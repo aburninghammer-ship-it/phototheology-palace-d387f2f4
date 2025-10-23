@@ -21,12 +21,6 @@ const Community = () => {
   const [newContent, setNewContent] = useState("");
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
     if (user) {
       fetchPosts();
 

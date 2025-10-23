@@ -79,9 +79,7 @@ export const Navigation = () => {
               <Link to="/spiritual-training">⚔️ Spiritual Training</Link>
             </Button>
 
-            {user ? (
-              <>
-                <DropdownMenu>
+            <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm">
                       Community
@@ -119,14 +117,6 @@ export const Navigation = () => {
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
-              </>
-            ) : (
-              <Link to="/auth">
-                <Button variant="default" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-            )}
           </div>
         </div>
       </div>

@@ -18,12 +18,6 @@ const LiveStudy = () => {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
     if (user) {
       fetchRooms();
       

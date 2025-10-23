@@ -42,12 +42,6 @@ const ChainChess = () => {
   const isVsJeeves = mode === "jeeves";
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
     if (user && !gameId) {
       initializeGame();
     } else if (gameId) {

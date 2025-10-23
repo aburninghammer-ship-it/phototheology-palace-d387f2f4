@@ -27,12 +27,6 @@ const ProphecyWatch = () => {
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
     if (user) {
       loadSignals();
     }

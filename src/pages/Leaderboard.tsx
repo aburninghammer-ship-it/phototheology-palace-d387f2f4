@@ -12,12 +12,6 @@ const Leaderboard = () => {
   const [leaders, setLeaders] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
     if (user) {
       fetchLeaders();
     }

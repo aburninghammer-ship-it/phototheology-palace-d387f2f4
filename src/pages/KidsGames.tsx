@@ -11,12 +11,6 @@ const KidsGames = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
   const youngKidsGames = [
     { id: "palace_explorer", name: "Palace Explorer", description: "Discover the rooms of the Palace" },
     { id: "verse_memory", name: "Verse Memory Match", description: "Match Bible verses" },

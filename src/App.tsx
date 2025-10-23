@@ -9,7 +9,6 @@ import Palace from "./pages/Palace";
 import FloorDetail from "./pages/FloorDetail";
 import Bible from "./pages/Bible";
 import BibleChapter from "./pages/BibleChapter";
-import Auth from "./pages/Auth";
 import DailyChallenges from "./pages/DailyChallenges";
 import Games from "./pages/Games";
 import ChainChess from "./pages/ChainChess";
@@ -42,7 +41,6 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
             <Route path="/palace" element={<Palace />} />
             <Route path="/floor/:floorNumber" element={<FloorDetail />} />
             <Route path="/bible" element={<Bible />} />

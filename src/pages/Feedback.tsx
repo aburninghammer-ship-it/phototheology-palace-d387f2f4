@@ -20,12 +20,6 @@ const Feedback = () => {
   const [category, setCategory] = useState("feature");
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !description.trim()) return;

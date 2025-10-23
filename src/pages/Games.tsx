@@ -10,12 +10,6 @@ const Games = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
   const startChainChess = async (vsJeeves: boolean) => {
     navigate(`/games/chain-chess/new${vsJeeves ? '/jeeves' : ''}`);
   };

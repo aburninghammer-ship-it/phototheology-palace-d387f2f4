@@ -18,12 +18,6 @@ const DailyChallenges = () => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
     if (user) {
       fetchDailyChallenge();
       checkSubmission();
