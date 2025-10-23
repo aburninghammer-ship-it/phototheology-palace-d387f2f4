@@ -74,7 +74,7 @@ export const Navigation = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
-                  <Link to="/bible/John/3">📖 Digital Bible</Link>
+                  <Link to="/bible/John/3">📖 Phototheology Bible</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/phototheologygpt">🤖 PhototheologyGPT</Link>

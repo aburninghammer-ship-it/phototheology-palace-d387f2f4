@@ -48,7 +48,7 @@ export const MobileNav = () => {
               <Link to="/bible/John/3">
                 <Button variant="ghost" className="w-full justify-start">
                   <BookOpen className="h-4 w-4 mr-2" />
-                  Digital Bible
+                  Phototheology Bible
                 </Button>
               </Link>
               <Link to="/power-of-the-lamb">
