@@ -24,12 +24,15 @@ const DailyChallenges = () => {
   }, [user]);
 
   const fetchDailyChallenge = async () => {
+    console.log("=== Fetching Daily Challenge ===");
     // Get current date in user's timezone, but set to start of day
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    console.log("Today (start of day):", today.toISOString());
     
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
+    console.log("Tomorrow:", tomorrow.toISOString());
 
     const { data, error } = await supabase
       .from("challenges")
@@ -38,6 +41,8 @@ const DailyChallenges = () => {
       .gte("starts_at", today.toISOString())
       .lt("starts_at", tomorrow.toISOString())
       .maybeSingle();
+
+    console.log("Challenge query result:", { data, error });
 
     if (error) {
       console.error("Error fetching challenge:", error);
@@ -54,6 +59,7 @@ const DailyChallenges = () => {
         .eq("user_id", user!.id)
         .maybeSingle();
 
+      console.log("Submission check:", submission);
       setHasSubmitted(!!submission);
     }
   };

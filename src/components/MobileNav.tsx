@@ -56,6 +56,21 @@ export const MobileNav = () => {
                   🎮 Games
                 </Button>
               </Link>
+              <Link to="/daily-challenges">
+                <Button variant="ghost" className="w-full justify-start">
+                  📅 Daily Challenges
+                </Button>
+              </Link>
+              <Link to="/treasure-hunt">
+                <Button variant="ghost" className="w-full justify-start">
+                  🏆 Treasure Hunt
+                </Button>
+              </Link>
+              <Link to="/equations-challenge">
+                <Button variant="ghost" className="w-full justify-start">
+                  🧮 Equations
+                </Button>
+              </Link>
               <Link to="/phototheologygpt">
                 <Button variant="ghost" className="w-full justify-start">
                   🤖 GPTs

@@ -10,6 +10,7 @@ import FloorDetail from "./pages/FloorDetail";
 import Bible from "./pages/Bible";
 import BibleChapter from "./pages/BibleChapter";
 import DailyChallenges from "./pages/DailyChallenges";
+import EquationsChallenge from "./pages/EquationsChallenge";
 import Games from "./pages/Games";
 import ChainChess from "./pages/ChainChess";
 import KidsGames from "./pages/KidsGames";
@@ -70,6 +71,7 @@ function App() {
             <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
             <Route path="/bible/:book/:chapter" element={<ProtectedRoute><BibleChapter /></ProtectedRoute>} />
             <Route path="/daily-challenges" element={<ProtectedRoute><DailyChallenges /></ProtectedRoute>} />
+            <Route path="/equations-challenge" element={<ProtectedRoute><EquationsChallenge /></ProtectedRoute>} />
             <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
             <Route path="/games/chain-chess/:gameId/:mode?" element={<ProtectedRoute><ChainChess /></ProtectedRoute>} />
             <Route path="/games/palace_quiz/:mode?" element={<ProtectedRoute><PalaceQuiz /></ProtectedRoute>} />

@@ -182,25 +182,31 @@ export const Navigation = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem asChild>
-                      <Link to="/daily-challenges">Daily Challenges</Link>
+                      <Link to="/daily-challenges">📅 Daily Challenges</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/live-study">Live Study</Link>
+                      <Link to="/treasure-hunt">🏆 Treasure Hunt (24hr)</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/community">Community Chat</Link>
+                      <Link to="/equations-challenge">🧮 Equations Challenge</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/leaderboard">Leaderboard</Link>
+                      <Link to="/live-study">📺 Live Study</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/achievements">Achievements</Link>
+                      <Link to="/community">💬 Community Chat</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/leaderboard">🏅 Leaderboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/achievements">🎖️ Achievements</Link>
                     </DropdownMenuItem>
                      <DropdownMenuItem asChild>
-                      <Link to="/feedback">Feedback</Link>
+                      <Link to="/feedback">💡 Feedback</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/critics-analysis">Critics Analysis</Link>
+                      <Link to="/critics-analysis">🎥 Critics Analysis</Link>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
