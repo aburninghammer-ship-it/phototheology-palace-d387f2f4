@@ -1,23 +1,9 @@
-import { useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, BookOpen, Calendar } from "lucide-react";
+import { SandboxedEmbed } from "@/components/SandboxedEmbed";
 
 const LessonQuarterlyGPT = () => {
-  useEffect(() => {
-    // Load the Phototheology embed script
-    const script = document.createElement("script");
-    script.src = "https://phototheologygpt.com/api/embed/bundle.js";
-    script.defer = true;
-    document.body.appendChild(script);
-
-    return () => {
-      // Cleanup script on unmount
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,9 +30,11 @@ const LessonQuarterlyGPT = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              <div 
-                id="deployment-1d681f37-c416-46d5-b565-d7e9673aeb14"
-                className="min-h-[600px] w-full"
+              <SandboxedEmbed
+                scriptUrl="https://phototheologygpt.com/api/embed/bundle.js"
+                embedId="deployment-1d681f37-c416-46d5-b565-d7e9673aeb14"
+                minHeight="600px"
+                title="Lesson Quarterly GPT Chat Interface"
               />
             </CardContent>
           </Card>

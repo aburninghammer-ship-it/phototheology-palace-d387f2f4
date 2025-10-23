@@ -1,23 +1,9 @@
-import { useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Shield, Book } from "lucide-react";
+import { SandboxedEmbed } from "@/components/SandboxedEmbed";
 
 const ApologeticsGPT = () => {
-  useEffect(() => {
-    // Load the Phototheology embed script
-    const script = document.createElement("script");
-    script.src = "https://phototheologygpt.com/api/embed/bundle.js";
-    script.defer = true;
-    document.body.appendChild(script);
-
-    return () => {
-      // Cleanup script on unmount
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,9 +30,11 @@ const ApologeticsGPT = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              <div 
-                id="deployment-a3183e57-2e65-466d-bcff-ac232a6231ea"
-                className="min-h-[600px] w-full"
+              <SandboxedEmbed
+                scriptUrl="https://phototheologygpt.com/api/embed/bundle.js"
+                embedId="deployment-a3183e57-2e65-466d-bcff-ac232a6231ea"
+                minHeight="600px"
+                title="ApologeticsGPT Chat Interface"
               />
             </CardContent>
           </Card>

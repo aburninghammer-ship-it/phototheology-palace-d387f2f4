@@ -1,23 +1,9 @@
-import { useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, Sparkles } from "lucide-react";
+import { SandboxedEmbed } from "@/components/SandboxedEmbed";
 
 const KidGPT = () => {
-  useEffect(() => {
-    // Load the Pickaxe embed script
-    const script = document.createElement("script");
-    script.src = "https://studio.pickaxe.co/api/embed/bundle.js";
-    script.defer = true;
-    document.body.appendChild(script);
-
-    return () => {
-      // Cleanup script on unmount
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 dark:from-gray-900 dark:to-purple-900">
@@ -44,9 +30,11 @@ const KidGPT = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              <div 
-                id="deployment-ac7e1d1e-1b82-4f73-812e-5d1d59b50f34"
-                className="min-h-[600px] w-full"
+              <SandboxedEmbed
+                scriptUrl="https://studio.pickaxe.co/api/embed/bundle.js"
+                embedId="deployment-ac7e1d1e-1b82-4f73-812e-5d1d59b50f34"
+                minHeight="600px"
+                title="KidGPT Chat Interface"
               />
             </CardContent>
           </Card>
