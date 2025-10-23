@@ -28,12 +28,12 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-dreamy">
+    <div className="min-h-screen bg-gradient-to-br from-palace-blue/20 via-palace-teal/15 to-palace-purple/20" style={{ background: 'linear-gradient(135deg, hsl(210 75% 65%) 0%, hsl(190 60% 65%) 50%, hsl(180 70% 60%) 100%)' }}>
       <Navigation />
       
       {/* Hero Section */}
       <section className="pt-28 pb-16 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(210,100%,56%,0.08),transparent_60%),radial-gradient(circle_at_70%_60%,rgba(180,77%,44%,0.08),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_60%),radial-gradient(circle_at_70%_60%,rgba(20,184,166,0.08),transparent_60%)]" />
         
         <div className="container mx-auto max-w-4xl text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full gradient-ocean border border-white/10 mb-6 shadow-sm animate-fade-in">
