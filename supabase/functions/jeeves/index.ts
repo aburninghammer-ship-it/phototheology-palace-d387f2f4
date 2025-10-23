@@ -133,6 +133,7 @@ serve(async (req) => {
       isFirstMove,
       previousMoves,
       userCommentary,
+      userVerse,
       category,
       categories,
       topic,
@@ -145,7 +146,9 @@ serve(async (req) => {
       availableCategories,
       includeSOP,
       difficulty,
-      symbolCount
+      symbolCount,
+      challengeCategory,
+      newChallengeCategory
     } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -374,9 +377,8 @@ Chart context: ${chartData || "General Bible study visualization"}
 Make it educational and insightful.`;
 
     } else if (mode === "chain-chess") {
-      // availableCategories already extracted from req.json() above
-      const { difficulty } = await req.json();
-      const difficultyContext = difficulty === "kids" 
+      // availableCategories and difficulty already extracted from req.json() above
+      const difficultyContext = difficulty === "kids"
         ? "Use simpler language and shorter sentences. Make it encouraging and fun for children aged 8-14."
         : "Use scholarly language with depth. Make it theologically rich for adult learners.";
       
@@ -481,7 +483,7 @@ Return JSON:
 }`;
 
     } else if (mode === "chain-chess-feedback") {
-      const { difficulty, userVerse, challengeCategory, newChallengeCategory } = await req.json();
+      // All variables already extracted from req.json() above
       const difficultyContext = difficulty === "kids"
         ? "Score generously to encourage kids. 6-8 for good effort, 9-10 for excellent insights."
         : "Score rigorously for adults. 4-6 for decent, 7-8 for strong, 9-10 for exceptional.";
