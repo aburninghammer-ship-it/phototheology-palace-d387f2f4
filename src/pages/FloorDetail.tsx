@@ -9,14 +9,20 @@ import { Badge } from "@/components/ui/badge";
 const FloorDetail = () => {
   const { floorNumber } = useParams();
   const floorNum = parseInt(floorNumber || "1");
-  const floor = palaceFloors.find(f => f.number === floorNum);
   
-  if (!floor) {
+  // Validate floor number
+  const isValidFloor = !isNaN(floorNum) && floorNum >= 1 && floorNum <= 8;
+  const floor = isValidFloor ? palaceFloors.find(f => f.number === floorNum) : null;
+  
+  if (!floor || !isValidFloor) {
     return (
       <div className="min-h-screen bg-gradient-subtle">
         <Navigation />
         <div className="pt-24 pb-16 px-4 text-center">
-          <h1 className="font-serif text-3xl mb-4">Floor not found</h1>
+          <h1 className="font-serif text-3xl mb-6">Floor not found</h1>
+          <p className="text-muted-foreground mb-8">
+            The floor you're looking for doesn't exist. Please choose from floors 1-8.
+          </p>
           <Button asChild>
             <Link to="/palace">Return to Palace</Link>
           </Button>
