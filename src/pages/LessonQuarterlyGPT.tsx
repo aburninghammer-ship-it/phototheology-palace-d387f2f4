@@ -1,9 +1,19 @@
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, BookOpen, Calendar } from "lucide-react";
-import { SandboxedEmbed } from "@/components/SandboxedEmbed";
+import { useEffect } from "react";
 
 const LessonQuarterlyGPT = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://studio.pickaxe.co/api/embed/bundle.js';
+    script.defer = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,12 +39,10 @@ const LessonQuarterlyGPT = () => {
                 Get deeper insights into your quarterly lessons. Ask questions, explore connections, and discover practical applications for each week's study.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <SandboxedEmbed
-                scriptUrl="https://phototheologygpt.com/api/embed/bundle.js"
-                embedId="deployment-1d681f37-c416-46d5-b565-d7e9673aeb14"
-                minHeight="600px"
-                title="Lesson Quarterly GPT Chat Interface"
+            <CardContent className="p-6">
+              <div 
+                id="deployment-56f03138-a62c-4016-b8f8-6a05f2f40aae"
+                style={{ minHeight: '600px' }}
               />
             </CardContent>
           </Card>
