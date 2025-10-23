@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, MessageSquare, Sparkles, Target } from "lucide-react";
+import { Trophy, MessageSquare, Sparkles, Target, Share2, Copy } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EmojiPicker } from "@/components/EmojiPicker";
+import { WebRTCCall } from "@/components/WebRTCCall";
 
 interface Move {
   player: string;
@@ -315,6 +316,42 @@ const ChainChess = () => {
     }
   };
 
+  const copyInviteLink = () => {
+    const inviteLink = window.location.href;
+    navigator.clipboard.writeText(inviteLink).then(() => {
+      toast({
+        title: "Link copied!",
+        description: "Share this link to invite someone to watch or join.",
+      });
+    }).catch(() => {
+      toast({
+        title: "Failed to copy",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    });
+  };
+
+  const shareInviteLink = async () => {
+    const inviteLink = window.location.href;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Chain Chess Game`,
+          text: `Join my Chain Chess game on Phototheology Palace!`,
+          url: inviteLink,
+        });
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          copyInviteLink();
+        }
+      }
+    } else {
+      copyInviteLink();
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -327,7 +364,7 @@ const ChainChess = () => {
               <Trophy className="h-8 w-8 text-yellow-500" />
               Chain Chess
             </h1>
-            <div className="flex gap-4">
+            <div className="flex gap-2 items-center">
               <Badge variant="secondary" className="text-lg">
                 <Target className="mr-2 h-4 w-4" />
                 You: {userScore}
@@ -336,6 +373,14 @@ const ChainChess = () => {
                 <Sparkles className="mr-2 h-4 w-4" />
                 {isVsJeeves ? "Jeeves" : "Opponent"}: {opponentScore}
               </Badge>
+              <Button variant="outline" size="sm" onClick={shareInviteLink}>
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+              <Button variant="outline" size="sm" onClick={copyInviteLink}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy Link
+              </Button>
             </div>
           </div>
 
@@ -352,13 +397,22 @@ const ChainChess = () => {
           </Card>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <Card className="h-[600px]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" />
-                  Conversation
-                </CardTitle>
-              </CardHeader>
+            <div className="space-y-6">
+              {!isVsJeeves && gameId && (
+                <WebRTCCall
+                  roomId={gameId}
+                  userId={user!.id}
+                  userName={user!.email || "User"}
+                />
+              )}
+              
+              <Card className="h-[600px]">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5" />
+                    Conversation
+                  </CardTitle>
+                </CardHeader>
               <CardContent>
                 <ScrollArea className="h-[480px] pr-4">
                   <div className="space-y-4">
@@ -403,7 +457,8 @@ const ChainChess = () => {
                   </div>
                 </ScrollArea>
               </CardContent>
-            </Card>
+              </Card>
+            </div>
 
             <Card className="h-[600px]">
               <CardHeader>

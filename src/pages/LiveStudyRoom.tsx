@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Video, Users, Send, ArrowLeft, Share2, Copy } from "lucide-react";
+import { WebRTCCall } from "@/components/WebRTCCall";
 
 interface ChatMessage {
   id: string;
@@ -246,41 +247,49 @@ const LiveStudyRoom = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>Chat</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ScrollArea className="h-[400px] pr-4">
-                  <div className="space-y-4">
-                    {messages.map((msg) => (
-                      <div key={msg.id} className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm">
-                            {msg.profiles?.username || "Unknown"}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(msg.created_at).toLocaleTimeString()}
-                          </span>
+            <div className="md:col-span-2 space-y-6">
+              <WebRTCCall
+                roomId={roomId!}
+                userId={user!.id}
+                userName={user!.email || "User"}
+              />
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Chat</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ScrollArea className="h-[400px] pr-4">
+                    <div className="space-y-4">
+                      {messages.map((msg) => (
+                        <div key={msg.id} className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sm">
+                              {msg.profiles?.username || "Unknown"}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(msg.created_at).toLocaleTimeString()}
+                            </span>
+                          </div>
+                          <p className="text-sm bg-muted p-2 rounded-lg">{msg.message}</p>
                         </div>
-                        <p className="text-sm bg-muted p-2 rounded-lg">{msg.message}</p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  </ScrollArea>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Type a message..."
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                    />
+                    <Button onClick={sendMessage}>
+                      <Send className="h-4 w-4" />
+                    </Button>
                   </div>
-                </ScrollArea>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Type a message..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                  />
-                  <Button onClick={sendMessage}>
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
 
             <Card>
               <CardHeader>
