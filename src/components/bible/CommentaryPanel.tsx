@@ -9,11 +9,55 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const PRINCIPLE_OPTIONS = [
-  { id: "dimensions", label: "5 Dimensions", color: "gradient-palace" },
-  { id: "cycles", label: "8 Cycles", color: "gradient-ocean" },
-  { id: "sanctuary", label: "Sanctuary Articles", color: "gradient-royal" },
-  { id: "feasts", label: "7 Feasts", color: "gradient-sunset" },
-  { id: "horizons", label: "3 Horizons", color: "gradient-warmth" },
+  // Floor 1 - Furnishing
+  { id: "sr", label: "Story Room (SR)", color: "gradient-palace" },
+  { id: "ir", label: "Imagination Room (IR)", color: "gradient-ocean" },
+  { id: "24fps", label: "24FPS Room", color: "gradient-royal" },
+  { id: "br", label: "Bible Rendered (BR)", color: "gradient-sunset" },
+  { id: "tr", label: "Translation Room (TR)", color: "gradient-warmth" },
+  { id: "gr", label: "Gems Room (GR)", color: "gradient-palace" },
+  
+  // Floor 2 - Investigation
+  { id: "or", label: "Observation Room (OR)", color: "gradient-ocean" },
+  { id: "dc", label: "Def-Com Room (DC)", color: "gradient-royal" },
+  { id: "st", label: "Symbols/Types (ST)", color: "gradient-sunset" },
+  { id: "qr", label: "Questions Room (QR)", color: "gradient-warmth" },
+  { id: "qa", label: "Q&A Chains (QA)", color: "gradient-palace" },
+  
+  // Floor 3 - Freestyle
+  { id: "nf", label: "Nature Freestyle (NF)", color: "gradient-ocean" },
+  { id: "pf", label: "Personal Freestyle (PF)", color: "gradient-royal" },
+  { id: "bf", label: "Bible Freestyle (BF)", color: "gradient-sunset" },
+  { id: "hf", label: "History Freestyle (HF)", color: "gradient-warmth" },
+  { id: "lr", label: "Listening Room (LR)", color: "gradient-palace" },
+  
+  // Floor 4 - Next Level
+  { id: "cr", label: "Concentration Room (CR)", color: "gradient-ocean" },
+  { id: "dr", label: "Dimensions Room (DR)", color: "gradient-royal" },
+  { id: "c6", label: "Connect-6 (C6)", color: "gradient-sunset" },
+  { id: "trm", label: "Theme Room (TRm)", color: "gradient-warmth" },
+  { id: "tz", label: "Time Zone (TZ)", color: "gradient-palace" },
+  { id: "prm", label: "Patterns Room (PRm)", color: "gradient-ocean" },
+  { id: "p||", label: "Parallels Room (P‖)", color: "gradient-royal" },
+  { id: "frt", label: "Fruit Room (FRt)", color: "gradient-sunset" },
+  
+  // Floor 5 - Vision
+  { id: "bl", label: "Blue Room - Sanctuary (BL)", color: "gradient-warmth" },
+  { id: "pr", label: "Prophecy Room (PR)", color: "gradient-palace" },
+  { id: "3a", label: "Three Angels (3A)", color: "gradient-ocean" },
+  { id: "fe", label: "Feasts Room (FE)", color: "gradient-royal" },
+  { id: "cec", label: "Christ in Every Chapter (CEC)", color: "gradient-sunset" },
+  { id: "r66", label: "Room 66 (R66)", color: "gradient-warmth" },
+  
+  // Floor 6 - Three Heavens & Cycles
+  { id: "123h", label: "Three Heavens (1H/2H/3H)", color: "gradient-palace" },
+  { id: "cycles", label: "Eight Cycles (@)", color: "gradient-ocean" },
+  { id: "jr", label: "Juice Room (JR)", color: "gradient-royal" },
+  
+  // Floor 7 - Spiritual & Emotional
+  { id: "frm", label: "Fire Room (FRm)", color: "gradient-sunset" },
+  { id: "mr", label: "Meditation Room (MR)", color: "gradient-warmth" },
+  { id: "srm", label: "Speed Room (SRm)", color: "gradient-palace" },
 ];
 
 interface CommentaryPanelProps {
@@ -29,6 +73,7 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
   const [loading, setLoading] = useState(false);
   const [commentary, setCommentary] = useState<string | null>(null);
   const [usedPrinciples, setUsedPrinciples] = useState<string[]>([]);
+  const [analysisMode, setAnalysisMode] = useState<"revealed" | "applied">("applied");
   const { toast } = useToast();
 
   const togglePrinciple = (id: string) => {
@@ -38,10 +83,10 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
   };
 
   const generateCommentary = async (refresh = false) => {
-    if (selectedPrinciples.length === 0 && !refresh) {
+    if (analysisMode === "applied" && selectedPrinciples.length === 0 && !refresh) {
       toast({
         title: "Select Principles",
-        description: "Please select at least one principle for commentary",
+        description: "Please select at least one principle for applied analysis",
         variant: "destructive",
       });
       return;
@@ -51,13 +96,13 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
     try {
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
-          mode: "commentary",
+          mode: analysisMode === "revealed" ? "commentary-revealed" : "commentary-applied",
           book,
           chapter,
           verseText: { verse, text: verseText },
-          selectedPrinciples: refresh ? undefined : selectedPrinciples.map(
-            id => PRINCIPLE_OPTIONS.find(p => p.id === id)?.label
-          ),
+          selectedPrinciples: (analysisMode === "applied" && !refresh) 
+            ? selectedPrinciples.map(id => PRINCIPLE_OPTIONS.find(p => p.id === id)?.label)
+            : undefined,
         },
       });
 
@@ -98,40 +143,75 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
       <CardContent className="pt-6">
         <div className="space-y-4">
           <div>
-            <h4 className="text-sm font-semibold mb-3">Select Analysis Lenses:</h4>
-            <div className="space-y-2">
-              {PRINCIPLE_OPTIONS.map((option) => (
-                <label
-                  key={option.id}
-                  className="flex items-center gap-3 p-3 rounded-lg border-2 border-border hover:border-primary cursor-pointer transition-all hover-lift"
-                >
-                  <Checkbox
-                    checked={selectedPrinciples.includes(option.id)}
-                    onCheckedChange={() => togglePrinciple(option.id)}
-                  />
-                  <Badge className={`${option.color} text-white shadow-sm`}>
-                    {option.label}
-                  </Badge>
-                </label>
-              ))}
+            <h4 className="text-sm font-semibold mb-3">Analysis Mode:</h4>
+            <div className="flex gap-2 mb-4">
+              <Button
+                variant={analysisMode === "revealed" ? "default" : "outline"}
+                onClick={() => {
+                  setAnalysisMode("revealed");
+                  setCommentary(null);
+                }}
+                className="flex-1"
+              >
+                Revealed Principles
+              </Button>
+              <Button
+                variant={analysisMode === "applied" ? "default" : "outline"}
+                onClick={() => {
+                  setAnalysisMode("applied");
+                  setCommentary(null);
+                }}
+                className="flex-1"
+              >
+                Applied Principles
+              </Button>
             </div>
+            <p className="text-xs text-muted-foreground mb-3">
+              {analysisMode === "revealed" 
+                ? "Identify which principles and dimensions are revealed in this text" 
+                : "Select principles to apply to this verse, or let AI randomly select"}
+            </p>
           </div>
+
+          {analysisMode === "applied" && (
+            <div>
+              <h4 className="text-sm font-semibold mb-3">Select Analysis Lenses:</h4>
+              <ScrollArea className="h-[300px]">
+                <div className="space-y-2 pr-4">
+                  {PRINCIPLE_OPTIONS.map((option) => (
+                    <label
+                      key={option.id}
+                      className="flex items-center gap-3 p-3 rounded-lg border-2 border-border hover:border-primary cursor-pointer transition-all hover-lift"
+                    >
+                      <Checkbox
+                        checked={selectedPrinciples.includes(option.id)}
+                        onCheckedChange={() => togglePrinciple(option.id)}
+                      />
+                      <Badge className={`${option.color} text-white shadow-sm text-xs`}>
+                        {option.label}
+                      </Badge>
+                    </label>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
 
           <div className="flex gap-2">
             <Button
               onClick={() => generateCommentary(false)}
-              disabled={loading || selectedPrinciples.length === 0}
+              disabled={loading || (analysisMode === "applied" && selectedPrinciples.length === 0)}
               className="flex-1 gradient-royal text-white shadow-blue"
             >
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generating...
+                  Analyzing...
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Generate
+                  {analysisMode === "revealed" ? "Analyze" : "Generate"}
                 </>
               )}
             </Button>
@@ -148,7 +228,7 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
                 ) : (
                   <Sparkles className="h-4 w-4 mr-2" />
                 )}
-                Refresh
+                {analysisMode === "revealed" ? "Re-analyze" : "Random Refresh"}
               </Button>
             )}
           </div>

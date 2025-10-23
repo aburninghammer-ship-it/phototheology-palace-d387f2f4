@@ -248,12 +248,45 @@ For each verse that connects to ${selectedPrinciple.name}, return a JSON object 
 
 Only include verses that have meaningful connections. Return as JSON array: [...]`;
 
-    } else if (mode === "commentary") {
-      systemPrompt = `You are Jeeves, a theologian providing insightful Bible commentary using specific analytical frameworks.
+    } else if (mode === "commentary-revealed") {
+      systemPrompt = `You are Jeeves, a theologian analyzing Bible verses to identify which principles and dimensions are REVEALED or PRESENT in the text itself.
+Focus on discovering what's already there, not applying external frameworks.`;
+
+      userPrompt = `Analyze ${book} ${chapter}:${verseText.verse} to identify which principles and dimensions are REVEALED in the text.
+
+Verse text: "${verseText.text}"
+
+Examine this verse and identify:
+1. Which dimensions are present (Literal, Christ-centered, Personal, Church/Community, Heavenly/Eschatological)
+2. Which palace rooms or principles naturally emerge from the text (Story elements? Symbols? Prophecy? Sanctuary connections? Feast patterns? etc.)
+3. What patterns, types, or themes are visible
+
+Structure your analysis:
+1. Opening observation (2 sentences)
+2. Dimensions revealed: List and explain each dimension present in the text
+3. Palace principles visible: Identify which rooms/lenses naturally connect
+4. Interconnections: How these revealed elements work together
+5. One profound synthesis
+
+Be specific about what's IN the text, not what could be applied to it.
+IMPORTANT: At the end, list the principles you identified: "PRINCIPLES_REVEALED: [list]"`;
+
+    } else if (mode === "commentary-applied") {
+      systemPrompt = `You are Jeeves, a theologian providing insightful Bible commentary by APPLYING specific analytical frameworks to verses.
 Provide deep, thoughtful analysis while remaining clear and accessible.`;
 
       // Random principle selection for refresh mode
-      const allPrinciples = ["2D", "3D", "Sanctuary", "Feasts", "Parables", "Prophecy", "Covenant", "Types & Shadows"];
+      const allPrinciples = [
+        "Story Room (SR)", "Imagination Room (IR)", "24FPS Room", "Bible Rendered (BR)", "Translation Room (TR)", "Gems Room (GR)",
+        "Observation Room (OR)", "Def-Com Room (DC)", "Symbols/Types (ST)", "Questions Room (QR)", "Q&A Chains (QA)",
+        "Nature Freestyle (NF)", "Personal Freestyle (PF)", "Bible Freestyle (BF)", "History Freestyle (HF)", "Listening Room (LR)",
+        "Concentration Room (CR)", "Dimensions Room (DR)", "Connect-6 (C6)", "Theme Room (TRm)", "Time Zone (TZ)", 
+        "Patterns Room (PRm)", "Parallels Room (P‖)", "Fruit Room (FRt)",
+        "Blue Room - Sanctuary (BL)", "Prophecy Room (PR)", "Three Angels (3A)", "Feasts Room (FE)", 
+        "Christ in Every Chapter (CEC)", "Room 66 (R66)",
+        "Three Heavens (1H/2H/3H)", "Eight Cycles (@)", "Juice Room (JR)",
+        "Fire Room (FRm)", "Meditation Room (MR)", "Speed Room (SRm)"
+      ];
       let usedPrinciples: string[];
       
       if (!selectedPrinciples || selectedPrinciples.length === 0) {
@@ -267,18 +300,18 @@ Provide deep, thoughtful analysis while remaining clear and accessible.`;
       
       const principleList = usedPrinciples.join(", ");
       
-      userPrompt = `Provide commentary on ${book} ${chapter}:${verseText.verse} using these analytical lenses: ${principleList}
+      userPrompt = `Provide commentary on ${book} ${chapter}:${verseText.verse} by APPLYING these analytical lenses: ${principleList}
 
 Verse text: "${verseText.text}"
 
 Structure your commentary:
 1. Opening insight (2-3 sentences)
-2. Analysis through each selected principle/lens
-3. How these principles interconnect in this verse
+2. Apply each selected principle/lens to this verse
+3. Show how these principles interconnect when applied to this verse
 4. Practical application
 5. One profound closing thought
 
-Make it scholarly yet accessible.
+Make it scholarly yet accessible. Show creative connections.
 IMPORTANT: At the end, include a line: "PRINCIPLES_USED: ${principleList}"`;
     
     } else if (mode === "generate-drills") {
