@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Video, Users, Send, ArrowLeft } from "lucide-react";
+import { Video, Users, Send, ArrowLeft, Share2, Copy } from "lucide-react";
 
 interface ChatMessage {
   id: string;
@@ -170,13 +170,49 @@ const LiveStudyRoom = () => {
     }
   };
 
+  const copyInviteLink = () => {
+    const inviteLink = window.location.href;
+    navigator.clipboard.writeText(inviteLink).then(() => {
+      toast({
+        title: "Link copied!",
+        description: "Share this link with your friends to invite them.",
+      });
+    }).catch(() => {
+      toast({
+        title: "Failed to copy",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    });
+  };
+
+  const shareInviteLink = async () => {
+    const inviteLink = window.location.href;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Join ${room?.name} on Phototheology Palace`,
+          text: `Join me in this live study session!`,
+          url: inviteLink,
+        });
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          copyInviteLink();
+        }
+      }
+    } else {
+      copyInviteLink();
+    }
+  };
+
   if (!room) return null;
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-6">
+          <div className="max-w-6xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button variant="ghost" onClick={() => navigate("/live-study")}>
@@ -193,10 +229,20 @@ const LiveStudyRoom = () => {
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              {participants.length} participants
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                {participants.length} participants
+              </Badge>
+              <Button variant="outline" onClick={shareInviteLink}>
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+              <Button variant="outline" onClick={copyInviteLink}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy Link
+              </Button>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
