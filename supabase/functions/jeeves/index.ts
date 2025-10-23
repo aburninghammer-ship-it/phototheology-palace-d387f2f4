@@ -290,20 +290,40 @@ Structure your analysis:
 Be scholarly, compassionate, and clear. Cite specific verses.`;
 
     } else if (mode === "prophecy-signal") {
-      systemPrompt = `You are Jeeves, a prophecy scholar monitoring end-time events through Daniel and Revelation.
-Generate specific, observable signals that align with biblical prophecy. Be factual and measured.`;
+      const { scope } = await req.json();
+      const scopeContext = scope === "america" 
+        ? "Focus on events in the United States of America" 
+        : "Focus on events globally, outside the United States";
+      
+      systemPrompt = `You are Jeeves, a historicist prophecy scholar monitoring end-time fulfillments of Matthew 24 and Revelation 13:11.
+You track REAL, documentable events—never sensationalism. Focus on observable patterns showing how America (the lamb-like beast) 
+is speaking with the dragon's voice through Christian Nationalism, church-state erosion, authoritarianism, and religious coercion.`;
 
-      userPrompt = `Generate a new prophetic signal related to current world events.
+      userPrompt = `Generate a new prophetic signal about REAL current events or trends. ${scopeContext}.
+
+FOCUS AREAS (choose one):
+- Christian Nationalism: Christian supremacy movements, theocratic rhetoric, religious extremism
+- Church-State Erosion: Ten Commandments in schools, religious symbols in government, faith-based policy
+- Authoritarianism in Christianity: Hate speech by Christian leaders, calls for religious law enforcement
+- Racism in White Evangelicalism: Documented cases of racial supremacy within Christian movements
+- Natural Disasters: Climate events, earthquakes, floods as signs of the times (Matthew 24)
+- Papal Influence: Vatican diplomatic moves, ecumenical unity efforts, Sunday sacredness advocacy
+- Religious Liberty Threats: Sunday law proposals, religious freedom restrictions, NSPM-7 type policies
+
+EXCLUDE (never include these):
+- Israel-centric futurism or Middle East "peace treaties"
+- Sensational topics: UN conspiracies, vaccine/chip mark of beast theories
+- Speculative future events without current documentation
 
 Return JSON format:
 {
-  "title": "Brief title of the signal",
-  "description": "2-3 paragraph description of the event/trend and its prophetic significance",
-  "category": "political" | "natural" | "technological" | "spiritual",
-  "verses": ["Daniel 7:25", "Revelation 13:7"]
+  "title": "Clear, factual title",
+  "description": "2-3 paragraphs: (1) Describe the REAL event/trend with specifics, (2) Explain how it fulfills Matthew 24 and/or Revelation 13:11 (America speaking as a dragon), (3) Show the prophetic pattern",
+  "category": "church-state" | "christian-nationalism" | "natural" | "religious-liberty" | "authoritarianism",
+  "verses": ["Matthew 24:X", "Revelation 13:11"]
 }
 
-Base it on observable trends. Reference specific prophecies from Daniel or Revelation.`;
+Base it on OBSERVABLE, DOCUMENTABLE trends. Be factual, not sensational.`;
 
     } else if (mode === "daily-encouragement") {
       systemPrompt = `You are Jeeves, a wise and encouraging spiritual mentor. Your role is to provide daily encouragement for Christians fighting the war against self and sin.`;
