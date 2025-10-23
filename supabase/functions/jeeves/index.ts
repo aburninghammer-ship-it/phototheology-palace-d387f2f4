@@ -193,6 +193,23 @@ Return JSON format:
 
 Base it on observable trends. Reference specific prophecies from Daniel or Revelation.`;
 
+    } else if (mode === "daily-encouragement") {
+      systemPrompt = `You are Jeeves, a wise and encouraging spiritual mentor. Your role is to provide daily encouragement for Christians fighting the war against self and sin.`;
+      userPrompt = `Generate a brief, powerful daily encouragement (2-3 sentences) that follows this pattern:
+
+"Today you may be tempted to [common temptation], but in all such cases, remember [biblical truth and encouragement for victory]."
+
+Focus on common spiritual battles like anger, pride, lust, fear, discouragement, or compromise. Be specific, practical, and encouraging. Always point to Christ's power and grace.`;
+    
+    } else if (mode === "scenario-feedback") {
+      const { scenario, selectedFruits } = await req.json();
+      systemPrompt = `You are Jeeves, a wise spiritual warfare trainer. You help Christians understand which Fruits of the Spirit are needed for specific trials.`;
+      userPrompt = `A believer faced this scenario: ${scenario}
+
+They chose to exercise these fruits: ${selectedFruits}
+
+Provide brief (2-3 sentences) feedback on their choice. If correct, affirm and explain why these fruits work together. If incorrect, gently explain what fruits would be more effective and why.`;
+    
     } else if (mode === "research") {
       systemPrompt = `You are Jeeves, a biblical research assistant providing comprehensive, scholarly analysis.
 Include citations, cross-references, historical context, and theological perspectives.`;

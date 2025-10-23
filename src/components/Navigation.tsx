@@ -70,6 +70,14 @@ export const Navigation = () => {
             >
               <Link to="/power-of-the-lamb">🔥 Power of the Lamb</Link>
             </Button>
+            <Button
+              variant={location.pathname === "/spiritual-training" ? "default" : "ghost"}
+              asChild
+              size="sm"
+              className={location.pathname === "/spiritual-training" ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg" : "hover:bg-muted"}
+            >
+              <Link to="/spiritual-training">⚔️ Spiritual Training</Link>
+            </Button>
 
             {user ? (
               <>
