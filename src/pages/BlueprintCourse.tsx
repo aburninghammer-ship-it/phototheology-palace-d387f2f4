@@ -1,0 +1,189 @@
+import { useState } from "react";
+import { Navigation } from "@/components/Navigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { BookOpen, Lock, CheckCircle2 } from "lucide-react";
+
+const COURSE_PARTS = [
+  {
+    id: 1,
+    title: "Part 1: The War in Heaven",
+    level: "Level 1: The Origin of Sin",
+    description: "The Fall of Angels and the beginning of the Great Controversy",
+    topics: ["Lucifer's rebellion", "War in heaven", "Satan cast to earth"],
+    completed: false,
+  },
+  {
+    id: 2,
+    title: "Part 2: The War on Earth",
+    level: "Level 1: The Origin of Sin",
+    description: "The Fall of Man and entrance of sin into our world",
+    topics: ["Garden of Eden", "The temptation", "Consequences of sin"],
+    completed: false,
+  },
+  {
+    id: 3,
+    title: "Part 3: The Plan of Salvation",
+    level: "Level 1: The Plan of Redemption",
+    description: "God's Blueprint revealed through the sanctuary",
+    topics: ["The sanctuary system", "Symbols and types", "God's GPS"],
+    completed: false,
+  },
+  {
+    id: 4,
+    title: "Part 4: The 70 Weeks Prophecy",
+    level: "Level 2: God's Advance",
+    description: "Messianic prophecy and Satan's first counterattack",
+    topics: ["Daniel 9", "Prophetic timeline", "The Messiah's mission"],
+    completed: false,
+  },
+  {
+    id: 5,
+    title: "Part 5: The 1,260 Years Prophecy",
+    level: "Level 2: Satan's Counter",
+    description: "The Dark Ages and Satan's second counterattack",
+    topics: ["Papal supremacy", "Persecution period", "Daniel 7"],
+    completed: false,
+  },
+  {
+    id: 6,
+    title: "Part 6: The 2,300 Days Prophecy",
+    level: "Level 2: God's Advance",
+    description: "The cleansing of the sanctuary and investigative judgment",
+    topics: ["Daniel 8:14", "1844", "Day of Atonement"],
+    completed: false,
+  },
+  {
+    id: 7,
+    title: "Part 7: The Three Angels' Messages",
+    level: "Level 3: Final Warnings",
+    description: "God's last call to the world before Christ returns",
+    topics: ["Revelation 14", "Judgment hour", "Babylon fallen", "Mark of the beast"],
+    completed: false,
+  },
+  {
+    id: 8,
+    title: "Part 8: The Time of Trouble",
+    level: "Level 3: Final Warnings",
+    description: "The seven last plagues and earth's final crisis",
+    topics: ["Seven plagues", "Seal of God", "Time of Jacob's trouble"],
+    completed: false,
+  },
+  {
+    id: 9,
+    title: "Part 9: The Second Coming",
+    level: "Level 4: Earth's Final Movie",
+    description: "Christ's return and the resurrection of the righteous",
+    topics: ["Visible return", "Resurrection", "Righteous gathered"],
+    completed: false,
+  },
+  {
+    id: 10,
+    title: "Part 10: The Final Judgment & New Earth",
+    level: "Level 4: Earth's Final Movie",
+    description: "The millennium, final judgment, and God's eternal kingdom",
+    topics: ["1000 years in heaven", "Second resurrection", "Lake of fire", "New heaven and earth"],
+    completed: false,
+  },
+];
+
+export default function BlueprintCourse() {
+  const [selectedPart, setSelectedPart] = useState<number | null>(null);
+
+  const currentPart = selectedPart ? COURSE_PARTS.find(p => p.id === selectedPart) : null;
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      
+      <main className="container mx-auto px-4 py-8 space-y-8">
+        <section className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <BookOpen className="w-12 h-12 text-primary" />
+            <h1 className="text-4xl font-bold">The Blueprint Course</h1>
+          </div>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            God's GPS: A comprehensive chronological view of the Great Controversy from Heaven to Earth's final days
+          </p>
+          <Badge variant="outline" className="text-lg px-4 py-2">
+            10-Part Biblical Prophecy Study
+          </Badge>
+        </section>
+
+        {!selectedPart ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {COURSE_PARTS.map((part) => (
+              <Card 
+                key={part.id} 
+                className="cursor-pointer hover:border-primary transition-colors"
+                onClick={() => setSelectedPart(part.id)}
+              >
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <Badge variant="secondary" className="mb-2">{part.level}</Badge>
+                      <CardTitle className="text-lg mb-2">{part.title}</CardTitle>
+                      <CardDescription>{part.description}</CardDescription>
+                    </div>
+                    {part.completed ? (
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <Lock className="w-5 h-5 text-muted-foreground" />
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-1">
+                    {part.topics.map((topic, i) => (
+                      <p key={i} className="text-sm text-muted-foreground">• {topic}</p>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardHeader>
+              <Button variant="ghost" onClick={() => setSelectedPart(null)} className="w-fit mb-4">
+                ← Back to Course Overview
+              </Button>
+              <Badge variant="secondary" className="w-fit mb-2">{currentPart?.level}</Badge>
+              <CardTitle className="text-2xl">{currentPart?.title}</CardTitle>
+              <CardDescription className="text-lg">{currentPart?.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[600px]">
+                <div className="prose prose-sm max-w-none space-y-6">
+                  <div className="bg-muted p-6 rounded-lg">
+                    <h3 className="text-lg font-semibold mb-3">Topics Covered:</h3>
+                    <ul className="space-y-2">
+                      {currentPart?.topics.map((topic, i) => (
+                        <li key={i} className="text-base">{topic}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground mb-4">
+                      Full course content coming soon! This will include:
+                    </p>
+                    <ul className="text-left max-w-md mx-auto space-y-2">
+                      <li>• Fill-in-the-blank Bible study format</li>
+                      <li>• Scripture references and cross-references</li>
+                      <li>• Reflection questions</li>
+                      <li>• Visual aids and diagrams</li>
+                      <li>• Kids version available</li>
+                    </ul>
+                  </div>
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        )}
+      </main>
+    </div>
+  );
+}

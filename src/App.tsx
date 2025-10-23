@@ -27,6 +27,7 @@ import SermonBuilder from "./pages/SermonBuilder";
 import Flashcards from "./pages/Flashcards";
 import PowerOfTheLamb from "./pages/PowerOfTheLamb";
 import SpiritualTraining from "./pages/SpiritualTraining";
+import BlueprintCourse from "./pages/BlueprintCourse";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ function App() {
           <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/power-of-the-lamb" element={<PowerOfTheLamb />} />
           <Route path="/spiritual-training" element={<SpiritualTraining />} />
+          <Route path="/blueprint-course" element={<BlueprintCourse />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

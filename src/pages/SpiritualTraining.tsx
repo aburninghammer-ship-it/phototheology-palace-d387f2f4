@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sword, Shield, Target, BookOpen, Flame, Trophy } from "lucide-react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -256,10 +257,10 @@ export default function SpiritualTraining() {
           <TabsContent value="courses" className="space-y-4">
             <div className="grid gap-6 md:grid-cols-2">
               {[
-                { title: "The Blueprint Course", description: "Foundation for spiritual warfare", icon: BookOpen },
-                { title: "Daniel Course", description: "Standing firm in hostile territory", icon: Shield },
-                { title: "Revelation Course", description: "Understanding end-time warfare", icon: Flame },
-                { title: "Phototheology Course", description: "Visual theology training", icon: Trophy },
+                { title: "The Blueprint Course", description: "Foundation for spiritual warfare", icon: BookOpen, link: "/blueprint-course" },
+                { title: "Daniel Course", description: "Standing firm in hostile territory", icon: Shield, link: null },
+                { title: "Revelation Course", description: "Understanding end-time warfare", icon: Flame, link: null },
+                { title: "Phototheology Course", description: "Visual theology training", icon: Trophy, link: null },
               ].map((course) => (
                 <Card key={course.title}>
                   <CardHeader>
@@ -268,18 +269,26 @@ export default function SpiritualTraining() {
                       <CardTitle>{course.title}</CardTitle>
                     </div>
                     <CardDescription>{course.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <Button className="w-full" variant="outline">
-                      Adult Version
-                    </Button>
-                    <Button className="w-full" variant="outline">
-                      Kids Version
-                    </Button>
-                    <p className="text-sm text-muted-foreground text-center pt-2">
-                      Course content coming soon
-                    </p>
-                  </CardContent>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {course.link ? (
+                    <Link to={course.link}>
+                      <Button className="w-full">Start Course</Button>
+                    </Link>
+                  ) : (
+                    <>
+                      <Button className="w-full" variant="outline" disabled>
+                        Adult Version
+                      </Button>
+                      <Button className="w-full" variant="outline" disabled>
+                        Kids Version
+                      </Button>
+                      <p className="text-sm text-muted-foreground text-center pt-2">
+                        Course content coming soon
+                      </p>
+                    </>
+                  )}
+                </CardContent>
                 </Card>
               ))}
             </div>
