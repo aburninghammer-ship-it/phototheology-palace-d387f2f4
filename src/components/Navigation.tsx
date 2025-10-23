@@ -1,10 +1,20 @@
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Sparkles } from "lucide-react";
+import { Building2, Sparkles, Users, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useActiveUsers } from "@/hooks/useActiveUsers";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Navigation = () => {
   const location = useLocation();
   const isBiblePage = location.pathname.startsWith('/bible');
+  const { user, signOut } = useAuth();
+  const activeCount = useActiveUsers();
   
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border shadow-purple">
@@ -21,6 +31,13 @@ export const Navigation = () => {
           </Link>
           
           <div className="flex items-center gap-3">
+            {user && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span>{activeCount} active</span>
+              </div>
+            )}
+
             <Button
               variant={location.pathname === "/" ? "default" : "ghost"}
               asChild
@@ -45,6 +62,55 @@ export const Navigation = () => {
             >
               <Link to="/bible/John/3">Bible</Link>
             </Button>
+
+            {user ? (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      Community
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                      <Link to="/daily-challenges">Daily Challenges</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/games">Palace Games</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/kids-games">Kids Games</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/live-study">Live Study</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/community">Community Chat</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/leaderboard">Leaderboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/achievements">Achievements</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/feedback">Feedback</Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <Button variant="ghost" size="sm" onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button variant="default" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
