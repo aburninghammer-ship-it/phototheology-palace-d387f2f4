@@ -33,39 +33,39 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="pt-28 pb-16 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(262,83%,58%,0.08),transparent_60%),radial-gradient(circle_at_70%_60%,rgba(340,82%,62%,0.08),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(210,100%,56%,0.08),transparent_60%),radial-gradient(circle_at_70%_60%,rgba(180,77%,44%,0.08),transparent_60%)]" />
         
         <div className="container mx-auto max-w-4xl text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full gradient-sunset border border-white/10 mb-6 shadow-sm animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full gradient-ocean border border-white/10 mb-6 shadow-sm animate-fade-in">
             <Building2 className="h-4 w-4 text-white" />
-            <span className="text-sm font-semibold text-white">The Palace of Biblical Wisdom</span>
+            <span className="text-sm font-semibold text-white">The Phototheology Palace</span>
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           
-          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-5 bg-gradient-palace bg-clip-text text-transparent animate-slide-up">
+          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-5 bg-gradient-ocean bg-clip-text text-transparent animate-slide-up">
             Phototheology
           </h1>
           
           <p className="text-xl md:text-2xl text-foreground/80 mb-8 leading-relaxed max-w-2xl mx-auto animate-fade-in font-medium">
-            Transform Bible study into a <span className="text-primary font-bold">palace of meaning</span>. 
-            Store Scripture as <span className="text-secondary font-bold">vivid images</span>, patterns, 
-            and structures through an <span className="text-accent font-bold">8-floor, 38-room</span> method.
+            Transform Bible study into a <span className="text-palace-blue font-bold">palace of meaning</span>. 
+            Store Scripture as <span className="text-palace-teal font-bold">vivid images</span>, patterns, 
+            and structures through an <span className="text-palace-orange font-bold">8-floor, 38-room</span> method.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slide-up">
-            <Button asChild size="lg" className="gradient-palace text-white hover:opacity-90 transition-all">
+            <Button asChild size="lg" className="gradient-ocean text-white hover:opacity-90 transition-all">
               <Link to="/auth">
                 <Building2 className="mr-2 h-4 w-4" />
                 Get Started Free
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border hover:bg-accent/5">
+            <Button asChild size="lg" variant="outline" className="border-palace-blue hover:bg-palace-blue/10">
               <Link to="/pricing">
                 <Sparkles className="mr-2 h-4 w-4" />
                 View Pricing
               </Link>
             </Button>
-            <Button size="lg" variant="ghost" onClick={handleShare} className="gap-2">
+            <Button size="lg" variant="ghost" onClick={handleShare} className="gap-2 hover:bg-palace-teal/10">
               <Share2 className="h-4 w-4" />
               Share
             </Button>
@@ -77,16 +77,16 @@ const Index = () => {
       <section className="py-16 px-4 bg-card/40 backdrop-blur-sm">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-12 h-12 gradient-royal rounded-xl mb-3">
+            <div className="inline-flex items-center justify-center w-12 h-12 gradient-ocean rounded-xl mb-3">
               <Layers className="h-5 w-5 text-white" />
             </div>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-royal bg-clip-text text-transparent">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-ocean bg-clip-text text-transparent">
               The Vision
             </h2>
           </div>
           
           <div className="space-y-5 text-lg leading-relaxed">
-            <div className="p-6 rounded-xl bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/10 transition-all hover:border-primary/20">
+            <div className="p-6 rounded-xl bg-gradient-to-r from-palace-blue/5 to-palace-teal/5 border border-palace-blue/10 transition-all hover:border-palace-blue/20">
               <p className="text-foreground/85">
                 Phototheology exists because the Bible is not only a book of words; it is a book of{" "}
                 <span className="font-bold text-foreground">images, symbols, and living stories</span>. 
@@ -95,7 +95,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="p-6 rounded-xl bg-gradient-to-r from-secondary/5 to-accent/5 border border-secondary/10 transition-all hover:border-secondary/20">
+            <div className="p-6 rounded-xl bg-gradient-to-r from-palace-teal/5 to-palace-green/5 border border-palace-teal/10 transition-all hover:border-palace-teal/20">
               <p className="text-foreground/85">
                 Phototheology restores that method. It teaches you to store Scripture as{" "}
                 <span className="font-bold text-foreground">images, patterns, and structures</span>. 
@@ -105,7 +105,7 @@ const Index = () => {
               </p>
             </div>
             
-            <div className="p-7 rounded-xl gradient-sunset text-white text-center">
+            <div className="p-7 rounded-xl gradient-ocean text-white text-center">
               <Sparkles className="h-10 w-10 mx-auto mb-4" />
               <p className="font-semibold text-xl mb-3">
                 The vision is not just information—it is <strong>formation</strong>.
@@ -123,10 +123,10 @@ const Index = () => {
       <section className="py-16 px-4 gradient-dreamy">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-12 h-12 gradient-warmth rounded-xl mb-3">
+            <div className="inline-flex items-center justify-center w-12 h-12 gradient-forest rounded-xl mb-3">
               <Zap className="h-5 w-5 text-white" />
             </div>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-sunset bg-clip-text text-transparent">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-forest bg-clip-text text-transparent">
               The Eight-Floor Method
             </h2>
             <p className="text-lg text-foreground/75 max-w-2xl mx-auto font-medium">
@@ -135,44 +135,44 @@ const Index = () => {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-xl bg-card border border-primary/20 hover:border-primary/40 transition-all group">
-              <div className="w-11 h-11 rounded-lg gradient-palace flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="p-5 rounded-xl bg-card border border-palace-blue/20 hover:border-palace-blue/40 transition-all group">
+              <div className="w-11 h-11 rounded-lg gradient-ocean flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                 <BookOpen className="h-5 w-5 text-white" />
               </div>
-              <h3 className="font-serif text-xl font-bold mb-2 text-primary">Floors 1-2</h3>
+              <h3 className="font-serif text-xl font-bold mb-2 text-palace-blue">Floors 1-2</h3>
               <p className="text-base text-foreground/80 leading-relaxed">
                 <strong className="text-foreground font-semibold">Furnishing & Investigation</strong> — Fill your shelves with stories 
                 and become a detective of the Word.
               </p>
             </div>
             
-            <div className="p-5 rounded-xl bg-card border border-secondary/20 hover:border-secondary/40 transition-all group">
-              <div className="w-11 h-11 rounded-lg gradient-sunset flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="p-5 rounded-xl bg-card border border-palace-teal/20 hover:border-palace-teal/40 transition-all group">
+              <div className="w-11 h-11 rounded-lg gradient-forest flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                 <Lightbulb className="h-5 w-5 text-white" />
               </div>
-              <h3 className="font-serif text-xl font-bold mb-2 text-secondary">Floors 3-4</h3>
+              <h3 className="font-serif text-xl font-bold mb-2 text-palace-teal">Floors 3-4</h3>
               <p className="text-base text-foreground/80 leading-relaxed">
                 <strong className="text-foreground font-semibold">Freestyle & Next Level</strong> — Connect Scripture to daily life 
                 and expand through Christ-centered dimensions.
               </p>
             </div>
             
-            <div className="p-5 rounded-xl bg-card border border-palace-blue/20 hover:border-palace-blue/40 transition-all group">
-              <div className="w-11 h-11 rounded-lg gradient-ocean flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="p-5 rounded-xl bg-card border border-palace-green/20 hover:border-palace-green/40 transition-all group">
+              <div className="w-11 h-11 rounded-lg gradient-forest flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                 <Building2 className="h-5 w-5 text-white" />
               </div>
-              <h3 className="font-serif text-xl font-bold mb-2 text-palace-blue">Floors 5-6</h3>
+              <h3 className="font-serif text-xl font-bold mb-2 text-palace-green">Floors 5-6</h3>
               <p className="text-base text-foreground/80 leading-relaxed">
                 <strong className="text-foreground font-semibold">Vision & Horizons</strong> — Open the prophetic telescope; 
                 see sanctuary, feasts, cycles, and cosmic dimensions.
               </p>
             </div>
             
-            <div className="p-5 rounded-xl bg-card border border-accent/20 hover:border-accent/40 transition-all group">
-              <div className="w-11 h-11 rounded-lg gradient-warmth flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="p-5 rounded-xl bg-card border border-palace-orange/20 hover:border-palace-orange/40 transition-all group">
+              <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-palace-orange to-palace-yellow flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                 <Crown className="h-5 w-5 text-white" />
               </div>
-              <h3 className="font-serif text-xl font-bold mb-2 text-accent">Floors 7-8</h3>
+              <h3 className="font-serif text-xl font-bold mb-2 text-palace-orange">Floors 7-8</h3>
               <p className="text-base text-foreground/80 leading-relaxed">
                 <strong className="text-foreground font-semibold">Spiritual & Master</strong> — Bring heart into fire, 
                 then let the palace become reflexive thought.
@@ -186,11 +186,11 @@ const Index = () => {
       <section className="py-16 px-4 bg-card/40 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/5 border border-accent/10 mb-3">
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
-              <span className="text-xs font-medium text-accent">Floor 0 - Advanced Modes</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-palace-teal/5 border border-palace-teal/10 mb-3">
+              <Sparkles className="h-3.5 w-3.5 text-palace-teal" />
+              <span className="text-xs font-medium text-palace-teal">Floor 0 - Advanced Modes</span>
             </div>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-royal bg-clip-text text-transparent">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-ocean bg-clip-text text-transparent">
               AI-Powered Study Tools
             </h2>
             <p className="text-lg text-foreground/75 max-w-2xl mx-auto font-medium">
@@ -276,14 +276,14 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-card/40 backdrop-blur-sm relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(262,83%,58%,0.05),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(210,100%,56%,0.05),transparent_70%)]" />
         
         <div className="container mx-auto max-w-3xl text-center relative z-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 gradient-palace rounded-2xl mb-5">
+          <div className="inline-flex items-center justify-center w-14 h-14 gradient-ocean rounded-2xl mb-5">
             <Building2 className="h-7 w-7 text-white" />
           </div>
           
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-5 bg-gradient-palace bg-clip-text text-transparent">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-5 bg-gradient-ocean bg-clip-text text-transparent">
             Enter the Palace
           </h2>
           
@@ -295,13 +295,13 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button asChild size="lg" className="gradient-palace text-white hover:opacity-90 transition-all">
+            <Button asChild size="lg" className="gradient-ocean text-white hover:opacity-90 transition-all">
               <Link to="/palace">
                 <Building2 className="mr-2 h-4 w-4" />
                 Begin Your Journey
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-2 border-primary hover:bg-primary hover:text-white">
+            <Button asChild size="lg" variant="outline" className="border-2 border-palace-blue hover:bg-palace-blue hover:text-white">
               <Link to="/floor/1">
                 Start Learning
               </Link>
