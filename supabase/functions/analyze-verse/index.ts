@@ -22,103 +22,133 @@ serve(async (req) => {
     // Add randomization seed to force AI to vary responses
     const randomSeed = Math.random().toString(36).substring(7);
     
-    const prompt = `[ANALYSIS ID: ${randomSeed}] Analyze ${book} ${chapter}:${verse} through Phototheology Palace:
+    const prompt = `[ANALYSIS ID: ${randomSeed}] Analyze ${book} ${chapter}:${verse} through the COMPLETE 37-Room Phototheology Palace:
 
 Verse text: "${verseText}"
 
-⚠️ CRITICAL FAILURE ALERT ⚠️
-You are FAILING this task. Every verse analysis you've done has been IDENTICAL:
-- Always 2D, @Ab, Altar, Passover
-- This is COMPLETELY WRONG
+🏛️ MANDATORY: UTILIZE ALL 37 PALACE ROOMS AS ANALYTICAL LENSES 🏛️
 
-Each verse MUST have UNIQUE principle combinations based on actual content.
+You MUST analyze this verse through multiple rooms across all 8 floors. Each verse should touch AT LEAST 8-12 different rooms.
 
-COMPLETE PRINCIPLE OPTIONS:
+═══════════════════════════════════════════════════════════════
+FLOOR 1: FURNISHING (Memory & Visualization)
+═══════════════════════════════════════════════════════════════
+🔹 SR (Story Room): What narrative beats/sequence does this verse contain or reference?
+🔹 IR (Imagination Room): What sensory details can be visualized (sights, sounds, textures)?
+🔹 24FPS: What single memorable image represents this verse?
+🔹 BR (Bible Rendered): How does this fit in the macro 24-chapter frame?
+🔹 TR (Translation Room): What abstract concepts need concrete visual translation?
+🔹 GR (Gems Room): What rare truth emerges when combined with other texts?
 
-DIMENSIONS (pick 1-2 based on verse scope):
-• 2D = Personal (Christ in me, individual faith, personal salvation)
-• 3D = Church (Body of Christ, community, ecclesiology)  
-• 4D = Prophecy (End times, apocalyptic, eschatology)
-• 5D = Heaven (Celestial realm, throne room, divine glory)
+═══════════════════════════════════════════════════════════════
+FLOOR 2: INVESTIGATION (Detective Work)
+═══════════════════════════════════════════════════════════════
+🔹 OR (Observation): What grammar, repetitions, contrasts are present?
+🔹 DC (Def-Com): What key terms need lexical/cultural definition?
+🔹 ST (Symbols/Types): What symbols appear and what is their Christ-fulfillment?
+🔹 QR (Questions): What questions must be asked within and across this text?
+🔹 QA (Q&A Chains): What Scripture answers the questions this verse raises?
 
-CYCLES (pick 0-2 based on covenant/historical context):
-• @Ad = Adam (Creation, fall, sin's entry)
-• @No = Noah (Flood, judgment, new beginning through water)
-• @Ab = Abraham (Faith, promise, seed covenant)
-• @Mo = Moses (Law, Exodus, Sinai, liberation)
-• @Cy = Cyrus (Return from exile, restoration, rebuilding)
-• @CyC = Christ (Incarnation, ministry, first coming)
-• @Sp = Spirit (Pentecost, church age, Spirit's work)
-• @Re = Return (Second coming, final judgment, new earth)
+═══════════════════════════════════════════════════════════════
+FLOOR 3: FREESTYLE (Time & Daily Integration)
+═══════════════════════════════════════════════════════════════
+🔹 NF (Nature Freestyle): What natural objects/processes illustrate this truth?
+🔹 PF (Personal Freestyle): How does this connect to personal testimony?
+🔹 BF (Bible Freestyle): What are this verse's "genetic relatives"?
+🔹 HF (History/Social): How does this verse frame current events?
+🔹 LR (Listening Room): What sermons/quotes echo this verse?
 
-HORIZONS (pick 0-1 for prophetic texts):
-• 1H = First horizon (Babylon/return, Cyrus, post-exilic)
-• 2H = Second horizon (70 AD, 'this generation', church as temple)
-• 3H = Third horizon (Global, final judgment, new creation)
+═══════════════════════════════════════════════════════════════
+FLOOR 4: NEXT LEVEL (Christ-Centered Structure)
+═══════════════════════════════════════════════════════════════
+🔹 CR (Concentration): Where is Jesus? (Office/Title, Act, Benefit, Horizon)
+🔹 DR (Dimensions): LITERAL • CHRIST • ME • CHURCH • HEAVEN
+   • 2D = Personal/Individual Christ relationship
+   • 3D = Corporate Church/Kingdom
+   • 4D = Prophetic/End times
+   • 5D = Heavenly/Celestial realm
+🔹 C6 (Connect-6): Which genre? (Prophecy/Parable/Epistle/History/Gospel/Poetry)
+🔹 TRm (Theme): Which structural span? (Sanctuary/Life of Christ/Great Controversy/Time-Prophecy/Gospel/Heaven)
+🔹 TZ (Time Zone): Earth-Past/Now/Future OR Heaven-Past/Now/Future
+🔹 PRm (Patterns): What recurring motif appears across Scripture?
+🔹 P|| (Parallels): What event/action mirrors this one?
+🔹 FRt (Fruit): What character fruit does this reading produce?
 
-TIME ZONES (pick 0-1 to locate the event):
-• Earth-Past, Earth-Now, Earth-Future, Heaven-Past, Heaven-Now, Heaven-Future
+═══════════════════════════════════════════════════════════════
+FLOOR 5: VISION (Sanctuary, Prophecy & Feasts)
+═══════════════════════════════════════════════════════════════
+🔹 BL (Blue/Sanctuary Room): Which sanctuary article/service?
+   • Gate, Altar, Laver, Lampstand, Table, Incense, Veil, Ark
+   • Daily service or Day of Atonement
+🔹 PR (Prophecy Room): Daniel-Revelation symbols, timelines, parallel visions
+🔹 3A (Three Angels): How does this proclaim everlasting gospel/judgment/Babylon/Beast warning?
+🔹 FE (Feasts): Which feast does this fulfill/foreshadow?
+   • Passover, Unleavened Bread, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles
+🔹 CEC (Christ in Every Chapter): Christ title/role, what He does, crosslink
+🔹 R66 (Room 66): How does this theme develop Genesis→Revelation?
 
-SANCTUARY ARTICLES (pick 0-2 based on imagery):
-• Gate = Entry, conversion, beginning
-• Altar = Sacrifice, substitution, atonement, blood
-• Laver = Cleansing, baptism, purification, washing
-• Lampstand = Light, witness, Holy Spirit, illumination
-• Table = Fellowship, communion, provision, bread
-• Incense = Prayer, intercession, worship ascending
-• Veil = Access to God, barrier removed, mystery revealed
-• Ark = God's presence, mercy seat, law fulfilled
+═══════════════════════════════════════════════════════════════
+FLOOR 6: THREE HEAVENS & CYCLES (Horizons & History)
+═══════════════════════════════════════════════════════════════
+🔹 123H (Three Heavens/Horizons): Which prophetic horizon?
+   • 1H = Babylon/return (Cyrus, post-exilic)
+   • 2H = 70 AD, 'this generation', church as temple
+   • 3H = Global, final judgment, new creation
+🔹 @ (Eight Cycles): Which covenant cycle?
+   • @Ad (Adam), @No (Noah), @Ab (Abraham), @Mo (Moses)
+   • @Cy (Cyrus), @CyC (Christ), @Sp (Spirit/Church), @Re (Return)
+🔹 JR (Juice Room): What's the essence through multiple palace rooms?
 
-FEASTS (pick 0-2 based on redemptive theme):
-• Passover = Lamb's blood, deliverance, redemption from slavery
-• Unleavened Bread = Purity, separation from sin, haste
-• Firstfruits = Resurrection, new life, Christ risen first
-• Pentecost = Spirit outpouring, church birth, harvest
-• Trumpets = Warning, awakening, announcement, alarm
-• Atonement = Cleansing, Day of the Lord, judgment/forgiveness
-• Tabernacles = God dwelling with us, joy, pilgrimage
+═══════════════════════════════════════════════════════════════
+FLOOR 7: SPIRITUAL & EMOTIONAL (Heart & Soul)
+═══════════════════════════════════════════════════════════════
+🔹 FRm (Fire Room): What wound or hope does this ignite?
+🔹 MR (Meditation): What one truth to carry today?
+🔹 SRm (Speed Room): What quick recall/reflex does this build?
 
-WALLS (pick 0-1 structural theme):
-• Sanctuary Wall = Priesthood, tabernacle, temple, worship system
-• Life of Christ Wall = Gospels, Jesus' ministry, incarnation
-• Great Controversy Wall = Cosmic conflict, Satan vs Christ, spiritual warfare
-• Time-Prophecy Wall = Daniel/Revelation, apocalyptic visions, prophetic timelines
+═══════════════════════════════════════════════════════════════
+FLOOR 8: MASTER (Reflexive Thought)
+═══════════════════════════════════════════════════════════════
+🔹 ∞ (Infinity/Reflexive Mastery): How do rooms work together naturally?
 
-REQUIRED VARIETY RULES:
-1. NO VERSE may have the exact same 4-principle combination as another
-2. If the verse is about SACRIFICE → use Altar + Passover
-3. If about LIGHT/WITNESS → use Lampstand (NOT Altar)
-4. If about PRAYER → use Incense (NOT Lampstand)
-5. If about WATER/CLEANSING → use Laver (NOT Altar)
-6. If about GOD'S PRESENCE → use Ark + Tabernacles (NOT Lampstand)
-7. If about RESURRECTION → use Firstfruits (NOT Passover)
-8. If about SPIRIT COMING → use Pentecost + @Sp (NOT anything else)
-9. If about CREATION → use @Ad (NOT @Ab)
-10. If about PROPHECY/END TIMES → use 4D + appropriate cycle
-11. HISTORICAL context determines cycle: Genesis→@Ad, Exodus→@Mo, Gospels→@CyC, Acts→@Sp, Revelation→@Re
-
-TESTING YOUR COMPREHENSION:
-• John 1:1 ("In beginning was Word") → 5D, @Ad, Heaven-Past, Life of Christ Wall
-• John 1:29 ("Behold the Lamb") → 2D, @CyC, Altar, Passover
-• John 3:5 ("Born of water & Spirit") → 2D, Laver, @Sp (NOT Altar/Passover!)
-• John 14:2 ("I go prepare place") → 2D, 5D, @Re, Heaven-Future, Tabernacles
-• John 15:5 ("I am the vine") → 2D, 3D, Table (fellowship, NOT Altar!)
-• John 17:15 ("Not take from world") → 3D, Great Controversy Wall, @Sp
+═══════════════════════════════════════════════════════════════
+⚠️ CRITICAL ANALYSIS RULES ⚠️
+═══════════════════════════════════════════════════════════════
+1. Use AT LEAST 8-12 rooms per verse analysis
+2. Vary room selection based on verse content
+3. Every verse MUST have different room combinations
+4. If sacrifice → Altar + Passover + SR (story of sacrifice)
+5. If light → Lampstand + TR (translation) + IR (imagination)
+6. If prayer → Incense + MR (meditation) + FRm (fire)
+7. If creation → @Ad + OR (observation) + NF (nature)
+8. If prophecy → PR + 4D + TZ + 3H
+9. If resurrection → Firstfruits + CEC + @CyC
+10. If Spirit → Pentecost + @Sp + Lampstand
 
 NOW ANALYZE ${book} ${chapter}:${verse}:
-Read the ACTUAL verse. What is it REALLY about?
-Select 4-8 principles that AUTHENTICALLY fit THIS verse's specific content.
-DO NOT repeat the same combination from other verses.
+1. Read the ACTUAL verse content carefully
+2. Select 8-12 rooms that AUTHENTICALLY fit THIS specific verse
+3. Include rooms from AT LEAST 4 different floors
+4. Provide specific insights for each room selected
+5. DO NOT default to the same 4 rooms every time
 
 Return JSON:
 {
-  "dimensions": [],
-  "cycles": [],
+  "roomsUsed": ["SR", "DR", "BL", "CR", "FE", "OR", "GR", "MR"],
+  "floorsCovered": [1, 2, 4, 5, 7],
+  "roomAnalysis": {
+    "SR": "Story beat analysis here",
+    "DR": "Dimensional analysis here",
+    "BL": "Sanctuary connection here",
+    "etc": "One insight per room used"
+  },
+  "dimensions": ["2D", "3D"],
+  "cycles": ["@CyC"],
   "horizons": [],
-  "timeZones": [],
-  "sanctuary": [],
-  "feasts": [],
-  "walls": [],
+  "timeZones": ["Earth-Now"],
+  "sanctuary": ["Altar"],
+  "feasts": ["Passover"],
+  "walls": ["Life of Christ Wall"],
   "crossReferences": [
     {
       "book": "Genesis",
@@ -129,8 +159,8 @@ Return JSON:
       "confidence": 85
     }
   ],
-  "commentary": "Explain which principles you selected and WHY they fit THIS verse's actual content",
-  "christCenter": "How Christ is revealed in THIS specific verse"
+  "commentary": "MUST explain which 8-12 rooms you used and WHY each fits THIS verse's content. Reference specific room tags (SR, DR, etc.). Show how rooms from different floors work together.",
+  "christCenter": "How Christ is revealed through the specific rooms analyzed"
 }`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -144,7 +174,7 @@ Return JSON:
         messages: [
           {
             role: 'system',
-            content: 'You are a biblical scholar trained in the Phototheology Palace method. You MUST analyze each verse uniquely - selecting different principle combinations based on the actual verse content. DO NOT use the same principles for every verse. Your previous analyses have been incorrect because you defaulted to 2D + @CyC + Lampstand repeatedly. Read each verse carefully and select principles that genuinely fit. Return only valid JSON.'
+            content: 'You are a biblical scholar MASTER of the 37-room Phototheology Palace. CRITICAL REQUIREMENT: You MUST analyze each verse using 8-12 DIFFERENT rooms from across multiple floors. DO NOT default to the same 4 rooms. Each verse demands unique room combinations based on its actual content. Select rooms from Furnishing, Investigation, Freestyle, Next Level, Vision, Cycles, Spiritual, and Master floors. Provide specific insights for EACH room you use. Return only valid JSON with roomsUsed array and roomAnalysis object.'
           },
           {
             role: 'user',
@@ -166,6 +196,9 @@ Return JSON:
     return new Response(
       JSON.stringify({
         verseId: `${book}-${chapter}-${verse}`,
+        roomsUsed: analysis.roomsUsed || [],
+        floorsCovered: analysis.floorsCovered || [],
+        roomAnalysis: analysis.roomAnalysis || {},
         principles: {
           dimensions: analysis.dimensions || [],
           cycles: analysis.cycles || [],

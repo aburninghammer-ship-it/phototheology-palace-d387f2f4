@@ -143,6 +143,41 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: Pri
           
           <ScrollArea className="h-[500px] mt-4">
             <TabsContent value="principles" className="space-y-4 mt-0">
+              {/* Room Analysis Summary */}
+              {annotation.roomsUsed && annotation.roomsUsed.length > 0 && (
+                <div className="p-4 rounded-lg gradient-palace text-white shadow-purple">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Layers className="h-4 w-4" />
+                    Palace Rooms Analyzed: {annotation.roomsUsed.length}
+                  </h4>
+                  <div className="flex gap-2 flex-wrap mb-3">
+                    {annotation.roomsUsed.map((room) => (
+                      <Badge key={room} variant="secondary" className="bg-white/20">
+                        {room}
+                      </Badge>
+                    ))}
+                  </div>
+                  {annotation.floorsCovered && (
+                    <p className="text-xs opacity-90">
+                      Floors covered: {annotation.floorsCovered.join(", ")}
+                    </p>
+                  )}
+                </div>
+              )}
+              
+              {/* Room-by-Room Analysis */}
+              {annotation.roomAnalysis && Object.keys(annotation.roomAnalysis).length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-sm">Room Insights</h4>
+                  {Object.entries(annotation.roomAnalysis).map(([room, insight]) => (
+                    <div key={room} className="p-3 rounded-lg border-2 border-border bg-card/50">
+                      <div className="font-semibold text-primary mb-1">{room}</div>
+                      <p className="text-sm text-muted-foreground">{insight}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
               {/* Dimensions */}
               {annotation.principles.dimensions && (
                 <div className="space-y-2">

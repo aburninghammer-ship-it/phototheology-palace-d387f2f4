@@ -46,6 +46,9 @@ export interface CrossReference {
 
 export interface VerseAnnotation {
   verseId: string;
+  roomsUsed?: string[];
+  floorsCovered?: number[];
+  roomAnalysis?: Record<string, string>;
   principles: {
     dimensions?: PrincipleType[];
     cycles?: CycleType[];
