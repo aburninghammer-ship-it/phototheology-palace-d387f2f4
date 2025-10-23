@@ -32,8 +32,17 @@ export const SandboxedEmbed = ({
     if (!iframeRef.current) return;
 
     const timer = setTimeout(() => {
+      console.log("Embed timeout after 5 seconds, checking if loaded:", embedId);
       setLoading(false);
-    }, 3000);
+    }, 5000);
+
+    const errorTimer = setTimeout(() => {
+      if (loading) {
+        console.error("Embed failed to load after 10 seconds:", embedId);
+        setError(true);
+        setLoading(false);
+      }
+    }, 10000);
 
     // Create isolated HTML document for iframe
     const iframeDoc = `
@@ -57,12 +66,21 @@ export const SandboxedEmbed = ({
         </head>
         <body>
           <div id="${embedId}"></div>
-          <script 
-            src="${scriptUrl}" 
-            defer
-            onload="parent.postMessage({type:'embed-loaded', embedId:'${embedId}'}, '*')"
-            onerror="parent.postMessage({type:'embed-error', embedId:'${embedId}'}, '*')"
-          ></script>
+          <script>
+            console.log("Loading embed script from:", "${scriptUrl}");
+            const script = document.createElement('script');
+            script.src = "${scriptUrl}";
+            script.defer = true;
+            script.onload = function() {
+              console.log("Embed script loaded successfully");
+              parent.postMessage({type:'embed-loaded', embedId:'${embedId}'}, '*');
+            };
+            script.onerror = function(e) {
+              console.error("Embed script failed to load:", e);
+              parent.postMessage({type:'embed-error', embedId:'${embedId}', error: 'Script load failed'}, '*');
+            };
+            document.body.appendChild(script);
+          </script>
         </body>
       </html>
     `;
@@ -74,6 +92,9 @@ export const SandboxedEmbed = ({
         doc.open();
         doc.write(iframeDoc);
         doc.close();
+        console.log("Iframe document initialized for:", embedId);
+      } else {
+        throw new Error("Could not access iframe document");
       }
     } catch (err) {
       console.error("Failed to initialize sandboxed embed:", err);
@@ -85,11 +106,13 @@ export const SandboxedEmbed = ({
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.embedId === embedId) {
         if (event.data?.type === 'embed-error') {
-          console.error("Embed script failed to load");
+          console.error("Embed script failed to load:", event.data);
           setError(true);
           setLoading(false);
         } else if (event.data?.type === 'embed-loaded') {
+          console.log("Embed loaded successfully:", embedId);
           setLoading(false);
+          setError(false);
         }
       }
     };
@@ -98,6 +121,7 @@ export const SandboxedEmbed = ({
     return () => {
       window.removeEventListener('message', handleMessage);
       clearTimeout(timer);
+      clearTimeout(errorTimer);
     };
   }, [scriptUrl, embedId, minHeight]);
 
@@ -106,7 +130,15 @@ export const SandboxedEmbed = ({
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
-          Failed to load embed. Please check your connection and try refreshing the page.
+          Failed to load the chat interface. This may be due to:
+          <ul className="list-disc list-inside mt-2 ml-2">
+            <li>Network connectivity issues</li>
+            <li>External service unavailable</li>
+            <li>Browser security settings blocking third-party content</li>
+          </ul>
+          <p className="mt-3">
+            Please try <button onClick={() => window.location.reload()} className="underline font-semibold">refreshing the page</button> or check your internet connection.
+          </p>
         </AlertDescription>
       </Alert>
     );

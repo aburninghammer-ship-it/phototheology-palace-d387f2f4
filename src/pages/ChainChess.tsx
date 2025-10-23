@@ -190,11 +190,21 @@ const ChainChess = () => {
   };
 
   const loadMoves = async () => {
-    const { data } = await supabase
+    console.log("=== Loading Moves ===");
+    console.log("Game ID:", gameId);
+    
+    const { data, error } = await supabase
       .from("game_moves")
       .select("*")
       .eq("game_id", gameId)
       .order("created_at", { ascending: true });
+
+    console.log("Moves query result:", { data, error });
+
+    if (error) {
+      console.error("Error loading moves:", error);
+      return;
+    }
 
     if (data) {
       const formattedMoves = data.map((move) => {
@@ -208,20 +218,31 @@ const ChainChess = () => {
           timestamp: move.created_at,
         };
       });
+      
+      console.log("Formatted moves:", formattedMoves);
       setMoves(formattedMoves);
 
       // Calculate scores
       const userMoves = formattedMoves.filter(m => m.player === "user");
       const opponentMoves = formattedMoves.filter(m => m.player !== "user");
-      setUserScore(userMoves.reduce((sum, m) => sum + (m.score || 0), 0));
-      setOpponentScore(opponentMoves.reduce((sum, m) => sum + (m.score || 0), 0));
+      const newUserScore = userMoves.reduce((sum, m) => sum + (m.score || 0), 0);
+      const newOpponentScore = opponentMoves.reduce((sum, m) => sum + (m.score || 0), 0);
+      
+      console.log("Scores - User:", newUserScore, "Opponent:", newOpponentScore);
+      setUserScore(newUserScore);
+      setOpponentScore(newOpponentScore);
     }
   };
 
   const jeevesMove = async (currentGameId: string, isFirst = false) => {
     setProcessing(true);
     try {
-      console.log("Jeeves making move. First move:", isFirst, "Verse:", currentVerse);
+      console.log("=== Jeeves Move Start ===");
+      console.log("First move:", isFirst);
+      console.log("Current verse:", currentVerse);
+      console.log("Game ID:", currentGameId);
+      console.log("Available categories:", selectedGameCategories);
+      console.log("Previous moves:", moves);
       
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
@@ -233,21 +254,45 @@ const ChainChess = () => {
         },
       });
 
+      console.log("=== Jeeves Response ===");
+      console.log("Data:", data);
+      console.log("Error:", error);
+
       if (error) {
-        console.error("Jeeves error:", error);
+        console.error("Jeeves invoke error:", error);
+        toast({
+          title: "Jeeves Error",
+          description: error.message || "Failed to get response from Jeeves",
+          variant: "destructive",
+        });
         throw error;
       }
 
-      console.log("Jeeves response:", data);
+      if (!data) {
+        console.error("No data received from Jeeves");
+        toast({
+          title: "Error",
+          description: "No response from Jeeves",
+          variant: "destructive",
+        });
+        throw new Error("No data received from Jeeves");
+      }
 
-      if (!data || !data.commentary) {
+      if (!data.commentary) {
+        console.error("Jeeves response missing commentary:", data);
+        toast({
+          title: "Error",
+          description: "Jeeves response missing commentary",
+          variant: "destructive",
+        });
         throw new Error("Jeeves did not provide commentary");
       }
 
+      console.log("=== Creating Jeeves Move ===");
       const move = {
         player: "jeeves",
         commentary: data.commentary,
-        category: data.challengeCategory,
+        category: data.challengeCategory || "General",
         score: data.score || 8,
         timestamp: new Date().toISOString(),
       };
