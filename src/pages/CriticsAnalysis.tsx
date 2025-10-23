@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface AnalysisResult {
+  videoType: "external-critic" | "sda-faithful" | "sda-organizational-critic";
   summary: string;
   mainClaims: Array<{
     claim: string;
@@ -96,7 +97,7 @@ export default function CriticsAnalysis() {
           <CardHeader>
             <CardTitle>Analyze Video</CardTitle>
             <CardDescription>
-              Enter a YouTube URL to begin analysis
+              Analyze videos critical of SDA/Bible, affirm SDA faithful teaching, or examine SDA organizational criticism against biblical principles and Ellen White's counsels
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -133,7 +134,16 @@ export default function CriticsAnalysis() {
             <TabsContent value="summary" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Video Summary</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    Video Summary
+                    <Badge variant={
+                      analysis.videoType === "sda-faithful" ? "default" :
+                      analysis.videoType === "sda-organizational-critic" ? "destructive" : "secondary"
+                    }>
+                      {analysis.videoType === "external-critic" ? "External Critic" :
+                       analysis.videoType === "sda-faithful" ? "SDA Faithful" : "SDA Org. Critic"}
+                    </Badge>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="whitespace-pre-wrap">{analysis.summary}</p>
