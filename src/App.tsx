@@ -38,7 +38,9 @@ import ApologeticsGPT from "./pages/ApologeticsGPT";
 import LessonQuarterlyGPT from "./pages/LessonQuarterlyGPT";
 import Profile from "./pages/Profile";
 import Pricing from "./pages/Pricing";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -51,39 +53,40 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/palace" element={<Palace />} />
-            <Route path="/floor/:floorNumber" element={<FloorDetail />} />
-            <Route path="/bible" element={<Bible />} />
-            <Route path="/bible/:book/:chapter" element={<BibleChapter />} />
-            <Route path="/daily-challenges" element={<DailyChallenges />} />
-            <Route path="/games" element={<Games />} />
-            <Route path="/games/chain-chess/:gameId/:mode?" element={<ChainChess />} />
-            <Route path="/kids-games" element={<KidsGames />} />
-            <Route path="/live-study" element={<LiveStudy />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/achievements" element={<Achievements />} />
-            <Route path="/feedback" element={<Feedback />} />
-          <Route path="/culture-controversy" element={<CultureControversy />} />
-          <Route path="/prophecy-watch" element={<ProphecyWatch />} />
-          <Route path="/research-mode" element={<ResearchMode />} />
-          <Route path="/bible-image-library" element={<BibleImageLibrary />} />
-          <Route path="/sermon-builder" element={<SermonBuilder />} />
-          <Route path="/flashcards" element={<Flashcards />} />
-          <Route path="/power-of-the-lamb" element={<PowerOfTheLamb />} />
-          <Route path="/spiritual-training" element={<SpiritualTraining />} />
-          <Route path="/blueprint-course" element={<BlueprintCourse />} />
-          <Route path="/phototheology-course" element={<PhototheologyCourse />} />
-          <Route path="/daniel-course" element={<DanielCourse />} />
-          <Route path="/revelation-course" element={<RevelationCourse />} />
-          <Route path="/revelation-course/kids" element={<RevelationCourseKids />} />
-          <Route path="/kidgpt" element={<KidGPT />} />
-          <Route path="/phototheologygpt" element={<PhototheologyGPT />} />
-          <Route path="/daniel-revelation-gpt" element={<DanielRevelationGPT />} />
-            <Route path="/apologetics-gpt" element={<ApologeticsGPT />} />
-            <Route path="/lesson-quarterly-gpt" element={<LessonQuarterlyGPT />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/palace" element={<ProtectedRoute><Palace /></ProtectedRoute>} />
+            <Route path="/floor/:floorNumber" element={<ProtectedRoute><FloorDetail /></ProtectedRoute>} />
+            <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
+            <Route path="/bible/:book/:chapter" element={<ProtectedRoute><BibleChapter /></ProtectedRoute>} />
+            <Route path="/daily-challenges" element={<ProtectedRoute><DailyChallenges /></ProtectedRoute>} />
+            <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
+            <Route path="/games/chain-chess/:gameId/:mode?" element={<ProtectedRoute><ChainChess /></ProtectedRoute>} />
+            <Route path="/kids-games" element={<ProtectedRoute><KidsGames /></ProtectedRoute>} />
+            <Route path="/live-study" element={<ProtectedRoute><LiveStudy /></ProtectedRoute>} />
+            <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+            <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+            <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
+            <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
+          <Route path="/culture-controversy" element={<ProtectedRoute><CultureControversy /></ProtectedRoute>} />
+          <Route path="/prophecy-watch" element={<ProtectedRoute><ProphecyWatch /></ProtectedRoute>} />
+          <Route path="/research-mode" element={<ProtectedRoute><ResearchMode /></ProtectedRoute>} />
+          <Route path="/bible-image-library" element={<ProtectedRoute><BibleImageLibrary /></ProtectedRoute>} />
+          <Route path="/sermon-builder" element={<ProtectedRoute><SermonBuilder /></ProtectedRoute>} />
+          <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
+          <Route path="/power-of-the-lamb" element={<ProtectedRoute><PowerOfTheLamb /></ProtectedRoute>} />
+          <Route path="/spiritual-training" element={<ProtectedRoute><SpiritualTraining /></ProtectedRoute>} />
+          <Route path="/blueprint-course" element={<ProtectedRoute><BlueprintCourse /></ProtectedRoute>} />
+          <Route path="/phototheology-course" element={<ProtectedRoute><PhototheologyCourse /></ProtectedRoute>} />
+          <Route path="/daniel-course" element={<ProtectedRoute><DanielCourse /></ProtectedRoute>} />
+          <Route path="/revelation-course" element={<ProtectedRoute><RevelationCourse /></ProtectedRoute>} />
+          <Route path="/revelation-course/kids" element={<ProtectedRoute><RevelationCourseKids /></ProtectedRoute>} />
+          <Route path="/kidgpt" element={<ProtectedRoute><KidGPT /></ProtectedRoute>} />
+          <Route path="/phototheologygpt" element={<ProtectedRoute><PhototheologyGPT /></ProtectedRoute>} />
+          <Route path="/daniel-revelation-gpt" element={<ProtectedRoute><DanielRevelationGPT /></ProtectedRoute>} />
+          <Route path="/apologetics-gpt" element={<ProtectedRoute><ApologeticsGPT /></ProtectedRoute>} />
+          <Route path="/lesson-quarterly-gpt" element={<ProtectedRoute><LessonQuarterlyGPT /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

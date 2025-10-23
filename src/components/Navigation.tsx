@@ -1,8 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Sparkles, Users, LogOut, BookOpen, User, CreditCard } from "lucide-react";
+import { Building2, Sparkles, Users, BookOpen, User, CreditCard, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
+import { MobileNav } from "@/components/MobileNav";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,11 +34,16 @@ export const Navigation = () => {
           
           <div className="flex items-center gap-3">
             {user && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
                 <Users className="h-4 w-4" />
                 <span>{activeCount} active</span>
               </div>
             )}
+
+            {user ? (
+              <>
+                {/* Desktop Navigation */}
+                <div className="hidden md:flex items-center gap-3">
 
             <Button
               variant={location.pathname === "/" ? "default" : "ghost"}
@@ -195,6 +201,30 @@ export const Navigation = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+              </div>
+              
+              {/* Mobile Navigation */}
+              <MobileNav />
+            </>
+            ) : (
+              <>
+                {/* Not logged in - show auth buttons */}
+                <div className="hidden md:flex items-center gap-3">
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/pricing">Pricing</Link>
+                  </Button>
+                  <Button asChild variant="default" size="sm" className="gradient-palace">
+                    <Link to="/auth">
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Get Started
+                    </Link>
+                  </Button>
+                </div>
+                
+                {/* Mobile Navigation for non-authenticated users */}
+                <MobileNav />
+              </>
+            )}
           </div>
         </div>
       </div>

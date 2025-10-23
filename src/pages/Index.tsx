@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Navigation";
-import { Building2, BookOpen, Lightbulb, Crown, Sparkles, Layers, Zap, Scale, Telescope, Search, Image, Film, Brain, Share2 } from "lucide-react";
+import { Building2, BookOpen, Sparkles, Lightbulb, Crown, Layers, Zap, Scale, Telescope, Search, Image, Film, Brain, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleShare = () => {
     const shareData = {
@@ -52,15 +54,15 @@ const Index = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
             <Button asChild size="lg" className="gradient-palace text-white shadow-purple hover:shadow-glow hover:scale-105 transition-all">
-              <Link to="/palace">
+              <Link to="/auth">
                 <Building2 className="mr-2 h-5 w-5" />
-                Explore the Palace
+                Get Started Free
               </Link>
             </Button>
             <Button asChild size="lg" className="gradient-ocean text-white shadow-blue hover:shadow-hover hover:scale-105 transition-all">
-              <Link to="/bible/John/3">
-                <BookOpen className="mr-2 h-5 w-5" />
-                Read the Bible
+              <Link to="/pricing">
+                <Sparkles className="mr-2 h-5 w-5" />
+                View Pricing
               </Link>
             </Button>
             <Button size="lg" variant="outline" onClick={handleShare} className="gap-2 border-2 hover:border-primary">
