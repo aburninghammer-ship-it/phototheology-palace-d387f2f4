@@ -1,9 +1,19 @@
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, Sparkles } from "lucide-react";
-import { SandboxedEmbed } from "@/components/SandboxedEmbed";
+import { useEffect } from "react";
 
 const KidGPT = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://studio.pickaxe.co/api/embed/bundle.js';
+    script.defer = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 dark:from-gray-900 dark:to-purple-900">
@@ -29,12 +39,10 @@ const KidGPT = () => {
                 Ask me anything about the Bible, Jesus, or your faith! I'm here to help you learn in a fun way.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <SandboxedEmbed
-                scriptUrl="https://studio.pickaxe.co/api/embed/bundle.js"
-                embedId="deployment-ac7e1d1e-1b82-4f73-812e-5d1d59b50f34"
-                minHeight="600px"
-                title="KidGPT Chat Interface"
+            <CardContent className="p-6">
+              <div 
+                id="deployment-ac7e1d1e-1b82-4f73-812e-5d1d59b50f34"
+                style={{ minHeight: '600px' }}
               />
             </CardContent>
           </Card>
