@@ -28,8 +28,8 @@ export const BibleNavigation = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery) {
-      // Parse search query (e.g., "John 3:16" or "Genesis 1")
-      navigate(`/bible/search?q=${encodeURIComponent(searchQuery)}`);
+      // Parse search query (e.g., "John 3:16" or "Genesis 1" or word search)
+      navigate(`/bible/search?q=${encodeURIComponent(searchQuery)}&mode=reference`);
     }
   };
 

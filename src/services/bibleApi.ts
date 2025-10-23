@@ -3,6 +3,17 @@ import { Chapter, Verse } from "@/types/bible";
 // Using Bible API - you can switch to different APIs or local data
 const BIBLE_API_BASE = "https://bible-api.com";
 
+// Available translations
+export const BIBLE_TRANSLATIONS = [
+  { value: "kjv", label: "King James Version (KJV)" },
+  { value: "web", label: "World English Bible (WEB)" },
+  { value: "bbe", label: "Bible in Basic English (BBE)" },
+  { value: "clementine", label: "Clementine Latin Vulgate" },
+  { value: "almeida", label: "João Ferreira de Almeida (Portuguese)" },
+] as const;
+
+export type Translation = typeof BIBLE_TRANSLATIONS[number]["value"];
+
 // Fallback data for John 3 (for demo purposes)
 const JOHN_3_FALLBACK: Chapter = {
   book: "John",
@@ -32,15 +43,15 @@ const JOHN_3_FALLBACK: Chapter = {
   ]
 };
 
-export const fetchChapter = async (book: string, chapter: number): Promise<Chapter> => {
+export const fetchChapter = async (book: string, chapter: number, translation: Translation = "kjv"): Promise<Chapter> => {
   // Use fallback for John 3
-  if (book === "John" && chapter === 3) {
+  if (book === "John" && chapter === 3 && translation === "kjv") {
     return Promise.resolve(JOHN_3_FALLBACK);
   }
   
   try {
     const response = await fetch(
-      `${BIBLE_API_BASE}/${book}${chapter}?translation=kjv`,
+      `${BIBLE_API_BASE}/${book}${chapter}?translation=${translation}`,
       { signal: AbortSignal.timeout(5000) }
     );
     
@@ -78,10 +89,10 @@ export const fetchChapter = async (book: string, chapter: number): Promise<Chapt
   }
 };
 
-export const searchBible = async (query: string): Promise<Verse[]> => {
+export const searchBible = async (query: string, translation: Translation = "kjv"): Promise<Verse[]> => {
   try {
     const response = await fetch(
-      `${BIBLE_API_BASE}/${query}?translation=kjv`,
+      `${BIBLE_API_BASE}/${query}?translation=${translation}`,
       { signal: AbortSignal.timeout(5000) }
     );
     const data = await response.json();
@@ -98,6 +109,59 @@ export const searchBible = async (query: string): Promise<Verse[]> => {
     return [];
   } catch (error) {
     console.error("Error searching Bible:", error);
+    return [];
+  }
+};
+
+// Word search across multiple verses
+export const searchBibleByWord = async (
+  word: string,
+  translation: Translation = "kjv",
+  searchType: "contains" | "exact" | "starts" = "contains"
+): Promise<Verse[]> => {
+  // For word search, we'll use common passages as a demo
+  // In production, you'd want a full-text search API
+  const commonBooks = ["John", "Genesis", "Psalms", "Matthew", "Romans"];
+  const results: Verse[] = [];
+  
+  try {
+    for (const book of commonBooks) {
+      // Search first few chapters of each book
+      for (let chapter = 1; chapter <= 3; chapter++) {
+        try {
+          const chapterData = await fetchChapter(book, chapter, translation);
+          
+          const matchingVerses = chapterData.verses.filter(verse => {
+            const text = verse.text.toLowerCase();
+            const searchTerm = word.toLowerCase();
+            
+            switch (searchType) {
+              case "exact":
+                return text.split(/\s+/).includes(searchTerm);
+              case "starts":
+                return text.split(/\s+/).some(w => w.startsWith(searchTerm));
+              case "contains":
+              default:
+                return text.includes(searchTerm);
+            }
+          });
+          
+          results.push(...matchingVerses);
+          
+          // Limit results to prevent too many
+          if (results.length >= 20) {
+            return results.slice(0, 20);
+          }
+        } catch (err) {
+          // Continue with next chapter
+          continue;
+        }
+      }
+    }
+    
+    return results;
+  } catch (error) {
+    console.error("Error in word search:", error);
     return [];
   }
 };
