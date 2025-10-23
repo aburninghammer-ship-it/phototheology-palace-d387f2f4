@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Navigation";
-import { Building2, BookOpen, Lightbulb, Crown, Sparkles, Layers, Zap, Scale, Telescope, Search } from "lucide-react";
+import { Building2, BookOpen, Lightbulb, Crown, Sparkles, Layers, Zap, Scale, Telescope, Search, Image } from "lucide-react";
 
 const Index = () => {
   return (
@@ -171,7 +171,7 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Link to="/culture-controversy" className="group">
               <div className="h-full p-8 rounded-2xl bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950 dark:to-orange-950 border-2 border-red-200 dark:border-red-800 hover-lift hover:border-red-500 transition-all">
                 <div className="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
@@ -204,6 +204,18 @@ const Index = () => {
                 <h3 className="font-serif text-2xl font-bold mb-3 text-foreground">Research Mode</h3>
                 <p className="text-foreground/80 leading-relaxed">
                   An AI-powered assistant for deep biblical study with comprehensive, scholarly research.
+                </p>
+              </div>
+            </Link>
+            
+            <Link to="/bible-image-library" className="group">
+              <div className="h-full p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950 border-2 border-purple-200 dark:border-purple-800 hover-lift hover:border-purple-500 transition-all">
+                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <Image className="h-8 w-8 text-purple-600" />
+                </div>
+                <h3 className="font-serif text-2xl font-bold mb-3 text-foreground">Bible Image Library</h3>
+                <p className="text-foreground/80 leading-relaxed">
+                  Create and manage AI-generated visual interpretations of Scripture for Translation and 24FPS rooms.
                 </p>
               </div>
             </Link>

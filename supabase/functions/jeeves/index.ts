@@ -26,7 +26,10 @@ serve(async (req) => {
       category,
       categories,
       topic,
-      query
+      query,
+      description,
+      verse_reference,
+      room_type
     } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -206,6 +209,86 @@ Structure your research:
 7. Further Study (suggest related topics and passages)
 
 Include verse citations, cross-references, and scholarly depth. Make it comprehensive but accessible.`;
+    } else if (mode === "generate-image") {
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      if (!LOVABLE_API_KEY) {
+        throw new Error('LOVABLE_API_KEY not configured');
+      }
+
+      // Import supabase client
+      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.7.1');
+      const supabaseClient = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
+
+      // Generate image using Lovable AI
+      const imagePrompt = verse_reference 
+        ? `Create a biblical illustration for ${verse_reference}: ${description}. Style: Reverent, artistic, and spiritually meaningful. Ultra high resolution.`
+        : `Create a biblical illustration: ${description}. Style: Reverent, artistic, and spiritually meaningful. Ultra high resolution.`;
+
+      const imageResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash-image-preview',
+          messages: [
+            {
+              role: 'user',
+              content: imagePrompt
+            }
+          ],
+          modalities: ['image', 'text']
+        })
+      });
+
+      if (!imageResponse.ok) {
+        const errorText = await imageResponse.text();
+        console.error('Image generation error:', errorText);
+        throw new Error('Failed to generate image');
+      }
+
+      const imageData = await imageResponse.json();
+      const imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+      if (!imageUrl) {
+        throw new Error('No image URL in response');
+      }
+
+      // Get authenticated user
+      const authHeader = req.headers.get('Authorization')!;
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user } } = await supabaseClient.auth.getUser(token);
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      // Store image in database
+      const { data: insertData, error: insertError } = await supabaseClient
+        .from('bible_images')
+        .insert({
+          user_id: user.id,
+          room_type,
+          description,
+          verse_reference: verse_reference || null,
+          image_url: imageUrl
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('Database insert error:', insertError);
+        throw insertError;
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, image: insertData }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

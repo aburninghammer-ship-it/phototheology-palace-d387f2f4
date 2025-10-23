@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      bible_images: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          is_favorite: boolean
+          room_type: string
+          updated_at: string
+          user_id: string
+          verse_reference: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          image_url: string
+          is_favorite?: boolean
+          room_type: string
+          updated_at?: string
+          user_id: string
+          verse_reference?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string
+          is_favorite?: boolean
+          room_type?: string
+          updated_at?: string
+          user_id?: string
+          verse_reference?: string | null
+        }
+        Relationships: []
+      }
       challenge_submissions: {
         Row: {
           ai_feedback: string | null

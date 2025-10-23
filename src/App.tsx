@@ -22,6 +22,7 @@ import Feedback from "./pages/Feedback";
 import CultureControversy from "./pages/CultureControversy";
 import ProphecyWatch from "./pages/ProphecyWatch";
 import ResearchMode from "./pages/ResearchMode";
+import BibleImageLibrary from "./pages/BibleImageLibrary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,9 +50,10 @@ function App() {
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/feedback" element={<Feedback />} />
-            <Route path="/culture-controversy" element={<CultureControversy />} />
-            <Route path="/prophecy-watch" element={<ProphecyWatch />} />
-            <Route path="/research-mode" element={<ResearchMode />} />
+          <Route path="/culture-controversy" element={<CultureControversy />} />
+          <Route path="/prophecy-watch" element={<ProphecyWatch />} />
+          <Route path="/research-mode" element={<ResearchMode />} />
+          <Route path="/bible-image-library" element={<BibleImageLibrary />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
