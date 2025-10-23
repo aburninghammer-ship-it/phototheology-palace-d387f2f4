@@ -47,6 +47,7 @@ const ChainChess = () => {
   const [difficultyLevel, setDifficultyLevel] = useState<"kids" | "adults">("adults");
   const [userVerse, setUserVerse] = useState("");
   const [chatMessages, setChatMessages] = useState<Array<{ userId: string; userName: string; message: string; timestamp: string }>>([]);
+  const [userDisplayName, setUserDisplayName] = useState<string>("");
 
   const categories = ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"];
   const isVsJeeves = mode === "jeeves";
@@ -71,6 +72,24 @@ const ChainChess = () => {
       loadGame();
     }
   }, [user, gameId]);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
+  const fetchUserProfile = async () => {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("display_name, username")
+      .eq("id", user!.id)
+      .single();
+    
+    if (profile) {
+      setUserDisplayName(profile.display_name || profile.username || "User");
+    }
+  };
 
   useEffect(() => {
     if (gameId) {
@@ -535,7 +554,7 @@ const ChainChess = () => {
       event: "message",
       payload: {
         userId: user!.id,
-        userName: user!.email || "User",
+        userName: userDisplayName || "User",
         message,
         timestamp: new Date().toISOString(),
       },
@@ -661,7 +680,7 @@ const ChainChess = () => {
                 <WebRTCCall
                   roomId={gameId}
                   userId={user!.id}
-                  userName={user!.email || "User"}
+                  userName={userDisplayName || "User"}
                 />
               )}
               

@@ -41,10 +41,12 @@ const LiveStudyRoom = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [participants, setParticipants] = useState<any[]>([]);
+  const [userDisplayName, setUserDisplayName] = useState<string>("");
 
   useEffect(() => {
     if (!roomId || !user) return;
 
+    fetchUserProfile();
     fetchRoomDetails();
     joinRoom();
     fetchMessages();
@@ -71,6 +73,18 @@ const LiveStudyRoom = () => {
       supabase.removeChannel(participantsChannel);
     };
   }, [roomId, user]);
+
+  const fetchUserProfile = async () => {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("display_name, username")
+      .eq("id", user!.id)
+      .single();
+    
+    if (profile) {
+      setUserDisplayName(profile.display_name || profile.username || "User");
+    }
+  };
 
   const fetchRoomDetails = async () => {
     const { data } = await supabase
@@ -256,7 +270,7 @@ const LiveStudyRoom = () => {
               <WebRTCCall
                 roomId={roomId!}
                 userId={user!.id}
-                userName={user!.email || "User"}
+                userName={userDisplayName || "User"}
               />
 
               <Card>
