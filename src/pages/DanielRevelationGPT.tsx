@@ -1,9 +1,19 @@
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Scroll, Crown } from "lucide-react";
-import { SandboxedEmbed } from "@/components/SandboxedEmbed";
+import { useEffect } from "react";
 
 const DanielRevelationGPT = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://studio.pickaxe.co/api/embed/bundle.js';
+    script.defer = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,12 +39,10 @@ const DanielRevelationGPT = () => {
                 Explore the prophetic books of Daniel and Revelation. Ask questions about prophecy, symbolism, historical fulfillment, and end-time events from a historicist perspective.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <SandboxedEmbed
-                scriptUrl="https://phototheologygpt.com/api/embed/bundle.js"
-                embedId="deployment-f476232e-cd16-4b73-b412-d9492c0f5fb7"
-                minHeight="600px"
-                title="Daniel & Revelation GPT Chat Interface"
+            <CardContent className="p-6">
+              <div 
+                id="deployment-23a98e87-a2d5-400a-9cac-60b098de90b7"
+                style={{ minHeight: '600px' }}
               />
             </CardContent>
           </Card>
