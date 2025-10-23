@@ -141,7 +141,8 @@ serve(async (req) => {
       verse_reference,
       room_type,
       question,
-      roomPurpose
+      roomPurpose,
+      availableCategories
     } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -335,7 +336,7 @@ Chart context: ${chartData || "General Bible study visualization"}
 Make it educational and insightful.`;
 
     } else if (mode === "chain-chess") {
-      const { availableCategories } = await req.json();
+      // availableCategories already extracted from req.json() above
       
       systemPrompt = `You are Jeeves, an enthusiastic Bible study companion playing Chain Chess!
 Your role is to make insightful biblical commentary that builds connections between verses and principles.
@@ -343,7 +344,7 @@ Be scholarly yet warm, like an excited friend sharing discoveries.
 YOU MUST respond in JSON format with: { "commentary": "your 3-4 sentence insight", "challengeCategory": "category name" }`;
 
       if (isFirstMove) {
-        const categoriesText = availableCategories.join(", ");
+        const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");
         userPrompt = `You're starting a Chain Chess game! You go FIRST. The verse is ${verse}.
 
 Available categories for this game: ${categoriesText}
@@ -366,7 +367,7 @@ If analyzing John 3:16 with "Rooms of the Palace" available:
 NOW: Analyze ${verse} using the available categories. Return ONLY valid JSON.`;
       } else {
         const lastMove = previousMoves[previousMoves.length - 1];
-        const categoriesText = availableCategories.join(", ");
+        const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");
         userPrompt = `Continue Chain Chess on ${verse}.
 
 Previous commentary: "${lastMove.commentary}"

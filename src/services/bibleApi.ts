@@ -39,7 +39,10 @@ export const fetchChapter = async (book: string, chapter: number): Promise<Chapt
   }
   
   try {
-    const response = await fetch(`${BIBLE_API_BASE}/${book}${chapter}?translation=kjv`);
+    const response = await fetch(
+      `${BIBLE_API_BASE}/${book}${chapter}?translation=kjv`,
+      { signal: AbortSignal.timeout(5000) }
+    );
     
     if (!response.ok) {
       throw new Error("API request failed");
@@ -61,15 +64,15 @@ export const fetchChapter = async (book: string, chapter: number): Promise<Chapt
     };
   } catch (error) {
     console.error("Error fetching chapter:", error);
-    // Return empty chapter for now
+    // Return placeholder verses when API fails
     return {
       book,
       chapter,
-      verses: Array.from({ length: 10 }, (_, i) => ({
+      verses: Array.from({ length: 20 }, (_, i) => ({
         book,
         chapter,
         verse: i + 1,
-        text: `Verse ${i + 1} text would appear here. (API unavailable - using demo data)`
+        text: `${book} ${chapter}:${i + 1} - Verse text temporarily unavailable. The Bible API service may be experiencing issues. Please try refreshing the page in a moment.`
       }))
     };
   }
@@ -77,7 +80,10 @@ export const fetchChapter = async (book: string, chapter: number): Promise<Chapt
 
 export const searchBible = async (query: string): Promise<Verse[]> => {
   try {
-    const response = await fetch(`${BIBLE_API_BASE}/${query}?translation=kjv`);
+    const response = await fetch(
+      `${BIBLE_API_BASE}/${query}?translation=kjv`,
+      { signal: AbortSignal.timeout(5000) }
+    );
     const data = await response.json();
     
     if (data.verses) {
@@ -121,7 +127,8 @@ export const getVerseAnnotations = async (book: string, chapter: number, verse: 
           chapter,
           verse,
           verseText: verseData.text
-        })
+        }),
+        signal: AbortSignal.timeout(30000)
       }
     );
 

@@ -121,15 +121,24 @@ const ChainChess = () => {
   };
 
   const fetchVerseText = async (verseRef: string) => {
+    // Common verse fallbacks
+    const verseFallbacks: Record<string, string> = {
+      "John 3:16": "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
+      "Psalm 23:1": "The LORD is my shepherd; I shall not want.",
+      "Romans 8:28": "And we know that all things work together for good to them that love God, to them who are the called according to his purpose.",
+      "Philippians 4:13": "I can do all things through Christ which strengtheneth me.",
+      "Proverbs 3:5": "Trust in the LORD with all thine heart; and lean not unto thine own understanding."
+    };
+
     try {
-      // Parse verse reference (e.g., "John 3:16")
       const parts = verseRef.match(/^(\d?\s?\w+)\s(\d+):(\d+)$/);
       if (parts) {
         const [, book, chapter, verse] = parts;
-        // Format the book name properly (replace spaces with underscores for API)
         const formattedBook = book.trim().replace(/\s+/g, '%20');
+        
         const response = await fetch(
-          `https://bible-api.com/${formattedBook}%20${chapter}:${verse}?translation=kjv`
+          `https://bible-api.com/${formattedBook}%20${chapter}:${verse}?translation=kjv`,
+          { signal: AbortSignal.timeout(5000) }
         );
         
         if (!response.ok) {
@@ -140,16 +149,18 @@ const ChainChess = () => {
         
         if (data.text) {
           setVerseText(data.text.trim());
+          return;
         } else if (data.verses && data.verses[0]) {
           setVerseText(data.verses[0].text.trim());
-        } else {
-          setVerseText("For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.");
+          return;
         }
       }
+      
+      // Use fallback if available
+      setVerseText(verseFallbacks[verseRef] || "Verse text temporarily unavailable. Please try refreshing the page.");
     } catch (error) {
       console.error("Error fetching verse text:", error);
-      // Fallback text for John 3:16
-      setVerseText("For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.");
+      setVerseText(verseFallbacks[verseRef] || "Verse text temporarily unavailable. Please try refreshing the page.");
     }
   };
 
