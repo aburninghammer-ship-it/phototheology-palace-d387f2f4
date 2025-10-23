@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Trophy, Gamepad2, Users, UserPlus, Share2, Sparkles, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { MonthlyGameCard } from "@/components/MonthlyGameCard";
+import { RoomPrerequisites } from "@/components/RoomPrerequisites";
 
 const Games = () => {
   const { user } = useAuth();
@@ -118,61 +119,71 @@ const Games = () => {
       name: "Chain Chess", 
       description: "Build biblical commentary chains by connecting verses, principles, and Palace rooms. Challenge Jeeves or other players to create the deepest theological connections.",
       featured: true,
-      skills: "Biblical Knowledge, Critical Thinking, Memory Palace Mastery"
+      skills: "Biblical Knowledge, Critical Thinking, Memory Palace Mastery",
+      requiredRooms: ["QR", "QA", "CR", "DR", "ST"]
     },
     { 
       id: "palace_quiz", 
       name: "Palace Quiz", 
       description: "Test your mastery of the 9 Rooms and 50 Principles. Race against time to correctly identify which room each principle belongs to and explain their connections.",
-      skills: "Palace Principles, Room Categories, Speed Recall"
+      skills: "Palace Principles, Room Categories, Speed Recall",
+      requiredRooms: ["SR", "OR", "NF", "CR", "BL"]
     },
     { 
       id: "verse_match", 
       name: "Verse Match", 
       description: "Match Bible verses with their book, chapter, and verse references. Start with easier passages and progress to obscure verses only true scholars know.",
-      skills: "Verse Memorization, Biblical Literacy, Pattern Recognition"
+      skills: "Verse Memorization, Biblical Literacy, Pattern Recognition",
+      requiredRooms: ["SR", "IR", "24", "BR"]
     },
     { 
       id: "principle_puzzle", 
       name: "Principle Puzzle", 
       description: "Given a Bible verse, identify which Palace principle(s) it exemplifies. Compete to find multiple valid connections and explain your reasoning.",
-      skills: "Theological Analysis, Principle Application, Creative Thinking"
+      skills: "Theological Analysis, Principle Application, Creative Thinking",
+      requiredRooms: ["CR", "DR", "TRm", "PRm"]
     },
     { 
       id: "timeline_challenge", 
       name: "Timeline Challenge", 
       description: "Place biblical events, prophecies, and their fulfillments in chronological order. Master the flow of redemptive history from Genesis to Revelation.",
-      skills: "Biblical Timeline, Historical Context, Prophetic Understanding"
+      skills: "Biblical Timeline, Historical Context, Prophetic Understanding",
+      requiredRooms: ["SR", "TZ", "PR", "FR"]
     },
     { 
       id: "symbol_decoder", 
       name: "Symbol Decoder", 
       description: "Decode biblical symbols and types across Scripture. Match symbols like lamb, rock, water, and bread to their meanings and Christ fulfillments.",
-      skills: "Typology, Symbolism, Cross-References"
+      skills: "Typology, Symbolism, Cross-References",
+      requiredRooms: ["ST", "CR", "BL", "TR"]
     },
     { 
       id: "sanctuary_architect", 
       name: "Sanctuary Architect", 
       description: "Map Bible passages to sanctuary articles and services. Build the complete picture of how Christ fulfills each element from altar to ark.",
-      skills: "Sanctuary System, Prophetic Fulfillment, Systematic Theology"
+      skills: "Sanctuary System, Prophetic Fulfillment, Systematic Theology",
+      requiredRooms: ["BL", "CR", "ST", "DR"]
     },
     { 
       id: "feast_calendar", 
       name: "Feast Calendar", 
       description: "Connect biblical events and prophecies to the seven feasts of Israel. Discover the prophetic timeline hidden in God's appointed times.",
-      skills: "Feast System, Prophetic Timeline, Redemptive History"
+      skills: "Feast System, Prophetic Timeline, Redemptive History",
+      requiredRooms: ["FR", "TZ", "CR", "PR"]
     },
     { 
       id: "dimension_detective", 
       name: "Dimension Detective", 
       description: "Analyze verses through all five dimensions: Literal, Christ, Personal, Church, Heaven. See the full diamond from every angle.",
-      skills: "Multi-dimensional Analysis, Hermeneutics, Application"
+      skills: "Multi-dimensional Analysis, Hermeneutics, Application",
+      requiredRooms: ["DR", "CR", "C6", "FRt"]
     },
     { 
       id: "cycle_navigator", 
       name: "Cycle Navigator", 
       description: "Place stories and prophecies within the eight covenant cycles from Adam to Christ's Return. Navigate the patterns of redemptive history.",
-      skills: "Covenant Theology, Historical Patterns, Cyclical Analysis"
+      skills: "Covenant Theology, Historical Patterns, Cyclical Analysis",
+      requiredRooms: ["SR", "TZ", "PRm", "P||"]
     },
   ];
 
@@ -281,10 +292,13 @@ const Games = () => {
                     {game.name}
                   </CardTitle>
                   <CardDescription className="min-h-[80px]">{game.description}</CardDescription>
-                  <div className="pt-2">
+                  <div className="pt-2 space-y-2">
                     <p className="text-xs text-muted-foreground">
                       <strong>Skills:</strong> {game.skills}
                     </p>
+                    {game.requiredRooms && (
+                      <RoomPrerequisites rooms={game.requiredRooms} compact />
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent>

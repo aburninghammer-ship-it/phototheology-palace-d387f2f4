@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Trophy, Clock, Users, Lightbulb, CheckCircle2, XCircle } from "lucide-react";
+import { RoomPrerequisites } from "@/components/RoomPrerequisites";
 
 interface TreasureHunt {
   id: string;
@@ -143,6 +144,8 @@ const TreasureHunt = () => {
               Follow clues step-by-step to reach the right answer. First to solve wins!
             </p>
           </div>
+
+          <RoomPrerequisites rooms={["QR", "QA", "CR", "ST", "DR"]} />
 
           {/* Difficulty Filter */}
           <Card>

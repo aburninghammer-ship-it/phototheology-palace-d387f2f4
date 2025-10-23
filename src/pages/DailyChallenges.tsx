@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Flame, Trophy, Clock, Share2 } from "lucide-react";
+import { RoomPrerequisites } from "@/components/RoomPrerequisites";
 
 const DailyChallenges = () => {
   const { user, loading } = useAuth();
@@ -156,6 +157,8 @@ const DailyChallenges = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
+                <RoomPrerequisites rooms={["SR", "OR", "DC", "QR", "NF", "CR"]} />
+                
                 <p>{dailyChallenge.description}</p>
                 
                 <div className="space-y-2">

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Clock, Users, Trophy, Zap } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { RoomPrerequisites } from "@/components/RoomPrerequisites";
 
 interface AvailableRoom {
   id: string;
@@ -110,6 +111,15 @@ export default function EscapeRoom() {
             60-minute biblical challenge. Race through Palace rooms, solve Scripture puzzles, reach the summit.
           </p>
         </div>
+
+        <RoomPrerequisites 
+          rooms={mode === "category_gauntlet" 
+            ? category === "prophecy" ? ["PR", "TZ", "FR", "ST"] 
+            : category === "sanctuary" ? ["BL", "ST", "CR", "DR"]
+            : ["CR", "DR", "C6", "FRt"]
+            : ["SR", "OR", "CR", "DR", "BL", "PR", "FR"]
+          } 
+        />
 
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <Card className="border-primary/20 hover:border-primary/40 transition-all hover:shadow-lg">
