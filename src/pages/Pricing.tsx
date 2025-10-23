@@ -1,11 +1,76 @@
 import { Navigation } from "@/components/Navigation";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Sparkles, Star, Crown, Zap, GraduationCap } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export default function Pricing() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const startFreeTrial = async () => {
+    if (!user) {
+      // Not logged in, redirect to auth
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      // Check if user already has an active trial or subscription
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("trial_started_at, trial_ends_at, subscription_status, is_student")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.is_student) {
+        toast.success("You already have free student access!");
+        navigate("/");
+        return;
+      }
+
+      if (profile?.subscription_status === "active") {
+        toast.success("You already have an active subscription!");
+        navigate("/");
+        return;
+      }
+
+      if (profile?.trial_started_at && profile?.trial_ends_at) {
+        const trialEnd = new Date(profile.trial_ends_at);
+        if (trialEnd > new Date()) {
+          toast.success("Your free trial is already active!");
+          navigate("/");
+          return;
+        }
+      }
+
+      // Start free trial
+      const trialStartDate = new Date();
+      const trialEndDate = new Date();
+      trialEndDate.setDate(trialEndDate.getDate() + 7);
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          trial_started_at: trialStartDate.toISOString(),
+          trial_ends_at: trialEndDate.toISOString(),
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast.success("🎉 Free trial activated! Enjoy 7 days of full access.");
+      navigate("/");
+    } catch (error: any) {
+      console.error("Error starting trial:", error);
+      toast.error("Failed to start trial. Please try again.");
+    }
+  };
+
   const plans = [
     {
       id: "free",
@@ -186,14 +251,12 @@ export default function Pricing() {
                   </Button>
                 ) : plan.id === "free" ? (
                   <Button
-                    asChild
+                    onClick={startFreeTrial}
                     variant={plan.ctaVariant}
                     className="w-full"
                     size="lg"
                   >
-                    <Link to="/auth">
-                      {plan.ctaText}
-                    </Link>
+                    {plan.ctaText}
                   </Button>
                 ) : (
                   <Button
