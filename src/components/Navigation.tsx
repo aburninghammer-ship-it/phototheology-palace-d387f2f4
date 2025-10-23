@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+// Import all required icons from lucide-react
 import { Building2, Sparkles, Users, BookOpen, User, CreditCard, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
