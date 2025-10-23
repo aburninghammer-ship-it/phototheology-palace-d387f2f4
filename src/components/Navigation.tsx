@@ -72,6 +72,9 @@ export const Navigation = () => {
                 <DropdownMenuItem asChild>
                   <Link to="/phototheologygpt">🤖 PhototheologyGPT</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/apologetics-gpt">🛡️ ApologeticsGPT</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link to="/bible-images">🎨 Image Library</Link>
