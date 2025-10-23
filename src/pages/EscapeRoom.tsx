@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,41 @@ import { Clock, Users, Trophy, Zap } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
+interface AvailableRoom {
+  id: string;
+  title: string;
+  mode: string;
+  category: string | null;
+  difficulty: string;
+  time_limit_minutes: number;
+  expires_at: string;
+}
+
 export default function EscapeRoom() {
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isBatchGenerating, setIsBatchGenerating] = useState(false);
   const [mode, setMode] = useState<"category_gauntlet" | "floor_race">("category_gauntlet");
   const [category, setCategory] = useState<"prophecy" | "sanctuary" | "gospel_mission">("prophecy");
   const [teamMode, setTeamMode] = useState<"solo" | "team">("solo");
+  const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([]);
+
+  useEffect(() => {
+    loadAvailableRooms();
+  }, []);
+
+  const loadAvailableRooms = async () => {
+    const { data, error } = await supabase
+      .from('escape_rooms')
+      .select('*')
+      .gt('expires_at', new Date().toISOString())
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (!error && data) {
+      setAvailableRooms(data);
+    }
+  };
 
   const startEscapeRoom = async () => {
     setIsGenerating(true);
@@ -34,6 +63,38 @@ export default function EscapeRoom() {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const batchGenerate = async () => {
+    setIsBatchGenerating(true);
+    
+    try {
+      toast.info("Generating multiple escape rooms... This may take a minute.");
+      
+      const { data, error } = await supabase.functions.invoke('batch-generate-escape-rooms', {
+        body: {}
+      });
+
+      if (error) throw error;
+
+      toast.success(`Successfully generated ${data.generated_count} escape rooms!`);
+      loadAvailableRooms(); // Refresh the list
+    } catch (error) {
+      console.error('Error batch generating:', error);
+      toast.error("Failed to batch generate escape rooms.");
+    } finally {
+      setIsBatchGenerating(false);
+    }
+  };
+
+  const formatTimeRemaining = (expiresAt: string) => {
+    const now = new Date();
+    const expires = new Date(expiresAt);
+    const minutes = Math.floor((expires.getTime() - now.getTime()) / (1000 * 60));
+    
+    if (minutes < 60) return `${minutes}m remaining`;
+    const hours = Math.floor(minutes / 60);
+    return `${hours}h ${minutes % 60}m remaining`;
   };
 
   return (
@@ -188,11 +249,21 @@ export default function EscapeRoom() {
 
             <Button
               onClick={startEscapeRoom}
-              disabled={isGenerating}
+              disabled={isGenerating || isBatchGenerating}
               size="lg"
               className="w-full text-lg py-6"
             >
               {isGenerating ? "Generating Challenge..." : "Start Escape Room"}
+            </Button>
+
+            <Button
+              onClick={batchGenerate}
+              disabled={isGenerating || isBatchGenerating}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              {isBatchGenerating ? "Batch Generating..." : "Generate Multiple Rooms (Admin)"}
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
@@ -200,6 +271,50 @@ export default function EscapeRoom() {
             </p>
           </CardContent>
         </Card>
+
+        {/* Available Escape Rooms */}
+        {availableRooms.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold mb-6">Available Escape Rooms</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {availableRooms.map((room) => (
+                <Card key={room.id} className="border-primary/20 hover:border-primary/40 transition-all hover:shadow-lg cursor-pointer" onClick={() => navigate(`/escape-room/play/${room.id}`)}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg mb-2">{room.title}</CardTitle>
+                        <CardDescription className="flex flex-wrap gap-2">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
+                            {room.mode === 'category_gauntlet' ? 'Category Gauntlet' : 'Floor Race'}
+                          </span>
+                          {room.category && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-accent/10 text-accent capitalize">
+                              {room.category.replace('_', ' ')}
+                            </span>
+                          )}
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-muted">
+                            {room.difficulty}
+                          </span>
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Clock className="w-4 h-4" />
+                        <span>{room.time_limit_minutes} min</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {formatTimeRemaining(room.expires_at)}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
