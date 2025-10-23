@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
@@ -35,38 +34,36 @@ export const FloorCard = ({ floor }: FloorCardProps) => {
   const shadow = floorShadows[floor.number - 1];
   
   return (
-    <Link to={`/floor/${floor.number}`}>
-      <Card className={`group hover-lift cursor-pointer border-2 hover:border-primary overflow-hidden transition-all duration-300 animate-fade-in`}>
-        <div className={`h-2 ${gradient}`} />
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-3">
-                <Badge variant="outline" className="font-mono text-xs border-primary/50 text-primary">
-                  Floor {floor.number}
-                </Badge>
-                <Badge className={`${gradient} text-white ${shadow}`}>
-                  {floor.rooms.length} Rooms
-                </Badge>
-              </div>
-              <CardTitle className="font-serif text-2xl mb-2 group-hover:bg-gradient-palace group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
-                {floor.name}
-              </CardTitle>
-              <CardDescription className="text-sm font-medium text-muted-foreground">
-                {floor.subtitle}
-              </CardDescription>
+    <Card className={`group hover-lift border-2 overflow-hidden transition-all duration-300 animate-fade-in`}>
+      <div className={`h-2 ${gradient}`} />
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="outline" className="font-mono text-xs border-primary/50 text-primary">
+                Floor {floor.number}
+              </Badge>
+              <Badge className={`${gradient} text-white ${shadow}`}>
+                {floor.rooms.length} Rooms
+              </Badge>
             </div>
-            <div className={`p-2 rounded-full ${gradient} group-hover:scale-110 transition-transform duration-300`}>
-              <ChevronRight className="h-5 w-5 text-white" />
-            </div>
+            <CardTitle className="font-serif text-2xl mb-2">
+              {floor.name}
+            </CardTitle>
+            <CardDescription className="text-sm font-medium text-muted-foreground">
+              {floor.subtitle}
+            </CardDescription>
           </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {floor.description}
-          </p>
-        </CardContent>
-      </Card>
-    </Link>
+          <div className={`p-2 rounded-full ${gradient}`}>
+            <ChevronRight className="h-5 w-5 text-white" />
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {floor.description}
+        </p>
+      </CardContent>
+    </Card>
   );
 };

@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Palace from "./pages/Palace";
-import FloorDetail from "./pages/FloorDetail";
+
 import Bible from "./pages/Bible";
 import BibleChapter from "./pages/BibleChapter";
 import DailyChallenges from "./pages/DailyChallenges";
@@ -67,7 +67,7 @@ function App() {
             <Route path="/auth" element={<Auth />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/palace" element={<ProtectedRoute><Palace /></ProtectedRoute>} />
-            <Route path="/floor/:floorNumber" element={<ProtectedRoute><FloorDetail /></ProtectedRoute>} />
+            
             <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
             <Route path="/bible/:book/:chapter" element={<ProtectedRoute><BibleChapter /></ProtectedRoute>} />
             <Route path="/daily-challenges" element={<ProtectedRoute><DailyChallenges /></ProtectedRoute>} />
