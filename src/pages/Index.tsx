@@ -1,9 +1,30 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Navigation";
-import { Building2, BookOpen, Lightbulb, Crown, Sparkles, Layers, Zap, Scale, Telescope, Search, Image, Film, Brain } from "lucide-react";
+import { Building2, BookOpen, Lightbulb, Crown, Sparkles, Layers, Zap, Scale, Telescope, Search, Image, Film, Brain, Share2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const { toast } = useToast();
+
+  const handleShare = () => {
+    const shareData = {
+      title: 'Phototheology - The Palace of Biblical Wisdom',
+      text: 'Transform Bible study into a palace of meaning through an 8-floor, 38-room method.',
+      url: window.location.origin
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+      toast({
+        title: "Link copied!",
+        description: "Share link copied to clipboard",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen gradient-dreamy">
       <Navigation />
@@ -41,6 +62,10 @@ const Index = () => {
                 <BookOpen className="mr-2 h-5 w-5" />
                 Read the Bible
               </Link>
+            </Button>
+            <Button size="lg" variant="outline" onClick={handleShare} className="gap-2 border-2 hover:border-primary">
+              <Share2 className="h-5 w-5" />
+              Share App
             </Button>
           </div>
         </div>

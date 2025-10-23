@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Flame, Trophy, Clock } from "lucide-react";
+import { Flame, Trophy, Clock, Share2 } from "lucide-react";
 
 const DailyChallenges = () => {
   const { user, loading } = useAuth();
@@ -20,7 +20,6 @@ const DailyChallenges = () => {
   useEffect(() => {
     if (user) {
       fetchDailyChallenge();
-      checkSubmission();
     }
   }, [user]);
 
@@ -33,22 +32,21 @@ const DailyChallenges = () => {
       .select("*")
       .eq("challenge_type", "daily")
       .gte("starts_at", today.toISOString())
-      .single();
+      .maybeSingle();
 
     setDailyChallenge(data);
-  };
+    
+    // Check submission after we have the challenge data
+    if (data) {
+      const { data: submission } = await supabase
+        .from("challenge_submissions")
+        .select("*")
+        .eq("challenge_id", data.id)
+        .eq("user_id", user!.id)
+        .maybeSingle();
 
-  const checkSubmission = async () => {
-    if (!dailyChallenge) return;
-
-    const { data } = await supabase
-      .from("challenge_submissions")
-      .select("*")
-      .eq("challenge_id", dailyChallenge.id)
-      .eq("user_id", user!.id)
-      .single();
-
-    setHasSubmitted(!!data);
+      setHasSubmitted(!!submission);
+    }
   };
 
   const handleSubmit = async () => {
@@ -80,6 +78,25 @@ const DailyChallenges = () => {
     }
   };
 
+  const handleShare = () => {
+    const shareData = {
+      title: dailyChallenge?.title || 'Daily Bible Challenge',
+      text: `Join me in today's Bible study challenge! ${dailyChallenge?.description || ''}`,
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(() => {});
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+      toast({
+        title: "Link copied!",
+        description: "Share link copied to clipboard",
+      });
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -97,14 +114,22 @@ const DailyChallenges = () => {
           {dailyChallenge ? (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5" />
-                  {dailyChallenge.title}
-                </CardTitle>
-                <CardDescription className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  24-hour challenge
-                </CardDescription>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5" />
+                      {dailyChallenge.title}
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-2 mt-2">
+                      <Clock className="h-4 w-4" />
+                      24-hour challenge
+                    </CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={handleShare} className="gap-2">
+                    <Share2 className="h-4 w-4" />
+                    Share Challenge
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p>{dailyChallenge.description}</p>
