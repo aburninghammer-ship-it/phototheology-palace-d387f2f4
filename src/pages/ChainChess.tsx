@@ -30,6 +30,7 @@ const ChainChess = () => {
   const [game, setGame] = useState<any>(null);
   const [moves, setMoves] = useState<Move[]>([]);
   const [currentVerse, setCurrentVerse] = useState("John 3:16");
+  const [verseText, setVerseText] = useState("");
   const [commentary, setCommentary] = useState("");
   const [challengeCategory, setChallengeCategory] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -83,6 +84,7 @@ const ChainChess = () => {
       if (error) throw error;
 
       setGame(newGame);
+      await fetchVerseText("John 3:16");
       navigate(`/games/chain-chess/${newGame.id}${isVsJeeves ? "/jeeves" : ""}`);
 
       // Jeeves makes first move
@@ -96,6 +98,23 @@ const ChainChess = () => {
     }
   };
 
+  const fetchVerseText = async (verseRef: string) => {
+    try {
+      // Parse verse reference (e.g., "John 3:16")
+      const parts = verseRef.match(/^(\d?\s?\w+)\s(\d+):(\d+)$/);
+      if (parts) {
+        const [, book, chapter, verse] = parts;
+        const response = await fetch(
+          `https://bible-api.com/${book}${chapter}:${verse}?translation=kjv`
+        );
+        const data = await response.json();
+        setVerseText(data.text || "");
+      }
+    } catch (error) {
+      console.error("Error fetching verse text:", error);
+    }
+  };
+
   const loadGame = async () => {
     const { data } = await supabase
       .from("games")
@@ -106,7 +125,9 @@ const ChainChess = () => {
     if (data) {
       setGame(data);
       const gameState = data.game_state as any;
-      setCurrentVerse(gameState?.verse || "John 3:16");
+      const verse = gameState?.verse || "John 3:16";
+      setCurrentVerse(verse);
+      await fetchVerseText(verse);
       setIsMyTurn(data.current_turn === user!.id);
       loadMoves();
     }
@@ -321,8 +342,13 @@ const ChainChess = () => {
           <Card>
             <CardHeader>
               <CardTitle>Current Verse</CardTitle>
-              <CardDescription className="text-lg">{currentVerse}</CardDescription>
+              <CardDescription className="text-lg font-semibold">{currentVerse}</CardDescription>
             </CardHeader>
+            <CardContent>
+              <p className="text-foreground leading-relaxed italic">
+                {verseText || "Loading verse text..."}
+              </p>
+            </CardContent>
           </Card>
 
           <div className="grid md:grid-cols-2 gap-6">
