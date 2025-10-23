@@ -38,15 +38,16 @@ export default function PowerOfTheLamb() {
               </p>
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
-              <div className="aspect-video rounded-lg overflow-hidden bg-black shadow-lg">
-                <iframe
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed?listType=user_uploads&list=@powerofthelamb"
-                  title="Power of the Lamb YouTube Channel"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+              <div className="bg-gradient-to-br from-red-100 to-orange-100 p-8 rounded-lg border-2 border-red-300">
+                <div className="text-center space-y-4">
+                  <div className="text-6xl mb-4">📺</div>
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                    Watch Our Content
+                  </h3>
+                  <p className="text-foreground/80 leading-relaxed">
+                    Discover powerful teachings, sermons, and prophetic messages on our YouTube channel
+                  </p>
+                </div>
               </div>
               
               <div className="space-y-3">

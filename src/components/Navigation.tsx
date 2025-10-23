@@ -60,7 +60,7 @@ export const Navigation = () => {
               size="sm"
               className={isBiblePage ? "gradient-ocean shadow-blue" : "hover:bg-muted"}
             >
-              <Link to="/bible/John/3">Bible</Link>
+              <Link to="/bible/John/3">Phototheology Digital Bible</Link>
             </Button>
             <Button
               variant={location.pathname === "/power-of-the-lamb" ? "default" : "ghost"}
