@@ -382,22 +382,27 @@ YOU MUST respond in JSON format with: { "commentary": "your 3-4 sentence insight
 
 Available categories for this game: ${categoriesText}
 
-**YOUR TASK:**
-1. Provide 3-4 sentences of insightful commentary on ${verse}
-   - Use one of the available categories in your commentary
-   - Be specific and scholarly
-   - Show excitement about the verse's meaning
+**YOUR CRITICAL TASK - YOU MUST PROVIDE COMMENTARY:**
+1. Write 3-4 sentences of insightful, enthusiastic commentary on ${verse}
+   - Explain what the verse means
+   - Use one of the available categories to analyze it
+   - Be specific, scholarly, and excited
+   - Make biblical connections
    
-2. Challenge the player to respond using ONE of the available categories
+2. Then challenge the player to respond using ONE of the available categories
+
+**IMPORTANT:** You MUST provide commentary first. This is not optional. The player needs to see your analysis of the verse to start the game.
 
 **EXAMPLE FORMAT:**
-If analyzing John 3:16 with "Rooms of the Palace" available:
+If analyzing John 3:16:
 {
-  "commentary": "This verse reveals God's cosmic love extending beyond ethnic Israel! The word 'world' (kosmos) shows universal scope—this is clearly 3D Kingdom truth. The act of 'giving' the Son points us directly to the Altar principle, where sacrifice demonstrates divine love. Notice the present tense 'believes'—calling for immediate Earth-Now response!",
+  "commentary": "What a powerful verse to start with! John 3:16 reveals God's cosmic love extending beyond ethnic Israel. The word 'world' (kosmos) shows universal scope—this is 3D Kingdom truth. The act of 'giving' the Son points us to the Altar principle, where sacrifice demonstrates divine love. Notice the present tense 'believes'—calling for immediate Earth-Now response!",
   "challengeCategory": "Books of the Bible"
 }
 
-NOW: Analyze ${verse} using the available categories. Return ONLY valid JSON.`;
+NOW: Write your enthusiastic commentary on ${verse}, then challenge them with one of these categories: ${categoriesText}
+
+Return ONLY valid JSON with your commentary and challengeCategory.`;
       } else {
         const lastMove = previousMoves[previousMoves.length - 1];
         const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");

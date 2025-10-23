@@ -221,6 +221,8 @@ const ChainChess = () => {
   const jeevesMove = async (currentGameId: string, isFirst = false) => {
     setProcessing(true);
     try {
+      console.log("Jeeves making move. First move:", isFirst, "Verse:", currentVerse);
+      
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "chain-chess",
@@ -231,7 +233,16 @@ const ChainChess = () => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Jeeves error:", error);
+        throw error;
+      }
+
+      console.log("Jeeves response:", data);
+
+      if (!data || !data.commentary) {
+        throw new Error("Jeeves did not provide commentary");
+      }
 
       const move = {
         player: "jeeves",
@@ -241,14 +252,24 @@ const ChainChess = () => {
         timestamp: new Date().toISOString(),
       };
 
-      await supabase.from("game_moves").insert({
+      console.log("Saving Jeeves move:", move);
+
+      const { error: insertError } = await supabase.from("game_moves").insert({
         game_id: currentGameId,
         player_id: null,
         move_data: move,
       });
 
+      if (insertError) {
+        console.error("Error saving move:", insertError);
+        throw insertError;
+      }
+
       setChallengeCategory(data.challengeCategory);
       setIsMyTurn(true);
+
+      // Reload moves to ensure the new move is displayed
+      await loadMoves();
 
       // Update game state
       await supabase
@@ -259,6 +280,7 @@ const ChainChess = () => {
         })
         .eq("id", currentGameId);
     } catch (error: any) {
+      console.error("Jeeves move error:", error);
       toast({
         title: "Error",
         description: error.message,
