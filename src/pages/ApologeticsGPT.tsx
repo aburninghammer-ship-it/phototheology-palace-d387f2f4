@@ -39,47 +39,6 @@ const ApologeticsGPT = () => {
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-3 gap-4 text-center">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  Defend the Faith
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Answer skeptics and critics with biblical evidence and logic
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Book className="h-5 w-5" />
-                  Biblical Reliability
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Explore manuscript evidence, archaeology, and fulfilled prophecy
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  Grace & Truth
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Learn to share your faith with both compassion and conviction
-                </p>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </main>
     </div>

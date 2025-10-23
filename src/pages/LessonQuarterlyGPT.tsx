@@ -39,47 +39,6 @@ const LessonQuarterlyGPT = () => {
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-3 gap-4 text-center">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <BookOpen className="h-5 w-5" />
-                  Weekly Lessons
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Explore daily lessons with enhanced commentary and insights
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Quarterly Themes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Understand overarching themes and connections throughout the quarter
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  Practical Application
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Discover how to apply biblical principles to daily life
-                </p>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </main>
     </div>

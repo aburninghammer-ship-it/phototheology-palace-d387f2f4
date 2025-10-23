@@ -39,38 +39,6 @@ const KidGPT = () => {
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-3 gap-4 text-center">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">📖 Ask Questions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Ask me about Bible stories, verses, or characters
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">🎨 Learn & Create</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Get fun activities and creative ways to remember
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">🌟 Grow in Faith</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Understand how to follow Jesus every day
-                </p>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </main>
     </div>

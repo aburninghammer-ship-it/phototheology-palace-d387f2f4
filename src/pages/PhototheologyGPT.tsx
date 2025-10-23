@@ -39,47 +39,6 @@ const PhototheologyGPT = () => {
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-3 gap-4 text-center">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Image className="h-5 w-5" />
-                  Image Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Upload images and discover biblical themes and theological insights
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Book className="h-5 w-5" />
-                  Scripture Context
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Connect visual elements to biblical passages and principles
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  Memory Palace
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Create visual memory anchors for biblical concepts
-                </p>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </main>
     </div>

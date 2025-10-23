@@ -39,47 +39,6 @@ const DanielRevelationGPT = () => {
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-3 gap-4 text-center">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Crown className="h-5 w-5" />
-                  Daniel's Visions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Explore the dreams, visions, and prophecies of Daniel's book
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Scroll className="h-5 w-5" />
-                  Revelation's Mysteries
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Understand the seals, trumpets, beasts, and new creation
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center justify-center gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  Repeat & Enlarge
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  See how Revelation repeats and expands Daniel's prophecies
-                </p>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </main>
     </div>
