@@ -29,7 +29,7 @@ export const palaceFloors: Floor[] = [
         id: "sr",
         name: "Story Room",
         tag: "SR",
-        purpose: "Load the canon's storyline into long-term memory as vivid scenes.",
+        purpose: "The Story Room transforms abstract Bible events into memorable, sequential scenes that stick in your mind like movie clips. Instead of vague summaries, you'll crystallize each narrative into 3-7 punchy 'beats' that capture the action. This is where chronology becomes your foundation—before you can interpret Scripture, you must first know what actually happened and in what order. By naming each beat with vivid nouns and verbs, you're building a mental library of biblical narratives that you can instantly recall and teach.",
         coreQuestion: "What exactly happened—and in what order?",
         method: "Break each story into 3–7 'beats' (film shots). Name each beat with a punchy noun/verb.",
         examples: [
@@ -43,7 +43,7 @@ export const palaceFloors: Floor[] = [
         id: "ir",
         name: "Imagination Room",
         tag: "IR",
-        purpose: "Burn stories into emotional memory through sanctified empathy.",
+        purpose: "The Imagination Room invites you to step into the biblical narrative with all five senses, transforming intellectual knowledge into lived experience. Through guided 2-5 minute exercises, you'll feel the wet sand beneath your feet at the Red Sea, smell the night air in Gethsemane, and sense the weight on your chest as Jesus prayed. This sanctified empathy burns stories into your emotional memory far deeper than mere facts ever could. When you preach or teach these passages later, you won't just recite events—you'll transport your listeners into the story because you've been there yourself.",
         coreQuestion: "What does it feel like to stand there?",
         method: "2–5 minute guided 'step-in': sights, sounds, touch, smell; then 1 sentence of personal resonance.",
         examples: [
@@ -99,12 +99,15 @@ export const palaceFloors: Floor[] = [
         id: "gr",
         name: "Gems Room",
         tag: "GR",
-        purpose: "Capture high-leverage insights for reuse.",
-        coreQuestion: "What observation will preach/teach/defend tomorrow?",
-        method: "One sentence + 2 proof texts.",
-        examples: ["Ex 12 Passover timing syncs with Jn 19:14—Lamb hours"],
-        pitfalls: ["Trivia", "Gem without text anchors"],
-        deliverable: "Gem card: claim + refs + use-case"
+        purpose: "The Gems Room is where you mine Scripture for rare and beautiful truths by placing 2-4 seemingly unrelated texts side by side until they suddenly illuminate each other with breathtaking clarity. Like a master jeweler combining different stones to create something more valuable than the sum of its parts, you'll discover profound connections that most readers never see. These aren't random parallels or surface similarities—they're high-leverage insights that emerge only when you dare to ask, 'What happens when I read this verse through the lens of that one?' The result is a gem: a single, crystallized truth so powerful it will preach, teach, and defend the faith for years to come.",
+        coreQuestion: "What beautiful truth emerges when I combine these seemingly unrelated texts?",
+        method: "Take 2-4 verses from different books/contexts; place them side by side; identify the rare truth that emerges from their combination.",
+        examples: [
+          "Ex 12 (Passover at twilight) + Jn 19:14 (crucifixion at 6th hour) → Jesus died at exact moment Passover lambs were slain",
+          "Gen 3:15 (seed of woman) + Gal 4:4 (born of woman) + Rev 12:5 (male child) → Virgin birth thread across redemptive history"
+        ],
+        pitfalls: ["Forced connections", "Trivia instead of theology", "Gem without clear text anchors"],
+        deliverable: "Gem card: Combined texts + rare truth + use-case"
       }
     ]
   },

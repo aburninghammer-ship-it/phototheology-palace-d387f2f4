@@ -1,7 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { RoomCard } from "@/components/RoomCard";
-import { JeevesAssistant } from "@/components/JeevesAssistant";
 import { palaceFloors } from "@/data/palaceData";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -58,26 +57,15 @@ const FloorDetail = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 mb-12">
-            {/* Rooms Grid */}
-            <div className="lg:col-span-2 space-y-6">
-              <h2 className="font-serif text-2xl font-semibold mb-6">
-                {floor.rooms.length} Rooms
-              </h2>
-              <div className="space-y-6">
-                {floor.rooms.map((room) => (
-                  <RoomCard key={room.id} room={room} floorNumber={floor.number} />
-                ))}
-              </div>
-            </div>
-
-            {/* Jeeves Assistant */}
-            <div className="lg:col-span-1">
-              <JeevesAssistant
-                roomTag={floor.rooms[0]?.tag || ""}
-                roomName={floor.rooms[0]?.name || ""}
-                principle={floor.subtitle}
-              />
+          {/* Rooms Section */}
+          <div className="mb-12">
+            <h2 className="font-serif text-2xl font-semibold mb-6">
+              {floor.rooms.length} Rooms
+            </h2>
+            <div className="space-y-8">
+              {floor.rooms.map((room) => (
+                <RoomCard key={room.id} room={room} floorNumber={floor.number} />
+              ))}
             </div>
           </div>
 
