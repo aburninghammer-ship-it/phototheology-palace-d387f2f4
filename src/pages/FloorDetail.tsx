@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { RoomCard } from "@/components/RoomCard";
+import { JeevesAssistant } from "@/components/JeevesAssistant";
 import { palaceFloors } from "@/data/palaceData";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -33,7 +34,7 @@ const FloorDetail = () => {
       <Navigation />
       
       <div className="pt-24 pb-16 px-4">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-7xl">
           {/* Floor Header */}
           <div className="mb-12">
             <Button asChild variant="ghost" className="mb-4">
@@ -57,15 +58,26 @@ const FloorDetail = () => {
             </div>
           </div>
 
-          {/* Rooms Grid */}
-          <div className="mb-12">
-            <h2 className="font-serif text-2xl font-semibold mb-6">
-              {floor.rooms.length} Rooms
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              {floor.rooms.map((room) => (
-                <RoomCard key={room.id} room={room} floorNumber={floor.number} />
-              ))}
+          <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            {/* Rooms Grid */}
+            <div className="lg:col-span-2 space-y-6">
+              <h2 className="font-serif text-2xl font-semibold mb-6">
+                {floor.rooms.length} Rooms
+              </h2>
+              <div className="space-y-6">
+                {floor.rooms.map((room) => (
+                  <RoomCard key={room.id} room={room} floorNumber={floor.number} />
+                ))}
+              </div>
+            </div>
+
+            {/* Jeeves Assistant */}
+            <div className="lg:col-span-1">
+              <JeevesAssistant
+                roomTag={floor.rooms[0]?.tag || ""}
+                roomName={floor.rooms[0]?.name || ""}
+                principle={floor.subtitle}
+              />
             </div>
           </div>
 
@@ -83,7 +95,7 @@ const FloorDetail = () => {
             )}
             
             {nextFloor && (
-              <Button asChild className="gradient-palace text-primary-foreground">
+              <Button asChild className="gradient-palace text-white">
                 <Link to={`/floor/${nextFloor.number}`}>
                   Floor {nextFloor.number}: {nextFloor.name}
                   <ChevronRight className="ml-2 h-4 w-4" />
