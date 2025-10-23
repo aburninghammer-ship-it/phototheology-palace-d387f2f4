@@ -4,11 +4,12 @@ import { fetchChapter } from "@/services/bibleApi";
 import { Chapter } from "@/types/bible";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot } from "lucide-react";
 import { VerseView } from "./VerseView";
 import { PrinciplePanel } from "./PrinciplePanel";
 import { ChainReferencePanel } from "./ChainReferencePanel";
 import { CommentaryPanel } from "./CommentaryPanel";
+import { JeevesVerseAssistant } from "./JeevesVerseAssistant";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -21,6 +22,7 @@ export const BibleReader = () => {
   const [principleMode, setPrincipleMode] = useState(false);
   const [chainReferenceMode, setChainReferenceMode] = useState(false);
   const [commentaryMode, setCommentaryMode] = useState(false);
+  const [jeevesMode, setJeevesMode] = useState(false);
   const [highlightedVerses, setHighlightedVerses] = useState<number[]>([]);
 
   useEffect(() => {
@@ -106,6 +108,7 @@ export const BibleReader = () => {
             setPrincipleMode(!principleMode);
             setChainReferenceMode(false);
             setCommentaryMode(false);
+            setJeevesMode(false);
           }}
           className={principleMode ? "gradient-palace" : ""}
         >
@@ -119,6 +122,7 @@ export const BibleReader = () => {
             setChainReferenceMode(!chainReferenceMode);
             setPrincipleMode(false);
             setCommentaryMode(false);
+            setJeevesMode(false);
             setHighlightedVerses([]);
           }}
           className={chainReferenceMode ? "gradient-palace" : ""}
@@ -133,11 +137,26 @@ export const BibleReader = () => {
             setCommentaryMode(!commentaryMode);
             setPrincipleMode(false);
             setChainReferenceMode(false);
+            setJeevesMode(false);
           }}
           className={commentaryMode ? "gradient-ocean" : ""}
         >
           <MessageSquare className="h-4 w-4 mr-2" />
           Commentary
+        </Button>
+        <Button
+          variant={jeevesMode ? "default" : "outline"}
+          size="sm"
+          onClick={() => {
+            setJeevesMode(!jeevesMode);
+            setPrincipleMode(false);
+            setChainReferenceMode(false);
+            setCommentaryMode(false);
+          }}
+          className={jeevesMode ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg" : ""}
+        >
+          <Bot className="h-4 w-4 mr-2" />
+          Ask Jeeves
         </Button>
       </div>
 
@@ -169,6 +188,14 @@ export const BibleReader = () => {
               verses={chapterData.verses}
               onHighlight={setHighlightedVerses}
             />
+          ) : jeevesMode && selectedVerse ? (
+            <JeevesVerseAssistant
+              book={book}
+              chapter={chapter}
+              verse={selectedVerse}
+              verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+              onClose={() => setSelectedVerse(null)}
+            />
           ) : commentaryMode && selectedVerse ? (
             <CommentaryPanel
               book={book}
@@ -188,7 +215,9 @@ export const BibleReader = () => {
             <Card className="p-6 text-center text-muted-foreground sticky top-24">
               <BookOpen className="h-12 w-12 mx-auto mb-3 text-primary/50" />
               <p className="text-sm">
-                {commentaryMode
+                {jeevesMode
+                  ? "Select a verse to ask Jeeves questions using any room or principle"
+                  : commentaryMode
                   ? "Select a verse for AI-powered commentary using your chosen principles"
                   : "Select a verse to view principles, cross-references, and commentary"}
               </p>

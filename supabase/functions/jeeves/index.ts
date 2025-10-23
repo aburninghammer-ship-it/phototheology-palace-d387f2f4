@@ -29,7 +29,9 @@ serve(async (req) => {
       query,
       description,
       verse_reference,
-      room_type
+      room_type,
+      question,
+      roomPurpose
     } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -286,6 +288,32 @@ Suggest how to structure this like a movie:
 5. Call to Action - What the audience should do
 
 Be specific but flexible. Help them see the cinematic potential.`;
+
+    } else if (mode === "verse-assistant") {
+      systemPrompt = `You are Jeeves, a wise and insightful Bible study assistant for Phototheology.
+Your role is to help users understand Scripture deeply by applying specific study methods (rooms) and principles.
+Be scholarly yet accessible, profound yet practical.`;
+
+      const roomContext = roomTag !== "General" 
+        ? `Using the ${roomName} (${roomTag}) method, which focuses on: ${roomPurpose}`
+        : "Using general biblical analysis";
+
+      userPrompt = `A student is studying ${book} ${chapter}:${verse} and asks:
+
+"${question}"
+
+Verse text: "${verseText}"
+
+${roomContext}
+
+Provide a thoughtful response that:
+1. Directly answers their question (2-3 paragraphs)
+2. ${roomTag !== "General" ? `Applies the ${roomName} method to this verse` : "Applies sound biblical principles"}
+3. Gives 2-3 specific insights they can use
+4. Includes a practical takeaway or application
+5. If relevant, suggests cross-references or connections
+
+Be conversational, educational, and inspiring. Help them see deeper truth.`;
 
     } else if (mode === "generate-flashcards") {
       const { topic } = await req.json();
