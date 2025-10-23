@@ -118,6 +118,7 @@ export function WebRTCCall({ roomId, userId, userName }: WebRTCCallProps) {
     // Handle ICE candidates
     pc.onicecandidate = (event) => {
       if (event.candidate && channelRef.current) {
+        console.log("Sending ICE candidate to", remoteUserId);
         channelRef.current.send({
           type: "broadcast",
           event: "ice-candidate",
@@ -130,16 +131,26 @@ export function WebRTCCall({ roomId, userId, userName }: WebRTCCallProps) {
       }
     };
 
+    // Handle connection state
+    pc.onconnectionstatechange = () => {
+      console.log(`Connection state with ${remoteUserId}:`, pc.connectionState);
+      if (pc.connectionState === 'failed') {
+        toast.error('Connection failed. Retrying...');
+        closePeerConnection(remoteUserId);
+      }
+    };
+
     // Create and send offer
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
 
+    console.log("Sending offer to", remoteUserId);
     if (channelRef.current) {
       channelRef.current.send({
         type: "broadcast",
         event: "offer",
         payload: {
-          offer,
+          offer: { type: offer.type, sdp: offer.sdp },
           from: userId,
           to: remoteUserId,
         },
@@ -178,6 +189,7 @@ export function WebRTCCall({ roomId, userId, userName }: WebRTCCallProps) {
     // Handle ICE candidates
     pc.onicecandidate = (event) => {
       if (event.candidate && channelRef.current) {
+        console.log("Sending ICE candidate (answer) to", from);
         channelRef.current.send({
           type: "broadcast",
           event: "ice-candidate",
@@ -190,16 +202,27 @@ export function WebRTCCall({ roomId, userId, userName }: WebRTCCallProps) {
       }
     };
 
+    // Handle connection state
+    pc.onconnectionstatechange = () => {
+      console.log(`Connection state with ${from}:`, pc.connectionState);
+      if (pc.connectionState === 'failed') {
+        toast.error('Connection failed. Retrying...');
+        closePeerConnection(from);
+      }
+    };
+
+    console.log("Received offer from", from);
     await pc.setRemoteDescription(new RTCSessionDescription(offer));
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
+    console.log("Sending answer to", from);
     if (channelRef.current) {
       channelRef.current.send({
         type: "broadcast",
         event: "answer",
         payload: {
-          answer,
+          answer: { type: answer.type, sdp: answer.sdp },
           from: userId,
           to: from,
         },
@@ -210,18 +233,30 @@ export function WebRTCCall({ roomId, userId, userName }: WebRTCCallProps) {
   const handleAnswer = async ({ answer, from }: any) => {
     if (from === userId) return;
 
+    console.log("Received answer from", from);
     const pc = peerConnectionsRef.current[from];
     if (pc) {
-      await pc.setRemoteDescription(new RTCSessionDescription(answer));
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(answer));
+        console.log("Set remote description (answer) successfully");
+      } catch (error) {
+        console.error("Error setting remote description:", error);
+      }
     }
   };
 
-  const handleIceCandidate = async ({ candidate, from }: any) => {
-    if (from === userId) return;
+  const handleIceCandidate = async ({ candidate, from, to }: any) => {
+    if (from === userId || (to && to !== userId)) return;
 
+    console.log("Received ICE candidate from", from);
     const pc = peerConnectionsRef.current[from];
-    if (pc) {
-      await pc.addIceCandidate(new RTCIceCandidate(candidate));
+    if (pc && pc.remoteDescription) {
+      try {
+        await pc.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log("Added ICE candidate successfully");
+      } catch (error) {
+        console.error("Error adding ICE candidate:", error);
+      }
     }
   };
 

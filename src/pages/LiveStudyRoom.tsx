@@ -32,6 +32,13 @@ interface Room {
   };
 }
 
+interface ParticipantLocation {
+  userId: string;
+  username: string;
+  currentPath: string;
+  timestamp: string;
+}
+
 const LiveStudyRoom = () => {
   const { roomId } = useParams();
   const { user } = useAuth();
@@ -42,6 +49,8 @@ const LiveStudyRoom = () => {
   const [newMessage, setNewMessage] = useState("");
   const [participants, setParticipants] = useState<any[]>([]);
   const [userDisplayName, setUserDisplayName] = useState<string>("");
+  const [participantLocations, setParticipantLocations] = useState<ParticipantLocation[]>([]);
+  const [showLocations, setShowLocations] = useState(true);
 
   useEffect(() => {
     if (!roomId || !user) return;
@@ -68,11 +77,57 @@ const LiveStudyRoom = () => {
       })
       .subscribe();
 
+    // Subscribe to location sharing
+    const locationChannel = supabase
+      .channel(`room_${roomId}_locations`);
+    
+    locationChannel
+      .on("presence", { event: "sync" }, () => {
+        const state = locationChannel.presenceState();
+        const locations: ParticipantLocation[] = [];
+        
+        Object.entries(state).forEach(([key, values]: [string, any[]]) => {
+          if (values[0] && values[0].userId !== user.id) {
+            locations.push(values[0] as ParticipantLocation);
+          }
+        });
+        
+        setParticipantLocations(locations);
+      })
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          // Track current location
+          await locationChannel.track({
+            userId: user.id,
+            username: userDisplayName || "User",
+            currentPath: window.location.pathname,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      });
+
+    // Update location when route changes
+    const handleLocationChange = async () => {
+      const currentState = locationChannel.state;
+      if (currentState === "joined") {
+        await locationChannel.track({
+          userId: user.id,
+          username: userDisplayName || "User",
+          currentPath: window.location.pathname,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+
     return () => {
       supabase.removeChannel(chatChannel);
       supabase.removeChannel(participantsChannel);
+      supabase.removeChannel(locationChannel);
+      window.removeEventListener("popstate", handleLocationChange);
     };
-  }, [roomId, user]);
+  }, [roomId, user, userDisplayName]);
 
   const fetchUserProfile = async () => {
     const { data: profile } = await supabase
@@ -226,6 +281,28 @@ const LiveStudyRoom = () => {
     }
   };
 
+  const followParticipant = (path: string) => {
+    navigate(path);
+    toast({
+      title: "Following participant",
+      description: "Navigating to their location",
+    });
+  };
+
+  const getPathLabel = (path: string) => {
+    const pathMap: { [key: string]: string } = {
+      "/": "Home",
+      "/palace": "Palace",
+      "/bible": "Bible",
+      "/games": "Games",
+      "/community": "Community",
+      "/training-drills": "Training Drills",
+      "/chain-chess": "Chain Chess",
+      "/flashcards": "Flashcards",
+    };
+    return pathMap[path] || path.split("/").pop() || "Unknown";
+  };
+
   if (!room) return null;
 
   return (
@@ -322,14 +399,41 @@ const LiveStudyRoom = () => {
               <CardContent>
                 <ScrollArea className="h-[450px]">
                   <div className="space-y-2">
-                    {participants.map((participant) => (
-                      <div key={participant.id} className="flex items-center gap-2 p-2 rounded-lg bg-muted">
-                        <Users className="h-4 w-4" />
-                        <span className="text-sm">
-                          {participant.profiles?.username || "Unknown"}
-                        </span>
-                      </div>
-                    ))}
+                    {participants.map((participant) => {
+                      const location = participantLocations.find(
+                        (loc) => loc.userId === participant.user_id
+                      );
+                      return (
+                        <div
+                          key={participant.id}
+                          className="flex items-center justify-between gap-2 p-2 rounded-lg bg-muted"
+                        >
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <Users className="h-4 w-4 flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <span className="text-sm font-medium block truncate">
+                                {participant.profiles?.username || "Unknown"}
+                              </span>
+                              {showLocations && location && (
+                                <span className="text-xs text-muted-foreground block truncate">
+                                  📍 {getPathLabel(location.currentPath)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          {showLocations && location && location.currentPath !== window.location.pathname && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => followParticipant(location.currentPath)}
+                              className="flex-shrink-0"
+                            >
+                              Follow
+                            </Button>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </ScrollArea>
               </CardContent>
