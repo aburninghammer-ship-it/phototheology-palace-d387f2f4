@@ -8,10 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, MessageSquare, Sparkles, Target, Share2, Copy } from "lucide-react";
+import { Trophy, MessageSquare, Sparkles, Target, Share2, Copy, MessagesSquare } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EmojiPicker } from "@/components/EmojiPicker";
 import { WebRTCCall } from "@/components/WebRTCCall";
+import { ChatInput } from "@/components/ChatInput";
 
 interface Move {
   player: string;
@@ -45,6 +46,7 @@ const ChainChess = () => {
   const [selectedGameCategories, setSelectedGameCategories] = useState<string[]>([]);
   const [difficultyLevel, setDifficultyLevel] = useState<"kids" | "adults">("adults");
   const [userVerse, setUserVerse] = useState("");
+  const [chatMessages, setChatMessages] = useState<Array<{ userId: string; userName: string; message: string; timestamp: string }>>([]);
 
   const categories = ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"];
   const isVsJeeves = mode === "jeeves";
@@ -72,15 +74,24 @@ const ChainChess = () => {
 
   useEffect(() => {
     if (gameId) {
-      const channel = supabase
+      const gameChannel = supabase
         .channel(`game_${gameId}`)
         .on("postgres_changes", { event: "*", schema: "public", table: "game_moves", filter: `game_id=eq.${gameId}` }, () => {
           loadMoves();
         })
         .subscribe();
 
+      // Chat channel for text messages
+      const chatChannel = supabase
+        .channel(`chat_${gameId}`)
+        .on("broadcast", { event: "message" }, ({ payload }) => {
+          setChatMessages((prev) => [...prev, payload]);
+        })
+        .subscribe();
+
       return () => {
-        supabase.removeChannel(channel);
+        supabase.removeChannel(gameChannel);
+        supabase.removeChannel(chatChannel);
       };
     }
   }, [gameId]);
@@ -515,6 +526,22 @@ const ChainChess = () => {
     }
   };
 
+  const sendChatMessage = async (message: string) => {
+    if (!gameId) return;
+    
+    const chatChannel = supabase.channel(`chat_${gameId}`);
+    await chatChannel.send({
+      type: "broadcast",
+      event: "message",
+      payload: {
+        userId: user!.id,
+        userName: user!.email || "User",
+        message,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  };
+
   if (!user) return null;
 
   return (
@@ -628,8 +655,8 @@ const ChainChess = () => {
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-6">
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 space-y-6">
               {!isVsJeeves && gameId && (
                 <WebRTCCall
                   roomId={gameId}
@@ -642,7 +669,7 @@ const ChainChess = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MessageSquare className="h-5 w-5" />
-                    Conversation
+                    Game Conversation
                   </CardTitle>
                 </CardHeader>
               <CardContent>
@@ -696,9 +723,8 @@ const ChainChess = () => {
                 </ScrollArea>
               </CardContent>
               </Card>
-            </div>
 
-            <Card className="h-[600px]">
+              <Card className="h-[600px]">
               <CardHeader>
                 <CardTitle>Your Turn</CardTitle>
                 {challengeCategory && (
@@ -784,6 +810,46 @@ const ChainChess = () => {
                 )}
               </CardContent>
             </Card>
+            </div>
+
+            {/* Text Chat Sidebar */}
+            {!isVsJeeves && (
+              <div className="space-y-4">
+                <Card className="h-[600px] flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MessagesSquare className="h-5 w-5" />
+                      Text Chat
+                    </CardTitle>
+                    <CardDescription>
+                      Chat with your opponent
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col">
+                    <ScrollArea className="flex-1 pr-4 mb-4">
+                      <div className="space-y-3">
+                        {chatMessages.map((msg, idx) => (
+                          <div
+                            key={idx}
+                            className={`p-3 rounded-lg ${
+                              msg.userId === user!.id
+                                ? "bg-primary/10 ml-auto max-w-[80%]"
+                                : "bg-muted mr-auto max-w-[80%]"
+                            }`}
+                          >
+                            <p className="text-xs text-muted-foreground mb-1">
+                              {msg.userId === user!.id ? "You" : msg.userName}
+                            </p>
+                            <p className="text-sm">{msg.message}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                    <ChatInput onSend={sendChatMessage} placeholder="Send a message..." />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
           </>
           )}
