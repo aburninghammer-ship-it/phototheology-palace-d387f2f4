@@ -86,31 +86,92 @@ Format your response as JSON:
     console.log('Daily challenge created:', challengeContent.title);
 
     // Generate Treasure Hunt
-    const huntPrompt = `Create a biblical treasure hunt with 5-8 clues based on the 8-floor memory palace system.
+    const huntPrompt = `Create a deeply profound biblical treasure hunt with exactly 8 multi-layered clues that require extensive research, cross-referencing, and theological insight to solve. This should take dedicated users a full 24 hours of study.
 
-Requirements:
-- Title: Compelling biblical theme
-- Difficulty: choose from easy, intermediate, advance, or pro (match number of clues: easy=5, intermediate=6, advance=7, pro=8)
-- Biblical conclusion: Powerful summary of the biblical truth (one sentence)
-- Clues: Each clue should have:
-  * room_tag: one of (foundation, wisdom, kingdom, law, grace, prophecy, glory, new_creation)
-  * principle: Short principle name
-  * hint: Question that guides to answer (engaging, not too easy)
-  * correct_answer: Single word or short phrase
+CRITICAL: Use ONLY these valid room tags and their associated principles:
 
-Theme ideas: Biblical characters, prophecy, Christ's ministry, sanctuary service, salvation history, end times
+FLOOR 1 - FURNISHING:
+- SR (Story Room): "What exactly happened—and in what order?"
+- IR (Imagination Room): "What does it feel like to stand there?"
+- 24 (24FPS Room): "What image will make this chapter unforgettably findable?"
+- BR (Bible Rendered): "What block image captures this 24-chapter arc?"
+- TR (Translation Room): "What does this verse look like?"
+- GR (Gems Room): "What beautiful truth emerges when I combine these seemingly unrelated texts?"
+
+FLOOR 2 - INVESTIGATION:
+- OR (Observation Room): "What is there—exactly?"
+- DC (Def-Com Room): "What did the words mean then, and what did the world look like there?"
+- ST (Symbols/Types Room): "What is this symbol's consistent meaning and Christ-fulfillment?"
+- QR (Questions Room): "What must be asked inside the text, across texts, and in PT-framework?"
+- QA (Q&A Chains Room): "Where does the Bible itself supply the answer?"
+
+FLOOR 3 - FREESTYLE:
+- NF (Nature Freestyle): "What does this natural object teach about God's Word?"
+- PF (Personal Freestyle): "Where is God writing lessons in my story?"
+- BF (Bible Freestyle): "What verses are this verse's 'relatives'?"
+- HF (History/Social Freestyle): "How does this secular historical event or social phenomenon illuminate the Bible passage?"
+- LR (Listening Room): "What verse does this quote/sermon/conversation echo?"
+
+FLOOR 4 - NEXT LEVEL:
+- CR (Concentration Room): "Where is Jesus here?"
+- DR (Dimensions Room): "How does this text speak to each dimension?"
+- C6 (Connect-6): "What genre is this, and how should I read it?"
+- TRm (Theme Room): "Which theological span does this text primarily occupy?"
+- TZ (Time Zone): "Where does this event sit in God's timeline?"
+- PRm (Patterns Room): "What pattern repeats across Scripture?"
+- P‖ (Parallels Room): "What event echoes this one?"
+- FRt (Fruit Room): "What fruit does this reading produce?"
+
+FLOOR 5 - VISION:
+- BL (Blue Room — Sanctuary): "Which sanctuary article/service does this map to?"
+- PR (Prophecy Room): "What does this prophetic symbol represent?"
+- 3A (Three Angels Room): "How does this text proclaim the everlasting gospel?"
+- FE (Feasts Room): "Which feast does this fulfill or foreshadow?"
+- CEC (Christ in Every Chapter): "How is Jesus present in this chapter?"
+- R66 (Room 66): "How does this theme develop from Genesis to Revelation?"
+
+FLOOR 6 - THREE HEAVENS & CYCLES:
+- 1H/2H/3H (Three Heavens): "Which horizon does this prophecy/promise address?"
+- @ (Eight Cycles): "Which covenant cycle does this narrative fit?"
+- JR (Juice Room): "What is the essence of this book through the palace lens?"
+
+FLOOR 7 - SPIRITUAL & EMOTIONAL:
+- FRm (Fire Room): "What wound or hope does this text speak to?"
+- MR (Meditation Room): "What one truth will I carry today?"
+- SRm (Speed Room): "Can I produce this knowledge under pressure?"
+
+FLOOR 8 - MASTER:
+- ∞ (Reflexive Mastery): "Am I thinking Phototheologically without thinking about it?"
+
+Requirements for each clue:
+1. Must use one of the EXACT room tags above (not made-up ones)
+2. Principle must match the room's core question exactly
+3. Hint must be a MULTI-LAYERED challenge requiring:
+   - Cross-referencing multiple books of the Bible
+   - Understanding Hebrew/Greek context
+   - Recognizing typological patterns
+   - Connecting historical/prophetic timelines
+   - Deep theological synthesis
+4. Hint should NOT be answerable with one verse lookup
+5. Correct answer should be precise but require significant study to reach
+6. Progress through different floors to showcase the palace system
+7. Each clue builds toward the biblical conclusion
+
+Difficulty: ALWAYS create "pro" level (8 clues, maximum challenge)
+
+Theme ideas: Sanctuary symbolism, Messianic prophecy chains, Covenant progressions, Prophetic parallels, Type-antitype connections
 
 Format as JSON:
 {
-  "title": "string",
-  "difficulty": "easy|intermediate|advance|pro",
-  "biblical_conclusion": "string",
+  "title": "string (compelling and mysterious)",
+  "difficulty": "pro",
+  "biblical_conclusion": "string (profound one-sentence synthesis)",
   "clues": [
     {
-      "room_tag": "foundation|wisdom|kingdom|law|grace|prophecy|glory|new_creation",
-      "principle": "string",
-      "hint": "string",
-      "correct_answer": "string"
+      "room_tag": "EXACT tag from list above",
+      "principle": "EXACT core question from that room",
+      "hint": "Multi-layered question requiring extensive research (3-5 sentences describing the challenge)",
+      "correct_answer": "string (precise answer, 1-3 words)"
     }
   ]
 }`;
@@ -134,9 +195,10 @@ Format as JSON:
     const huntData = await huntResponse.json();
     const huntContent = JSON.parse(huntData.choices[0].message.content);
 
-    // Calculate expiration (30 days from tomorrow)
+    // Calculate expiration (24 hours from tomorrow start)
     const expiration = new Date(tomorrow);
-    expiration.setDate(expiration.getDate() + 30);
+    expiration.setDate(expiration.getDate() + 1);
+    expiration.setHours(6, 0, 0, 0);
 
     // Insert treasure hunt
     const { data: hunt, error: huntError } = await supabase
