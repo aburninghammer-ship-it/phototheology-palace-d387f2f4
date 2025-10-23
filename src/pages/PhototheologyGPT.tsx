@@ -1,9 +1,19 @@
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Book, Image } from "lucide-react";
-import { SandboxedEmbed } from "@/components/SandboxedEmbed";
+import { useEffect } from "react";
 
 const PhototheologyGPT = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://studio.pickaxe.co/api/embed/bundle.js';
+    script.defer = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,12 +39,10 @@ const PhototheologyGPT = () => {
                 Explore the intersection of photography, art, and theology. Upload images, ask about biblical symbolism, or dive into visual representations of Scripture.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <SandboxedEmbed
-                scriptUrl="https://phototheologygpt.com/api/embed/bundle.js"
-                embedId="deployment-f6c8b84b-543b-4920-8ed5-3c8a817956c1"
-                minHeight="600px"
-                title="PhototheologyGPT Chat Interface"
+            <CardContent className="p-6">
+              <div 
+                id="deployment-ac7e1d1e-1b82-4f73-812e-5d1d59b50f34"
+                style={{ minHeight: '600px' }}
               />
             </CardContent>
           </Card>
