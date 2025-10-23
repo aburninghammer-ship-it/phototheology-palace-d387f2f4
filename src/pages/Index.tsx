@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Navigation";
-import { Building2, BookOpen, Lightbulb, Crown, Sparkles, Layers, Zap } from "lucide-react";
+import { Building2, BookOpen, Lightbulb, Crown, Sparkles, Layers, Zap, Scale, Telescope, Search } from "lucide-react";
 
 const Index = () => {
   return (
@@ -151,6 +151,62 @@ const Index = () => {
                 then let the palace become reflexive thought.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Advanced Modes Section */}
+      <section className="py-20 px-4 bg-card/80 backdrop-blur-sm">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/10 border-2 border-accent/20 mb-4">
+              <Sparkles className="h-4 w-4 text-accent animate-pulse-glow" />
+              <span className="text-sm font-semibold text-accent">Floor 0 - Advanced Modes</span>
+            </div>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold mb-4 bg-gradient-royal bg-clip-text text-transparent">
+              AI-Powered Study Tools
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Specialized tools for deep analysis and real-world application
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <Link to="/culture-controversy" className="group">
+              <div className="h-full p-8 rounded-2xl bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950 dark:to-orange-950 border-2 border-red-200 dark:border-red-800 hover-lift hover:border-red-500 transition-all">
+                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <Scale className="h-8 w-8 text-red-500" />
+                </div>
+                <h3 className="font-serif text-2xl font-bold mb-3 text-foreground">Culture & Controversy</h3>
+                <p className="text-foreground/80 leading-relaxed">
+                  Analyze current events, cultural movements, and political topics through the clear lens of Jesus' teachings.
+                </p>
+              </div>
+            </Link>
+            
+            <Link to="/prophecy-watch" className="group">
+              <div className="h-full p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border-2 border-blue-200 dark:border-blue-800 hover-lift hover:border-blue-500 transition-all">
+                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <Telescope className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="font-serif text-2xl font-bold mb-3 text-foreground">Prophecy Watch</h3>
+                <p className="text-foreground/80 leading-relaxed">
+                  Monitoring signals of end-time events. Watching for the fulfillment of Daniel and Revelation.
+                </p>
+              </div>
+            </Link>
+            
+            <Link to="/research-mode" className="group">
+              <div className="h-full p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-indigo-900 border-2 border-blue-200 dark:border-blue-800 hover-lift hover:border-blue-500 transition-all">
+                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <Search className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="font-serif text-2xl font-bold mb-3 text-foreground">Research Mode</h3>
+                <p className="text-foreground/80 leading-relaxed">
+                  An AI-powered assistant for deep biblical study with comprehensive, scholarly research.
+                </p>
+              </div>
+            </Link>
           </div>
         </div>
       </section>

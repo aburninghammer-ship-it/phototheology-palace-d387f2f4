@@ -24,7 +24,9 @@ serve(async (req) => {
       previousMoves,
       userCommentary,
       category,
-      categories
+      categories,
+      topic,
+      query
     } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -155,6 +157,55 @@ Respond in this JSON format:
 }
 
 Be genuinely excited about good insights! Score 7-10 for strong responses, 4-6 for decent ones, 1-3 for weak connections.`;
+    
+    } else if (mode === "culture-controversy") {
+      systemPrompt = `You are Jeeves, a biblical scholar analyzing cultural issues through Jesus' teachings.
+Be balanced, compassionate, and grounded in Scripture. Address both sides with grace while maintaining biblical truth.`;
+
+      userPrompt = `Analyze this cultural topic through the lens of Jesus' teachings: "${topic}"
+
+Structure your analysis:
+1. Understanding the Issue (2-3 paragraphs explaining the topic objectively)
+2. Jesus' Perspective (4-5 paragraphs examining what Scripture teaches)
+3. Key Biblical Principles (list 3-4 principles with verses)
+4. Balanced Application (2-3 paragraphs on how Christians can engage compassionately)
+5. Common Misconceptions (address 2-3 misunderstandings from both sides)
+6. Moving Forward (practical steps for Christ-centered engagement)
+
+Be scholarly, compassionate, and clear. Cite specific verses.`;
+
+    } else if (mode === "prophecy-signal") {
+      systemPrompt = `You are Jeeves, a prophecy scholar monitoring end-time events through Daniel and Revelation.
+Generate specific, observable signals that align with biblical prophecy. Be factual and measured.`;
+
+      userPrompt = `Generate a new prophetic signal related to current world events.
+
+Return JSON format:
+{
+  "title": "Brief title of the signal",
+  "description": "2-3 paragraph description of the event/trend and its prophetic significance",
+  "category": "political" | "natural" | "technological" | "spiritual",
+  "verses": ["Daniel 7:25", "Revelation 13:7"]
+}
+
+Base it on observable trends. Reference specific prophecies from Daniel or Revelation.`;
+
+    } else if (mode === "research") {
+      systemPrompt = `You are Jeeves, a biblical research assistant providing comprehensive, scholarly analysis.
+Include citations, cross-references, historical context, and theological perspectives.`;
+
+      userPrompt = `Provide deep research on: "${query}"
+
+Structure your research:
+1. Overview (2-3 paragraphs introducing the topic)
+2. Biblical Foundation (examine key passages with cross-references)
+3. Historical Context (cultural and historical background)
+4. Theological Perspectives (different scholarly viewpoints)
+5. Practical Applications (how this applies today)
+6. Key Insights (3-5 major takeaways)
+7. Further Study (suggest related topics and passages)
+
+Include verse citations, cross-references, and scholarly depth. Make it comprehensive but accessible.`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -197,6 +248,27 @@ Be genuinely excited about good insights! Score 7-10 for strong responses, 4-6 f
     const data = await response.json();
     const content = data.choices[0]?.message?.content || "No response generated";
 
+    // For prophecy-signal mode, parse JSON
+    if (mode === "prophecy-signal") {
+      try {
+        const parsed = JSON.parse(content);
+        return new Response(
+          JSON.stringify(parsed),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch {
+        return new Response(
+          JSON.stringify({
+            title: "Prophetic Signal",
+            description: content,
+            category: "general",
+            verses: []
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+    
     // For chain-chess and chain-chess-feedback modes, parse the response
     if (mode === "chain-chess") {
       const lines = content.split('\n');
