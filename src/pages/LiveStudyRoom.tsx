@@ -152,21 +152,26 @@ const LiveStudyRoom = () => {
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
-    const { error } = await supabase
+    console.log("Sending message:", newMessage, "Room ID:", roomId, "User ID:", user?.id);
+
+    const { data, error } = await supabase
       .from("study_room_chat")
       .insert({
         room_id: roomId,
         user_id: user!.id,
         message: newMessage,
-      });
+      })
+      .select();
 
     if (error) {
+      console.error("Error sending message:", error);
       toast({
         title: "Error sending message",
         description: error.message,
         variant: "destructive",
       });
     } else {
+      console.log("Message sent successfully:", data);
       setNewMessage("");
     }
   };
@@ -281,9 +286,14 @@ const LiveStudyRoom = () => {
                       placeholder="Type a message..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          sendMessage();
+                        }
+                      }}
                     />
-                    <Button onClick={sendMessage}>
+                    <Button onClick={sendMessage} disabled={!newMessage.trim()}>
                       <Send className="h-4 w-4" />
                     </Button>
                   </div>
