@@ -12,6 +12,7 @@ import BibleChapter from "./pages/BibleChapter";
 import Auth from "./pages/Auth";
 import DailyChallenges from "./pages/DailyChallenges";
 import Games from "./pages/Games";
+import ChainChess from "./pages/ChainChess";
 import KidsGames from "./pages/KidsGames";
 import LiveStudy from "./pages/LiveStudy";
 import Community from "./pages/Community";
@@ -38,6 +39,7 @@ function App() {
             <Route path="/bible/:book/:chapter" element={<BibleChapter />} />
             <Route path="/daily-challenges" element={<DailyChallenges />} />
             <Route path="/games" element={<Games />} />
+            <Route path="/games/chain-chess/:gameId/:mode?" element={<ChainChess />} />
             <Route path="/kids-games" element={<KidsGames />} />
             <Route path="/live-study" element={<LiveStudy />} />
             <Route path="/community" element={<Community />} />

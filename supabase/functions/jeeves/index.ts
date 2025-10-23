@@ -9,7 +9,24 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { roomTag, roomName, principle, mode, book, chapter, verses, verseText, selectedPrinciples } = await req.json();
+    const { 
+      roomTag, 
+      roomName, 
+      principle, 
+      mode, 
+      book, 
+      chapter, 
+      verses, 
+      verseText, 
+      selectedPrinciples,
+      verse,
+      isFirstMove,
+      previousMoves,
+      userCommentary,
+      category,
+      categories
+    } = await req.json();
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -86,6 +103,58 @@ Structure your commentary:
 5. One profound closing thought
 
 Make it scholarly yet accessible.`;
+    
+    } else if (mode === "chain-chess") {
+      systemPrompt = `You are Jeeves, an enthusiastic Bible study companion playing Chain Chess!
+Your role is to make insightful biblical commentary that builds connections between verses and principles.
+Be scholarly yet warm, like an excited friend sharing discoveries.`;
+
+      if (isFirstMove) {
+        userPrompt = `Start a Chain Chess game on ${verse}.
+
+1. Share an insightful 3-4 sentence commentary on this verse
+2. End by challenging the player to respond using ONE of these categories:
+   - Books of the Bible
+   - Rooms of the Palace
+   - Principles of the Palace
+
+Make it engaging and set a high bar for the conversation!`;
+      } else {
+        const lastMove = previousMoves[previousMoves.length - 1];
+        userPrompt = `Continue the Chain Chess game on ${verse}.
+
+Previous commentary: "${lastMove.commentary}"
+
+1. Build on what was said by adding 3-4 sentences of fresh insight
+2. Show excitement about the connection
+3. Challenge them to respond using ONE of these categories:
+   - Books of the Bible
+   - Rooms of the Palace  
+   - Principles of the Palace
+
+Be enthusiastic and encouraging!`;
+      }
+
+    } else if (mode === "chain-chess-feedback") {
+      systemPrompt = `You are Jeeves, scoring Chain Chess responses! 
+Celebrate what makes each response impactful, like an excited friend.
+Then give a score from 1-10 based on: biblical accuracy, depth of insight, and connection to the challenge category.`;
+
+      const lastMove = previousMoves[previousMoves.length - 1];
+      
+      userPrompt = `The player responded to ${verse} using the "${category}" category:
+
+Their commentary: "${userCommentary}"
+
+Previous move for context: "${lastMove.commentary}"
+
+Respond in this JSON format:
+{
+  "feedback": "2-3 enthusiastic sentences highlighting what makes their response impactful and one way it could be even stronger",
+  "score": 8
+}
+
+Be genuinely excited about good insights! Score 7-10 for strong responses, 4-6 for decent ones, 1-3 for weak connections.`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -127,6 +196,36 @@ Make it scholarly yet accessible.`;
 
     const data = await response.json();
     const content = data.choices[0]?.message?.content || "No response generated";
+
+    // For chain-chess and chain-chess-feedback modes, parse the response
+    if (mode === "chain-chess") {
+      const lines = content.split('\n');
+      const commentary = lines.slice(0, -2).join('\n').trim();
+      const challengeCategory = ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"][
+        Math.floor(Math.random() * 3)
+      ];
+      
+      return new Response(
+        JSON.stringify({ commentary, challengeCategory, score: 8 }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    } else if (mode === "chain-chess-feedback") {
+      try {
+        const parsed = JSON.parse(content);
+        return new Response(
+          JSON.stringify(parsed),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch {
+        return new Response(
+          JSON.stringify({ 
+            feedback: content, 
+            score: 7 
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
 
     return new Response(
       JSON.stringify({ content }),

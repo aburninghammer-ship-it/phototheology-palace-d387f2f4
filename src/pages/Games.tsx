@@ -16,6 +16,10 @@ const Games = () => {
     }
   }, [user, loading, navigate]);
 
+  const startChainChess = async (vsJeeves: boolean) => {
+    navigate(`/games/chain-chess/new${vsJeeves ? '/jeeves' : ''}`);
+  };
+
   const adultGames = [
     { id: "chain_chess", name: "Chain Chess", description: "Build biblical chains with Jeeves", featured: true },
     { id: "palace_quiz", name: "Palace Quiz", description: "Test your knowledge of the Palace principles" },
@@ -50,22 +54,45 @@ const Games = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <Button
-                      onClick={() => navigate(`/games/${game.id}`)}
-                      className="w-full"
-                      variant={game.featured ? "default" : "outline"}
-                    >
-                      <Users className="mr-2 h-4 w-4" />
-                      Play vs Player
-                    </Button>
-                    <Button
-                      onClick={() => navigate(`/games/${game.id}/jeeves`)}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <Gamepad2 className="mr-2 h-4 w-4" />
-                      Play vs Jeeves
-                    </Button>
+                    {game.id === "chain_chess" ? (
+                      <>
+                        <Button
+                          onClick={() => startChainChess(false)}
+                          className="w-full"
+                          variant="default"
+                        >
+                          <Users className="mr-2 h-4 w-4" />
+                          Play vs Player
+                        </Button>
+                        <Button
+                          onClick={() => startChainChess(true)}
+                          className="w-full"
+                          variant="outline"
+                        >
+                          <Gamepad2 className="mr-2 h-4 w-4" />
+                          Play vs Jeeves
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          onClick={() => navigate(`/games/${game.id}`)}
+                          className="w-full"
+                          variant={game.featured ? "default" : "outline"}
+                        >
+                          <Users className="mr-2 h-4 w-4" />
+                          Play vs Player
+                        </Button>
+                        <Button
+                          onClick={() => navigate(`/games/${game.id}/jeeves`)}
+                          className="w-full"
+                          variant="outline"
+                        >
+                          <Gamepad2 className="mr-2 h-4 w-4" />
+                          Play vs Jeeves
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
