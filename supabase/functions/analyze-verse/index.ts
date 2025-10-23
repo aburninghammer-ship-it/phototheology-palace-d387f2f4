@@ -45,7 +45,7 @@ Provide a JSON response with the following structure:
 
 Be selective - only include dimensions/cycles/sanctuary/feasts that genuinely apply. Not every verse touches every element. Focus on quality over quantity. Make sure cross-references are genuinely connected by theme, typology, or direct quotation.`;
 
-    const response = await fetch('https://api.lovable.app/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
@@ -63,7 +63,6 @@ Be selective - only include dimensions/cycles/sanctuary/feasts that genuinely ap
             content: prompt
           }
         ],
-        temperature: 0.7,
         response_format: { type: 'json_object' }
       }),
     });
