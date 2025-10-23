@@ -30,8 +30,11 @@ const VerseMatch = () => {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [isVsJeeves] = useState(mode === "jeeves");
+  const [isCustomMode] = useState(mode === "custom");
+  const [verses, setVerses] = useState<Array<{ text: string; reference: string }>>([]);
+  const [isLoadingVerses, setIsLoadingVerses] = useState(true);
 
-  const verses = [
+  const defaultVerses = [
     { text: "For God so loved the world, that he gave his only begotten Son...", reference: "John 3:16" },
     { text: "The LORD is my shepherd; I shall not want.", reference: "Psalm 23:1" },
     { text: "I can do all things through Christ which strengtheneth me.", reference: "Philippians 4:13" },
@@ -41,8 +44,53 @@ const VerseMatch = () => {
   ];
 
   useEffect(() => {
-    initializeGame();
+    loadVerses();
   }, []);
+
+  useEffect(() => {
+    if (verses.length > 0 && !isLoadingVerses) {
+      initializeGame();
+    }
+  }, [verses, isLoadingVerses]);
+
+  const loadVerses = async () => {
+    if (isCustomMode && user) {
+      try {
+        const { data, error } = await supabase
+          .from("memorization_verses")
+          .select("verse_text, verse_reference")
+          .eq("user_id", user.id)
+          .limit(10);
+
+        if (error) throw error;
+
+        if (data && data.length >= 6) {
+          setVerses(data.map(v => ({
+            text: v.verse_text,
+            reference: v.verse_reference
+          })));
+        } else {
+          toast({
+            title: "Not enough verses",
+            description: "You need at least 6 verses saved. Using default verses instead.",
+            variant: "destructive",
+          });
+          setVerses(defaultVerses);
+        }
+      } catch (error) {
+        console.error("Error loading memorization verses:", error);
+        toast({
+          title: "Error loading verses",
+          description: "Using default verses instead",
+          variant: "destructive",
+        });
+        setVerses(defaultVerses);
+      }
+    } else {
+      setVerses(defaultVerses);
+    }
+    setIsLoadingVerses(false);
+  };
 
   useEffect(() => {
     if (gameOver) return;
@@ -159,6 +207,19 @@ const VerseMatch = () => {
 
   if (!user) return null;
 
+  if (isLoadingVerses) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 py-8">
+          <Card className="p-12 text-center">
+            <p className="text-muted-foreground">Loading verses...</p>
+          </Card>
+        </main>
+      </div>
+    );
+  }
+
   if (gameOver) {
     const score = Math.max(1000 - (moves * 10) - timeElapsed, 100);
     
@@ -234,6 +295,11 @@ const VerseMatch = () => {
             <CardHeader>
               <CardTitle className="text-center">
                 Match Verses with References
+                {isCustomMode && (
+                  <Badge variant="secondary" className="ml-2">
+                    Custom Verses
+                  </Badge>
+                )}
                 <div className="text-sm text-muted-foreground font-normal mt-2">
                   Matched: {matchedPairs} / {verses.length}
                 </div>

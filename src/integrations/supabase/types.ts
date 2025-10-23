@@ -729,6 +729,51 @@ export type Database = {
         }
         Relationships: []
       }
+      memorization_verses: {
+        Row: {
+          added_at: string
+          book: string
+          chapter: number
+          id: string
+          last_reviewed: string | null
+          mastery_level: number
+          notes: string | null
+          review_count: number
+          user_id: string
+          verse: number
+          verse_reference: string
+          verse_text: string
+        }
+        Insert: {
+          added_at?: string
+          book: string
+          chapter: number
+          id?: string
+          last_reviewed?: string | null
+          mastery_level?: number
+          notes?: string | null
+          review_count?: number
+          user_id: string
+          verse: number
+          verse_reference: string
+          verse_text: string
+        }
+        Update: {
+          added_at?: string
+          book?: string
+          chapter?: number
+          id?: string
+          last_reviewed?: string | null
+          mastery_level?: number
+          notes?: string | null
+          review_count?: number
+          user_id?: string
+          verse?: number
+          verse_reference?: string
+          verse_text?: string
+        }
+        Relationships: []
+      }
       monthly_games: {
         Row: {
           average_rating: number | null

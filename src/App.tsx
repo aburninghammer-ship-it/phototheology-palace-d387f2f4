@@ -55,6 +55,7 @@ import Auth from "./pages/Auth";
 import CriticsAnalysis from "./pages/CriticsAnalysis";
 import Referrals from "./pages/Referrals";
 import StudentVerification from "./pages/StudentVerification";
+import MemorizationVerses from "./pages/MemorizationVerses";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -76,6 +77,7 @@ function App() {
             <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
             <Route path="/bible/search" element={<ProtectedRoute><BibleSearch /></ProtectedRoute>} />
             <Route path="/bible/:book/:chapter" element={<ProtectedRoute><BibleChapter /></ProtectedRoute>} />
+            <Route path="/memorization-verses" element={<ProtectedRoute><MemorizationVerses /></ProtectedRoute>} />
             <Route path="/daily-challenges" element={<ProtectedRoute><DailyChallenges /></ProtectedRoute>} />
             <Route path="/equations-challenge" element={<ProtectedRoute><EquationsChallenge /></ProtectedRoute>} />
             <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
