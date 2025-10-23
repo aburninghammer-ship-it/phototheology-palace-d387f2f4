@@ -24,15 +24,24 @@ const DailyChallenges = () => {
   }, [user]);
 
   const fetchDailyChallenge = async () => {
+    // Get current date in user's timezone, but set to start of day
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("challenges")
       .select("*")
       .eq("challenge_type", "daily")
       .gte("starts_at", today.toISOString())
+      .lt("starts_at", tomorrow.toISOString())
       .maybeSingle();
+
+    if (error) {
+      console.error("Error fetching challenge:", error);
+    }
 
     setDailyChallenge(data);
     
@@ -79,20 +88,20 @@ const DailyChallenges = () => {
   };
 
   const handleShare = () => {
+    const inviteUrl = `${window.location.origin}/daily-challenges`;
     const shareData = {
       title: dailyChallenge?.title || 'Daily Bible Challenge',
-      text: `Join me in today's Bible study challenge! ${dailyChallenge?.description || ''}`,
-      url: window.location.href
+      text: `Join me in today's Bible study challenge on Phototheology! ${dailyChallenge?.description || 'Study Scripture together and grow in faith.'}`,
+      url: inviteUrl
     };
 
     if (navigator.share) {
       navigator.share(shareData).catch(() => {});
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
       toast({
-        title: "Link copied!",
-        description: "Share link copied to clipboard",
+        title: "Invitation copied!",
+        description: "Share link copied to clipboard. Send it to your friends!",
       });
     }
   };
@@ -109,6 +118,10 @@ const DailyChallenges = () => {
               <Flame className="h-8 w-8 text-orange-500" />
               Daily Challenges
             </h1>
+            <Button onClick={handleShare} variant="outline" className="gap-2">
+              <Share2 className="h-4 w-4" />
+              Invite Friends
+            </Button>
           </div>
 
           {dailyChallenge ? (
@@ -122,13 +135,9 @@ const DailyChallenges = () => {
                     </CardTitle>
                     <CardDescription className="flex items-center gap-2 mt-2">
                       <Clock className="h-4 w-4" />
-                      24-hour challenge
+                      Today's Challenge
                     </CardDescription>
                   </div>
-                  <Button variant="outline" size="sm" onClick={handleShare} className="gap-2">
-                    <Share2 className="h-4 w-4" />
-                    Share Challenge
-                  </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">

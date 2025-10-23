@@ -1,14 +1,58 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { Trophy, Gamepad2, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Trophy, Gamepad2, Users, UserPlus, Share2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Games = () => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [activeGames, setActiveGames] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchActiveGames();
+    }
+  }, [user]);
+
+  const fetchActiveGames = async () => {
+    const { data } = await supabase
+      .from("games")
+      .select("*")
+      .or(`player1_id.eq.${user?.id},player2_id.eq.${user?.id}`)
+      .eq("status", "active")
+      .order("updated_at", { ascending: false })
+      .limit(5);
+
+    setActiveGames(data || []);
+    setLoading(false);
+  };
+
+  const inviteFriend = () => {
+    const inviteUrl = `${window.location.origin}/games`;
+    const message = `Join me in Phototheology Palace Games! Let's compete in biblical knowledge and memory palace mastery.`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'Join Phototheology Games',
+        text: message,
+        url: inviteUrl
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(`${message}\n\n${inviteUrl}`);
+      toast({
+        title: "Invitation copied!",
+        description: "Share the link with your friend",
+      });
+    }
+  };
 
   const startChainChess = async (vsJeeves: boolean) => {
     navigate(`/games/chain-chess/new${vsJeeves ? '/jeeves' : ''}`);
@@ -60,7 +104,43 @@ const Games = () => {
               <Gamepad2 className="h-8 w-8" />
               Palace Games
             </h1>
+            <Button onClick={inviteFriend} className="gap-2" size="lg">
+              <UserPlus className="h-5 w-5" />
+              Invite a Friend
+            </Button>
           </div>
+
+          {/* Active Games Section */}
+          {activeGames.length > 0 && (
+            <Card className="border-primary">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-yellow-500" />
+                  Your Active Games
+                </CardTitle>
+                <CardDescription>Resume your ongoing matches</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {activeGames.map((game) => (
+                    <div
+                      key={game.id}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted cursor-pointer"
+                      onClick={() => navigate(`/games/chain-chess/${game.id}`)}
+                    >
+                      <div>
+                        <p className="font-medium">{game.game_type.replace('_', ' ').toUpperCase()}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {game.player2_id ? 'vs Player' : 'Waiting for opponent...'}
+                        </p>
+                      </div>
+                      <Badge>{game.status}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <Card className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
             <CardHeader>
