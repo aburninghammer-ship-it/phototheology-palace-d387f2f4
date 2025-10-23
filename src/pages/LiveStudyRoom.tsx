@@ -177,7 +177,7 @@ const LiveStudyRoom = () => {
   };
 
   const copyInviteLink = () => {
-    const inviteLink = window.location.href;
+    const inviteLink = `${window.location.origin}/live-study/${roomId}`;
     navigator.clipboard.writeText(inviteLink).then(() => {
       toast({
         title: "Link copied!",
@@ -193,7 +193,7 @@ const LiveStudyRoom = () => {
   };
 
   const shareInviteLink = async () => {
-    const inviteLink = window.location.href;
+    const inviteLink = `${window.location.origin}/live-study/${roomId}`;
     
     if (navigator.share) {
       try {
