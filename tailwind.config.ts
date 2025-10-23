@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Crimson Pro', 'Georgia', 'serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -46,6 +50,13 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        palace: {
+          blue: "hsl(var(--palace-blue))",
+          blueLight: "hsl(var(--palace-blue-light))",
+          gold: "hsl(var(--palace-gold))",
+          goldLight: "hsl(var(--palace-gold-light))",
+          cream: "hsl(var(--palace-cream))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
