@@ -85,10 +85,10 @@ Format your response as JSON:
 
     console.log('Daily challenge created:', challengeContent.title);
 
-    // Generate Treasure Hunt
-    const huntPrompt = `Create a deeply profound biblical treasure hunt with exactly 8 multi-layered clues that require extensive research, cross-referencing, and theological insight to solve. This should take dedicated users a full 24 hours of study.
+    // Generate Treasure Hunt - "COME AND SEE" Format
+    const huntPrompt = `Create a 24-hour biblical treasure hunt with exactly 10 Palace-coded clues. Theme: "Come and See" - invitation to encounter Christ across Story, Symbols, Blue/Sanctuary, 24FPS, Room 66, Mathematics/Timeline, Feasts, and Church/Mission rooms.
 
-CRITICAL: Use ONLY these valid room tags and their associated principles:
+CRITICAL: Use ONLY these valid room tags and their associated principles from the palace data:
 
 FLOOR 1 - FURNISHING:
 - SR (Story Room): "What exactly happened—and in what order?"
@@ -143,35 +143,43 @@ FLOOR 7 - SPIRITUAL & EMOTIONAL:
 FLOOR 8 - MASTER:
 - ∞ (Reflexive Mastery): "Am I thinking Phototheologically without thinking about it?"
 
-Requirements for each clue:
+Requirements for the 10 clues:
 1. Must use one of the EXACT room tags above (not made-up ones)
 2. Principle must match the room's core question exactly
-3. Hint must be a MULTI-LAYERED challenge requiring:
+3. Each hint must be a MULTI-LAYERED challenge requiring:
    - Cross-referencing multiple books of the Bible
-   - Understanding Hebrew/Greek context
-   - Recognizing typological patterns
-   - Connecting historical/prophetic timelines
-   - Deep theological synthesis
-4. Hint should NOT be answerable with one verse lookup
-5. Correct answer should be precise but require significant study to reach
+   - Understanding typological patterns or Hebrew/Greek context
+   - Recognizing theological connections across testaments
+   - Deep synthesis requiring several hours per clue
+4. Hint should NOT be answerable with simple verse lookup
+5. Correct answer should be a precise KJV verse reference
 6. Progress through different floors to showcase the palace system
-7. Each clue builds toward the biblical conclusion
+7. The first letter of each answer's BOOK NAME will spell "COME AND SEE"
 
-Difficulty: ALWAYS create "pro" level (8 clues, maximum challenge)
+Target book sequence for acrostic (first letters):
+C-O-M-E-A-N-D-S-E-E = 1 Corinthians, Obadiah, Micah, Exodus, Acts, Numbers, Daniel, Psalms, Ephesians, Ecclesiastes
 
-Theme ideas: Sanctuary symbolism, Messianic prophecy chains, Covenant progressions, Prophetic parallels, Type-antitype connections
+Example clue structure:
+- Room tag: "CR" (Concentration Room)
+- Principle: "Where is Jesus here?"
+- Hint: "Paul declared the heart of the gospel message as a scandal to some and foolishness to others. In which verse does he identify this central proclamation as 'Christ crucified,' the stumbling block that became the cornerstone of salvation? This requires understanding the cultural context of Corinth, the Jewish expectation of signs, and the Greek pursuit of wisdom—all converging at the cross." (3-5 sentences like this)
+- Correct answer: "1 Corinthians 1:23"
+
+Difficulty: ALWAYS "pro" (10 clues, maximum 24-hour challenge)
+
+Theme: "Come and See" - an invitation to encounter Christ through Scripture
 
 Format as JSON:
 {
-  "title": "string (compelling and mysterious)",
+  "title": "string (compelling and mysterious, should reference 'Come and See' theme)",
   "difficulty": "pro",
-  "biblical_conclusion": "string (profound one-sentence synthesis)",
+  "biblical_conclusion": "string (profound synthesis connecting all clues to the invitation to encounter Christ, 2-3 sentences)",
   "clues": [
     {
       "room_tag": "EXACT tag from list above",
       "principle": "EXACT core question from that room",
-      "hint": "Multi-layered question requiring extensive research (3-5 sentences describing the challenge)",
-      "correct_answer": "string (precise answer, 1-3 words)"
+      "hint": "Multi-layered question requiring extensive research (3-5 sentences describing the theological challenge)",
+      "correct_answer": "KJV verse reference (Book Chapter:Verse)"
     }
   ]
 }`;
@@ -196,9 +204,7 @@ Format as JSON:
     const huntContent = JSON.parse(huntData.choices[0].message.content);
 
     // Calculate expiration (24 hours from tomorrow start)
-    const expiration = new Date(tomorrow);
-    expiration.setDate(expiration.getDate() + 1);
-    expiration.setHours(6, 0, 0, 0);
+    const expiration = new Date(tomorrow.getTime() + 24 * 60 * 60 * 1000);
 
     // Insert treasure hunt
     const { data: hunt, error: huntError } = await supabase
