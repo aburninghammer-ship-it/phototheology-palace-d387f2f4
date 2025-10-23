@@ -31,6 +31,8 @@ export const useAuth = () => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    localStorage.removeItem('rememberedEmail');
+    localStorage.removeItem('rememberedPassword');
     navigate("/");
   };
 

@@ -22,6 +22,7 @@ export default function Auth() {
   // Login form
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   
   // Signup form
   const [signupEmail, setSignupEmail] = useState("");
@@ -29,12 +30,21 @@ export default function Auth() {
   const [signupDisplayName, setSignupDisplayName] = useState("");
   const [referralCode, setReferralCode] = useState("");
 
-  // Get referral code from URL on mount
+  // Get referral code from URL and load saved credentials on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('ref');
     if (ref) {
       setReferralCode(ref);
+    }
+
+    // Load saved credentials
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    if (savedEmail && savedPassword) {
+      setLoginEmail(savedEmail);
+      setLoginPassword(savedPassword);
+      setRememberMe(true);
     }
   }, []);
 
@@ -87,6 +97,15 @@ export default function Auth() {
           setError(error.message);
         }
         return;
+      }
+
+      // Save credentials if remember me is checked
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', loginEmail);
+        localStorage.setItem('rememberedPassword', loginPassword);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('rememberedPassword');
       }
 
       toast.success("Welcome back!");
@@ -218,6 +237,19 @@ export default function Auth() {
                       required
                       disabled={loading}
                     />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="remember-me"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="h-4 w-4 rounded border-input"
+                      disabled={loading}
+                    />
+                    <Label htmlFor="remember-me" className="text-sm font-normal cursor-pointer">
+                      Remember me
+                    </Label>
                   </div>
                 </CardContent>
                 <CardFooter>
