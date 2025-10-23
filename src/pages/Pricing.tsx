@@ -1,0 +1,212 @@
+import { Navigation } from "@/components/Navigation";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Check, Sparkles, Star, Crown, Zap } from "lucide-react";
+
+export default function Pricing() {
+  const plans = [
+    {
+      id: "free",
+      name: "Free Trial",
+      icon: Sparkles,
+      iconColor: "text-gray-600",
+      price: "$0",
+      period: "7 days",
+      description: "Try Phototheology risk-free",
+      badge: "No Credit Card Required",
+      badgeVariant: "secondary" as const,
+      ctaText: "Start Free Trial",
+      ctaVariant: "default" as const,
+      ctaUrl: "#", // No Stripe link for free trial
+      features: [
+        "FULL ACCESS - Everything unlocked",
+        "Access to The Palace (8 floors, 40+ rooms)",
+        "The Phototheology Bible",
+        "Daily Challenges",
+        "All study tools",
+        "Study groups",
+        "My Studies library",
+      ],
+    },
+    {
+      id: "essential",
+      name: "Essential",
+      icon: Star,
+      iconColor: "text-blue-600",
+      price: "$9",
+      period: "per month",
+      description: "Perfect for serious Bible students",
+      badge: "Payment Required",
+      badgeVariant: "default" as const,
+      ctaText: "Get Essential",
+      ctaVariant: "default" as const,
+      ctaUrl: "https://buy.stripe.com/4gM8wP6U37zoavefiY6EU07",
+      features: [
+        "Everything in Free Trial",
+        "Phototheology GPT (main AI assistant)",
+        "The Blueprint (10-lesson course)",
+        "90-Day Training Course",
+        "Art of War Training",
+        "Unlimited Daily Challenges",
+        "Sermon Builder with 5 Smooth Stones",
+        "Research Mode with citations",
+        "Flashcards & study games",
+        "Bible Image Library",
+        "Unlimited study groups",
+        "Collaborative rooms",
+      ],
+    },
+    {
+      id: "premium",
+      name: "Premium",
+      icon: Crown,
+      iconColor: "text-purple-600",
+      price: "$15",
+      period: "per month",
+      description: "Everything you need to master Phototheology",
+      badge: "Most Popular",
+      badgeVariant: "secondary" as const,
+      ctaText: "Get Premium",
+      ctaVariant: "default" as const,
+      ctaUrl: "https://buy.stripe.com/aFa3cvemv7zo46Q9YE6EU08",
+      popular: true,
+      features: [
+        "Everything in Essential",
+        "All 5 AI Study GPTs (Kids, Daniel & Revelation, Apologetics, Lesson Quarterly)",
+        "20+ Palace Games",
+        "Chain Chess multiplayer",
+        "Kids Games (all ages)",
+        "Prophecy Watch alerts",
+        "Culture & Controversy analysis",
+        "Power of the Lamb devotionals",
+        "Priority support",
+        "Early access to new features",
+      ],
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <Navigation />
+      
+      <div className="container mx-auto px-4 pt-24 pb-12">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <Badge className="mb-4 gradient-palace text-white border-0">
+            <Zap className="h-3 w-3 mr-1" />
+            7-Day Free Trial • No Credit Card Required
+          </Badge>
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-palace bg-clip-text text-transparent mb-4">
+            Choose Your Plan
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Start with a free trial, upgrade anytime to unlock more features
+          </p>
+        </div>
+
+        {/* Pricing Cards */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {plans.map((plan) => (
+            <Card
+              key={plan.id}
+              className={`glass-card relative ${
+                plan.popular ? "border-primary shadow-2xl shadow-primary/20 scale-105" : ""
+              }`}
+            >
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <Badge className="gradient-palace text-white border-0">
+                    <Star className="h-3 w-3 mr-1 fill-current" />
+                    Most Popular
+                  </Badge>
+                </div>
+              )}
+
+              <CardHeader className="text-center pb-8">
+                <div className="mx-auto mb-4 p-4 rounded-2xl bg-muted/50 w-fit">
+                  <plan.icon className={`h-8 w-8 ${plan.iconColor}`} />
+                </div>
+                <Badge variant={plan.badgeVariant} className="mx-auto mb-2">
+                  {plan.badge}
+                </Badge>
+                <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
+                <CardDescription>{plan.description}</CardDescription>
+                <div className="mt-4">
+                  <div className="text-5xl font-bold">{plan.price}</div>
+                  <div className="text-sm text-muted-foreground mt-1">/ {plan.period}</div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="pb-6">
+                <ul className="space-y-3">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+
+              <CardFooter>
+                <Button
+                  asChild
+                  variant={plan.ctaVariant}
+                  className={`w-full ${plan.id === "free" ? "" : "gradient-palace"}`}
+                  size="lg"
+                >
+                  <a
+                    href={plan.ctaUrl}
+                    target={plan.id !== "free" ? "_blank" : undefined}
+                    rel={plan.id !== "free" ? "noopener noreferrer" : undefined}
+                  >
+                    {plan.ctaText}
+                  </a>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+
+        {/* Compare Plans Section */}
+        <div className="mt-16 text-center">
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-muted/50">
+            <Zap className="h-5 w-5 text-primary" />
+            <span className="font-medium">Compare Plans</span>
+          </div>
+          <p className="mt-4 text-muted-foreground">
+            All plans include access to the core Phototheology experience
+          </p>
+        </div>
+
+        {/* FAQ or Additional Info */}
+        <Card className="glass-card mt-12 max-w-3xl mx-auto">
+          <CardHeader>
+            <CardTitle>Frequently Asked Questions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="font-semibold mb-2">Can I cancel anytime?</h3>
+              <p className="text-sm text-muted-foreground">
+                Yes! You can cancel your subscription at any time. Your access continues until the end of your billing period.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
+              <p className="text-sm text-muted-foreground">
+                We accept all major credit cards through our secure Stripe payment processor.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">Is my free trial really free?</h3>
+              <p className="text-sm text-muted-foreground">
+                Absolutely! No credit card required. You get full access to all features for 7 days with no commitments.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

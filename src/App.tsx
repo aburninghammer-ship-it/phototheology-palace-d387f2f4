@@ -36,6 +36,8 @@ import PhototheologyGPT from "./pages/PhototheologyGPT";
 import DanielRevelationGPT from "./pages/DanielRevelationGPT";
 import ApologeticsGPT from "./pages/ApologeticsGPT";
 import LessonQuarterlyGPT from "./pages/LessonQuarterlyGPT";
+import Profile from "./pages/Profile";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -78,8 +80,10 @@ function App() {
           <Route path="/kidgpt" element={<KidGPT />} />
           <Route path="/phototheologygpt" element={<PhototheologyGPT />} />
           <Route path="/daniel-revelation-gpt" element={<DanielRevelationGPT />} />
-          <Route path="/apologetics-gpt" element={<ApologeticsGPT />} />
-          <Route path="/lesson-quarterly-gpt" element={<LessonQuarterlyGPT />} />
+            <Route path="/apologetics-gpt" element={<ApologeticsGPT />} />
+            <Route path="/lesson-quarterly-gpt" element={<LessonQuarterlyGPT />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/pricing" element={<Pricing />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
