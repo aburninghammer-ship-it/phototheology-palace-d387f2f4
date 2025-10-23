@@ -181,7 +181,7 @@ export const palaceFloors: Floor[] = [
     number: 3,
     name: "Freestyle",
     subtitle: "Time & Daily Integration",
-    description: "Train spontaneous connections between Scripture and daily life. Turn nature, personal experiences, culture, and conversations into biblical wisdom.",
+    description: "Master the art of drawing object lessons from everything around you—nature, seasons, the animal kingdom, science, driving, walking, washing dishes, cooking, and all everyday activities. Train your mind to spontaneously connect the physical world with spiritual truth, turning ordinary moments into gospel insights and Scripture connections.",
     rooms: [
       {
         id: "nf",
