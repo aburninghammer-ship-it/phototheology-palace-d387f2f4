@@ -183,7 +183,7 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: Pri
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full gradient-palace" />
-                    Dimensions
+                    Dimensions (1D=Literal, 2D=Christ, 3D=Me, 4D=Church, 5D=Heaven)
                   </h4>
                   <div className="flex gap-2 flex-wrap">
                     {annotation.principles.dimensions.map((dim) => (

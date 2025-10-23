@@ -17,6 +17,13 @@ export type PrincipleType =
   | "Heaven-Past" | "Heaven-Now" | "Heaven-Future"
   | "Earth-Past" | "Earth-Now" | "Earth-Future";
 
+// Dimension clarification:
+// 1D = Literal (what the text says plainly, historical/grammatical)
+// 2D = Christ (personal Christ relationship, individual salvation)
+// 3D = Me (personal application, how it applies to my life)
+// 4D = Church (corporate body, ecclesiology, community)
+// 5D = Heaven (celestial realm, throne room, divine glory)
+
 export type CycleType = "@Ad" | "@No" | "@Ab" | "@Mo" | "@Cy" | "@CyC" | "@Sp" | "@Re";
 
 export type SanctuaryArticle = 
