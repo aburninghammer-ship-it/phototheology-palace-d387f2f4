@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,16 @@ export default function Auth() {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [signupDisplayName, setSignupDisplayName] = useState("");
+  const [referralCode, setReferralCode] = useState("");
+
+  // Get referral code from URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      setReferralCode(ref);
+    }
+  }, []);
 
   const validateEmail = (email: string) => {
     try {
@@ -114,6 +124,7 @@ export default function Auth() {
           emailRedirectTo: redirectUrl,
           data: {
             display_name: signupDisplayName,
+            referral_code: referralCode || null,
           },
         },
       });
@@ -292,6 +303,14 @@ export default function Auth() {
                       Must be at least 6 characters
                     </p>
                   </div>
+                  {referralCode && (
+                    <Alert>
+                      <AlertDescription className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4" />
+                        You're joining with a referral! You'll get 7 days free trial.
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </CardContent>
                 <CardFooter>
                   <Button 

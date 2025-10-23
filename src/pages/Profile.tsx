@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { User, Mail, Trophy, Star, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -92,6 +93,9 @@ export default function Profile() {
         </div>
 
         <div className="grid gap-6">
+          {/* Subscription Banner */}
+          <SubscriptionBanner />
+
           {/* Profile Info Card */}
           <Card className="glass-card">
             <CardHeader>
@@ -173,27 +177,6 @@ export default function Profile() {
               <Button onClick={updateProfile} className="w-full gradient-palace">
                 Save Changes
               </Button>
-            </CardContent>
-          </Card>
-
-          {/* Subscription Status */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Subscription</CardTitle>
-              <CardDescription>Your current plan and benefits</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Badge variant="secondary" className="mb-2">Free Trial</Badge>
-                  <p className="text-sm text-muted-foreground">
-                    Upgrade to unlock all features and support Phototheology
-                  </p>
-                </div>
-                <Button asChild className="gradient-palace">
-                  <a href="/pricing">Upgrade</a>
-                </Button>
-              </div>
             </CardContent>
           </Card>
         </div>

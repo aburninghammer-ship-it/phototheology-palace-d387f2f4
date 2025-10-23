@@ -588,6 +588,7 @@ export type Database = {
           equations_streak: number | null
           gem_creation_streak: number | null
           id: string
+          is_student: boolean | null
           last_seen: string | null
           level: number | null
           longest_chess_streak: number | null
@@ -595,6 +596,14 @@ export type Database = {
           longest_gem_streak: number | null
           longest_study_streak: number | null
           points: number | null
+          referral_code: string | null
+          stripe_customer_id: string | null
+          student_expires_at: string | null
+          student_verified_at: string | null
+          subscription_status: string | null
+          subscription_tier: string | null
+          trial_ends_at: string | null
+          trial_started_at: string | null
           updated_at: string | null
           username: string
         }
@@ -607,6 +616,7 @@ export type Database = {
           equations_streak?: number | null
           gem_creation_streak?: number | null
           id: string
+          is_student?: boolean | null
           last_seen?: string | null
           level?: number | null
           longest_chess_streak?: number | null
@@ -614,6 +624,14 @@ export type Database = {
           longest_gem_streak?: number | null
           longest_study_streak?: number | null
           points?: number | null
+          referral_code?: string | null
+          stripe_customer_id?: string | null
+          student_expires_at?: string | null
+          student_verified_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string | null
           username: string
         }
@@ -626,6 +644,7 @@ export type Database = {
           equations_streak?: number | null
           gem_creation_streak?: number | null
           id?: string
+          is_student?: boolean | null
           last_seen?: string | null
           level?: number | null
           longest_chess_streak?: number | null
@@ -633,6 +652,14 @@ export type Database = {
           longest_gem_streak?: number | null
           longest_study_streak?: number | null
           points?: number | null
+          referral_code?: string | null
+          stripe_customer_id?: string | null
+          student_expires_at?: string | null
+          student_verified_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string | null
           username?: string
         }
@@ -665,6 +692,42 @@ export type Database = {
           updated_at?: string
           user_id?: string
           window_start?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string | null
+          id: string
+          referral_code: string
+          referred_email: string | null
+          referred_user_id: string | null
+          referrer_id: string
+          reward_given: boolean | null
+          status: string
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code: string
+          referred_email?: string | null
+          referred_user_id?: string | null
+          referrer_id: string
+          reward_given?: boolean | null
+          status?: string
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_email?: string | null
+          referred_user_id?: string | null
+          referrer_id?: string
+          reward_given?: boolean | null
+          status?: string
         }
         Relationships: []
       }
@@ -1076,6 +1139,7 @@ export type Database = {
     }
     Functions: {
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
+      generate_referral_code: { Args: { user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

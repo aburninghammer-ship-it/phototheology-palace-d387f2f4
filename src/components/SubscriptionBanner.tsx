@@ -1,0 +1,83 @@
+import { useSubscription } from "@/hooks/useSubscription";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { Sparkles, AlertTriangle, GraduationCap, Crown } from "lucide-react";
+
+export function SubscriptionBanner() {
+  const { subscription, loading } = useSubscription();
+
+  if (loading) return null;
+
+  const now = new Date();
+  const trialEndsAt = subscription.trialEndsAt ? new Date(subscription.trialEndsAt) : null;
+  const studentExpiresAt = subscription.studentExpiresAt ? new Date(subscription.studentExpiresAt) : null;
+  const daysUntilTrialEnd = trialEndsAt ? Math.ceil((trialEndsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : 0;
+  const daysUntilStudentExpires = studentExpiresAt ? Math.ceil((studentExpiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : 0;
+
+  // Active subscription
+  if (subscription.status === 'active' && subscription.tier && subscription.tier !== 'student') {
+    return (
+      <Alert className="border-green-500 bg-green-50 dark:bg-green-950/20">
+        <Crown className="h-4 w-4 text-green-600" />
+        <AlertDescription>
+          <strong>Active Subscription:</strong> {subscription.tier.charAt(0).toUpperCase() + subscription.tier.slice(1)} Plan
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Student subscription
+  if (subscription.isStudent && subscription.studentExpiresAt && daysUntilStudentExpires > 0) {
+    return (
+      <Alert className="border-green-500 bg-green-50 dark:bg-green-950/20">
+        <GraduationCap className="h-4 w-4 text-green-600" />
+        <AlertDescription>
+          <strong>Student Plan Active:</strong> Free Premium access expires in {daysUntilStudentExpires} days. 
+          {daysUntilStudentExpires < 30 && (
+            <Link to="/student-verify" className="ml-2 underline">
+              Renew early
+            </Link>
+          )}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Trial active
+  if (subscription.status === 'trial' && daysUntilTrialEnd > 0) {
+    return (
+      <Alert className={daysUntilTrialEnd <= 2 ? "border-orange-500 bg-orange-50 dark:bg-orange-950/20" : ""}>
+        <Sparkles className="h-4 w-4" />
+        <AlertDescription className="flex items-center justify-between">
+          <span>
+            <strong>Free Trial:</strong> {daysUntilTrialEnd} days remaining
+          </span>
+          {daysUntilTrialEnd <= 2 && (
+            <Button asChild size="sm" variant="default">
+              <Link to="/pricing">Upgrade Now</Link>
+            </Button>
+          )}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Trial expired or no subscription
+  if (subscription.status === 'expired' || subscription.status === 'none') {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription className="flex items-center justify-between">
+          <span>Your trial has ended. Subscribe to continue accessing all features.</span>
+          <Button asChild size="sm" variant="default">
+            <Link to="/pricing">View Plans</Link>
+          </Button>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  return null;
+}

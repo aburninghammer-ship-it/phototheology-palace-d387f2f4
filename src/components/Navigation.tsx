@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 // Import all required icons from lucide-react
-import { Building2, Sparkles, Users, BookOpen, User, CreditCard, LogOut } from "lucide-react";
+import { Building2, Sparkles, Users, BookOpen, User, CreditCard, LogOut, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
@@ -229,6 +229,12 @@ export const Navigation = () => {
                       <Link to="/pricing">
                         <CreditCard className="h-4 w-4 mr-2" />
                         Pricing & Plans
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/referrals">
+                        <Gift className="h-4 w-4 mr-2" />
+                        Referrals
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

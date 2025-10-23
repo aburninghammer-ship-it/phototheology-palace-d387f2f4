@@ -1,8 +1,9 @@
 import { Navigation } from "@/components/Navigation";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Sparkles, Star, Crown, Zap } from "lucide-react";
+import { Check, Sparkles, Star, Crown, Zap, GraduationCap } from "lucide-react";
 
 export default function Pricing() {
   const plans = [
@@ -84,6 +85,28 @@ export default function Pricing() {
         "Early access to new features",
       ],
     },
+    {
+      id: "student",
+      name: "Student",
+      icon: GraduationCap,
+      iconColor: "text-green-600",
+      price: "FREE",
+      period: "for 1 year",
+      description: "Full Premium access for verified students",
+      badge: ".edu Email Required",
+      badgeVariant: "default" as const,
+      ctaText: "Verify Student Status",
+      ctaVariant: "default" as const,
+      ctaUrl: "/student-verify",
+      features: [
+        "Everything in Premium",
+        "100% Free with .edu email",
+        "Valid for 1 year",
+        "Annual renewal required",
+        "Support education",
+        "All features unlocked",
+      ],
+    },
   ];
 
   return (
@@ -106,7 +129,7 @@ export default function Pricing() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {plans.map((plan) => (
             <Card
               key={plan.id}
@@ -150,20 +173,44 @@ export default function Pricing() {
               </CardContent>
 
               <CardFooter>
-                <Button
-                  asChild
-                  variant={plan.ctaVariant}
-                  className={`w-full ${plan.id === "free" ? "" : "gradient-palace"}`}
-                  size="lg"
-                >
-                  <a
-                    href={plan.ctaUrl}
-                    target={plan.id !== "free" ? "_blank" : undefined}
-                    rel={plan.id !== "free" ? "noopener noreferrer" : undefined}
+                {plan.id === "student" ? (
+                  <Button
+                    asChild
+                    variant={plan.ctaVariant}
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    size="lg"
                   >
-                    {plan.ctaText}
-                  </a>
-                </Button>
+                    <Link to={plan.ctaUrl}>
+                      {plan.ctaText}
+                    </Link>
+                  </Button>
+                ) : plan.id === "free" ? (
+                  <Button
+                    asChild
+                    variant={plan.ctaVariant}
+                    className="w-full"
+                    size="lg"
+                  >
+                    <Link to="/auth">
+                      {plan.ctaText}
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button
+                    asChild
+                    variant={plan.ctaVariant}
+                    className="w-full gradient-palace"
+                    size="lg"
+                  >
+                    <a
+                      href={plan.ctaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {plan.ctaText}
+                    </a>
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           ))}
@@ -202,6 +249,12 @@ export default function Pricing() {
               <h3 className="font-semibold mb-2">Is my free trial really free?</h3>
               <p className="text-sm text-muted-foreground">
                 Absolutely! No credit card required. You get full access to all features for 7 days with no commitments.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">How does the student plan work?</h3>
+              <p className="text-sm text-muted-foreground">
+                Students with a valid .edu email get free Premium access for 1 year. After that, you'll need to verify your student status again to renew.
               </p>
             </div>
           </CardContent>

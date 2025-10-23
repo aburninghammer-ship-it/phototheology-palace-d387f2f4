@@ -50,6 +50,8 @@ import Profile from "./pages/Profile";
 import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
 import CriticsAnalysis from "./pages/CriticsAnalysis";
+import Referrals from "./pages/Referrals";
+import StudentVerification from "./pages/StudentVerification";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -109,6 +111,8 @@ function App() {
           <Route path="/lesson-quarterly-gpt" element={<ProtectedRoute><LessonQuarterlyGPT /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/critics-analysis" element={<ProtectedRoute><CriticsAnalysis /></ProtectedRoute>} />
+            <Route path="/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
+            <Route path="/student-verify" element={<ProtectedRoute><StudentVerification /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
