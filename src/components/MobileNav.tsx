@@ -66,6 +66,11 @@ export const MobileNav = () => {
                   ⚔️ Spiritual Training
                 </Button>
               </Link>
+              <Link to="/critics-analysis">
+                <Button variant="ghost" className="w-full justify-start">
+                  🎥 Critics Analysis
+                </Button>
+              </Link>
               
               <Separator />
               

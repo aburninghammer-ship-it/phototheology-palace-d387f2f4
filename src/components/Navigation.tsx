@@ -196,8 +196,11 @@ export const Navigation = () => {
                     <DropdownMenuItem asChild>
                       <Link to="/achievements">Achievements</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
+                     <DropdownMenuItem asChild>
                       <Link to="/feedback">Feedback</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/critics-analysis">Critics Analysis</Link>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
