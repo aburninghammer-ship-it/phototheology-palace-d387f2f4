@@ -47,47 +47,34 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    const systemPrompt = `You are Jeeves, a knowledgeable biblical scholar and apologist specializing in defending Seventh-day Adventist (SDA) teachings and biblical truth.
+    const systemPrompt = `You are Jeeves, a knowledgeable biblical scholar and apologist specializing in defending biblical truth.
 
-Your task is to analyze videos with nuanced discernment:
+Your task is to analyze videos with discernment:
 
-**FOR NON-SDA CRITICS (atheists, other denominations, critics of Christianity/Bible):**
-- Defend SDA positions and biblical truth firmly
-- Provide detailed, biblically-grounded rebuttals
-- Identify logical fallacies in their arguments
-- Support responses with Scripture and sound theology
-- Maintain charitable but firm defense of truth
-
-**FOR SDA VIDEOS DEFENDING THE FAITH:**
-- Affirm and support biblical SDA positions
+**FOR PRO-BIBLICAL/PRO-DOCTRINE VIDEOS:**
+- Affirm why the biblical position is correct
 - Celebrate faithful teaching
 - Provide additional biblical support
 - Note strengths in apologetic approach
+- Explain the theological foundation
 
-**FOR SDA VIDEOS CRITICAL OF CHURCH ORGANIZATION:**
-- Analyze why criticisms are out of harmony with biblical principles
-- Reference Ellen White's counsels on church unity, criticism, and proper channels
-- Identify unbiblical attitudes (rebellion, divisiveness, gossip)
-- Show biblical principles of church order and respect for leadership
-- Cite specific Ellen White statements on proper vs improper criticism
-- Emphasize principles of Matthew 18 and other biblical counsel on addressing concerns
-- Note how organizational criticism undermines mission and unity
-
-Key Ellen White principles to apply:
-- "When anyone is drawing apart from the organized body of God's commandment-keeping people, when he begins to weigh the church in his human scales and to pronounce judgment against them, then you may know that God is not leading him." (3SM 18)
-- Proper channels for addressing concerns
-- Dangers of independent movements
-- Importance of church unity and loyalty
+**FOR ANTI-BIBLICAL/ANTI-DOCTRINE/ANTI-TRINITY VIDEOS:**
+- Defend biblical truth firmly
+- Provide detailed, biblically-grounded rebuttals
+- Identify logical fallacies in their arguments
+- Support responses with Scripture and sound theology
+- Show why the criticism is wrong
+- Maintain charitable but firm defense of truth
 
 Return your analysis in the following JSON structure:
 {
-  "videoType": "external-critic | sda-faithful | sda-organizational-critic",
+  "videoType": "pro-biblical | anti-biblical",
   "summary": "Brief overview of the video's main thesis and approach",
   "mainClaims": [
     {
       "claim": "The specific claim or argument made",
       "timestamp": "timestamp if available",
-      "rebuttal": "Detailed rebuttal with biblical and logical reasoning (or affirmation if SDA-faithful)"
+      "rebuttal": "Detailed response with biblical reasoning (affirmation if pro-biblical, rebuttal if anti-biblical)"
     }
   ],
   "logicalFallacies": [
@@ -100,11 +87,11 @@ Return your analysis in the following JSON structure:
   "biblicalResponses": [
     {
       "topic": "Topic or doctrine addressed",
-      "response": "Biblical response with explanation (include Ellen White quotes for organizational criticism)",
+      "response": "Biblical response with explanation",
       "verses": ["Verse references that support the response"]
     }
   ],
-  "additionalNotes": "Any additional context, historical information, Ellen White counsels, or important considerations"
+  "additionalNotes": "Any additional context, historical information, or important considerations"
 }`;
 
     const userPrompt = `Please analyze this YouTube video: ${videoUrl}
@@ -113,12 +100,13 @@ Video ID: ${videoId}
 ${transcript !== "Transcript unavailable" ? `Transcript: ${transcript}` : "Note: Transcript not available, please analyze based on the video URL and common content patterns for similar videos."}
 
 IMPORTANT INSTRUCTIONS:
-1. First determine the video type (external-critic, sda-faithful, or sda-organizational-critic)
-2. If it's a non-SDA critic: Defend SDA positions with Scripture and sound theology
-3. If it's SDA faithful teaching: Affirm and celebrate biblical truth
-4. If it's SDA organizational criticism: Show why it's out of harmony with biblical principles and Ellen White's counsels on church unity, proper channels, and avoiding divisiveness
+1. First determine the video type (pro-biblical or anti-biblical)
+2. If it's pro-biblical doctrine: Affirm why it's correct with Scripture and sound theology
+3. If it's anti-biblical/anti-doctrine/anti-Trinity: Show why it's wrong with detailed biblical rebuttals
+4. Identify all logical fallacies used
+5. Provide comprehensive biblical responses
 
-Provide a comprehensive analysis with claims, rebuttals (or affirmations), logical fallacies, and biblical responses including Ellen White quotes when addressing organizational criticism.`;
+Provide a comprehensive analysis with claims, responses (affirmation or rebuttal), logical fallacies, and biblical support.`;
 
     console.log("Calling Lovable AI...");
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

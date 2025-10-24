@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface AnalysisResult {
-  videoType: "external-critic" | "sda-faithful" | "sda-organizational-critic";
+  videoType: "pro-biblical" | "anti-biblical";
   summary: string;
   mainClaims: Array<{
     claim: string;
@@ -89,7 +89,7 @@ export default function CriticsAnalysis() {
             Critics Analysis
           </h1>
           <p className="text-muted-foreground">
-            Analyze videos critical of SDA teaching or the Bible. Get detailed rebuttals, identify logical fallacies, and biblical responses.
+            Analyze videos about biblical teaching. Affirm sound doctrine or rebut false teaching with Scripture, identify logical fallacies, and provide biblical responses.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export default function CriticsAnalysis() {
           <CardHeader>
             <CardTitle>Analyze Video</CardTitle>
             <CardDescription>
-              Analyze videos critical of SDA/Bible, affirm SDA faithful teaching, or examine SDA organizational criticism against biblical principles and Ellen White's counsels
+              Analyze videos about biblical teaching. Affirm sound doctrine or identify and rebut false teaching, anti-biblical claims, or anti-Trinity arguments.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -137,11 +137,9 @@ export default function CriticsAnalysis() {
                   <CardTitle className="flex items-center gap-2">
                     Video Summary
                     <Badge variant={
-                      analysis.videoType === "sda-faithful" ? "default" :
-                      analysis.videoType === "sda-organizational-critic" ? "destructive" : "secondary"
+                      analysis.videoType === "pro-biblical" ? "default" : "destructive"
                     }>
-                      {analysis.videoType === "external-critic" ? "External Critic" :
-                       analysis.videoType === "sda-faithful" ? "SDA Faithful" : "SDA Org. Critic"}
+                      {analysis.videoType === "pro-biblical" ? "Pro-Biblical" : "Anti-Biblical"}
                     </Badge>
                   </CardTitle>
                 </CardHeader>
