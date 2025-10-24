@@ -30,15 +30,24 @@ export const palaceFloors: Floor[] = [
         id: "sr",
         name: "Story Room",
         tag: "SR",
-        purpose: "The Story Room transforms abstract Bible events into memorable, sequential scenes that stick in your mind like movie clips. Instead of vague summaries, you'll crystallize each narrative into 3-7 punchy 'beats' that capture the action. This is where chronology becomes your foundation—before you can interpret Scripture, you must first know what actually happened and in what order. By naming each beat with vivid nouns and verbs, you're building a mental library of biblical narratives that you can instantly recall and teach.",
+        purpose: "The Story Room is the foundation of all biblical understanding—you cannot interpret what you cannot remember, and you cannot remember what you haven't structured. This room transforms abstract Bible events into memorable, sequential scenes that stick in your mind like movie clips. Instead of vague summaries ('David fought Goliath'), you'll crystallize each narrative into 3-7 punchy 'beats' that capture the precise action and sequence. This is where chronology becomes your non-negotiable foundation—before you can interpret Scripture, you must first know what actually happened and in what order. Think of it like this: a film director doesn't say 'some stuff happened'—they know shot 1, shot 2, shot 3. Similarly, you're training to see biblical narratives as distinct, sequential moments. By naming each beat with vivid nouns and verbs (Coat, Pit, Caravan, Prison, Palace), you're building a mental library of biblical narratives that you can instantly recall, teach, and cross-reference. Without this room, all other Palace work collapses—you can't identify types if you don't know the story; you can't answer questions if the chronology is fuzzy; you can't find Christ if you don't know the plot. The Story Room turns biblical narratives from blurry impressions into sharp, teachable sequences.",
         coreQuestion: "What exactly happened—and in what order?",
-        method: "Break each story into 3–7 'beats' (film shots). Name each beat with a punchy noun/verb.",
+        method: "STEP-BY-STEP METHODOLOGY:\n\n1. Read the narrative passage completely (a chapter, a story arc, or a complete episode)\n2. Identify 3-7 distinct 'beats' (major plot movements)—not too many (loses focus) or too few (loses detail)\n3. Name each beat with a punchy NOUN or VERB (not full sentences)\n   • Good: 'Coat' → 'Pit' → 'Caravan' → 'Prison' → 'Palace'\n   • Bad: 'Joseph receives a colorful coat from his father' (too wordy)\n4. Arrange beats chronologically using arrows (→) to show sequence\n5. Test your beat list: Can you teach this story to a child using only these beats?\n6. Write a one-line plot summary that captures the movement from first beat to last\n\nKEY PRINCIPLES:\n• Beats are like film shots—each one freezes a distinct moment\n• Use CONCRETE nouns (Altar, River, Mountain) over abstractions (Crisis, Decision)\n• Chronology is king—if you mix up the order, you've failed the room\n• The goal is MEMORABLE, not comprehensive\n• If you need more than 7 beats, you're probably covering too much ground",
         examples: [
-          "Joseph: Coat → Pit → Caravan → Prison → Palace",
-          "Make 5-beat sketches for Gen 37, Ex 14, 1 Sam 17, Dan 3, Mark 5"
+          "Genesis 37 (Joseph): Dream → Coat → Pit → Caravan → Egypt → Potiphar (6 beats capture the descent arc)",
+          "Exodus 14 (Red Sea): Trapped → Fear → 'Stand Still' → Staff Raised → Waters Part → Crossing → Egypt Drowns (7 beats show the deliverance sequence)",
+          "1 Samuel 17 (David & Goliath): Giant Mocks → Boy Arrives → 5 Stones → Sling → Head Severed (5 beats emphasize the underdog victory)",
+          "Daniel 3 (Fiery Furnace): Idol Built → Bow or Burn → Three Refuse → Furnace Heated → Fourth Man → Untouched (6 beats highlight supernatural deliverance)",
+          "Mark 5:1-20 (Demoniac): Tombs → Legion → Pigs → Cliff → Clothed → 'Go Tell' (6 beats show radical transformation)"
         ],
-        pitfalls: ["Commentary before chronology", "Too many beats"],
-        deliverable: "Beat list + one-line plot"
+        pitfalls: [
+          "Commentary before chronology—don't interpret until you've mapped the sequence",
+          "Too many beats (10+)—you're making an outline, not a story beat list",
+          "Using full sentences instead of punchy nouns/verbs",
+          "Mixing up chronological order",
+          "Including interpretation in the beat names ('Joseph's prideful dream' vs. just 'Dream')"
+        ],
+        deliverable: "Beat list (3-7 beats with arrows) + one-line plot summary capturing the arc from start to finish"
       },
       {
         id: "ir",
@@ -58,43 +67,73 @@ export const palaceFloors: Floor[] = [
         id: "24fps",
         name: "24FPS Room",
         tag: "24",
-        purpose: "Index every chapter with a single sticky image.",
+        purpose: "The 24FPS Room is your biblical GPS system—it makes every chapter of the Bible instantly findable through a single, unforgettable image. Just like a movie plays at 24 frames per second, you're creating a 'frame' (mental image) for every chapter of Scripture. The goal isn't artistic beauty or theological depth—it's INSTANT RETRIEVAL. When someone says 'Genesis 22,' you should immediately see a knife hovering over an altar. When you hear 'Psalm 23,' a shepherd's staff casting a long shadow should flash in your mind. This room solves the universal problem of biblical amnesia: you've read it, but where was it? By indexing each chapter with a quirky, sticky visual icon, you build a mental filing cabinet that lets you navigate 1,189 chapters with confidence. The image can be silly, even irreverent—what matters is that it WORKS. A birthday cake with 'Earth' written on it for Genesis 1 (creation's 'birthday') is more effective than a vague 'light and darkness.' This is memory engineering, not artistry. Once you've built your 24FPS index, you'll never again stare blankly when someone references a chapter—you'll see the image, recall the content, and engage immediately.",
         coreQuestion: "What image will make this chapter unforgettably findable?",
-        method: "Choose a striking, even quirky icon per chapter (not artful—memorable).",
+        method: "STEP-BY-STEP METHODOLOGY:\n\n1. Read the chapter you want to index\n2. Identify the MOST MEMORABLE element (event, object, phrase, turning point)\n3. Convert that element into a SINGLE VISUAL IMAGE—preferably something concrete and striking\n4. Test the image: Does it instantly trigger the chapter content?\n5. Make it QUIRKY if needed—weird images stick better than dignified ones\n6. Record: Chapter Number → Image Description\n7. Repeat for every chapter in the book you're studying\n\nKEY PRINCIPLES:\n• Prioritize MEMORABLE over accurate\n• Use concrete objects over abstract concepts (Knife > Faith)\n• Quirky beats theological (Snake+Apple+Clock for Gen 3 is better than 'Disobedience')\n• The image should be VISUAL—you should be able to draw it (even badly)\n• One image per chapter—don't try to capture everything\n• The image is a TRIGGER, not a summary\n\nPRO TIP: Go through an entire book in one sitting to build momentum. Your 24FPS index becomes more valuable the more chapters you complete.",
         examples: [
-          "Genesis: 1=Birthday Cake Earth; 3=Snake+Apple-Clock; 22=Knife over Altar",
-          "Psalm 23 = Shepherd's Staff casting a long path-shadow"
+          "Genesis 1 = Birthday Cake with 'Earth' written on it (Creation is Earth's birthday)",
+          "Genesis 3 = Snake coiled around an apple with a ticking clock (Fall, time begins running out)",
+          "Genesis 22 = Knife suspended over an altar (Abraham's test with Isaac)",
+          "Exodus 14 = Towering walls of water with a dry path between them (Red Sea parting)",
+          "Psalm 23 = Shepherd's staff casting a long shadow on a path (The LORD is my shepherd)",
+          "Daniel 3 = Three men standing in orange flames (Fiery furnace)",
+          "John 3 = Wind swirling around a question mark (Nicodemus at night, born again mystery)",
+          "Revelation 1 = Seven golden lampstands with eyes in them (Christ among the churches)"
         ],
-        pitfalls: ["Descriptive titles instead of images"],
-        deliverable: "Chapter → Image table"
+        pitfalls: [
+          "Using descriptive titles instead of IMAGES ('The Creation Story' vs. Birthday Cake Earth)",
+          "Making images too complex—keep it to ONE striking element",
+          "Trying to be theologically comprehensive—this is about memory, not meaning",
+          "Using the same image for multiple chapters",
+          "Abstract images that you can't visualize (avoid 'grace,' 'redemption'—use objects)"
+        ],
+        deliverable: "Chapter → Image table (e.g., 'Gen 1 = Birthday Cake Earth, Gen 2 = Garden with Rivers, Gen 3 = Snake+Apple+Clock')"
       },
       {
         id: "br",
         name: "Bible Rendered",
         tag: "BR",
-        purpose: "Compress the Bible into ~51 macro-frames (one per 24-chapter block).",
-        coreQuestion: "What block image captures this 24-chapter arc?",
-        method: "Assign a symbolic glyph to each block (/, ×, crown, tear, etc.).",
+        purpose: "The Bible Rendered Room gives you the ultimate macro-view—compressing all 1,189 chapters of Scripture into approximately 51 ultra-high-level frames (one symbolic glyph per 24-chapter block). If 24FPS lets you navigate individual chapters, Bible Rendered lets you see the ENTIRE biblical landscape at a glance, like viewing Earth from orbit. Each block gets a single symbolic glyph that captures the essence of that 24-chapter arc: '/' for Genesis 1-24 (divisions emerge—light/dark, waters/land, man/woman); '↑→' for Acts 1-24 (gospel goes UP to heaven, then OUT to nations). This isn't verse-by-verse study—it's aerial reconnaissance. You're training your mind to hold the WHOLE counsel of God in view, so you can see how individual passages fit into the grand narrative. Bible Rendered keeps you from getting lost in the trees by showing you the forest's shape. When you have all 51 frames memorized, you possess a mental map of redemptive history that lets you orient any passage within the larger story. This is particularly powerful for apologetics and teaching: you can sketch the entire Bible arc on a napkin using your glyphs, then zoom into specific sections as needed.",
+        coreQuestion: "What single symbol captures this 24-chapter block's essence?",
+        method: "STEP-BY-STEP METHODOLOGY:\n\n1. Divide the Bible into 24-chapter blocks (approximately 51 blocks total)\n2. Read/review the entire 24-chapter block to identify its CENTRAL MOVEMENT or THEME\n3. Choose a SIMPLE SYMBOLIC GLYPH that captures that essence:\n   • Use symbols: /, ×, +, ↑, →, ○, △, crown, tear, sword, etc.\n   • Use single words: SEED, EXILE, KING, LAMB\n   • Use letter-combos: @Mo, 1H, 3H\n4. Assign ONE glyph per block—resist the urge to add more\n5. Write a 1-2 sentence explanation of WHY this glyph fits\n6. Build your complete 51-frame legend\n7. Memorize the sequence so you can mentally 'fly over' the Bible\n\nKEY PRINCIPLES:\n• Simplicity is power—complex glyphs defeat the purpose\n• The glyph is a COMPRESSION tool, not a comprehensive summary\n• Different people may choose different glyphs—what matters is that YOURS works for YOU\n• Once you've chosen a glyph, stick with it—consistency builds memory\n• Test yourself: Can you recite all 51 glyphs in order?",
         examples: [
-          "Gen 1–24 = '/' (divisions emerge)",
-          "Acts 1–24 = '↑→' (gospel up & out)"
+          "Genesis 1-24 = '/' (divisions emerge: light/dark, land/sea, male/female, nation/nation)",
+          "Genesis 25-50 = 'SEED' (Patriarchs—promise carried through Abraham's line)",
+          "Exodus 1-24 = '↑' (Ascent from slavery to Sinai covenant)",
+          "Acts 1-24 = '↑→' (Gospel UP to Father via ascension, then OUT to nations via mission)",
+          "Revelation 1-22 = '○+' (Completed circle—Eden restored and escalated, full consummation)"
         ],
-        pitfalls: ["Over-explaining the glyph", "Using more than 1 per block"],
-        deliverable: "51-frame legend"
+        pitfalls: [
+          "Over-explaining the glyph—keep it to 1-2 sentences",
+          "Using more than 1 glyph per block—defeats the compression purpose",
+          "Choosing glyphs that are too obscure to remember",
+          "Changing your glyph system midstream—commit to your symbols",
+          "Trying to capture EVERYTHING in the glyph—it's a trigger, not an encyclopedia"
+        ],
+        deliverable: "51-frame legend (Block range → Glyph → Brief explanation). Example: 'Gen 1-24 = / → Divisions emerge throughout creation and early history'"
       },
       {
         id: "tr",
         name: "Translation Room",
         tag: "TR",
-        purpose: "Turn abstractions into concrete visuals.",
-        coreQuestion: "What does this verse look like?",
-        method: "Verse → icon; pericope → 3-panel comic; book → mural.",
+        purpose: "The Translation Room is where words become pictures—where abstract biblical concepts get converted into concrete, memorable visual representations. Human brains are wired to remember images 6x better than words, yet most Bible study stays trapped in abstract language: 'God's Word is a lamp'—but what does that LOOK like? Translation Room forces you to answer that question by converting verses into icons, passages into 3-panel comics, and entire books into murals. This isn't just artistic fun—it's cognitive science applied to Scripture. When you visualize Psalm 119:105 as a glowing scroll casting light on a dark trail, you've created a mental image that will last decades. When you draw John 15's vine with branch-sockets showing broken branches and fruitful ones, you've turned theology into something you can SEE. This room is essential for teachers and preachers: your listeners will forget your three-point outline, but they'll never forget the striking visual you showed them. Translation Room trains you to think visually about every passage, asking: If this truth were a painting, a diagram, or a symbol, what would it be?",
+        coreQuestion: "What does this verse/passage/book look like?",
+        method: "STEP-BY-STEP METHODOLOGY (Three Levels):\n\nLEVEL 1: VERSE → ICON (Single verse becomes one memorable image)\n1. Read the verse slowly, looking for the central visual element\n2. Identify the MAIN OBJECT or ACTION the verse describes\n3. Sketch (or describe) that element as a simple icon\n4. Add ONE detail that captures the verse's uniqueness\n5. Test: Does the icon trigger the verse in your memory?\n\nLEVEL 2: PERICOPE → 3-PANEL COMIC (Passage becomes sequential visual story)\n1. Break the passage into 3 movements (beginning, middle, end)\n2. Choose the KEY IMAGE for each movement\n3. Arrange the 3 images in comic-strip panels\n4. Use arrows or simple text to show progression\n5. The comic should tell the story without words if possible\n\nLEVEL 3: BOOK → MURAL (Entire book becomes one panoramic visual)\n1. Identify the book's CENTRAL THEME or MOVEMENT\n2. Choose a single visual metaphor that spans the whole book\n3. Sketch the metaphor as a mural with clear progression left-to-right\n4. Include key moments/chapters as visual 'stations' along the mural\n5. The mural should capture the book's arc at a glance\n\nKEY PRINCIPLES:\n• Concrete beats abstract (Lamp > Truth, Vine > Relationship)\n• Simplicity beats complexity (Don't try to illustrate every detail)\n• Respect biblical metaphors—translate WHAT'S THERE, don't invent new imagery\n• Bad art is fine—memorability matters more than beauty",
         examples: [
-          "Ps 119:105: glowing scroll lighting trail",
-          "Jn 15: Vine with sockets/branches"
+          "Psalm 119:105 (Verse→Icon): A glowing scroll unrolled on a dark path, casting golden light 5 feet ahead—showing 'lamp to my feet, light to my path'",
+          "John 15:1-8 (Verse→Icon): A vine trunk with branch-sockets; some branches green with grape clusters, others broken and lying on ground, one being thrown into fire—showing abiding vs. not abiding",
+          "Prodigal Son Luke 15 (Pericope→3-Panel Comic): Panel 1 = Son walking away with money bag, Panel 2 = Son in pig pen eating pods, Panel 3 = Father running with robe flowing toward son",
+          "Exodus (Book→Mural): Left side shows brick slavery under whip, center shows Red Sea parting with people crossing, right side shows tabernacle glowing with glory cloud—showing Liberation → Covenant → Presence",
+          "Revelation (Book→Mural): A scroll unrolling left-to-right showing 7 seals breaking → 7 trumpets sounding → 7 bowls pouring → New Jerusalem descending"
         ],
-        pitfalls: ["Keeping text abstract", "Mixing metaphors mid-scene"],
-        deliverable: "Sketches or descriptions"
+        pitfalls: [
+          "Keeping text abstract instead of pushing toward concrete visuals",
+          "Mixing metaphors mid-scene (don't combine John's vine with Paul's body imagery)",
+          "Over-complicating the image—simpler is stronger",
+          "Ignoring the biblical metaphor and inventing your own",
+          "Creating images that are theologically accurate but visually unmemorable"
+        ],
+        deliverable: "Sketches (even crude stick figures) OR detailed written descriptions of your visual translations. Label each with verse/passage reference."
       },
       {
         id: "gr",
@@ -122,39 +161,63 @@ export const palaceFloors: Floor[] = [
         id: "or",
         name: "Observation Room",
         tag: "OR",
-        purpose: "Gather raw data without interpretation.",
+        purpose: "The Observation Room is where you become a biblical detective, training your eye to see what's actually on the page before rushing to interpretation. Most Bible readers commit the cardinal sin of reading INTO the text before reading OUT of it—they bring their assumptions, their theology, their sermon outline, and miss what's staring them in the face. This room forces you to SLOW DOWN and gather raw data without commentary. You're cataloging grammatical patterns, repetitions, contrasts, settings, verbs, time markers—anything observable. Why? Because interpretation built on sloppy observation is a house built on sand. By making 20-50 bullet-point observations (yes, that many), you create a massive dataset that reveals patterns you'd never see in casual reading. You'll notice that Luke 15's father 'saw...ran...kissed' (three rapid verbs showing urgency), or that Genesis 1 repeats 'And God said' ten times (oral formula pattern), or that John's Gospel uses 'believe' 98 times but 'repent' zero times. These observations become the raw material for solid interpretation. The Observation Room keeps you honest—it won't let you skip over details that don't fit your theology. If you can't list 20+ observations, you haven't looked hard enough.",
         coreQuestion: "What is there—exactly?",
-        method: "20–50 bullet observations (grammar, repetition, setting, contrasts).",
-        examples: ["Luke 15: note verbs of the father ('saw, ran, kissed')"],
-        pitfalls: ["Slipping into meaning", "Too few observations"],
-        deliverable: "Observation sheet",
+        method: "STEP-BY-STEP METHODOLOGY:\n\n1. Read the passage 2-3 times WITHOUT writing anything—just look\n2. Begin listing observations in bullet form (goal: 20-50 observations minimum)\n3. Use these observation categories:\n   • GRAMMAR: verb tenses, pronouns, conjunctions ('but,' 'therefore')\n   • REPETITION: words, phrases, or patterns that appear multiple times\n   • CONTRASTS: opposites, conflicts, before/after comparisons\n   • SETTING: time, place, cultural details, who's present\n   • VERBS: actions, especially unusual or forceful ones\n   • STRUCTURE: chiasms, parallel lines, turning points\n   • OMISSIONS: what's surprisingly NOT mentioned\n   • EMPHASIS: words in unusual positions, lengthy descriptions\n4. Write ONLY what you see—no 'what it means' allowed yet\n5. Number your observations (helps you hit 20+ quota)\n6. When you think you're done, read once more and find 5 more observations\n\nKEY PRINCIPLES:\n• If you interpret before observing, you'll miss crucial data\n• Obvious observations count—don't skip them because they seem trivial\n• Quantity reveals quality—the 23rd observation often unlocks the passage\n• Ask: 'What's on the page?' not 'What does it mean?'\n• Observation is a skill—you get better with practice",
+        examples: [
+          "Luke 15:20 observations: 1) Father SAW son while 'still a long way off' (watching), 2) Father RAN (unusual for elderly Middle Eastern patriarch), 3) Father KISSED son BEFORE son finishes confession, 4) No mention of anger or lecture, 5) Verbs are rapid-fire (saw-ran-threw-kissed), suggesting urgency, 6) Son's prepared speech gets interrupted",
+          "Genesis 1 observations: 1) 'And God said' appears 10 times, 2) 'Let there be' formula repeated, 3) Each day ends with 'evening and morning,' 4) Day 7 is different—no 'evening and morning,' 5) Only humans get 'image and likeness' language, 6) Repetition of 'good' (7x), 7) Command to 'be fruitful' appears with fish, birds, and humans but not land animals"
+        ],
+        pitfalls: [
+          "Slipping into interpretation ('this means God is gracious') instead of observation ('father ran before son confessed')",
+          "Stopping too early—fewer than 20 observations means you're not done",
+          "Only observing 'theological' details—notice everything (grammar, setting, etc.)",
+          "Skipping 'obvious' observations—they're often the foundation for insight"
+        ],
+        deliverable: "Observation sheet with 20-50 numbered bullet points listing only what you directly see in the text",
         prerequisites: [{ floor: 1, room: "sr" }]
       },
       {
         id: "dc",
         name: "Def-Com Room",
         tag: "DC",
-        purpose: "Nail lexical/cultural meaning; consult witnesses (commentaries).",
-        coreQuestion: "What did the words mean then, and what did the world look like there?",
-        method: "3–5 terms to define; 1–2 cultural notes; 2–3 commentary excerpts (label source).",
+        purpose: "The Def-Com Room stands for Definition-Commentary—the twin pillars of responsible Bible study. This is where you nail down what words ACTUALLY meant in the original language and cultural context, then consult the wisdom of faithful interpreters who've gone before you. Too many Bible students either ignore word meanings entirely (reading English as if it were Greek/Hebrew) or treat commentaries like infallible authorities that can't be questioned. Def-Com trains you to do both tasks properly: define 3-5 key terms using lexicons and study tools (What did ἀγαπάω vs. φιλέω mean to a first-century Greek speaker?), then engage 2-3 trusted commentaries to see how scholars have understood the passage—without letting them overrule Scripture itself. Cultural notes are crucial here: when Jesus offers 'eye-salve' to Laodicea, you need to know that city was FAMOUS for Phrygian eye medicine—suddenly the rebuke has teeth. The goal is informed interpretation: you're standing on the shoulders of giants (commentators) while keeping your feet planted in the text itself. Def-Com keeps you from reinventing the wheel or falling into interpretive novelty while also preventing you from slavishly accepting commentary without verification.",
+        coreQuestion: "What did the words mean THEN in THAT world, and what have faithful scholars observed?",
+        method: "STEP-BY-STEP METHODOLOGY:\n\nPART 1: DEFINITIONS (3-5 key terms)\n1. Identify 3-5 crucial words in your passage that carry theological or cultural weight\n2. Look up each word in:\n   • Strong's Concordance (with Greek/Hebrew numbers)\n   • Lexicon (Thayer's, BDAG, BDB)\n   • Bible dictionary for cultural background\n3. Record: Original word + transliteration + Strong's number + definition + usage note\n4. Note any significant translation differences (e.g., 'love' in English covers both agapē and phileō)\n\nPART 2: CULTURAL NOTES (1-2 details)\n1. Research the historical/cultural setting of your passage\n2. Identify 1-2 details that would be obvious to original hearers but obscure to modern readers\n3. Note the source of your cultural information\n\nPART 3: COMMENTARY (2-3 excerpts)\n1. Consult 2-3 trusted commentaries (Matthew Henry, Calvin, Spurgeon, Keil & Delitzsch, modern scholars)\n2. Choose excerpts that illuminate the text—not just repeat it\n3. LABEL each excerpt with author and source\n4. Write a brief synthesis: Where do commentators agree? Where do they differ? What insights strike you?\n\nKEY PRINCIPLES:\n• Original language > English translation when meanings diverge\n• Commentaries inform but don't replace Scripture as final authority\n• Cultural background illuminates but doesn't determine meaning\n• Compare multiple commentaries—single sources can be biased\n• Brevity in excerpts—long quotes mean you're not synthesizing",
         examples: [
-          "John 21: ἀγαπάω (agapaō, Strong's G25 - divine, selfless love) vs φιλέω (phileō, Strong's G5368 - affectionate friendship) — Jesus asks Peter using agapaō twice, Peter responds with phileō; third time Jesus uses phileō",
-          "Rev 3:18: 'eye-salve' (κολλούριον, kollourion) — Laodicea was famous for Phrygian powder eye medicine. Matthew Henry: 'Christ offers them spiritual eye-salve that they might see their own wretchedness and his grace.' Cultural note: Laodicea's lukewarm water supply came from hot springs 6 miles away, arriving neither hot nor cold"
+          "John 21:15-17 DEFINITIONS: 1) ἀγαπάω (agapaō, G25) = divine, selfless, sacrificial love; 2) φιλέω (phileō, G5368) = affectionate friendship love, brotherly love. PATTERN: Jesus asks Peter 'Do you agapē me?' twice, Peter responds 'I phileō you' both times; third time Jesus switches to 'Do you phileō me?' matching Peter's weaker term. COMMENTARY: Spurgeon notes this may show Jesus meeting Peter where he is; Carson argues both terms overlapped in Koine Greek and the triple question mirrors Peter's triple denial.",
+          "Revelation 3:18 DEFINITION: κολλούριον (kollourion, G2854) = eye-salve, medicinal ointment. CULTURAL NOTE: Laodicea was famous throughout the Roman world for manufacturing Phrygian powder eye medicine—a major export. Christ's offer of 'eye-salve' is surgical irony: the city proud of healing others' eyes is spiritually blind. COMMENTARY: Matthew Henry: 'Christ offers them spiritual eye-salve that they might see their own wretchedness and his grace.' William Barclay: 'Laodicea's lukewarm water came from hot springs 6 miles away, arriving neither hot (healing) nor cold (refreshing)'—explains Rev 3:15-16."
         ],
-        pitfalls: ["Letting commentary overrule Scripture"],
-        deliverable: "Wordlist + notes + brief synthesis",
+        pitfalls: [
+          "Letting commentary overrule clear Scripture",
+          "Ignoring original language because 'I don't know Greek/Hebrew'—Strong's and lexicons are accessible",
+          "Reading modern English meaning into ancient words",
+          "Using only one commentary (creates echo chamber)",
+          "Copying long commentary quotes without synthesis—show you've digested it"
+        ],
+        deliverable: "Wordlist (3-5 terms with definitions) + Cultural notes (1-2 details) + Commentary excerpts (2-3 quotes with sources) + Brief synthesis paragraph",
         prerequisites: [{ floor: 1, room: "sr" }]
       },
       {
         id: "st",
         name: "Symbols/Types Room",
         tag: "ST",
-        purpose: "Build God's symbol dictionary and Christ-types.",
-        coreQuestion: "What is this symbol's consistent meaning and Christ-fulfillment?",
-        method: "Symbol card: sign → scope → Christ locus → texts.",
-        examples: ["Lamb, Rock, Light, Water, Bread, Temple"],
-        pitfalls: ["Free-associating symbols", "Ignoring canonical usage"],
-        deliverable: "Symbol cards (reusable)",
+        purpose: "The Symbols/Types Room is where you build God's own symbol dictionary by tracking how He uses specific images throughout Scripture—and how they all point to Christ. Unlike secular symbols that can mean anything (a heart can mean love, courage, or just the organ), biblical symbols have CONSISTENT meaning because God is their Author. When you see 'lamb' in Scripture, it carries the same sacrificial freight from Genesis 22 (ram caught in thicket) to Exodus 12 (Passover) to Isaiah 53 (led to slaughter) to John 1:29 (Behold the Lamb) to Revelation 5 (Lamb who was slain). This room trains you to trace each symbol through the canon, noting its SCOPE (where it appears), its SIGN (what it represents), and its Christ-LOCUS (how Jesus fulfills it). You're not free-associating ('water makes me think of beaches')—you're letting Scripture interpret Scripture. When you've built symbol cards for Lamb, Rock, Light, Water, Bread, Temple, Vine, Door, Shepherd, and others, you possess a theology-packed vocabulary that unlocks hundreds of passages. The Symbols/Types Room keeps you from eisegesis (reading in) by anchoring your interpretation in God's own repeated imagery. Every symbol card you create becomes a reusable interpretive tool.",
+        coreQuestion: "What is this symbol's consistent biblical meaning and how does it find fulfillment in Christ?",
+        method: "STEP-BY-STEP METHODOLOGY (Building a Symbol Card):\n\n1. IDENTIFY the symbol (Lamb, Rock, Light, Water, Bread, etc.)\n2. SCOPE: Track the symbol through Scripture—where does it appear?\n   • List 5-10 key texts where the symbol shows up\n   • Note if usage is consistent or if there are variations\n3. SIGN: What does the symbol consistently represent?\n   • Sacrifice? Provision? Judgment? Presence?\n   • Write a 1-sentence definition\n4. CHRIST-LOCUS: How does Jesus fulfill this symbol?\n   • Find NT passages where Christ is explicitly connected to the symbol\n   • Write 1-2 sentences on fulfillment\n5. Build your card:\n   Symbol → Scope (texts) → Sign (meaning) → Christ-locus (fulfillment)\n6. Store the card for reuse—you'll reference it in future study\n\nCOMMON BIBLICAL SYMBOLS TO MAP:\n• LAMB: Sacrifice, substitution, innocence\n• ROCK: Stability, refuge, foundation, judgment\n• LIGHT: Truth, revelation, presence, holiness\n• WATER: Life, cleansing, Spirit, Word\n• BREAD: Provision, sustenance, Word\n• TEMPLE: God's dwelling, holiness, access\n• VINE: Life source, fruitfulness, covenant relationship\n• DOOR: Access, salvation, exclusive entry\n• SHEPHERD: Care, guidance, protection, ownership\n\nKEY PRINCIPLES:\n• Let Scripture define symbols—not your imagination\n• Symbols are CONSISTENT across the canon (God is the Author)\n• Multiple texts create biblical vocabulary—single texts create speculation\n• Christ is the ultimate reality behind every type and symbol\n• Build your library over time—each card is permanent infrastructure",
+        examples: [
+          "LAMB Symbol Card:\n→ SCOPE: Gen 22:8 (God will provide), Ex 12:3-13 (Passover), Isa 53:7 (led to slaughter), John 1:29 (Behold the Lamb), 1 Cor 5:7 (Christ our Passover), 1 Pet 1:19 (without blemish), Rev 5:6-12 (Lamb on throne)\n→ SIGN: Substitutionary sacrifice—innocent dies in place of guilty\n→ CHRIST-LOCUS: Jesus is the Lamb of God who takes away sin (John 1:29); slain from foundation of world (Rev 13:8); Passover fulfilled at crucifixion (1 Cor 5:7)",
+          "ROCK Symbol Card:\n→ SCOPE: Ex 17:6 (water from rock), Deut 32:4 (Rock of salvation), Ps 18:2 (my Rock), Isa 28:16 (cornerstone), Matt 16:18 (build on this rock), 1 Cor 10:4 (Rock was Christ), 1 Pet 2:6-8 (living stone)\n→ SIGN: Immovable foundation, refuge in storm, source of life-giving water\n→ CHRIST-LOCUS: Christ is the Rock struck for us (1 Cor 10:4); foundation stone (Isa 28:16, 1 Pet 2:6); living water flows from Him (John 7:38)",
+          "TEMPLE Symbol Card:\n→ SCOPE: Ex 25-40 (tabernacle), 1 Kings 6-8 (Solomon's temple), Ezek 40-48 (vision), John 2:19-21 (destroy this temple), 1 Cor 3:16 (you are temple), Eph 2:21 (growing into holy temple), Rev 21:22 (no temple—Lamb is temple)\n→ SIGN: God's dwelling place among humanity, holiness, mediated access\n→ CHRIST-LOCUS: Jesus' body is the temple (John 2:21); we are living stones in Him (1 Pet 2:5); in new creation, Christ Himself is the temple (Rev 21:22)"
+        ],
+        pitfalls: [
+          "Free-associating symbols without biblical warrant ('dove = peace' may work in culture, but what does Scripture say?)",
+          "Ignoring canonical usage—assuming one-time symbols are universal",
+          "Missing Christ connections—types exist to point to Him",
+          "Allegorizing everything—not every detail is symbolic (sometimes a door is just a door)",
+          "Creating symbols that contradict Scripture's own interpretation"
+        ],
+        deliverable: "Symbol cards (reusable)—each card shows: Symbol → Scope (5-10 texts) → Sign (1-sentence meaning) → Christ-locus (fulfillment note)",
         prerequisites: [{ floor: 1, room: "sr" }, { floor: 1, room: "tr" }]
       },
       {
