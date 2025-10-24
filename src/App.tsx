@@ -56,6 +56,8 @@ import Auth from "./pages/Auth";
 import CriticsAnalysis from "./pages/CriticsAnalysis";
 import Referrals from "./pages/Referrals";
 import StudentVerification from "./pages/StudentVerification";
+import AccessCode from "./pages/AccessCode";
+import AdminAccessCodes from "./pages/AdminAccessCodes";
 import MemorizationVerses from "./pages/MemorizationVerses";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -73,6 +75,16 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/access" element={
+              <ProtectedRoute>
+                <AccessCode />
+              </ProtectedRoute>
+            } />
+            <Route path="/student-verification" element={
+              <ProtectedRoute>
+                <StudentVerification />
+              </ProtectedRoute>
+            } />
             <Route path="/palace" element={<ProtectedRoute><Palace /></ProtectedRoute>} />
             
             <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
@@ -123,6 +135,7 @@ function App() {
             <Route path="/critics-analysis" element={<ProtectedRoute><CriticsAnalysis /></ProtectedRoute>} />
             <Route path="/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
             <Route path="/student-verify" element={<ProtectedRoute><StudentVerification /></ProtectedRoute>} />
+            <Route path="/admin/access-codes" element={<ProtectedRoute><AdminAccessCodes /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -824,6 +824,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          access_code_used: string | null
           avatar_url: string | null
           chain_chess_streak: number | null
           created_at: string | null
@@ -831,10 +832,12 @@ export type Database = {
           display_name: string | null
           equations_streak: number | null
           gem_creation_streak: number | null
+          has_lifetime_access: boolean
           id: string
           is_student: boolean | null
           last_seen: string | null
           level: number | null
+          lifetime_access_granted_at: string | null
           longest_chess_streak: number | null
           longest_equations_streak: number | null
           longest_gem_streak: number | null
@@ -852,6 +855,7 @@ export type Database = {
           username: string
         }
         Insert: {
+          access_code_used?: string | null
           avatar_url?: string | null
           chain_chess_streak?: number | null
           created_at?: string | null
@@ -859,10 +863,12 @@ export type Database = {
           display_name?: string | null
           equations_streak?: number | null
           gem_creation_streak?: number | null
+          has_lifetime_access?: boolean
           id: string
           is_student?: boolean | null
           last_seen?: string | null
           level?: number | null
+          lifetime_access_granted_at?: string | null
           longest_chess_streak?: number | null
           longest_equations_streak?: number | null
           longest_gem_streak?: number | null
@@ -880,6 +886,7 @@ export type Database = {
           username: string
         }
         Update: {
+          access_code_used?: string | null
           avatar_url?: string | null
           chain_chess_streak?: number | null
           created_at?: string | null
@@ -887,10 +894,12 @@ export type Database = {
           display_name?: string | null
           equations_streak?: number | null
           gem_creation_streak?: number | null
+          has_lifetime_access?: boolean
           id?: string
           is_student?: boolean | null
           last_seen?: string | null
           level?: number | null
+          lifetime_access_granted_at?: string | null
           longest_chess_streak?: number | null
           longest_equations_streak?: number | null
           longest_gem_streak?: number | null
@@ -1017,6 +1026,39 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      special_access_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          is_active: boolean
+          max_uses: number | null
+          used_count: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          used_count?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          used_count?: number
         }
         Relationships: []
       }
@@ -1391,6 +1433,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      redeem_access_code: { Args: { access_code: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

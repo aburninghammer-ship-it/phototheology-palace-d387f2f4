@@ -35,7 +35,7 @@ export function useSubscription() {
     try {
       const { data: profile } = await supabase
         .from("profiles")
-        .select("subscription_status, subscription_tier, trial_ends_at, is_student, student_expires_at")
+        .select("subscription_status, subscription_tier, trial_ends_at, is_student, student_expires_at, has_lifetime_access")
         .eq("id", user!.id)
         .single();
 
@@ -50,7 +50,7 @@ export function useSubscription() {
           isStudent: profile.is_student || false,
           trialEndsAt: profile.trial_ends_at,
           studentExpiresAt: profile.student_expires_at,
-          hasAccess: profile.subscription_status === 'active' || trialValid || studentValid,
+          hasAccess: profile.has_lifetime_access || profile.subscription_status === 'active' || trialValid || studentValid,
         });
       }
     } catch (error) {
