@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useReadingHistory } from "@/hooks/useReadingHistory";
 import { 
   BookOpen, 
   Flame, 
@@ -14,7 +15,8 @@ import {
   TrendingUp,
   Clock,
   Award,
-  Play
+  Play,
+  History
 } from "lucide-react";
 
 interface DashboardStats {
@@ -30,6 +32,7 @@ interface DashboardStats {
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { getRecentReading } = useReadingHistory();
   const [stats, setStats] = useState<DashboardStats>({
     dailyStreak: 0,
     totalPoints: 0,
@@ -40,12 +43,19 @@ export default function Dashboard() {
     recentActivity: [],
   });
   const [loading, setLoading] = useState(true);
+  const [recentReading, setRecentReading] = useState<any[]>([]);
 
   useEffect(() => {
     if (user) {
       loadDashboardData();
+      loadRecentReading();
     }
   }, [user]);
+
+  const loadRecentReading = async () => {
+    const history = await getRecentReading(3);
+    setRecentReading(history);
+  };
 
   const loadDashboardData = async () => {
     try {
@@ -195,18 +205,34 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Recent Activity */}
+        {/* Recent Reading */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Recent Activity
+              <History className="h-5 w-5" />
+              Recent Reading
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-sm text-muted-foreground text-center py-8">
-              Start learning to see your activity here
-            </div>
+            {recentReading.length > 0 ? (
+              <div className="space-y-2">
+                {recentReading.map((reading) => (
+                  <Button
+                    key={reading.id}
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => navigate(`/bible/${reading.book}/${reading.chapter}`)}
+                  >
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    {reading.book} {reading.chapter}
+                  </Button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground text-center py-8">
+                Start reading to see your history here
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

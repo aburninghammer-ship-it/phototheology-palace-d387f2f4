@@ -13,6 +13,7 @@ import { BookOpen, Gamepad2, GraduationCap, Users, User, Menu, Home, Crown, Sett
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { GlobalSearch } from "./GlobalSearch";
 
 export const SimplifiedNav = () => {
   const { user, signOut } = useAuth();
@@ -151,6 +152,8 @@ export const SimplifiedNav = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <GlobalSearch />
+          
           <Button asChild variant="ghost" size="sm" className="hidden md:flex">
             <Link to="/pricing"><Crown className="h-4 w-4 mr-1" />Upgrade</Link>
           </Button>

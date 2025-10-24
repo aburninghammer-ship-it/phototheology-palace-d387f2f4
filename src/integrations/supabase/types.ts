@@ -83,6 +83,39 @@ export type Database = {
         }
         Relationships: []
       }
+      bookmarks: {
+        Row: {
+          book: string
+          chapter: number
+          color: string | null
+          created_at: string
+          id: string
+          note: string | null
+          user_id: string
+          verse: number | null
+        }
+        Insert: {
+          book: string
+          chapter: number
+          color?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          user_id: string
+          verse?: number | null
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          color?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          user_id?: string
+          verse?: number | null
+        }
+        Relationships: []
+      }
       challenge_submissions: {
         Row: {
           ai_feedback: string | null
@@ -948,6 +981,33 @@ export type Database = {
         }
         Relationships: []
       }
+      reading_history: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string
+          id: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string
+          id?: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string
+          id?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       referrals: {
         Row: {
           converted_at: string | null
@@ -1400,6 +1460,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_preferences: {
+        Row: {
+          bible_font_size: string | null
+          bible_translation: string | null
+          id: string
+          reading_mode: string | null
+          theme_preference: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bible_font_size?: string | null
+          bible_translation?: string | null
+          id?: string
+          reading_mode?: string | null
+          theme_preference?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bible_font_size?: string | null
+          bible_translation?: string | null
+          id?: string
+          reading_mode?: string | null
+          theme_preference?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

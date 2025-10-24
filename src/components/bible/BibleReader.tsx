@@ -4,12 +4,16 @@ import { fetchChapter } from "@/services/bibleApi";
 import { Chapter } from "@/types/bible";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot, Bookmark } from "lucide-react";
 import { VerseView } from "./VerseView";
 import { PrinciplePanel } from "./PrinciplePanel";
 import { ChainReferencePanel } from "./ChainReferencePanel";
 import { CommentaryPanel } from "./CommentaryPanel";
 import { JeevesVerseAssistant } from "./JeevesVerseAssistant";
+import { ReadingControls } from "./ReadingControls";
+import { useReadingHistory } from "@/hooks/useReadingHistory";
+import { useBookmarks } from "@/hooks/useBookmarks";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -25,8 +29,13 @@ export const BibleReader = () => {
   const [jeevesMode, setJeevesMode] = useState(false);
   const [highlightedVerses, setHighlightedVerses] = useState<number[]>([]);
 
+  const { trackReading } = useReadingHistory();
+  const { addBookmark, isBookmarked } = useBookmarks();
+  const { preferences } = useUserPreferences();
+
   useEffect(() => {
     loadChapter();
+    trackReading(book, chapter);
   }, [book, chapter]);
 
   const loadChapter = async () => {
@@ -65,10 +74,16 @@ export const BibleReader = () => {
     );
   }
 
+  const fontSizeClass = {
+    small: "text-sm",
+    medium: "text-base",
+    large: "text-lg",
+  }[preferences.bible_font_size];
+
   return (
     <div className="space-y-6">
       {/* Chapter Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="font-serif text-3xl md:text-4xl font-bold bg-gradient-palace bg-clip-text text-transparent">
             {book} {chapter}
@@ -78,7 +93,17 @@ export const BibleReader = () => {
           </p>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <ReadingControls />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => addBookmark(book, chapter)}
+            disabled={isBookmarked(book, chapter)}
+          >
+            <Bookmark className="h-4 w-4 mr-2" />
+            {isBookmarked(book, chapter) ? "Bookmarked" : "Bookmark"}
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -163,8 +188,8 @@ export const BibleReader = () => {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Reading Pane */}
         <div className="lg:col-span-2">
-          <Card className="p-6 shadow-elegant hover:shadow-hover transition-smooth">
-            <div className="space-y-4">
+          <Card className={`p-6 shadow-elegant hover:shadow-hover transition-smooth ${preferences.reading_mode === 'focus' ? 'max-w-3xl mx-auto' : ''}`}>
+            <div className={`space-y-4 ${fontSizeClass}`}>
               {chapterData.verses.map((verse) => (
                 <VerseView
                   key={`${verse.book}-${verse.chapter}-${verse.verse}`}
