@@ -155,7 +155,8 @@ serve(async (req) => {
       lessonContent,
       bibleVerses,
       selectedRoom,
-      selectedPrinciple
+      selectedPrinciple,
+      userQuestion
     } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -165,30 +166,58 @@ serve(async (req) => {
     let userPrompt = "";
 
     if (mode === "quarterly_analysis") {
-      systemPrompt = `You are Jeeves, an expert Bible study assistant who helps students apply the 38-Room Phototheology Palace framework and the 5 Dimensions (from the Dimensions Room) to Sabbath School lessons. You provide insightful, practical analysis that helps students see deeper connections in Scripture.
+      systemPrompt = `You are Jeeves, an enthusiastic and engaging Bible study assistant who helps students apply the 38-Room Phototheology Palace framework and the 5 Dimensions to Sabbath School lessons. You provide insightful, practical analysis that helps students see deeper connections in Scripture.
+
+**COMMUNICATION STYLE:**
+- Use relevant emojis throughout your response (📖 ✨ 🔍 💡 ⭐ 🌟 ✅ 🎯 💭 🙏 etc.)
+- Start with an engaging emoji that matches the content
+- Use emojis to highlight key points and sections
+- Break up text with emojis for visual appeal
+- Make your tone warm, enthusiastic, and conversational
+- Use formatting like **bold** for emphasis
+- Create clear sections with emoji headers
       
 ${PALACE_SCHEMA}`;
       
       const framework = selectedRoom || selectedPrinciple || 'general palace framework';
+      const userQuestionSection = question ? `\n\nUser's Specific Question:\n${question}\n\nPlease address this question in your analysis.` : '';
       
       userPrompt = `Analyze this Sabbath School lesson using ${framework}:
 
-Lesson: ${lessonTitle}
-Day: ${dayTitle}
+📚 **Lesson:** ${lessonTitle}
+📅 **Day:** ${dayTitle}
 
-Bible Verses Referenced:
+📖 **Bible Verses Referenced:**
 ${bibleVerses?.join(', ') || 'See lesson content'}
 
-Lesson Content (excerpt):
+📝 **Lesson Content (excerpt):**
 ${lessonContent?.substring(0, 2500) || 'Content not available'}
+${userQuestionSection}
 
-Please provide:
-1. How ${framework} applies to this specific lesson
-2. Key insights and connections you discover through this lens
-3. Practical applications for daily spiritual life
-4. Questions for deeper reflection
+Please provide an engaging analysis with:
 
-Keep your response conversational, insightful, and practical. Help the student see connections they might have missed. Use the specific methodology from the palace room if applicable.`;
+🎯 **1. Framework Application**
+How ${framework} applies to this specific lesson (use relevant emojis)
+
+✨ **2. Key Insights & Connections**
+Discoveries through this lens that illuminate the text (highlight with emojis)
+
+🌟 **3. Practical Applications**
+How to apply this to daily spiritual life (make it actionable)
+
+💭 **4. Reflection Questions**
+Thought-provoking questions for deeper study
+
+**Style Requirements:**
+- Use emojis generously throughout (but appropriately)
+- Make it visually engaging and easy to scan
+- Keep tone conversational yet insightful
+- Help the student see connections they might have missed
+- Use specific methodology from the palace room if applicable
+- End with an encouraging thought and emoji
+
+Remember: Your goal is to make Bible study exciting and visually appealing while maintaining depth and accuracy!`;
+
 
     } else if (mode === "example") {
       systemPrompt = `You are Jeeves, a wise and scholarly Bible study assistant for Phototheology. 
