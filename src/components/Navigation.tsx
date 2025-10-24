@@ -20,9 +20,10 @@ export const Navigation = () => {
   const activeCount = useActiveUsers();
   
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border shadow-purple">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border shadow-purple">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">
               <Building2 className="h-6 w-6 text-primary transition-all duration-300 group-hover:scale-110" />
@@ -272,5 +273,8 @@ export const Navigation = () => {
         </div>
       </div>
     </nav>
+    {/* Spacer to prevent content from being hidden behind fixed nav */}
+    <div className="h-16" />
+    </>
   );
 };
