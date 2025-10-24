@@ -137,11 +137,11 @@ const TreasureHunt = () => {
           <div className="text-center space-y-4">
             <h1 className="text-5xl font-bold flex items-center justify-center gap-3">
               <Trophy className="h-12 w-12 text-yellow-500" />
-              Daily Treasure Hunts
+              24-Hour Treasure Hunts
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Join 24-hour biblical treasure hunts! Jeeves creates a conclusion using palace rooms and principles. 
-              Follow clues step-by-step to reach the right answer. First to solve wins!
+              Follow clues step-by-step to reach the right answer. New challenge every 24 hours!
             </p>
           </div>
 
