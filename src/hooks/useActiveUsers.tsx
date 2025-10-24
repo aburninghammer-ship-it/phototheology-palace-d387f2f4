@@ -6,29 +6,46 @@ export const useActiveUsers = () => {
 
   useEffect(() => {
     const updateLastSeen = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from("profiles")
-          .update({ last_seen: new Date().toISOString() })
-          .eq("id", user.id);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { error } = await supabase
+            .from("profiles")
+            .update({ last_seen: new Date().toISOString() })
+            .eq("id", user.id);
+          
+          if (error) {
+            console.error("Error updating last_seen:", error);
+          }
+        }
+      } catch (error) {
+        console.error("Error in updateLastSeen:", error);
       }
     };
 
     const fetchActiveUsers = async () => {
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-      const { count } = await supabase
-        .from("profiles")
-        .select("*", { count: "exact", head: true })
-        .gte("last_seen", fiveMinutesAgo);
-      
-      setActiveCount(count || 0);
+      try {
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        const { count, error } = await supabase
+          .from("profiles")
+          .select("*", { count: "exact", head: true })
+          .gte("last_seen", fiveMinutesAgo);
+        
+        if (error) {
+          console.error("Error fetching active users:", error);
+          return;
+        }
+        
+        setActiveCount(count || 0);
+      } catch (error) {
+        console.error("Error in fetchActiveUsers:", error);
+      }
     };
 
-    // Update user's last_seen
+    // Update user's last_seen immediately
     updateLastSeen();
 
-    // Fetch active users count
+    // Fetch active users count immediately
     fetchActiveUsers();
 
     // Update every 30 seconds
@@ -37,7 +54,28 @@ export const useActiveUsers = () => {
       fetchActiveUsers();
     }, 30000);
 
-    return () => clearInterval(interval);
+    // Set up realtime subscription for profile updates
+    const channel = supabase
+      .channel('profiles-active-users')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: 'last_seen=gte.' + new Date(Date.now() - 5 * 60 * 1000).toISOString()
+        },
+        () => {
+          // When any profile is updated, refetch the count
+          fetchActiveUsers();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return activeCount;
