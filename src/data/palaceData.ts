@@ -8,6 +8,7 @@ export interface Room {
   examples: string[];
   pitfalls: string[];
   deliverable: string;
+  prerequisites?: { floor: number; room: string }[];
 }
 
 export interface Floor {
@@ -126,7 +127,8 @@ export const palaceFloors: Floor[] = [
         method: "20–50 bullet observations (grammar, repetition, setting, contrasts).",
         examples: ["Luke 15: note verbs of the father ('saw, ran, kissed')"],
         pitfalls: ["Slipping into meaning", "Too few observations"],
-        deliverable: "Observation sheet"
+        deliverable: "Observation sheet",
+        prerequisites: [{ floor: 1, room: "sr" }]
       },
       {
         id: "dc",
@@ -140,7 +142,8 @@ export const palaceFloors: Floor[] = [
           "Rev 3:18: 'eye-salve' (κολλούριον, kollourion) — Laodicea was famous for Phrygian powder eye medicine. Matthew Henry: 'Christ offers them spiritual eye-salve that they might see their own wretchedness and his grace.' Cultural note: Laodicea's lukewarm water supply came from hot springs 6 miles away, arriving neither hot nor cold"
         ],
         pitfalls: ["Letting commentary overrule Scripture"],
-        deliverable: "Wordlist + notes + brief synthesis"
+        deliverable: "Wordlist + notes + brief synthesis",
+        prerequisites: [{ floor: 1, room: "sr" }]
       },
       {
         id: "st",
@@ -151,7 +154,8 @@ export const palaceFloors: Floor[] = [
         method: "Symbol card: sign → scope → Christ locus → texts.",
         examples: ["Lamb, Rock, Light, Water, Bread, Temple"],
         pitfalls: ["Free-associating symbols", "Ignoring canonical usage"],
-        deliverable: "Symbol cards (reusable)"
+        deliverable: "Symbol cards (reusable)",
+        prerequisites: [{ floor: 1, room: "sr" }, { floor: 1, room: "tr" }]
       },
       {
         id: "qr",
@@ -162,7 +166,8 @@ export const palaceFloors: Floor[] = [
         method: "25 intra + 25 inter + 25 PT (75x3 when fully trained).",
         examples: ["Why 'Jesus wept' if resurrection minutes away?"],
         pitfalls: ["Leading questions", "Stopping too early"],
-        deliverable: "Question map"
+        deliverable: "Question map",
+        prerequisites: [{ floor: 1, room: "sr" }]
       },
       {
         id: "qa",
@@ -173,7 +178,8 @@ export const palaceFloors: Floor[] = [
         method: "For each key question, cite 2–4 cross-texts that resolve it.",
         examples: ["Why did the father run? (Ps 103:13; Lk 15)"],
         pitfalls: ["Proof-texting without context"],
-        deliverable: "Answer chains (Q → refs → synthesis)"
+        deliverable: "Answer chains (Q → refs → synthesis)",
+        prerequisites: [{ floor: 1, room: "sr" }, { floor: 2, room: "qr" }]
       }
     ]
   },

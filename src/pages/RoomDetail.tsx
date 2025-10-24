@@ -1,16 +1,20 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { palaceFloors } from "@/data/palaceData";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Target, HelpCircle, BookOpen, AlertCircle, CheckCircle, Trophy } from "lucide-react";
+import { ArrowLeft, Target, HelpCircle, BookOpen, AlertCircle, CheckCircle, Trophy, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { JeevesAssistant } from "@/components/JeevesAssistant";
 import { useRoomProgress } from "@/hooks/useRoomProgress";
 import { useAuth } from "@/hooks/useAuth";
+import { useRoomUnlock } from "@/hooks/useRoomUnlock";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useEffect } from "react";
 
 export default function RoomDetail() {
   const { floorNumber, roomId } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const floor = palaceFloors.find(f => f.number === Number(floorNumber));
   const room = floor?.rooms.find(r => r.id === roomId);
@@ -21,6 +25,18 @@ export default function RoomDetail() {
     markExerciseComplete, 
     markRoomComplete 
   } = useRoomProgress(Number(floorNumber), roomId || "");
+  
+  const { isUnlocked, loading: unlockLoading, missingPrerequisites } = useRoomUnlock(
+    Number(floorNumber), 
+    roomId || ""
+  );
+
+  // Redirect if room is locked
+  useEffect(() => {
+    if (!unlockLoading && !isUnlocked && user) {
+      navigate(`/palace/floor/${floorNumber}`);
+    }
+  }, [isUnlocked, unlockLoading, user, navigate, floorNumber]);
 
   if (!floor || !room) {
     return (
@@ -55,6 +71,20 @@ export default function RoomDetail() {
             Back to Floor {floor.number}
           </Button>
         </Link>
+
+        {!isUnlocked && !unlockLoading && (
+          <Alert className="mb-6 border-destructive/50 bg-destructive/10">
+            <Lock className="h-4 w-4" />
+            <AlertDescription>
+              <strong>Room Locked:</strong> You must complete these rooms first:
+              <ul className="list-disc list-inside mt-2">
+                {missingPrerequisites.map((prereq, idx) => (
+                  <li key={idx}>{prereq}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className={`${gradient} rounded-lg p-8 mb-8 text-white`}>
           <div className="flex items-center gap-3 mb-4">
@@ -186,14 +216,28 @@ export default function RoomDetail() {
           </div>
 
           <div className="lg:col-span-1">
-            <JeevesAssistant
-              roomTag={room.tag}
-              roomName={room.name}
-              principle={room.purpose}
-              floorNumber={floor.number}
-              roomId={room.id}
-              onExerciseComplete={markExerciseComplete}
-            />
+            {isUnlocked ? (
+              <JeevesAssistant
+                roomTag={room.tag}
+                roomName={room.name}
+                principle={room.purpose}
+                floorNumber={floor.number}
+                roomId={room.id}
+                onExerciseComplete={markExerciseComplete}
+              />
+            ) : (
+              <Card className="opacity-60">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Lock className="h-5 w-5" />
+                    Room Locked
+                  </CardTitle>
+                  <CardDescription>
+                    Complete the prerequisite rooms to unlock this content.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            )}
           </div>
         </div>
       </div>

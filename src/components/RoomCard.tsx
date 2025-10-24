@@ -1,8 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Room } from "@/data/palaceData";
-import { Sparkles, BookOpen, Target, Lightbulb } from "lucide-react";
+import { Sparkles, BookOpen, Target, Lightbulb, Lock } from "lucide-react";
 import { JeevesAssistant } from "@/components/JeevesAssistant";
+import { useRoomUnlock } from "@/hooks/useRoomUnlock";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface RoomCardProps {
   room: Room;
@@ -24,12 +26,27 @@ export const RoomCard = ({ room, floorNumber }: RoomCardProps) => {
   const gradients = roomGradients[floorNumber - 1] || ["gradient-palace"];
   const roomIndex = room.id.charCodeAt(0) % gradients.length;
   const gradient = gradients[roomIndex];
+  const { isUnlocked, loading, missingPrerequisites } = useRoomUnlock(floorNumber, room.id);
   
   return (
     <div className="grid lg:grid-cols-3 gap-6">
       {/* Room Details */}
       <div className="lg:col-span-2">
-        <Card className="hover-lift group border-2 hover:border-primary overflow-hidden animate-scale-in bg-gradient-to-br from-card to-muted/20">
+        {!isUnlocked && !loading && (
+          <Alert className="mb-4 border-destructive/50 bg-destructive/10">
+            <Lock className="h-4 w-4" />
+            <AlertDescription>
+              <strong>Room Locked:</strong> Complete these rooms first:
+              <ul className="list-disc list-inside mt-2">
+                {missingPrerequisites.map((prereq, idx) => (
+                  <li key={idx}>{prereq}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        <Card className={`hover-lift group border-2 hover:border-primary overflow-hidden animate-scale-in bg-gradient-to-br from-card to-muted/20 ${!isUnlocked ? 'opacity-60' : ''}`}>
           <div className={`h-2 ${gradient}`} />
           <CardHeader>
             <div className="flex items-start justify-between mb-3">
@@ -43,8 +60,9 @@ export const RoomCard = ({ room, floorNumber }: RoomCardProps) => {
                   </Badge>
                 </div>
                 <CardTitle className="font-serif text-2xl group-hover:text-primary transition-smooth flex items-center gap-2">
+                  {!isUnlocked && <Lock className="h-5 w-5 text-destructive" />}
                   {room.name}
-                  <Sparkles className="h-5 w-5 text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse-glow" />
+                  {isUnlocked && <Sparkles className="h-5 w-5 text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse-glow" />}
                 </CardTitle>
               </div>
             </div>
@@ -112,13 +130,27 @@ export const RoomCard = ({ room, floorNumber }: RoomCardProps) => {
 
       {/* Jeeves Assistant for this room */}
       <div className="lg:col-span-1">
-        <JeevesAssistant
-          roomTag={room.tag}
-          roomName={room.name}
-          principle={room.purpose.split('.')[0]}
-          floorNumber={floorNumber}
-          roomId={room.id}
-        />
+        {isUnlocked ? (
+          <JeevesAssistant
+            roomTag={room.tag}
+            roomName={room.name}
+            principle={room.purpose.split('.')[0]}
+            floorNumber={floorNumber}
+            roomId={room.id}
+          />
+        ) : (
+          <Card className="opacity-60">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                Locked
+              </CardTitle>
+              <CardDescription>
+                Complete prerequisite rooms to unlock Jeeves for this room.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        )}
       </div>
     </div>
   );
