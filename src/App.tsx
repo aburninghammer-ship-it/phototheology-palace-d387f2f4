@@ -44,6 +44,7 @@ import PhototheologyGPT from "./pages/PhototheologyGPT";
 import DanielRevelationGPT from "./pages/DanielRevelationGPT";
 import ApologeticsGPT from "./pages/ApologeticsGPT";
 import LessonQuarterlyGPT from "./pages/LessonQuarterlyGPT";
+import QuarterlyStudy from "./pages/QuarterlyStudy";
 import TreasureHunt from "./pages/TreasureHunt";
 import TreasureHuntPlay from "./pages/TreasureHuntPlay";
 import TrainingDrills from "./pages/TrainingDrills";
@@ -117,6 +118,7 @@ function App() {
           <Route path="/daniel-revelation-gpt" element={<ProtectedRoute><DanielRevelationGPT /></ProtectedRoute>} />
           <Route path="/apologetics-gpt" element={<ProtectedRoute><ApologeticsGPT /></ProtectedRoute>} />
           <Route path="/lesson-quarterly-gpt" element={<ProtectedRoute><LessonQuarterlyGPT /></ProtectedRoute>} />
+          <Route path="/quarterly-study" element={<ProtectedRoute><QuarterlyStudy /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/critics-analysis" element={<ProtectedRoute><CriticsAnalysis /></ProtectedRoute>} />
             <Route path="/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
