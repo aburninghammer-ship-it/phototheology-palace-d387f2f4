@@ -48,7 +48,17 @@ export const MobileNav = () => {
               <Link to="/bible/John/3">
                 <Button variant="ghost" className="w-full justify-start">
                   <BookOpen className="h-4 w-4 mr-2" />
-                  Phototheology Bible
+                  📖 Phototheology Bible
+                </Button>
+              </Link>
+              <Link to="/bible-image-library">
+                <Button variant="ghost" className="w-full justify-start">
+                  🎨 Image Library
+                </Button>
+              </Link>
+              <Link to="/quarterly-study">
+                <Button variant="ghost" className="w-full justify-start">
+                  📅 Amplified Quarterly
                 </Button>
               </Link>
               <Link to="/games">
