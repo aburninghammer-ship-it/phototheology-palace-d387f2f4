@@ -123,13 +123,38 @@ const QuarterlyStudy = () => {
       <div className="min-h-screen bg-background">
         <Navigation />
         <main className="container mx-auto px-4 py-8">
-          <Card>
+          <Card className="max-w-2xl mx-auto">
             <CardHeader>
-              <CardTitle>Quarterly Not Available</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-6 w-6 text-primary" />
+                Quarterly Not Available
+              </CardTitle>
               <CardDescription>
-                Unable to load the current Sabbath School quarterly. Please try again later.
+                The Sabbath School API is currently unavailable or the quarterly data couldn't be loaded.
               </CardDescription>
             </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  This page connects to the official Adventist Sabbath School API. 
+                  The service may be temporarily unavailable or experiencing technical difficulties.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Alternative options:</p>
+                <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                  <li>Visit the official Sabbath School website directly</li>
+                  <li>Try again in a few minutes</li>
+                  <li>Contact support if the issue persists</li>
+                </ul>
+              </div>
+              <Button 
+                onClick={loadCurrentQuarterly}
+                className="w-full"
+              >
+                Try Again
+              </Button>
+            </CardContent>
           </Card>
         </main>
       </div>

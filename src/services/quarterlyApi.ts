@@ -30,28 +30,57 @@ export async function getCurrentQuarterly(language: string = "en"): Promise<Quar
     const year = now.getFullYear();
     const quarter = Math.ceil((now.getMonth() + 1) / 3);
     
-    const quarterlyId = `${year}-${quarter < 10 ? '0' + quarter : quarter}-${language}`;
+    // Try different quarter ID formats
+    const quarterlyIds = [
+      `${year}-${quarter.toString().padStart(2, '0')}-${language}`,
+      `${year}-0${quarter}-${language}`,
+      `${language}/${year}-0${quarter}`,
+    ];
     
-    const response = await fetch(
-      `https://sabbath-school.adventech.io/api/v2/${language}/quarterlies/${quarterlyId}/index.json`
-    );
-    
-    if (!response.ok) {
-      console.error('Failed to fetch quarterly:', response.status);
-      return null;
+    for (const quarterlyId of quarterlyIds) {
+      try {
+        // Try new API structure
+        const response = await fetch(
+          `https://sabbath-school.adventech.io/api/v2/${language}/quarterlies/${quarterlyId}/index.json`,
+          {
+            headers: {
+              'Accept': 'application/json',
+            }
+          }
+        );
+        
+        if (!response.ok) {
+          console.warn(`Failed to fetch quarterly with ID ${quarterlyId}:`, response.status);
+          continue;
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType?.includes('application/json')) {
+          console.warn(`Non-JSON response for ${quarterlyId}`);
+          continue;
+        }
+        
+        const data = await response.json();
+        
+        if (data && data.quarterly) {
+          return {
+            id: data.quarterly.id || quarterlyId,
+            title: data.quarterly.title || 'Current Quarterly',
+            description: data.quarterly.description || '',
+            introduction: data.quarterly.introduction || '',
+            lessons: data.lessons || [],
+            quarter: data.quarterly.quarter || `Q${quarter} ${year}`,
+            cover_image: data.quarterly.cover || undefined,
+          };
+        }
+      } catch (err) {
+        console.warn(`Error with quarterly ID ${quarterlyId}:`, err);
+        continue;
+      }
     }
     
-    const data = await response.json();
-    
-    return {
-      id: data.quarterly.id,
-      title: data.quarterly.title,
-      description: data.quarterly.description || '',
-      introduction: data.quarterly.introduction || '',
-      lessons: data.lessons || [],
-      quarter: data.quarterly.quarter || `Q${quarter} ${year}`,
-      cover_image: data.quarterly.cover || undefined,
-    };
+    console.error('All quarterly API attempts failed');
+    return null;
   } catch (error) {
     console.error('Error fetching quarterly:', error);
     return null;
