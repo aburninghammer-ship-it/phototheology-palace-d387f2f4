@@ -58,6 +58,8 @@ import Referrals from "./pages/Referrals";
 import StudentVerification from "./pages/StudentVerification";
 import AccessCode from "./pages/AccessCode";
 import AdminAccessCodes from "./pages/AdminAccessCodes";
+import Onboarding from "./pages/Onboarding";
+import Dashboard from "./pages/Dashboard";
 import MemorizationVerses from "./pages/MemorizationVerses";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -74,6 +76,16 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/onboarding" element={
+              <ProtectedRoute>
+                <Onboarding />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/access" element={
               <ProtectedRoute>

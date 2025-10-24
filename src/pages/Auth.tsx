@@ -160,7 +160,7 @@ export default function Auth() {
       }
 
       toast.success("Account created! Welcome to Phototheology!");
-      navigate("/");
+      navigate("/onboarding");
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
       console.error("Signup error:", err);

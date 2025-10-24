@@ -280,14 +280,103 @@ export default function Pricing() {
         </div>
 
         {/* Compare Plans Section */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-muted/50">
-            <Zap className="h-5 w-5 text-primary" />
-            <span className="font-medium">Compare Plans</span>
+        <div className="mt-16">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-muted/50">
+              <Zap className="h-5 w-5 text-primary" />
+              <span className="font-medium">Feature Comparison</span>
+            </div>
           </div>
-          <p className="mt-4 text-muted-foreground">
-            All plans include access to the core Phototheology experience
-          </p>
+          
+          <Card className="glass-card max-w-5xl mx-auto">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-4 font-semibold">Feature</th>
+                      <th className="text-center p-4 font-semibold">Free Trial</th>
+                      <th className="text-center p-4 font-semibold">Essential</th>
+                      <th className="text-center p-4 font-semibold bg-primary/5">Premium</th>
+                      <th className="text-center p-4 font-semibold">Student</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-4">Memory Palace Access</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Bible Reader & Search</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Basic Games (Chain Chess, Verse Match)</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Escape Rooms & Treasure Hunts</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 text-muted-foreground">Limited</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">All Courses (Revelation, Daniel, etc.)</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 text-muted-foreground">1 Course</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">AI Study Assistants (Jeeves, GPTs)</td>
+                      <td className="text-center p-4 text-muted-foreground">Limited</td>
+                      <td className="text-center p-4 text-muted-foreground">10 questions/day</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Live Study Rooms</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Community Features</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Offline Access</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr>
+                      <td className="p-4">Priority Support</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* FAQ or Additional Info */}

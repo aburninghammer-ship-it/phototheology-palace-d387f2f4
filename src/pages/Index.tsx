@@ -43,13 +43,15 @@ const Index = () => {
           </div>
           
           <h1 className="font-serif text-5xl md:text-7xl font-bold mb-5 bg-gradient-ocean bg-clip-text text-transparent animate-slide-up">
-            Phototheology
+            Master Bible Typology
           </h1>
           
-          <p className="text-xl md:text-2xl text-foreground mb-8 leading-relaxed max-w-2xl mx-auto animate-fade-in font-normal">
-            Transform Bible study into a <strong className="font-bold">palace of meaning</strong>. 
-            Store Scripture as <strong className="font-bold">vivid images</strong>, patterns, 
-            and structures through an <strong className="font-bold">8-floor, 38-room</strong> method.
+          <p className="text-xl md:text-2xl text-foreground mb-4 leading-relaxed max-w-2xl mx-auto animate-fade-in font-normal">
+            The only app that teaches you to <strong className="font-bold">see Christ everywhere in Scripture</strong> through interactive games, memory techniques, and prophetic connections.
+          </p>
+          
+          <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
+            Join thousands learning Biblical typology through the <strong>8-floor Memory Palace method</strong>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slide-up">
