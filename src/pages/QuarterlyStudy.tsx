@@ -243,21 +243,32 @@ const QuarterlyStudy = () => {
           </p>
         </div>
 
-        {/* Quarterly Info */}
+          {/* Quarterly Info */}
         {quarterly && (
           <Card className="mb-6 border-2 border-primary/20">
             <CardHeader className="gradient-palace text-white">
-              <CardTitle className="font-serif text-2xl flex items-center justify-between">
+              <CardTitle className="font-serif text-2xl flex items-center justify-between flex-wrap gap-4">
                 <span>{quarterly.title}</span>
-                <a
-                  href="https://www.sabbath.school/LessonBook"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all flex items-center gap-2"
-                >
-                  <BookOpen className="h-4 w-4" />
-                  View PDF
-                </a>
+                <div className="flex gap-2">
+                  <a
+                    href="https://www.sabbath.school/LessonBook"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    Quarterly PDF
+                  </a>
+                  <a
+                    href="https://www.sabbath.school"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    Official Site
+                  </a>
+                </div>
               </CardTitle>
               <CardDescription className="text-white/90">
                 {quarterly.quarter} • {quarterly.description}
@@ -272,9 +283,22 @@ const QuarterlyStudy = () => {
             {/* Lesson Selector */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Select Lesson
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Select Lesson
+                  </div>
+                  {selectedLesson && selectedLesson.full_read && (
+                    <a
+                      href={selectedLesson.full_read}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded-lg hover:bg-primary/90 transition-all flex items-center gap-2"
+                    >
+                      <BookOpen className="h-3 w-3" />
+                      View Official PDF
+                    </a>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>

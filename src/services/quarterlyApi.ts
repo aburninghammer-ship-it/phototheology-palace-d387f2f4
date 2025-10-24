@@ -82,24 +82,37 @@ export async function getCurrentQuarterly(language: string = "en"): Promise<Quar
       console.warn('API fetch failed:', apiError);
     }
     
-    // Fallback: Return the current quarterly structure from sabbath.school
-    // This is a static fallback for Q4 2025 - "Lessons of Faith from Joshua"
+    // Fallback: Return Q4 2025 quarterly structure with official PDF links
+    const lessonData = [
+      { id: "01", title: "From Egypt to Canaan", dates: "Sep 27–Oct 3", bible_verses: ["Joshua 1:1-9", "Hebrews 11:24-26", "Joshua 1:10-18"], memory_verse: "Joshua 1:9" },
+      { id: "02", title: "Rahab and the Spies", dates: "Oct 4–10", bible_verses: ["Joshua 2:1-24", "Hebrews 11:31", "James 2:25"], memory_verse: "Joshua 2:11" },
+      { id: "03", title: "Memorials of Grace", dates: "Oct 11–17", bible_verses: ["Joshua 3:1-17", "Joshua 4:1-24", "Deuteronomy 6:20-25"], memory_verse: "Joshua 4:7" },
+      { id: "04", title: "The Conflict Behind All Conflicts", dates: "Oct 18–24", bible_verses: ["Joshua 10:1-15", "Joshua 10:12-14", "Revelation 12:7-9"], memory_verse: "Joshua 10:14" },
+      { id: "05", title: "When God Fights for You", dates: "Oct 25–31", bible_verses: ["Joshua 6:1-27", "Joshua 7:1-26", "Hebrews 11:30"], memory_verse: "Joshua 6:2" },
+      { id: "06", title: "Living as God's People", dates: "Nov 1–7", bible_verses: ["Joshua 23:1-16", "Joshua 24:1-33", "Deuteronomy 30:15-20"], memory_verse: "Joshua 24:15" },
+      { id: "07", title: "The Land of Rest", dates: "Nov 8–14", bible_verses: ["Joshua 21:43-45", "Hebrews 3:7-4:11", "Psalm 95:7-11"], memory_verse: "Joshua 21:45" },
+      { id: "08", title: "Justice and Mercy", dates: "Nov 15–21", bible_verses: ["Joshua 20:1-9", "Numbers 35:9-34", "Deuteronomy 19:1-13"], memory_verse: "Joshua 20:3" },
+      { id: "09", title: "Choose This Day", dates: "Nov 22–28", bible_verses: ["Joshua 24:1-33", "Deuteronomy 30:19-20", "1 Kings 18:21"], memory_verse: "Joshua 24:15" },
+      { id: "10", title: "Lessons from Failure", dates: "Nov 29–Dec 5", bible_verses: ["Judges 2:6-23", "Judges 3:7-31", "Hebrews 10:35-39"], memory_verse: "Judges 2:18" },
+      { id: "11", title: "God's Unlikely Heroes", dates: "Dec 6–12", bible_verses: ["Judges 4:1-24", "Judges 6:1-40", "1 Corinthians 1:26-29"], memory_verse: "Judges 6:16" },
+      { id: "12", title: "The Cost of Compromise", dates: "Dec 13–19", bible_verses: ["Judges 16:1-31", "Proverbs 4:23-27", "James 4:7-10"], memory_verse: "Judges 16:20" },
+      { id: "13", title: "A Better Hope", dates: "Dec 20–26", bible_verses: ["Hebrews 4:1-16", "Hebrews 11:39-40", "Revelation 21:1-7"], memory_verse: "Hebrews 4:9" },
+    ];
+
     return {
-      id: `${year}-${quarter.toString().padStart(2, '0')}-${language}`,
+      id: `${year}-0${quarter}-${language}`,
       title: "Lessons of Faith from Joshua",
-      description: "An in-depth study of the book of Joshua, exploring themes of faith, courage, and God's faithfulness.",
-      introduction: "This quarter we will journey through the book of Joshua, examining the conquest of Canaan and the distribution of the Promised Land. We'll discover lessons about faith, obedience, and God's unwavering promises.",
-      lessons: [
-        { id: "01", title: "From Egypt to Canaan", start_date: `${year}-${quarter === 4 ? '10' : '01'}-01`, end_date: `${year}-${quarter === 4 ? '10' : '01'}-07`, index: 1, full_read: "", bible_verses: ["Joshua 1:1-9"] },
-        { id: "02", title: "Rahab and the Spies", start_date: `${year}-${quarter === 4 ? '10' : '01'}-08`, end_date: `${year}-${quarter === 4 ? '10' : '01'}-14`, index: 2, full_read: "", bible_verses: ["Joshua 2:1-24"] },
-        { id: "03", title: "Crossing the Jordan", start_date: `${year}-${quarter === 4 ? '10' : '01'}-15`, end_date: `${year}-${quarter === 4 ? '10' : '01'}-21`, index: 3, full_read: "", bible_verses: ["Joshua 3:1-17"] },
-        { id: "04", title: "The Fall of Jericho", start_date: `${year}-${quarter === 4 ? '10' : '01'}-22`, end_date: `${year}-${quarter === 4 ? '10' : '01'}-28`, index: 4, full_read: "", bible_verses: ["Joshua 6:1-27"] },
-        { id: "05", title: "Achan's Sin", start_date: `${year}-${quarter === 4 ? '10' : '02'}-01`, end_date: `${year}-${quarter === 4 ? '10' : '02'}-07`, index: 5, full_read: "", bible_verses: ["Joshua 7:1-26"] },
-        { id: "06", title: "The Conquest Continues", start_date: `${year}-${quarter === 4 ? '11' : '02'}-08`, end_date: `${year}-${quarter === 4 ? '11' : '02'}-14`, index: 6, full_read: "", bible_verses: ["Joshua 8-12"] },
-        { id: "07", title: "Dividing the Land", start_date: `${year}-${quarter === 4 ? '11' : '02'}-15`, end_date: `${year}-${quarter === 4 ? '11' : '02'}-21`, index: 7, full_read: "", bible_verses: ["Joshua 13-21"] },
-        { id: "08", title: "Cities of Refuge", start_date: `${year}-${quarter === 4 ? '11' : '02'}-22`, end_date: `${year}-${quarter === 4 ? '11' : '02'}-28`, index: 8, full_read: "", bible_verses: ["Joshua 20:1-9"] },
-        { id: "09", title: "Choose This Day", start_date: `${year}-${quarter === 4 ? '12' : '03'}-01`, end_date: `${year}-${quarter === 4 ? '12' : '03'}-07`, index: 9, full_read: "", bible_verses: ["Joshua 24:1-33"] },
-      ],
+      description: "An in-depth study of the book of Joshua and Judges, exploring themes of faith, courage, and God's faithfulness.",
+      introduction: "This quarter we journey through the books of Joshua and Judges, examining faith lessons from Israel's conquest and settlement of Canaan. We'll discover timeless truths about faith, obedience, and God's unwavering promises.",
+      lessons: lessonData.map((lesson, index) => ({
+        id: lesson.id,
+        title: lesson.title,
+        start_date: lesson.dates.split('–')[0] + `, ${year}`,
+        end_date: lesson.dates.split('–')[1] + `, ${year}`,
+        index: index + 1,
+        full_read: `https://www.sabbath.school/SSchool/${year}/${quarter}/EAQ${String(year).slice(2)}${quarter}_${lesson.id}.pdf`,
+        bible_verses: lesson.bible_verses,
+      })),
       quarter: `Q${quarter} ${year}`,
       cover_image: "https://www.sabbath.school/assets/img/lessons/2025/4/cover.jpg",
     };
@@ -145,47 +158,52 @@ export async function getQuarterlyLesson(
     }
     
     // Fallback: Return basic structure with actual content
-    const fallbackContent = `
-      <h3>Lesson Overview</h3>
-      <p>This is a fallback lesson view. The Sabbath School API is currently unavailable, but you can still practice using the Palace Rooms and Principles to analyze this sample content.</p>
-      
-      <h4>Key Bible Text: Joshua 1:8-9</h4>
-      <p>"This Book of the Law shall not depart from your mouth, but you shall meditate in it day and night, that you may observe to do according to all that is written in it. For then you will make your way prosperous, and then you will have good success. Have I not commanded you? Be strong and of good courage; do not be afraid, nor be dismayed, for the Lord your God is with you wherever you go."</p>
-      
-      <h4>Introduction</h4>
-      <p>Joshua stands at the threshold of a new era. Moses, the great deliverer and lawgiver, has died, and now Joshua must lead Israel into the Promised Land. God's call to Joshua is clear: "Be strong and of good courage." This is not a call based on human strength but on trust in God's promises and presence.</p>
-      
-      <h4>The Promise of God's Presence</h4>
-      <p>Three times in the opening chapter, God commands Joshua to be strong and courageous. This repetition emphasizes both the difficulty of the task ahead and the sufficiency of God's enabling power. The source of Joshua's courage was not self-confidence but God-confidence. The Lord promised, "I will not leave you nor forsake you" (Joshua 1:5).</p>
-      
-      <h4>The Importance of God's Word</h4>
-      <p>Success in Joshua's mission depended on his faithfulness to God's Word. He was instructed to meditate on it day and night and to be careful to obey everything written in it. This was not merely intellectual study but transformative engagement with divine revelation that would shape his decisions and actions.</p>
-      
-      <h4>Application for Today</h4>
-      <p>Like Joshua, we face challenges that seem overwhelming. Whether it's spiritual battles, difficult relationships, or uncertain futures, God's call to us is the same: "Be strong and courageous." Our strength comes not from ourselves but from God's presence and His Word. As we meditate on Scripture and trust in His promises, we too can face our "Promised Land" moments with faith and courage.</p>
-      
-      <h4>Discussion Questions</h4>
-      <ul>
-        <li>What "Promised Land" challenges are you facing in your life right now?</li>
-        <li>How does meditating on God's Word day and night help you navigate difficulties?</li>
-        <li>In what ways can you practice God's presence in your daily life?</li>
-        <li>What does it mean to be "strong and courageous" in a Christian context?</li>
-      </ul>
+    const studyContent = `
+      <div class="lesson-intro">
+        <h3>📖 Official Sabbath School Lesson</h3>
+        <p>This lesson is part of the official Adult Sabbath School Quarterly. For the complete lesson with all daily readings, discussion questions, and EGW notes, please access the official PDF.</p>
+        
+        <div class="study-approach">
+          <h4>🎯 How to Use This Platform</h4>
+          <ol>
+            <li><strong>Read the Official Lesson:</strong> Click the "View Official PDF" button above to access the complete lesson content</li>
+            <li><strong>Select a Day:</strong> Choose which day's study you want to analyze</li>
+            <li><strong>Apply Palace Tools:</strong> Use the Palace Rooms or Principles to dig deeper into the Scripture passages</li>
+            <li><strong>Get AI Insights:</strong> Jeeves will help you apply the selected framework to enhance your study</li>
+          </ol>
+        </div>
+
+        <div class="study-prompt">
+          <h4>📝 Study Prompt</h4>
+          <p>As you read through this week's lesson, consider:</p>
+          <ul>
+            <li>What is the main biblical narrative or teaching?</li>
+            <li>Which Palace Room would help you see this story/passage in a new way?</li>
+            <li>What principles or dimensions apply to your life today?</li>
+            <li>How can you use the Jeeves assistant to explore connections you might have missed?</li>
+          </ul>
+        </div>
+
+        <div class="palace-example">
+          <h4>💡 Quick Example</h4>
+          <p><strong>Try This:</strong> After reading about Joshua's courage (Lesson 1), select "Story Room (SR)" to break the narrative into memorable beats, or choose "Christ Dimension" to see how Joshua points to Jesus.</p>
+        </div>
+      </div>
     `;
     
     return {
       lesson: {
         id: lessonId,
-        title: "Faith and Courage: Lessons from Joshua",
-        bible_reading: "Joshua 1:1-9",
+        title: "Weekly Study Guide",
+        bible_reading: "See official PDF for complete Bible readings",
       },
       days: [
-        { id: "01", title: "Sunday - God's Call to Joshua", date: "", read: fallbackContent, content: fallbackContent },
-        { id: "02", title: "Monday - The Promise of Presence", date: "", read: fallbackContent.replace("Introduction", "God's Presence"), content: fallbackContent },
-        { id: "03", title: "Tuesday - Meditating on God's Word", date: "", read: fallbackContent.replace("Introduction", "The Power of Scripture"), content: fallbackContent },
-        { id: "04", title: "Wednesday - Courage in Action", date: "", read: fallbackContent.replace("Introduction", "Putting Faith to Work"), content: fallbackContent },
-        { id: "05", title: "Thursday - Trusting God's Promises", date: "", read: fallbackContent.replace("Introduction", "The Faithfulness of God"), content: fallbackContent },
-        { id: "06", title: "Friday - Living with Courage", date: "", read: fallbackContent.replace("Introduction", "Practical Application"), content: fallbackContent },
+        { id: "01", title: "Sunday - First Day Study", date: "", read: studyContent, content: studyContent },
+        { id: "02", title: "Monday - Second Day Study", date: "", read: studyContent, content: studyContent },
+        { id: "03", title: "Tuesday - Third Day Study", date: "", read: studyContent, content: studyContent },
+        { id: "04", title: "Wednesday - Fourth Day Study", date: "", read: studyContent, content: studyContent },
+        { id: "05", title: "Thursday - Fifth Day Study", date: "", read: studyContent, content: studyContent },
+        { id: "06", title: "Friday - Sixth Day Study", date: "", read: studyContent, content: studyContent },
       ],
     };
   } catch (error) {
