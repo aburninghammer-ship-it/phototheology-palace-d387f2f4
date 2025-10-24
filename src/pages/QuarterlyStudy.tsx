@@ -5,11 +5,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, BookOpen, Calendar, Sparkles, Bot } from "lucide-react";
+import { Loader2, BookOpen, Calendar, Sparkles, Bot, Upload, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentQuarterly, getQuarterlyLesson, type Quarterly, type QuarterlyLesson } from "@/services/quarterlyApi";
 import { Navigation } from "@/components/Navigation";
+import * as pdfjsLib from 'pdfjs-dist';
 
 const QuarterlyStudy = () => {
   const [quarterly, setQuarterly] = useState<Quarterly | null>(null);
@@ -23,7 +24,13 @@ const QuarterlyStudy = () => {
   const [selectedPrinciple, setSelectedPrinciple] = useState<string>("");
   const [userLessonInput, setUserLessonInput] = useState<string>("");
   const [userQuestion, setUserQuestion] = useState<string>("");
+  const [uploadingPdf, setUploadingPdf] = useState(false);
   const { toast } = useToast();
+
+  // Configure PDF.js worker
+  useEffect(() => {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+  }, []);
 
   const rooms = [
     "Room 1: Story Room (SR)", "Room 2: Imagination Room (IR)", "Room 3: 24FPS Room (24)", 
@@ -210,6 +217,54 @@ const QuarterlyStudy = () => {
     return lessonContent.days?.find((d: any) => d.id === selectedDay);
   };
 
+  const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: "Invalid File Type",
+        description: "Please upload a PDF file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploadingPdf(true);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+
+      // Extract text from all pages
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(' ');
+        fullText += pageText + '\n\n';
+      }
+
+      setUserLessonInput(fullText);
+      toast({
+        title: "PDF Uploaded Successfully",
+        description: `Extracted text from ${pdf.numPages} pages`,
+      });
+    } catch (error) {
+      console.error('Error parsing PDF:', error);
+      toast({
+        title: "Error",
+        description: "Failed to extract text from PDF. Please try copying and pasting instead.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingPdf(false);
+      // Reset the file input
+      event.target.value = '';
+    }
+  };
+
   if (loading && !quarterly) {
     return (
       <div className="min-h-screen bg-background">
@@ -316,16 +371,53 @@ const QuarterlyStudy = () => {
                   Paste Lesson Content to Amplify
                 </CardTitle>
                 <CardDescription>
-                  Copy text from the official PDF and paste it here to analyze with Palace Rooms and Principles
+                  Upload a PDF or paste text from the official lesson to analyze with Palace Rooms and Principles
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px]">
+              <CardContent className="space-y-4">
+                {/* PDF Upload Button */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handlePdfUpload}
+                    className="hidden"
+                    id="pdf-upload"
+                    disabled={uploadingPdf}
+                  />
+                  <label htmlFor="pdf-upload">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={uploadingPdf}
+                      className="cursor-pointer"
+                      asChild
+                    >
+                      <span>
+                        {uploadingPdf ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Extracting PDF...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="h-4 w-4 mr-2" />
+                            Upload PDF
+                          </>
+                        )}
+                      </span>
+                    </Button>
+                  </label>
+                  <span className="text-sm text-muted-foreground">or paste text below</span>
+                </div>
+
+                {/* Text Input Area */}
+                <ScrollArea className="h-[450px]">
                   <textarea
                     value={userLessonInput}
                     onChange={(e) => setUserLessonInput(e.target.value)}
-                    className="w-full min-h-[450px] p-4 rounded-lg border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Paste the lesson content here... Include:&#10;• Bible passages&#10;• Key quotes&#10;• Discussion points&#10;• Any text you want to analyze&#10;&#10;Then select a Room or Principle and click 'Apply Framework' to get Jeeves' insights!"
+                    className="w-full min-h-[420px] p-4 rounded-lg border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Upload a PDF or paste the lesson content here... Include:&#10;• Bible passages&#10;• Key quotes&#10;• Discussion points&#10;• Any text you want to analyze&#10;&#10;Then select a Room or Principle and click 'Apply Framework' to get Jeeves' insights!"
                   />
                 </ScrollArea>
               </CardContent>
