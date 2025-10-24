@@ -26,7 +26,7 @@ const QuarterlyStudy = () => {
     setLoading(true);
     try {
       const data = await getCurrentQuarterly();
-      if (data) {
+      if (data && data.lessons && data.lessons.length > 0) {
         setQuarterly(data);
         // Auto-select current week's lesson
         const today = new Date();
@@ -39,17 +39,18 @@ const QuarterlyStudy = () => {
           loadLesson(currentLesson);
         }
       } else {
+        console.error('No quarterly data or lessons available');
         toast({
-          title: "Error",
-          description: "Failed to load quarterly. Please try again.",
+          title: "Service Unavailable",
+          description: "The Sabbath School API is temporarily unavailable. Please try again later.",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error('Error loading quarterly:', error);
       toast({
-        title: "Error",
-        description: "An error occurred while loading the quarterly.",
+        title: "Connection Error",
+        description: "Could not connect to the Sabbath School service. Please check your internet connection.",
         variant: "destructive",
       });
     } finally {
