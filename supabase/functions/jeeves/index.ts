@@ -433,13 +433,20 @@ Available categories for this game: ${categoriesText}
 **EXAMPLE FORMAT:**
 {
   "verse": "John 3:16",
-  "commentary": "What a powerful verse to start with! John 3:16 reveals God's cosmic love extending beyond ethnic Israel. The word 'world' (kosmos) shows universal scope—this is 3D Kingdom truth. The act of 'giving' the Son points us to the Altar principle, where sacrifice demonstrates divine love. Notice the present tense 'believes'—calling for immediate Earth-Now response!",
-  "challengeCategory": "Books of the Bible - Isaiah"
+  "commentary": "What a foundational truth to commence our game! John 3:16 encapsulates the very essence of divine agape. The term 'kosmos' signifies the entirety of fallen creation, emphasizing the boundless reach of God's redemptive plan. This verse magnificently unveils the divine initiative in salvation.",
+  "challengeCategory": "Books of the Bible - Romans"
 }
 
-NOW: Write your enthusiastic commentary on ${verse}, then challenge them with a SPECIFIC book/room/principle from these categories: ${categoriesText}
+**CRITICAL:** Your challengeCategory MUST follow this format:
+- "Books of the Bible - [SPECIFIC BOOK NAME]" (e.g., "Books of the Bible - Isaiah", "Books of the Bible - Revelation")
+- "Rooms of the Palace - [SPECIFIC ROOM NAME]" (e.g., "Rooms of the Palace - Story Room", "Rooms of the Palace - Gems Room")  
+- "Principles of the Palace - [SPECIFIC PRINCIPLE]" (e.g., "Principles of the Palace - 2D", "Principles of the Palace - Time Zones")
 
-Return ONLY valid JSON with verse, commentary, and specific challengeCategory.`;
+DO NOT use generic categories like "Books of the Bible" or "Principles of the Palace" without the specific name!
+
+NOW: Write your enthusiastic commentary on ${verse}, then challenge them with a SPECIFIC challenge from these categories: ${categoriesText}
+
+Return ONLY valid JSON with verse, commentary, and SPECIFIC challengeCategory (with the book/room/principle name included).`;
       } else {
         const lastMove = previousMoves[previousMoves.length - 1];
         const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");
@@ -456,14 +463,23 @@ Available categories: ${categoriesText}
 1. Present your verse reference that relates to their challenge "${lastMove.challengeCategory}"
 2. Build on what they said with 3-4 fresh sentences of insight
 3. Show excitement about the connection you're making
-4. Challenge them with a SPECIFIC challenge:
-   - If using "Books of the Bible" → name a specific book: "Books of the Bible - Psalm 23"
-   - If using "Rooms of the Palace" → name a specific room: "Rooms of the Palace - Feasts Room"
-   - If using "Principles of the Palace" → name a specific principle: "Principles of the Palace - Repeat & Enlarge"
+4. Challenge them with a SPECIFIC challenge using this format:
+   - "Books of the Bible - [BOOK NAME]" (e.g., "Books of the Bible - Psalms", "Books of the Bible - Daniel")
+   - "Rooms of the Palace - [ROOM NAME]" (e.g., "Rooms of the Palace - Feasts Room", "Rooms of the Palace - Gems Room")
+   - "Principles of the Palace - [PRINCIPLE]" (e.g., "Principles of the Palace - 2D", "Principles of the Palace - Repeat & Enlarge")
 
-**IMPORTANT:** Be specific! Don't say "Books of the Bible", say "Books of the Bible - [book name]"
+**CRITICAL:** DO NOT use generic categories! ALWAYS include the specific book/room/principle name after the dash!
 
-Return JSON: { "verse": "reference", "commentary": "...", "challengeCategory": "specific challenge with book/room/principle name" }`;
+Example CORRECT challenges:
+- "Books of the Bible - Exodus"
+- "Rooms of the Palace - Theme Room"
+- "Principles of the Palace - Heaven Ceiling"
+
+Example WRONG challenges (DO NOT DO THIS):
+- "Books of the Bible" (missing specific book!)
+- "Principles of the Palace" (missing specific principle!)
+
+Return JSON: { "verse": "reference", "commentary": "...", "challengeCategory": "Category - SPECIFIC NAME" }`;
       }
 
     } else if (mode === "equations-challenge") {

@@ -344,6 +344,22 @@ const ChainChess = () => {
         throw new Error("Jeeves did not provide commentary");
       }
 
+      // Validate challenge specificity
+      if (data.challengeCategory) {
+        const hasSpecificName = data.challengeCategory.includes(" - ");
+        if (!hasSpecificName) {
+          console.warn("Jeeves provided generic challenge:", data.challengeCategory);
+          // Try to make it more specific
+          if (data.challengeCategory.includes("Books of the Bible")) {
+            data.challengeCategory = "Books of the Bible - Romans";
+          } else if (data.challengeCategory.includes("Rooms of the Palace")) {
+            data.challengeCategory = "Rooms of the Palace - Story Room";
+          } else if (data.challengeCategory.includes("Principles")) {
+            data.challengeCategory = "Principles of the Palace - 2D";
+          }
+        }
+      }
+
       console.log("=== Creating Jeeves Move ===");
       const move = {
         player: "jeeves",
@@ -708,18 +724,22 @@ const ChainChess = () => {
                           )}
                         </div>
                         
-                        {move.verse && move.player === "user" && (
+                        {/* ALWAYS show verse for both Jeeves and user */}
+                        {move.verse && (
                           <p className="text-sm font-semibold text-primary mb-2">
-                            Verse: {move.verse}
+                            {move.player === "jeeves" ? "Jeeves' Verse: " : "Your Verse: "}
+                            {move.verse}
                           </p>
                         )}
                         
                         <p className="mb-2">{move.commentary}</p>
                         
                         {move.challengeCategory && (
-                          <p className="text-sm text-muted-foreground mt-2 italic">
-                            Challenge: {move.challengeCategory}
-                          </p>
+                          <div className="mt-2 p-2 bg-background/50 rounded border-l-2 border-primary">
+                            <p className="text-sm font-semibold text-primary">
+                              Challenge: {move.challengeCategory}
+                            </p>
+                          </div>
                         )}
                         
                         {move.jeeves_feedback && (
@@ -759,13 +779,17 @@ const ChainChess = () => {
                       <label className="text-sm font-medium">Your Verse</label>
                       <input
                         type="text"
-                        placeholder="Add a verse from the challenged category (e.g., Romans 8:28)"
+                        placeholder={
+                          challengeCategory?.includes(" - ") 
+                            ? `Add a verse related to: ${challengeCategory.split(" - ")[1]}`
+                            : "Add a verse from the challenged category (e.g., Romans 8:28)"
+                        }
                         value={userVerse}
                         onChange={(e) => setUserVerse(e.target.value)}
                         className="w-full px-3 py-2 border rounded-md bg-background"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Choose a verse that relates to the challenge: {challengeCategory}
+                        Choose a verse that relates to: <span className="font-semibold">{challengeCategory}</span>
                       </p>
                     </div>
 
