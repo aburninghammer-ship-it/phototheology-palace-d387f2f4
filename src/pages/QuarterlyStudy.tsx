@@ -143,6 +143,8 @@ const QuarterlyStudy = () => {
     const lesson = quarterly?.lessons.find(l => l.id === lessonId);
     if (lesson && quarterly) {
       setSelectedLesson(lesson);
+      setLessonContent(null); // Clear previous content
+      setSelectedDay(""); // Clear selected day
       loadLessonContent(quarterly.id, lesson.id);
       setJeevesResponse(null);
     }
@@ -314,7 +316,13 @@ const QuarterlyStudy = () => {
             </Card>
 
             {/* Lesson Content */}
-            {getCurrentDayContent() && (
+            {loading && !lessonContent ? (
+              <Card>
+                <CardContent className="flex items-center justify-center h-[500px]">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </CardContent>
+              </Card>
+            ) : getCurrentDayContent() ? (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -333,7 +341,7 @@ const QuarterlyStudy = () => {
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[500px]">
-                    <div className="prose prose-sm max-w-none">
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
                       <div dangerouslySetInnerHTML={{ 
                         __html: getCurrentDayContent()?.read || getCurrentDayContent()?.content || "No content available" 
                       }} />
@@ -341,7 +349,19 @@ const QuarterlyStudy = () => {
                   </ScrollArea>
                 </CardContent>
               </Card>
-            )}
+            ) : selectedLesson ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center h-[500px] text-center">
+                  <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">
+                    No content available for this lesson yet.
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Select a day above to view lesson content.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : null}
           </div>
 
           {/* Right Column - Jeeves Assistant */}
