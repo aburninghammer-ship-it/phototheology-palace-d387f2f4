@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
 import { SpacedRepetitionReview } from "@/components/SpacedRepetitionReview";
+import { DashboardSkeleton } from "@/components/SkeletonLoader";
 import { 
   BookOpen, 
   Flame, 
@@ -51,6 +52,8 @@ export default function Dashboard() {
     if (user) {
       loadDashboardData();
       loadRecentReading();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 

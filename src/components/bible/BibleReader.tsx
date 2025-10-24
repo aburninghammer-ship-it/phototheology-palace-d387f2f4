@@ -11,9 +11,12 @@ import { ChainReferencePanel } from "./ChainReferencePanel";
 import { CommentaryPanel } from "./CommentaryPanel";
 import { JeevesVerseAssistant } from "./JeevesVerseAssistant";
 import { ReadingControls } from "./ReadingControls";
+import { BibleReaderSkeleton } from "@/components/SkeletonLoader";
+import { RetryButton } from "@/components/RetryButton";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -22,6 +25,7 @@ export const BibleReader = () => {
   
   const [chapterData, setChapterData] = useState<Chapter | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
   const [principleMode, setPrincipleMode] = useState(false);
   const [chainReferenceMode, setChainReferenceMode] = useState(false);
@@ -32,6 +36,7 @@ export const BibleReader = () => {
   const { trackReading } = useReadingHistory();
   const { addBookmark, isBookmarked } = useBookmarks();
   const { preferences } = useUserPreferences();
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     loadChapter();
@@ -40,11 +45,17 @@ export const BibleReader = () => {
 
   const loadChapter = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await fetchChapter(book, chapter);
       setChapterData(data);
+      setError(null);
     } catch (error) {
-      console.error("Failed to load chapter:", error);
+      const message = handleError(error, {
+        title: "Failed to load chapter",
+        showToast: false,
+      });
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -59,18 +70,25 @@ export const BibleReader = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <BibleReaderSkeleton />;
   }
 
-  if (!chapterData) {
+  if (error || !chapterData) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">Failed to load chapter</p>
-      </div>
+      <Card className="p-12 text-center">
+        <div className="space-y-4">
+          <BookOpen className="h-12 w-12 mx-auto text-muted-foreground" />
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Failed to load chapter</h3>
+            <p className="text-muted-foreground mb-4">
+              {error || "Unable to load the chapter. Please try again."}
+            </p>
+          </div>
+          <RetryButton onRetry={loadChapter}>
+            Try Again
+          </RetryButton>
+        </div>
+      </Card>
     );
   }
 
