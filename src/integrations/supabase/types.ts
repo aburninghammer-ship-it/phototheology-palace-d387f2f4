@@ -980,13 +980,16 @@ export type Database = {
           id: string
           is_student: boolean | null
           last_seen: string | null
+          learning_style: string | null
           level: number | null
           lifetime_access_granted_at: string | null
           longest_chess_streak: number | null
           longest_equations_streak: number | null
           longest_gem_streak: number | null
           longest_study_streak: number | null
+          onboarding_completed: boolean | null
           points: number | null
+          preferred_features: string[] | null
           referral_code: string | null
           stripe_customer_id: string | null
           student_expires_at: string | null
@@ -1011,13 +1014,16 @@ export type Database = {
           id: string
           is_student?: boolean | null
           last_seen?: string | null
+          learning_style?: string | null
           level?: number | null
           lifetime_access_granted_at?: string | null
           longest_chess_streak?: number | null
           longest_equations_streak?: number | null
           longest_gem_streak?: number | null
           longest_study_streak?: number | null
+          onboarding_completed?: boolean | null
           points?: number | null
+          preferred_features?: string[] | null
           referral_code?: string | null
           stripe_customer_id?: string | null
           student_expires_at?: string | null
@@ -1042,13 +1048,16 @@ export type Database = {
           id?: string
           is_student?: boolean | null
           last_seen?: string | null
+          learning_style?: string | null
           level?: number | null
           lifetime_access_granted_at?: string | null
           longest_chess_streak?: number | null
           longest_equations_streak?: number | null
           longest_gem_streak?: number | null
           longest_study_streak?: number | null
+          onboarding_completed?: boolean | null
           points?: number | null
+          preferred_features?: string[] | null
           referral_code?: string | null
           stripe_customer_id?: string | null
           student_expires_at?: string | null
