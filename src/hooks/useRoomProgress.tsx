@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
+import { useAchievements } from "./useAchievements";
 
 export interface RoomProgress {
   id: string;
@@ -17,6 +18,7 @@ export interface RoomProgress {
 
 export const useRoomProgress = (floorNumber: number, roomId: string) => {
   const { user } = useAuth();
+  const { checkAndAwardAchievements } = useAchievements();
   const [progress, setProgress] = useState<RoomProgress | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -181,6 +183,9 @@ export const useRoomProgress = (floorNumber: number, roomId: string) => {
       }
 
       toast.success("Room completed! 🎉");
+
+      // Check for new achievements
+      await checkAndAwardAchievements();
     } catch (error) {
       console.error("Error marking room complete:", error);
       toast.error("Failed to mark room as complete");

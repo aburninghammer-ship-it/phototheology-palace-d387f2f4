@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
+import { useAchievements } from "./useAchievements";
 
 export interface DrillQuestion {
   id: string;
@@ -20,6 +21,7 @@ export interface DrillResult {
 
 export const useDrills = (floorNumber: number, roomId: string) => {
   const { user } = useAuth();
+  const { checkAndAwardAchievements } = useAchievements();
   const [loading, setLoading] = useState(false);
 
   const saveDrillResult = async (
@@ -55,6 +57,9 @@ export const useDrills = (floorNumber: number, roomId: string) => {
       } else {
         toast.info(`You scored ${percentage}%. Keep practicing!`);
       }
+
+      // Check for new achievements
+      await checkAndAwardAchievements();
     } catch (error) {
       console.error("Error saving drill result:", error);
       toast.error("Failed to save drill result");

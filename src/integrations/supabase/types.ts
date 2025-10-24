@@ -1772,6 +1772,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_user_points: {
+        Args: { points_to_add: number; user_id: string }
+        Returns: undefined
+      }
       redeem_access_code: { Args: { access_code: string }; Returns: Json }
     }
     Enums: {

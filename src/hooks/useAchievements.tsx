@@ -71,12 +71,13 @@ export const useAchievements = () => {
       }
 
       case "perfect_drills": {
-        const { count } = await supabase
+        const { data: drills } = await supabase
           .from("drill_results")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id)
-          .eq("score", supabase.raw("max_score"));
-        return (count || 0) >= requirementCount;
+          .select("score, max_score")
+          .eq("user_id", user.id);
+        
+        const perfectCount = drills?.filter(d => d.score === d.max_score).length || 0;
+        return perfectCount >= requirementCount;
       }
 
       case "study_streak": {
@@ -116,10 +117,16 @@ export const useAchievements = () => {
 
     if (!error) {
       // Award points to user
-      await supabase.rpc("increment_user_points", {
-        user_id: user.id,
-        points_to_add: achievement.points || 0,
-      });
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("points")
+        .eq("id", user.id)
+        .single();
+
+      await supabase
+        .from("profiles")
+        .update({ points: (profile?.points || 0) + (achievement.points || 0) })
+        .eq("id", user.id);
 
       // Show notification
       toast({
