@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, BookOpen, Calendar, Sparkles, Bot, Upload, FileText } from "lucide-react";
+import { Loader2, BookOpen, Calendar, Sparkles, Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentQuarterly, getQuarterlyLesson, type Quarterly, type QuarterlyLesson } from "@/services/quarterlyApi";
@@ -23,7 +23,6 @@ const QuarterlyStudy = () => {
   const [selectedPrinciple, setSelectedPrinciple] = useState<string>("");
   const [userLessonInput, setUserLessonInput] = useState<string>("");
   const [userQuestion, setUserQuestion] = useState<string>("");
-  const [uploadingPdf, setUploadingPdf] = useState(false);
   const { toast } = useToast();
 
   const rooms = [
@@ -211,54 +210,6 @@ const QuarterlyStudy = () => {
     return lessonContent.days?.find((d: any) => d.id === selectedDay);
   };
 
-  const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (file.type !== 'application/pdf') {
-      toast({
-        title: "Invalid File Type",
-        description: "Please upload a PDF file",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setUploadingPdf(true);
-    
-    try {
-      // Create FormData and send to edge function for parsing
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const { data, error } = await supabase.functions.invoke('parse-pdf', {
-        body: formData,
-      });
-
-      if (error) throw error;
-
-      if (data?.text) {
-        setUserLessonInput(data.text);
-        toast({
-          title: "PDF Uploaded Successfully",
-          description: `Extracted text from your PDF`,
-        });
-      } else {
-        throw new Error('No text extracted from PDF');
-      }
-    } catch (error) {
-      console.error('Error parsing PDF:', error);
-      toast({
-        title: "PDF Upload Not Available",
-        description: "Please copy and paste the text from your PDF instead",
-        variant: "destructive",
-      });
-    } finally {
-      setUploadingPdf(false);
-      event.target.value = '';
-    }
-  };
-
   if (loading && !quarterly) {
     return (
       <div className="min-h-screen bg-background">
@@ -365,53 +316,16 @@ const QuarterlyStudy = () => {
                   Paste Lesson Content to Amplify
                 </CardTitle>
                 <CardDescription>
-                  Upload a PDF or paste text from the official lesson to analyze with Palace Rooms and Principles
+                  Copy text from your quarterly PDF and paste it here to analyze with Palace Rooms and Principles
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {/* PDF Upload Button */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="file"
-                    accept="application/pdf"
-                    onChange={handlePdfUpload}
-                    className="hidden"
-                    id="pdf-upload"
-                    disabled={uploadingPdf}
-                  />
-                  <label htmlFor="pdf-upload">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={uploadingPdf}
-                      className="cursor-pointer"
-                      asChild
-                    >
-                      <span>
-                        {uploadingPdf ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Extracting PDF...
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="h-4 w-4 mr-2" />
-                            Upload PDF
-                          </>
-                        )}
-                      </span>
-                    </Button>
-                  </label>
-                  <span className="text-sm text-muted-foreground">or paste text below</span>
-                </div>
-
-                {/* Text Input Area */}
-                <ScrollArea className="h-[450px]">
+              <CardContent>
+                <ScrollArea className="h-[500px]">
                   <textarea
                     value={userLessonInput}
                     onChange={(e) => setUserLessonInput(e.target.value)}
-                    className="w-full min-h-[420px] p-4 rounded-lg border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Upload a PDF or paste the lesson content here... Include:&#10;• Bible passages&#10;• Key quotes&#10;• Discussion points&#10;• Any text you want to analyze&#10;&#10;Then select a Room or Principle and click 'Apply Framework' to get Jeeves' insights!"
+                    className="w-full min-h-[480px] p-4 rounded-lg border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Paste the lesson content here... Include:&#10;&#10;• Bible passages&#10;• Key quotes from the lesson&#10;• Discussion questions&#10;• Any text you want to analyze&#10;&#10;Then select a Room or Principle below and click 'Apply Framework' to get Jeeves' insights!"
                   />
                 </ScrollArea>
               </CardContent>
