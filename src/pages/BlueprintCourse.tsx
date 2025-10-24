@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Lock, CheckCircle2 } from "lucide-react";
+import { BookOpen, Lock, CheckCircle2, Sparkles } from "lucide-react";
+import { blueprintLessons } from "@/data/blueprintCourseData";
 
 const COURSE_PARTS = [
   {
@@ -166,18 +167,70 @@ export default function BlueprintCourse() {
                     </ul>
                   </div>
 
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground mb-4">
-                      Full course content coming soon! This will include:
-                    </p>
-                    <ul className="text-left max-w-md mx-auto space-y-2">
-                      <li>• Fill-in-the-blank Bible study format</li>
-                      <li>• Scripture references and cross-references</li>
-                      <li>• Reflection questions</li>
-                      <li>• Visual aids and diagrams</li>
-                      <li>• Kids version available</li>
-                    </ul>
-                  </div>
+                  {(() => {
+                    const lesson = blueprintLessons.find(l => l.id === selectedPart);
+                    if (!lesson) return null;
+                    
+                    return (
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="font-semibold text-primary mb-2 flex items-center gap-2">
+                            <Sparkles className="h-4 w-4" />
+                            Focus
+                          </h3>
+                          <p>{lesson.focus}</p>
+                        </div>
+
+                        <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+                          <h3 className="font-semibold text-primary mb-2">Scripture: {lesson.scripture}</h3>
+                          <p className="italic">"{lesson.scriptureText}"</p>
+                        </div>
+
+                        <div>
+                          <h3 className="font-semibold text-primary mb-2">Key Points</h3>
+                          <ul className="list-disc pl-5 space-y-1">
+                            {lesson.keyPoints.map((point, i) => (
+                              <li key={i}>{point}</li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div>
+                          <h3 className="font-semibold text-primary mb-2">Historical Context</h3>
+                          <p className="leading-relaxed">{lesson.historicalContext}</p>
+                        </div>
+
+                        <div>
+                          <h3 className="font-semibold text-primary mb-2">Prophetic Application</h3>
+                          <p className="leading-relaxed">{lesson.propheticApplication}</p>
+                        </div>
+
+                        <div>
+                          <h3 className="font-semibold text-primary mb-2">Practical Application</h3>
+                          <p className="leading-relaxed">{lesson.practicalApplication}</p>
+                        </div>
+
+                        <div className="bg-secondary/50 p-4 rounded-lg">
+                          <h3 className="font-semibold mb-2">Reflection Question</h3>
+                          <p className="italic">{lesson.reflectionQuestion}</p>
+                        </div>
+
+                        <div className="bg-primary/10 p-4 rounded-lg">
+                          <h3 className="font-semibold text-primary mb-2">Prayer</h3>
+                          <p className="italic">"{lesson.prayer}"</p>
+                        </div>
+
+                        <div>
+                          <h3 className="font-semibold text-primary mb-2">Cross References</h3>
+                          <ul className="list-disc pl-5 space-y-1 text-sm">
+                            {lesson.crossReferences.map((ref, i) => (
+                              <li key={i}>{ref}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               </ScrollArea>
             </CardContent>
