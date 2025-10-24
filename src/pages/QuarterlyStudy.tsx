@@ -40,12 +40,29 @@ const QuarterlyStudy = () => {
     "Room 37: Reflexive Mastery (∞)"
   ];
 
-  const dimensions = [
-    "Literal Dimension",
-    "Christ Dimension",
-    "Me Dimension",
-    "Church Dimension",
-    "Heaven Dimension"
+  const principles = [
+    // Five Dimensions (DR Room)
+    "Literal Dimension", "Christ Dimension", "Me Dimension", "Church Dimension", "Heaven Dimension",
+    // Core Principles
+    "Repeat and Enlarge", "Chain References", "Christ in All Scripture",
+    // Structural Principles
+    "Sanctuary Pattern", "Types and Symbols", "Seven Feasts", "Time Zones",
+    // Prophetic Principles
+    "Day-Year Principle (DY)", "@2300 (1844 IJ)", "@1260 (Papal Supremacy)", "@538-1798 (Dark Ages)",
+    "@508 (Clovis Conversion)", "@1844 (Judgment Begins)", "@70 Weeks (Messiah)",
+    // Investigative Patterns
+    "Observation Only", "Questions Room Method", "Scripture Answers Scripture",
+    // Visualization Principles
+    "Story Beats (3-7)", "Five Senses Imagination", "Chapter Icons",
+    // Thematic Walls
+    "Great Controversy Wall", "Life of Christ Wall", "Sanctuary Wall", 
+    "Time-Prophecy Wall", "Gospel Floor", "Heaven Ceiling",
+    // Genre Reading
+    "Prophecy Genre", "Parable Genre", "Epistle Genre", "History Genre", "Gospel Genre", "Poetry Genre",
+    // Application Principles
+    "Nature Parallels", "Personal Testimony", "History Parallels",
+    // Advanced Synthesis
+    "Gems (2-4 Text Combo)", "Parallels Comparison", "Fruit Test", "Three Angels' Messages"
   ];
 
   useEffect(() => {
@@ -361,19 +378,19 @@ const QuarterlyStudy = () => {
                   </Select>
                 </div>
 
-                {/* Dimension Selection */}
+                {/* Principle Selection */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">
                     Select a Principle
                   </label>
                   <Select value={selectedPrinciple} onValueChange={setSelectedPrinciple}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose a dimension..." />
+                      <SelectValue placeholder="Choose a principle..." />
                     </SelectTrigger>
-                    <SelectContent>
-                      {dimensions.map((dimension) => (
-                        <SelectItem key={dimension} value={dimension}>
-                          {dimension}
+                    <SelectContent className="max-h-[400px]">
+                      {principles.map((principle) => (
+                        <SelectItem key={principle} value={principle}>
+                          {principle}
                         </SelectItem>
                       ))}
                     </SelectContent>
