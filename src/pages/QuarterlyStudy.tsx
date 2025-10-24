@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentQuarterly, getQuarterlyLesson, type Quarterly, type QuarterlyLesson } from "@/services/quarterlyApi";
 import { Navigation } from "@/components/Navigation";
-import * as pdfjsLib from 'pdfjs-dist';
 
 const QuarterlyStudy = () => {
   const [quarterly, setQuarterly] = useState<Quarterly | null>(null);
@@ -26,11 +25,6 @@ const QuarterlyStudy = () => {
   const [userQuestion, setUserQuestion] = useState<string>("");
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const { toast } = useToast();
-
-  // Configure PDF.js worker
-  useEffect(() => {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-  }, []);
 
   const rooms = [
     "Room 1: Story Room (SR)", "Room 2: Imagination Room (IR)", "Room 3: 24FPS Room (24)", 
@@ -231,36 +225,36 @@ const QuarterlyStudy = () => {
     }
 
     setUploadingPdf(true);
+    
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let fullText = '';
+      // Create FormData and send to edge function for parsing
+      const formData = new FormData();
+      formData.append('file', file);
 
-      // Extract text from all pages
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items
-          .map((item: any) => item.str)
-          .join(' ');
-        fullText += pageText + '\n\n';
-      }
-
-      setUserLessonInput(fullText);
-      toast({
-        title: "PDF Uploaded Successfully",
-        description: `Extracted text from ${pdf.numPages} pages`,
+      const { data, error } = await supabase.functions.invoke('parse-pdf', {
+        body: formData,
       });
+
+      if (error) throw error;
+
+      if (data?.text) {
+        setUserLessonInput(data.text);
+        toast({
+          title: "PDF Uploaded Successfully",
+          description: `Extracted text from your PDF`,
+        });
+      } else {
+        throw new Error('No text extracted from PDF');
+      }
     } catch (error) {
       console.error('Error parsing PDF:', error);
       toast({
-        title: "Error",
-        description: "Failed to extract text from PDF. Please try copying and pasting instead.",
+        title: "PDF Upload Not Available",
+        description: "Please copy and paste the text from your PDF instead",
         variant: "destructive",
       });
     } finally {
       setUploadingPdf(false);
-      // Reset the file input
       event.target.value = '';
     }
   };
