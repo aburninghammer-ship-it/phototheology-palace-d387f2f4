@@ -848,7 +848,10 @@ Make questions clear, answers comprehensive, and include verse references when r
     }
 
     const data = await response.json();
-    const content = data.choices[0]?.message?.content || "No response generated";
+    let content = data.choices[0]?.message?.content || "No response generated";
+    
+    // Clean markdown code fencing from JSON responses
+    content = content.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
 
     // For generate-drills mode, parse JSON
     if (mode === "generate-drills") {
@@ -952,25 +955,33 @@ Make questions clear, answers comprehensive, and include verse references when r
     if (mode === "chain-chess") {
       try {
         const parsed = JSON.parse(content);
+        
+        // Ensure all required fields are present
+        if (!parsed.commentary) {
+          throw new Error("Missing commentary in AI response");
+        }
+        
         return new Response(
           JSON.stringify({ 
-            commentary: parsed.commentary || content,
-            challengeCategory: parsed.challengeCategory || "Books of the Bible",
+            verse: parsed.verse || null,
+            commentary: parsed.commentary,
+            challengeCategory: parsed.challengeCategory || "Books of the Bible - Romans",
             score: 8 
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
-      } catch {
-        // Fallback if not JSON
-        const lines = content.split('\n');
-        const commentary = lines.slice(0, -2).join('\n').trim();
-        const challengeCategory = ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"][
-          Math.floor(Math.random() * 3)
-        ];
+      } catch (parseError) {
+        console.error("Failed to parse chain-chess response:", parseError);
+        console.error("Raw content:", content);
         
+        // Fallback if not JSON - return error instead of trying to salvage
+        const errorMessage = parseError instanceof Error ? parseError.message : "Unknown error";
         return new Response(
-          JSON.stringify({ commentary, challengeCategory, score: 8 }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ 
+            error: "Failed to parse AI response. Please try again.",
+            details: errorMessage
+          }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
     } else if (mode === "chain-chess-feedback") {
