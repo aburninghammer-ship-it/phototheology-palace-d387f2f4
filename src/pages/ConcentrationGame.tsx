@@ -123,16 +123,128 @@ const PARALLEL_PAIRS: ParallelPair[] = [
   },
   {
     id: "8",
-    category: "Suffering Servant",
+    category: "Betrayed for Silver",
     oldTestament: {
-      event: "Joseph Betrayed",
+      event: "Joseph Sold",
       reference: "Genesis 37:28",
-      description: "Sold by brothers for silver, becomes savior"
+      description: "Sold by brothers for silver, becomes savior of nations"
     },
     newTestament: {
-      event: "Judas Betrays",
+      event: "Christ Sold",
       reference: "Matthew 26:15",
-      description: "Betrayed for 30 silver pieces, becomes Savior"
+      description: "Betrayed for 30 silver pieces, becomes Savior of world"
+    }
+  },
+  {
+    id: "9",
+    category: "Between Two",
+    oldTestament: {
+      event: "Samson's Death",
+      reference: "Judges 16:29-30",
+      description: "Samson between two pillars, dies destroying enemies"
+    },
+    newTestament: {
+      event: "Christ's Cross",
+      reference: "Luke 23:33",
+      description: "Jesus between two criminals, dies defeating sin and death"
+    }
+  },
+  {
+    id: "10",
+    category: "Three-Day Resurrection",
+    oldTestament: {
+      event: "Jonah in Fish",
+      reference: "Jonah 1:17",
+      description: "Jonah swallowed by great fish, emerges after three days"
+    },
+    newTestament: {
+      event: "Christ Rises",
+      reference: "Matthew 12:40",
+      description: "Jesus in tomb three days, rises victorious"
+    }
+  },
+  {
+    id: "11",
+    category: "Rock Struck",
+    oldTestament: {
+      event: "Water from Rock",
+      reference: "Exodus 17:6",
+      description: "Moses strikes rock, water flows for thirsty people"
+    },
+    newTestament: {
+      event: "Spirit Flows",
+      reference: "John 7:37-39",
+      description: "Christ struck, living water (Spirit) flows to all who thirst"
+    }
+  },
+  {
+    id: "12",
+    category: "Innocent Blood Cries",
+    oldTestament: {
+      event: "Abel's Blood",
+      reference: "Genesis 4:10",
+      description: "Abel's blood cries out from ground for justice"
+    },
+    newTestament: {
+      event: "Jesus' Blood",
+      reference: "Hebrews 12:24",
+      description: "Jesus' blood speaks better word - mercy and forgiveness"
+    }
+  },
+  {
+    id: "13",
+    category: "Passover Deliverance",
+    oldTestament: {
+      event: "Egypt's Firstborn",
+      reference: "Exodus 12:12-13",
+      description: "Lamb's blood on doorposts spares Israel from death angel"
+    },
+    newTestament: {
+      event: "Christ Our Passover",
+      reference: "1 Corinthians 5:7",
+      description: "Christ sacrificed as Passover lamb, delivers from sin's death"
+    }
+  },
+  {
+    id: "14",
+    category: "Suffering Righteousness",
+    oldTestament: {
+      event: "Job's Testing",
+      reference: "Job 1:21-22",
+      description: "Job loses everything, remains faithful, blessed double"
+    },
+    newTestament: {
+      event: "Christ's Humiliation",
+      reference: "Philippians 2:8-11",
+      description: "Christ empties self unto death, exalted above all names"
+    }
+  },
+  {
+    id: "15",
+    category: "Shepherd King",
+    oldTestament: {
+      event: "David the Shepherd",
+      reference: "1 Samuel 17:34-35",
+      description: "David protects sheep from lion and bear, becomes king"
+    },
+    newTestament: {
+      event: "Good Shepherd",
+      reference: "John 10:11",
+      description: "Jesus lays down life for sheep, reigns as eternal King"
+    }
+  },
+  {
+    id: "16",
+    category: "Bride Acquired",
+    oldTestament: {
+      event: "Isaac's Bride",
+      reference: "Genesis 24:67",
+      description: "Abraham sends servant to get bride for Isaac with gifts"
+    },
+    newTestament: {
+      event: "Church as Bride",
+      reference: "Ephesians 5:25-27",
+      description: "Father sends Spirit to gather bride for Christ through gospel"
     }
   }
 ];
