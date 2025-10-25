@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ interface MemorizationVerse {
 const MemorizationVerses = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [verses, setVerses] = useState<MemorizationVerse[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -375,7 +377,7 @@ const MemorizationVerses = () => {
                   </p>
                 </div>
                 <Button 
-                  onClick={() => window.location.href = '/games/verse_match/custom'}
+                  onClick={() => navigate('/games/verse_match/custom')}
                   className="gradient-palace"
                 >
                   Play Verse Match
