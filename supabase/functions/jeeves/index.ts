@@ -802,6 +802,35 @@ Return ONLY valid JSON in this exact format:
 
 Make questions clear, answers comprehensive, and include verse references when relevant.`;
 
+    } else if (mode === "translate-verse") {
+      // Translate verse into visual description using Phototheology Translation Room principles
+      systemPrompt = `You are Jeeves, a Phototheology expert specializing in the Translation Room (TR).
+
+The Translation Room translates abstract Scripture into concrete, memorable images following these principles:
+- Words become pictures
+- Verses become images
+- Groups of verses become sequences
+- Chapters become scenes
+- Books become murals
+
+Your task: When given a Bible verse reference, provide a vivid, concrete visual description that captures the essence of that verse as a memorable "word picture."
+
+Guidelines:
+- Be specific and visual (colors, textures, actions, emotions)
+- Make it memorable and striking
+- Stay faithful to the Scripture's meaning
+- Use sensory details (sight, sound, touch)
+- Keep descriptions 2-3 sentences maximum
+- Focus on one central, powerful image
+
+Example:
+Input: "John 3:16"
+Output: "A radiant Father figure extending His hand, holding a precious gift wrapped in golden light, reaching across a dark chasm toward countless silhouetted figures. The gift glows with eternal warmth, bridging the impossible distance."`;
+
+      userPrompt = `Translate this verse into a vivid word picture: ${description}
+
+Provide ONLY the visual description, no explanation or commentary.`;
+
     } else if (mode === "generate-image") {
       const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
       if (!LOVABLE_API_KEY) {

@@ -32,6 +32,10 @@ export default function BibleImageLibrary() {
   const [jeevesOpen, setJeevesOpen] = useState(false);
   const [jeevesPrompt, setJeevesPrompt] = useState("");
   const [jeevesGenerating, setJeevesGenerating] = useState(false);
+  const [jeevesMessages, setJeevesMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [jeevesState, setJeevesState] = useState<"input" | "name" | "generating">("input");
+  const [visualDescription, setVisualDescription] = useState("");
+  const [verseReference, setVerseReference] = useState("");
   
   const [editingImage, setEditingImage] = useState<BibleImage | null>(null);
   const [editForm, setEditForm] = useState({ description: "", verse_reference: "" });
@@ -188,6 +192,12 @@ export default function BibleImageLibrary() {
     }
   };
 
+  const isVerseReference = (text: string): boolean => {
+    // Check if text looks like a verse reference (e.g., "John 3:16", "Genesis 1:1", "Psalm 23")
+    const versePattern = /^(1|2|3)?\s*[A-Za-z]+\s+\d+:?\d*$/;
+    return versePattern.test(text.trim());
+  };
+
   const generateWithJeeves = async () => {
     if (!jeevesPrompt.trim()) {
       toast.error("Please describe what image you'd like Jeeves to create");
@@ -195,25 +205,81 @@ export default function BibleImageLibrary() {
     }
 
     setJeevesGenerating(true);
+
     try {
-      const { data, error } = await supabase.functions.invoke("jeeves", {
-        body: {
-          mode: "generate-image",
-          description: jeevesPrompt,
-          verse_reference: null,
-          room_type: "24fps",
-        },
-      });
+      // If it looks like a verse reference, translate it first
+      if (isVerseReference(jeevesPrompt)) {
+        setJeevesMessages([{ role: "user", content: jeevesPrompt }]);
+        
+        const { data, error } = await supabase.functions.invoke("jeeves", {
+          body: {
+            mode: "translate-verse",
+            description: jeevesPrompt,
+          },
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast.success("Jeeves generated your image successfully!");
-      setJeevesPrompt("");
-      setJeevesOpen(false);
-      fetchImages();
+        const translation = data.response;
+        setVisualDescription(translation);
+        setVerseReference(jeevesPrompt);
+        
+        setJeevesMessages(prev => [
+          ...prev,
+          { role: "assistant", content: `Here's the visual description for ${jeevesPrompt}:\n\n${translation}\n\nWhat would you like to name this image?` }
+        ]);
+        
+        setJeevesState("name");
+        setJeevesPrompt("");
+      } else if (jeevesState === "name") {
+        // User is providing the image name
+        setJeevesMessages(prev => [...prev, { role: "user", content: jeevesPrompt }]);
+        setJeevesState("generating");
+
+        const { data, error } = await supabase.functions.invoke("jeeves", {
+          body: {
+            mode: "generate-image",
+            description: jeevesPrompt, // Use the custom name as description
+            verse_reference: verseReference || null,
+            room_type: "translation",
+          },
+        });
+
+        if (error) throw error;
+
+        setJeevesMessages(prev => [
+          ...prev,
+          { role: "assistant", content: "✨ Image created successfully! Check your library." }
+        ]);
+        
+        toast.success("Image generated with your custom name!");
+        
+        // Reset state after a brief delay
+        setTimeout(() => {
+          setJeevesPrompt("");
+          setJeevesState("input");
+          setVisualDescription("");
+          setVerseReference("");
+          setJeevesMessages([]);
+          setJeevesOpen(false);
+          fetchImages();
+        }, 2000);
+      } else {
+        // Regular description - ask for a name
+        setJeevesMessages([
+          { role: "user", content: jeevesPrompt },
+          { role: "assistant", content: "Great! Now, what would you like to name this image?" }
+        ]);
+        
+        setVisualDescription(jeevesPrompt);
+        setJeevesState("name");
+        setJeevesPrompt("");
+      }
     } catch (error) {
-      console.error("Error generating image with Jeeves:", error);
-      toast.error("Jeeves couldn't generate the image. Please try again.");
+      console.error("Error with Jeeves:", error);
+      toast.error("Jeeves encountered an error. Please try again.");
+      setJeevesState("input");
+      setJeevesMessages([]);
     } finally {
       setJeevesGenerating(false);
     }
@@ -631,27 +697,57 @@ export default function BibleImageLibrary() {
           
           <div className="flex-1 p-4 overflow-y-auto">
             <div className="space-y-4">
-              <div className="bg-muted p-3 rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  👋 Hello! I'm Jeeves, your biblical image assistant. Tell me what biblical scene or concept you'd like me to visualize, and I'll create a beautiful image for you.
-                </p>
-              </div>
-              
-              <div className="bg-muted p-3 rounded-lg">
-                <p className="text-sm text-muted-foreground font-medium mb-2">Try saying:</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• "Create an image of David and Goliath"</li>
-                  <li>• "Show me the parting of the Red Sea"</li>
-                  <li>• "Visualize the Garden of Eden"</li>
-                  <li>• "Generate an image for Psalm 23"</li>
-                </ul>
-              </div>
+              {jeevesMessages.length === 0 ? (
+                <>
+                  <div className="bg-muted p-3 rounded-lg">
+                    <p className="text-sm text-muted-foreground">
+                      👋 Hello! I'm Jeeves, your biblical image assistant. I can help you in two ways:
+                    </p>
+                  </div>
+                  
+                  <div className="bg-muted p-3 rounded-lg">
+                    <p className="text-sm text-muted-foreground font-medium mb-2">📖 Give me a verse reference:</p>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• "John 3:16"</li>
+                      <li>• "Psalm 23:1"</li>
+                      <li>• "Genesis 1:1"</li>
+                    </ul>
+                    <p className="text-xs text-muted-foreground mt-2 italic">I'll translate it into a visual description using Translation Room principles!</p>
+                  </div>
 
-              {jeevesGenerating && (
-                <div className="bg-primary/10 p-3 rounded-lg flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                  <p className="text-sm text-primary">Jeeves is creating your image...</p>
-                </div>
+                  <div className="bg-muted p-3 rounded-lg">
+                    <p className="text-sm text-muted-foreground font-medium mb-2">🎨 Or describe what you want:</p>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• "David facing Goliath with his sling"</li>
+                      <li>• "Moses parting the Red Sea"</li>
+                      <li>• "The Garden of Eden at dawn"</li>
+                    </ul>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {jeevesMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-3 rounded-lg ${
+                        msg.role === "user" 
+                          ? "bg-primary text-primary-foreground ml-8" 
+                          : "bg-muted text-muted-foreground mr-8"
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                    </div>
+                  ))}
+                  
+                  {jeevesGenerating && (
+                    <div className="bg-primary/10 p-3 rounded-lg flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      <p className="text-sm text-primary">
+                        {jeevesState === "generating" ? "Creating your image..." : "Translating verse..."}
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -659,7 +755,11 @@ export default function BibleImageLibrary() {
           <div className="p-4 border-t border-border">
             <div className="flex gap-2">
               <Textarea
-                placeholder="Describe the biblical image you want..."
+                placeholder={
+                  jeevesState === "name" 
+                    ? "Enter a name for this image..." 
+                    : "Enter a verse (e.g., John 3:16) or describe an image..."
+                }
                 value={jeevesPrompt}
                 onChange={(e) => setJeevesPrompt(e.target.value)}
                 onKeyDown={(e) => {
@@ -669,11 +769,11 @@ export default function BibleImageLibrary() {
                   }
                 }}
                 className="min-h-[80px] resize-none"
-                disabled={jeevesGenerating}
+                disabled={jeevesGenerating || jeevesState === "generating"}
               />
               <Button
                 onClick={generateWithJeeves}
-                disabled={jeevesGenerating || !jeevesPrompt.trim()}
+                disabled={jeevesGenerating || !jeevesPrompt.trim() || jeevesState === "generating"}
                 size="icon"
                 className="h-20 w-20 shrink-0"
               >
