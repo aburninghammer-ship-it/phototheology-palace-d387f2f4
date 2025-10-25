@@ -75,7 +75,14 @@ export const StrongsVerseView = ({
                   ))}
                 </span>
               ) : (
-                <p>{verse.text}</p>
+                <div>
+                  <p className="mb-2">{verse.text}</p>
+                  {verse.verse === 1 && (
+                    <p className="text-xs text-muted-foreground italic bg-muted/30 p-2 rounded">
+                      Strong's numbers are currently available for John 3:16 as a demo. Full Strong's concordance integration coming soon.
+                    </p>
+                  )}
+                </div>
               )}
             </div>
             
@@ -95,8 +102,8 @@ export const StrongsVerseView = ({
             )}
 
             {strongsData && (
-              <div className="mt-2 text-xs text-muted-foreground italic">
-                Click superscript numbers to see Hebrew/Greek definitions
+              <div className="mt-2 text-xs text-primary/60 italic font-semibold">
+                ✨ Click superscript numbers to see Hebrew/Greek definitions
               </div>
             )}
           </div>
