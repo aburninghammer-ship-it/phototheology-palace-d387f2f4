@@ -73,11 +73,13 @@ export const useUserPreferences = () => {
     try {
       const { error } = await supabase
         .from("user_preferences")
-        .update({
+        .upsert({
+          user_id: user.id,
           [key]: value,
           updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id);
+        }, {
+          onConflict: "user_id"
+        });
 
       if (error) throw error;
 
