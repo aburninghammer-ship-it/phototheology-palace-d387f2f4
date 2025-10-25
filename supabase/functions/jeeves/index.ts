@@ -156,7 +156,16 @@ serve(async (req) => {
       bibleVerses,
       selectedRoom,
       selectedPrinciple,
-      userQuestion
+      userQuestion,
+      scenario,
+      selectedFruits,
+      title,
+      theme,
+      style,
+      existingStones,
+      stones,
+      existingBridges,
+      bridges
     } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -670,7 +679,6 @@ Base it on OBSERVABLE, DOCUMENTABLE trends. Be factual, not sensational.`;
 Focus on common spiritual battles like anger, pride, lust, fear, discouragement, or compromise. Be specific, practical, and encouraging. Always point to Christ's power and grace.`;
     
     } else if (mode === "scenario-feedback") {
-      const { scenario, selectedFruits } = await req.json();
       systemPrompt = `You are Jeeves, a wise spiritual warfare trainer. You help Christians understand which Fruits of the Spirit are needed for specific trials.`;
       userPrompt = `A believer faced this scenario: ${scenario}
 
@@ -696,7 +704,6 @@ Structure your research:
 Include verse citations, cross-references, and scholarly depth. Make it comprehensive but accessible.`;
     
     } else if (mode === "sermon-setup") {
-      const { title, theme, style } = await req.json();
       systemPrompt = "You are Jeeves, a sermon preparation assistant. Help preachers organize their thoughts and structure powerful messages.";
       userPrompt = `A preacher is preparing a sermon with this setup:
 Title: "${title}"
@@ -712,10 +719,9 @@ Provide guidance on:
 Be encouraging and practical. Help them think through the sermon, but don't write it for them.`;
 
     } else if (mode === "sermon-stones") {
-      const { theme, existingStones } = await req.json();
       systemPrompt = "You are Jeeves, helping identify powerful AHA moments (smooth stones) for sermons.";
       userPrompt = `For a sermon on "${theme}", suggest 2-3 potential smooth stones (powerful Phototheology insights).
-${existingStones.length > 0 ? `\nThey already have: ${existingStones.join('; ')}` : ''}
+${existingStones && existingStones.length > 0 ? `\nThey already have: ${existingStones.join('; ')}` : ''}
 
 Each stone should be:
 - A mind-blowing biblical insight
@@ -726,12 +732,11 @@ Each stone should be:
 Present them as options, not mandates.`;
 
     } else if (mode === "sermon-bridges") {
-      const { stones, existingBridges } = await req.json();
       systemPrompt = "You are Jeeves, helping create narrative bridges between sermon points.";
       userPrompt = `Help create bridges to connect these 5 smooth stones into a flowing narrative:
 ${stones.map((s: string, i: number) => `Stone ${i+1}: ${s}`).join('\n')}
 
-${existingBridges.length > 0 ? `\nExisting bridges: ${existingBridges.join('; ')}` : ''}
+${existingBridges && existingBridges.length > 0 ? `\nExisting bridges: ${existingBridges.join('; ')}` : ''}
 
 Suggest 2-3 potential bridge transitions that:
 - Flow naturally between the stones
@@ -740,7 +745,6 @@ Suggest 2-3 potential bridge transitions that:
 - Build toward a climax`;
 
     } else if (mode === "sermon-structure") {
-      const { stones, bridges } = await req.json();
       systemPrompt = "You are Jeeves, helping structure sermons like movies.";
       userPrompt = `Given these sermon elements:
 Stones: ${stones.join('; ')}
@@ -782,7 +786,6 @@ Provide a thoughtful response that:
 Be conversational, educational, and inspiring. Help them see deeper truth.`;
 
     } else if (mode === "generate-flashcards") {
-      const { topic } = await req.json();
       systemPrompt = `You are Jeeves, creating Bible study flashcards. Return your response as valid JSON only.`;
       userPrompt = `Create 10 flashcards about: "${topic}"
 
