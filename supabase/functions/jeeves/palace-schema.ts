@@ -26,9 +26,9 @@ export const PALACE_SCHEMA = `
 **Example:** Joseph: Coat → Pit → Caravan → Prison → Palace
 
 ### IR - Imagination Room  
-**Purpose:** Step into the narrative with all five senses
+**Purpose:** Experience Scripture with your whole being through sanctified imagination
 **Core Question:** What does it feel like to stand there?
-**METHOD:** 2–5 minute guided 'step-in': sights, sounds, touch, smell; then 1 sentence of personal resonance.
+**METHOD:** Use your imagination to step fully into the biblical scene. Engage all five senses: What do you see, hear, touch, smell, and taste? Let the passage become a lived experience, not just information. Then capture in one sentence how this sensory encounter resonates with your own story.
 
 ### 24 - 24FPS Room
 **Purpose:** Index every chapter with a single sticky image
