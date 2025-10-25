@@ -78,6 +78,12 @@ export const Navigation = () => {
                   <Link to="/bible/John/3">📖 Phototheology Bible</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
+                  <Link to="/palace">🏰 The Palace</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/bible-rendered-room">📚 Bible Rendered</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/verse-memory-hall">🧠 Verse Memory Hall</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

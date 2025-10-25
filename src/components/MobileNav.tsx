@@ -56,6 +56,16 @@ export const MobileNav = () => {
                   📖 Phototheology Bible
                 </Button>
               </Link>
+              <Link to="/palace">
+                <Button variant="ghost" className="w-full justify-start" size="sm">
+                  🏰 The Palace
+                </Button>
+              </Link>
+              <Link to="/bible-rendered-room">
+                <Button variant="ghost" className="w-full justify-start" size="sm">
+                  📚 Bible Rendered
+                </Button>
+              </Link>
               <Link to="/verse-memory-hall">
                 <Button variant="ghost" className="w-full justify-start" size="sm">
                   🧠 Verse Memory Hall

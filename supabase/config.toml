@@ -42,3 +42,9 @@ verify_jwt = false
 
 [functions.generate-access-code]
 verify_jwt = true
+
+[functions.generate-bible-rendered-flashcards]
+verify_jwt = true
+
+[functions.generate-bible-rendered-images]
+verify_jwt = true
