@@ -500,42 +500,47 @@ You MUST be specific. Never give a generic category without naming the specific 
 
       if (isFirstMove) {
         const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");
-        userPrompt = `You're starting a Chain Chess game! You go FIRST. The game verse is ${verse}.
+        userPrompt = `You're starting a Chain Chess game! You go FIRST. 
+
+**THE VERSE FOR THIS GAME IS: ${verse}**
+
+This verse is FIXED. You MUST comment on THIS verse - ${verse} - not any other verse.
 
 Available categories for this game: ${categoriesText}
 
 **YOUR CRITICAL TASK:**
-1. Present the verse: "${verse}" (include this in your response)
-2. Write 3-4 sentences of insightful, enthusiastic commentary on ${verse}
-   - Explain what the verse means
-   - Use one of the available categories to analyze it
-   - Be specific, scholarly, and excited
-   - Make biblical connections
+1. The verse field in your JSON response MUST be: "${verse}" (this exact verse - DO NOT change it or pick a different verse!)
+
+2. Write 3-4 sentences of insightful, enthusiastic commentary SPECIFICALLY ABOUT ${verse}:
+   - Explain what ${verse} means
+   - Use one of the available categories to analyze ${verse}
+   - Be specific, scholarly, and excited about ${verse}
+   - Make biblical connections to ${verse}
    
 3. Then challenge the player with a SPECIFIC challenge:
    - If using "Books of the Bible" → name a specific book: "Books of the Bible - Romans"
    - If using "Rooms of the Palace" → name a specific room: "Rooms of the Palace - Story Room"
    - If using "Principles of the Palace" → name a specific principle: "Principles of the Palace - 2D/3D"
 
-**IMPORTANT:** You MUST be specific in your challenge. Don't just say "Books of the Bible", say "Books of the Bible - [specific book name]"
+**IMPORTANT:** 
+- The "verse" in your JSON MUST be "${verse}" - do not change this!
+- Your commentary MUST be about ${verse} specifically
+- You MUST be specific in your challenge category
 
-**EXAMPLE FORMAT:**
+**EXAMPLE FORMAT (for a different verse):**
 {
-  "verse": "John 3:16",
-  "commentary": "What a foundational truth to commence our game! John 3:16 encapsulates the very essence of divine agape. The term 'kosmos' signifies the entirety of fallen creation, emphasizing the boundless reach of God's redemptive plan. This verse magnificently unveils the divine initiative in salvation.",
-  "challengeCategory": "Books of the Bible - Romans"
+  "verse": "Psalm 23:1",
+  "commentary": "What a beautiful declaration of trust! Psalm 23:1 portrays Yahweh as the divine Shepherd who provides completely for His flock. The Hebrew 'ra'ah' (shepherd) emphasizes both guidance and provision. This pastoral imagery, so central to Israel's identity, reveals God's intimate, caring relationship with His people.",
+  "challengeCategory": "Books of the Bible - Isaiah"
 }
 
-**CRITICAL:** Your challengeCategory MUST follow this format:
-- "Books of the Bible - [SPECIFIC BOOK NAME]" (e.g., "Books of the Bible - Isaiah", "Books of the Bible - Revelation")
-- "Rooms of the Palace - [SPECIFIC ROOM NAME]" (e.g., "Rooms of the Palace - Story Room", "Rooms of the Palace - Gems Room")  
-- "Principles of the Palace - [SPECIFIC PRINCIPLE]" (e.g., "Principles of the Palace - 2D", "Principles of the Palace - Time Zones")
+**FOR THIS GAME:**
+NOW: Write your enthusiastic commentary specifically about ${verse}, then challenge them with a SPECIFIC challenge from these categories: ${categoriesText}
 
-DO NOT use generic categories like "Books of the Bible" or "Principles of the Palace" without the specific name!
-
-NOW: Write your enthusiastic commentary on ${verse}, then challenge them with a SPECIFIC challenge from these categories: ${categoriesText}
-
-Return ONLY valid JSON with verse, commentary, and SPECIFIC challengeCategory (with the book/room/principle name included).`;
+Return ONLY valid JSON with:
+- verse: "${verse}" (exactly as shown)
+- commentary: (your insightful thought about ${verse})
+- challengeCategory: (specific challenge with book/room/principle name)`;
       } else {
         const lastMove = previousMoves[previousMoves.length - 1];
         const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");
