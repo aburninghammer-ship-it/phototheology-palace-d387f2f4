@@ -166,7 +166,7 @@ export default function RoomDetail() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p>{room.method}</p>
+                <p className="text-base leading-relaxed whitespace-pre-line">{room.method}</p>
               </CardContent>
             </Card>
 
