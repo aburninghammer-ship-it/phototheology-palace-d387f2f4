@@ -334,14 +334,14 @@ const ChainChess = () => {
         throw new Error("No data received from Jeeves");
       }
 
-      if (!data.commentary) {
-        console.error("Jeeves response missing commentary:", data);
+      if (!data.commentary || data.commentary.trim() === "") {
+        console.error("Jeeves response missing commentary (thought):", data);
         toast({
           title: "Error",
-          description: "Jeeves response missing commentary",
+          description: "Jeeves did not provide a thought/commentary. Please check the console logs.",
           variant: "destructive",
         });
-        throw new Error("Jeeves did not provide commentary");
+        throw new Error("Jeeves did not provide commentary (thought)");
       }
 
       // Validate challenge specificity
@@ -732,7 +732,25 @@ const ChainChess = () => {
                           </p>
                         )}
                         
-                        <p className="mb-2">{move.commentary}</p>
+                        {/* Display commentary with clear labeling */}
+                        {move.commentary ? (
+                          <div className="mb-2">
+                            {move.player === "jeeves" && (
+                              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+                                💭 Jeeves' Thought:
+                              </p>
+                            )}
+                            <p className={move.player === "jeeves" ? "text-foreground" : "text-foreground"}>
+                              {move.commentary}
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="mb-2 p-2 bg-destructive/10 rounded border border-destructive/20">
+                            <p className="text-xs text-destructive">
+                              ⚠️ Missing commentary - there was an error. Please check the console for details.
+                            </p>
+                          </div>
+                        )}
                         
                         {move.challengeCategory && (
                           <div className="mt-2 p-2 bg-background/50 rounded border-l-2 border-primary">

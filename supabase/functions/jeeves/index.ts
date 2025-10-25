@@ -461,6 +461,12 @@ Chart context: ${chartData || "General Bible study visualization"}
 Make it educational and insightful.`;
 
     } else if (mode === "chain-chess") {
+      console.log("=== CHAIN CHESS MODE ===");
+      console.log("Is first move:", isFirstMove);
+      console.log("Verse:", verse);
+      console.log("Available categories:", availableCategories);
+      console.log("Difficulty:", difficulty);
+      
       // availableCategories and difficulty already extracted from req.json() above
       const difficultyContext = difficulty === "kids"
         ? "Use simpler language and shorter sentences. Make it encouraging and fun for children aged 8-14."
@@ -470,7 +476,20 @@ Make it educational and insightful.`;
 Your role is to make insightful biblical commentary that builds connections between verses and principles.
 Be scholarly yet warm, like an excited friend sharing discoveries.
 ${difficultyContext}
-YOU MUST respond in JSON format with: { "verse": "book chapter:verse", "commentary": "your 3-4 sentence insight", "challengeCategory": "specific challenge" }
+
+**CRITICAL:** YOU MUST respond in VALID JSON format with these REQUIRED fields:
+{
+  "verse": "book chapter:verse",
+  "commentary": "your 3-4 sentence insightful thought about the verse",
+  "challengeCategory": "specific challenge"
+}
+
+**RULES FOR COMMENTARY (YOUR THOUGHT):**
+- MUST be 3-4 complete sentences
+- MUST provide actual biblical insight (not meta-commentary about the game)
+- MUST be enthusiastic and engaging
+- MUST connect to biblical truth and principles
+- This is YOUR THOUGHT - share your scholarly insight!
 
 **CRITICAL RULES FOR CHALLENGES:**
 - If category is "Books of the Bible" → specify the book name: "Books of the Bible - Romans" or "Books of the Bible - Isaiah"
@@ -1046,25 +1065,46 @@ Provide ONLY the visual description, no explanation or commentary.`;
     
     // For chain-chess and chain-chess-feedback modes, parse the response
     if (mode === "chain-chess") {
+      console.log("=== PARSING CHAIN CHESS RESPONSE ===");
+      console.log("Raw AI response:", content);
+      
       try {
         const parsed = JSON.parse(content);
+        console.log("Parsed response:", parsed);
         
         // Ensure all required fields are present
-        if (!parsed.commentary) {
-          throw new Error("Missing commentary in AI response");
+        if (!parsed.verse) {
+          console.error("Missing verse in response");
+          throw new Error("Missing verse in AI response");
         }
+        
+        if (!parsed.commentary || parsed.commentary.trim() === "") {
+          console.error("Missing or empty commentary in response");
+          throw new Error("Missing commentary (thought) in AI response");
+        }
+        
+        if (!parsed.challengeCategory) {
+          console.error("Missing challengeCategory in response");
+          throw new Error("Missing challengeCategory in AI response");
+        }
+        
+        console.log("=== VALID RESPONSE ===");
+        console.log("Verse:", parsed.verse);
+        console.log("Commentary (Jeeves' thought):", parsed.commentary);
+        console.log("Challenge:", parsed.challengeCategory);
         
         return new Response(
           JSON.stringify({ 
-            verse: parsed.verse || null,
+            verse: parsed.verse,
             commentary: parsed.commentary,
-            challengeCategory: parsed.challengeCategory || "Books of the Bible - Romans",
+            challengeCategory: parsed.challengeCategory,
             score: 8 
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       } catch (parseError) {
-        console.error("Failed to parse chain-chess response:", parseError);
+        console.error("=== ERROR PARSING CHAIN CHESS ===");
+        console.error("Parse error:", parseError);
         console.error("Raw content:", content);
         
         // Fallback if not JSON - return error instead of trying to salvage
@@ -1072,7 +1112,8 @@ Provide ONLY the visual description, no explanation or commentary.`;
         return new Response(
           JSON.stringify({ 
             error: "Failed to parse AI response. Please try again.",
-            details: errorMessage
+            details: errorMessage,
+            rawContent: content.substring(0, 500) // First 500 chars for debugging
           }),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
