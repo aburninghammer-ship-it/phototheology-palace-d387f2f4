@@ -72,6 +72,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Certificates = lazy(() => import("./pages/Certificates"));
 const StudyPartners = lazy(() => import("./pages/StudyPartners"));
 const MemorizationVerses = lazy(() => import("./pages/MemorizationVerses"));
+const VerseMemoryHall = lazy(() => import("./pages/VerseMemoryHall"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -118,6 +119,7 @@ function App() {
             <Route path="/bible/search" element={<ProtectedRoute><BibleSearch /></ProtectedRoute>} />
             <Route path="/bible/:book/:chapter" element={<ProtectedRoute><BibleChapter /></ProtectedRoute>} />
             <Route path="/memorization-verses" element={<ProtectedRoute><MemorizationVerses /></ProtectedRoute>} />
+            <Route path="/verse-memory-hall" element={<ProtectedRoute><VerseMemoryHall /></ProtectedRoute>} />
             <Route path="/daily-challenges" element={<ProtectedRoute><DailyChallenges /></ProtectedRoute>} />
             <Route path="/equations-challenge" element={<ProtectedRoute><EquationsChallenge /></ProtectedRoute>} />
             <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
