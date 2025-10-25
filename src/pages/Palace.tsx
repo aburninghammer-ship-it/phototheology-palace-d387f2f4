@@ -60,7 +60,7 @@ const Palace = () => {
             
             <div className="flex gap-3 justify-center">
               <Button asChild size="lg" className="gradient-palace text-white">
-                <Link to={user ? `/games/palace_quiz/${palaceFloors[0].rooms[0].tag}` : "/auth"}>
+                <Link to={user ? "/games/palace_quiz" : "/auth"}>
                   <Building2 className="mr-2 h-4 w-4" />
                   {user ? "Continue Learning" : "Start Your Journey"}
                 </Link>
