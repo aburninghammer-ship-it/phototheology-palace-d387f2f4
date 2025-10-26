@@ -670,6 +670,15 @@ const Games = () => {
                               Play vs Jeeves
                             </Button>
                           </>
+                        ) : game.id === "chef_challenge" ? (
+                          <Button
+                            onClick={() => navigate(`/games/chef-challenge`)}
+                            className="w-full"
+                            variant="default"
+                          >
+                            <Gamepad2 className="mr-2 h-4 w-4" />
+                            Start Challenge
+                          </Button>
                         ) : (
                           <>
                             <Button
