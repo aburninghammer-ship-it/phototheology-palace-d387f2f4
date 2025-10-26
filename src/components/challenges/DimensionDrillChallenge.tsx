@@ -13,9 +13,11 @@ interface DimensionDrillProps {
 }
 
 const DIMENSIONS = [
-  { value: "3d", label: "3D - Christ in the Text", description: "Show how this verse points to Jesus" },
-  { value: "4d", label: "4D - Church/Mission", description: "How this applies to the Church body or remnant" },
-  { value: "5d", label: "5D - Final Conflict", description: "How this relates to end-time conflict" }
+  { value: "1d", label: "1D - Literal", description: "What does the text say plainly? Historical/grammatical meaning" },
+  { value: "2d", label: "2D - Christ", description: "How does this verse point to Jesus personally?" },
+  { value: "3d", label: "3D - Me", description: "How does this apply to my personal life and walk with God?" },
+  { value: "4d", label: "4D - Church", description: "How does this apply to the Church body, mission, or remnant?" },
+  { value: "5d", label: "5D - Heaven", description: "How does this relate to heaven, final conflict, or eternal perspective?" }
 ];
 
 export const DimensionDrillChallenge = ({ challenge, onSubmit, hasSubmitted }: DimensionDrillProps) => {
