@@ -167,73 +167,42 @@ export const Navigation = () => {
             </DropdownMenu>
 
             <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Courses
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem asChild>
-                      <Link to="/blueprint-course">Blueprint Course</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/daniel-course">Daniel Course</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/phototheology-course">Phototheology Course</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/revelation-course">Revelation Course</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/revelation-course/kids">📚 Revelation for Kids</Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-            <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      Community
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem asChild>
-                      <Link to="/escape-room" className="font-semibold text-primary">
-                        <Clock className="h-4 w-4 mr-2" />
-                        🚨 Escape Rooms
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/daily-challenges">📅 Daily Challenges</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/treasure-hunt">🏆 Treasure Hunt (24hr)</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/equations-challenge">🧮 Equations Challenge</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/live-study">📺 Live Study</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/community">💬 Community Chat</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/leaderboard">🏅 Leaderboard</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/achievements">🎖️ Achievements</Link>
-                    </DropdownMenuItem>
+                   <DropdownMenuTrigger asChild>
+                     <Button variant="ghost" size="sm">
+                       <BookOpen className="mr-2 h-4 w-4" />
+                       Courses
+                     </Button>
+                   </DropdownMenuTrigger>
+                   <DropdownMenuContent>
                      <DropdownMenuItem asChild>
-                      <Link to="/feedback">💡 Feedback</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/critics-analysis">🎥 Critics Analysis</Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                       <Link to="/blueprint-course">Blueprint Course</Link>
+                     </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                       <Link to="/daniel-course">Daniel Course</Link>
+                     </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                       <Link to="/phototheology-course">Phototheology Course</Link>
+                     </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                       <Link to="/revelation-course">Revelation Course</Link>
+                     </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                       <Link to="/revelation-course/kids">📚 Revelation for Kids</Link>
+                     </DropdownMenuItem>
+                   </DropdownMenuContent>
+                 </DropdownMenu>
+
+            <Button
+              variant={location.pathname === "/community" ? "default" : "ghost"}
+              asChild
+              size="sm"
+              className={location.pathname === "/community" ? "gradient-palace shadow-purple" : "hover:bg-muted"}
+            >
+              <Link to="/community">
+                <Users className="mr-2 h-4 w-4" />
+                Community
+              </Link>
+            </Button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
