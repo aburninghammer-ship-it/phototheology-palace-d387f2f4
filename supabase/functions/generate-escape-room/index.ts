@@ -32,9 +32,18 @@ serve(async (req) => {
 
     if (mode === 'room_as_room') {
       // Room-as-Room Escape: Lock players inside ONE specific Palace room's theology
+      const lockCounts: Record<string, number> = {
+        easy: 3,
+        medium: 4,
+        hard: 5,
+        pro: 6
+      };
+      const numLocks = lockCounts[difficulty] || 4;
+      const maxPoints = numLocks * 6 + 4; // 6 pts per lock + 4 for escape
+      
       systemPrompt = `CRITICAL: Return ONLY valid JSON. Do NOT wrap your response in markdown code blocks or backticks.
 
-Create a 45-minute "Room-as-Room" escape experience for the ${category} room.
+Create a ${difficulty.toUpperCase()} difficulty "Room-as-Room" escape experience for the ${category} room with ${numLocks} locks (max ${maxPoints} pts).
 
 ROOM-AS-ROOM CONCEPT:
 Players are LOCKED inside one specific Palace room's theology. The only way out is to correctly use that room's tools on a given biblical text. This trains deep fluency in one methodology.
@@ -47,48 +56,25 @@ AVAILABLE ROOMS:
 - christ_concentration (CR): "Where is Christ in this text?" - Christ-centered interpretation
 - dimensions (DR): 5-layer analysis (Literal/Christ/Me/Church/Heaven)
 
-ROOM MECHANICS:
-Each room has 3 LOCKS that must be opened using that room's specific method:
+DIFFICULTY-BASED MECHANICS:
+- EASY (3 locks): Foundational questions, basic application
+- MEDIUM (4 locks): Moderate depth, requires synthesis
+- HARD (5 locks): Advanced connections, complex patterns
+- PRO (6 locks): Expert-level mastery, multi-layered integration
 
-For SANCTUARY Room:
-- Lock 1 (Furniture): Match 3 verses to 3 sanctuary articles (typology must be correct)
-- Lock 2 (Doctrinal Defense): Counter a false teaching using "bread texts" (Word as promise AND command)
-- Lock 3 (Gospel Chain): Connect all furniture into one coherent Christ-centered story
+ROOM MECHANICS (${difficulty.toUpperCase()} = ${numLocks} locks):
+- ${numLocks} Locks: Each lock tests a different aspect of the room's method
+- 1 Final Escape Puzzle: Proves mastery by combining principles
+- Points: 6 pts per lock (perfect), 3 pts (partial), Escape: 4 pts
+- Total Max: ${maxPoints} pts
+- Hints: ${difficulty === 'easy' || difficulty === 'medium' ? 3 : 2} available (−3 pts each)
+- Time: ${difficulty === 'easy' ? 30 : difficulty === 'medium' ? 40 : difficulty === 'hard' ? 50 : 60} minutes
 
-For PROPHECY Room:
-- Lock 1 (Symbol ID): Correctly identify prophetic symbols using scripture + history
-- Lock 2 (Timeline Lock): Place events in prophetic time without inventing dates
-- Lock 3 (Mission Application): Show how this prophecy affects justice/mercy/witness today
-
-For STORY Room:
-- Lock 1 (Sequence): Retell the passage in plain language, no jargon
-- Lock 2 (Immersion): Describe what it feels like to stand IN the scene
-- Lock 3 (Memory Frame): Create an unforgettable image for this chapter
-
-For SYMBOLS Room:
-- Lock 1 (Type Identification): Identify the type and its antitype with verses
-- Lock 2 (Pattern Recognition): Show where else this symbol appears in Scripture
-- Lock 3 (Christ Connection): Prove how this type points to Christ
-
-For CHRIST CONCENTRATION Room:
-- Lock 1 (Find Jesus): Locate Christ explicitly in the text
-- Lock 2 (Gospel Clarity): Explain how this reveals salvation without works-based distortion
-- Lock 3 (Apologetic Defense): Answer skeptical objections using this Christ-truth
-
-For DIMENSIONS Room:
-- Lock 1 (Literal): State the plain historical/literal meaning
-- Lock 2 (Christological): Show the Christ dimension
-- Lock 3 (Application Trifecta): Apply to Me + Church + Heaven with specific examples
-
-Create 3 lock-puzzles for the ${category} room with the following structure:
+For ${category} Room - Create ${numLocks} lock-puzzles with:
 - Each lock has a specific challenge tied to that room's methodology
 - Must use KJV verses as keys
-- Include FAILURE CONDITIONS (what happens if they get it wrong - e.g., "veil stays shut", "prophetic damage", "detained by authorities")
-- Add 1 ESCAPE PUZZLE that synthesizes all 3 locks into final output
-
-SCORING:
-- Perfect Lock: 8 pts each (24 total for 3 locks)
-- Escape Puzzle: 12 pts
+- Include FAILURE CONDITIONS (what happens if they get it wrong)
+- Add 1 ESCAPE PUZZLE that synthesizes all locks into final output
 - Total: 36 pts max
 - Hints: 2 available (−3 pts each)
 - Repeated Principle Penalty: −2 pts
@@ -162,57 +148,55 @@ Format as JSON:
 
     } else if (mode === 'live_mission') {
       // Live Group Mission: House Fire Edition - Real-time apologetics training
+      const challengeCounts: Record<string, number> = {
+        easy: 2,
+        medium: 3,
+        hard: 4,
+        pro: 5
+      };
+      const numChallenges = challengeCounts[difficulty] || 3;
+      const maxPoints = numChallenges * 10; // 10 pts per challenge
+      
       systemPrompt = `CRITICAL: Return ONLY valid JSON. Do NOT wrap your response in markdown code blocks or backticks.
 
-Create a 30-minute "Live Group Mission" escape challenge for real-time group apologetics training.
+Create a ${difficulty.toUpperCase()} difficulty "Live Group Mission" escape challenge with ${numChallenges} challenges (max ${maxPoints} pts)${scenario ? ` based on: "${scenario}"` : ''}.
 
 LIVE MISSION CONCEPT:
-This is pastoral discipleship under pressure. One team is "Witnesses" delivering gospel truth in 90 seconds to hostile crowd. Other team plays "The Crowd" with real objections. Then roles switch.
+This is pastoral discipleship under pressure. One team is "Witnesses" delivering gospel truth under hostile questioning. Teams face ${numChallenges} real-world apologetics challenges.
 
 SCENARIO: ${scenario || 'Public Square Evangelism'}
 
-The challenge has 3 ROOMS that teams must clear in sequence:
+Each challenge includes:
+- Base Verse (anchor text)
+- Objection (what they're being accused of)
+- Crowd Simulation (mocking questions, false charges)
+- Expected Response (what principles/verses they should use)
 
-1. 24FPS ROOM CHALLENGE (Orient in Redemption History):
-   - Given verse must be placed in biblical timeline (Creation? Judgment? Rescue?)
-   - If team can't orient in the story, they're "disqualified from speaking" (confusion penalty)
-   - Question: "Where are we in the drama of redemption?"
+Create ${numChallenges} challenges based on difficulty level:
+- Easy: Simple objections (e.g., "Why go to church?")
+- Medium: Moderate objections (e.g., "Religion is colonizer nonsense")
+- Hard: Complex objections (e.g., "Your God judges - that's oppression")
+- Pro: Multi-layered objections requiring comprehensive defense
 
-2. CHRIST IN EVERY CHAPTER CHALLENGE (Gospel Lock):
-   - Must explain how Jesus is revealed in the text, not just judgment/commands
-   - If they preach judgment without Christ, they "fail the room" and are "detained"
-   - Question: "Where is Christ in this warning/promise/narrative?"
+SCORING PER CHALLENGE:
+- Accuracy (Did they use correct biblical texts?)
+- Compassion (Did they sound like Jesus?)
+- Application (Did they connect to real life?)
+- Perfect: 10 pts per challenge
+- Total: ${maxPoints} pts max
 
-3. MISSION ROOM CHALLENGE (Live Apologetics):
-   - 60-second gospel pitch based fully on the text
-   - "Crowd" interrupts with real objections:
-     * "Church is corrupt"
-     * "Religion is colonizer nonsense"
-     * "Why does your God judge?"
-     * "Sabbath is legalism"
-   - If Witnesses survive hostile questioning with coherent Christ-centered answer, they escape
-
-Create 3 room challenges + 1 final apologetics test:
-
-SCORING:
-- Clarity (Did they explain gospel or just doom?)
-- Scriptural Accuracy (Did they twist the verse?)
-- Compassion (Did they sound like Jesus or YouTube anger ministry?)
-- Application (Did they connect to real oppression and hope?)
-- Perfect: 10 pts per room, Partial: 5 pts
-- Final Defense: 15 pts
-- Total: 45 pts max
-
-Format as JSON:
+Format as JSON - Generate exactly ${numChallenges} challenges:
 {
-  "title": "string (e.g., 'Public Square Defense: Revelation 14 Gospel')",
+  "title": "string (e.g., 'Public Square Defense [${difficulty.toUpperCase()}]: Revelation 14 Gospel')",
+  "difficulty": "${difficulty}",
+  "time_limit_minutes": ${difficulty === 'easy' ? 20 : difficulty === 'medium' ? 30 : difficulty === 'hard' ? 45 : 60},
   "scenario": "string (emergency scenario setup, 2-3 sentences)",
   "base_verse": "Book Chapter:Verse",
   "biblical_conclusion": "string (what this trains for street-level evangelism, 2-3 sentences)",
   "puzzles": [
     {
-      "puzzle_number": 1,
-      "room_tag": "24|CR|MR (matching the 3 challenges)",
+      "puzzle_number": 1-${numChallenges},
+      "room_tag": "24|CR|MR",
       "principle": "Exact principle",
       "prompt": "Challenge prompt (2-3 sentences)",
       "expected_verses": ["Book Chapter:Verse"],
@@ -223,49 +207,65 @@ Format as JSON:
 }`;
 
     } else if (mode === 'async_hunt') {
-      // Asynchronous Hunt: 24-Hour Survival Mode - Crisis briefings with timed resolution
+      // Asynchronous Hunt: Crisis briefings with timed resolution
+      const complexityLevels: Record<string, { locks: number; wordCount: string; timeHours: number; maxPoints: number }> = {
+        easy: { locks: 2, wordCount: '300-400', timeHours: 12, maxPoints: 15 },
+        medium: { locks: 3, wordCount: '400-600', timeHours: 18, maxPoints: 25 },
+        hard: { locks: 4, wordCount: '600-800', timeHours: 20, maxPoints: 30 },
+        pro: { locks: 5, wordCount: '800-1000', timeHours: 24, maxPoints: 35 }
+      };
+      const config = complexityLevels[difficulty] || complexityLevels.medium;
+      
       systemPrompt = `CRITICAL: Return ONLY valid JSON. Do NOT wrap your response in markdown code blocks or backticks.
 
-Create a 24-hour "Asynchronous Hunt" crisis challenge for group study and defense building.
+Create a ${difficulty.toUpperCase()} difficulty "Asynchronous Hunt" crisis challenge with ${config.locks} locks (${config.wordCount} words, ${config.timeHours}h, ${config.maxPoints} pts max).
 
 ASYNC HUNT CONCEPT:
-Drop a "Crisis Briefing" - teams have 24 hours to solve it offline, build defense, submit 2-min voice memo or 500-word response. Ranks top teams. Trains real-time doctrinal warfare response.
+Drop a "Crisis Briefing" - teams have ${config.timeHours} hours to solve it offline, build defense, submit ${config.wordCount}-word response. Ranks top teams. Trains real-time doctrinal warfare response.
 
-CRISIS SCENARIOS:
-- Influencer attacks Sabbath as legalism
-- YouTube preacher says "seal of God" is just Holy Spirit, not obedience
-- Reddit thread claims sanctuary typology is "Old Testament irrelevant"
-- TikTok viral post: "Adventist prophecy is fear manipulation"
+DIFFICULTY-BASED COMPLEXITY:
+- EASY (${config.locks} locks): Simple crisis, straightforward defense, ${config.wordCount} words
+- MEDIUM (${config.locks} locks): Moderate crisis, nuanced defense, ${config.wordCount} words
+- HARD (${config.locks} locks): Complex crisis, multi-faceted defense, ${config.wordCount} words
+- PRO (${config.locks} locks): Multi-layered crisis, comprehensive defense, ${config.wordCount} words
+
+CRISIS SCENARIOS (scale to difficulty):
+- Easy: Simple doctrinal challenge (e.g., Sabbath basics)
+- Medium: Moderate theological objection (e.g., Sanctuary relevance)
+- Hard: Complex multi-doctrine attack (e.g., Prophecy + Law + Gospel)
+- Pro: Sophisticated multi-layered heresy requiring comprehensive defense
 
 Create CRISIS BRIEFING with:
-1. THE ACCUSATION (2-3 sentences of actual online heresy)
-2. PROVIDED TEXTS (3 verses they must use)
-3. LIMITER RULE (e.g., "No Ellen White quotes - Bible only for non-Adventist audience")
-4. DEFENSE REQUIREMENT (What they must prove without falling into works-based OR lawless errors)
+1. THE ACCUSATION (2-3 sentences scaled to difficulty)
+2. PROVIDED TEXTS (${difficulty === 'easy' ? 2 : difficulty === 'medium' ? 3 : difficulty === 'hard' ? 4 : 5} verses they must use)
+3. LIMITER RULE (e.g., "Bible only for non-Adventist audience")
+4. DEFENSE REQUIREMENT (What they must prove)
 
-LOCKS TO OPEN:
-- Gospel Lock: Must defend truth without separating obedience from faith
-- Scripture Lock: Must use provided verses (can't import random texts)
-- Mission Lock: Must be clear enough for non-Adventist to understand
-- Testimony Lock: Must show how this truth affects real life this week (can't fake discipleship)
+LOCKS TO OPEN (generate ${config.locks} locks):
+Available lock types:
+- Gospel Lock: Defend truth without separating obedience from faith
+- Scripture Lock: Use provided verses correctly
+- Mission Lock: Clear enough for non-Adventist to understand
+- Testimony Lock: Show how truth affects real life
+- Synthesis Lock: (PRO only) Integrate multiple doctrines coherently
 
 GRADING CRITERIA:
-- Biblical Accuracy (Is it scripturally sound?)
-- Christ-Centered (Is it gospel-centered, not works-based?)
-- Clarity (Can non-Adventist understand it?)
-- Missional (Does it transform life or stay abstract?)
-- Perfect: 25 pts, Strong: 18 pts, Partial: 10 pts
+- Biblical Accuracy + Christ-Centered + Clarity + Missional
+- Max: ${config.maxPoints} pts
 
-Format as JSON:
+Format as JSON - Generate ${config.locks} locks:
 {
-  "title": "string (e.g., 'Crisis: Sabbath Legalism Accusation')",
-  "crisis_briefing": "string (the accusation/scenario, 3-4 sentences)",
-  "provided_texts": ["Book Chapter:Verse", "Book Chapter:Verse", "Book Chapter:Verse"],
+  "title": "string (e.g., 'Crisis [${difficulty.toUpperCase()}]: Sabbath Legalism Accusation')",
+  "difficulty": "${difficulty}",
+  "time_limit_minutes": ${config.timeHours * 60},
+  "crisis_briefing": "string (the accusation/scenario, 3-4 sentences scaled to difficulty)",
+  "provided_texts": ["${difficulty === 'easy' ? 'Book Chapter:Verse' : difficulty === 'medium' ? 'Book Chapter:Verse", "Book Chapter:Verse", "Book Chapter:Verse' : difficulty === 'hard' ? 'Book Chapter:Verse", "Book Chapter:Verse", "Book Chapter:Verse", "Book Chapter:Verse' : 'Book Chapter:Verse", "Book Chapter:Verse", "Book Chapter:Verse", "Book Chapter:Verse", "Book Chapter:Verse'}"],
   "limiter_rule": "string (constraint on sources, 1 sentence)",
   "defense_requirement": "string (what they must prove, 2 sentences)",
+  "word_count_requirement": "${config.wordCount}",
   "locks": [
     {
-      "lock_type": "gospel_lock|scripture_lock|mission_lock|testimony_lock",
+      "lock_type": "gospel_lock|scripture_lock|mission_lock|testimony_lock|synthesis_lock",
       "requirement": "What this lock requires (1 sentence)"
     }
   ],

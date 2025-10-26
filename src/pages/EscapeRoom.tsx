@@ -189,11 +189,11 @@ export default function EscapeRoom() {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• 3 locks + 1 escape puzzle</li>
+                <li>• 3-6 locks (difficulty-based)</li>
                 <li>• Deep fluency in one method</li>
-                <li>• 2 hints (−3 pts each)</li>
-                <li>• Max: 36 points</li>
-                <li className="text-xs italic text-primary">45 minutes</li>
+                <li>• 2-3 hints (−3 pts each)</li>
+                <li>• Max: 20-40 points</li>
+                <li className="text-xs italic text-primary">30-60 minutes</li>
               </ul>
             </CardContent>
           </Card>
@@ -207,16 +207,16 @@ export default function EscapeRoom() {
                 <CardTitle className="text-lg">Category Gauntlet</CardTitle>
               </div>
               <CardDescription>
-                5 rooms + Meta Boss. Prophecy, Sanctuary, or Gospel-Mission specialty.
+                3-6 rooms + Meta Boss. Prophecy, Sanctuary, or Gospel-Mission specialty.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Fixed escalating difficulty</li>
+                <li>• 3-6 rooms (difficulty-based)</li>
+                <li>• Escalating complexity</li>
                 <li>• 3 hints (−2 pts each)</li>
-                <li>• Perfect run bonus: +5</li>
-                <li>• Max: 40 points</li>
-                <li className="text-xs italic text-accent">60 minutes</li>
+                <li>• Max: 20-45 points</li>
+                <li className="text-xs italic text-accent">30-60 minutes</li>
               </ul>
             </CardContent>
           </Card>
@@ -235,11 +235,11 @@ export default function EscapeRoom() {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• 3 challenges + defense</li>
+                <li>• 2-5 challenges (difficulty-based)</li>
                 <li>• Teams switch roles</li>
                 <li>• Street-ready training</li>
-                <li>• Max: 45 points</li>
-                <li className="text-xs italic text-primary">30 minutes</li>
+                <li>• Max: 20-50 points</li>
+                <li className="text-xs italic text-primary">20-60 minutes</li>
               </ul>
             </CardContent>
           </Card>
@@ -258,11 +258,11 @@ export default function EscapeRoom() {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Doctrinal warfare response</li>
-                <li>• 500-word defense</li>
+                <li>• Simple to multi-layered crisis</li>
+                <li>• 300-1000 word defense</li>
                 <li>• Public ranking</li>
-                <li>• Max: 25 points</li>
-                <li className="text-xs italic text-accent">24 hours</li>
+                <li>• Max: 15-35 points</li>
+                <li className="text-xs italic text-accent">12-24 hours</li>
               </ul>
             </CardContent>
           </Card>
@@ -358,41 +358,43 @@ export default function EscapeRoom() {
               </div>
             )}
 
-            {/* Difficulty Selection for Floor Race */}
-            {mode === "floor_race" && (
-              <div className="space-y-3">
-                <Label className="text-base font-semibold">Difficulty Level</Label>
-                <RadioGroup value={difficulty} onValueChange={(v) => setDifficulty(v as any)}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="easy" id="easy" />
-                    <Label htmlFor="easy" className="cursor-pointer">
-                      Easy - 4 floors + summit (25 pts, ~30 min)
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="medium" id="medium" />
-                    <Label htmlFor="medium" className="cursor-pointer">
-                      Medium - 5 floors + summit (30 pts, ~40 min)
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="hard" id="hard" />
-                    <Label htmlFor="hard" className="cursor-pointer">
-                      Hard - 7 floors + summit (40 pts, ~50 min)
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="pro" id="pro" />
-                    <Label htmlFor="pro" className="cursor-pointer">
-                      Pro - All 8 floors + summit (45 pts, full 60 min)
-                    </Label>
-                  </div>
-                </RadioGroup>
-                <p className="text-xs text-muted-foreground">
-                  Higher difficulty = more floors to race through before reaching the summit
-                </p>
-              </div>
-            )}
+            {/* Difficulty Selection - Universal for all modes */}
+            <div className="space-y-3">
+              <Label className="text-base font-semibold">Difficulty Level</Label>
+              <RadioGroup value={difficulty} onValueChange={(v) => setDifficulty(v as any)}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="easy" id="diff-easy" />
+                  <Label htmlFor="diff-easy" className="cursor-pointer">
+                    Easy - {mode === "floor_race" ? "4 floors" : mode === "room_as_room" ? "3 locks" : mode === "category_gauntlet" ? "3 rooms" : mode === "live_mission" ? "2 challenges" : "Simple crisis"} (~30 min)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="medium" id="diff-medium" />
+                  <Label htmlFor="diff-medium" className="cursor-pointer">
+                    Medium - {mode === "floor_race" ? "5 floors" : mode === "room_as_room" ? "4 locks" : mode === "category_gauntlet" ? "4 rooms" : mode === "live_mission" ? "3 challenges" : "Moderate crisis"} (~40 min)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="hard" id="diff-hard" />
+                  <Label htmlFor="diff-hard" className="cursor-pointer">
+                    Hard - {mode === "floor_race" ? "7 floors" : mode === "room_as_room" ? "5 locks" : mode === "category_gauntlet" ? "5 rooms" : mode === "live_mission" ? "4 challenges" : "Complex crisis"} (~50 min)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="pro" id="diff-pro" />
+                  <Label htmlFor="diff-pro" className="cursor-pointer">
+                    Pro - {mode === "floor_race" ? "All 8 floors" : mode === "room_as_room" ? "6 locks" : mode === "category_gauntlet" ? "6 rooms + meta" : mode === "live_mission" ? "5 challenges" : "Multi-layered crisis"} (full 60 min)
+                  </Label>
+                </div>
+              </RadioGroup>
+              <p className="text-xs text-muted-foreground">
+                {mode === "floor_race" && "Higher difficulty = more floors to race through"}
+                {mode === "room_as_room" && "Higher difficulty = more locks to solve in the room"}
+                {mode === "category_gauntlet" && "Higher difficulty = more rooms in the gauntlet"}
+                {mode === "live_mission" && "Higher difficulty = more apologetics challenges"}
+                {mode === "async_hunt" && "Higher difficulty = more complex multi-layered crisis scenarios"}
+              </p>
+            </div>
 
             {/* Scenario Input for Live Mission */}
             {mode === "live_mission" && (
