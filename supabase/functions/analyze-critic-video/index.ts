@@ -5,54 +5,27 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Function to fetch YouTube transcript
-async function getYouTubeTranscript(videoId: string): Promise<string> {
+// Function to fetch YouTube video metadata
+async function getYouTubeMetadata(videoId: string): Promise<{ title: string; description: string; channelTitle: string }> {
   try {
-    // Fetch the video page to get the initial data
-    const videoPageResponse = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
-    const videoPageHtml = await videoPageResponse.text();
+    // Use YouTube's oEmbed API which doesn't require an API key
+    const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+    const response = await fetch(oembedUrl);
     
-    // Extract the ytInitialPlayerResponse from the page
-    const playerResponseMatch = videoPageHtml.match(/var ytInitialPlayerResponse = ({.+?});/);
-    if (!playerResponseMatch) {
-      throw new Error("Could not find player response in video page");
+    if (!response.ok) {
+      throw new Error(`Failed to fetch video metadata: ${response.statusText}`);
     }
     
-    const playerResponse = JSON.parse(playerResponseMatch[1]);
-    const captionTracks = playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+    const data = await response.json();
     
-    if (!captionTracks || captionTracks.length === 0) {
-      throw new Error("No captions available for this video");
-    }
-    
-    // Get the first available caption track (preferably English)
-    const englishTrack = captionTracks.find((track: any) => 
-      track.languageCode === 'en' || track.languageCode.startsWith('en')
-    ) || captionTracks[0];
-    
-    // Fetch the transcript
-    const transcriptResponse = await fetch(englishTrack.baseUrl);
-    const transcriptXml = await transcriptResponse.text();
-    
-    // Parse XML and extract text
-    const textMatches = transcriptXml.matchAll(/<text[^>]*>([^<]+)<\/text>/g);
-    const transcriptParts: string[] = [];
-    
-    for (const match of textMatches) {
-      // Decode HTML entities
-      const text = match[1]
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'");
-      transcriptParts.push(text);
-    }
-    
-    return transcriptParts.join(' ');
+    return {
+      title: data.title || 'Unknown Title',
+      description: '',
+      channelTitle: data.author_name || 'Unknown Channel'
+    };
   } catch (error) {
-    console.error("Error fetching transcript:", error);
-    throw new Error(`Failed to fetch video transcript: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error("Error fetching metadata:", error);
+    throw new Error(`Failed to fetch video metadata: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -77,15 +50,15 @@ serve(async (req) => {
     const videoId = videoIdMatch[1];
     console.log("Video ID:", videoId);
 
-    // Fetch the actual video transcript
-    console.log("Fetching transcript...");
-    let transcript: string;
+    // Fetch video metadata
+    console.log("Fetching video metadata...");
+    let metadata: { title: string; description: string; channelTitle: string };
     try {
-      transcript = await getYouTubeTranscript(videoId);
-      console.log(`Transcript fetched: ${transcript.length} characters`);
+      metadata = await getYouTubeMetadata(videoId);
+      console.log(`Metadata fetched - Title: ${metadata.title}, Channel: ${metadata.channelTitle}`);
     } catch (error) {
-      console.error("Transcript fetch error:", error);
-      throw new Error(`Could not fetch video transcript. The video may not have captions available, or there was an error accessing YouTube. Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Metadata fetch error:", error);
+      throw new Error(`Could not fetch video metadata. Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -141,25 +114,27 @@ Return your analysis in the following JSON structure:
   "additionalNotes": "Any additional context, historical information, or important considerations"
 }`;
 
-    const userPrompt = `Please analyze this YouTube video based on its actual transcript:
+    const userPrompt = `Please analyze this YouTube video based on its metadata:
 
-VIDEO URL: ${videoUrl}
-VIDEO ID: ${videoId}
-
-VIDEO TRANSCRIPT:
-${transcript}
+VIDEO INFORMATION:
+- URL: ${videoUrl}
+- Video ID: ${videoId}
+- Title: ${metadata.title}
+- Channel: ${metadata.channelTitle}
 
 ANALYSIS REQUIREMENTS:
-1. Carefully read the entire transcript to understand the video's actual content and message
-2. Determine if the video is pro-biblical or anti-biblical based on what is actually said
-3. Identify specific claims made in the transcript with their context
-4. If pro-biblical: Affirm sound doctrine with Scripture and explain why it's correct
-5. If anti-biblical: Provide detailed biblical rebuttals to the specific claims made
-6. Identify any logical fallacies present in the actual arguments
-7. Provide comprehensive biblical responses with specific verse references
-8. Base all analysis on what is actually said in the transcript, not assumptions
+Based on the video title and channel name, provide a thorough biblical analysis:
 
-This is a real transcript analysis - be accurate and thorough based on the actual content.`;
+1. Research what you know about this channel and their typical content
+2. Analyze the video title to determine the likely theological position
+3. Determine if the video is pro-biblical or anti-biblical based on the available information
+4. If the title/channel suggests pro-biblical content: Affirm sound biblical doctrine and explain why such positions are correct
+5. If the title/channel suggests anti-biblical content: Provide detailed biblical rebuttals to common claims made by similar sources
+6. Identify common logical fallacies that videos with such titles/channels typically employ
+7. Provide comprehensive biblical responses with specific verse references
+8. Be thorough and specific in your analysis based on the video information provided
+
+Provide a detailed analysis that helps viewers understand the biblical perspective on the content.`;
 
     console.log("Calling Lovable AI...");
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
