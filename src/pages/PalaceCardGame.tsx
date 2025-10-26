@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   ArrowLeft, Trophy, RotateCcw, Eye, Search, Zap, 
   Layers, Telescope, Globe, Flame, Crown, Book,
-  Lightbulb, Target, Sparkles, Mountain, Compass
+  Lightbulb, Target, Sparkles, Mountain, Compass, Send, CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import { palaceFloors } from "@/data/palaceData";
+import { supabase } from "@/integrations/supabase/client";
 
 // Room icon mapping
 const ROOM_ICONS: Record<string, any> = {
@@ -54,9 +56,25 @@ interface GameCard {
   roomPurpose: string;
   color: string;
   tagline: string;
+  verse: string;
+  verseReference: string;
   isFlipped: boolean;
-  isMatched: boolean;
+  isCompleted: boolean;
+  userAnswer: string;
+  isValidating: boolean;
 }
+
+// Sample Bible verses for practice
+const PRACTICE_VERSES = [
+  { text: "I beseech you therefore, brethren, by the mercies of God, that ye present your bodies a living sacrifice, holy, acceptable unto God, which is your reasonable service.", ref: "Romans 12:1" },
+  { text: "And we know that all things work together for good to them that love God, to them who are the called according to his purpose.", ref: "Romans 8:28" },
+  { text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.", ref: "John 3:16" },
+  { text: "Trust in the LORD with all thine heart; and lean not unto thine own understanding.", ref: "Proverbs 3:5" },
+  { text: "The LORD is my shepherd; I shall not want. He maketh me to lie down in green pastures: he leadeth me beside the still waters.", ref: "Psalm 23:1-2" },
+  { text: "I can do all things through Christ which strengtheneth me.", ref: "Philippians 4:13" },
+  { text: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles.", ref: "Isaiah 40:31" },
+  { text: "For by grace are ye saved through faith; and that not of yourselves: it is the gift of God.", ref: "Ephesians 2:8" },
+];
 
 const FLOOR_COLORS = [
   { 
@@ -136,9 +154,8 @@ const FLOOR_COLORS = [
 export default function PalaceCardGame() {
   const navigate = useNavigate();
   const [cards, setCards] = useState<GameCard[]>([]);
-  const [flippedCards, setFlippedCards] = useState<string[]>([]);
-  const [matches, setMatches] = useState(0);
-  const [moves, setMoves] = useState(0);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
   const [gameWon, setGameWon] = useState(false);
 
   useEffect(() => {
@@ -147,7 +164,7 @@ export default function PalaceCardGame() {
 
   const initializeGame = () => {
     // Select 8 random rooms from the palace
-    const allRooms: GameCard[] = [];
+    const allRooms: Omit<GameCard, 'verse' | 'verseReference' | 'userAnswer' | 'isValidating'>[] = [];
     palaceFloors.forEach((floor) => {
       floor.rooms.forEach((room) => {
         const colorScheme = FLOOR_COLORS.find(c => c.floor === floor.number) || FLOOR_COLORS[0];
@@ -157,11 +174,11 @@ export default function PalaceCardGame() {
           floorName: floor.name,
           roomTag: room.tag,
           roomName: room.name,
-          roomPurpose: room.purpose.substring(0, 150) + "...",
+          roomPurpose: room.purpose,
           color: colorScheme.color,
           tagline: colorScheme.tagline,
           isFlipped: false,
-          isMatched: false,
+          isCompleted: false,
         });
       });
     });
@@ -170,67 +187,83 @@ export default function PalaceCardGame() {
     const shuffled = allRooms.sort(() => Math.random() - 0.5);
     const selectedRooms = shuffled.slice(0, 8);
 
-    // Create pairs and shuffle
-    const cardPairs = [...selectedRooms, ...selectedRooms].map((card, index) => ({
-      ...card,
-      id: `${card.id}-${index}`,
+    // Pair each room with a random verse
+    const shuffledVerses = [...PRACTICE_VERSES].sort(() => Math.random() - 0.5);
+    const cardsWithVerses: GameCard[] = selectedRooms.map((room, index) => ({
+      ...room,
+      verse: shuffledVerses[index].text,
+      verseReference: shuffledVerses[index].ref,
+      userAnswer: '',
+      isValidating: false,
     }));
 
-    setCards(cardPairs.sort(() => Math.random() - 0.5));
-    setFlippedCards([]);
-    setMatches(0);
-    setMoves(0);
+    setCards(cardsWithVerses);
+    setCurrentCardIndex(0);
+    setCompletedCount(0);
     setGameWon(false);
   };
 
   const handleCardClick = (cardId: string) => {
-    if (flippedCards.length === 2) return;
-    if (flippedCards.includes(cardId)) return;
-    
-    const card = cards.find(c => c.id === cardId);
-    if (card?.isMatched) return;
+    setCards(cards.map(c => 
+      c.id === cardId ? { ...c, isFlipped: !c.isFlipped } : c
+    ));
+  };
 
-    const newFlipped = [...flippedCards, cardId];
-    setFlippedCards(newFlipped);
+  const handleAnswerChange = (cardId: string, answer: string) => {
+    setCards(cards.map(c => 
+      c.id === cardId ? { ...c, userAnswer: answer } : c
+    ));
+  };
+
+  const handleSubmitAnswer = async (cardId: string) => {
+    const card = cards.find(c => c.id === cardId);
+    if (!card || !card.userAnswer.trim()) {
+      toast.error("Please write your answer first");
+      return;
+    }
 
     setCards(cards.map(c => 
-      c.id === cardId ? { ...c, isFlipped: true } : c
+      c.id === cardId ? { ...c, isValidating: true } : c
     ));
 
-    if (newFlipped.length === 2) {
-      setMoves(moves + 1);
-      const [first, second] = newFlipped;
-      const firstCard = cards.find(c => c.id === first);
-      const secondCard = cards.find(c => c.id === second);
+    try {
+      const { data, error } = await supabase.functions.invoke('validate-principle-application', {
+        body: {
+          verse: card.verse,
+          verseReference: card.verseReference,
+          principle: card.roomName,
+          principleDescription: card.roomPurpose,
+          userAnswer: card.userAnswer,
+        }
+      });
 
-      // Check if they match (same room tag)
-      if (firstCard?.roomTag === secondCard?.roomTag) {
-        setTimeout(() => {
-          setCards(cards.map(c => 
-            c.id === first || c.id === second 
-              ? { ...c, isMatched: true } 
-              : c
-          ));
-          setMatches(matches + 1);
-          setFlippedCards([]);
-          toast.success(`Matched! ${firstCard.roomName}`);
+      if (error) throw error;
 
-          // Check if game is won
-          if (matches + 1 === 8) {
-            setGameWon(true);
-            toast.success(`🎉 You won in ${moves + 1} moves!`);
-          }
-        }, 500);
+      const { isCorrect, feedback } = data;
+
+      if (isCorrect) {
+        setCards(cards.map(c => 
+          c.id === cardId ? { ...c, isCompleted: true, isValidating: false } : c
+        ));
+        setCompletedCount(prev => prev + 1);
+        toast.success(feedback || "Excellent application of the principle!");
+        
+        // Check if game is won
+        if (completedCount + 1 === cards.length) {
+          setTimeout(() => setGameWon(true), 500);
+        }
       } else {
-        setTimeout(() => {
-          setCards(cards.map(c => 
-            c.id === first || c.id === second 
-              ? { ...c, isFlipped: false } 
-              : c
-          ));
-          setFlippedCards([]);
-        }, 1000);
+        setCards(cards.map(c => 
+          c.id === cardId ? { ...c, isValidating: false } : c
+        ));
+        toast.error(feedback || "Try again! Think about how this principle applies to the verse.");
       }
+    } catch (error) {
+      console.error('Error validating answer:', error);
+      setCards(cards.map(c => 
+        c.id === cardId ? { ...c, isValidating: false } : c
+      ));
+      toast.error("Failed to validate your answer. Please try again.");
     }
   };
 
@@ -268,10 +301,10 @@ export default function PalaceCardGame() {
                 WebkitTextFillColor: "transparent",
                 textShadow: "0 0 30px rgba(255,215,0,0.5)"
               }}>
-                PALACE MEMORY
+                PALACE PRACTICE
               </h1>
               <p className="text-sm text-amber-200/80" style={{ fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.2em" }}>
-                Match the Sacred Rooms
+                Apply Principles to Scripture
               </p>
             </div>
             <Button
@@ -293,25 +326,25 @@ export default function PalaceCardGame() {
           <div className="relative text-center group">
             <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 blur-xl group-hover:blur-2xl transition-all" />
             <div className="relative bg-black/40 backdrop-blur-sm border-2 border-amber-500/50 rounded-2xl px-8 py-4 shadow-2xl">
-              <p className="text-xs text-amber-200/80 mb-1 uppercase tracking-widest" style={{ fontFamily: "'Cinzel', serif" }}>Matches</p>
+              <p className="text-xs text-amber-200/80 mb-1 uppercase tracking-widest" style={{ fontFamily: "'Cinzel', serif" }}>Completed</p>
               <p className="text-5xl font-bold bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-300 bg-clip-text text-transparent">
-                {matches}<span className="text-2xl text-amber-500/50">/8</span>
+                {completedCount}<span className="text-2xl text-amber-500/50">/{cards.length}</span>
               </p>
             </div>
           </div>
           <div className="relative text-center group">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-xl group-hover:blur-2xl transition-all" />
             <div className="relative bg-black/40 backdrop-blur-sm border-2 border-blue-500/50 rounded-2xl px-8 py-4 shadow-2xl">
-              <p className="text-xs text-blue-200/80 mb-1 uppercase tracking-widest" style={{ fontFamily: "'Cinzel', serif" }}>Moves</p>
+              <p className="text-xs text-blue-200/80 mb-1 uppercase tracking-widest" style={{ fontFamily: "'Cinzel', serif" }}>Progress</p>
               <p className="text-5xl font-bold bg-gradient-to-br from-blue-300 via-cyan-400 to-blue-300 bg-clip-text text-transparent">
-                {moves}
+                {cards.length > 0 ? Math.round((completedCount / cards.length) * 100) : 0}%
               </p>
             </div>
           </div>
         </div>
 
         {/* Game Board */}
-        <div className="grid grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {cards.map((card) => {
             const floorConfig = FLOOR_COLORS.find(c => c.floor === card.floorNumber) || FLOOR_COLORS[0];
             const RoomIcon = ROOM_ICONS[card.roomTag] || Book;
@@ -319,116 +352,71 @@ export default function PalaceCardGame() {
             return (
               <div
                 key={card.id}
-                onClick={() => handleCardClick(card.id)}
-                className={`aspect-[2/3] cursor-pointer transition-all duration-500 ${
-                  card.isFlipped || card.isMatched ? "" : "hover:scale-105 hover:-translate-y-2"
-                }`}
+                className="aspect-[2/3] transition-all duration-500"
                 style={{ perspective: "1500px" }}
               >
                 <div
                   className={`relative w-full h-full transition-all duration-700 ${
-                    card.isFlipped || card.isMatched ? "[transform:rotateY(180deg)]" : ""
+                    card.isFlipped ? "[transform:rotateY(180deg)]" : ""
                   }`}
                   style={{ transformStyle: "preserve-3d" }}
                 >
-                  {/* Card Back - Phototheology Branding */}
+                  {/* Card Front - Verse Display */}
                   <div
-                    className={`absolute w-full h-full rounded-2xl bg-gradient-to-br ${floorConfig.color} border-4 ${floorConfig.border} ${floorConfig.glow} shadow-2xl flex flex-col overflow-hidden`}
-                    style={{ 
-                      backfaceVisibility: "hidden",
-                      boxShadow: `0 25px 50px -12px ${floorConfig.glow}, 0 0 0 1px rgba(255,255,255,0.1) inset`
-                    }}
-                  >
-                    {/* Decorative pattern overlay */}
-                    <div className="absolute inset-0 opacity-20" style={{
-                      backgroundImage: `
-                        repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,.05) 15px, rgba(255,255,255,.05) 30px),
-                        ${floorConfig.bgPattern}
-                      `
-                    }} />
-                    
-                    {/* Glowing orb effect */}
-                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full opacity-30 blur-3xl"
-                      style={{ background: floorConfig.bgPattern }} />
-                    
-                    <div className="relative flex-1 flex flex-col items-center justify-center p-6">
-                      {/* Floor Symbol */}
-                      <div className="text-6xl mb-4 animate-pulse">
-                        {floorConfig.symbol}
-                      </div>
-                      
-                      {/* Title */}
-                      <div className="text-center mb-6">
-                        <h2 className="text-4xl font-black mb-2" style={{ 
-                          fontFamily: "'Cinzel', serif",
-                          color: "#ffd700",
-                          textShadow: "0 0 20px rgba(255,215,0,0.6), 3px 3px 8px rgba(0,0,0,0.9)",
-                          letterSpacing: "0.1em"
-                        }}>
-                          PHOTO
-                        </h2>
-                        <h3 className="text-3xl font-black" style={{ 
-                          fontFamily: "'Cinzel', serif",
-                          color: "#ffd700",
-                          textShadow: "0 0 20px rgba(255,215,0,0.6), 3px 3px 8px rgba(0,0,0,0.9)",
-                          letterSpacing: "0.1em"
-                        }}>
-                          THEOLOGY
-                        </h3>
-                      </div>
-                      
-                      {/* Visual Metaphor */}
-                      <div className="relative mb-6">
-                        <div className="w-28 h-28 rounded-full bg-gradient-to-br from-white/30 via-amber-200/20 to-white/10 backdrop-blur-md flex items-center justify-center border-4 border-amber-300/50 shadow-2xl">
-                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400/40 to-yellow-500/40 flex items-center justify-center">
-                            <RoomIcon className="w-10 h-10 text-white drop-shadow-2xl" />
-                          </div>
-                        </div>
-                        {/* Decorative rings */}
-                        <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-ping" style={{ animationDuration: "3s" }} />
-                      </div>
-                      
-                      {/* Scripture Reference Icon */}
-                      <div className="text-4xl mb-2 opacity-80">📖</div>
-                    </div>
-                    
-                    {/* Bottom Tagline Section */}
-                    <div className="relative h-20 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
-                      <div className="absolute inset-0 flex items-center justify-center px-4">
-                        <p className="text-xs font-bold tracking-widest text-center uppercase" style={{
-                          fontFamily: "'Cinzel', serif",
-                          color: "#ffd700",
-                          textShadow: "2px 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(255,215,0,0.3)"
-                        }}>
-                          {floorConfig.tagline}
-                        </p>
-                      </div>
-                      
-                      {/* Cityscape/Palace silhouette */}
-                      <div className="absolute bottom-0 left-0 right-0 h-10 flex items-end justify-center gap-1 px-3">
-                        {[...Array(16)].map((_, i) => (
-                          <div
-                            key={i}
-                            className="bg-gradient-to-t from-amber-400/60 to-amber-300/30 rounded-t-sm"
-                            style={{
-                              width: `${Math.random() * 6 + 3}px`,
-                              height: `${Math.random() * 25 + 15}px`,
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Front - Room Details */}
-                  <div
-                    className={`absolute w-full h-full rounded-2xl bg-gradient-to-br from-amber-50 via-yellow-50/80 to-amber-100 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950 border-4 ${floorConfig.border} shadow-2xl flex flex-col overflow-hidden ${
-                      card.isMatched ? "opacity-60" : ""
+                    onClick={() => !card.isCompleted && handleCardClick(card.id)}
+                    className={`absolute w-full h-full rounded-2xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border-4 border-amber-500/50 shadow-2xl flex flex-col overflow-hidden ${
+                      !card.isCompleted ? 'cursor-pointer hover:border-amber-400' : 'opacity-75'
                     }`}
                     style={{ 
                       backfaceVisibility: "hidden",
+                    }}
+                  >
+                    {/* Verse Display */}
+                    <div className="relative flex-1 flex flex-col p-6">
+                      {/* Header */}
+                      <div className="text-center mb-4">
+                        <div className="inline-flex items-center gap-2 mb-2">
+                          <Book className="w-5 h-5 text-amber-400" />
+                          <p className="text-amber-400 font-bold text-sm" style={{ fontFamily: "'Cinzel', serif" }}>
+                            {card.verseReference}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Verse Text */}
+                      <div className="flex-1 flex items-center justify-center mb-4">
+                        <div className="bg-black/40 rounded-lg p-4 border border-amber-500/30">
+                          <p className="text-amber-100 text-center leading-relaxed" style={{ 
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontSize: "1rem"
+                          }}>
+                            "{card.verse}"
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Instruction */}
+                      <div className="text-center">
+                        <p className="text-amber-300/80 text-sm italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                          {card.isCompleted ? '✓ Completed' : 'Click to apply principle →'}
+                        </p>
+                      </div>
+
+                      {/* Completion Badge */}
+                      {card.isCompleted && (
+                        <div className="absolute top-4 right-4">
+                          <CheckCircle className="w-8 h-8 text-green-400 drop-shadow-lg" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card Back - Principle Application */}
+                  <div
+                    className={`absolute w-full h-full rounded-2xl bg-gradient-to-br ${floorConfig.color} border-4 ${floorConfig.border} shadow-2xl flex flex-col overflow-hidden`}
+                    style={{ 
+                      backfaceVisibility: "hidden",
                       transform: "rotateY(180deg)",
-                      boxShadow: `0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px ${floorConfig.border} inset`
                     }}
                   >
                     {/* Decorative corner ornaments */}
@@ -482,16 +470,6 @@ export default function PalaceCardGame() {
                           </p>
                         </div>
                       </div>
-                      
-                      {/* Match Trophy */}
-                      {card.isMatched && (
-                        <div className="relative text-center my-3">
-                          <div className="inline-block relative">
-                            <div className="absolute inset-0 bg-yellow-400 blur-xl opacity-50 animate-pulse" />
-                            <Trophy className="relative w-12 h-12 text-yellow-500 drop-shadow-2xl animate-bounce" />
-                          </div>
-                        </div>
-                      )}
                     </div>
                     
                     {/* Bottom Floor Info Banner */}
@@ -552,7 +530,7 @@ export default function PalaceCardGame() {
                   </h2>
                   
                   <p className="text-xl text-amber-200 mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                    You mastered the Palace in <span className="font-bold text-yellow-400">{moves}</span> moves!
+                    You successfully applied all {cards.length} principles!
                   </p>
                   
                   <p className="text-sm text-amber-300/80 mb-8 italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
