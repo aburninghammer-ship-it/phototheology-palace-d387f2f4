@@ -154,27 +154,39 @@ export type Database = {
           ai_feedback: string | null
           challenge_id: string | null
           content: string
+          created_at: string
           id: string
+          principle_applied: string | null
           rating: number | null
+          submission_data: Json | null
           submitted_at: string | null
+          time_spent: number | null
           user_id: string
         }
         Insert: {
           ai_feedback?: string | null
           challenge_id?: string | null
           content: string
+          created_at?: string
           id?: string
+          principle_applied?: string | null
           rating?: number | null
+          submission_data?: Json | null
           submitted_at?: string | null
+          time_spent?: number | null
           user_id: string
         }
         Update: {
           ai_feedback?: string | null
           challenge_id?: string | null
           content?: string
+          created_at?: string
           id?: string
+          principle_applied?: string | null
           rating?: number | null
+          submission_data?: Json | null
           submitted_at?: string | null
+          time_spent?: number | null
           user_id?: string
         }
         Relationships: [
@@ -189,39 +201,60 @@ export type Database = {
       }
       challenges: {
         Row: {
+          challenge_subtype: string | null
+          challenge_tier: string | null
           challenge_type: string
           created_at: string | null
           created_by: string | null
+          day_in_rotation: number | null
           description: string | null
           difficulty: string | null
           ends_at: string | null
           id: string
+          instructions: Json | null
+          principle_used: string | null
+          room_codes: string[] | null
           starts_at: string | null
           title: string
+          ui_config: Json | null
           verses: string[]
         }
         Insert: {
+          challenge_subtype?: string | null
+          challenge_tier?: string | null
           challenge_type: string
           created_at?: string | null
           created_by?: string | null
+          day_in_rotation?: number | null
           description?: string | null
           difficulty?: string | null
           ends_at?: string | null
           id?: string
+          instructions?: Json | null
+          principle_used?: string | null
+          room_codes?: string[] | null
           starts_at?: string | null
           title: string
+          ui_config?: Json | null
           verses: string[]
         }
         Update: {
+          challenge_subtype?: string | null
+          challenge_tier?: string | null
           challenge_type?: string
           created_at?: string | null
           created_by?: string | null
+          day_in_rotation?: number | null
           description?: string | null
           difficulty?: string | null
           ends_at?: string | null
           id?: string
+          instructions?: Json | null
+          principle_used?: string | null
+          room_codes?: string[] | null
           starts_at?: string | null
           title?: string
+          ui_config?: Json | null
           verses?: string[]
         }
         Relationships: []
@@ -1326,6 +1359,75 @@ export type Database = {
         }
         Relationships: []
       }
+      strongs_dictionary: {
+        Row: {
+          created_at: string
+          definition: string
+          id: string
+          kjv_translation: string | null
+          language: string
+          occurrences: number | null
+          pronunciation: string | null
+          strongs_number: string
+          transliteration: string | null
+          word: string
+        }
+        Insert: {
+          created_at?: string
+          definition: string
+          id?: string
+          kjv_translation?: string | null
+          language: string
+          occurrences?: number | null
+          pronunciation?: string | null
+          strongs_number: string
+          transliteration?: string | null
+          word: string
+        }
+        Update: {
+          created_at?: string
+          definition?: string
+          id?: string
+          kjv_translation?: string | null
+          language?: string
+          occurrences?: number | null
+          pronunciation?: string | null
+          strongs_number?: string
+          transliteration?: string | null
+          word?: string
+        }
+        Relationships: []
+      }
+      strongs_verses: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string
+          id: string
+          verse: number
+          verse_text: string
+          words: Json
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string
+          id?: string
+          verse: number
+          verse_text: string
+          words?: Json
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string
+          id?: string
+          verse?: number
+          verse_text?: string
+          words?: Json
+        }
+        Relationships: []
+      }
       study_activities: {
         Row: {
           activity_data: Json
@@ -1808,7 +1910,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_growth_journal: {
+        Row: {
+          challenge_id: string | null
+          challenge_subtype: string | null
+          challenge_tier: string | null
+          challenge_title: string | null
+          challenge_type: string | null
+          content: string | null
+          created_at: string | null
+          id: string | null
+          principle_applied: string | null
+          principle_used: string | null
+          room_codes: string[] | null
+          submission_data: Json | null
+          time_spent: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_submissions_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
