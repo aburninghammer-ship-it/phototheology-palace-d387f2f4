@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, Gamepad2, Users, UserPlus, Share2, Sparkles, RefreshCw } from "lucide-react";
+import { Trophy, Gamepad2, Users, UserPlus, Share2, Sparkles, RefreshCw, Flame, Lock, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { MonthlyGameCard } from "@/components/MonthlyGameCard";
 import { RoomPrerequisites } from "@/components/RoomPrerequisites";
@@ -113,15 +114,63 @@ const Games = () => {
     }
   };
 
-  const adultGames = [
+  const cardGames = [
     { 
       id: "palace_cards", 
-      name: "Palace Card Match", 
+      name: "Palace Memory Match", 
       description: "Match pairs of palace room cards in this beautiful memory game inspired by physical Phototheology cards. Flip cards to find matching rooms across the eight floors.",
       featured: true,
       skills: "Memory, Visual Recognition, Palace Room Knowledge",
-      requiredRooms: ["SR", "IR"]
+      requiredRooms: ["SR", "IR"],
+      players: "1",
+      duration: "5-10 min"
     },
+    { 
+      id: "room_snap", 
+      name: "Room Snap", 
+      description: "Speed-based card game where you must identify matching room principles faster than your opponent. When two cards share the same floor or principle, be the first to 'snap' and claim them!",
+      featured: true,
+      skills: "Quick Recognition, Palace Principles, Speed Processing",
+      requiredRooms: ["SR", "OR", "CR", "DR"],
+      players: "2-4",
+      duration: "10-15 min"
+    },
+    { 
+      id: "theology_deck", 
+      name: "Theology Deck Builder", 
+      description: "Build your own deck of Palace rooms, Bible verses, and prophetic cards. Create powerful combinations where Sanctuary rooms unlock prophetic timelines, and verse chains strengthen your theological arguments.",
+      featured: false,
+      skills: "Strategy, Deck Building, Multi-Room Synergy",
+      requiredRooms: ["BL", "PR", "ST", "QA", "CR"],
+      players: "2",
+      duration: "20-30 min"
+    },
+    { 
+      id: "verse_poker", 
+      name: "Verse Poker", 
+      description: "Biblical poker where you build 'hands' using verse cards, room cards, and principle cards. Create combinations like 'Sanctuary Flush' (5 sanctuary-related verses) or 'Prophetic Straight' (Daniel→Revelation progression).",
+      featured: false,
+      skills: "Combination Building, Biblical Knowledge, Strategic Thinking",
+      requiredRooms: ["ST", "BL", "PR", "QA"],
+      players: "2-6",
+      duration: "15-20 min"
+    },
+  ];
+
+  const escapeRooms = [
+    {
+      id: "escape_rooms",
+      name: "Palace Escape Rooms",
+      description: "60-minute biblical challenges with 4 unique formats: Room-as-Room (master one methodology), Category Gauntlet (prophecy/sanctuary specialist), Live Mission (apologetics training), or Async Hunt (24-hour crisis defense).",
+      featured: true,
+      skills: "Palace Mastery, Biblical Defense, Theological Accuracy, Speed Thinking",
+      requiredRooms: ["SR", "OR", "CR", "DR", "BL", "PR", "ST"],
+      players: "1-10",
+      duration: "30-60 min (or 24 hrs)"
+    },
+  ];
+
+  const competitiveGames = [
     { 
       id: "chain_chess", 
       name: "Chain Chess", 
@@ -171,7 +220,9 @@ const Games = () => {
       name: "Symbol Decoder", 
       description: "Decode biblical symbols and types across Scripture. Match symbols like lamb, rock, water, and bread to their meanings and Christ fulfillments.",
       skills: "Typology, Symbolism, Cross-References",
-      requiredRooms: ["ST", "CR", "BL", "TR"]
+      requiredRooms: ["ST", "CR", "BL", "TR"],
+      players: "1-2",
+      duration: "10-15 min"
     },
     { 
       id: "sanctuary_architect", 
@@ -289,117 +340,268 @@ const Games = () => {
             </div>
           )}
 
-          <Card className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
+          <Card className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-primary/20">
             <CardHeader>
-              <CardTitle className="text-2xl">Welcome to Palace Games</CardTitle>
+              <CardTitle className="text-2xl flex items-center gap-2">
+                <Gamepad2 className="h-6 w-6" />
+                Welcome to Palace Games
+              </CardTitle>
               <CardDescription className="text-base">
-                These games are designed to help you master the Memory Palace method while deepening your understanding of Scripture. 
-                Each game combines biblical knowledge with the phototheology principles to create engaging learning experiences.
+                Master the Memory Palace method through engaging biblical games. Each game trains specific Palace principles while deepening your Scripture knowledge.
               </CardDescription>
             </CardHeader>
           </Card>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {adultGames.map((game) => (
-              <Card key={game.id} className={game.featured ? "border-primary shadow-lg" : ""}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    {game.featured && <Trophy className="h-5 w-5 text-yellow-500" />}
-                    {game.name}
-                  </CardTitle>
-                  <CardDescription className="min-h-[80px]">{game.description}</CardDescription>
-                  <div className="pt-2 space-y-2">
-                    <p className="text-xs text-muted-foreground">
-                      <strong>Skills:</strong> {game.skills}
-                    </p>
-                    {game.requiredRooms && (
-                      <RoomPrerequisites rooms={game.requiredRooms} compact />
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {game.id === "palace_cards" ? (
-                      <Button
-                        onClick={() => navigate(`/games/palace-cards`)}
-                        className="w-full"
-                        variant="default"
-                      >
-                        <Gamepad2 className="mr-2 h-4 w-4" />
-                        Play Now
-                      </Button>
-                    ) : game.id === "chain_chess" ? (
-                      <>
+          <Tabs defaultValue="card_games" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsTrigger value="card_games" className="gap-2">
+                <Trophy className="h-4 w-4" />
+                Card Games
+              </TabsTrigger>
+              <TabsTrigger value="escape_rooms" className="gap-2">
+                <Lock className="h-4 w-4" />
+                Escape Rooms
+              </TabsTrigger>
+              <TabsTrigger value="competitive" className="gap-2">
+                <Zap className="h-4 w-4" />
+                Competitive
+              </TabsTrigger>
+            </TabsList>
+
+            {/* CARD GAMES TAB */}
+            <TabsContent value="card_games">
+              <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800">
+                <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-amber-600" />
+                  Phototheology Card Games
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Physical-inspired card games that train memory, speed recognition, and Palace mastery through matching, building, and strategic play.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {cardGames.map((game) => (
+                  <Card key={game.id} className={game.featured ? "border-amber-500 shadow-lg" : ""}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        {game.featured && <Trophy className="h-5 w-5 text-amber-500" />}
+                        {game.name}
+                      </CardTitle>
+                      <CardDescription className="min-h-[80px]">{game.description}</CardDescription>
+                      <div className="pt-2 space-y-2">
+                        <div className="flex gap-4 text-xs text-muted-foreground">
+                          <span>👥 {game.players}</span>
+                          <span>⏱️ {game.duration}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          <strong>Skills:</strong> {game.skills}
+                        </p>
+                        {game.requiredRooms && (
+                          <RoomPrerequisites rooms={game.requiredRooms} compact />
+                        )}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      {game.id === "palace_cards" ? (
                         <Button
-                          onClick={() => startChainChess(false)}
+                          onClick={() => navigate(`/games/palace-cards`)}
                           className="w-full"
                           variant="default"
                         >
-                          <Users className="mr-2 h-4 w-4" />
-                          Play vs Player
+                          <Gamepad2 className="mr-2 h-4 w-4" />
+                          Play Now
                         </Button>
+                      ) : (
                         <Button
-                          onClick={() => startChainChess(true)}
+                          onClick={() => toast({ title: "Coming Soon!", description: `${game.name} is under development` })}
                           className="w-full"
                           variant="outline"
                         >
-                          <Gamepad2 className="mr-2 h-4 w-4" />
-                          Play vs Jeeves
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Coming Soon
                         </Button>
-                      </>
-                    ) : game.id === "concentration" ? (
-                      <Button
-                        onClick={() => navigate(`/games/concentration`)}
-                        className="w-full"
-                        variant="default"
-                      >
-                        <Gamepad2 className="mr-2 h-4 w-4" />
-                        Play Now
-                      </Button>
-                    ) : game.id === "palace_quiz" || game.id === "verse_match" || game.id === "principle_puzzle" ? (
-                      <>
-                        <Button
-                          onClick={() => navigate(`/games/${game.id}`)}
-                          className="w-full"
-                          variant={game.featured ? "default" : "outline"}
-                        >
-                          <Users className="mr-2 h-4 w-4" />
-                          Play Solo
-                        </Button>
-                        <Button
-                          onClick={() => navigate(`/games/${game.id}/jeeves`)}
-                          className="w-full"
-                          variant="outline"
-                        >
-                          <Gamepad2 className="mr-2 h-4 w-4" />
-                          Play vs Jeeves
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          onClick={() => navigate(`/games/${game.id}`)}
-                          className="w-full"
-                          variant={game.featured ? "default" : "outline"}
-                        >
-                          <Users className="mr-2 h-4 w-4" />
-                          Play vs Player
-                        </Button>
-                        <Button
-                          onClick={() => navigate(`/games/${game.id}/jeeves`)}
-                          className="w-full"
-                          variant="outline"
-                        >
-                          <Gamepad2 className="mr-2 h-4 w-4" />
-                          Play vs Jeeves
-                        </Button>
-                      </>
-                    )}
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* ESCAPE ROOMS TAB */}
+            <TabsContent value="escape_rooms">
+              <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-200 dark:border-red-800">
+                <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                  <Lock className="h-5 w-5 text-red-600" />
+                  Palace Escape Rooms
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Timed biblical challenges that lock you inside Palace theology. Use room methodologies to solve Scripture puzzles and escape before time runs out.
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                  <div className="bg-white dark:bg-slate-800 p-2 rounded border">
+                    <div className="font-semibold text-primary">Room-as-Room</div>
+                    <div className="text-muted-foreground">Master one methodology (45 min)</div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <div className="bg-white dark:bg-slate-800 p-2 rounded border">
+                    <div className="font-semibold text-accent">Category Gauntlet</div>
+                    <div className="text-muted-foreground">Prophecy/Sanctuary specialist (60 min)</div>
+                  </div>
+                  <div className="bg-white dark:bg-slate-800 p-2 rounded border">
+                    <div className="font-semibold text-orange-600">Live Mission</div>
+                    <div className="text-muted-foreground">Apologetics training (30 min)</div>
+                  </div>
+                  <div className="bg-white dark:bg-slate-800 p-2 rounded border">
+                    <div className="font-semibold text-purple-600">Async Hunt</div>
+                    <div className="text-muted-foreground">Crisis defense (24 hrs)</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {escapeRooms.map((game) => (
+                  <Card key={game.id} className="border-red-500 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-xl">
+                        <Flame className="h-6 w-6 text-red-500" />
+                        {game.name}
+                      </CardTitle>
+                      <CardDescription className="min-h-[100px] text-base">{game.description}</CardDescription>
+                      <div className="pt-2 space-y-2">
+                        <div className="flex gap-4 text-xs text-muted-foreground">
+                          <span>👥 {game.players}</span>
+                          <span>⏱️ {game.duration}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          <strong>Skills:</strong> {game.skills}
+                        </p>
+                        {game.requiredRooms && (
+                          <RoomPrerequisites rooms={game.requiredRooms} compact />
+                        )}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <Button
+                        onClick={() => navigate('/escape-room')}
+                        className="w-full bg-red-600 hover:bg-red-700"
+                        size="lg"
+                      >
+                        <Lock className="mr-2 h-5 w-5" />
+                        Enter Escape Rooms
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* COMPETITIVE GAMES TAB */}
+            <TabsContent value="competitive">
+              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h3 className="font-semibold text-lg mb-2">Competitive & Study Games</h3>
+                <p className="text-sm text-muted-foreground">
+                  Challenge other players or Jeeves AI in biblical knowledge battles, quizzes, and strategic games.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {competitiveGames.map((game) => (
+                  <Card key={game.id} className={game.featured ? "border-primary shadow-lg" : ""}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        {game.featured && <Trophy className="h-5 w-5 text-yellow-500" />}
+                        {game.name}
+                      </CardTitle>
+                      <CardDescription className="min-h-[80px]">{game.description}</CardDescription>
+                      <div className="pt-2 space-y-2">
+                        <div className="flex gap-4 text-xs text-muted-foreground">
+                          <span>👥 {game.players || "1-2"}</span>
+                          <span>⏱️ {game.duration || "15-20 min"}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          <strong>Skills:</strong> {game.skills}
+                        </p>
+                        {game.requiredRooms && (
+                          <RoomPrerequisites rooms={game.requiredRooms} compact />
+                        )}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {game.id === "chain_chess" ? (
+                          <>
+                            <Button
+                              onClick={() => startChainChess(false)}
+                              className="w-full"
+                              variant="default"
+                            >
+                              <Users className="mr-2 h-4 w-4" />
+                              Play vs Player
+                            </Button>
+                            <Button
+                              onClick={() => startChainChess(true)}
+                              className="w-full"
+                              variant="outline"
+                            >
+                              <Gamepad2 className="mr-2 h-4 w-4" />
+                              Play vs Jeeves
+                            </Button>
+                          </>
+                        ) : game.id === "concentration" ? (
+                          <Button
+                            onClick={() => navigate(`/games/concentration`)}
+                            className="w-full"
+                            variant="default"
+                          >
+                            <Gamepad2 className="mr-2 h-4 w-4" />
+                            Play Now
+                          </Button>
+                        ) : game.id === "palace_quiz" || game.id === "verse_match" || game.id === "principle_puzzle" ? (
+                          <>
+                            <Button
+                              onClick={() => navigate(`/games/${game.id}`)}
+                              className="w-full"
+                              variant={game.featured ? "default" : "outline"}
+                            >
+                              <Users className="mr-2 h-4 w-4" />
+                              Play Solo
+                            </Button>
+                            <Button
+                              onClick={() => navigate(`/games/${game.id}/jeeves`)}
+                              className="w-full"
+                              variant="outline"
+                            >
+                              <Gamepad2 className="mr-2 h-4 w-4" />
+                              Play vs Jeeves
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              onClick={() => navigate(`/games/${game.id}`)}
+                              className="w-full"
+                              variant={game.featured ? "default" : "outline"}
+                            >
+                              <Users className="mr-2 h-4 w-4" />
+                              Play vs Player
+                            </Button>
+                            <Button
+                              onClick={() => navigate(`/games/${game.id}/jeeves`)}
+                              className="w-full"
+                              variant="outline"
+                            >
+                              <Gamepad2 className="mr-2 h-4 w-4" />
+                              Play vs Jeeves
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </div>
