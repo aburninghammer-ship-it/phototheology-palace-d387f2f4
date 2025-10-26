@@ -654,7 +654,7 @@ const Games = () => {
                         ) : game.id === "palace_quiz" || game.id === "verse_match" || game.id === "principle_puzzle" ? (
                           <>
                             <Button
-                              onClick={() => navigate(`/games/${game.id}`)}
+                              onClick={() => navigate(`/games/${game.id.replace(/_/g, '-')}`)}
                               className="w-full"
                               variant={game.featured ? "default" : "outline"}
                             >
@@ -662,7 +662,7 @@ const Games = () => {
                               Play Solo
                             </Button>
                             <Button
-                              onClick={() => navigate(`/games/${game.id}/jeeves`)}
+                              onClick={() => navigate(`/games/${game.id.replace(/_/g, '-')}/jeeves`)}
                               className="w-full"
                               variant="outline"
                             >
@@ -673,20 +673,12 @@ const Games = () => {
                         ) : (
                           <>
                             <Button
-                              onClick={() => navigate(`/games/${game.id}`)}
+                              onClick={() => navigate(`/games/${game.id.replace(/_/g, '-')}`)}
                               className="w-full"
                               variant={game.featured ? "default" : "outline"}
                             >
-                              <Users className="mr-2 h-4 w-4" />
-                              Play vs Player
-                            </Button>
-                            <Button
-                              onClick={() => navigate(`/games/${game.id}/jeeves`)}
-                              className="w-full"
-                              variant="outline"
-                            >
                               <Gamepad2 className="mr-2 h-4 w-4" />
-                              Play vs Jeeves
+                              Play Now
                             </Button>
                           </>
                         )}
