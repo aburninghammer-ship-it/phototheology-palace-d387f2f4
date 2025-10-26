@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Flame, Trophy, Clock, Share2 } from "lucide-react";
-import { RoomPrerequisites } from "@/components/RoomPrerequisites";
+import { Flame, Share2, BookOpen } from "lucide-react";
+import { DimensionDrillChallenge } from "@/components/challenges/DimensionDrillChallenge";
+import { Connect6Challenge } from "@/components/challenges/Connect6Challenge";
+import { SanctuaryMapChallenge } from "@/components/challenges/SanctuaryMapChallenge";
+import { ChristChapterChallenge } from "@/components/challenges/ChristChapterChallenge";
+import { FruitCheckChallenge } from "@/components/challenges/FruitCheckChallenge";
 
 const DailyChallenges = () => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [dailyChallenge, setDailyChallenge] = useState<any>(null);
-  const [submission, setSubmission] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [startTime] = useState(Date.now());
 
   useEffect(() => {
     if (user) {
@@ -26,72 +29,62 @@ const DailyChallenges = () => {
   }, [user]);
 
   const fetchDailyChallenge = async () => {
-    console.log("=== Fetching Daily Challenge ===");
-    
-    // Get current date/time
     const now = new Date();
-    console.log("Current time:", now.toISOString());
+    
+    // Get today's challenge based on rotation
+    const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
+    const rotationDay = (dayOfYear % 14) + 1; // 14-day rotation
 
-    // Query for active challenges - get today's challenge or the most recent active one
     const { data: challenges, error } = await supabase
       .from("challenges")
       .select("*")
-      .eq("challenge_type", "daily")
-      .order("starts_at", { ascending: false });
-
-    console.log("All daily challenges:", challenges);
+      .eq("day_in_rotation", rotationDay)
+      .order("created_at", { ascending: false })
+      .limit(1);
 
     if (error) {
       console.error("Error fetching challenges:", error);
       return;
     }
 
-    if (!challenges || challenges.length === 0) {
-      console.log("No daily challenges found in database");
-      setDailyChallenge(null);
-      return;
-    }
-
-    // Find today's challenge - the most recent one that has started
-    const todayChallenge = challenges.find(c => {
-      const startDate = new Date(c.starts_at);
-      return startDate <= now;
-    });
-
-    console.log("Selected challenge:", todayChallenge);
-    setDailyChallenge(todayChallenge || null);
+    const todayChallenge = challenges?.[0] || null;
+    setDailyChallenge(todayChallenge);
     
-    // Check submission after we have the challenge data
-    if (todayChallenge) {
+    if (todayChallenge && user) {
       const { data: submission } = await supabase
         .from("challenge_submissions")
         .select("*")
         .eq("challenge_id", todayChallenge.id)
-        .eq("user_id", user!.id)
+        .eq("user_id", user.id)
+        .gte("created_at", new Date(now.setHours(0, 0, 0, 0)).toISOString())
         .maybeSingle();
 
-      console.log("Submission check:", submission);
       setHasSubmitted(!!submission);
     }
   };
 
-  const handleSubmit = async () => {
-    if (!dailyChallenge || !submission.trim()) return;
+  const handleChallengeSubmit = async (submissionData: any) => {
+    if (!dailyChallenge || !user) return;
+
+    const timeSpent = Math.floor((Date.now() - startTime) / 1000); // seconds
 
     try {
       const { error } = await supabase
         .from("challenge_submissions")
         .insert({
           challenge_id: dailyChallenge.id,
-          user_id: user!.id,
-          content: submission,
+          user_id: user.id,
+          content: JSON.stringify(submissionData),
+          submission_data: submissionData,
+          principle_applied: submissionData.principle_applied,
+          time_spent: timeSpent,
         });
 
       if (error) throw error;
 
       toast({
-        title: "Submission received!",
-        description: "Jeeves will review your study shortly.",
+        title: "Challenge Complete! 🎉",
+        description: "Added to your Growth Journal. Check back tomorrow for the next challenge!",
       });
 
       setHasSubmitted(true);
@@ -105,11 +98,10 @@ const DailyChallenges = () => {
   };
 
   const handleShare = () => {
-    const inviteUrl = `${window.location.origin}/daily-challenges`;
     const shareData = {
-      title: dailyChallenge?.title || 'Daily Bible Challenge',
-      text: `Join me in today's Bible study challenge on Phototheology! ${dailyChallenge?.description || 'Study Scripture together and grow in faith.'}`,
-      url: inviteUrl
+      title: 'Daily Phototheology Challenge',
+      text: `Join me in today's Bible study challenge! Today: ${dailyChallenge?.challenge_tier} challenge training ${dailyChallenge?.principle_used}`,
+      url: `${window.location.origin}/daily-challenges`
     };
 
     if (navigator.share) {
@@ -118,8 +110,41 @@ const DailyChallenges = () => {
       navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
       toast({
         title: "Invitation copied!",
-        description: "Share link copied to clipboard. Send it to your friends!",
+        description: "Share link copied to clipboard!",
       });
+    }
+  };
+
+  const renderChallenge = () => {
+    if (!dailyChallenge) return null;
+
+    const props = {
+      challenge: dailyChallenge,
+      onSubmit: handleChallengeSubmit,
+      hasSubmitted
+    };
+
+    switch (dailyChallenge.challenge_subtype) {
+      case "dimension-drill":
+        return <DimensionDrillChallenge {...props} />;
+      case "connect-6":
+        return <Connect6Challenge {...props} />;
+      case "sanctuary-map":
+        return <SanctuaryMapChallenge {...props} />;
+      case "christ-chapter":
+        return <ChristChapterChallenge {...props} />;
+      case "fruit-check":
+        return <FruitCheckChallenge {...props} />;
+      default:
+        return (
+          <Card>
+            <CardContent className="py-8">
+              <p className="text-muted-foreground text-center">
+                Challenge type not yet implemented. Check back soon!
+              </p>
+            </CardContent>
+          </Card>
+        );
     }
   };
 
@@ -130,87 +155,54 @@ const DailyChallenges = () => {
       <Navigation />
       <main className="container mx-auto px-4 pt-24 pb-8">
         <div className="max-w-4xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <h1 className="text-4xl font-bold flex items-center gap-2">
               <Flame className="h-8 w-8 text-orange-500" />
               Daily Challenges
             </h1>
-            <Button onClick={handleShare} variant="outline" className="gap-2">
-              <Share2 className="h-4 w-4" />
-              Invite Friends
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={() => navigate("/growth-journal")} variant="outline" className="gap-2">
+                <BookOpen className="h-4 w-4" />
+                Growth Journal
+              </Button>
+              <Button onClick={handleShare} variant="outline" className="gap-2">
+                <Share2 className="h-4 w-4" />
+                Share
+              </Button>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-lg border border-primary/20">
+            <h2 className="font-semibold mb-2">About Daily Challenges</h2>
+            <p className="text-sm text-muted-foreground">
+              Each day brings a new challenge designed to train you in Phototheology principles. 
+              Complete challenges to build your Growth Journal and develop reflexive biblical thinking.
+              We rotate through 14 different challenge types on a schedule.
+            </p>
           </div>
 
           {dailyChallenge ? (
-            <Card>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5" />
-                      {dailyChallenge.title}
-                    </CardTitle>
-                    <CardDescription className="flex items-center gap-2 mt-2">
-                      <Clock className="h-4 w-4" />
-                      Today's Challenge
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {dailyChallenge.requiredRooms && dailyChallenge.requiredRooms.length > 0 && (
-                  <div className="mb-4">
-                    <RoomPrerequisites rooms={dailyChallenge.requiredRooms} />
-                  </div>
-                )}
-                
-                {dailyChallenge.requiredPrinciples && dailyChallenge.requiredPrinciples.length > 0 && (
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">Using These Principles:</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {dailyChallenge.requiredPrinciples.map((principle: string, idx: number) => (
-                        <Badge key={idx} variant="secondary">{principle}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                <p className="text-lg">{dailyChallenge.description}</p>
-                
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Verses to Study:</h3>
-                  <ul className="list-disc list-inside space-y-1">
-                    {dailyChallenge.verses.map((verse: string, idx: number) => (
-                      <li key={idx} className="text-sm">{verse}</li>
-                    ))}
-                  </ul>
-                </div>
+            <>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Badge variant={
+                  dailyChallenge.challenge_tier === "Quick" ? "default" :
+                  dailyChallenge.challenge_tier === "Core" ? "secondary" :
+                  "outline"
+                }>
+                  {dailyChallenge.challenge_tier}
+                </Badge>
+                <span>•</span>
+                <span>Day {dailyChallenge.day_in_rotation} of 14</span>
+              </div>
 
-                {!hasSubmitted ? (
-                  <>
-                    <Textarea
-                      placeholder="Share your study insights here..."
-                      value={submission}
-                      onChange={(e) => setSubmission(e.target.value)}
-                      rows={8}
-                    />
-                    <Button onClick={handleSubmit} className="w-full">
-                      Submit Your Study
-                    </Button>
-                  </>
-                ) : (
-                  <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                    <p className="text-green-800 dark:text-green-200">
-                      ✓ You've submitted today's challenge! Check back tomorrow for a new challenge.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              {renderChallenge()}
+            </>
           ) : (
             <Card>
               <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">No active challenge right now. Check back soon!</p>
+                <p className="text-muted-foreground">
+                  No challenge available right now. Challenges are generated daily. Check back soon!
+                </p>
               </CardContent>
             </Card>
           )}

@@ -22,6 +22,7 @@ const Bible = lazy(() => import("./pages/Bible"));
 const BibleChapter = lazy(() => import("./pages/BibleChapter"));
 const BibleSearch = lazy(() => import("./pages/BibleSearch"));
 const DailyChallenges = lazy(() => import("./pages/DailyChallenges"));
+const GrowthJournal = lazy(() => import("./pages/GrowthJournal"));
 const EquationsChallenge = lazy(() => import("./pages/EquationsChallenge"));
 const Games = lazy(() => import("./pages/Games"));
 const ChainChess = lazy(() => import("./pages/ChainChess"));
@@ -123,6 +124,7 @@ function App() {
             <Route path="/memorization-verses" element={<ProtectedRoute><MemorizationVerses /></ProtectedRoute>} />
             <Route path="/verse-memory-hall" element={<ProtectedRoute><VerseMemoryHall /></ProtectedRoute>} />
             <Route path="/daily-challenges" element={<ProtectedRoute><DailyChallenges /></ProtectedRoute>} />
+            <Route path="/growth-journal" element={<ProtectedRoute><GrowthJournal /></ProtectedRoute>} />
             <Route path="/equations-challenge" element={<ProtectedRoute><EquationsChallenge /></ProtectedRoute>} />
             <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
             <Route path="/games/chain-chess/:gameId/:mode?" element={<ProtectedRoute><ChainChess /></ProtectedRoute>} />
