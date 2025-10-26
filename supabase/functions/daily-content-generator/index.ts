@@ -85,103 +85,117 @@ Format your response as JSON:
 
     console.log('Daily challenge created:', challengeContent.title);
 
-    // Generate Treasure Hunt - "COME AND SEE" Format
-    const huntPrompt = `Create a 24-hour biblical treasure hunt with exactly 10 Palace-coded clues. Theme: "Come and See" - invitation to encounter Christ across Story, Symbols, Blue/Sanctuary, 24FPS, Room 66, Mathematics/Timeline, Feasts, and Church/Mission rooms.
+    // Generate Treasure Hunt - Palace Methodology Training
+    const huntPrompt = `Create a biblical treasure hunt that TEACHES Phototheology Palace methodology through progressive clues. Each clue should guide users through actual Palace rooms and their principles.
 
-CRITICAL: Use ONLY these valid room tags and their associated principles from the palace data:
+FORMAT: Create 8-10 clues that progress through Palace floors, teaching the methodology:
 
-FLOOR 1 - FURNISHING:
-- SR (Story Room): "What exactly happened—and in what order?"
-- IR (Imagination Room): "What does it feel like to stand there?"
-- 24 (24FPS Room): "What image will make this chapter unforgettably findable?"
-- BR (Bible Rendered): "What block image captures this 24-chapter arc?"
-- TR (Translation Room): "What does this verse look like?"
-- GR (Gems Room): "What beautiful truth emerges when I combine these seemingly unrelated texts?"
+PALACE ROOMS & PRINCIPLES:
 
-FLOOR 2 - INVESTIGATION:
-- OR (Observation Room): "What is there—exactly?"
-- DC (Def-Com Room): "What did the words mean then, and what did the world look like there?"
-- ST (Symbols/Types Room): "What is this symbol's consistent meaning and Christ-fulfillment?"
-- QR (Questions Room): "What must be asked inside the text, across texts, and in PT-framework?"
-- QA (Q&A Chains Room): "Where does the Bible itself supply the answer?"
+FLOOR 1 - FURNISHING (Memory & Width):
+- SR (Story Room): "What exactly happened—and in what order?" → Story sequencing
+- IR (Imagination Room): "What does it feel like to stand there?" → Immersive experience
+- 24 (24FPS Room): "What image will make this chapter unforgettably findable?" → Chapter frames
+- BR (Bible Rendered): "What block image captures this 24-chapter arc?" → Book rendering
+- TR (Translation Room): "What does this verse look like?" → Verse visualization
+- GR (Gems Room): "What powerful insight sparkles here?" → Insight collection
 
-FLOOR 3 - FREESTYLE:
-- NF (Nature Freestyle): "What does this natural object teach about God's Word?"
-- PF (Personal Freestyle): "Where is God writing lessons in my story?"
-- BF (Bible Freestyle): "What verses are this verse's 'relatives'?"
-- HF (History/Social Freestyle): "How does this secular historical event or social phenomenon illuminate the Bible passage?"
-- LR (Listening Room): "What verse does this quote/sermon/conversation echo?"
+FLOOR 2 - INVESTIGATION (Detective Work):
+- OR (Observation Room): "What 30 fingerprints/footprints can I log?" → Detail noticing
+- DC (Def-Com Room): "What does this word mean (Greek/Hebrew/context)?" → Word study
+- ST (Symbols/Types Room): "What does this symbol/type point to?" → Typology
+- QR (Questions Room): "What intra/inter/PT questions reveal depth?" → Interrogation
+- QA (Q&A Chains Room): "What verse answers this verse?" → Cross-reference
 
-FLOOR 4 - NEXT LEVEL:
-- CR (Concentration Room): "Where is Jesus here?"
-- DR (Dimensions Room): "How does this text speak to each dimension?"
-- C6 (Connect-6): "What genre is this, and how should I read it?"
-- TRm (Theme Room): "Which theological span does this text primarily occupy?"
-- TZ (Time Zone): "Where does this event sit in God's timeline?"
-- PRm (Patterns Room): "What pattern repeats across Scripture?"
-- P‖ (Parallels Room): "What event echoes this one?"
-- FRt (Fruit Room): "What fruit does this reading produce?"
+FLOOR 3 - FREESTYLE (Time Expansion):
+- NF (Nature Freestyle): "What in nature illustrates this truth?" → Natural theology
+- PF (Personal Freestyle): "How does this connect to my life?" → Application
+- BF (Bible Freestyle): "What verse cousins relate here?" → Verse genetics
+- HF (History/Social Freestyle): "How does history/culture echo this?" → Contextual parallels
+- LR (Listening Room): "What sermon/quote connects?" → Active listening
 
-FLOOR 5 - VISION:
-- BL (Blue Room — Sanctuary): "Which sanctuary article/service does this map to?"
-- PR (Prophecy Room): "What does this prophetic symbol represent?"
-- 3A (Three Angels Room): "How does this text proclaim the everlasting gospel?"
-- FE (Feasts Room): "Which feast does this fulfill or foreshadow?"
-- CEC (Christ in Every Chapter): "How is Jesus present in this chapter?"
-- R66 (Room 66): "How does this theme develop from Genesis to Revelation?"
+FLOOR 4 - NEXT LEVEL (Depth):
+- CR (Concentration Room): "Where is Christ in this text?" → Christ-centered focus
+- DR (Dimensions Room): "Show 5 dimensions: Literal/Christ/Me/Church/Heaven" → Layered meaning
+- C6 (Connect 6): "What genre (prophecy/poetry/history/gospel/epistle/parable)?" → Genre rules
+- TRm (Theme Room): "Which wall? Sanctuary/Christ Life/Great Controversy/Time Prophecy" → Theme placement
+- TZ (Time Zone): "Past, present, or future? Earth or heaven?" → Timeline
+- PRm (Patterns Room): "What repeating motif appears?" → Pattern recognition
+- P‖ (Parallels Room): "What mirrored action echoes here?" → Historical reflection
+- FRt (Fruit Room): "Does this interpretation produce Christlike fruit?" → Validation
+- CEC (Christ in Every Chapter): "How is Christ present in THIS chapter?" → Chapter Christ focus
+- R66 (Room 66): "Trace this theme across all 66 books" → Bible-wide themes
 
-FLOOR 6 - THREE HEAVENS & CYCLES:
-- 1H/2H/3H (Three Heavens): "Which horizon does this prophecy/promise address?"
-- @ (Eight Cycles): "Which covenant cycle does this narrative fit?"
-- JR (Juice Room): "What is the essence of this book through the palace lens?"
+FLOOR 5 - VISION (Prophecy & Sanctuary):
+- BL (Blue/Sanctuary Room): "How does sanctuary furniture map this truth?" → Blueprint
+- PR (Prophecy Room): "Which prophetic timeline does this fulfill?" → Telescope
+- 3A (Three Angels): "How do the Three Angels' Messages apply?" → Mission
+- FE (Feasts Room): "Which feast correlates to this text/story?" → Festival calendar
 
-FLOOR 7 - SPIRITUAL & EMOTIONAL:
-- FRm (Fire Room): "What wound or hope does this text speak to?"
-- MR (Meditation Room): "What one truth will I carry today?"
-- SRm (Speed Room): "Can I produce this knowledge under pressure?"
+FLOOR 6 - THREE HEAVENS (Cycles):
+- @Ad (Adamic): Eden → Promise cycle
+- @No (Noahic): Flood → Covenant cycle  
+- @Ab (Abrahamic): Call → People cycle
+- @Mo (Mosaic): Exodus → Nation cycle
+- @Cy (Cyrusic): Exile → Return cycle
+- @CyC (Cyrus-Christ): Type → Antitype cycle
+- @Sp (Spirit): Pentecost → Church cycle
+- @Re (Remnant): End-time → Second Coming cycle
+- JR (Juice Room): "Squeeze this book through ALL Palace principles" → Full-book analysis
 
-FLOOR 8 - MASTER:
-- ∞ (Reflexive Mastery): "Am I thinking Phototheologically without thinking about it?"
+FLOOR 7 - SPIRITUAL (Heart):
+- FRm (Fire Room): "How does this burn into your heart?" → Conviction
+- MR (Meditation Room): "Marinate in this truth" → Slow contemplation
+- SRm (Speed Room): "Quick recall under pressure" → Rapid application
 
-Requirements for the 10 clues:
-1. Must use one of the EXACT room tags above (not made-up ones)
-2. Principle must match the room's core question exactly
-3. Each hint must be a MULTI-LAYERED challenge requiring:
-   - Cross-referencing multiple books of the Bible
-   - Understanding typological patterns or Hebrew/Greek context
-   - Recognizing theological connections across testaments
-   - Deep synthesis requiring several hours per clue
-4. Hint should NOT be answerable with simple verse lookup
-5. Correct answer should be a precise KJV verse reference
-6. Progress through different floors to showcase the palace system
-7. The first letter of each answer's BOOK NAME will spell "COME AND SEE"
+FLOOR 8 - MASTER (Reflexive):
+- ∞ (Mastery): "Do I think Phototheologically naturally?" → Reflexive integration
 
-Target book sequence for acrostic (first letters):
-C-O-M-E-A-N-D-S-E-E = 1 Corinthians, Obadiah, Micah, Exodus, Acts, Numbers, Daniel, Psalms, Ephesians, Ecclesiastes
+HUNT STRUCTURE EXAMPLES:
+1. **Floor 1 Journey**: SR → IR → 24 → TR (Story to Image progression)
+2. **Investigation Training**: OR → ST → QR → QA (Detective skills)
+3. **Christ-Centered Quest**: CR → DR → CEC → BL (Finding Jesus everywhere)
+4. **Prophecy Path**: PR → 3A → @CyC → FE (Prophetic understanding)
+5. **Multi-Floor Ascent**: SR → OR → CR → BL → @Sp (Full palace climb)
 
-Example clue structure:
-- Room tag: "CR" (Concentration Room)
-- Principle: "Where is Jesus here?"
-- Hint: "Paul declared the heart of the gospel message as a scandal to some and foolishness to others. In which verse does he identify this central proclamation as 'Christ crucified,' the stumbling block that became the cornerstone of salvation? This requires understanding the cultural context of Corinth, the Jewish expectation of signs, and the Greek pursuit of wisdom—all converging at the cross." (3-5 sentences like this)
-- Correct answer: "1 Corinthians 1:23"
+Each clue should:
+1. TEACH the room's specific method/principle
+2. APPLY it to a specific Bible passage
+3. Lead naturally to the next room's discovery
+4. Build Palace methodology understanding
 
-Difficulty: ALWAYS "pro" (10 clues, maximum 24-hour challenge)
+EXAMPLE PROGRESSIVE CLUES:
 
-Theme: "Come and See" - an invitation to encounter Christ through Scripture
+Clue 1 (SR - Story Room): "In John 11:1-44, we use the Story Room method: 'What happened and in what order?' Identify the 5 main story beats from Lazarus's illness to resurrection. What is the room tag that asks this question?"
+Answer: "SR" or "Story Room"
+Explanation: "The Story Room teaches narrative sequencing. John 11 flows: sickness → death → delay → resurrection → belief. This structure anchors deeper study."
 
-Format as JSON:
+Clue 2 (IR - Imagination Room): "Now step INSIDE the story. John 11:35 says 'Jesus wept.' Use the Imagination Room's question: 'What does it feel like to stand there?' Picture yourself beside Jesus at Lazarus's tomb. What room teaches immersive Bible experience?"
+Answer: "IR" or "Imagination Room"  
+Explanation: "The Imagination Room turns memory into experience. Feeling Jesus' grief makes the text unforgettable."
+
+Clue 3 (CR - Concentration Room): "Every text reveals Christ. In John 11:25, Jesus declares 'I am the resurrection and the life.' What Palace principle asks 'Where is Christ in this text?' Name the room."
+Answer: "CR" or "Concentration Room"
+Explanation: "The Concentration Room insists Christ is the center. Jesus isn't just performing resurrection—He IS resurrection."
+
+Return JSON format:
 {
-  "title": "string (compelling and mysterious, should reference 'Come and See' theme)",
-  "difficulty": "pro",
-  "biblical_conclusion": "string (profound synthesis connecting all clues to the invitation to encounter Christ, 2-3 sentences)",
+  "title": "Engaging title (e.g., 'The Christ-Centered Quest', 'Story to Sanctuary Journey')",
+  "difficulty": "beginner|pro|scholar",
+  "category": "Palace Floor focus (e.g., 'Floor 1: Furnishing', 'Multi-Floor Journey')",
+  "time_limit_hours": 24,
   "clues": [
     {
-      "room_tag": "EXACT tag from list above",
-      "principle": "EXACT core question from that room",
-      "hint": "Multi-layered question requiring extensive research (3-5 sentences describing the theological challenge)",
-      "correct_answer": "KJV verse reference (Book Chapter:Verse)"
+      "clue_number": 1,
+      "clue_type": "room",
+      "hint": "Teaching hint explaining the room's METHOD with biblical application (200-400 chars)",
+      "correct_answers": ["primary", "alternate", "abbreviated"],
+      "explanation": "Why this teaches the principle and connects forward (150-250 chars)"
     }
-  ]
+  ],
+  "final_verse": "Book Chapter:Verse",
+  "final_verse_text": "Full KJV text of treasure verse",
+  "biblical_conclusion": "Summary of Palace principles taught and Christ-centered insight (500-700 chars)"
 }`;
 
     const huntResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -212,9 +226,14 @@ Format as JSON:
       .insert({
         title: huntContent.title,
         difficulty: huntContent.difficulty,
-        total_clues: huntContent.clues.length,
+        category: huntContent.category,
+        time_limit_hours: huntContent.time_limit_hours,
+        clues: huntContent.clues,
+        final_verse: huntContent.final_verse,
+        final_verse_text: huntContent.final_verse_text,
         biblical_conclusion: huntContent.biblical_conclusion,
         expires_at: expiration.toISOString(),
+        is_active: true,
       })
       .select()
       .single();
@@ -225,27 +244,6 @@ Format as JSON:
     }
 
     console.log('Treasure hunt created:', huntContent.title);
-
-    // Insert clues
-    const clues = huntContent.clues.map((clue: any, index: number) => ({
-      hunt_id: hunt.id,
-      clue_number: index + 1,
-      room_tag: clue.room_tag,
-      principle: clue.principle,
-      hint: clue.hint,
-      correct_answer: clue.correct_answer,
-    }));
-
-    const { error: cluesError } = await supabase
-      .from('treasure_hunt_clues')
-      .insert(clues);
-
-    if (cluesError) {
-      console.error('Clues insert error:', cluesError);
-      throw cluesError;
-    }
-
-    console.log(`Inserted ${clues.length} clues for hunt`);
 
     return new Response(
       JSON.stringify({
