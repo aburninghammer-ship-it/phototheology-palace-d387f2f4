@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Clock, Users, Trophy, Zap } from "lucide-react";
@@ -25,8 +26,9 @@ export default function EscapeRoom() {
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isBatchGenerating, setIsBatchGenerating] = useState(false);
-  const [mode, setMode] = useState<"category_gauntlet" | "floor_race">("category_gauntlet");
-  const [category, setCategory] = useState<"prophecy" | "sanctuary" | "gospel_mission">("prophecy");
+  const [mode, setMode] = useState<"room_as_room" | "category_gauntlet" | "floor_race" | "live_mission" | "async_hunt">("room_as_room");
+  const [category, setCategory] = useState<"sanctuary" | "prophecy" | "story" | "symbols" | "christ_concentration" | "dimensions" | "gospel_mission">("sanctuary");
+  const [scenario, setScenario] = useState("");
   const [teamMode, setTeamMode] = useState<"solo" | "team">("solo");
   const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([]);
 
@@ -52,7 +54,11 @@ export default function EscapeRoom() {
     
     try {
       const { data, error } = await supabase.functions.invoke('generate-escape-room', {
-        body: { mode, category: mode === 'category_gauntlet' ? category : null }
+        body: { 
+          mode, 
+          category: (mode === 'category_gauntlet' || mode === 'room_as_room') ? category : null,
+          scenario: mode === 'live_mission' ? scenario : null
+        }
       });
 
       if (error) throw error;
@@ -122,25 +128,26 @@ export default function EscapeRoom() {
           } 
         />
 
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <Card className="border-primary/20 hover:border-primary/40 transition-all hover:shadow-lg">
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <Zap className="w-6 h-6 text-primary" />
                 </div>
-                <CardTitle>Category Gauntlet</CardTitle>
+                <CardTitle className="text-lg">Room-as-Room</CardTitle>
               </div>
               <CardDescription>
-                5 rooms + Meta Boss. Choose your specialty: Prophecy, Sanctuary, or Gospel-Mission.
+                Lock yourself inside ONE Palace room. Master its methodology to escape.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Fixed room order with escalating difficulty</li>
-                <li>• 3 hints available (−2 pts each)</li>
-                <li>• Perfect run bonus: +5 pts</li>
-                <li>• Max score: 40 points</li>
+                <li>• 3 locks + 1 escape puzzle</li>
+                <li>• Deep fluency in one method</li>
+                <li>• 2 hints (−3 pts each)</li>
+                <li>• Max: 36 points</li>
+                <li className="text-xs italic text-primary">45 minutes</li>
               </ul>
             </CardContent>
           </Card>
@@ -151,18 +158,65 @@ export default function EscapeRoom() {
                 <div className="p-2 bg-accent/10 rounded-lg">
                   <Trophy className="w-6 h-6 text-accent" />
                 </div>
-                <CardTitle>Floor-by-Floor Race</CardTitle>
+                <CardTitle className="text-lg">Category Gauntlet</CardTitle>
               </div>
               <CardDescription>
-                Sprint through 7 floors + Summit Meta. First to the top wins.
+                5 rooms + Meta Boss. Prophecy, Sanctuary, or Gospel-Mission specialty.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• 6-minute cap per floor (auto-advance)</li>
-                <li>• 2 hints total (−2 pts each)</li>
-                <li>• Diversity bonus: +3 pts for ≥6 rooms</li>
-                <li>• Max score: ~41 points</li>
+                <li>• Fixed escalating difficulty</li>
+                <li>• 3 hints (−2 pts each)</li>
+                <li>• Perfect run bonus: +5</li>
+                <li>• Max: 40 points</li>
+                <li className="text-xs italic text-accent">60 minutes</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="border-primary/20 hover:border-primary/40 transition-all hover:shadow-lg">
+            <CardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Users className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="text-lg">Live Mission</CardTitle>
+              </div>
+              <CardDescription>
+                House Fire Edition: Real-time apologetics under hostile questioning.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• 3 challenges + defense</li>
+                <li>• Teams switch roles</li>
+                <li>• Street-ready training</li>
+                <li>• Max: 45 points</li>
+                <li className="text-xs italic text-primary">30 minutes</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="border-accent/20 hover:border-accent/40 transition-all hover:shadow-lg">
+            <CardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-accent/10 rounded-lg">
+                  <Clock className="w-6 h-6 text-accent" />
+                </div>
+                <CardTitle className="text-lg">Async Hunt</CardTitle>
+              </div>
+              <CardDescription>
+                24-hour survival: Crisis briefing → team defense → ranking.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• Doctrinal warfare response</li>
+                <li>• 500-word defense</li>
+                <li>• Public ranking</li>
+                <li>• Max: 25 points</li>
+                <li className="text-xs italic text-accent">24 hours</li>
               </ul>
             </CardContent>
           </Card>
@@ -179,44 +233,125 @@ export default function EscapeRoom() {
               <Label className="text-base font-semibold">Game Mode</Label>
               <RadioGroup value={mode} onValueChange={(v) => setMode(v as any)}>
                 <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="room_as_room" id="room_escape" />
+                  <Label htmlFor="room_escape" className="cursor-pointer">
+                    Room-as-Room Escape (45 min) - Master one methodology
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
                   <RadioGroupItem value="category_gauntlet" id="gauntlet" />
                   <Label htmlFor="gauntlet" className="cursor-pointer">
-                    Category Gauntlet
+                    Category Gauntlet (60 min) - Specialty focus
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="floor_race" id="race" />
                   <Label htmlFor="race" className="cursor-pointer">
-                    Floor-by-Floor Race
+                    Floor-by-Floor Race (60 min) - Sprint ascent
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="live_mission" id="live" />
+                  <Label htmlFor="live" className="cursor-pointer">
+                    Live Mission (30 min) - Apologetics training
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="async_hunt" id="async" />
+                  <Label htmlFor="async" className="cursor-pointer">
+                    Async Hunt (24 hrs) - Crisis response
                   </Label>
                 </div>
               </RadioGroup>
             </div>
 
-            {/* Category Selection (only for Gauntlet) */}
-            {mode === "category_gauntlet" && (
+            {/* Category Selection */}
+            {(mode === "category_gauntlet" || mode === "room_as_room") && (
               <div className="space-y-3">
-                <Label className="text-base font-semibold">Category</Label>
+                <Label className="text-base font-semibold">
+                  {mode === "room_as_room" ? "Palace Room" : "Category"}
+                </Label>
                 <RadioGroup value={category} onValueChange={(v) => setCategory(v as any)}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="prophecy" id="prophecy" />
-                    <Label htmlFor="prophecy" className="cursor-pointer">
-                      Prophecy (Dan/Rev, timelines, symbols)
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="sanctuary" id="sanctuary" />
-                    <Label htmlFor="sanctuary" className="cursor-pointer">
-                      Sanctuary (Furniture, Feasts, typology)
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="gospel_mission" id="gospel" />
-                    <Label htmlFor="gospel" className="cursor-pointer">
-                      Gospel-Mission (Christ-centered, Room 66)
-                    </Label>
-                  </div>
+                  {mode === "room_as_room" ? (
+                    <>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="sanctuary" id="sanctuary" />
+                        <Label htmlFor="sanctuary" className="cursor-pointer">
+                          Sanctuary (BL) - Furniture mapping, typology
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="prophecy" id="prophecy" />
+                        <Label htmlFor="prophecy" className="cursor-pointer">
+                          Prophecy (PR) - Daniel/Revelation timelines
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="story" id="story" />
+                        <Label htmlFor="story" className="cursor-pointer">
+                          Story (SR) - Narrative sequencing
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="symbols" id="symbols" />
+                        <Label htmlFor="symbols" className="cursor-pointer">
+                          Symbols (ST) - Biblical typology
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="christ_concentration" id="christ" />
+                        <Label htmlFor="christ" className="cursor-pointer">
+                          Christ Concentration (CR) - Finding Jesus
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="dimensions" id="dimensions" />
+                        <Label htmlFor="dimensions" className="cursor-pointer">
+                          Dimensions (DR) - 5-layer analysis
+                        </Label>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="prophecy" id="prophecy" />
+                        <Label htmlFor="prophecy" className="cursor-pointer">
+                          Prophecy (Dan/Rev, timelines, symbols)
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="sanctuary" id="sanctuary" />
+                        <Label htmlFor="sanctuary" className="cursor-pointer">
+                          Sanctuary (Furniture, Feasts, typology)
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="gospel_mission" id="gospel" />
+                        <Label htmlFor="gospel" className="cursor-pointer">
+                          Gospel-Mission (Christ-centered, Room 66)
+                        </Label>
+                      </div>
+                    </>
+                  )}
                 </RadioGroup>
+              </div>
+            )}
+
+            {/* Scenario Input for Live Mission */}
+            {mode === "live_mission" && (
+              <div className="space-y-3">
+                <Label htmlFor="scenario" className="text-base font-semibold">
+                  Scenario (optional)
+                </Label>
+                <Input
+                  id="scenario"
+                  value={scenario}
+                  onChange={(e) => setScenario(e.target.value)}
+                  placeholder="e.g., 'Public Square Evangelism' or 'Online Debate'"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Leave blank for default scenarios (Sabbath defense, Sanctuary relevance, etc.)
+                </p>
               </div>
             )}
 
@@ -243,17 +378,25 @@ export default function EscapeRoom() {
             <div className="grid grid-cols-3 gap-4 pt-4 border-t">
               <div className="text-center">
                 <Clock className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold">60</div>
-                <div className="text-xs text-muted-foreground">minutes</div>
+                <div className="text-2xl font-bold">
+                  {mode === "live_mission" ? "30" : mode === "room_as_room" ? "45" : mode === "async_hunt" ? "24h" : "60"}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {mode === "async_hunt" ? "hours" : "minutes"}
+                </div>
               </div>
               <div className="text-center">
                 <Users className="w-6 h-6 text-accent mx-auto mb-2" />
-                <div className="text-2xl font-bold">{teamMode === "solo" ? "1" : "2-5"}</div>
+                <div className="text-2xl font-bold">
+                  {mode === "live_mission" ? "3-10" : teamMode === "solo" ? "1" : "2-5"}
+                </div>
                 <div className="text-xs text-muted-foreground">players</div>
               </div>
               <div className="text-center">
                 <Trophy className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold">{mode === "category_gauntlet" ? "40" : "41"}</div>
+                <div className="text-2xl font-bold">
+                  {mode === "room_as_room" ? "36" : mode === "live_mission" ? "45" : mode === "async_hunt" ? "25" : mode === "category_gauntlet" ? "40" : "41"}
+                </div>
                 <div className="text-xs text-muted-foreground">max points</div>
               </div>
             </div>
