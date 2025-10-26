@@ -32,7 +32,9 @@ serve(async (req) => {
 
     if (mode === 'room_as_room') {
       // Room-as-Room Escape: Lock players inside ONE specific Palace room's theology
-      systemPrompt = `Create a 45-minute "Room-as-Room" escape experience for the ${category} room.
+      systemPrompt = `CRITICAL: Return ONLY valid JSON. Do NOT wrap your response in markdown code blocks or backticks.
+
+Create a 45-minute "Room-as-Room" escape experience for the ${category} room.
 
 ROOM-AS-ROOM CONCEPT:
 Players are LOCKED inside one specific Palace room's theology. The only way out is to correctly use that room's tools on a given biblical text. This trains deep fluency in one methodology.
@@ -113,7 +115,9 @@ Format as JSON:
 
     } else if (mode === 'category_gauntlet') {
       // Generate Category Gauntlet puzzles
-      systemPrompt = `Create a 60-minute Category Gauntlet escape room for the "${category}" category.
+      systemPrompt = `CRITICAL: Return ONLY valid JSON. Do NOT wrap your response in markdown code blocks or backticks.
+
+Create a 60-minute Category Gauntlet escape room for the "${category}" category.
 
 CATEGORY DEFINITIONS:
 - prophecy: Dan/Rev spine, timelines, symbols (Beast empires, 70 weeks, 2300 days, sanctuary cleansing)
@@ -158,7 +162,9 @@ Format as JSON:
 
     } else if (mode === 'live_mission') {
       // Live Group Mission: House Fire Edition - Real-time apologetics training
-      systemPrompt = `Create a 30-minute "Live Group Mission" escape challenge for real-time group apologetics training.
+      systemPrompt = `CRITICAL: Return ONLY valid JSON. Do NOT wrap your response in markdown code blocks or backticks.
+
+Create a 30-minute "Live Group Mission" escape challenge for real-time group apologetics training.
 
 LIVE MISSION CONCEPT:
 This is pastoral discipleship under pressure. One team is "Witnesses" delivering gospel truth in 90 seconds to hostile crowd. Other team plays "The Crowd" with real objections. Then roles switch.
@@ -218,7 +224,9 @@ Format as JSON:
 
     } else if (mode === 'async_hunt') {
       // Asynchronous Hunt: 24-Hour Survival Mode - Crisis briefings with timed resolution
-      systemPrompt = `Create a 24-hour "Asynchronous Hunt" crisis challenge for group study and defense building.
+      systemPrompt = `CRITICAL: Return ONLY valid JSON. Do NOT wrap your response in markdown code blocks or backticks.
+
+Create a 24-hour "Asynchronous Hunt" crisis challenge for group study and defense building.
 
 ASYNC HUNT CONCEPT:
 Drop a "Crisis Briefing" - teams have 24 hours to solve it offline, build defense, submit 2-min voice memo or 500-word response. Ranks top teams. Trains real-time doctrinal warfare response.
@@ -267,7 +275,9 @@ Format as JSON:
 
     } else if (mode === 'floor_race') {
       // Generate Floor Race puzzles
-      systemPrompt = `Create a 60-minute Floor-by-Floor Race escape room with 7 floor puzzles + 1 Summit Meta.
+      systemPrompt = `CRITICAL: Return ONLY valid JSON. Do NOT wrap your response in markdown code blocks or backticks.
+
+Create a 60-minute Floor-by-Floor Race escape room with 7 floor puzzles + 1 Summit Meta.
 
 FLOOR THEMES:
 1. Foundations (Story + Symbols): Proto-gospel, type-antitype basics
@@ -328,7 +338,16 @@ Format as JSON:
     }
 
     const aiData = await response.json();
-    const content = JSON.parse(aiData.choices[0].message.content);
+    let rawContent = aiData.choices[0].message.content;
+    
+    // Strip markdown code blocks if present
+    if (rawContent.includes('```json')) {
+      rawContent = rawContent.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+    } else if (rawContent.includes('```')) {
+      rawContent = rawContent.replace(/```\n?/g, '');
+    }
+    
+    const content = JSON.parse(rawContent.trim());
 
     // Set expiration based on mode
     const expirationMinutes = mode === 'live_mission' ? 30 : mode === 'room_as_room' ? 45 : mode === 'async_hunt' ? 1440 : 60;
