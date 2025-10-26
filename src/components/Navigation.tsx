@@ -45,7 +45,7 @@ export const Navigation = () => {
             {user ? (
               <>
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-3">
+                <div className="hidden md:flex items-center gap-2 flex-wrap max-w-[calc(100vw-400px)] justify-end">
 
             <Button
               variant={location.pathname === "/" ? "default" : "ghost"}
