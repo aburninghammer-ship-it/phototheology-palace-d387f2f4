@@ -5,6 +5,57 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Function to fetch YouTube transcript
+async function getYouTubeTranscript(videoId: string): Promise<string> {
+  try {
+    // Fetch the video page to get the initial data
+    const videoPageResponse = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
+    const videoPageHtml = await videoPageResponse.text();
+    
+    // Extract the ytInitialPlayerResponse from the page
+    const playerResponseMatch = videoPageHtml.match(/var ytInitialPlayerResponse = ({.+?});/);
+    if (!playerResponseMatch) {
+      throw new Error("Could not find player response in video page");
+    }
+    
+    const playerResponse = JSON.parse(playerResponseMatch[1]);
+    const captionTracks = playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+    
+    if (!captionTracks || captionTracks.length === 0) {
+      throw new Error("No captions available for this video");
+    }
+    
+    // Get the first available caption track (preferably English)
+    const englishTrack = captionTracks.find((track: any) => 
+      track.languageCode === 'en' || track.languageCode.startsWith('en')
+    ) || captionTracks[0];
+    
+    // Fetch the transcript
+    const transcriptResponse = await fetch(englishTrack.baseUrl);
+    const transcriptXml = await transcriptResponse.text();
+    
+    // Parse XML and extract text
+    const textMatches = transcriptXml.matchAll(/<text[^>]*>([^<]+)<\/text>/g);
+    const transcriptParts: string[] = [];
+    
+    for (const match of textMatches) {
+      // Decode HTML entities
+      const text = match[1]
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
+      transcriptParts.push(text);
+    }
+    
+    return transcriptParts.join(' ');
+  } catch (error) {
+    console.error("Error fetching transcript:", error);
+    throw new Error(`Failed to fetch video transcript: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -25,6 +76,17 @@ serve(async (req) => {
     }
     const videoId = videoIdMatch[1];
     console.log("Video ID:", videoId);
+
+    // Fetch the actual video transcript
+    console.log("Fetching transcript...");
+    let transcript: string;
+    try {
+      transcript = await getYouTubeTranscript(videoId);
+      console.log(`Transcript fetched: ${transcript.length} characters`);
+    } catch (error) {
+      console.error("Transcript fetch error:", error);
+      throw new Error(`Could not fetch video transcript. The video may not have captions available, or there was an error accessing YouTube. Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     
@@ -79,22 +141,25 @@ Return your analysis in the following JSON structure:
   "additionalNotes": "Any additional context, historical information, or important considerations"
 }`;
 
-    const userPrompt = `Please analyze this YouTube video:
+    const userPrompt = `Please analyze this YouTube video based on its actual transcript:
 
 VIDEO URL: ${videoUrl}
 VIDEO ID: ${videoId}
 
-Based on the video URL and ID, provide a thorough biblical analysis:
+VIDEO TRANSCRIPT:
+${transcript}
 
 ANALYSIS REQUIREMENTS:
-1. Determine if the video is likely pro-biblical or anti-biblical based on the URL/ID context
-2. Analyze potential theological claims or positions based on common patterns in similar content
-3. If pro-biblical: Affirm sound doctrine with Scripture and explain why it's correct
-4. If anti-biblical: Provide detailed biblical rebuttals showing why such claims are typically wrong
-5. Identify common logical fallacies that may be present in videos with similar themes
-6. Provide comprehensive biblical responses with specific verse references
+1. Carefully read the entire transcript to understand the video's actual content and message
+2. Determine if the video is pro-biblical or anti-biblical based on what is actually said
+3. Identify specific claims made in the transcript with their context
+4. If pro-biblical: Affirm sound doctrine with Scripture and explain why it's correct
+5. If anti-biblical: Provide detailed biblical rebuttals to the specific claims made
+6. Identify any logical fallacies present in the actual arguments
+7. Provide comprehensive biblical responses with specific verse references
+8. Base all analysis on what is actually said in the transcript, not assumptions
 
-Note: This analysis is based on the video URL/ID and common patterns. For more detailed analysis, users should watch the video directly.`;
+This is a real transcript analysis - be accurate and thorough based on the actual content.`;
 
     console.log("Calling Lovable AI...");
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
