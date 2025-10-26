@@ -994,6 +994,139 @@ Provide ONLY the visual description, no explanation or commentary.`;
         JSON.stringify({ success: true, image: insertData }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    } else if (mode === "validate_chain") {
+      // ChainWar game validation
+      const { cards, verse, explanation } = await req.json();
+      systemPrompt = `You are Jeeves, validating Chain War card combinations. Check if the player's chain of symbols logically connects to their verse and explanation.`;
+      userPrompt = `Player played these cards: ${cards.join(', ')}
+Verse: ${verse}
+Explanation: ${explanation}
+
+Is this a valid biblical chain? Does the verse fit? Does the explanation show real understanding?
+Return JSON: { "valid": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_sanctuary") {
+      // SanctuaryRun game validation
+      const { items, narrative } = await req.json();
+      systemPrompt = `You are Jeeves, validating Sanctuary Run narratives. Check if the player's gospel story flows coherently through the sanctuary items.`;
+      userPrompt = `Player used these sanctuary items in order: ${items.map((i: any) => i.name).join(' → ')}
+Their narrative: ${narrative}
+
+Does this form a coherent gospel story? Does each item fit its traditional meaning?
+Return JSON: { "coherent": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_time_zones") {
+      // TimeZoneInvasion game validation
+      const { verse, zones, explanation } = await req.json();
+      systemPrompt = `You are Jeeves, validating Time Zone placements. Check if the player's zone choices make biblical sense.`;
+      userPrompt = `Verse: ${verse}
+Selected zones: ${zones.join(', ')}
+Player's explanation: ${explanation}
+
+Do these time zones apply to this verse? Is the explanation biblically sound?
+Return JSON: { "quality": "excellent"/"good"/"weak", "feedback": "brief comment", "points": 0-2 }`;
+
+    } else if (mode === "validate_connect6") {
+      // Connect6Draft game validation
+      const { genres, doctrine, verses } = await req.json();
+      systemPrompt = `You are Jeeves, validating Connect-6 doctrine proofs. Check if verses from different genres support the doctrine.`;
+      userPrompt = `Doctrine: ${doctrine}
+Genres used: ${genres.join(', ')}
+Verse explanations: ${verses}
+
+Do these verses from these genres actually support this doctrine?
+Return JSON: { "valid": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_christ") {
+      // ChristLock game validation
+      const { card, verse, answer } = await req.json();
+      systemPrompt = `You are Jeeves, validating Christ-centered interpretations. Check if the player's explanation truly reveals Christ in the verse.`;
+      userPrompt = `Christ card: ${card.name}
+Verse: ${verse}
+Player's answer: ${answer}
+
+Does this genuinely reveal Christ in this verse? Is it biblical and profound?
+Return JSON: { "reveals_christ": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_controversy") {
+      // ControversyRaid game validation
+      const { card, issue, diagnosis } = await req.json();
+      systemPrompt = `You are Jeeves, validating spiritual warfare diagnoses. Check if the player's biblical diagnosis fits the modern issue.`;
+      userPrompt = `Card used: ${card.name}
+Modern issue: ${issue}
+Player's diagnosis: ${diagnosis}
+
+Is this a biblical diagnosis of this spiritual issue? Does the card principle apply?
+Return JSON: { "captured": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_dragon_defense") {
+      // EscapeTheDragon game validation
+      const { attack, cards, defense } = await req.json();
+      systemPrompt = `You are Jeeves, validating remnant defenses. Check if the player's theological defense answers the dragon's attack.`;
+      userPrompt = `Dragon attack: ${attack}
+Defense cards: ${cards.join(', ')}
+Player's defense: ${defense}
+
+Does this defense biblically answer the attack? Does it use the cards effectively?
+Return JSON: { "survived": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_equation") {
+      // EquationBuilder game validation
+      const { pieces, explanation } = await req.json();
+      systemPrompt = `You are Jeeves, validating theological equations. Check if the player's equation is logically coherent and biblically sound.`;
+      userPrompt = `Equation pieces: ${pieces.join(' ')}
+Player's explanation: ${explanation}
+
+Does this equation make theological sense? Is the explanation biblical?
+Return JSON: { "valid": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_witness") {
+      // WitnessTrial game validation
+      const { cards, objection, defense } = await req.json();
+      systemPrompt = `You are Jeeves, validating apologetics responses. Check if the player's biblical defense answers the objection convincingly.`;
+      userPrompt = `Cards available: ${cards.join(', ')}
+Objection: ${objection}
+Player's defense: ${defense}
+
+Does this defense use the cards? Does it answer the objection with Scripture?
+Return JSON: { "convincing": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_frame") {
+      // FrameSnapshot game validation
+      const { storyboard, narrative } = await req.json();
+      systemPrompt = `You are Jeeves, validating Frame Snapshot narratives. Check if the 4-part salvation story flows coherently.`;
+      userPrompt = `Storyboard cards: ${storyboard.join(', ')}
+Player's narrative: ${narrative}
+
+Does this form a coherent 4-part salvation story using these frames?
+Return JSON: { "coherent": true/false, "feedback": "brief comment" }`;
+
+    } else if (mode === "validate_chef_recipe") {
+      // Chef Challenge validation
+      const { recipe, theme, difficulty } = await req.json();
+      systemPrompt = `You are Jeeves, the head chef validating biblical recipes. Check creativity, biblical accuracy, and thematic fit.`;
+      userPrompt = `Recipe theme: ${theme}
+Difficulty: ${difficulty}
+Player's recipe: ${recipe}
+
+Is this creative? Are the biblical ingredients and instructions meaningful? Does it fit the theme?
+Return JSON: { "approved": true/false, "rating": 1-5, "feedback": "brief comment" }`;
+
+    } else if (mode === "qa") {
+      // Q&A mode for "Ask Jeeves" in rooms
+      const { question } = await req.json();
+      systemPrompt = `You are Jeeves, a wise and enthusiastic Bible study assistant for Phototheology. Answer questions clearly and biblically, using the Palace framework when relevant.
+      
+${PALACE_SCHEMA}`;
+      userPrompt = `A student asks: "${question}"
+
+Provide a clear, insightful answer that:
+1. Directly addresses their question
+2. Uses biblical references
+3. Applies relevant Palace principles when helpful
+4. Is encouraging and educational
+
+Keep it conversational and practical.`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -1203,6 +1336,28 @@ Provide ONLY the visual description, no explanation or commentary.`;
           JSON.stringify({ 
             feedback: content, 
             score: 7 
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Parse JSON responses for game validation modes
+    if (["validate_chain", "validate_sanctuary", "validate_time_zones", "validate_connect6", 
+         "validate_christ", "validate_controversy", "validate_dragon_defense", "validate_equation",
+         "validate_witness", "validate_frame", "validate_chef_recipe"].includes(mode)) {
+      try {
+        const parsed = JSON.parse(content);
+        return new Response(
+          JSON.stringify(parsed),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch {
+        return new Response(
+          JSON.stringify({ 
+            error: "Failed to parse validation response",
+            valid: false,
+            feedback: "Unable to validate. Please try again."
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
