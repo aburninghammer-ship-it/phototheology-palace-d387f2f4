@@ -120,6 +120,8 @@ serve(async (req) => {
       }
     }
 
+    // Parse request body once to avoid "Body already consumed" error
+    const requestBody = await req.json();
     const {
       roomTag, 
       roomName, 
@@ -166,8 +168,30 @@ serve(async (req) => {
       stones,
       existingBridges,
       bridges,
-      scope
-    } = await req.json();
+      scope,
+      // Game validation properties
+      cards,
+      explanation,
+      items,
+      narrative,
+      zones,
+      genres,
+      doctrine,
+      card,
+      answer,
+      issue,
+      diagnosis,
+      attack,
+      defense,
+      pieces,
+      objection,
+      storyboard,
+      recipe,
+      chartType,
+      chartData,
+      chartTitle,
+      roomMethod
+    } = requestBody;
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -408,7 +432,7 @@ Make it scholarly yet accessible. Show creative connections.
 IMPORTANT: At the end, include a line: "PRINCIPLES_USED: ${principleList}"`;
     
     } else if (mode === "generate-drills") {
-      const { roomTag, roomName, roomPurpose, roomMethod } = await req.json();
+      // Properties already destructured from requestBody
       
       systemPrompt = `You are Jeeves, a master trainer creating dynamic practice drills for palace room mastery.
 Generate 10 unique, progressive training drills that help users master this specific room's methodology.`;
@@ -442,7 +466,7 @@ Return JSON format:
       systemPrompt = `You are Jeeves, a data visualization expert for Bible study.
 Generate simple, clear chart data in JSON format for visualizing biblical concepts.`;
 
-      const { chartType, chartData, chartTitle } = await req.json();
+      // Properties already destructured from requestBody
       
       userPrompt = `Create a ${chartType} chart with the title "${chartTitle}".
 
@@ -995,8 +1019,7 @@ Provide ONLY the visual description, no explanation or commentary.`;
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } else if (mode === "validate_chain") {
-      // ChainWar game validation
-      const { cards, verse, explanation } = await req.json();
+      // ChainWar game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating Chain War card combinations. Check if the player's chain of symbols logically connects to their verse and explanation.`;
       userPrompt = `Player played these cards: ${cards.join(', ')}
 Verse: ${verse}
@@ -1006,8 +1029,7 @@ Is this a valid biblical chain? Does the verse fit? Does the explanation show re
 Return JSON: { "valid": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_sanctuary") {
-      // SanctuaryRun game validation
-      const { items, narrative } = await req.json();
+      // SanctuaryRun game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating Sanctuary Run narratives. Check if the player's gospel story flows coherently through the sanctuary items.`;
       userPrompt = `Player used these sanctuary items in order: ${items.map((i: any) => i.name).join(' → ')}
 Their narrative: ${narrative}
@@ -1016,8 +1038,7 @@ Does this form a coherent gospel story? Does each item fit its traditional meani
 Return JSON: { "coherent": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_time_zones") {
-      // TimeZoneInvasion game validation
-      const { verse, zones, explanation } = await req.json();
+      // TimeZoneInvasion game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating Time Zone placements. Check if the player's zone choices make biblical sense.`;
       userPrompt = `Verse: ${verse}
 Selected zones: ${zones.join(', ')}
@@ -1027,8 +1048,7 @@ Do these time zones apply to this verse? Is the explanation biblically sound?
 Return JSON: { "quality": "excellent"/"good"/"weak", "feedback": "brief comment", "points": 0-2 }`;
 
     } else if (mode === "validate_connect6") {
-      // Connect6Draft game validation
-      const { genres, doctrine, verses } = await req.json();
+      // Connect6Draft game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating Connect-6 doctrine proofs. Check if verses from different genres support the doctrine.`;
       userPrompt = `Doctrine: ${doctrine}
 Genres used: ${genres.join(', ')}
@@ -1038,8 +1058,7 @@ Do these verses from these genres actually support this doctrine?
 Return JSON: { "valid": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_christ") {
-      // ChristLock game validation
-      const { card, verse, answer } = await req.json();
+      // ChristLock game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating Christ-centered interpretations. Check if the player's explanation truly reveals Christ in the verse.`;
       userPrompt = `Christ card: ${card.name}
 Verse: ${verse}
@@ -1049,8 +1068,7 @@ Does this genuinely reveal Christ in this verse? Is it biblical and profound?
 Return JSON: { "reveals_christ": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_controversy") {
-      // ControversyRaid game validation
-      const { card, issue, diagnosis } = await req.json();
+      // ControversyRaid game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating spiritual warfare diagnoses. Check if the player's biblical diagnosis fits the modern issue.`;
       userPrompt = `Card used: ${card.name}
 Modern issue: ${issue}
@@ -1060,8 +1078,7 @@ Is this a biblical diagnosis of this spiritual issue? Does the card principle ap
 Return JSON: { "captured": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_dragon_defense") {
-      // EscapeTheDragon game validation
-      const { attack, cards, defense } = await req.json();
+      // EscapeTheDragon game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating remnant defenses. Check if the player's theological defense answers the dragon's attack.`;
       userPrompt = `Dragon attack: ${attack}
 Defense cards: ${cards.join(', ')}
@@ -1071,8 +1088,7 @@ Does this defense biblically answer the attack? Does it use the cards effectivel
 Return JSON: { "survived": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_equation") {
-      // EquationBuilder game validation
-      const { pieces, explanation } = await req.json();
+      // EquationBuilder game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating theological equations. Check if the player's equation is logically coherent and biblically sound.`;
       userPrompt = `Equation pieces: ${pieces.join(' ')}
 Player's explanation: ${explanation}
@@ -1081,8 +1097,7 @@ Does this equation make theological sense? Is the explanation biblical?
 Return JSON: { "valid": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_witness") {
-      // WitnessTrial game validation
-      const { cards, objection, defense } = await req.json();
+      // WitnessTrial game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating apologetics responses. Check if the player's biblical defense answers the objection convincingly.`;
       userPrompt = `Cards available: ${cards.join(', ')}
 Objection: ${objection}
@@ -1092,8 +1107,7 @@ Does this defense use the cards? Does it answer the objection with Scripture?
 Return JSON: { "convincing": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_frame") {
-      // FrameSnapshot game validation
-      const { storyboard, narrative } = await req.json();
+      // FrameSnapshot game validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, validating Frame Snapshot narratives. Check if the 4-part salvation story flows coherently.`;
       userPrompt = `Storyboard cards: ${storyboard.join(', ')}
 Player's narrative: ${narrative}
@@ -1102,8 +1116,7 @@ Does this form a coherent 4-part salvation story using these frames?
 Return JSON: { "coherent": true/false, "feedback": "brief comment" }`;
 
     } else if (mode === "validate_chef_recipe") {
-      // Chef Challenge validation
-      const { recipe, theme, difficulty } = await req.json();
+      // Chef Challenge validation - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, the head chef validating biblical recipes. Check creativity, biblical accuracy, and thematic fit.`;
       userPrompt = `Recipe theme: ${theme}
 Difficulty: ${difficulty}
@@ -1113,8 +1126,7 @@ Is this creative? Are the biblical ingredients and instructions meaningful? Does
 Return JSON: { "approved": true/false, "rating": 1-5, "feedback": "brief comment" }`;
 
     } else if (mode === "qa") {
-      // Q&A mode for "Ask Jeeves" in rooms
-      const { question } = await req.json();
+      // Q&A mode for "Ask Jeeves" in rooms - properties already destructured from requestBody
       systemPrompt = `You are Jeeves, a wise and enthusiastic Bible study assistant for Phototheology. Answer questions clearly and biblically, using the Palace framework when relevant.
       
 ${PALACE_SCHEMA}`;
