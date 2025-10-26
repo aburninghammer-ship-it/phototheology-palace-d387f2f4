@@ -278,6 +278,12 @@ export const Navigation = () => {
                 {/* Not logged in - show auth buttons */}
                 <div className="hidden md:flex items-center gap-3">
                   <Button asChild variant="ghost" size="sm">
+                    <Link to="/app-tour">
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Tour
+                    </Link>
+                  </Button>
+                  <Button asChild variant="ghost" size="sm">
                     <Link to="/pricing">Pricing</Link>
                   </Button>
                   <Button asChild variant="default" size="sm" className="gradient-palace">

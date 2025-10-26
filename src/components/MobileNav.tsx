@@ -258,6 +258,12 @@ export const MobileNav = () => {
             </>
           ) : (
             <>
+              <Link to="/app-tour">
+                <Button variant="outline" className="w-full border-2 border-palace-blue text-palace-blue font-semibold">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Take a Tour First
+                </Button>
+              </Link>
               <Link to="/auth">
                 <Button className="w-full gradient-palace">
                   <Sparkles className="h-4 w-4 mr-2" />

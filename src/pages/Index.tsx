@@ -63,6 +63,19 @@ const Index = () => {
             Join thousands learning Biblical typology through the <strong>8-floor Memory Palace method</strong>
           </p>
           
+          {/* Prominent Tour CTA */}
+          <div className="mb-6 animate-fade-in">
+            <Button asChild size="lg" variant="outline" className="border-2 border-palace-blue text-palace-blue hover:bg-palace-blue hover:text-white font-semibold shadow-lg hover:shadow-xl transition-all">
+              <Link to="/app-tour">
+                <BookOpen className="mr-2 h-5 w-5" />
+                Take a Tour First →
+              </Link>
+            </Button>
+            <p className="text-sm text-muted-foreground mt-2">
+              See how everything works in 5 minutes
+            </p>
+          </div>
+          
           <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slide-up">
             <Button asChild size="lg" className="gradient-ocean text-white hover:opacity-90 transition-all">
               <Link to="/auth">
