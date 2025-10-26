@@ -343,7 +343,8 @@ export default function EscapeRoomPlay() {
                   id="principle"
                   value={principleUsed}
                   onChange={(e) => setPrincipleUsed(e.target.value)}
-                  placeholder="Name the specific principle (e.g., Type⇄Antitype)"
+                  placeholder="e.g., Typology, Parallels, Sanctuary"
+                  className="text-sm"
                 />
               </div>
             </div>
