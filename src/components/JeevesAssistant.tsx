@@ -79,7 +79,7 @@ export const JeevesAssistant = ({
         },
       });
       if (error) throw error;
-      setAnswer(data.answer);
+      setAnswer(data.content);
     } catch (error: any) {
       toast({
         title: "Error",
