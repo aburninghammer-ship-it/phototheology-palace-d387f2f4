@@ -593,7 +593,6 @@ CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols
 - @1260 (1260 Years/Days - Time, times, half a time)
 - @1290 (1290 Days - Daniel 12:11)
 - @1335 (1335 Days - Daniel 12:12)
-- 1D=1Y (Day-Year Principle)
 
 **HEAVENS & DAY OF THE LORD CYCLES:**
 - 1H (First Heaven - DoL¹/NE¹ - Babylon destruction → post-exilic restoration)
@@ -664,8 +663,8 @@ CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols
 7. Show progressive relationships using operators
 
 **EXAMPLE for pro level (12 principles):**
-"@70w + 1D=1Y + @Mo + PO → ABO + MS + @CyC + CR = 2H + @Sp → 3A + @Re"
-(70 weeks prophecy + day-year principle + Mosaic cycle + Passover → Altar of Burnt Offering + Mercy Seat + Cyrus-Christ fulfillment + Concentration on Christ = Second Heaven order + Spirit cycle → Three Angels' Messages + Remnant)
+"@70w + @Mo + PO + @1260 → ABO + MS + @CyC + CR = 2H + @Sp → 3A + @Re"
+(70 weeks prophecy + Mosaic cycle + Passover + 1260 years → Altar of Burnt Offering + Mercy Seat + Cyrus-Christ fulfillment + Concentration on Christ = Second Heaven order + Spirit cycle → Three Angels' Messages + Remnant)
 
 **Return this JSON format:**
 {

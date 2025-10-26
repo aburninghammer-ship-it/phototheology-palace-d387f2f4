@@ -115,7 +115,6 @@ export default function EquationsChallenge() {
                   <Badge variant="outline" className="justify-start">@1260 - 1260 Years</Badge>
                   <Badge variant="outline" className="justify-start">@1290 - 1290 Days</Badge>
                   <Badge variant="outline" className="justify-start">@1335 - 1335 Days</Badge>
-                  <Badge variant="outline" className="justify-start">1D=1Y - Day-Year</Badge>
                 </div>
               </div>
 
@@ -207,10 +206,10 @@ export default function EquationsChallenge() {
               <div className="mt-4 p-3 bg-muted rounded-lg">
                 <h4 className="font-semibold mb-1 text-sm">Example Equations:</h4>
                 <p className="text-sm text-muted-foreground font-mono mb-2">
-                  @70w + 1D=1Y + @CyC → CR + ABO + MS = @Re + 3H
+                  @70w + @CyC + PO → CR + ABO + MS = @Re + 3H
                 </p>
                 <p className="text-xs text-muted-foreground mb-3">
-                  (70 weeks prophecy + day-year principle + Cyrus-Christ cycle → Concentration on Christ + Altar of Burnt Offering + Mercy Seat = Remnant fulfillment in Third Heaven)
+                  (70 weeks prophecy + Cyrus-Christ cycle + Passover → Concentration on Christ + Altar of Burnt Offering + Mercy Seat = Remnant fulfillment in Third Heaven)
                 </p>
                 <p className="text-sm text-muted-foreground font-mono">
                   PO + @Mo → ABO + @CyC = CR + 2H
