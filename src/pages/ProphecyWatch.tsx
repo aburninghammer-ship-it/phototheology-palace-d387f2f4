@@ -56,6 +56,7 @@ const ProphecyWatch = () => {
   const generateSignal = async () => {
     setGenerating(true);
     try {
+      console.log("Calling jeeves with scope:", scope);
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "prophecy-signal",
@@ -63,9 +64,12 @@ const ProphecyWatch = () => {
         },
       });
 
-      if (error) throw error;
+      console.log("Jeeves response:", { data, error });
 
-      await supabase.from("challenges").insert({
+      if (error) throw error;
+      if (!data) throw new Error("No data returned from AI");
+
+      const { error: insertError } = await supabase.from("challenges").insert({
         title: data.title,
         description: data.description,
         challenge_type: "prophecy",
@@ -73,16 +77,21 @@ const ProphecyWatch = () => {
         verses: data.verses || [],
       });
 
+      console.log("Insert result:", insertError);
+
+      if (insertError) throw insertError;
+
       toast({
         title: "Signal Generated",
         description: "New prophetic signal added to your watch list",
       });
 
-      loadSignals();
+      await loadSignals();
     } catch (error: any) {
+      console.error("Generate signal error:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to generate signal",
         variant: "destructive",
       });
     } finally {
