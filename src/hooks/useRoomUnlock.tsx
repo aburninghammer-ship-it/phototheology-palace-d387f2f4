@@ -17,16 +17,30 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
         return;
       }
 
-      const floor = palaceFloors.find(f => f.number === floorNumber);
-      const room = floor?.rooms.find(r => r.id === roomId);
-
-      if (!room || !room.prerequisites || room.prerequisites.length === 0) {
-        setIsUnlocked(true);
-        setLoading(false);
-        return;
-      }
-
       try {
+        // Check if user is admin - admins bypass all locks
+        const { data: roleData, error: roleError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .eq("role", "admin")
+          .single();
+
+        if (!roleError && roleData) {
+          setIsUnlocked(true);
+          setLoading(false);
+          return;
+        }
+
+        const floor = palaceFloors.find(f => f.number === floorNumber);
+        const room = floor?.rooms.find(r => r.id === roomId);
+
+        if (!room || !room.prerequisites || room.prerequisites.length === 0) {
+          setIsUnlocked(true);
+          setLoading(false);
+          return;
+        }
+
         // Get all user's completed rooms
         const { data: completedRooms, error } = await supabase
           .from("room_progress")
