@@ -461,9 +461,9 @@ export default function PalaceCardGame() {
                       </div>
                       
                       {/* Room Description */}
-                      <div className="relative flex-1 flex items-center justify-center px-3">
-                        <div className="bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 backdrop-blur-sm border border-amber-200/50 dark:border-slate-700/50">
-                          <p className="text-xs text-center leading-relaxed text-gray-800 dark:text-gray-200" style={{
+                      <div className="relative flex-1 overflow-hidden px-3">
+                        <div className="h-full bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 backdrop-blur-sm border border-amber-200/50 dark:border-slate-700/50 overflow-y-auto">
+                          <p className="text-xs leading-relaxed text-gray-800 dark:text-gray-200" style={{
                             fontFamily: "'Cormorant Garamond', serif"
                           }}>
                             {card.roomPurpose}
