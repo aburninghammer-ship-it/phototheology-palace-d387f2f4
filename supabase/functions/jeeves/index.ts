@@ -578,65 +578,80 @@ Return JSON: { "verse": "reference", "commentary": "...", "challengeCategory": "
       }
 
     } else if (mode === "equations-challenge") {
-      systemPrompt = `You are Jeeves, creating biblical equations using Phototheology principle codes.
-CRITICAL: Use individual PRINCIPLES, not just room codes. Each room has specific principles.
-Return valid JSON only.`;
+      systemPrompt = `You are Jeeves, the Phototheology equations master. Generate biblical equation challenges using ONLY authentic Phototheology principle codes from the official system.
 
-      userPrompt = `Create a biblical equation at "${difficulty}" difficulty with ${symbolCount} principles.
+CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols. Return valid JSON only.`;
 
-Use these INDIVIDUAL PRINCIPLE CODES:
+      userPrompt = `Create a biblical equation challenge at "${difficulty}" difficulty with ${symbolCount} principles.
 
-PROPHECY PRINCIPLES (PR Room):
-- @2300 (2300 Days prophecy)
-- @70w (70 Weeks prophecy)
-- @1260 (1260 Years/Days)
-- @1290 (1290 Days)
-- @1335 (1335 Days)
-- 1D=1Y (Day-Year principle)
+**USE ONLY THESE AUTHENTIC PHOTOTHEOLOGY CODES:**
 
-HEAVENS & CYCLES:
-- 1H (First Heaven/Day of Lord 1)
-- 2H (Second Heaven/Day of Lord 2)
-- 3H (Third Heaven/Final)
-- @Ad (Adamic Cycle)
-- @No (Noahic Cycle)
-- @Ab (Abrahamic Cycle)
-- @Mo (Mosaic Cycle)
-- @Cy (Cyrusic Cycle)
-- @CyC (Cyrus-Christ Cycle)
-- @Sp (Spirit/Pentecost Cycle)
-- @Re (Remnant Cycle)
+**PROPHECY PRINCIPLES (individual principles from PR Room):**
+- @2300 (2300 Days prophecy - Daniel 8:14)
+- @70w (70 Weeks prophecy - Daniel 9:24-27)
+- @1260 (1260 Years/Days - Time, times, half a time)
+- @1290 (1290 Days - Daniel 12:11)
+- @1335 (1335 Days - Daniel 12:12)
+- 1D=1Y (Day-Year Principle)
 
-PALACE ROOM CODES (only use if room has single principle):
-- SR (Story), IR (Imagination), 24 (24FPS), BR (Bible Rendered), TR (Translation), GR (Gems)
-- OR (Observation), DC (Def-Com), ST (Symbols/Types), QR (Questions), QA (Q&A Chains)
-- NF (Nature), PF (Personal), BF (Bible), HF (History), LR (Listening)
-- CR (Concentration), DR (Dimensions), C6 (Connect-6), TRm (Theme), TZ (Time Zone)
-- PRm (Patterns), P|| (Parallels), FRt (Fruit)
-- BL (Blue/Sanctuary), PR (Prophecy Room), 3A (Three Angels)
-- JR (Juice), FRm (Fire), MR (Meditation), SRm (Speed)
+**HEAVENS & DAY OF THE LORD CYCLES:**
+- 1H (First Heaven - DoL¹/NE¹ - Babylon destruction → post-exilic restoration)
+- 2H (Second Heaven - DoL²/NE² - 70 AD destruction → New Covenant order)
+- 3H (Third Heaven - DoL³/NE³ - Final judgment → Literal New Creation)
 
-KEY SYMBOLS:
-- CH (Christ), HS (Holy Spirit), CL (Calvary), RS (Resurrection)
-- AR (Ark), MS (Mercy Seat), VL (Veil), LB (Lamb), RK (Rock)
+**HISTORICAL CYCLES:**
+- @Ad (Adamic Cycle - Eden → Fall → Promise)
+- @No (Noahic Cycle - Flood → Covenant → Rainbow)
+- @Ab (Abrahamic Cycle - Call → Covenant → Promise fulfilled)
+- @Mo (Mosaic Cycle - Exodus → Law → Tabernacle)
+- @Cy (Cyrusic Cycle - Exile → Return → Rebuild)
+- @CyC (Cyrus-Christ Cycle - Type → Antitype fulfillment)
+- @Sp (Spirit Cycle - Pentecost → Church → Mission)
+- @Re (Remnant Cycle - End-time witness → Second Coming)
 
-OPERATORS: + (and/with), → (leads to/results in), = (equals/completes)
+**PALACE ROOM CODES (1st-2nd Floor - Furnishing & Investigation):**
+- SR (Story Room), IR (Imagination Room), 24 (24FPS), BR (Bible Rendered)
+- TR (Translation Room), GR (Gems Room)
+- OR (Observation Room), DC (Def-Com), ST (Symbols/Types)
+- QR (Questions Room), QA (Q&A Chains)
 
-Create an equation that:
-1. Uses exactly ${symbolCount} INDIVIDUAL PRINCIPLES (prefer @codes and specific principles over generic room codes)
-2. Relates to a specific Bible verse (KJV)
-3. Tells a coherent theological story
-4. Shows progressive relationships
+**PALACE ROOM CODES (3rd-4th Floor - Freestyle & Next Level):**
+- NF (Nature Freestyle), PF (Personal Freestyle), BF (Bible Freestyle)
+- HF (History Freestyle), LR (Listening Room)
+- CR (Concentration on Christ), DR (Dimensions Room), C6 (Connect-6 genres)
+- TRm (Theme Room), TZ (Time Zone), PRm (Patterns Room), P‖ (Parallels Room)
+- FRt (Fruit Room)
 
-Example for pro (12 principles): "@70w + 1D=1Y + @Mo + CL + RS → @CyC + 2H + @Re → 3H + CH + MS = @Sp"
+**PALACE ROOM CODES (5th-7th Floor - Vision & Spiritual):**
+- BL (Blue Room/Sanctuary), PR (Prophecy Room), 3A (Three Angels' Messages)
+- FE (Feasts Room), CEC (Christ in Every Chapter), R66 (Room 66)
+- JR (Juice Room)
+- FRm (Fire Room), MR (Meditation Room), SRm (Speed Room)
 
-Return JSON:
+**OPERATORS:** 
+- + (and/with/plus)
+- → (leads to/results in/points to)
+- = (equals/completes/fulfills)
+
+**REQUIREMENTS:**
+1. Use exactly ${symbolCount} INDIVIDUAL PRINCIPLES from the codes listed above
+2. NO hallucinated symbols (NO CH, HS, CL, RS, AR, MS, VL, LB, RK or similar)
+3. Prefer @ codes (prophecy/cycles) and specific room codes over generic abbreviations
+4. Select a specific Bible verse (KJV) that the equation illuminates
+5. Create a coherent theological narrative through the equation
+6. Show progressive relationships using operators
+
+**EXAMPLE for pro level (12 principles):**
+"@70w + 1D=1Y + @Mo → BL + @CyC + CR = 2H + @Sp → 3A + @Re + 3H"
+(70 weeks prophecy + day-year principle + Mosaic cycle → Sanctuary understanding + Cyrus-Christ fulfillment + Concentration on Christ = Second Heaven order + Spirit cycle → Three Angels' Messages + Remnant + Third Heaven)
+
+**Return this JSON format:**
 {
-  "verse": "Book Chapter:Verse (KJV)",
-  "equation": "Your equation using INDIVIDUAL principles",
-  "symbols": ["@70w: 70 Weeks Prophecy", "1D=1Y: Day-Year Principle", ...],
+  "verse": "Book Chapter:Verse (KJV reference)",
+  "equation": "Your equation using ONLY codes listed above",
+  "symbols": ["@70w: 70 Weeks Prophecy", "1D=1Y: Day-Year Principle", "BL: Sanctuary/Blue Room", ...],
   "difficulty": "${difficulty}",
-  "explanation": "3-4 paragraph explanation connecting each principle to the verse and showing how they build toward the theological conclusion."
+  "explanation": "3-4 paragraph explanation: (1) Introduce the verse and its context, (2) Walk through each principle in the equation showing how it relates to the verse, (3) Show how the principles connect to form a theological conclusion, (4) Close with the profound insight this equation reveals"
 }`;
 
     } else if (mode === "chain-chess-feedback") {

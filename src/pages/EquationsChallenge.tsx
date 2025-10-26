@@ -152,31 +152,34 @@ export default function EquationsChallenge() {
                   <Badge variant="outline" className="justify-start">QA - Q&A Chains</Badge>
                   <Badge variant="outline" className="justify-start">CR - Concentration</Badge>
                   <Badge variant="outline" className="justify-start">DR - Dimensions</Badge>
+                  <Badge variant="outline" className="justify-start">C6 - Connect 6</Badge>
+                  <Badge variant="outline" className="justify-start">TRm - Theme</Badge>
+                  <Badge variant="outline" className="justify-start">TZ - Time Zone</Badge>
+                  <Badge variant="outline" className="justify-start">PRm - Patterns</Badge>
+                  <Badge variant="outline" className="justify-start">P‖ - Parallels</Badge>
+                  <Badge variant="outline" className="justify-start">FRt - Fruit</Badge>
                   <Badge variant="outline" className="justify-start">BL - Blue/Sanctuary</Badge>
                   <Badge variant="outline" className="justify-start">PR - Prophecy</Badge>
                   <Badge variant="outline" className="justify-start">3A - Three Angels</Badge>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold mb-2 text-primary">Key Symbols</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Badge variant="outline" className="justify-start">CH - Christ</Badge>
-                  <Badge variant="outline" className="justify-start">HS - Holy Spirit</Badge>
-                  <Badge variant="outline" className="justify-start">CL - Calvary</Badge>
-                  <Badge variant="outline" className="justify-start">RS - Resurrection</Badge>
-                  <Badge variant="outline" className="justify-start">AR - Ark</Badge>
-                  <Badge variant="outline" className="justify-start">MS - Mercy Seat</Badge>
+                  <Badge variant="outline" className="justify-start">NF - Nature Freestyle</Badge>
+                  <Badge variant="outline" className="justify-start">PF - Personal Freestyle</Badge>
+                  <Badge variant="outline" className="justify-start">BF - Bible Freestyle</Badge>
+                  <Badge variant="outline" className="justify-start">HF - History Freestyle</Badge>
+                  <Badge variant="outline" className="justify-start">LR - Listening</Badge>
+                  <Badge variant="outline" className="justify-start">JR - Juice</Badge>
+                  <Badge variant="outline" className="justify-start">FRm - Fire</Badge>
+                  <Badge variant="outline" className="justify-start">MR - Meditation</Badge>
+                  <Badge variant="outline" className="justify-start">SRm - Speed</Badge>
                 </div>
               </div>
               
               <div className="mt-4 p-3 bg-muted rounded-lg">
                 <h4 className="font-semibold mb-1 text-sm">Example Equation:</h4>
                 <p className="text-sm text-muted-foreground font-mono">
-                  @70w + 1D=1Y + CH → CL → RS = @Re + 3H
+                  @70w + 1D=1Y + @CyC → CR + BL = @Re + 3H
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  (70 weeks prophecy + day-year principle + Christ leads to Calvary and Resurrection = Remnant fulfillment in Third Heaven)
+                  (70 weeks prophecy + day-year principle + Cyrus-Christ cycle → Concentration + Sanctuary = Remnant cycle fulfillment in Third Heaven)
                 </p>
               </div>
             </div>
