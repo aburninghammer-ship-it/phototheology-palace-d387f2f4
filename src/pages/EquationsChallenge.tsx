@@ -161,6 +161,7 @@ export default function EquationsChallenge() {
                   <Badge variant="outline" className="justify-start">BL - Blue/Sanctuary</Badge>
                   <Badge variant="outline" className="justify-start">PR - Prophecy</Badge>
                   <Badge variant="outline" className="justify-start">3A - Three Angels</Badge>
+                  <Badge variant="outline" className="justify-start">FE - Feasts</Badge>
                   <Badge variant="outline" className="justify-start">NF - Nature Freestyle</Badge>
                   <Badge variant="outline" className="justify-start">PF - Personal Freestyle</Badge>
                   <Badge variant="outline" className="justify-start">BF - Bible Freestyle</Badge>
@@ -170,16 +171,52 @@ export default function EquationsChallenge() {
                   <Badge variant="outline" className="justify-start">FRm - Fire</Badge>
                   <Badge variant="outline" className="justify-start">MR - Meditation</Badge>
                   <Badge variant="outline" className="justify-start">SRm - Speed</Badge>
+                  <Badge variant="outline" className="justify-start">CEC - Christ/Chapter</Badge>
+                  <Badge variant="outline" className="justify-start">R66 - Room 66</Badge>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2 text-primary">Sanctuary Furniture (BL Room)</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <Badge variant="outline" className="justify-start">ABO - Altar Burnt Offering</Badge>
+                  <Badge variant="outline" className="justify-start">LV - Laver</Badge>
+                  <Badge variant="outline" className="justify-start">LS - Lampstand</Badge>
+                  <Badge variant="outline" className="justify-start">SB - Showbread Table</Badge>
+                  <Badge variant="outline" className="justify-start">AI - Altar of Incense</Badge>
+                  <Badge variant="outline" className="justify-start">ARK - Ark of Covenant</Badge>
+                  <Badge variant="outline" className="justify-start">MS - Mercy Seat</Badge>
+                  <Badge variant="outline" className="justify-start">VL - Veil</Badge>
+                  <Badge variant="outline" className="justify-start">GT - Gate</Badge>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2 text-primary">Biblical Feasts (FE Room)</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <Badge variant="outline" className="justify-start">PO - Passover</Badge>
+                  <Badge variant="outline" className="justify-start">UB - Unleavened Bread</Badge>
+                  <Badge variant="outline" className="justify-start">FF - Firstfruits</Badge>
+                  <Badge variant="outline" className="justify-start">PT - Pentecost</Badge>
+                  <Badge variant="outline" className="justify-start">TR - Trumpets</Badge>
+                  <Badge variant="outline" className="justify-start">DA - Day of Atonement</Badge>
+                  <Badge variant="outline" className="justify-start">TB - Tabernacles</Badge>
                 </div>
               </div>
               
               <div className="mt-4 p-3 bg-muted rounded-lg">
-                <h4 className="font-semibold mb-1 text-sm">Example Equation:</h4>
+                <h4 className="font-semibold mb-1 text-sm">Example Equations:</h4>
+                <p className="text-sm text-muted-foreground font-mono mb-2">
+                  @70w + 1D=1Y + @CyC → CR + ABO + MS = @Re + 3H
+                </p>
+                <p className="text-xs text-muted-foreground mb-3">
+                  (70 weeks prophecy + day-year principle + Cyrus-Christ cycle → Concentration on Christ + Altar of Burnt Offering + Mercy Seat = Remnant fulfillment in Third Heaven)
+                </p>
                 <p className="text-sm text-muted-foreground font-mono">
-                  @70w + 1D=1Y + @CyC → CR + BL = @Re + 3H
+                  PO + @Mo → ABO + @CyC = CR + 2H
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  (70 weeks prophecy + day-year principle + Cyrus-Christ cycle → Concentration + Sanctuary = Remnant cycle fulfillment in Third Heaven)
+                  (Passover + Mosaic cycle → Altar of Burnt Offering + Cyrus-Christ = Concentration on Christ in Second Heaven)
                 </p>
               </div>
             </div>

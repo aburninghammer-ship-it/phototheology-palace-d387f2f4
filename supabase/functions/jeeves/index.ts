@@ -623,10 +623,30 @@ CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols
 - FRt (Fruit Room)
 
 **PALACE ROOM CODES (5th-7th Floor - Vision & Spiritual):**
-- BL (Blue Room/Sanctuary), PR (Prophecy Room), 3A (Three Angels' Messages)
-- FE (Feasts Room), CEC (Christ in Every Chapter), R66 (Room 66)
+- BL (Blue Room/Sanctuary - general), PR (Prophecy Room), 3A (Three Angels' Messages)
+- FE (Feasts Room - general), CEC (Christ in Every Chapter), R66 (Room 66)
 - JR (Juice Room)
 - FRm (Fire Room), MR (Meditation Room), SRm (Speed Room)
+
+**SANCTUARY FURNITURE (BL Room individual principles):**
+- ABO (Altar of Burnt Offering - the cross, sacrifice)
+- LV (Laver - baptism, cleansing)
+- LS (Lampstand - light of the Spirit, witness)
+- SB (Showbread Table - Word of God, spiritual nourishment)
+- AI (Altar of Incense - intercession, prayer)
+- ARK (Ark of the Covenant - God's throne, law)
+- MS (Mercy Seat - atonement, grace)
+- VL (Veil - separation removed through Christ)
+- GT (Gate - entrance, way to God)
+
+**BIBLICAL FEASTS (FE Room individual principles):**
+- PO (Passover - Christ's sacrifice, deliverance)
+- UB (Unleavened Bread - sinless life, sanctification)
+- FF (Firstfruits - Christ's resurrection)
+- PT (Pentecost - Holy Spirit outpouring)
+- TR (Trumpets - Second Coming announcement)
+- DA (Day of Atonement - judgment hour, sanctuary cleansing)
+- TB (Tabernacles - God dwelling with His people, eternal rest)
 
 **OPERATORS:** 
 - + (and/with/plus)
@@ -635,21 +655,22 @@ CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols
 
 **REQUIREMENTS:**
 1. Use exactly ${symbolCount} INDIVIDUAL PRINCIPLES from the codes listed above
-2. NO hallucinated symbols (NO CH, HS, CL, RS, AR, MS, VL, LB, RK or similar)
-3. Prefer @ codes (prophecy/cycles) and specific room codes over generic abbreviations
-4. Select a specific Bible verse (KJV) that the equation illuminates
-5. Create a coherent theological narrative through the equation
-6. Show progressive relationships using operators
+2. PREFER specific furniture/feast codes over general room codes (use ABO, PO instead of just BL, FE)
+3. NO hallucinated symbols beyond what's listed
+4. Prefer @ codes (prophecy/cycles) and specific sanctuary/feast principles
+5. Select a specific Bible verse (KJV) that the equation illuminates
+6. Create a coherent theological narrative through the equation
+7. Show progressive relationships using operators
 
 **EXAMPLE for pro level (12 principles):**
-"@70w + 1D=1Y + @Mo → BL + @CyC + CR = 2H + @Sp → 3A + @Re + 3H"
-(70 weeks prophecy + day-year principle + Mosaic cycle → Sanctuary understanding + Cyrus-Christ fulfillment + Concentration on Christ = Second Heaven order + Spirit cycle → Three Angels' Messages + Remnant + Third Heaven)
+"@70w + 1D=1Y + @Mo + PO → ABO + MS + @CyC + CR = 2H + @Sp → 3A + @Re"
+(70 weeks prophecy + day-year principle + Mosaic cycle + Passover → Altar of Burnt Offering + Mercy Seat + Cyrus-Christ fulfillment + Concentration on Christ = Second Heaven order + Spirit cycle → Three Angels' Messages + Remnant)
 
 **Return this JSON format:**
 {
   "verse": "Book Chapter:Verse (KJV reference)",
   "equation": "Your equation using ONLY codes listed above",
-  "symbols": ["@70w: 70 Weeks Prophecy", "1D=1Y: Day-Year Principle", "BL: Sanctuary/Blue Room", ...],
+  "symbols": ["@70w: 70 Weeks Prophecy", "PO: Passover - Christ's sacrifice", "ABO: Altar of Burnt Offering - the cross", ...],
   "difficulty": "${difficulty}",
   "explanation": "3-4 paragraph explanation: (1) Introduce the verse and its context, (2) Walk through each principle in the equation showing how it relates to the verse, (3) Show how the principles connect to form a theological conclusion, (4) Close with the profound insight this equation reveals"
 }`;
