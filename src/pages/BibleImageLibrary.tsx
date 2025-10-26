@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Image, Search, Heart, Trash2, RefreshCw, Loader2, ArrowLeft, MessageCircle, Send, X, Edit } from "lucide-react";
+import { Image, Search, Heart, Trash2, RefreshCw, Loader2, ArrowLeft, MessageCircle, Send, X, Edit, Package, Download } from "lucide-react";
+import { genesisImages } from "@/assets/24fps/genesis";
 
 interface BibleImage {
   id: string;
@@ -28,7 +29,7 @@ export default function BibleImageLibrary() {
   const [generating, setGenerating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "translation" | "24fps">("all");
-  const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "favorites" | "genesis-pack">("all");
   const [jeevesOpen, setJeevesOpen] = useState(false);
   const [jeevesPrompt, setJeevesPrompt] = useState("");
   const [jeevesGenerating, setJeevesGenerating] = useState(false);
@@ -45,6 +46,8 @@ export default function BibleImageLibrary() {
     description: "",
     verse_reference: "",
   });
+
+  const [importingGenesis, setImportingGenesis] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -327,6 +330,97 @@ export default function BibleImageLibrary() {
     fps24: images.filter(img => img.room_type === "24fps").length,
   };
 
+  const genesisChapterTitles = [
+    "Creation", "Garden of Eden", "The Fall", "Cain and Abel", "Adam's Genealogy",
+    "Noah's Ark", "The Flood", "Post-Flood Covenant", "Table of Nations", "Tower of Babel",
+    "Call of Abram", "Abram and Lot Separate", "Abram Rescues Lot", "God's Covenant with Abram", "Hagar and Ishmael",
+    "Covenant of Circumcision", "Three Visitors", "Sodom and Gomorrah", "Abraham and Abimelech", "Birth of Isaac",
+    "Hagar and Ishmael Sent Away", "Abraham Tested", "Death of Sarah", "Isaac and Rebekah"
+  ];
+
+  const importGenesisImage = async (chapterIndex: number) => {
+    try {
+      const chapter = chapterIndex + 1;
+      const imageSrc = genesisImages[chapterIndex];
+      
+      // Fetch the image as a blob
+      const response = await fetch(imageSrc);
+      const blob = await response.blob();
+      
+      // Upload to Supabase Storage
+      const fileName = `genesis-${String(chapter).padStart(2, '0')}.jpg`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('bible-images')
+        .upload(`24fps/${fileName}`, blob, {
+          contentType: 'image/jpeg',
+          upsert: true
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('bible-images')
+        .getPublicUrl(`24fps/${fileName}`);
+
+      // Insert into bible_images table
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error("Not authenticated");
+
+      const { error: insertError } = await supabase
+        .from('bible_images')
+        .insert({
+          user_id: userData.user.id,
+          room_type: '24fps',
+          description: genesisChapterTitles[chapterIndex],
+          verse_reference: `Genesis ${chapter}`,
+          image_url: publicUrl,
+          is_favorite: false
+        });
+
+      if (insertError) throw insertError;
+
+      return true;
+    } catch (error) {
+      console.error(`Error importing Genesis ${chapterIndex + 1}:`, error);
+      return false;
+    }
+  };
+
+  const importAllGenesis = async () => {
+    setImportingGenesis(true);
+    try {
+      let successCount = 0;
+      
+      for (let i = 0; i < 24; i++) {
+        const success = await importGenesisImage(i);
+        if (success) successCount++;
+      }
+
+      toast.success(`Successfully imported ${successCount} of 24 Genesis images!`);
+      fetchImages();
+    } catch (error) {
+      console.error("Error importing Genesis images:", error);
+      toast.error("Failed to import some images");
+    } finally {
+      setImportingGenesis(false);
+    }
+  };
+
+  const importSingleGenesis = async (chapterIndex: number) => {
+    const chapter = chapterIndex + 1;
+    toast.loading(`Importing Genesis ${chapter}...`, { id: `import-${chapter}` });
+    
+    const success = await importGenesisImage(chapterIndex);
+    
+    if (success) {
+      toast.success(`Genesis ${chapter} imported!`, { id: `import-${chapter}` });
+      fetchImages();
+    } else {
+      toast.error(`Failed to import Genesis ${chapter}`, { id: `import-${chapter}` });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
       {/* Header */}
@@ -429,10 +523,14 @@ export default function BibleImageLibrary() {
         </div>
 
         {/* Content Tabs */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "favorites")} className="mb-6">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "favorites" | "genesis-pack")} className="mb-6">
           <TabsList className="bg-white/90 backdrop-blur-sm border-white/20">
             <TabsTrigger value="all">All Images ({filteredImages.length})</TabsTrigger>
             <TabsTrigger value="favorites">Favorites ({images.filter(img => img.is_favorite).length})</TabsTrigger>
+            <TabsTrigger value="genesis-pack">
+              <Package className="w-4 h-4 mr-2" />
+              Genesis Starter Pack
+            </TabsTrigger>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="ml-auto bg-primary text-primary-foreground hover:bg-primary/90">
@@ -631,6 +729,72 @@ export default function BibleImageLibrary() {
                 ))}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="genesis-pack" className="mt-6">
+            <Card className="mb-6 bg-white/10 backdrop-blur-sm border-white/20 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Genesis 1-24 Starter Pack</h3>
+                  <p className="text-purple-200">
+                    Pre-illustrated frames for the first 24 chapters of Genesis from the 24FPS Room
+                  </p>
+                </div>
+                <Button
+                  onClick={importAllGenesis}
+                  disabled={importingGenesis}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  {importingGenesis ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Importing...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="mr-2 h-4 w-4" />
+                      Import All 24
+                    </>
+                  )}
+                </Button>
+              </div>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {genesisImages.map((image, index) => {
+                const chapter = index + 1;
+                return (
+                  <Card key={chapter} className="bg-white/10 backdrop-blur-sm border-white/20 overflow-hidden group">
+                    <div className="relative aspect-square">
+                      <img
+                        src={image}
+                        alt={`Genesis Chapter ${chapter}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Button
+                          onClick={() => importSingleGenesis(index)}
+                          disabled={importingGenesis}
+                          className="bg-white/20 hover:bg-white/30 text-white"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Import
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary-foreground">
+                          24FPS Room
+                        </span>
+                        <span className="text-xs text-purple-200">Genesis {chapter}</span>
+                      </div>
+                      <p className="text-sm text-white">{genesisChapterTitles[index]}</p>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
           </TabsContent>
         </Tabs>
       </div>
