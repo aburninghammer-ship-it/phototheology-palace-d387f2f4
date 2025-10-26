@@ -102,78 +102,81 @@ export default function EquationsChallenge() {
 
           <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Palace Room Codes</CardTitle>
-            <CardDescription>Phototheology principle codes used in equations</CardDescription>
+            <CardTitle>Principle Codes Reference</CardTitle>
+            <CardDescription>Individual principles used in Phototheology equations</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-2 text-primary">Floor 1 — Furnishing (Memory)</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Badge variant="outline" className="justify-start">SR - Story Room</Badge>
-                  <Badge variant="outline" className="justify-start">IR - Imagination Room</Badge>
-                  <Badge variant="outline" className="justify-start">24 - 24FPS</Badge>
-                  <Badge variant="outline" className="justify-start">BR - Bible Rendered</Badge>
-                  <Badge variant="outline" className="justify-start">TR - Translation</Badge>
-                  <Badge variant="outline" className="justify-start">GR - Gems Room</Badge>
+                <h3 className="font-semibold mb-2 text-primary">Prophecy Principles (PR)</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <Badge variant="outline" className="justify-start">@2300 - 2300 Days</Badge>
+                  <Badge variant="outline" className="justify-start">@70w - 70 Weeks</Badge>
+                  <Badge variant="outline" className="justify-start">@1260 - 1260 Years</Badge>
+                  <Badge variant="outline" className="justify-start">@1290 - 1290 Days</Badge>
+                  <Badge variant="outline" className="justify-start">@1335 - 1335 Days</Badge>
+                  <Badge variant="outline" className="justify-start">1D=1Y - Day-Year</Badge>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2 text-primary">Heavens & Cycles</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <Badge variant="outline" className="justify-start">1H - First Heaven</Badge>
+                  <Badge variant="outline" className="justify-start">2H - Second Heaven</Badge>
+                  <Badge variant="outline" className="justify-start">3H - Third Heaven</Badge>
+                  <Badge variant="outline" className="justify-start">@Ad - Adamic Cycle</Badge>
+                  <Badge variant="outline" className="justify-start">@No - Noahic Cycle</Badge>
+                  <Badge variant="outline" className="justify-start">@Ab - Abrahamic</Badge>
+                  <Badge variant="outline" className="justify-start">@Mo - Mosaic Cycle</Badge>
+                  <Badge variant="outline" className="justify-start">@Cy - Cyrus Cycle</Badge>
+                  <Badge variant="outline" className="justify-start">@CyC - Cyrus-Christ</Badge>
+                  <Badge variant="outline" className="justify-start">@Sp - Spirit Cycle</Badge>
+                  <Badge variant="outline" className="justify-start">@Re - Remnant</Badge>
                 </div>
               </div>
               
               <div>
-                <h3 className="font-semibold mb-2 text-primary">Floor 2 — Investigation (Detective)</h3>
+                <h3 className="font-semibold mb-2 text-primary">Palace Room Codes</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <Badge variant="outline" className="justify-start">SR - Story</Badge>
+                  <Badge variant="outline" className="justify-start">IR - Imagination</Badge>
+                  <Badge variant="outline" className="justify-start">24 - 24FPS</Badge>
+                  <Badge variant="outline" className="justify-start">BR - Bible Rendered</Badge>
+                  <Badge variant="outline" className="justify-start">TR - Translation</Badge>
+                  <Badge variant="outline" className="justify-start">GR - Gems</Badge>
                   <Badge variant="outline" className="justify-start">OR - Observation</Badge>
                   <Badge variant="outline" className="justify-start">DC - Def-Com</Badge>
                   <Badge variant="outline" className="justify-start">ST - Symbols/Types</Badge>
                   <Badge variant="outline" className="justify-start">QR - Questions</Badge>
                   <Badge variant="outline" className="justify-start">QA - Q&A Chains</Badge>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold mb-2 text-primary">Floor 3 — Freestyle (Connections)</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Badge variant="outline" className="justify-start">NF - Nature</Badge>
-                  <Badge variant="outline" className="justify-start">PF - Personal</Badge>
-                  <Badge variant="outline" className="justify-start">BF - Bible</Badge>
-                  <Badge variant="outline" className="justify-start">HF - History</Badge>
-                  <Badge variant="outline" className="justify-start">LR - Listening</Badge>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold mb-2 text-primary">Floor 4 — Christ-Centered (Depth)</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   <Badge variant="outline" className="justify-start">CR - Concentration</Badge>
                   <Badge variant="outline" className="justify-start">DR - Dimensions</Badge>
-                  <Badge variant="outline" className="justify-start">C6 - Connect-6</Badge>
-                  <Badge variant="outline" className="justify-start">TRm - Theme</Badge>
-                  <Badge variant="outline" className="justify-start">TZ - Time Zone</Badge>
-                  <Badge variant="outline" className="justify-start">PRm - Patterns</Badge>
-                  <Badge variant="outline" className="justify-start">P|| - Parallels</Badge>
-                  <Badge variant="outline" className="justify-start">FRt - Fruit</Badge>
+                  <Badge variant="outline" className="justify-start">BL - Blue/Sanctuary</Badge>
+                  <Badge variant="outline" className="justify-start">PR - Prophecy</Badge>
+                  <Badge variant="outline" className="justify-start">3A - Three Angels</Badge>
                 </div>
               </div>
               
               <div>
-                <h3 className="font-semibold mb-2 text-primary">Floors 5-8 — Vision & Mastery</h3>
+                <h3 className="font-semibold mb-2 text-primary">Key Symbols</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Badge variant="outline" className="justify-start">BL - Blue (Sanctuary)</Badge>
-                  <Badge variant="outline" className="justify-start">PR - Prophecy</Badge>
-                  <Badge variant="outline" className="justify-start">3A - Three Angels</Badge>
-                  <Badge variant="outline" className="justify-start">JR - Juice Room</Badge>
-                  <Badge variant="outline" className="justify-start">FRm - Fire</Badge>
-                  <Badge variant="outline" className="justify-start">MR - Meditation</Badge>
-                  <Badge variant="outline" className="justify-start">SRm - Speed</Badge>
+                  <Badge variant="outline" className="justify-start">CH - Christ</Badge>
+                  <Badge variant="outline" className="justify-start">HS - Holy Spirit</Badge>
+                  <Badge variant="outline" className="justify-start">CL - Calvary</Badge>
+                  <Badge variant="outline" className="justify-start">RS - Resurrection</Badge>
+                  <Badge variant="outline" className="justify-start">AR - Ark</Badge>
+                  <Badge variant="outline" className="justify-start">MS - Mercy Seat</Badge>
                 </div>
               </div>
               
               <div className="mt-4 p-3 bg-muted rounded-lg">
-                <h4 className="font-semibold mb-1 text-sm">Operators:</h4>
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-mono font-bold">+</span> (and/with) • 
-                  <span className="font-mono font-bold"> →</span> (leads to/results in) • 
-                  <span className="font-mono font-bold"> =</span> (equals/completes)
+                <h4 className="font-semibold mb-1 text-sm">Example Equation:</h4>
+                <p className="text-sm text-muted-foreground font-mono">
+                  @70w + 1D=1Y + CH → CL → RS = @Re + 3H
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  (70 weeks prophecy + day-year principle + Christ leads to Calvary and Resurrection = Remnant fulfillment in Third Heaven)
                 </p>
               </div>
             </div>

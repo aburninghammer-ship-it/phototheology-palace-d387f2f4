@@ -578,33 +578,65 @@ Return JSON: { "verse": "reference", "commentary": "...", "challengeCategory": "
       }
 
     } else if (mode === "equations-challenge") {
-      systemPrompt = `You are Jeeves, creating biblical equations using Phototheology codes.
-Use the standardized codes for sanctuary furniture, feasts, and palace floors to create meaningful equations.
+      systemPrompt = `You are Jeeves, creating biblical equations using Phototheology principle codes.
+CRITICAL: Use individual PRINCIPLES, not just room codes. Each room has specific principles.
 Return valid JSON only.`;
 
-      userPrompt = `Create a biblical equation at "${difficulty}" difficulty with ${symbolCount} symbols/principles.
+      userPrompt = `Create a biblical equation at "${difficulty}" difficulty with ${symbolCount} principles.
 
-Use these standard codes:
-SANCTUARY: BA (Brazen Altar), LA (Laver), ST (Showbread Table), GC (Golden Candlestick), AI (Altar of Incense), AR (Ark), MS (Mercy Seat), VL (Veil)
-FEASTS: PO (Passover), UB (Unleavened Bread), FF (Firstfruits), PN (Pentecost), TR (Trumpets), AT (Atonement), TB (Tabernacles), SB (Sabbath)
-PALACE FLOORS: FD (Foundation), WS (Wisdom), KG (Kingdom), LW (Law), GR (Grace), PR (Prophecy), GL (Glory), NC (New Creation)
-OTHER: CH (Christ), HS (Holy Spirit), CL (Calvary), RS (Resurrection), SC (Second Coming), NJ (New Jerusalem)
+Use these INDIVIDUAL PRINCIPLE CODES:
+
+PROPHECY PRINCIPLES (PR Room):
+- @2300 (2300 Days prophecy)
+- @70w (70 Weeks prophecy)
+- @1260 (1260 Years/Days)
+- @1290 (1290 Days)
+- @1335 (1335 Days)
+- 1D=1Y (Day-Year principle)
+
+HEAVENS & CYCLES:
+- 1H (First Heaven/Day of Lord 1)
+- 2H (Second Heaven/Day of Lord 2)
+- 3H (Third Heaven/Final)
+- @Ad (Adamic Cycle)
+- @No (Noahic Cycle)
+- @Ab (Abrahamic Cycle)
+- @Mo (Mosaic Cycle)
+- @Cy (Cyrusic Cycle)
+- @CyC (Cyrus-Christ Cycle)
+- @Sp (Spirit/Pentecost Cycle)
+- @Re (Remnant Cycle)
+
+PALACE ROOM CODES (only use if room has single principle):
+- SR (Story), IR (Imagination), 24 (24FPS), BR (Bible Rendered), TR (Translation), GR (Gems)
+- OR (Observation), DC (Def-Com), ST (Symbols/Types), QR (Questions), QA (Q&A Chains)
+- NF (Nature), PF (Personal), BF (Bible), HF (History), LR (Listening)
+- CR (Concentration), DR (Dimensions), C6 (Connect-6), TRm (Theme), TZ (Time Zone)
+- PRm (Patterns), P|| (Parallels), FRt (Fruit)
+- BL (Blue/Sanctuary), PR (Prophecy Room), 3A (Three Angels)
+- JR (Juice), FRm (Fire), MR (Meditation), SRm (Speed)
+
+KEY SYMBOLS:
+- CH (Christ), HS (Holy Spirit), CL (Calvary), RS (Resurrection)
+- AR (Ark), MS (Mercy Seat), VL (Veil), LB (Lamb), RK (Rock)
+
+OPERATORS: + (and/with), → (leads to/results in), = (equals/completes)
 
 Create an equation that:
-1. Uses exactly ${symbolCount} codes
-2. Relates to a specific Bible verse
+1. Uses exactly ${symbolCount} INDIVIDUAL PRINCIPLES (prefer @codes and specific principles over generic room codes)
+2. Relates to a specific Bible verse (KJV)
 3. Tells a coherent theological story
-4. Shows relationships using + (and), → (leads to), = (equals)
+4. Shows progressive relationships
 
-Example for easy (3 codes): "BA + CH → MS" (Brazen Altar + Christ → Mercy Seat)
+Example for pro (12 principles): "@70w + 1D=1Y + @Mo + CL + RS → @CyC + 2H + @Re → 3H + CH + MS = @Sp"
 
 Return JSON:
 {
-  "verse": "Book Chapter:Verse",
-  "equation": "Your equation using the codes above",
-  "symbols": ["Code 1: Full Name", "Code 2: Full Name", ...],
+  "verse": "Book Chapter:Verse (KJV)",
+  "equation": "Your equation using INDIVIDUAL principles",
+  "symbols": ["@70w: 70 Weeks Prophecy", "1D=1Y: Day-Year Principle", ...],
   "difficulty": "${difficulty}",
-  "explanation": "3-4 paragraph explanation of how this equation reveals biblical truth, connecting to the verse. Explain each symbol's role and how they relate."
+  "explanation": "3-4 paragraph explanation connecting each principle to the verse and showing how they build toward the theological conclusion."
 }`;
 
     } else if (mode === "chain-chess-feedback") {

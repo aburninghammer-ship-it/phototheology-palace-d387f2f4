@@ -19,12 +19,13 @@ serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY not found in environment');
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
     const { mode, category, scenario } = await req.json();
     
-    console.log('Generating escape room:', mode, category, scenario);
+    console.log('Generating escape room with params:', { mode, category, scenario });
 
     let systemPrompt = '';
     let puzzles: any[] = [];

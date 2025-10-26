@@ -53,6 +53,8 @@ export default function EscapeRoom() {
     setIsGenerating(true);
     
     try {
+      console.log('Starting escape room generation with:', { mode, category, scenario });
+      
       const { data, error } = await supabase.functions.invoke('generate-escape-room', {
         body: { 
           mode, 
@@ -61,13 +63,22 @@ export default function EscapeRoom() {
         }
       });
 
-      if (error) throw error;
+      console.log('Escape room response:', { data, error });
+
+      if (error) {
+        console.error('Escape room error:', error);
+        throw error;
+      }
+
+      if (!data || !data.room_id) {
+        throw new Error('No room ID returned from server');
+      }
 
       toast.success("Escape room created! Let the challenge begin...");
       navigate(`/escape-room/play/${data.room_id}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating escape room:', error);
-      toast.error("Failed to create escape room. Please try again.");
+      toast.error(error.message || "Failed to create escape room. Please try again.");
     } finally {
       setIsGenerating(false);
     }
