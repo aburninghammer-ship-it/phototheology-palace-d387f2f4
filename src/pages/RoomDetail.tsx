@@ -250,7 +250,7 @@ export default function RoomDetail() {
               </Card>
             )}
 
-            {room.id === "gems" && (
+            {room.id === "gr" && (
               <UserGemsList floorNumber={floor.number} roomId={room.id} />
             )}
 
