@@ -1860,6 +1860,39 @@ export type Database = {
           },
         ]
       }
+      user_gems: {
+        Row: {
+          created_at: string
+          floor_number: number
+          gem_content: string
+          gem_name: string
+          id: string
+          room_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          floor_number: number
+          gem_content: string
+          gem_name: string
+          id?: string
+          room_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          floor_number?: number
+          gem_content?: string
+          gem_name?: string
+          id?: string
+          room_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           bible_font_size: string | null

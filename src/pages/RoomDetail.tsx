@@ -16,6 +16,7 @@ import { getDrillsByRoom, getDrillName } from "@/data/drillQuestions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
 import { genesisImages } from "@/assets/24fps/genesis";
+import { UserGemsList } from "@/components/UserGemsList";
 
 export default function RoomDetail() {
   const { floorNumber, roomId } = useParams();
@@ -247,6 +248,10 @@ export default function RoomDetail() {
                   </Tabs>
                 </CardContent>
               </Card>
+            )}
+
+            {room.id === "gems" && (
+              <UserGemsList floorNumber={floor.number} roomId={room.id} />
             )}
 
             <Card>
