@@ -167,18 +167,23 @@ const ChainChess = () => {
       await fetchVerseText(randomVerse);
       setGameStarted(true);
       
+      // Navigate immediately to the game page
+      navigate(`/games/chain-chess/${newGame.id}${isVsJeeves ? "/jeeves" : ""}`, { replace: true });
+      
       if (whoStarts === "jeeves") {
-        // Jeeves makes first move BEFORE navigating - he chooses verse and gives exposition
-        console.log("=== Waiting for Jeeves opening move ===");
-        await jeevesMove(newGame.id, true);
-        console.log("=== Jeeves opening move complete ===");
+        // Jeeves makes first move - show processing state
+        setProcessing(true);
+        toast({
+          title: "Jeeves is preparing his opening...",
+          description: "Please wait while Jeeves crafts his first move",
+        });
+        console.log("=== Triggering Jeeves opening move (non-blocking) ===");
+        // Don't await - let it run in background
+        jeevesMove(newGame.id, true);
       } else {
         // Player goes first
         setIsMyTurn(true);
       }
-      
-      // Navigate AFTER Jeeves' opening move is complete (if he starts)
-      navigate(`/games/chain-chess/${newGame.id}${isVsJeeves ? "/jeeves" : ""}`, { replace: true });
     } catch (error: any) {
       toast({
         title: "Error",
