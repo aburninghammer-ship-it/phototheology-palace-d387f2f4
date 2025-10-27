@@ -298,7 +298,7 @@ export default function PalaceCardGame() {
   const validatedCount = matchedPairs.filter(p => p.isValidated).length;
 
   return (
-    <div className="min-h-screen bg-gradient-subtle pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
@@ -327,10 +327,10 @@ export default function PalaceCardGame() {
         </div>
 
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-palace bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
             Biblical Parallels Match
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
             Stage 1: Find cards that parallel each other. Stage 2: Explain the connection.
           </p>
         </div>
@@ -351,30 +351,30 @@ export default function PalaceCardGame() {
 
         {unmatched.length > 0 && (
           <>
-            <h2 className="text-2xl font-bold mb-4 text-center">
+            <h2 className="text-2xl font-bold mb-6 text-center text-white">
               Find the Matching Parallels ({unmatched.length} cards)
             </h2>
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-6xl mx-auto mb-12">
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto mb-12">
               {unmatched.map((card) => (
                 <Card
                   key={card.id}
-                  className={`overflow-hidden transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-xl ${
-                    card.isFlipped ? 'ring-2 ring-primary' : ''
+                  className={`overflow-hidden transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl bg-slate-800/50 backdrop-blur border-slate-700 ${
+                    card.isFlipped ? 'ring-2 ring-blue-500' : ''
                   } ${selectedCards.some(c => c.id === card.id) ? 'ring-2 ring-yellow-500' : ''}`}
                   onClick={() => handleCardClick(card.id)}
                 >
                   {!card.isFlipped ? (
-                    <CardContent className="p-6 h-48 flex items-center justify-center">
-                      <div className={`text-center p-4 rounded-lg bg-gradient-to-br ${card.color}`}>
-                        <div className="text-4xl mb-2">📜</div>
-                        <p className="text-sm text-white/90 font-semibold">Click to reveal</p>
+                    <CardContent className="p-8 h-64 flex items-center justify-center">
+                      <div className={`text-center p-6 rounded-xl bg-gradient-to-br ${card.color} w-full`}>
+                        <div className="text-6xl mb-3">📜</div>
+                        <p className="text-base text-white font-semibold">Click to reveal</p>
                       </div>
                     </CardContent>
                   ) : (
-                    <CardContent className="p-4 h-48 overflow-y-auto">
-                      <h3 className="font-bold text-sm mb-2">{card.eventTitle}</h3>
-                      <p className="text-xs text-muted-foreground mb-2 line-clamp-4">{card.eventStory}</p>
-                      <p className="text-xs italic text-primary">{card.eventReference}</p>
+                    <CardContent className="p-6 h-64 overflow-y-auto">
+                      <h3 className="font-bold text-lg mb-3 text-white">{card.eventTitle}</h3>
+                      <p className="text-sm text-slate-300 mb-3 leading-relaxed">{card.eventStory}</p>
+                      <p className="text-sm italic text-blue-400 font-medium">{card.eventReference}</p>
                     </CardContent>
                   )}
                 </Card>
@@ -385,40 +385,40 @@ export default function PalaceCardGame() {
 
         {matchedPairs.length > 0 && (
           <>
-            <h2 className="text-2xl font-bold mb-4 text-center">
+            <h2 className="text-2xl font-bold mb-6 text-center text-white">
               Explain the Connections
             </h2>
-            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 max-w-6xl mx-auto">
+            <div className="grid gap-6 md:grid-cols-1 max-w-4xl mx-auto">
               {matchedPairs.map((pair, index) => (
                 <Card
                   key={`pair-${index}`}
-                  className={`overflow-hidden bg-card/95 backdrop-blur ${pair.isValidated ? 'ring-2 ring-green-500' : ''}`}
+                  className={`overflow-hidden bg-slate-800/70 backdrop-blur border-slate-700 ${pair.isValidated ? 'ring-2 ring-green-500' : ''}`}
                 >
-                  <div className={`h-2 bg-gradient-to-r ${pair.card1.color}`} />
-                  <CardContent className="p-6 space-y-4">
-                    <div className="bg-muted/50 rounded-lg p-4 border-l-4 border-primary">
-                      <h3 className="font-bold text-base mb-1">{pair.card1.eventTitle}</h3>
-                      <p className="text-sm text-muted-foreground">{pair.card1.eventReference}</p>
+                  <div className={`h-3 bg-gradient-to-r ${pair.card1.color}`} />
+                  <CardContent className="p-8 space-y-5">
+                    <div className="bg-slate-900/60 rounded-lg p-5 border-l-4 border-blue-500">
+                      <h3 className="font-bold text-lg mb-2 text-white">{pair.card1.eventTitle}</h3>
+                      <p className="text-sm text-slate-300">{pair.card1.eventReference}</p>
                     </div>
 
-                    <div className="text-center text-2xl opacity-50">⇅</div>
+                    <div className="text-center text-3xl text-slate-400">⇅</div>
 
-                    <div className="bg-muted/50 rounded-lg p-4 border-l-4 border-primary">
-                      <h3 className="font-bold text-base mb-1">{pair.card2.eventTitle}</h3>
-                      <p className="text-sm text-muted-foreground">{pair.card2.eventReference}</p>
+                    <div className="bg-slate-900/60 rounded-lg p-5 border-l-4 border-blue-500">
+                      <h3 className="font-bold text-lg mb-2 text-white">{pair.card2.eventTitle}</h3>
+                      <p className="text-sm text-slate-300">{pair.card2.eventReference}</p>
                     </div>
 
                     {!pair.isValidated && (
                       <>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">
+                        <div className="space-y-3">
+                          <label className="text-base font-medium text-white">
                             Explain how these events parallel (no verse required):
                           </label>
                           <Textarea
                             value={pair.userAnswer}
                             onChange={(e) => handleAnswerChange(index, e.target.value)}
                             placeholder="Focus on the connections and patterns between these events..."
-                            className="min-h-[100px] bg-background/50"
+                            className="min-h-[120px] bg-slate-900/80 border-slate-600 text-white placeholder:text-slate-400"
                           />
                         </div>
                         <Button
