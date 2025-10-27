@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Video, Users, Plus } from "lucide-react";
+import { Video, Users, Plus, Trash2 } from "lucide-react";
 
 const LiveStudy = () => {
   const { user, loading } = useAuth();
@@ -38,8 +38,7 @@ const LiveStudy = () => {
   const fetchRooms = async () => {
     const { data: roomsData } = await supabase
       .from("study_rooms")
-      .select("*")
-      .eq("is_public", true);
+      .select("*");
     
     if (roomsData) {
       const roomsWithProfiles = await Promise.all(
@@ -87,6 +86,30 @@ const LiveStudy = () => {
       });
     } finally {
       setCreating(false);
+    }
+  };
+
+  const deleteRoom = async (roomId: string) => {
+    try {
+      const { error } = await supabase
+        .from("study_rooms")
+        .delete()
+        .eq("id", roomId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Room deleted",
+        description: "Study room has been removed.",
+      });
+
+      fetchRooms();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -147,7 +170,7 @@ const LiveStudy = () => {
                     Host: {room.profiles?.username || "Unknown"}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-2">
                   <Button
                     onClick={() => navigate(`/live-study/${room.id}`)}
                     className="w-full"
@@ -155,6 +178,16 @@ const LiveStudy = () => {
                     <Users className="mr-2 h-4 w-4" />
                     Join Room
                   </Button>
+                  {room.host_id === user?.id && (
+                    <Button
+                      onClick={() => deleteRoom(room.id)}
+                      variant="destructive"
+                      className="w-full"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete Room
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}
