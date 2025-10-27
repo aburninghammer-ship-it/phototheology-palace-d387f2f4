@@ -40,6 +40,7 @@ export const useDirectMessages = () => {
   const fetchConversations = useCallback(async () => {
     if (!user) return;
 
+    console.log('Fetching conversations for user:', user.id);
     try {
       const { data: convos, error } = await supabase
         .from('conversations')
@@ -53,6 +54,8 @@ export const useDirectMessages = () => {
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
+
+      console.log('Found conversations:', convos?.length || 0);
 
       // Fetch other user profiles and unread counts
       const conversationsWithData = await Promise.all(
@@ -301,15 +304,31 @@ export const useDirectMessages = () => {
           schema: 'public',
           table: 'messages'
         },
-        (payload) => {
+        async (payload) => {
           const newMessage = payload.new as Message;
+          console.log('New message received:', newMessage);
+          
+          // Check if this message is in a conversation we're part of
+          const { data: conversation } = await supabase
+            .from('conversations')
+            .select('*')
+            .eq('id', newMessage.conversation_id)
+            .single();
+          
+          const isParticipant = conversation && 
+            (conversation.participant1_id === user.id || conversation.participant2_id === user.id);
+          
+          if (!isParticipant) return;
+          
+          // If this is the active conversation, add the message
           if (newMessage.conversation_id === activeConversationId) {
             setMessages(prev => [...prev, { ...newMessage, read_by: [] }]);
           }
-          // Refresh conversations to update last message
-          fetchConversations();
           
-          // Show notification if from another user
+          // Always refresh conversations to update last message and ensure recipient sees it
+          await fetchConversations();
+          
+          // Show notification if from another user and not in active conversation
           if (newMessage.sender_id !== user.id && newMessage.conversation_id !== activeConversationId) {
             toast({
               title: 'New Message',
@@ -377,7 +396,9 @@ export const useDirectMessages = () => {
 
   // Load messages when conversation changes
   useEffect(() => {
+    console.log('Active conversation changed:', activeConversationId);
     if (activeConversationId) {
+      console.log('Fetching messages for conversation:', activeConversationId);
       fetchMessages(activeConversationId);
     } else {
       setMessages([]);
