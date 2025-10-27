@@ -192,17 +192,41 @@ export const Navigation = () => {
                    </DropdownMenuContent>
                  </DropdownMenu>
 
-            <Button
-              variant={location.pathname === "/community" ? "default" : "ghost"}
-              asChild
-              size="sm"
-              className={location.pathname === "/community" ? "gradient-palace shadow-purple text-xs" : "hover:bg-muted text-xs"}
-            >
-              <Link to="/community">
-                <Users className="mr-1 h-3 w-3" />
-                Community
-              </Link>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant={location.pathname === "/community" || location.pathname === "/achievements" || location.pathname === "/escape-room" || location.pathname === "/leaderboard" || location.pathname === "/study-partners" || location.pathname === "/live-study" || location.pathname === "/streaks" ? "default" : "ghost"}
+                  size="sm"
+                  className={location.pathname === "/community" || location.pathname === "/achievements" || location.pathname === "/escape-room" || location.pathname === "/leaderboard" || location.pathname === "/study-partners" || location.pathname === "/live-study" || location.pathname === "/streaks" ? "gradient-palace shadow-purple text-xs" : "hover:bg-muted text-xs"}
+                >
+                  <Users className="mr-1 h-3 w-3" />
+                  Community
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link to="/community">💬 Community Posts</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/achievements">🏆 Achievements</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/escape-room">🚪 Escape Rooms</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/leaderboard">📊 Leaderboard</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/study-partners">👥 Study Partners</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/live-study">📹 Live Study</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/streaks">🔥 Streaks</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
                 <DropdownMenu>
                    <DropdownMenuTrigger asChild>
