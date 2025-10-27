@@ -247,6 +247,26 @@ export const useDirectMessages = () => {
   useEffect(() => {
     if (!user) return;
 
+    // Subscribe to new conversations
+    const conversationsChannel = supabase
+      .channel('conversations-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'conversations'
+        },
+        (payload) => {
+          const conversation = payload.new as any;
+          // Check if current user is a participant
+          if (conversation.participant1_id === user.id || conversation.participant2_id === user.id) {
+            fetchConversations();
+          }
+        }
+      )
+      .subscribe();
+
     // Subscribe to new messages
     const messagesChannel = supabase
       .channel('messages-changes')
@@ -320,6 +340,7 @@ export const useDirectMessages = () => {
       .subscribe();
 
     return () => {
+      supabase.removeChannel(conversationsChannel);
       supabase.removeChannel(messagesChannel);
       supabase.removeChannel(typingChannel);
     };
