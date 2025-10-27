@@ -42,7 +42,7 @@ serve(async (req) => {
       );
     }
 
-    const { maxUses } = await req.json();
+    const { maxUses, accessDurationMonths } = await req.json();
 
     // Generate random code
     const code = 'PT-' + Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -56,6 +56,7 @@ serve(async (req) => {
         created_by: user.id,
         expires_at: expiresAt.toISOString(),
         max_uses: maxUses || null,
+        access_duration_months: accessDurationMonths || null,
       })
       .select()
       .single();

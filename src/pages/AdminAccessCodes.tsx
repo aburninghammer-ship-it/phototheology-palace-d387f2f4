@@ -11,11 +11,13 @@ import { Label } from "@/components/ui/label";
 export default function AdminAccessCodes() {
   const { toast } = useToast();
   const [maxUses, setMaxUses] = useState<string>("");
+  const [accessDurationMonths, setAccessDurationMonths] = useState<string>("3");
   const [loading, setLoading] = useState(false);
   const [generatedCode, setGeneratedCode] = useState<{
     code: string;
     link: string;
     expiresAt: string;
+    duration?: number;
   } | null>(null);
 
   const handleGenerate = async () => {
@@ -25,7 +27,10 @@ export default function AdminAccessCodes() {
       if (!session) throw new Error("Not authenticated");
 
       const response = await supabase.functions.invoke('generate-access-code', {
-        body: { maxUses: maxUses ? parseInt(maxUses) : null }
+        body: { 
+          maxUses: maxUses ? parseInt(maxUses) : null,
+          accessDurationMonths: accessDurationMonths ? parseInt(accessDurationMonths) : null
+        }
       });
 
       if (response.error) throw response.error;
@@ -34,7 +39,8 @@ export default function AdminAccessCodes() {
       setGeneratedCode({
         code: response.data.code,
         link: `${window.location.origin}/access?code=${response.data.code}`,
-        expiresAt: response.data.expiresAt
+        expiresAt: response.data.expiresAt,
+        duration: accessDurationMonths ? parseInt(accessDurationMonths) : undefined
       });
 
       toast({
@@ -72,10 +78,26 @@ export default function AdminAccessCodes() {
             </div>
             <CardTitle>Generate Access Code</CardTitle>
             <CardDescription>
-              Create a special 24-hour access link that grants lifetime premium access
+              Create a special 24-hour access link that grants premium access
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="accessDuration">Access Duration (Months)</Label>
+              <Input
+                id="accessDuration"
+                type="number"
+                placeholder="3"
+                value={accessDurationMonths}
+                onChange={(e) => setAccessDurationMonths(e.target.value)}
+                disabled={loading}
+                min="1"
+              />
+              <p className="text-sm text-muted-foreground">
+                Number of months of premium access. Leave blank for lifetime access.
+              </p>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="maxUses">Maximum Uses (optional)</Label>
               <Input
@@ -141,8 +163,11 @@ export default function AdminAccessCodes() {
                 <div className="text-sm text-muted-foreground">
                   <p>Expires: {new Date(generatedCode.expiresAt).toLocaleString()}</p>
                   <p className="mt-2">
-                    Share this link with users who should receive lifetime premium access. 
-                    The link will expire in 24 hours from now.
+                    {generatedCode.duration 
+                      ? `This code grants ${generatedCode.duration} months of premium access.`
+                      : "This code grants lifetime premium access."
+                    }
+                    {" "}The link will expire in 24 hours from generation.
                   </p>
                 </div>
               </div>

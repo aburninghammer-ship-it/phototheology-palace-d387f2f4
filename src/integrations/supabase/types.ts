@@ -1114,6 +1114,7 @@ export type Database = {
           onboarding_completed: boolean | null
           points: number | null
           preferred_features: string[] | null
+          promotional_access_expires_at: string | null
           referral_code: string | null
           stripe_customer_id: string | null
           student_expires_at: string | null
@@ -1148,6 +1149,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           points?: number | null
           preferred_features?: string[] | null
+          promotional_access_expires_at?: string | null
           referral_code?: string | null
           stripe_customer_id?: string | null
           student_expires_at?: string | null
@@ -1182,6 +1184,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           points?: number | null
           preferred_features?: string[] | null
+          promotional_access_expires_at?: string | null
           referral_code?: string | null
           stripe_customer_id?: string | null
           student_expires_at?: string | null
@@ -1419,6 +1422,7 @@ export type Database = {
       }
       special_access_codes: {
         Row: {
+          access_duration_months: number | null
           code: string
           created_at: string
           created_by: string | null
@@ -1429,6 +1433,7 @@ export type Database = {
           used_count: number
         }
         Insert: {
+          access_duration_months?: number | null
           code: string
           created_at?: string
           created_by?: string | null
@@ -1439,6 +1444,7 @@ export type Database = {
           used_count?: number
         }
         Update: {
+          access_duration_months?: number | null
           code?: string
           created_at?: string
           created_by?: string | null

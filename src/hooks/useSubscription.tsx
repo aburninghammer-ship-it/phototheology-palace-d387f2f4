@@ -8,6 +8,7 @@ interface SubscriptionStatus {
   isStudent: boolean;
   trialEndsAt: string | null;
   studentExpiresAt: string | null;
+  promotionalExpiresAt: string | null;
   hasAccess: boolean;
 }
 
@@ -19,6 +20,7 @@ export function useSubscription() {
     isStudent: false,
     trialEndsAt: null,
     studentExpiresAt: null,
+    promotionalExpiresAt: null,
     hasAccess: false,
   });
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,7 @@ export function useSubscription() {
     try {
       const { data: profile } = await supabase
         .from("profiles")
-        .select("subscription_status, subscription_tier, trial_ends_at, is_student, student_expires_at, has_lifetime_access")
+        .select("subscription_status, subscription_tier, trial_ends_at, is_student, student_expires_at, has_lifetime_access, promotional_access_expires_at")
         .eq("id", user!.id)
         .single();
 
@@ -43,6 +45,7 @@ export function useSubscription() {
         const now = new Date();
         const trialValid = profile.trial_ends_at && new Date(profile.trial_ends_at) > now;
         const studentValid = profile.is_student && profile.student_expires_at && new Date(profile.student_expires_at) > now;
+        const promotionalValid = profile.promotional_access_expires_at && new Date(profile.promotional_access_expires_at) > now;
         
         setSubscription({
           status: (profile.subscription_status as any) || 'none',
@@ -50,7 +53,8 @@ export function useSubscription() {
           isStudent: profile.is_student || false,
           trialEndsAt: profile.trial_ends_at,
           studentExpiresAt: profile.student_expires_at,
-          hasAccess: profile.has_lifetime_access || profile.subscription_status === 'active' || trialValid || studentValid,
+          promotionalExpiresAt: profile.promotional_access_expires_at,
+          hasAccess: profile.has_lifetime_access || profile.subscription_status === 'active' || trialValid || studentValid || promotionalValid,
         });
       }
     } catch (error) {
