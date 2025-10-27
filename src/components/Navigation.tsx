@@ -175,19 +175,20 @@ export const Navigation = () => {
                    </DropdownMenuTrigger>
                    <DropdownMenuContent>
                      <DropdownMenuItem asChild>
-                       <Link to="/blueprint-course">Blueprint Course</Link>
+                       <Link to="/blueprint-course">🗺️ Blueprint Course</Link>
                      </DropdownMenuItem>
                      <DropdownMenuItem asChild>
-                       <Link to="/daniel-course">Daniel Course</Link>
+                       <Link to="/daniel-course">📜 Daniel Course</Link>
                      </DropdownMenuItem>
                      <DropdownMenuItem asChild>
-                       <Link to="/phototheology-course">Phototheology Course</Link>
+                       <Link to="/phototheology-course">🏰 Phototheology Course</Link>
                      </DropdownMenuItem>
                      <DropdownMenuItem asChild>
-                       <Link to="/revelation-course">Revelation Course</Link>
+                       <Link to="/revelation-course">🔥 Revelation Course</Link>
                      </DropdownMenuItem>
-                     <DropdownMenuItem asChild>
-                       <Link to="/revelation-course/kids">📚 Revelation for Kids</Link>
+                     <DropdownMenuSeparator />
+                     <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                       All courses include kids versions (Ages 6-15)
                      </DropdownMenuItem>
                    </DropdownMenuContent>
                  </DropdownMenu>
