@@ -56,6 +56,7 @@ export const Navigation = () => {
                   className="relative"
                 >
                   <MessageCircle className="h-4 w-4" />
+                  <span className="ml-1 hidden sm:inline">Chat</span>
                   {totalUnread > 0 && (
                     <Badge 
                       variant="destructive" 
