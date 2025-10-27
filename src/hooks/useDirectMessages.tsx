@@ -84,12 +84,19 @@ export const useDirectMessages = () => {
           
           const readMessageIds = readStatus?.map(r => r.message_id) || [];
           
-          const { data: unreadMessages } = await supabase
+          // Build query for unread messages
+          let unreadQuery = supabase
             .from('messages')
             .select('id')
             .eq('conversation_id', convo.id)
-            .neq('sender_id', user.id)
-            .not('id', 'in', `(${readMessageIds.length > 0 ? readMessageIds.join(',') : 'null'})`);
+            .neq('sender_id', user.id);
+          
+          // Only add the NOT IN clause if there are read messages
+          if (readMessageIds.length > 0) {
+            unreadQuery = unreadQuery.not('id', 'in', `(${readMessageIds.join(',')})`);
+          }
+          
+          const { data: unreadMessages } = await unreadQuery;
 
           return {
             ...convo,
