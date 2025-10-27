@@ -20,6 +20,18 @@ const Games = () => {
 
   const allGames = [
     {
+      id: "story_room",
+      name: "Story Room Challenge",
+      description: "Arrange biblical stories in sequence. Master the Story Room by turning events into vivid mental movies!",
+      icon: "📚",
+      floor: 1,
+      timed: false,
+      rooms: ["SR"],
+      modes: ["solo"],
+      difficulties: ["easy", "medium", "hard"],
+      route: "/games/story-room"
+    },
+    {
       id: "palace_cards",
       name: "Memory Palace Builder",
       description: "Build a memory palace by placing verses in specific locations. Recall them in order!",
@@ -56,16 +68,16 @@ const Games = () => {
       route: "/games/verse-match"
     },
     {
-      id: "observation_drill",
+      id: "observation_room",
       name: "Observation Detective",
-      description: "Spot hidden details in Scripture passages. Train your investigative eye!",
+      description: "Spot hidden details in Scripture passages. Train your investigative eye like a detective!",
       icon: "🔍",
       floor: 2,
       timed: false,
-      rooms: ["OR", "DC"],
-      modes: ["solo", "vs-ai"],
-      difficulties: ["medium", "hard"],
-      route: "/training-drills"
+      rooms: ["OR"],
+      modes: ["solo"],
+      difficulties: ["easy", "medium", "hard"],
+      route: "/games/observation-room"
     },
     {
       id: "symbol_decoder",
@@ -90,6 +102,42 @@ const Games = () => {
       modes: ["solo"],
       difficulties: ["medium", "hard"],
       route: "/games/chef-challenge"
+    },
+    {
+      id: "concentration_room",
+      name: "Concentration Room: Find Christ",
+      description: "Every passage must reveal Christ. Use your magnifying glass to see Jesus in all Scripture!",
+      icon: "✝️",
+      floor: 4,
+      timed: false,
+      rooms: ["CR"],
+      modes: ["solo"],
+      difficulties: ["medium", "hard"],
+      route: "/games/concentration-room"
+    },
+    {
+      id: "dimensions_room",
+      name: "Five Dimensions Challenge",
+      description: "View verses like a diamond under five lights: Literal, Christ, Me, Church, Heaven!",
+      icon: "💎",
+      floor: 4,
+      timed: false,
+      rooms: ["DR"],
+      modes: ["solo"],
+      difficulties: ["medium", "hard"],
+      route: "/games/dimensions-room"
+    },
+    {
+      id: "blue_room",
+      name: "Sanctuary Blueprint Master",
+      description: "Match sanctuary articles to their gospel meanings. Master God's blueprint of salvation!",
+      icon: "⛪",
+      floor: 5,
+      timed: false,
+      rooms: ["BL"],
+      modes: ["solo"],
+      difficulties: ["easy", "medium", "hard"],
+      route: "/games/blue-room"
     },
     {
       id: "chain_war",

@@ -90,6 +90,11 @@ const EscapeTheDragon = lazy(() => import("./pages/games/EscapeTheDragon"));
 const EquationBuilder = lazy(() => import("./pages/games/EquationBuilder"));
 const WitnessTrial = lazy(() => import("./pages/games/WitnessTrial"));
 const FrameSnapshot = lazy(() => import("./pages/games/FrameSnapshot"));
+const StoryRoomGame = lazy(() => import("./pages/games/StoryRoomGame"));
+const ObservationGame = lazy(() => import("./pages/games/ObservationGame"));
+const ConcentrationRoom = lazy(() => import("./pages/games/ConcentrationRoom"));
+const DimensionsRoom = lazy(() => import("./pages/games/DimensionsRoom"));
+const BlueRoomGame = lazy(() => import("./pages/games/BlueRoomGame"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -157,6 +162,11 @@ function App() {
             <Route path="/games/equation-builder" element={<ProtectedRoute><EquationBuilder /></ProtectedRoute>} />
             <Route path="/games/witness-trial" element={<ProtectedRoute><WitnessTrial /></ProtectedRoute>} />
             <Route path="/games/frame-snapshot" element={<ProtectedRoute><FrameSnapshot /></ProtectedRoute>} />
+            <Route path="/games/story-room" element={<ProtectedRoute><StoryRoomGame /></ProtectedRoute>} />
+            <Route path="/games/observation-room" element={<ProtectedRoute><ObservationGame /></ProtectedRoute>} />
+            <Route path="/games/concentration-room" element={<ProtectedRoute><ConcentrationRoom /></ProtectedRoute>} />
+            <Route path="/games/dimensions-room" element={<ProtectedRoute><DimensionsRoom /></ProtectedRoute>} />
+            <Route path="/games/blue-room" element={<ProtectedRoute><BlueRoomGame /></ProtectedRoute>} />
             <Route path="/games/chain-chess/:gameId/:mode?" element={<ProtectedRoute><ChainChess /></ProtectedRoute>} />
             <Route path="/games/concentration" element={<ProtectedRoute><ConcentrationGame /></ProtectedRoute>} />
             <Route path="/games/palace-cards" element={<ProtectedRoute><PalaceCardGame /></ProtectedRoute>} />
