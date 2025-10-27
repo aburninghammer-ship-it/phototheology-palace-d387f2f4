@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from '@/components/ui/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 
 export interface Message {
   id: string;
@@ -333,6 +334,17 @@ export const useDirectMessages = () => {
             toast({
               title: 'New Message',
               description: 'You have a new message',
+              action: (
+                <ToastAction
+                  altText="View message"
+                  onClick={() => {
+                    console.log('Opening conversation from notification:', newMessage.conversation_id);
+                    setActiveConversationId(newMessage.conversation_id);
+                  }}
+                >
+                  View
+                </ToastAction>
+              )
             });
           }
         }

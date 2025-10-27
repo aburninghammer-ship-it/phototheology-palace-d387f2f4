@@ -17,7 +17,7 @@ import { MessageCircle, Users as UsersIcon, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 export const MessagingSidebar = () => {
-  const { state, toggleSidebar } = useSidebar();
+  const { state, toggleSidebar, open, setOpen } = useSidebar();
   const { user } = useAuth();
   const { activeUsers } = useActiveUsers();
   const {
@@ -38,6 +38,15 @@ export const MessagingSidebar = () => {
   const activeConversation = conversations.find(c => c.id === activeConversationId);
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread_count, 0);
   const isCollapsed = state === 'collapsed';
+
+  // Auto-expand sidebar when a conversation is set (e.g., from notification)
+  useEffect(() => {
+    if (activeConversationId && isCollapsed) {
+      console.log('Auto-expanding sidebar due to active conversation');
+      setOpen?.(true);
+      setActiveTab('conversations');
+    }
+  }, [activeConversationId, isCollapsed, setOpen]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
