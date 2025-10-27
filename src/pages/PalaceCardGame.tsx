@@ -11,22 +11,45 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface EventCard {
   id: string;
-  eventTitle: string;
-  eventStory: string;
-  eventReference: string;
+  questionEvent: {
+    title: string;
+    story: string;
+    reference: string;
+  };
+  correctAnswer: {
+    title: string;
+    story: string;
+    reference: string;
+  };
+  distractorAnswers: Array<{
+    title: string;
+    story: string;
+    reference: string;
+  }>;
+  parallelKey: string;
   pairId: string;
   isFlipped: boolean;
   isMatched: boolean;
+  selectedAnswer: number | null;
   color: string;
 }
 
 interface MatchedPair {
-  card1: EventCard;
-  card2: EventCard;
+  card1: {
+    eventTitle: string;
+    eventStory: string;
+    eventReference: string;
+  };
+  card2: {
+    eventTitle: string;
+    eventStory: string;
+    eventReference: string;
+  };
   parallelKey: string;
   userAnswer: string;
   isValidated: boolean;
   isValidating: boolean;
+  color: string;
 }
 
 const PARALLEL_PAIRS = [
@@ -128,34 +151,41 @@ export default function PalaceCardGame() {
   const initializeGame = () => {
     const shuffled = [...PARALLEL_PAIRS].sort(() => Math.random() - 0.5);
     const selectedPairs = shuffled.slice(0, totalPairs);
+    const allPairs = [...PARALLEL_PAIRS];
     
-    const cards: EventCard[] = [];
-    selectedPairs.forEach((pair, index) => {
-      const pairId = `pair-${index}`;
-      cards.push({
-        id: `${pairId}-event1`,
-        eventTitle: pair.event1Title,
-        eventStory: pair.event1Story,
-        eventReference: pair.event1Reference,
-        pairId,
+    const cards: EventCard[] = selectedPairs.map((pair, index) => {
+      // Get 3 random distractors from other pairs
+      const otherPairs = allPairs.filter(p => p !== pair);
+      const shuffledOthers = otherPairs.sort(() => Math.random() - 0.5);
+      const distractors = shuffledOthers.slice(0, 3).map(p => ({
+        title: p.event2Title,
+        story: p.event2Story,
+        reference: p.event2Reference,
+      }));
+
+      return {
+        id: `card-${index}`,
+        questionEvent: {
+          title: pair.event1Title,
+          story: pair.event1Story,
+          reference: pair.event1Reference,
+        },
+        correctAnswer: {
+          title: pair.event2Title,
+          story: pair.event2Story,
+          reference: pair.event2Reference,
+        },
+        distractorAnswers: distractors,
+        parallelKey: pair.parallelKey,
+        pairId: `pair-${index}`,
         isFlipped: false,
         isMatched: false,
+        selectedAnswer: null,
         color: pair.color,
-      });
-      cards.push({
-        id: `${pairId}-event2`,
-        eventTitle: pair.event2Title,
-        eventStory: pair.event2Story,
-        eventReference: pair.event2Reference,
-        pairId,
-        isFlipped: false,
-        isMatched: false,
-        color: pair.color,
-      });
+      };
     });
     
-    const shuffledCards = cards.sort(() => Math.random() - 0.5);
-    setEventCards(shuffledCards);
+    setEventCards(cards);
     setSelectedCards([]);
     setMatchedPairs([]);
     setGameWon(false);
@@ -163,66 +193,57 @@ export default function PalaceCardGame() {
 
   const handleCardClick = (cardId: string) => {
     const card = eventCards.find(c => c.id === cardId);
-    if (!card || card.isMatched) return;
-
-    if (card.isFlipped) {
-      setSelectedCards(prev => prev.filter(c => c.id !== cardId));
-      setEventCards(prev =>
-        prev.map(c => c.id === cardId ? { ...c, isFlipped: false } : c)
-      );
-      return;
-    }
+    if (!card || card.isMatched || card.isFlipped) return;
 
     setEventCards(prev =>
       prev.map(c => c.id === cardId ? { ...c, isFlipped: true } : c)
     );
+  };
 
-    const newSelection = [...selectedCards, card];
-    setSelectedCards(newSelection);
+  const handleAnswerSelect = (cardId: string, answerIndex: number) => {
+    const card = eventCards.find(c => c.id === cardId);
+    if (!card) return;
 
-    if (newSelection.length === 2) {
-      const [card1, card2] = newSelection;
+    setEventCards(prev =>
+      prev.map(c => c.id === cardId ? { ...c, selectedAnswer: answerIndex } : c)
+    );
+
+    // Check if correct (index 0 is always correct after shuffle)
+    const allAnswers = [card.correctAnswer, ...card.distractorAnswers];
+    const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
+    const correctIndex = shuffledAnswers.findIndex(a => a.title === card.correctAnswer.title);
+
+    if (answerIndex === correctIndex) {
+      toast.success("Correct! Now explain the parallel connection.");
       
-      if (card1.pairId === card2.pairId) {
-        const pair = PARALLEL_PAIRS.find(p => 
-          (p.event1Title === card1.eventTitle || p.event2Title === card1.eventTitle) &&
-          (p.event1Title === card2.eventTitle || p.event2Title === card2.eventTitle)
+      setMatchedPairs(prev => [...prev, {
+        card1: { 
+          eventTitle: card.questionEvent.title,
+          eventStory: card.questionEvent.story,
+          eventReference: card.questionEvent.reference,
+        },
+        card2: {
+          eventTitle: card.correctAnswer.title,
+          eventStory: card.correctAnswer.story,
+          eventReference: card.correctAnswer.reference,
+        },
+        parallelKey: card.parallelKey,
+        userAnswer: "",
+        isValidated: false,
+        isValidating: false,
+        color: card.color,
+      }]);
+
+      setEventCards(prev =>
+        prev.map(c => c.id === cardId ? { ...c, isMatched: true } : c)
+      );
+    } else {
+      toast.error("Not the right parallel. Try again!");
+      setTimeout(() => {
+        setEventCards(prev =>
+          prev.map(c => c.id === cardId ? { ...c, isFlipped: false, selectedAnswer: null } : c)
         );
-        
-        if (pair) {
-          setMatchedPairs(prev => [...prev, {
-            card1,
-            card2,
-            parallelKey: pair.parallelKey,
-            userAnswer: "",
-            isValidated: false,
-            isValidating: false,
-          }]);
-          
-          setEventCards(prev =>
-            prev.map(c => 
-              c.id === card1.id || c.id === card2.id 
-                ? { ...c, isMatched: true } 
-                : c
-            )
-          );
-          
-          toast.success("Match found! Now explain the parallel.");
-        }
-      } else {
-        toast.error("Not a match. Keep looking!");
-        setTimeout(() => {
-          setEventCards(prev =>
-            prev.map(c => 
-              c.id === card1.id || c.id === card2.id 
-                ? { ...c, isFlipped: false } 
-                : c
-            )
-          );
-        }, 1500);
-      }
-      
-      setSelectedCards([]);
+      }, 1500);
     }
   };
 
@@ -355,30 +376,58 @@ export default function PalaceCardGame() {
               Find the Matching Parallels ({unmatched.length} cards)
             </h2>
             <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto mb-12">
-              {unmatched.map((card) => (
-                <Card
-                  key={card.id}
-                  className={`overflow-hidden transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl bg-slate-800/50 backdrop-blur border-slate-700 ${
-                    card.isFlipped ? 'ring-2 ring-blue-500' : ''
-                  } ${selectedCards.some(c => c.id === card.id) ? 'ring-2 ring-yellow-500' : ''}`}
-                  onClick={() => handleCardClick(card.id)}
-                >
-                  {!card.isFlipped ? (
-                    <CardContent className="p-8 h-64 flex items-center justify-center">
-                      <div className={`text-center p-6 rounded-xl bg-gradient-to-br ${card.color} w-full`}>
-                        <div className="text-6xl mb-3">📜</div>
-                        <p className="text-base text-white font-semibold">Click to reveal</p>
-                      </div>
-                    </CardContent>
-                  ) : (
-                    <CardContent className="p-6 h-64 overflow-y-auto">
-                      <h3 className="font-bold text-lg mb-3 text-white">{card.eventTitle}</h3>
-                      <p className="text-sm text-slate-300 mb-3 leading-relaxed">{card.eventStory}</p>
-                      <p className="text-sm italic text-blue-400 font-medium">{card.eventReference}</p>
-                    </CardContent>
-                  )}
-                </Card>
-              ))}
+              {unmatched.map((card) => {
+                const allAnswers = [card.correctAnswer, ...card.distractorAnswers];
+                const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
+                
+                return (
+                  <Card
+                    key={card.id}
+                    className={`overflow-hidden transition-all duration-300 bg-slate-800/50 backdrop-blur border-slate-700 ${
+                      card.isFlipped ? 'ring-2 ring-blue-500' : 'cursor-pointer hover:scale-105 hover:shadow-2xl'
+                    }`}
+                    onClick={() => !card.isFlipped && handleCardClick(card.id)}
+                  >
+                    {!card.isFlipped ? (
+                      <CardContent className="p-8 h-96 flex items-center justify-center">
+                        <div className={`text-center p-6 rounded-xl bg-gradient-to-br ${card.color} w-full`}>
+                          <div className="text-6xl mb-3">📜</div>
+                          <p className="text-base text-white font-semibold">Click to reveal</p>
+                        </div>
+                      </CardContent>
+                    ) : (
+                      <CardContent className="p-6 h-96 overflow-y-auto">
+                        <h3 className="font-bold text-lg mb-3 text-white">{card.questionEvent.title}</h3>
+                        <p className="text-sm text-slate-300 mb-3 leading-relaxed">{card.questionEvent.story}</p>
+                        <p className="text-xs italic text-blue-400 font-medium mb-4">{card.questionEvent.reference}</p>
+                        
+                        <div className="border-t border-slate-600 pt-4 mt-4">
+                          <p className="text-sm font-semibold text-white mb-3">Select the parallel event:</p>
+                          <div className="space-y-2">
+                            {shuffledAnswers.map((answer, idx) => (
+                              <button
+                                key={idx}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAnswerSelect(card.id, idx);
+                                }}
+                                disabled={card.selectedAnswer !== null}
+                                className={`w-full text-left p-3 rounded-lg transition-all text-sm ${
+                                  card.selectedAnswer === idx
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-slate-700/50 text-slate-200 hover:bg-slate-700'
+                                } disabled:cursor-not-allowed`}
+                              >
+                                <span className="font-semibold">{String.fromCharCode(65 + idx)}.</span> {answer.title}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    )}
+                  </Card>
+                );
+              })}
             </div>
           </>
         )}
@@ -394,7 +443,7 @@ export default function PalaceCardGame() {
                   key={`pair-${index}`}
                   className={`overflow-hidden bg-slate-800/70 backdrop-blur border-slate-700 ${pair.isValidated ? 'ring-2 ring-green-500' : ''}`}
                 >
-                  <div className={`h-3 bg-gradient-to-r ${pair.card1.color}`} />
+                  <div className={`h-3 bg-gradient-to-r ${pair.color}`} />
                   <CardContent className="p-8 space-y-5">
                     <div className="bg-slate-900/60 rounded-lg p-5 border-l-4 border-blue-500">
                       <h3 className="font-bold text-lg mb-2 text-white">{pair.card1.eventTitle}</h3>
