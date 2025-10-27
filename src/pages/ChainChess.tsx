@@ -38,6 +38,8 @@ const ChainChess = () => {
   const [commentary, setCommentary] = useState("");
   const [challengeCategory, setChallengeCategory] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategoryBase, setSelectedCategoryBase] = useState<string>("");
+  const [specificChallenge, setSpecificChallenge] = useState<string>("");
   const [isMyTurn, setIsMyTurn] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [userScore, setUserScore] = useState(0);
@@ -454,6 +456,15 @@ const ChainChess = () => {
       return;
     }
 
+    if (!selectedCategory.includes(" - ")) {
+      toast({
+        title: "Incomplete challenge",
+        description: "Please specify the exact book, room, or principle for your challenge",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setProcessing(true);
     try {
       // Get Jeeves feedback and score
@@ -488,9 +499,12 @@ const ChainChess = () => {
         move_data: move,
       });
 
+      // Clear form
       setCommentary("");
       setUserVerse("");
       setSelectedCategory("");
+      setSelectedCategoryBase("");
+      setSpecificChallenge("");
       setIsMyTurn(false);
 
       // Update game state
@@ -502,9 +516,18 @@ const ChainChess = () => {
         })
         .eq("id", gameId);
 
+      toast({
+        title: "Response submitted!",
+        description: `Scored ${feedback.score}/10 - Jeeves is thinking...`,
+      });
+
+      // Wait a bit and reload moves to show user's move
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await loadMoves();
+
       // Jeeves responds
       if (isVsJeeves) {
-        setTimeout(() => jeevesMove(gameId!), 2000);
+        setTimeout(() => jeevesMove(gameId!), 1500);
       }
     } catch (error: any) {
       toast({
@@ -512,6 +535,7 @@ const ChainChess = () => {
         description: error.message,
         variant: "destructive",
       });
+      setIsMyTurn(true); // Re-enable form on error
     } finally {
       setProcessing(false);
     }
@@ -893,23 +917,59 @@ const ChainChess = () => {
                         </div>
                       </div>
 
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <label className="text-sm font-medium">Challenge Jeeves with:</label>
+                        
+                        {/* Step 1: Select Category */}
                         <div className="flex flex-wrap gap-2">
                           {selectedGameCategories.map((cat) => (
                             <Button
                               key={cat}
-                              variant={selectedCategory === cat ? "default" : "outline"}
-                              onClick={() => setSelectedCategory(cat)}
+                              variant={selectedCategoryBase === cat ? "default" : "outline"}
+                              onClick={() => {
+                                setSelectedCategoryBase(cat);
+                                setSpecificChallenge("");
+                                setSelectedCategory("");
+                              }}
                               size="sm"
                             >
                               {cat}
                             </Button>
                           ))}
                         </div>
+
+                        {/* Step 2: Enter Specific Challenge */}
+                        {selectedCategoryBase && (
+                          <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
+                            <label className="text-xs font-medium text-muted-foreground">
+                              {selectedCategoryBase === "Books of the Bible" && "Which book? (e.g., Romans, Daniel, Psalms)"}
+                              {selectedCategoryBase === "Rooms of the Palace" && "Which room? (e.g., Story Room, Gems Room, Fire Room)"}
+                              {selectedCategoryBase === "Principles of the Palace" && "Which principle? (e.g., 2D/3D, Time Zones, Repeat & Enlarge)"}
+                            </label>
+                            <input
+                              type="text"
+                              placeholder={
+                                selectedCategoryBase === "Books of the Bible" ? "e.g., Romans" :
+                                selectedCategoryBase === "Rooms of the Palace" ? "e.g., Story Room" :
+                                "e.g., 2D/3D"
+                              }
+                              value={specificChallenge}
+                              onChange={(e) => {
+                                setSpecificChallenge(e.target.value);
+                                setSelectedCategory(`${selectedCategoryBase} - ${e.target.value}`);
+                              }}
+                              className="w-full px-3 py-2 border rounded-md bg-background text-sm"
+                            />
+                            {specificChallenge && (
+                              <p className="text-xs text-primary">
+                                ✓ Challenge set: {selectedCategoryBase} - {specificChallenge}
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </div>
 
-                      <Button onClick={submitMove} className="w-full" disabled={!commentary.trim() || !selectedCategory || !userVerse.trim()}>
+                      <Button onClick={submitMove} className="w-full" disabled={!commentary.trim() || !selectedCategory.includes(" - ") || !userVerse.trim()}>
                         Submit Response
                       </Button>
 
