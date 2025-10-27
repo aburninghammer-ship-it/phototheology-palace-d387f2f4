@@ -275,6 +275,8 @@ export const useDirectMessages = () => {
   useEffect(() => {
     if (!user) return;
 
+    console.log('Setting up realtime subscriptions for user:', user.id);
+
     // Subscribe to new conversations
     const conversationsChannel = supabase
       .channel('conversations-changes')
@@ -286,6 +288,7 @@ export const useDirectMessages = () => {
           table: 'conversations'
         },
         (payload) => {
+          console.log('Conversation change detected:', payload);
           const conversation = payload.new as any;
           // Check if current user is a participant
           if (conversation.participant1_id === user.id || conversation.participant2_id === user.id) {
@@ -331,6 +334,9 @@ export const useDirectMessages = () => {
           
           // Show notification if from another user and not in active conversation
           if (newMessage.sender_id !== user.id && newMessage.conversation_id !== activeConversationId) {
+            const convId = newMessage.conversation_id;
+            console.log('Showing notification for message from:', newMessage.sender_id, 'in conversation:', convId);
+            
             toast({
               title: 'New Message',
               description: 'You have a new message',
@@ -338,8 +344,13 @@ export const useDirectMessages = () => {
                 <ToastAction
                   altText="View message"
                   onClick={() => {
-                    console.log('Opening conversation from notification:', newMessage.conversation_id);
-                    setActiveConversationId(newMessage.conversation_id);
+                    console.log('Notification clicked - opening conversation:', convId);
+                    // Use a fresh reference to ensure state update works
+                    setActiveConversationId(convId);
+                    // Force sidebar expansion via window event
+                    window.dispatchEvent(new CustomEvent('open-chat-sidebar', { 
+                      detail: { conversationId: convId } 
+                    }));
                   }}
                 >
                   View
@@ -408,11 +419,12 @@ export const useDirectMessages = () => {
 
   // Load messages when conversation changes
   useEffect(() => {
-    console.log('Active conversation changed:', activeConversationId);
+    console.log('Active conversation ID state changed to:', activeConversationId);
     if (activeConversationId) {
-      console.log('Fetching messages for conversation:', activeConversationId);
+      console.log('Loading messages for conversation:', activeConversationId);
       fetchMessages(activeConversationId);
     } else {
+      console.log('No active conversation, clearing messages');
       setMessages([]);
     }
   }, [activeConversationId, fetchMessages]);

@@ -42,11 +42,26 @@ export const MessagingSidebar = () => {
   // Auto-expand sidebar when a conversation is set (e.g., from notification)
   useEffect(() => {
     if (activeConversationId && isCollapsed) {
-      console.log('Auto-expanding sidebar due to active conversation');
+      console.log('Auto-expanding sidebar due to active conversation:', activeConversationId);
       setOpen?.(true);
       setActiveTab('conversations');
     }
   }, [activeConversationId, isCollapsed, setOpen]);
+
+  // Listen for window event to force sidebar open (for deep-linked notifications)
+  useEffect(() => {
+    const handleOpenChat = (e: CustomEvent) => {
+      console.log('Open chat sidebar event received:', e.detail);
+      if (e.detail?.conversationId) {
+        setActiveConversationId(e.detail.conversationId);
+        toggleSidebar();
+        setActiveTab('conversations');
+      }
+    };
+    
+    window.addEventListener('open-chat-sidebar' as any, handleOpenChat);
+    return () => window.removeEventListener('open-chat-sidebar' as any, handleOpenChat);
+  }, [setActiveConversationId, toggleSidebar]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
