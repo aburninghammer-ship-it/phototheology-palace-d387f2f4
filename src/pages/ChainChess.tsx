@@ -525,9 +525,15 @@ const ChainChess = () => {
       await new Promise(resolve => setTimeout(resolve, 500));
       await loadMoves();
 
-      // Jeeves responds
+      // Jeeves responds after loading user's move
       if (isVsJeeves) {
-        setTimeout(() => jeevesMove(gameId!), 1500);
+        console.log("=== Triggering Jeeves Response ===");
+        console.log("Game ID:", gameId);
+        console.log("User's challenge:", selectedCategory);
+        setTimeout(async () => {
+          console.log("=== Jeeves Move Triggered ===");
+          await jeevesMove(gameId!, false);
+        }, 1500);
       }
     } catch (error: any) {
       toast({

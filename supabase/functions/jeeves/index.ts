@@ -570,20 +570,40 @@ Return ONLY valid JSON with:
       } else {
         const lastMove = previousMoves[previousMoves.length - 1];
         const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");
+        
+        // Handle generic challenges by making them specific
+        let specificChallenge = lastMove.challengeCategory || "Books of the Bible";
+        if (!specificChallenge.includes(" - ")) {
+          // User gave a generic challenge - make it specific
+          if (specificChallenge.includes("Books of the Bible")) {
+            const books = ["Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings", "Isaiah", "Jeremiah", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "Revelation"];
+            const randomBook = books[Math.floor(Math.random() * books.length)];
+            specificChallenge = `Books of the Bible - ${randomBook}`;
+          } else if (specificChallenge.includes("Rooms of the Palace")) {
+            const rooms = ["Story Room", "Observation Room", "Gems Room", "Concentration Room", "Sanctuary (Blue Room)", "Theme Room", "Patterns Room"];
+            const randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
+            specificChallenge = `Rooms of the Palace - ${randomRoom}`;
+          } else if (specificChallenge.includes("Principles")) {
+            const principles = ["2D/3D", "Time Zones", "Repeat & Enlarge", "Heaven Ceiling", "Gospel Floor"];
+            const randomPrinciple = principles[Math.floor(Math.random() * principles.length)];
+            specificChallenge = `Principles of the Palace - ${randomPrinciple}`;
+          }
+        }
+        
         userPrompt = `Continue Chain Chess on ${verse}.
 
 Player's previous move:
 Verse: "${lastMove.verse}"
 Commentary: "${lastMove.commentary}"
-Their challenge: "${lastMove.challengeCategory}"
+Their challenge: "${specificChallenge}"
 
 Available categories: ${categoriesText}
 
 **YOUR TASK:**
-1. Present your verse reference that relates to their challenge "${lastMove.challengeCategory}"
-2. Build on what they said with 3-4 fresh sentences of insight
+1. Find a verse that relates to their challenge "${specificChallenge}"
+2. Give 3-4 sentences of insightful commentary connecting your verse to the challenge
 3. Show excitement about the connection you're making
-4. Challenge them with a SPECIFIC challenge using this format:
+4. Challenge them back with a SPECIFIC challenge using this format:
    - "Books of the Bible - [BOOK NAME]" (e.g., "Books of the Bible - Psalms", "Books of the Bible - Daniel")
    - "Rooms of the Palace - [ROOM NAME]" (e.g., "Rooms of the Palace - Feasts Room", "Rooms of the Palace - Gems Room")
    - "Principles of the Palace - [PRINCIPLE]" (e.g., "Principles of the Palace - 2D", "Principles of the Palace - Repeat & Enlarge")
