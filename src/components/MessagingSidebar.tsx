@@ -265,7 +265,7 @@ export const MessagingSidebar = () => {
                 size="icon"
                 onClick={() => {
                   setActiveConversationId(null);
-                  setView('list');
+                  setView('users');
                 }}
                 className="h-7 w-7"
               >
@@ -289,15 +289,6 @@ export const MessagingSidebar = () => {
                   </p>
                 )}
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setView('users')}
-                className="h-7 w-7"
-                title="Browse active users"
-              >
-                <UsersIcon className="h-4 w-4" />
-              </Button>
               <Button
                 variant="ghost"
                 size="icon"
