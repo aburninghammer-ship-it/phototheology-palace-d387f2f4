@@ -4,152 +4,111 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { 
-  ArrowLeft, Trophy, RotateCcw, Eye, Search, Zap, 
-  Layers, Telescope, Globe, Flame, Crown, Book,
-  Lightbulb, Target, Sparkles, Mountain, Compass, Send, CheckCircle
+  ArrowLeft, Trophy, RotateCcw, Send, CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
-import { palaceFloors } from "@/data/palaceData";
 import { supabase } from "@/integrations/supabase/client";
-
-// Room icon mapping
-const ROOM_ICONS: Record<string, any> = {
-  'SR': Book,
-  'IR': Eye,
-  '24F': Layers,
-  'BR': Mountain,
-  'TR': Lightbulb,
-  'GR': Sparkles,
-  'OR': Search,
-  'DC': Book,
-  'ST': Target,
-  'QR': Search,
-  'QA': Compass,
-  'NF': Mountain,
-  'PF': Eye,
-  'BF': Book,
-  'HF': Globe,
-  'LR': Eye,
-  'CR': Crown,
-  'DR': Layers,
-  'C6': Book,
-  'TRm': Target,
-  'TZ': Globe,
-  'PRm': Layers,
-  'P‖': Compass,
-  'FRt': Sparkles,
-  'BL': Crown,
-  'PR': Telescope,
-  '3A': Flame,
-  'JR': Zap,
-  'FRm': Flame,
-  'MR': Eye,
-  'SRm': Zap,
-};
 
 interface GameCard {
   id: string;
-  floorNumber: number;
-  floorName: string;
-  roomTag: string;
-  roomName: string;
-  roomPurpose: string;
+  event1Title: string;
+  event1Story: string;
+  event1Reference: string;
+  event2Title: string;
+  event2Story: string;
+  event2Reference: string;
+  parallelKey: string;
   color: string;
-  tagline: string;
-  verse: string;
-  verseReference: string;
   isFlipped: boolean;
   isCompleted: boolean;
   userAnswer: string;
   isValidating: boolean;
 }
 
-// Sample Bible verses for practice
-const PRACTICE_VERSES = [
-  { text: "I beseech you therefore, brethren, by the mercies of God, that ye present your bodies a living sacrifice, holy, acceptable unto God, which is your reasonable service.", ref: "Romans 12:1" },
-  { text: "And we know that all things work together for good to them that love God, to them who are the called according to his purpose.", ref: "Romans 8:28" },
-  { text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.", ref: "John 3:16" },
-  { text: "Trust in the LORD with all thine heart; and lean not unto thine own understanding.", ref: "Proverbs 3:5" },
-  { text: "The LORD is my shepherd; I shall not want. He maketh me to lie down in green pastures: he leadeth me beside the still waters.", ref: "Psalm 23:1-2" },
-  { text: "I can do all things through Christ which strengtheneth me.", ref: "Philippians 4:13" },
-  { text: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles.", ref: "Isaiah 40:31" },
-  { text: "For by grace are ye saved through faith; and that not of yourselves: it is the gift of God.", ref: "Ephesians 2:8" },
+// Biblical parallels for the game
+const PARALLEL_PAIRS = [
+  {
+    event1Title: "Elijah's Mantle Transfer",
+    event1Story: "Elijah struck the waters of Jordan with his mantle, and they parted. After crossing, he was taken up to heaven, and his mantle fell to Elisha, who struck the Jordan again and the waters parted.",
+    event1Reference: "2 Kings 2:8-14",
+    event2Title: "Jesus' Baptism",
+    event2Story: "Jesus came to the Jordan to be baptized by John. When He came up from the water, the Spirit descended upon Him like a dove, and a voice from heaven declared Him God's Son.",
+    event2Reference: "Matthew 3:13-17",
+    parallelKey: "Transfer of power and anointing at the Jordan River; the passing of authority from one to another with divine confirmation",
+    color: "from-blue-600 via-cyan-700 to-blue-800"
+  },
+  {
+    event1Title: "Moses Lifted Up the Serpent",
+    event1Story: "When fiery serpents bit the Israelites in the wilderness, Moses made a bronze serpent and lifted it up on a pole. Whoever looked at it lived.",
+    event1Reference: "Numbers 21:8-9",
+    event2Title: "Jesus Lifted Up on the Cross",
+    event2Story: "Jesus told Nicodemus that as Moses lifted up the serpent in the wilderness, so must the Son of Man be lifted up, that whoever believes in Him should have eternal life.",
+    event2Reference: "John 3:14-15",
+    parallelKey: "Both involve being lifted up as the means of salvation from death; looking/believing brings life",
+    color: "from-purple-600 via-violet-700 to-purple-800"
+  },
+  {
+    event1Title: "Jonah in the Fish",
+    event1Story: "Jonah was swallowed by a great fish and remained in its belly three days and three nights before being vomited out alive onto dry land.",
+    event1Reference: "Jonah 1:17, 2:10",
+    event2Title: "Jesus' Resurrection",
+    event2Story: "Jesus said the only sign He would give was the sign of Jonah: as Jonah was three days and nights in the belly of the fish, so would the Son of Man be three days and nights in the heart of the earth.",
+    event2Reference: "Matthew 12:39-40",
+    parallelKey: "Three days in darkness/death followed by miraculous emergence to life; both are signs pointing to God's deliverance",
+    color: "from-emerald-600 via-green-700 to-emerald-800"
+  },
+  {
+    event1Title: "Passover Lamb",
+    event1Story: "In Egypt, each household took a lamb without blemish, killed it at twilight, and put its blood on the doorposts. The destroyer passed over those houses, sparing the firstborn inside.",
+    event1Reference: "Exodus 12:3-13",
+    event2Title: "Christ Our Passover",
+    event2Story: "John the Baptist declared Jesus 'the Lamb of God who takes away the sin of the world.' Paul wrote, 'Christ our Passover is sacrificed for us.'",
+    event2Reference: "John 1:29; 1 Cor 5:7",
+    parallelKey: "An unblemished lamb's blood provides protection from death; sacrifice at appointed time brings deliverance",
+    color: "from-red-600 via-rose-700 to-red-800"
+  },
+  {
+    event1Title: "Isaac on Mount Moriah",
+    event1Story: "Abraham took his only son Isaac to Mount Moriah to offer him as a sacrifice. Isaac carried the wood for the burnt offering up the mountain.",
+    event1Reference: "Genesis 22:1-10",
+    event2Title: "Jesus on Calvary",
+    event2Story: "God gave His only begotten Son. Jesus carried His cross to Golgotha, where He was offered as a sacrifice for the sins of the world.",
+    event2Reference: "John 3:16; 19:17",
+    parallelKey: "A father offering his only beloved son on a mountain; the son carries the instrument of sacrifice; substitutionary provision",
+    color: "from-amber-600 via-yellow-700 to-amber-800"
+  },
+  {
+    event1Title: "Manna from Heaven",
+    event1Story: "God provided bread from heaven each morning for Israel in the wilderness. The people gathered it daily, and it sustained them for forty years.",
+    event1Reference: "Exodus 16:4-35",
+    event2Title: "Jesus the Bread of Life",
+    event2Story: "Jesus declared, 'I am the bread of life. Your fathers ate manna in the wilderness and died, but I am the living bread that came down from heaven. Whoever eats this bread will live forever.'",
+    event2Reference: "John 6:48-51",
+    parallelKey: "Both are bread from heaven that sustains life; daily dependence required; points to eternal life through Christ",
+    color: "from-orange-600 via-amber-700 to-orange-800"
+  },
+  {
+    event1Title: "David Defeats Goliath",
+    event1Story: "Young David, armed only with a sling and stones, defeated the giant Goliath who defied the armies of Israel. He struck him in the forehead and cut off his head with the giant's own sword.",
+    event1Reference: "1 Samuel 17:41-51",
+    event2Title: "Jesus Defeats Satan",
+    event2Story: "Jesus, though tempted in the wilderness, defeated Satan with the Word of God. Through His death and resurrection, He crushed the serpent's head and triumphed over principalities and powers.",
+    event2Reference: "Matthew 4:1-11; Col 2:15",
+    parallelKey: "Unlikely champion defeats seemingly invincible enemy; victory secures deliverance for God's people; enemy's weapon turned against him",
+    color: "from-indigo-600 via-blue-700 to-indigo-800"
+  },
+  {
+    event1Title: "Tower of Babel Scattered",
+    event1Story: "At Babel, God confused the languages of mankind, and they were scattered across the earth, unable to understand one another.",
+    event1Reference: "Genesis 11:1-9",
+    event2Title: "Pentecost Gathered",
+    event2Story: "At Pentecost, the Holy Spirit came upon the disciples, and they spoke in various languages. People from every nation heard the gospel in their own tongue and were united in Christ.",
+    event2Reference: "Acts 2:1-11",
+    parallelKey: "Division of languages reversed; scattering becomes gathering; human pride judged vs. divine grace uniting; Babel divided, Pentecost united",
+    color: "from-pink-600 via-rose-700 to-pink-800"
+  }
 ];
 
-const FLOOR_COLORS = [
-  { 
-    floor: 1, 
-    color: "from-rose-600 via-red-700 to-rose-800", 
-    border: "border-rose-400",
-    glow: "shadow-rose-500/50",
-    tagline: "MEMORY & VISUALIZATION",
-    symbol: "🏛️",
-    bgPattern: "radial-gradient(circle at 20% 80%, rgba(255,0,100,0.15) 0%, transparent 50%)"
-  },
-  { 
-    floor: 2, 
-    color: "from-blue-600 via-indigo-700 to-blue-800", 
-    border: "border-blue-400",
-    glow: "shadow-blue-500/50",
-    tagline: "DETECTIVE INVESTIGATION",
-    symbol: "🔍",
-    bgPattern: "radial-gradient(circle at 80% 20%, rgba(0,100,255,0.15) 0%, transparent 50%)"
-  },
-  { 
-    floor: 3, 
-    color: "from-emerald-600 via-green-700 to-emerald-800", 
-    border: "border-emerald-400",
-    glow: "shadow-emerald-500/50",
-    tagline: "FREESTYLE CONNECTIONS",
-    symbol: "🎭",
-    bgPattern: "radial-gradient(circle at 50% 50%, rgba(0,255,100,0.15) 0%, transparent 50%)"
-  },
-  { 
-    floor: 4, 
-    color: "from-amber-600 via-yellow-700 to-amber-800", 
-    border: "border-amber-400",
-    glow: "shadow-amber-500/50",
-    tagline: "CHRIST-CENTERED DEPTH",
-    symbol: "✝️",
-    bgPattern: "radial-gradient(circle at 30% 70%, rgba(255,200,0,0.15) 0%, transparent 50%)"
-  },
-  { 
-    floor: 5, 
-    color: "from-purple-600 via-violet-700 to-purple-800", 
-    border: "border-purple-400",
-    glow: "shadow-purple-500/50",
-    tagline: "PROPHETIC VISION",
-    symbol: "🔭",
-    bgPattern: "radial-gradient(circle at 70% 30%, rgba(150,0,255,0.15) 0%, transparent 50%)"
-  },
-  { 
-    floor: 6, 
-    color: "from-orange-600 via-amber-700 to-orange-800", 
-    border: "border-orange-400",
-    glow: "shadow-orange-500/50",
-    tagline: "COSMIC CYCLES",
-    symbol: "🌍",
-    bgPattern: "radial-gradient(circle at 20% 20%, rgba(255,150,0,0.15) 0%, transparent 50%)"
-  },
-  { 
-    floor: 7, 
-    color: "from-pink-600 via-rose-700 to-pink-800", 
-    border: "border-pink-400",
-    glow: "shadow-pink-500/50",
-    tagline: "SPIRITUAL FIRE",
-    symbol: "🔥",
-    bgPattern: "radial-gradient(circle at 80% 80%, rgba(255,0,150,0.15) 0%, transparent 50%)"
-  },
-  { 
-    floor: 8, 
-    color: "from-cyan-600 via-teal-700 to-cyan-800", 
-    border: "border-cyan-400",
-    glow: "shadow-cyan-500/50",
-    tagline: "REFLEXIVE MASTERY",
-    symbol: "👑",
-    bgPattern: "radial-gradient(circle at 50% 10%, rgba(0,200,255,0.15) 0%, transparent 50%)"
-  },
-];
 
 export default function PalaceCardGame() {
   const navigate = useNavigate();
@@ -163,41 +122,27 @@ export default function PalaceCardGame() {
   }, []);
 
   const initializeGame = () => {
-    // Select 8 random rooms from the palace
-    const allRooms: Omit<GameCard, 'verse' | 'verseReference' | 'userAnswer' | 'isValidating'>[] = [];
-    palaceFloors.forEach((floor) => {
-      floor.rooms.forEach((room) => {
-        const colorScheme = FLOOR_COLORS.find(c => c.floor === floor.number) || FLOOR_COLORS[0];
-        allRooms.push({
-          id: `${floor.number}-${room.tag}`,
-          floorNumber: floor.number,
-          floorName: floor.name,
-          roomTag: room.tag,
-          roomName: room.name,
-          roomPurpose: room.purpose,
-          color: colorScheme.color,
-          tagline: colorScheme.tagline,
-          isFlipped: false,
-          isCompleted: false,
-        });
-      });
-    });
+    // Shuffle and select parallels for the game
+    const shuffled = [...PARALLEL_PAIRS].sort(() => Math.random() - 0.5);
+    const selectedPairs = shuffled.slice(0, 6);
 
-    // Shuffle and take 8 rooms
-    const shuffled = allRooms.sort(() => Math.random() - 0.5);
-    const selectedRooms = shuffled.slice(0, 8);
-
-    // Pair each room with a random verse
-    const shuffledVerses = [...PRACTICE_VERSES].sort(() => Math.random() - 0.5);
-    const cardsWithVerses: GameCard[] = selectedRooms.map((room, index) => ({
-      ...room,
-      verse: shuffledVerses[index].text,
-      verseReference: shuffledVerses[index].ref,
+    const gameCards: GameCard[] = selectedPairs.map((pair, index) => ({
+      id: `parallel-${index}`,
+      event1Title: pair.event1Title,
+      event1Story: pair.event1Story,
+      event1Reference: pair.event1Reference,
+      event2Title: pair.event2Title,
+      event2Story: pair.event2Story,
+      event2Reference: pair.event2Reference,
+      parallelKey: pair.parallelKey,
+      color: pair.color,
+      isFlipped: false,
+      isCompleted: false,
       userAnswer: '',
       isValidating: false,
     }));
 
-    setCards(cardsWithVerses);
+    setCards(gameCards);
     setCurrentCardIndex(0);
     setCompletedCount(0);
     setGameWon(false);
@@ -229,11 +174,11 @@ export default function PalaceCardGame() {
     try {
       const { data, error } = await supabase.functions.invoke('validate-principle-application', {
         body: {
-          verse: card.verse,
-          verseReference: card.verseReference,
-          principle: card.roomName,
-          principleDescription: card.roomPurpose,
+          event1: `${card.event1Title}: ${card.event1Story} (${card.event1Reference})`,
+          event2: `${card.event2Title}: ${card.event2Story} (${card.event2Reference})`,
+          parallelKey: card.parallelKey,
           userAnswer: card.userAnswer,
+          validationType: 'parallel'
         }
       });
 
@@ -246,7 +191,7 @@ export default function PalaceCardGame() {
           c.id === cardId ? { ...c, isCompleted: true, isValidating: false } : c
         ));
         setCompletedCount(prev => prev + 1);
-        toast.success(feedback || "Excellent application of the principle!");
+        toast.success(feedback || "Excellent! You identified the parallel!");
         
         // Check if game is won
         if (completedCount + 1 === cards.length) {
@@ -256,7 +201,7 @@ export default function PalaceCardGame() {
         setCards(cards.map(c => 
           c.id === cardId ? { ...c, isValidating: false } : c
         ));
-        toast.error(feedback || "Try again! Think about how this principle applies to the verse.");
+        toast.error(feedback || "Look deeper! How do these events mirror each other?");
       }
     } catch (error) {
       console.error('Error validating answer:', error);
@@ -301,10 +246,10 @@ export default function PalaceCardGame() {
                 WebkitTextFillColor: "transparent",
                 textShadow: "0 0 30px rgba(255,215,0,0.5)"
               }}>
-                PALACE PRACTICE
+                PARALLELS MATCH
               </h1>
               <p className="text-sm text-amber-200/80" style={{ fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.2em" }}>
-                Apply Principles to Scripture
+                Discover Biblical Echoes Across Time
               </p>
             </div>
             <Button
@@ -344,10 +289,8 @@ export default function PalaceCardGame() {
         </div>
 
         {/* Game Board */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {cards.map((card) => {
-            const floorConfig = FLOOR_COLORS.find(c => c.floor === card.floorNumber) || FLOOR_COLORS[0];
-            const RoomIcon = ROOM_ICONS[card.roomTag] || Book;
             
             return (
               <div
@@ -361,144 +304,125 @@ export default function PalaceCardGame() {
                   }`}
                   style={{ transformStyle: "preserve-3d" }}
                 >
-                  {/* Card Front - Verse Display */}
+                  {/* Card Front - First Event */}
                   <div
                     onClick={() => !card.isCompleted && handleCardClick(card.id)}
-                    className={`absolute w-full h-full rounded-2xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border-4 border-amber-500/50 shadow-2xl flex flex-col overflow-hidden ${
-                      !card.isCompleted ? 'cursor-pointer hover:border-amber-400' : 'opacity-75'
+                    className={`absolute w-full h-full rounded-2xl bg-gradient-to-br ${card.color} border-4 border-amber-500/50 shadow-2xl flex flex-col overflow-hidden ${
+                      !card.isCompleted ? 'cursor-pointer hover:border-amber-400 hover:scale-[1.02] transition-transform' : 'opacity-90'
                     }`}
                     style={{ 
                       backfaceVisibility: "hidden",
                     }}
                   >
-                    {/* Verse Display */}
                     <div className="relative flex-1 flex flex-col p-6">
-                      {/* Header */}
+                      {/* Event Title */}
                       <div className="text-center mb-4">
-                        <div className="inline-flex items-center gap-2 mb-2">
-                          <Book className="w-5 h-5 text-amber-400" />
-                          <p className="text-amber-400 font-bold text-sm" style={{ fontFamily: "'Cinzel', serif" }}>
-                            {card.verseReference}
-                          </p>
-                        </div>
+                        <h3 className="text-amber-100 font-bold text-lg mb-2" style={{ fontFamily: "'Cinzel', serif" }}>
+                          {card.event1Title}
+                        </h3>
+                        <p className="text-amber-300/90 text-xs" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                          {card.event1Reference}
+                        </p>
                       </div>
 
-                      {/* Verse Text */}
+                      {/* Event Story */}
                       <div className="flex-1 flex items-center justify-center mb-4">
-                        <div className="bg-black/40 rounded-lg p-4 border border-amber-500/30">
-                          <p className="text-amber-100 text-center leading-relaxed" style={{ 
-                            fontFamily: "'Cormorant Garamond', serif",
-                            fontSize: "1rem"
+                        <div className="bg-black/30 rounded-lg p-4 border border-amber-400/30 backdrop-blur-sm">
+                          <p className="text-white text-sm leading-relaxed" style={{ 
+                            fontFamily: "'Cormorant Garamond', serif"
                           }}>
-                            "{card.verse}"
+                            {card.event1Story}
                           </p>
                         </div>
                       </div>
 
                       {/* Instruction */}
                       <div className="text-center">
-                        <p className="text-amber-300/80 text-sm italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                          {card.isCompleted ? '✓ Completed' : 'Click to apply principle →'}
+                        <p className="text-amber-200 text-sm font-semibold" style={{ fontFamily: "'Cinzel', serif" }}>
+                          {card.isCompleted ? '✓ Matched!' : 'CLICK TO FIND THE PARALLEL →'}
                         </p>
                       </div>
 
                       {/* Completion Badge */}
                       {card.isCompleted && (
                         <div className="absolute top-4 right-4">
-                          <CheckCircle className="w-8 h-8 text-green-400 drop-shadow-lg" />
+                          <CheckCircle className="w-10 h-10 text-amber-400 drop-shadow-2xl animate-pulse" />
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Card Back - Principle Application */}
+                  {/* Card Back - Second Event & Input */}
                   <div
-                    className={`absolute w-full h-full rounded-2xl bg-gradient-to-br ${floorConfig.color} border-4 ${floorConfig.border} shadow-2xl flex flex-col overflow-hidden`}
+                    className={`absolute w-full h-full rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-4 border-cyan-500/50 shadow-2xl flex flex-col overflow-hidden`}
                     style={{ 
                       backfaceVisibility: "hidden",
                       transform: "rotateY(180deg)",
                     }}
                   >
-                    {/* Decorative corner ornaments */}
-                    <div className="absolute top-2 left-2 w-8 h-8 border-l-4 border-t-4 border-amber-400/50 rounded-tl-lg" />
-                    <div className="absolute top-2 right-2 w-8 h-8 border-r-4 border-t-4 border-amber-400/50 rounded-tr-lg" />
-                    <div className="absolute bottom-2 left-2 w-8 h-8 border-l-4 border-b-4 border-amber-400/50 rounded-bl-lg" />
-                    <div className="absolute bottom-2 right-2 w-8 h-8 border-r-4 border-b-4 border-amber-400/50 rounded-br-lg" />
-                    
-                    {/* Top Gold Banner */}
-                    <div className="relative bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400 px-3 py-2 shadow-lg">
-                      <div className="absolute inset-0 opacity-20" style={{
-                        backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,.1) 10px, rgba(0,0,0,.1) 11px)"
-                      }} />
-                      <h3 className="relative text-center font-black text-gray-900 text-sm uppercase tracking-wide" style={{
+                    {/* Top Banner */}
+                    <div className="relative bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 px-3 py-2 shadow-lg">
+                      <h3 className="relative text-center font-black text-gray-900 text-xs uppercase tracking-wide" style={{
                         fontFamily: "'Cinzel', serif",
                         textShadow: "1px 1px 2px rgba(255,255,255,0.5)"
                       }}>
-                        {card.roomName}
+                        Find the Parallel
                       </h3>
                     </div>
                     
-                    {/* Main Content */}
-                    <div className="flex-1 p-4 flex flex-col justify-between relative">
-                      {/* Background pattern */}
-                      <div className="absolute inset-0 opacity-5" style={{
-                        backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
-                        backgroundSize: "20px 20px"
-                      }} />
-                      
-                      {/* Room Icon & Tag */}
-                      <div className="relative text-center mb-4">
-                        <div className="inline-flex flex-col items-center gap-2">
-                          <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${floorConfig.color} flex items-center justify-center shadow-xl border-4 ${floorConfig.border}`}>
-                            <RoomIcon className="w-10 h-10 text-white drop-shadow-lg" />
-                          </div>
-                          <div className={`text-5xl font-black bg-gradient-to-br ${floorConfig.color} bg-clip-text text-transparent`} style={{
-                            fontFamily: "'Playfair Display', serif"
-                          }}>
-                            {card.roomTag}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Room Description */}
-                      <div className="relative flex-1 overflow-hidden px-3">
-                        <div className="h-full bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 backdrop-blur-sm border border-amber-200/50 dark:border-slate-700/50 overflow-y-auto">
-                          <p className="text-xs leading-relaxed text-gray-800 dark:text-gray-200" style={{
-                            fontFamily: "'Cormorant Garamond', serif"
-                          }}>
-                            {card.roomPurpose}
-                          </p>
-                        </div>
+                    {/* Second Event */}
+                    <div className="p-4 border-b border-cyan-500/30">
+                      <h4 className="text-cyan-300 font-bold text-sm mb-1 text-center" style={{ fontFamily: "'Cinzel', serif" }}>
+                        {card.event2Title}
+                      </h4>
+                      <p className="text-cyan-400/80 text-xs mb-2 text-center" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                        {card.event2Reference}
+                      </p>
+                      <div className="bg-black/40 rounded-lg p-3 border border-cyan-500/20">
+                        <p className="text-cyan-100 text-xs leading-relaxed" style={{ 
+                          fontFamily: "'Cormorant Garamond', serif"
+                        }}>
+                          {card.event2Story}
+                        </p>
                       </div>
                     </div>
                     
-                    {/* Bottom Floor Info Banner */}
-                    <div className={`relative bg-gradient-to-r ${floorConfig.color} px-4 py-3 shadow-lg`}>
-                      <div className="absolute inset-0 opacity-10" style={{
-                        backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.2) 10px, rgba(255,255,255,.2) 20px)"
-                      }} />
-                      <div className="relative text-center">
-                        <p className="text-xs text-white font-black mb-1 uppercase tracking-wider" style={{
-                          fontFamily: "'Cinzel', serif",
-                          textShadow: "1px 1px 2px rgba(0,0,0,0.5)"
-                        }}>
-                          Floor {card.floorNumber} • {card.floorName}
-                        </p>
-                        
-                        {/* Mini cityscape */}
-                        <div className="flex items-end justify-center gap-px h-4">
-                          {[...Array(12)].map((_, i) => (
-                            <div
-                              key={i}
-                              className="bg-yellow-300/70 rounded-t-sm"
-                              style={{
-                                width: "5px",
-                                height: `${Math.random() * 12 + 4}px`,
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
+                    {/* Answer Input */}
+                    <div className="flex-1 p-4 flex flex-col">
+                      <label className="text-amber-300 text-xs font-semibold mb-2 text-center" style={{ fontFamily: "'Cinzel', serif" }}>
+                        How do these events parallel each other?
+                      </label>
+                      <Textarea
+                        value={card.userAnswer}
+                        onChange={(e) => handleAnswerChange(card.id, e.target.value)}
+                        placeholder="Explain the connection between these two events..."
+                        className="flex-1 bg-black/50 border-cyan-500/30 text-white text-xs mb-3 resize-none"
+                        style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                        disabled={card.isCompleted || card.isValidating}
+                      />
+                      <Button
+                        onClick={() => handleSubmitAnswer(card.id)}
+                        disabled={card.isCompleted || card.isValidating || !card.userAnswer.trim()}
+                        className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold"
+                        size="sm"
+                      >
+                        {card.isValidating ? (
+                          <>
+                            <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                            Checking...
+                          </>
+                        ) : card.isCompleted ? (
+                          <>
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Completed
+                          </>
+                        ) : (
+                          <>
+                            <Send className="mr-2 h-4 w-4" />
+                            Submit Answer
+                          </>
+                        )}
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -530,11 +454,11 @@ export default function PalaceCardGame() {
                   </h2>
                   
                   <p className="text-xl text-amber-200 mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                    You successfully applied all {cards.length} principles!
+                    You matched all {cards.length} biblical parallels!
                   </p>
                   
                   <p className="text-sm text-amber-300/80 mb-8 italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                    "The palace of wisdom is built one room at a time"
+                    "Scripture echoes Scripture - Christ is the fulfillment of all things"
                   </p>
                   
                   <Button 

@@ -33,14 +33,14 @@ const Games = () => {
     },
     {
       id: "palace_cards",
-      name: "Memory Palace Builder",
-      description: "Build a memory palace by placing verses in specific locations. Recall them in order!",
-      icon: "🏛️",
-      floor: 1,
-      timed: true,
-      rooms: ["BR", "CR"],
-      modes: ["solo", "vs-ai", "2p"],
-      difficulties: ["easy", "medium", "hard"],
+      name: "Parallels Match",
+      description: "Match biblical parallels across Scripture! Discover how events echo each other: Elijah→Elisha, Jonah→Jesus, Passover→Calvary.",
+      icon: "🔗",
+      floor: 4,
+      timed: false,
+      rooms: ["P‖"],
+      modes: ["solo"],
+      difficulties: ["medium", "hard"],
       route: "/games/palace-cards"
     },
     {

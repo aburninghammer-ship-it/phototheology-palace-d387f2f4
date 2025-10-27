@@ -11,14 +11,58 @@ serve(async (req) => {
   }
 
   try {
-    const { verse, verseReference, principle, principleDescription, userAnswer } = await req.json();
+    const { 
+      verse, 
+      verseReference, 
+      principle, 
+      principleDescription, 
+      userAnswer,
+      validationType,
+      event1,
+      event2,
+      parallelKey
+    } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are a Phototheology expert helping students learn to apply biblical study principles to Scripture.
+    let systemPrompt: string;
+    let userPrompt: string;
+
+    if (validationType === 'parallel') {
+      // Parallel validation mode
+      systemPrompt = `You are a Phototheology expert helping students identify biblical parallels.
+
+Your task: Evaluate if the student correctly identified how two biblical events parallel each other.
+
+Guidelines:
+- Look for thoughtful connections between the events
+- Consider typology, themes, patterns, and prophetic fulfillment
+- The answer should show understanding of how Scripture echoes Scripture
+- Be encouraging but accurate
+- The parallel should be biblically sound
+
+Respond with JSON:
+{
+  "isCorrect": boolean,
+  "feedback": "Brief encouraging feedback (1-2 sentences)"
+}`;
+
+      userPrompt = `EVENT 1: ${event1}
+
+EVENT 2: ${event2}
+
+KEY PARALLEL: ${parallelKey}
+
+STUDENT'S ANSWER:
+${userAnswer}
+
+Did the student correctly identify the parallel between these events? Evaluate and respond in JSON format.`;
+    } else {
+      // Original principle application mode
+      systemPrompt = `You are a Phototheology expert helping students learn to apply biblical study principles to Scripture.
 
 Your task: Evaluate if the student correctly applied the given principle to the verse.
 
@@ -35,7 +79,7 @@ Respond with JSON:
   "feedback": "Brief encouraging feedback (1-2 sentences)"
 }`;
 
-    const userPrompt = `VERSE: "${verse}" (${verseReference})
+      userPrompt = `VERSE: "${verse}" (${verseReference})
 
 PRINCIPLE TO APPLY: ${principle}
 DESCRIPTION: ${principleDescription}
@@ -44,6 +88,7 @@ STUDENT'S ANSWER:
 ${userAnswer}
 
 Did the student correctly apply this principle to the verse? Evaluate and respond in JSON format.`;
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
