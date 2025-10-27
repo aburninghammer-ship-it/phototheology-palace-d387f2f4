@@ -4,7 +4,7 @@ export interface KidsPhototheologyDay {
   title: string;
   floor: string;
   room?: string;
-  ageGroup: 'ages-5-8' | 'ages-9-12' | 'ages-13-16';
+  ageGroup: 'ages-6-8' | 'ages-9-12' | 'ages-13-15';
   kidFriendlyFocus: string;
   scripture: string;
   scriptureText: string;
@@ -23,7 +23,7 @@ export const phototheologyCourseKids: KidsPhototheologyDay[] = [
     week: 1,
     title: "Welcome to the Bible Memory Palace!",
     floor: "Floor 1: Furnishing",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyFocus: "Imagining the Bible as a huge palace you can explore",
     scripture: "Psalm 119:11",
     scriptureText: "Thy word have I hid in mine heart, that I might not sin against thee.",
@@ -40,7 +40,7 @@ export const phototheologyCourseKids: KidsPhototheologyDay[] = [
     title: "Story Room: Turn Bible Stories Into Movies!",
     floor: "Floor 1: Furnishing",
     room: "Story Room (SR)",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyFocus: "Memorizing stories by seeing them like movies",
     scripture: "Luke 24:27",
     scriptureText: "Beginning at Moses and all the prophets, he expounded unto them in all the scriptures the things concerning himself.",
@@ -91,7 +91,7 @@ export const phototheologyCourseKids: KidsPhototheologyDay[] = [
     title: "Translation Room: Turn Words Into Pictures!",
     floor: "Floor 1: Furnishing",
     room: "Translation Room (TR)",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyFocus: "Translating Bible verses into images you can see",
     scripture: "Psalm 119:105",
     scriptureText: "Thy word is a lamp unto my feet, and a light unto my path.",
@@ -159,7 +159,7 @@ export const phototheologyCourseKids: KidsPhototheologyDay[] = [
     title: "Concentration Room: EVERYTHING Points to Jesus!",
     floor: "Floor 4: Next Level",
     room: "Concentration Room (CR)",
-    ageGroup: 'ages-13-16',
+    ageGroup: 'ages-13-15',
     kidFriendlyFocus: "Finding Jesus in every part of the Bible—even the Old Testament!",
     scripture: "Luke 24:27",
     scriptureText: "And beginning at Moses and all the prophets, he expounded unto them in all the scriptures the things concerning himself.",
@@ -176,7 +176,7 @@ export const phototheologyCourseKids: KidsPhototheologyDay[] = [
     title: "Dimensions Room: Seeing in 5D!",
     floor: "Floor 4: Next Level",
     room: "Dimensions Room (DR)",
-    ageGroup: 'ages-13-16',
+    ageGroup: 'ages-13-15',
     kidFriendlyFocus: "Reading Bible verses on 5 different levels",
     scripture: "2 Timothy 3:16",
     scriptureText: "All scripture is given by inspiration of God, and is profitable.",

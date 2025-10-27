@@ -2,7 +2,7 @@ export interface KidsDanielDay {
   day: number;
   week: number;
   title: string;
-  ageGroup: 'ages-5-8' | 'ages-9-12' | 'ages-13-16';
+  ageGroup: 'ages-6-8' | 'ages-9-12' | 'ages-13-15';
   kidFriendlyFocus: string;
   scripture: string;
   scriptureText: string;
@@ -20,7 +20,7 @@ export const danielCourseKids: KidsDanielDay[] = [
     day: 1,
     week: 1,
     title: "Daniel Gets Kidnapped (But God Has a Plan!)",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyFocus: "Being brave when everything changes",
     scripture: "Daniel 1:8",
     scriptureText: "But Daniel purposed in his heart that he would not defile himself.",
@@ -65,7 +65,7 @@ export const danielCourseKids: KidsDanielDay[] = [
     day: 4,
     week: 1,
     title: "Three Boys vs. A Fiery Furnace",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyFocus: "Staying faithful even when it's scary",
     scripture: "Daniel 3:17-18",
     scriptureText: "Our God is able to deliver us... But if not... we will not serve thy gods.",
@@ -95,7 +95,7 @@ export const danielCourseKids: KidsDanielDay[] = [
     day: 6,
     week: 1,
     title: "Daniel in the Lions' Den",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyFocus: "Praying even when it's against the law",
     scripture: "Daniel 6:10",
     scriptureText: "He kneeled upon his knees three times a day, and prayed, and gave thanks before his God, as he did aforetime.",
@@ -110,7 +110,7 @@ export const danielCourseKids: KidsDanielDay[] = [
     day: 7,
     week: 1,
     title: "Review: Daniel's Greatest Hits!",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyFocus: "Remembering this week's brave stories",
     scripture: "Daniel 6:26-27",
     scriptureText: "He is the living God, and stedfast for ever, and his kingdom shall not be destroyed.",
@@ -141,7 +141,7 @@ export const danielCourseKids: KidsDanielDay[] = [
     day: 9,
     week: 2,
     title: "The Judgment Day Scene",
-    ageGroup: 'ages-13-16',
+    ageGroup: 'ages-13-15',
     kidFriendlyFocus: "Understanding the pre-Advent judgment (not scary—it's GOOD news!)",
     scripture: "Daniel 7:9-10",
     scriptureText: "The judgment was set, and the books were opened.",
@@ -156,7 +156,7 @@ export const danielCourseKids: KidsDanielDay[] = [
     day: 10,
     week: 2,
     title: "The Little Horn's Big Mouth",
-    ageGroup: 'ages-13-16',
+    ageGroup: 'ages-13-15',
     kidFriendlyFocus: "Identifying the antichrist power (not scary—just truth!)",
     scripture: "Daniel 7:25",
     scriptureText: "He shall speak great words against the most High, and shall wear out the saints.",

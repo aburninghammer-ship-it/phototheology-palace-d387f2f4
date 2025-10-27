@@ -13,7 +13,7 @@ export interface CourseDay {
 }
 
 export interface KidsCourseDay extends CourseDay {
-  ageGroup: 'ages-5-8' | 'ages-9-12' | 'ages-13-16';
+  ageGroup: 'ages-6-8' | 'ages-9-12' | 'ages-13-15';
   simplifiedActivity: string;
   funElement: string;
 }
@@ -564,7 +564,7 @@ export const kidsDanielCourse: KidsCourseDay[] = [
     activity: "Read Daniel 1 together. Talk about times you had to make a brave choice. Draw Daniel standing tall and saying 'No thank you!' to the king.",
     reflection: "When is it hard to do the right thing?",
     prayer: "Help me be brave like Daniel, God!",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     simplifiedActivity: "Color a picture of Daniel and his friends. Practice saying 'I choose to obey God!' in a brave voice.",
     funElement: "Play 'Daniel Says' (like Simon Says) - only do actions that honor God!"
   },
@@ -580,7 +580,7 @@ export const kidsDanielCourse: KidsCourseDay[] = [
     activity: "Tell the story in 4 parts: Daniel taken away → Learns new things → Eats good food → Becomes wisest! Act it out with toys or puppets.",
     reflection: "How does God help you learn?",
     prayer: "Thank You for helping me learn, God!",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     simplifiedActivity: "Draw 4 pictures showing Daniel's story like a comic strip. Number them 1-2-3-4.",
     funElement: "Have a 'healthy food taste test' - try vegetables and fruits Daniel might have eaten!"
   },
@@ -596,7 +596,7 @@ export const kidsDanielCourse: KidsCourseDay[] = [
     activity: "Read about the king's scary dream. Look at pictures carefully. Count: How many wise men were scared? What did Daniel do? Draw Daniel praying.",
     reflection: "What do you do when you're scared?",
     prayer: "Help me talk to You when I'm scared, God!",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     simplifiedActivity: "Play 'I Spy' to practice noticing details. Then pray together like Daniel did.",
     funElement: "Tell about a dream you had! Was it happy, silly, or scary?"
   }

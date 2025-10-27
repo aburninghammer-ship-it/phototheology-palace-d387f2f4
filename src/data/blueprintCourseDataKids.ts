@@ -2,7 +2,7 @@ export interface KidsBlueprintLesson {
   id: number;
   level: string;
   title: string;
-  ageGroup: 'ages-5-8' | 'ages-9-12' | 'ages-13-16';
+  ageGroup: 'ages-6-8' | 'ages-9-12' | 'ages-13-15';
   kidFriendlyDescription: string;
   focus: string;
   scripture: string;
@@ -21,7 +21,7 @@ export const blueprintLessonsKids: KidsBlueprintLesson[] = [
     id: 1,
     level: "Level 1: The War Begins",
     title: "The Angel Who Wanted to Be King",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyDescription: "Learn about Lucifer, the beautiful angel who became jealous and started a war in heaven.",
     focus: "How the Great War started in heaven",
     scripture: "Revelation 12:7",
@@ -45,7 +45,7 @@ export const blueprintLessonsKids: KidsBlueprintLesson[] = [
     id: 2,
     level: "Level 1: The War Begins",
     title: "The Snake in the Garden",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyDescription: "The story of how Satan tricked Adam and Eve and brought sin into the world.",
     focus: "How sin came to Earth",
     scripture: "Genesis 3:1",
@@ -69,7 +69,7 @@ export const blueprintLessonsKids: KidsBlueprintLesson[] = [
     id: 3,
     level: "Level 2: God's Rescue Plan",
     title: "The Lamb Who Saves",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyDescription: "How Jesus became the sacrifice to save us from sin.",
     focus: "Understanding the Passover lamb and Jesus",
     scripture: "John 1:29",
@@ -117,7 +117,7 @@ export const blueprintLessonsKids: KidsBlueprintLesson[] = [
     id: 5,
     level: "Level 3: The Sanctuary Blueprint",
     title: "God's Tent House",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyDescription: "God's special tent in the desert that showed how Jesus would save us!",
     focus: "Introduction to the Sanctuary",
     scripture: "Exodus 25:8",
@@ -165,7 +165,7 @@ export const blueprintLessonsKids: KidsBlueprintLesson[] = [
     id: 7,
     level: "Level 3: The Sanctuary Blueprint",
     title: "The Big Washing Bowl",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     kidFriendlyDescription: "The laver was where priests washed before serving God—just like baptism washes away sin!",
     focus: "The Laver = Baptism and Daily Cleansing",
     scripture: "Titus 3:5",

@@ -13,7 +13,7 @@ export interface CourseDay {
 }
 
 export interface KidsCourseDay extends CourseDay {
-  ageGroup: 'ages-5-8' | 'ages-9-12' | 'ages-13-16';
+  ageGroup: 'ages-6-8' | 'ages-9-12' | 'ages-13-15';
   simplifiedActivity: string;
   funElement: string;
 }
@@ -679,7 +679,7 @@ export const kidsPhototheologyCourse: KidsCourseDay[] = [
     week: 1,
     title: "Building Your Bible Castle",
     floor: "Floor 1: Starting Your Adventure",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     focus: "The Bible tells us about Jesus in every story",
     scripture: "Luke 24:27",
     scriptureText: "Jesus showed them all the stories in the Bible about Himself.",
@@ -695,7 +695,7 @@ export const kidsPhototheologyCourse: KidsCourseDay[] = [
     title: "Story Time Room",
     floor: "Floor 1: Starting Your Adventure",
     room: "Story Time Room",
-    ageGroup: 'ages-5-8',
+    ageGroup: 'ages-6-8',
     focus: "God teaches us through stories",
     scripture: "Genesis 3:21",
     scriptureText: "God made clothes for Adam and Eve.",
@@ -745,7 +745,7 @@ export const kidsPhototheologyCourse: KidsCourseDay[] = [
     week: 1,
     title: "Introduction to Phototheology",
     floor: "Floor 1: Foundations",
-    ageGroup: 'ages-13-16',
+    ageGroup: 'ages-13-15',
     focus: "Phototheology as a visual, Christ-centered approach to Scripture",
     scripture: "Luke 24:27",
     scriptureText: "And beginning at Moses and all the prophets, he expounded unto them in all the scriptures the things concerning himself.",
@@ -761,7 +761,7 @@ export const kidsPhototheologyCourse: KidsCourseDay[] = [
     title: "Story Room (ST) Deep Dive",
     floor: "Floor 1: Foundations",
     room: "Story Room",
-    ageGroup: 'ages-13-16',
+    ageGroup: 'ages-13-15',
     focus: "Narrative as God's primary visual teaching method",
     scripture: "Genesis 3:21",
     scriptureText: "Unto Adam also and to his wife did the LORD God make coats of skins, and clothed them.",
