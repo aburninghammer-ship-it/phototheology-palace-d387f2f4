@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { User, Mail, Trophy, Star, Calendar } from "lucide-react";
+import { User, Mail, Trophy, Star, Calendar, Upload, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
@@ -17,8 +17,9 @@ export default function Profile() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadProfile();
@@ -38,12 +39,74 @@ export default function Profile() {
 
       setProfile(data);
       setDisplayName(data?.display_name || "");
-      setAvatarUrl(data?.avatar_url || "");
     } catch (error) {
       console.error("Error loading profile:", error);
       toast.error("Failed to load profile");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user || !event.target.files || event.target.files.length === 0) return;
+
+    const file = event.target.files[0];
+    const fileExt = file.name.split('.').pop();
+    const filePath = `${user.id}/avatar.${fileExt}`;
+
+    // Validate file size (5MB max)
+    if (file.size > 5242880) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Only JPG, PNG, WEBP, and GIF images are allowed");
+      return;
+    }
+
+    try {
+      setUploading(true);
+
+      // Delete old avatar if exists
+      if (profile?.avatar_url) {
+        const oldPath = profile.avatar_url.split('/').pop();
+        if (oldPath) {
+          await supabase.storage
+            .from('avatars')
+            .remove([`${user.id}/${oldPath}`]);
+        }
+      }
+
+      // Upload new avatar
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      toast.success("Avatar uploaded successfully!");
+      loadProfile();
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast.error("Failed to upload avatar");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -55,7 +118,6 @@ export default function Profile() {
         .from("profiles")
         .update({
           display_name: displayName,
-          avatar_url: avatarUrl,
         })
         .eq("id", user.id);
 
@@ -100,18 +162,41 @@ export default function Profile() {
           <Card className="glass-card">
             <CardHeader>
               <div className="flex items-center gap-4">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={profile?.avatar_url} />
-                  <AvatarFallback className="bg-gradient-palace text-white text-2xl">
-                    {profile?.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative group">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage src={profile?.avatar_url} />
+                    <AvatarFallback className="bg-gradient-palace text-white text-2xl">
+                      {profile?.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer disabled:cursor-not-allowed"
+                  >
+                    {uploading ? (
+                      <Loader2 className="h-6 w-6 text-white animate-spin" />
+                    ) : (
+                      <Upload className="h-6 w-6 text-white" />
+                    )}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={uploadAvatar}
+                    className="hidden"
+                  />
+                </div>
                 <div className="flex-1">
                   <CardTitle className="text-2xl">{profile?.display_name || "User"}</CardTitle>
                   <CardDescription className="flex items-center gap-2 mt-1">
                     <Mail className="h-4 w-4" />
                     {user?.email}
                   </CardDescription>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Click avatar to upload new picture
+                  </p>
                 </div>
               </div>
             </CardHeader>
@@ -155,15 +240,6 @@ export default function Profile() {
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Enter your display name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="avatarUrl">Avatar URL</Label>
-                <Input
-                  id="avatarUrl"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  placeholder="https://example.com/avatar.jpg"
                 />
               </div>
               <Separator />
