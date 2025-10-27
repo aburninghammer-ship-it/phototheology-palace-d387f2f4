@@ -109,9 +109,9 @@ function App() {
           <OfflineIndicator />
           <BrowserRouter>
             <SidebarProvider defaultOpen={false}>
-              <div className="min-h-screen flex w-full">
+              <div className="min-h-screen flex w-full relative">
                 <MessagingSidebar />
-                <main className="flex-1">
+                <main className="flex-1 min-w-0 overflow-x-hidden">
                   <Suspense fallback={<LoadingScreen />}>
                     <Routes>
             <Route path="/" element={<Index />} />

@@ -17,7 +17,7 @@ import { MessageCircle, Users as UsersIcon, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 export const MessagingSidebar = () => {
-  const { state, toggleSidebar, open, setOpen } = useSidebar();
+  const { state, toggleSidebar, open, setOpen, isMobile } = useSidebar();
   const { user } = useAuth();
   const { activeUsers } = useActiveUsers();
   const {
@@ -38,6 +38,11 @@ export const MessagingSidebar = () => {
   const activeConversation = conversations.find(c => c.id === activeConversationId);
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread_count, 0);
   const isCollapsed = state === 'collapsed';
+
+  // Log sidebar state changes
+  useEffect(() => {
+    console.log('📊 Sidebar state:', { state, isCollapsed, isMobile, open });
+  }, [state, isCollapsed, isMobile, open]);
 
   // Auto-expand sidebar when a conversation is set (e.g., from notification)
   useEffect(() => {
@@ -86,14 +91,18 @@ export const MessagingSidebar = () => {
 
   if (isCollapsed) {
     return (
-      <Sidebar className="w-14" collapsible="icon">
+      <Sidebar className="w-14 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" collapsible="icon" side="left">
         <SidebarContent>
           <div className="p-2 flex flex-col items-center">
             <Button
               variant="ghost"
               size="icon"
               className="relative"
-              onClick={toggleSidebar}
+              onClick={() => {
+                console.log('🔄 Expanding sidebar from collapsed state');
+                toggleSidebar();
+              }}
+              aria-label="Open messages"
             >
               <MessageCircle className="h-5 w-5" />
               {totalUnread > 0 && (
@@ -112,15 +121,43 @@ export const MessagingSidebar = () => {
   }
 
   return (
-    <Sidebar className="w-96" collapsible="icon">
-      <SidebarContent className="flex flex-col h-full">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="font-semibold text-lg">Messages</h2>
-          <Button variant="ghost" size="icon" onClick={toggleSidebar} className="h-8 w-8">
+    <>
+      {/* Backdrop overlay for mobile - click to close */}
+      {!isCollapsed && isMobile && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => {
+            console.log('🎭 Backdrop clicked - closing sidebar');
+            toggleSidebar();
+          }}
+          aria-label="Close sidebar"
+        />
+      )}
+      
+      <Sidebar 
+        className="w-96 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50" 
+        collapsible="icon" 
+        side="left"
+      >
+        <SidebarContent className="flex flex-col h-full relative">
+          {/* Floating Close Button - Always Visible */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              console.log('❌ Closing sidebar via floating button');
+              toggleSidebar();
+            }}
+            className="absolute top-2 right-2 z-50 h-8 w-8 hover:bg-destructive/10 bg-background/80 backdrop-blur-sm shadow-sm"
+            aria-label="Close sidebar"
+          >
             <X className="h-4 w-4" />
           </Button>
-        </div>
+
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b bg-background pt-12">
+            <h2 className="font-semibold text-lg">Messages</h2>
+          </div>
 
         {/* Split Layout */}
         <div className="flex-1 flex overflow-hidden">
@@ -357,5 +394,6 @@ export const MessagingSidebar = () => {
         </div>
       </SidebarContent>
     </Sidebar>
+    </>
   );
 };
