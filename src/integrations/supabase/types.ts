@@ -687,6 +687,83 @@ export type Database = {
         }
         Relationships: []
       }
+      email_campaigns: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          subject: string
+          trigger_condition: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          subject: string
+          trigger_condition: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          subject?: string
+          trigger_condition?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      email_logs: {
+        Row: {
+          campaign_id: string | null
+          created_at: string | null
+          email_address: string
+          error_message: string | null
+          id: string
+          opened_at: string | null
+          sent_at: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string | null
+          email_address: string
+          error_message?: string | null
+          id?: string
+          opened_at?: string | null
+          sent_at?: string | null
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string | null
+          email_address?: string
+          error_message?: string | null
+          id?: string
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_logs_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "email_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equation_codes: {
         Row: {
           biblical_reference: string | null
@@ -2320,6 +2397,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_engagement: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_activity_at: string | null
+          last_login_at: string | null
+          login_streak: number | null
+          total_sessions: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_activity_at?: string | null
+          last_login_at?: string | null
+          login_streak?: number | null
+          total_sessions?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_activity_at?: string | null
+          last_login_at?: string | null
+          login_streak?: number | null
+          total_sessions?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       user_gems: {
         Row: {
