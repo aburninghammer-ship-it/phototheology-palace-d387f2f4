@@ -78,13 +78,29 @@ export const StrongsVerseView = ({
                 <div>
                   <p className="mb-2">{verse.text}</p>
                   {verse.verse === 1 && (
-                    <p className="text-xs text-muted-foreground italic bg-muted/30 p-2 rounded flex items-start gap-2">
-                      <Sparkles className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                      <span>
-                        Strong's numbers are available for select verses (John 1:1, 3:3, 3:16, 14:6). 
-                        Click the superscript numbers to see Hebrew/Greek definitions. Full concordance integration coming soon.
-                      </span>
-                    </p>
+                    <div className="mt-3 p-3 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
+                      <div className="flex items-start gap-2">
+                        <Sparkles className="h-5 w-5 flex-shrink-0 text-primary mt-0.5" />
+                        <div className="text-xs space-y-1">
+                          <p className="font-semibold text-foreground">
+                            ✨ Strong's Numbers Active
+                          </p>
+                          <p className="text-muted-foreground">
+                            Strong's concordance data is currently available for these demonstration verses:
+                          </p>
+                          <ul className="list-disc list-inside text-muted-foreground ml-2 space-y-0.5">
+                            <li><strong>John 1:1</strong> - "In the beginning was the Word"</li>
+                            <li><strong>John 3:3</strong> - "Ye must be born again"</li>
+                            <li><strong>John 3:16</strong> - "For God so loved the world"</li>
+                            <li><strong>John 14:6</strong> - "I am the way, the truth, and the life"</li>
+                          </ul>
+                          <p className="text-muted-foreground mt-2">
+                            When viewing these verses, click the superscript numbers to see original Hebrew/Greek definitions and usage. 
+                            <span className="text-primary font-medium"> Full Bible concordance integration coming soon!</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </div>
               )}
