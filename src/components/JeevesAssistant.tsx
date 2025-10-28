@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { Bot, Sparkles, BookOpen, Dumbbell, Loader2, HelpCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
 interface JeevesAssistantProps {
   roomTag: string;
@@ -160,11 +161,7 @@ export const JeevesAssistant = ({
                     <span className="font-semibold text-foreground">Jeeves says:</span>
                   </div>
                   <div className="prose prose-sm max-w-none text-foreground">
-                    {exampleContent.split('\n\n').map((paragraph, idx) => (
-                      <p key={idx} className="mb-3 leading-relaxed">
-                        {paragraph}
-                      </p>
-                    ))}
+                    {formatJeevesResponse(exampleContent)}
                   </div>
                 </div>
               )}
@@ -202,11 +199,7 @@ export const JeevesAssistant = ({
                     <span className="font-semibold text-foreground">Practice Exercise:</span>
                   </div>
                   <div className="prose prose-sm max-w-none text-foreground">
-                    {exerciseContent.split('\n\n').map((paragraph, idx) => (
-                      <p key={idx} className="mb-3 leading-relaxed">
-                        {paragraph}
-                      </p>
-                    ))}
+                    {formatJeevesResponse(exerciseContent)}
                   </div>
                 </div>
               )}
@@ -252,11 +245,7 @@ export const JeevesAssistant = ({
                     <span className="font-semibold text-foreground">Jeeves answers:</span>
                   </div>
                   <div className="prose prose-sm max-w-none text-foreground">
-                    {answer.split('\n\n').map((paragraph, idx) => (
-                      <p key={idx} className="mb-3 leading-relaxed">
-                        {paragraph}
-                      </p>
-                    ))}
+                    {formatJeevesResponse(answer)}
                   </div>
                 </div>
               )}

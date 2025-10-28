@@ -10,6 +10,7 @@ import { Bot, Sparkles, Send, Loader2, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { palaceFloors } from "@/data/palaceData";
 import { JeevesResponseValidator } from "./JeevesResponseValidator";
+import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
 interface JeevesVerseAssistantProps {
   book: string;
@@ -297,11 +298,7 @@ export const JeevesVerseAssistant = ({ book, chapter, verse, verseText, onClose 
                   <span className="font-semibold text-foreground">Jeeves responds:</span>
                 </div>
                 <div className="prose prose-sm max-w-none text-foreground">
-                  {response.split('\n\n').map((paragraph, idx) => (
-                    <p key={idx} className="mb-3 leading-relaxed">
-                      {paragraph}
-                    </p>
-                  ))}
+                  {formatJeevesResponse(response)}
                 </div>
               </div>
             </ScrollArea>
