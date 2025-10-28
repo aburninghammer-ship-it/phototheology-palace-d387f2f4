@@ -1907,6 +1907,51 @@ export type Database = {
         }
         Relationships: []
       }
+      strongs_entries: {
+        Row: {
+          created_at: string | null
+          definition: string
+          id: string
+          kjv_translations: string | null
+          language: string
+          occurrences: number | null
+          pronunciation: string | null
+          strongs_number: string
+          transliteration: string | null
+          updated_at: string | null
+          usage: string | null
+          word: string
+        }
+        Insert: {
+          created_at?: string | null
+          definition: string
+          id?: string
+          kjv_translations?: string | null
+          language: string
+          occurrences?: number | null
+          pronunciation?: string | null
+          strongs_number: string
+          transliteration?: string | null
+          updated_at?: string | null
+          usage?: string | null
+          word: string
+        }
+        Update: {
+          created_at?: string | null
+          definition?: string
+          id?: string
+          kjv_translations?: string | null
+          language?: string
+          occurrences?: number | null
+          pronunciation?: string | null
+          strongs_number?: string
+          transliteration?: string | null
+          updated_at?: string | null
+          usage?: string | null
+          word?: string
+        }
+        Relationships: []
+      }
       strongs_verses: {
         Row: {
           book: string
@@ -2512,6 +2557,39 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      verses_strongs: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string | null
+          id: string
+          strongs_number: string | null
+          verse: number
+          word_position: number
+          word_text: string
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string | null
+          id?: string
+          strongs_number?: string | null
+          verse: number
+          word_position: number
+          word_text: string
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string | null
+          id?: string
+          strongs_number?: string | null
+          verse?: number
+          word_position?: number
+          word_text?: string
         }
         Relationships: []
       }

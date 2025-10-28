@@ -1,4 +1,6 @@
 // Strong's Concordance Data and API
+import { supabase } from "@/integrations/supabase/client";
+
 export interface StrongsEntry {
   number: string;
   word: string;
@@ -124,9 +126,32 @@ export const parseStrongsFromText = (text: string): { word: string; strongs: str
 
 // Get Strong's entry by number
 export const getStrongsEntry = async (number: string): Promise<StrongsEntry | null> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 100));
+  try {
+    // Try to fetch from database first
+    const { data, error } = await supabase
+      .from('strongs_entries')
+      .select('*')
+      .eq('strongs_number', number)
+      .maybeSingle();
+    
+    if (data && !error) {
+      return {
+        number: data.strongs_number,
+        word: data.word,
+        transliteration: data.transliteration || '',
+        pronunciation: data.pronunciation || '',
+        language: data.language as 'Hebrew' | 'Greek',
+        definition: data.definition,
+        usage: data.kjv_translations ? data.kjv_translations.split(', ') : [],
+        occurrences: data.occurrences || 0,
+        derivation: data.usage || ''
+      };
+    }
+  } catch (error) {
+    console.error('Error fetching Strong\'s entry from database:', error);
+  }
   
+  // Fallback to hardcoded data
   return STRONGS_DATA[number] || null;
 };
 
@@ -1164,10 +1189,35 @@ const ADDITIONAL_STRONGS: Record<string, StrongsEntry> = {
 Object.assign(STRONGS_DATA, ADDITIONAL_STRONGS);
 
 // Get verse with Strong's numbers
-export const getVerseWithStrongs = (book: string, chapter: number, verse: number): {
+export const getVerseWithStrongs = async (book: string, chapter: number, verse: number): Promise<{
   text: string;
   words: Array<{ text: string; strongs?: string }>
-} | null => {
+} | null> => {
+  try {
+    // Try to fetch from database first
+    const { data, error } = await supabase
+      .from('verses_strongs')
+      .select('*')
+      .eq('book', book)
+      .eq('chapter', chapter)
+      .eq('verse', verse)
+      .order('word_position');
+    
+    if (data && data.length > 0 && !error) {
+      const words = data.map(row => ({
+        text: row.word_text,
+        strongs: row.strongs_number || undefined
+      }));
+      
+      const text = words.map(w => w.text).join(' ');
+      
+      return { text, words };
+    }
+  } catch (error) {
+    console.error('Error fetching verse with Strong\'s from database:', error);
+  }
+  
+  // Fallback to hardcoded data
   const key = `${book}-${chapter}-${verse}`;
   return VERSES_WITH_STRONGS[key] || null;
 };

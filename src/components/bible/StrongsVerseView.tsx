@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Verse } from "@/types/bible";
 import { Badge } from "@/components/ui/badge";
 import { StrongsModal } from "./StrongsModal";
@@ -23,10 +23,30 @@ export const StrongsVerseView = ({
   principles 
 }: StrongsVerseViewProps) => {
   const [selectedStrongs, setSelectedStrongs] = useState<string | null>(null);
+  const [strongsData, setStrongsData] = useState<{
+    text: string;
+    words: Array<{ text: string; strongs?: string }>;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const displayPrinciples = principles || ["2D", "@Ab", "Altar", "Passover"];
   const colors = ["gradient-palace", "gradient-ocean", "gradient-sunset", "gradient-warmth", "gradient-royal"];
   
-  const strongsData = getVerseWithStrongs(verse.book, verse.chapter, verse.verse);
+  useEffect(() => {
+    const fetchStrongsData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getVerseWithStrongs(verse.book, verse.chapter, verse.verse);
+        setStrongsData(data);
+      } catch (error) {
+        console.error('Error fetching Strong\'s data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchStrongsData();
+  }, [verse.book, verse.chapter, verse.verse]);
 
   const handleStrongsClick = (strongsNumber: string, e: React.MouseEvent) => {
     e.stopPropagation();
