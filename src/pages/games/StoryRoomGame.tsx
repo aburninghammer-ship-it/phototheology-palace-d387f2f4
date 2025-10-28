@@ -145,33 +145,37 @@ export default function StoryRoomGame() {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
-        <main className="container mx-auto px-4 py-8 max-w-4xl">
-          <Card className="text-center">
-            <CardHeader>
-              <Trophy className="h-16 w-16 mx-auto text-yellow-500 mb-4" />
-              <CardTitle className="text-3xl">Story Room Mastered!</CardTitle>
-              <CardDescription>
-                You've completed all story sequences!
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-4xl font-bold text-primary">
-                {score} / {storyQuizzes.length}
-              </div>
-              <p className="text-muted-foreground">
-                Stories memorized as vivid mental movies
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Button onClick={() => navigate("/games")}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Games
-                </Button>
-                <Button onClick={() => window.location.reload()} variant="outline">
-                  Play Again
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <main className="container mx-auto px-4 py-8 max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-6">
+            <Card className="text-center">
+              <CardHeader>
+                <Trophy className="h-16 w-16 mx-auto text-yellow-500 mb-4" />
+                <CardTitle className="text-3xl">Story Room Mastered!</CardTitle>
+                <CardDescription>
+                  You've completed all story sequences!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-4xl font-bold text-primary">
+                  {score} / {storyQuizzes.length}
+                </div>
+                <p className="text-muted-foreground">
+                  Stories memorized as vivid mental movies
+                </p>
+                <div className="flex gap-4 justify-center">
+                  <Button onClick={() => navigate("/games")}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Games
+                  </Button>
+                  <Button onClick={() => window.location.reload()} variant="outline">
+                    Play Again
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <GameLeaderboard gameType="story_room" currentScore={score} />
+          </div>
         </main>
       </div>
     );

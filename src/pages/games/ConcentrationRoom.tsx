@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
+import { GameLeaderboard } from "@/components/GameLeaderboard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Trophy, ArrowLeft, Focus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 
 const passages = [
@@ -40,10 +43,12 @@ const passages = [
 export default function ConcentrationRoom() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [currentPassage, setCurrentPassage] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
   const [revealed, setRevealed] = useState(false);
   const [score, setScore] = useState(0);
+  const [gameSaved, setGameSaved] = useState(false);
 
   const passage = passages[currentPassage];
   const progress = ((currentPassage + 1) / passages.length) * 100;
@@ -77,37 +82,66 @@ export default function ConcentrationRoom() {
 
   const isGameComplete = currentPassage === passages.length - 1 && revealed;
 
+  // Save score when game completes
+  const saveGameScore = async () => {
+    if (!user || gameSaved) return;
+    
+    try {
+      await supabase.from("game_scores").insert({
+        user_id: user.id,
+        game_type: "concentration_room",
+        score: score,
+        mode: "solo",
+        metadata: {
+          total_passages: passages.length,
+          completed_at: new Date().toISOString(),
+        },
+      });
+      setGameSaved(true);
+    } catch (error) {
+      console.error("Error saving score:", error);
+    }
+  };
+
+  if (isGameComplete && !gameSaved) {
+    saveGameScore();
+  }
+
   if (isGameComplete) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
-        <main className="container mx-auto px-4 py-8 max-w-4xl">
-          <Card className="text-center">
-            <CardHeader>
-              <Trophy className="h-16 w-16 mx-auto text-yellow-500 mb-4" />
-              <CardTitle className="text-3xl">Concentration Room Mastered!</CardTitle>
-              <CardDescription>
-                You're seeing Christ in all Scripture!
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-4xl font-bold text-primary">
-                {score} / {passages.length}
-              </div>
-              <p className="text-muted-foreground">
-                "These are they which testify of me" - John 5:39
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Button onClick={() => navigate("/games")}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Games
-                </Button>
-                <Button onClick={() => window.location.reload()} variant="outline">
-                  Play Again
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <main className="container mx-auto px-4 py-8 max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-6">
+            <Card className="text-center">
+              <CardHeader>
+                <Trophy className="h-16 w-16 mx-auto text-yellow-500 mb-4" />
+                <CardTitle className="text-3xl">Concentration Room Mastered!</CardTitle>
+                <CardDescription>
+                  You're seeing Christ in all Scripture!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-4xl font-bold text-primary">
+                  {score} / {passages.length}
+                </div>
+                <p className="text-muted-foreground">
+                  "These are they which testify of me" - John 5:39
+                </p>
+                <div className="flex gap-4 justify-center">
+                  <Button onClick={() => navigate("/games")}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Games
+                  </Button>
+                  <Button onClick={() => window.location.reload()} variant="outline">
+                    Play Again
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <GameLeaderboard gameType="concentration_room" currentScore={score} />
+          </div>
         </main>
       </div>
     );
