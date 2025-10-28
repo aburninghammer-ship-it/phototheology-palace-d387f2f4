@@ -262,6 +262,116 @@ export default function RoomDetail() {
               roomPrinciple={room.purpose}
             />
 
+            {room.id === "infinity" && (
+              <Card className="border-2 border-primary/20 bg-primary/5">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                    <CardTitle>Room Code Reference</CardTitle>
+                  </div>
+                  <CardDescription>
+                    Quick reference for all Palace room abbreviations used in the examples above
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Floor 1 */}
+                    <div>
+                      <h4 className="font-semibold text-sm mb-2 text-primary">Floor 1 - Furnishing</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div><Badge variant="outline" className="mr-2">SR</Badge>Story Room</div>
+                        <div><Badge variant="outline" className="mr-2">IR</Badge>Imagination Room</div>
+                        <div><Badge variant="outline" className="mr-2">24</Badge>24FPS Room</div>
+                        <div><Badge variant="outline" className="mr-2">BR</Badge>Bible Rendered</div>
+                        <div><Badge variant="outline" className="mr-2">TR</Badge>Translation Room</div>
+                        <div><Badge variant="outline" className="mr-2">GR</Badge>Gems Room</div>
+                      </div>
+                    </div>
+                    
+                    {/* Floor 2 */}
+                    <div>
+                      <h4 className="font-semibold text-sm mb-2 text-primary">Floor 2 - Investigation</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div><Badge variant="outline" className="mr-2">OR</Badge>Observation Room</div>
+                        <div><Badge variant="outline" className="mr-2">DC</Badge>Def-Com Room</div>
+                        <div><Badge variant="outline" className="mr-2">ST</Badge>Symbols/Types Room</div>
+                        <div><Badge variant="outline" className="mr-2">QR</Badge>Questions Room</div>
+                        <div><Badge variant="outline" className="mr-2">QA</Badge>Q&A Chains</div>
+                      </div>
+                    </div>
+                    
+                    {/* Floor 3 */}
+                    <div>
+                      <h4 className="font-semibold text-sm mb-2 text-primary">Floor 3 - Freestyle</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div><Badge variant="outline" className="mr-2">NF</Badge>Nature Freestyle</div>
+                        <div><Badge variant="outline" className="mr-2">PF</Badge>Personal Freestyle</div>
+                        <div><Badge variant="outline" className="mr-2">BF</Badge>Bible Freestyle</div>
+                        <div><Badge variant="outline" className="mr-2">HF</Badge>History Freestyle</div>
+                        <div><Badge variant="outline" className="mr-2">LR</Badge>Listening Room</div>
+                      </div>
+                    </div>
+                    
+                    {/* Floor 4 */}
+                    <div>
+                      <h4 className="font-semibold text-sm mb-2 text-primary">Floor 4 - Next Level</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div><Badge variant="outline" className="mr-2">CR</Badge>Concentration Room</div>
+                        <div><Badge variant="outline" className="mr-2">DR</Badge>Dimensions Room</div>
+                        <div><Badge variant="outline" className="mr-2">C6</Badge>Connect 6</div>
+                        <div><Badge variant="outline" className="mr-2">TRm</Badge>Theme Room</div>
+                        <div><Badge variant="outline" className="mr-2">TZ</Badge>Time Zone Room</div>
+                        <div><Badge variant="outline" className="mr-2">PRm</Badge>Patterns Room</div>
+                        <div><Badge variant="outline" className="mr-2">P‖</Badge>Parallels Room</div>
+                        <div><Badge variant="outline" className="mr-2">FRt</Badge>Fruit Room</div>
+                        <div><Badge variant="outline" className="mr-2">CEC</Badge>Christ in Every Chapter</div>
+                        <div><Badge variant="outline" className="mr-2">R66</Badge>Room 66</div>
+                      </div>
+                    </div>
+                    
+                    {/* Floor 5 */}
+                    <div>
+                      <h4 className="font-semibold text-sm mb-2 text-primary">Floor 5 - Vision</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div><Badge variant="outline" className="mr-2">BL</Badge>Blue Room (Sanctuary)</div>
+                        <div><Badge variant="outline" className="mr-2">PR</Badge>Prophecy Room</div>
+                        <div><Badge variant="outline" className="mr-2">3A</Badge>Three Angels' Room</div>
+                      </div>
+                    </div>
+                    
+                    {/* Floor 6 */}
+                    <div>
+                      <h4 className="font-semibold text-sm mb-2 text-primary">Floor 6 - Three Heavens & Cycles</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div><Badge variant="outline" className="mr-2">@Ad</Badge>Adamic Cycle</div>
+                        <div><Badge variant="outline" className="mr-2">@No</Badge>Noahic Cycle</div>
+                        <div><Badge variant="outline" className="mr-2">@Ab</Badge>Abrahamic Cycle</div>
+                        <div><Badge variant="outline" className="mr-2">@Mo</Badge>Mosaic Cycle</div>
+                        <div><Badge variant="outline" className="mr-2">@Cy</Badge>Cyrusic Cycle</div>
+                        <div><Badge variant="outline" className="mr-2">@CyC</Badge>Cyrus-Christ Cycle</div>
+                        <div><Badge variant="outline" className="mr-2">@Sp</Badge>Holy Spirit Cycle</div>
+                        <div><Badge variant="outline" className="mr-2">@Re</Badge>Remnant Cycle</div>
+                        <div><Badge variant="outline" className="mr-2">1H</Badge>First Heaven (DoL¹/NE¹)</div>
+                        <div><Badge variant="outline" className="mr-2">2H</Badge>Second Heaven (DoL²/NE²)</div>
+                        <div><Badge variant="outline" className="mr-2">3H</Badge>Third Heaven (DoL³/NE³)</div>
+                        <div><Badge variant="outline" className="mr-2">JR</Badge>Juice Room</div>
+                      </div>
+                    </div>
+                    
+                    {/* Floor 7 */}
+                    <div>
+                      <h4 className="font-semibold text-sm mb-2 text-primary">Floor 7 - Spiritual & Emotional</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <div><Badge variant="outline" className="mr-2">FRm</Badge>Fire Room</div>
+                        <div><Badge variant="outline" className="mr-2">MR</Badge>Meditation Room</div>
+                        <div><Badge variant="outline" className="mr-2">SRm</Badge>Speed Room</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
