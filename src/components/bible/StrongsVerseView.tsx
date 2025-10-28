@@ -78,8 +78,12 @@ export const StrongsVerseView = ({
                 <div>
                   <p className="mb-2">{verse.text}</p>
                   {verse.verse === 1 && (
-                    <p className="text-xs text-muted-foreground italic bg-muted/30 p-2 rounded">
-                      Strong's numbers are currently available for John 3:16 as a demo. Full Strong's concordance integration coming soon.
+                    <p className="text-xs text-muted-foreground italic bg-muted/30 p-2 rounded flex items-start gap-2">
+                      <Sparkles className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                      <span>
+                        Strong's numbers are available for select verses (John 1:1, 3:3, 3:16, 14:6). 
+                        Click the superscript numbers to see Hebrew/Greek definitions. Full concordance integration coming soon.
+                      </span>
                     </p>
                   )}
                 </div>
