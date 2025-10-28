@@ -39,7 +39,7 @@ export const useDirectMessages = () => {
 
   // Fetch conversations with unread counts
   const fetchConversations = useCallback(async () => {
-    if (!user) return;
+    if (!user?.id) return;
 
     console.log('Fetching conversations for user:', user.id);
     try {
@@ -390,7 +390,9 @@ export const useDirectMessages = () => {
       )
       .subscribe();
 
-    // Subscribe to typing indicators
+    // Subscribe to typing indicators (only if activeConversationId exists)
+    if (!activeConversationId) return;
+    
     const typingChannel = supabase
       .channel('typing-changes')
       .on(
