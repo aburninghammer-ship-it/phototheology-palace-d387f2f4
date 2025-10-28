@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
 import { genesisImages } from "@/assets/24fps/genesis";
 import { UserGemsList } from "@/components/UserGemsList";
+import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 
 export default function RoomDetail() {
   const { floorNumber, roomId } = useParams();
@@ -253,6 +254,13 @@ export default function RoomDetail() {
             {room.id === "gr" && (
               <UserGemsList floorNumber={floor.number} roomId={room.id} />
             )}
+
+            <RoomPracticeSpace
+              floorNumber={floor.number}
+              roomId={room.id}
+              roomName={room.name}
+              roomPrinciple={room.purpose}
+            />
 
             <Card>
               <CardHeader>
