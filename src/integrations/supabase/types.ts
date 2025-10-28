@@ -1294,6 +1294,42 @@ export type Database = {
         }
         Relationships: []
       }
+      room_exercises: {
+        Row: {
+          created_at: string | null
+          exercise_content: string
+          exercise_title: string
+          floor_number: number
+          id: string
+          room_id: string
+          updated_at: string | null
+          user_id: string
+          verse_reference: string
+        }
+        Insert: {
+          created_at?: string | null
+          exercise_content: string
+          exercise_title: string
+          floor_number: number
+          id?: string
+          room_id: string
+          updated_at?: string | null
+          user_id: string
+          verse_reference: string
+        }
+        Update: {
+          created_at?: string | null
+          exercise_content?: string
+          exercise_title?: string
+          floor_number?: number
+          id?: string
+          room_id?: string
+          updated_at?: string | null
+          user_id?: string
+          verse_reference?: string
+        }
+        Relationships: []
+      }
       room_progress: {
         Row: {
           best_drill_score: number
