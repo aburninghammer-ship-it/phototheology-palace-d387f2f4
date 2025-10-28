@@ -89,10 +89,16 @@ export const StrongsVerseView = ({
                             Strong's concordance data is currently available for these demonstration verses:
                           </p>
                           <ul className="list-disc list-inside text-muted-foreground ml-2 space-y-0.5">
-                            <li><strong>John 1:1</strong> - "In the beginning was the Word"</li>
-                            <li><strong>John 3:3</strong> - "Ye must be born again"</li>
-                            <li><strong>John 3:16</strong> - "For God so loved the world"</li>
-                            <li><strong>John 14:6</strong> - "I am the way, the truth, and the life"</li>
+                            <li><strong>Genesis 1:1</strong> - In the beginning God created</li>
+                            <li><strong>Psalm 23:1</strong> - The LORD is my shepherd</li>
+                            <li><strong>Isaiah 53:5</strong> - By his stripes we are healed</li>
+                            <li><strong>Matthew 28:19</strong> - Go and teach all nations</li>
+                            <li><strong>John 1:1, 3:3, 3:16, 14:6</strong> - Key Gospel verses</li>
+                            <li><strong>Romans 3:23, 6:23</strong> - Sin and salvation</li>
+                            <li><strong>Ephesians 2:8</strong> - Saved by grace through faith</li>
+                            <li><strong>Philippians 4:13</strong> - I can do all things</li>
+                            <li><strong>1 Corinthians 13:13</strong> - Faith, hope, and love</li>
+                            <li><strong>Revelation 21:4</strong> - No more tears</li>
                           </ul>
                           <p className="text-muted-foreground mt-2">
                             When viewing these verses, click the superscript numbers to see original Hebrew/Greek definitions and usage. 
