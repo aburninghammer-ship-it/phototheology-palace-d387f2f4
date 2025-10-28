@@ -125,6 +125,9 @@ export const Navigation = () => {
                   <Link to="/bible-image-library">🎨 Image Library</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
+                  <Link to="/public-image-library">🌐 Public Gallery</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/quarterly-study">📅 Amplified Quarterly</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Image, Search, Heart, Trash2, RefreshCw, Loader2, ArrowLeft, MessageCircle, Send, X, Edit, Package, Download } from "lucide-react";
+import { Image, Search, Heart, Trash2, RefreshCw, Loader2, ArrowLeft, MessageCircle, Send, X, Edit, Package, Download, Share2, Globe } from "lucide-react";
 import { genesisImages } from "@/assets/24fps/genesis";
 
 interface BibleImage {
@@ -18,6 +18,7 @@ interface BibleImage {
   verse_reference: string | null;
   image_url: string;
   is_favorite: boolean;
+  is_public: boolean;
   created_at: string;
 }
 
@@ -150,6 +151,25 @@ export default function BibleImageLibrary() {
     } catch (error) {
       console.error("Error toggling favorite:", error);
       toast.error("Failed to update favorite");
+    }
+  };
+
+  const togglePublic = async (id: string, currentPublic: boolean) => {
+    try {
+      const { error } = await supabase
+        .from("bible_images")
+        .update({ is_public: !currentPublic })
+        .eq("id", id);
+
+      if (error) throw error;
+      
+      setImages(images.map(img => 
+        img.id === id ? { ...img, is_public: !currentPublic } : img
+      ));
+      toast.success(!currentPublic ? "Image is now public" : "Image is now private");
+    } catch (error) {
+      console.error("Error toggling public:", error);
+      toast.error("Failed to update sharing status");
     }
   };
 
@@ -613,14 +633,25 @@ export default function BibleImageLibrary() {
                           variant="ghost"
                           onClick={() => toggleFavorite(image.id, image.is_favorite)}
                           className="bg-white/20 hover:bg-white/30"
+                          title={image.is_favorite ? "Remove from favorites" : "Add to favorites"}
                         >
                           <Heart className={`w-5 h-5 ${image.is_favorite ? "fill-red-500 text-red-500" : "text-white"}`} />
                         </Button>
                         <Button
                           size="icon"
                           variant="ghost"
+                          onClick={() => togglePublic(image.id, image.is_public)}
+                          className="bg-white/20 hover:bg-white/30"
+                          title={image.is_public ? "Make private" : "Share publicly"}
+                        >
+                          <Globe className={`w-5 h-5 ${image.is_public ? "fill-green-500 text-green-500" : "text-white"}`} />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
                           onClick={() => startEdit(image)}
                           className="bg-white/20 hover:bg-white/30"
+                          title="Edit"
                         >
                           <Edit className="w-5 h-5 text-white" />
                         </Button>
@@ -629,6 +660,7 @@ export default function BibleImageLibrary() {
                           variant="ghost"
                           onClick={() => regenerateImage(image)}
                           className="bg-white/20 hover:bg-white/30"
+                          title="Regenerate"
                         >
                           <RefreshCw className="w-5 h-5 text-white" />
                         </Button>
@@ -637,6 +669,7 @@ export default function BibleImageLibrary() {
                           variant="ghost"
                           onClick={() => deleteImage(image.id)}
                           className="bg-white/20 hover:bg-white/30"
+                          title="Delete"
                         >
                           <Trash2 className="w-5 h-5 text-white" />
                         </Button>
@@ -685,14 +718,25 @@ export default function BibleImageLibrary() {
                           variant="ghost"
                           onClick={() => toggleFavorite(image.id, image.is_favorite)}
                           className="bg-white/20 hover:bg-white/30"
+                          title="Remove from favorites"
                         >
                           <Heart className="w-5 h-5 fill-red-500 text-red-500" />
                         </Button>
                         <Button
                           size="icon"
                           variant="ghost"
+                          onClick={() => togglePublic(image.id, image.is_public)}
+                          className="bg-white/20 hover:bg-white/30"
+                          title={image.is_public ? "Make private" : "Share publicly"}
+                        >
+                          <Globe className={`w-5 h-5 ${image.is_public ? "fill-green-500 text-green-500" : "text-white"}`} />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
                           onClick={() => startEdit(image)}
                           className="bg-white/20 hover:bg-white/30"
+                          title="Edit"
                         >
                           <Edit className="w-5 h-5 text-white" />
                         </Button>
@@ -701,6 +745,7 @@ export default function BibleImageLibrary() {
                           variant="ghost"
                           onClick={() => regenerateImage(image)}
                           className="bg-white/20 hover:bg-white/30"
+                          title="Regenerate"
                         >
                           <RefreshCw className="w-5 h-5 text-white" />
                         </Button>
@@ -709,6 +754,7 @@ export default function BibleImageLibrary() {
                           variant="ghost"
                           onClick={() => deleteImage(image.id)}
                           className="bg-white/20 hover:bg-white/30"
+                          title="Delete"
                         >
                           <Trash2 className="w-5 h-5 text-white" />
                         </Button>
