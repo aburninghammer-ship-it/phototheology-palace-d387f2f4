@@ -148,15 +148,17 @@ export const MessagingSidebar = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               console.log('❌ Closing sidebar via floating button');
+              setActiveConversationId(null);
               if (setOpen) {
                 setOpen(false);
               } else {
                 toggleSidebar();
               }
             }}
-            className="absolute top-2 right-2 z-50 h-8 w-8 hover:bg-destructive/10 bg-background/80 backdrop-blur-sm shadow-sm"
+            className="absolute top-2 right-2 z-50 h-8 w-8 hover:bg-destructive/10 bg-background/80 backdrop-blur-sm shadow-md border border-border"
             aria-label="Close sidebar"
           >
             <X className="h-4 w-4" />

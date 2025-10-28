@@ -9,6 +9,12 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { useDirectMessages } from "@/hooks/useDirectMessages";
 import { Badge } from "@/components/ui/badge";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -72,42 +78,68 @@ export const Navigation = () => {
             {user ? (
               <>
                 {/* Desktop Navigation */}
+                <TooltipProvider delayDuration={300}>
                 <div className="hidden md:flex items-center gap-1.5">
 
-            <Button
-              variant={location.pathname === "/" ? "default" : "ghost"}
-              asChild
-              size="sm"
-              className={location.pathname === "/" ? "gradient-palace shadow-purple text-xs" : "hover:bg-muted text-xs"}
-            >
-              <Link to="/">Home</Link>
-            </Button>
-            <Button
-              variant={location.pathname === "/app-tour" ? "default" : "ghost"}
-              asChild
-              size="sm"
-              className={location.pathname === "/app-tour" ? "gradient-ocean shadow-blue text-xs" : "hover:bg-muted text-xs"}
-            >
-              <Link to="/app-tour">📖 Tour</Link>
-            </Button>
-            <Button
-              variant={location.pathname === "/palace" ? "default" : "ghost"}
-              asChild
-              size="sm"
-              className={location.pathname === "/palace" ? "gradient-royal shadow-blue text-xs" : "hover:bg-muted text-xs"}
-            >
-              <Link to="/palace">Palace</Link>
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant={isBiblePage ? "default" : "ghost"}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={location.pathname === "/" ? "default" : "ghost"}
+                  asChild
                   size="sm"
-                  className={isBiblePage ? "gradient-ocean shadow-blue text-xs" : "hover:bg-muted text-xs"}
+                  className={location.pathname === "/" ? "gradient-palace shadow-purple text-xs" : "hover:bg-muted text-xs"}
                 >
-                  Bible
+                  <Link to="/">Home</Link>
                 </Button>
-              </DropdownMenuTrigger>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Return to the main dashboard</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={location.pathname === "/app-tour" ? "default" : "ghost"}
+                  asChild
+                  size="sm"
+                  className={location.pathname === "/app-tour" ? "gradient-ocean shadow-blue text-xs" : "hover:bg-muted text-xs"}
+                >
+                  <Link to="/app-tour">📖 Tour</Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Take a guided tour of Phototheology features</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={location.pathname === "/palace" ? "default" : "ghost"}
+                  asChild
+                  size="sm"
+                  className={location.pathname === "/palace" ? "gradient-royal shadow-blue text-xs" : "hover:bg-muted text-xs"}
+                >
+                  <Link to="/palace">Palace</Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Explore the 8-floor Phototheology Palace</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant={isBiblePage ? "default" : "ghost"}
+                      size="sm"
+                      className={isBiblePage ? "gradient-ocean shadow-blue text-xs" : "hover:bg-muted text-xs"}
+                    >
+                      Bible
+                    </Button>
+                  </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
                   <Link to="/bible/John/3">📖 Phototheology Bible</Link>
@@ -134,17 +166,25 @@ export const Navigation = () => {
                   <Link to="/bible-study-leader">👥 Lead a Bible Study</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant={location.pathname.startsWith("/games") || location.pathname === "/kids-games" ? "default" : "ghost"}
-                  size="sm"
-                  className={location.pathname.startsWith("/games") || location.pathname === "/kids-games" ? "gradient-royal shadow-blue text-xs" : "hover:bg-muted text-xs"}
-                >
-                  Games
-                </Button>
-              </DropdownMenuTrigger>
+                </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Bible reading, study tools, and memory games</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant={location.pathname.startsWith("/games") || location.pathname === "/kids-games" ? "default" : "ghost"}
+                      size="sm"
+                      className={location.pathname.startsWith("/games") || location.pathname === "/kids-games" ? "gradient-royal shadow-blue text-xs" : "hover:bg-muted text-xs"}
+                    >
+                      Games
+                    </Button>
+                  </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
                   <Link to="/games">🎮 Palace Games</Link>
@@ -153,17 +193,25 @@ export const Navigation = () => {
                   <Link to="/kids-games">👶 Kids Games</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant={location.pathname.includes("gpt") ? "default" : "ghost"}
-                  size="sm"
-                  className={location.pathname.includes("gpt") ? "gradient-palace shadow-purple text-xs" : "hover:bg-muted text-xs"}
-                >
-                  GPTs
-                </Button>
-              </DropdownMenuTrigger>
+                </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Interactive games for Palace learning</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant={location.pathname.includes("gpt") ? "default" : "ghost"}
+                      size="sm"
+                      className={location.pathname.includes("gpt") ? "gradient-palace shadow-purple text-xs" : "hover:bg-muted text-xs"}
+                    >
+                      GPTs
+                    </Button>
+                  </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
                   <Link to="/phototheologygpt">🤖 PhototheologyGPT</Link>
@@ -178,17 +226,25 @@ export const Navigation = () => {
                   <Link to="/kidgpt">👶 KidGPT</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant={location.pathname === "/spiritual-training" || location.pathname === "/power-of-the-lamb" ? "default" : "ghost"}
-                  size="sm"
-                  className={location.pathname === "/spiritual-training" || location.pathname === "/power-of-the-lamb" ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg text-xs" : "hover:bg-muted text-xs"}
-                >
-                  ⚔️ Training
-                </Button>
-              </DropdownMenuTrigger>
+                </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>AI assistants for Bible study and apologetics</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant={location.pathname === "/spiritual-training" || location.pathname === "/power-of-the-lamb" ? "default" : "ghost"}
+                      size="sm"
+                      className={location.pathname === "/spiritual-training" || location.pathname === "/power-of-the-lamb" ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg text-xs" : "hover:bg-muted text-xs"}
+                    >
+                      ⚔️ Training
+                    </Button>
+                  </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
                   <Link to="/spiritual-training">⚔️ Spiritual Training</Link>
@@ -197,9 +253,16 @@ export const Navigation = () => {
                   <Link to="/power-of-the-lamb">🔥 Power of the Lamb</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Spiritual warfare training and resources</p>
+              </TooltipContent>
+            </Tooltip>
 
-            <DropdownMenu>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
                    <DropdownMenuTrigger asChild>
                      <Button variant="ghost" size="sm" className="text-xs">
                        <BookOpen className="mr-1 h-3 w-3" />
@@ -225,18 +288,25 @@ export const Navigation = () => {
                      </DropdownMenuItem>
                    </DropdownMenuContent>
                  </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Structured courses on Bible prophecy and study</p>
+              </TooltipContent>
+            </Tooltip>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant={location.pathname === "/community" || location.pathname === "/achievements" || location.pathname === "/escape-room" || location.pathname === "/leaderboard" || location.pathname === "/study-partners" || location.pathname === "/live-study" || location.pathname === "/streaks" || location.pathname === "/treasure-hunt" ? "default" : "ghost"}
-                  size="sm"
-                  className={location.pathname === "/community" || location.pathname === "/achievements" || location.pathname === "/escape-room" || location.pathname === "/leaderboard" || location.pathname === "/study-partners" || location.pathname === "/live-study" || location.pathname === "/streaks" || location.pathname === "/treasure-hunt" ? "gradient-palace shadow-purple text-xs" : "hover:bg-muted text-xs"}
-                >
-                  <Users className="mr-1 h-3 w-3" />
-                  Community
-                </Button>
-              </DropdownMenuTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant={location.pathname === "/community" || location.pathname === "/achievements" || location.pathname === "/escape-room" || location.pathname === "/leaderboard" || location.pathname === "/study-partners" || location.pathname === "/live-study" || location.pathname === "/streaks" || location.pathname === "/treasure-hunt" ? "default" : "ghost"}
+                      size="sm"
+                      className={location.pathname === "/community" || location.pathname === "/achievements" || location.pathname === "/escape-room" || location.pathname === "/leaderboard" || location.pathname === "/study-partners" || location.pathname === "/live-study" || location.pathname === "/streaks" || location.pathname === "/treasure-hunt" ? "gradient-palace shadow-purple text-xs" : "hover:bg-muted text-xs"}
+                    >
+                      <Users className="mr-1 h-3 w-3" />
+                      Community
+                    </Button>
+                  </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
                   <Link to="/community">💬 Community Posts</Link>
@@ -265,15 +335,22 @@ export const Navigation = () => {
                   <Link to="/live-study">📹 Live Study</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Connect with other learners and study together</p>
+              </TooltipContent>
+            </Tooltip>
 
-                <DropdownMenu>
-                   <DropdownMenuTrigger asChild>
-                     <Button variant="ghost" size="sm" className="text-xs">
-                       <User className="h-3 w-3 mr-1" />
-                       Account
-                     </Button>
-                   </DropdownMenuTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="text-xs">
+                          <User className="h-3 w-3 mr-1" />
+                          Account
+                        </Button>
+                      </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem asChild>
                       <Link to="/profile">
@@ -305,8 +382,14 @@ export const Navigation = () => {
                       Sign Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                </DropdownMenu>
+                    </DropdownMenu>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Manage your profile and settings</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
+              </TooltipProvider>
               
               {/* Mobile Navigation */}
               <MobileNav />

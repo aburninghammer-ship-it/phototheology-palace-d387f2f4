@@ -43,12 +43,26 @@ const Community = () => {
   }, [user]);
 
   const fetchPosts = async () => {
-    const { data } = await supabase
-      .from("community_posts")
-      .select("*, profiles!community_posts_user_id_fkey(username, display_name)")
-      .order("created_at", { ascending: false });
-    
-    setPosts(data || []);
+    try {
+      const { data, error } = await supabase
+        .from("community_posts")
+        .select("*, profiles!community_posts_user_id_fkey(username, display_name)")
+        .order("created_at", { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching posts:', error);
+        toast({
+          title: "Error loading posts",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      setPosts(data || []);
+    } catch (error: any) {
+      console.error('Unexpected error fetching posts:', error);
+    }
   };
 
   const createPost = async () => {

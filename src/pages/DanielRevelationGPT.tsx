@@ -8,10 +8,15 @@ const DanielRevelationGPT = () => {
     const script = document.createElement('script');
     script.src = 'https://studio.pickaxe.co/api/embed/bundle.js';
     script.defer = true;
+    script.onerror = () => {
+      console.error('Failed to load Daniel & Revelation GPT embed script');
+    };
     document.body.appendChild(script);
 
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
 
