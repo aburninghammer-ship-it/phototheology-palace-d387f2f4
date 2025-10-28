@@ -103,6 +103,7 @@ const JoinChurch = lazy(() => import("./pages/JoinChurch"));
 const ChurchSignup = lazy(() => import("./pages/ChurchSignup"));
 const ChurchSignupSuccess = lazy(() => import("./pages/ChurchSignupSuccess"));
 const ChurchSignupCancelled = lazy(() => import("./pages/ChurchSignupCancelled"));
+const AdminStrongsImport = lazy(() => import("./pages/AdminStrongsImport"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -224,6 +225,7 @@ function App() {
             <Route path="/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
             <Route path="/student-verify" element={<ProtectedRoute><StudentVerification /></ProtectedRoute>} />
             <Route path="/admin/access-codes" element={<ProtectedRoute><AdminAccessCodes /></ProtectedRoute>} />
+            <Route path="/admin/strongs-import" element={<ProtectedRoute><AdminStrongsImport /></ProtectedRoute>} />
             <Route path="/certificates" element={<ProtectedRoute><Certificates /></ProtectedRoute>} />
             <Route path="/study-partners" element={<ProtectedRoute><StudyPartners /></ProtectedRoute>} />
             <Route path="/church-admin" element={<ProtectedRoute><ChurchAdmin /></ProtectedRoute>} />
