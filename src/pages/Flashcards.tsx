@@ -183,7 +183,14 @@ export default function Flashcards() {
 
       toast.success("Custom set created!");
       setNewSet({ title: "", description: "", is_public: false });
-      fetchSets();
+      
+      // Refresh both tabs to show the new set
+      await fetchSets();
+      
+      // Switch to "my" tab if on public tab
+      if (activeTab === "public") {
+        setActiveTab("my");
+      }
     } catch (error: any) {
       console.error("Error creating set:", error);
       if (error.name === 'ZodError') {

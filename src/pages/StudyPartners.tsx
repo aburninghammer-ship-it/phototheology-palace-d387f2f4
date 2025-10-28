@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, UserPlus, Check, X, Search } from "lucide-react";
+import { Users, UserPlus, Check, X, Search, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Footer } from "@/components/Footer";
 
 interface Partner {
   id: string;
@@ -29,12 +30,38 @@ export default function StudyPartners() {
   const [requests, setRequests] = useState<Partner[]>([]);
   const [searchUsername, setSearchUsername] = useState("");
   const [loading, setLoading] = useState(true);
+  const [searchResults, setSearchResults] = useState<Array<{ id: string; username: string; display_name: string }>>([]);
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     if (user) {
       loadPartners();
     }
   }, [user]);
+
+  const searchUsers = async (query: string) => {
+    if (!query.trim() || query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    setSearching(true);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, username, display_name")
+        .or(`username.ilike.%${query}%,display_name.ilike.%${query}%`)
+        .limit(10);
+
+      if (error) throw error;
+      setSearchResults(data || []);
+    } catch (error) {
+      console.error("Error searching users:", error);
+      setSearchResults([]);
+    } finally {
+      setSearching(false);
+    }
+  };
 
   const loadPartners = async () => {
     if (!user) return;
@@ -212,17 +239,50 @@ export default function StudyPartners() {
             <CardDescription>Search by username to connect</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter username..."
-                value={searchUsername}
-                onChange={(e) => setSearchUsername(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendRequest()}
-              />
-              <Button onClick={sendRequest}>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Send Request
-              </Button>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Input
+                    placeholder="Search by username or display name..."
+                    value={searchUsername}
+                    onChange={(e) => {
+                      setSearchUsername(e.target.value);
+                      searchUsers(e.target.value);
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && sendRequest()}
+                  />
+                  {searching && (
+                    <Loader2 className="h-4 w-4 animate-spin absolute right-3 top-3 text-muted-foreground" />
+                  )}
+                </div>
+                <Button onClick={sendRequest} disabled={!searchUsername.trim()}>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Send Request
+                </Button>
+              </div>
+              
+              {/* Search Results Dropdown */}
+              {searchResults.length > 0 && (
+                <Card className="border shadow-lg">
+                  <CardContent className="p-2">
+                    <div className="space-y-1 max-h-48 overflow-y-auto">
+                      {searchResults.map((result) => (
+                        <button
+                          key={result.id}
+                          onClick={() => {
+                            setSearchUsername(result.username);
+                            setSearchResults([]);
+                          }}
+                          className="w-full text-left p-2 rounded-md hover:bg-accent transition-colors"
+                        >
+                          <div className="font-medium text-sm">{result.display_name}</div>
+                          <div className="text-xs text-muted-foreground">@{result.username}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -302,6 +362,7 @@ export default function StudyPartners() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 }

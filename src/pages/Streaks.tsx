@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Flame, Calendar, Sparkles, Gamepad2, Calculator } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { Footer } from "@/components/Footer";
 
 interface StreakData {
   activity: string;
@@ -162,6 +163,7 @@ export default function Streaks() {
           ))}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

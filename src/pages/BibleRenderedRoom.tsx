@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { bibleRenderedSets } from "@/data/bibleRenderedSets";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Footer } from "@/components/Footer";
 
 const BibleRenderedRoom = () => {
   const navigate = useNavigate();
@@ -199,6 +200,7 @@ const BibleRenderedRoom = () => {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 };

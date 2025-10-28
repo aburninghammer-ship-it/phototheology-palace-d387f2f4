@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
+import { Building2, Sparkles, Users, BookOpen, Lightbulb, Crown, Layers, Zap, Scale, Telescope, Search, Image, Film, Brain, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Navigation } from "@/components/Navigation";
-import { Building2, BookOpen, Sparkles, Lightbulb, Crown, Layers, Zap, Scale, Telescope, Search, Image, Film, Brain, Share2, Users } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
+import { useToast } from "@/hooks/use-toast";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
   const { toast } = useToast();
@@ -335,11 +336,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border">
-        <div className="container mx-auto text-center text-sm text-muted-foreground">
-          <p>Phototheology — The Magnum Opus of Visual Biblical Formation</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCourseProgress } from "@/hooks/useCourseProgress";
 import { Link, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
+import { Footer } from "@/components/Footer";
 
 const Palace = () => {
   const { user } = useAuth();
@@ -47,8 +48,8 @@ const Palace = () => {
         <div className="container mx-auto max-w-6xl">
           {/* Hero Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-palace border border-white/10 mb-4 shadow-lg">
-              <Building2 className="h-4 w-4 text-white" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-palace border border-white/20 mb-4 shadow-lg">
+              <Building2 className="h-5 w-5 text-white" />
               <span className="text-sm font-semibold text-white">The Master System</span>
             </div>
             
@@ -141,6 +142,7 @@ const Palace = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

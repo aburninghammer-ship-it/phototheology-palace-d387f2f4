@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, BookOpen, Users, Calendar } from "lucide-react";
+import { Loader2, BookOpen, Users, Calendar, Download, FileText, ExternalLink } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Footer } from "@/components/Footer";
 
 interface BibleStudySession {
   sessionNumber: number;
@@ -76,7 +77,7 @@ const BibleStudyLeader = () => {
     }
   };
 
-  const downloadStudy = () => {
+  const downloadAsText = () => {
     if (!generatedStudy) return;
 
     let content = `${generatedStudy.seriesTitle}\n\n`;
@@ -108,6 +109,124 @@ const BibleStudyLeader = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Downloaded!",
+      description: "Study guide saved as text file",
+    });
+  };
+
+  const downloadAsPDF = () => {
+    if (!generatedStudy) return;
+
+    // Create HTML content for printing
+    const printWindow = window.open('', '', 'width=800,height=600');
+    if (!printWindow) return;
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>${generatedStudy.seriesTitle}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+          h1 { color: #2563eb; border-bottom: 3px solid #2563eb; padding-bottom: 10px; }
+          h2 { color: #1e40af; margin-top: 30px; page-break-after: avoid; }
+          h3 { color: #3730a3; margin-top: 20px; }
+          .session { page-break-before: always; margin-top: 40px; padding: 20px; border: 1px solid #e5e7eb; }
+          .session:first-of-type { page-break-before: auto; }
+          .overview { background: #eff6ff; padding: 20px; border-left: 4px solid #2563eb; margin: 20px 0; }
+          .scripture { background: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 15px 0; font-style: italic; }
+          .section { margin: 15px 0; }
+          .section-title { font-weight: bold; color: #2563eb; margin-bottom: 8px; }
+          ul { margin-left: 20px; }
+          li { margin: 8px 0; }
+          @media print {
+            body { margin: 20px; }
+            .session { page-break-inside: avoid; }
+          }
+        </style>
+      </head>
+      <body>
+        <h1>${generatedStudy.seriesTitle}</h1>
+        <div class="overview">
+          <h3>Series Overview</h3>
+          <p>${generatedStudy.overview}</p>
+        </div>
+        
+        ${generatedStudy.sessions.map(session => `
+          <div class="session">
+            <h2>Session ${session.sessionNumber}: ${session.title}</h2>
+            <div class="scripture">
+              <strong>Scripture:</strong> ${session.scripture}
+            </div>
+            
+            <div class="section">
+              <div class="section-title">Opening Prayer:</div>
+              <p>${session.openingPrayer}</p>
+            </div>
+            
+            <div class="section">
+              <div class="section-title">Icebreaker:</div>
+              <p>${session.icebreaker}</p>
+            </div>
+            
+            <div class="section">
+              <div class="section-title">Main Teaching:</div>
+              <p>${session.mainTeaching.replace(/\n/g, '<br>')}</p>
+            </div>
+            
+            <div class="section">
+              <div class="section-title">Discussion Questions:</div>
+              <ul>
+                ${session.discussionQuestions.map(q => `<li>${q}</li>`).join('')}
+              </ul>
+            </div>
+            
+            <div class="section">
+              <div class="section-title">Practical Application:</div>
+              <p>${session.practicalApplication}</p>
+            </div>
+            
+            <div class="section">
+              <div class="section-title">Closing Prayer:</div>
+              <p>${session.closingPrayer}</p>
+            </div>
+          </div>
+        `).join('')}
+        
+        <script>
+          window.onload = function() {
+            window.print();
+          }
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
+  const renderScriptureLink = (reference: string) => {
+    // Parse simple references like "John 3:16" or "Genesis 1:1-3"
+    const match = reference.match(/^(\d?\s?[A-Za-z]+)\s+(\d+):(\d+)(-\d+)?/);
+    if (match) {
+      const book = match[1].trim();
+      const chapter = match[2];
+      return (
+        <a 
+          href={`/bible/${book}/${chapter}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+        >
+          {reference}
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      );
+    }
+    return <span>{reference}</span>;
   };
 
   return (
@@ -120,7 +239,7 @@ const BibleStudyLeader = () => {
             <h1 className="text-4xl font-bold">Lead a Bible Study</h1>
           </div>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Generate comprehensive Bible study series on any topic. Perfect for small groups, Sunday school, or personal study.
+            Generate comprehensive Bible study series on any topic. Perfect for small groups, Bible studies, or personal devotions.
           </p>
         </div>
 
@@ -201,14 +320,26 @@ const BibleStudyLeader = () => {
               </Button>
 
               {generatedStudy && (
-                <Button 
-                  onClick={downloadStudy} 
-                  variant="secondary"
-                  className="w-full"
-                  size="lg"
-                >
-                  Download Study Guide
-                </Button>
+                <div className="space-y-2">
+                  <Button 
+                    onClick={downloadAsText} 
+                    variant="secondary"
+                    className="w-full"
+                    size="lg"
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    Download as Text
+                  </Button>
+                  <Button 
+                    onClick={downloadAsPDF} 
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Print as PDF
+                  </Button>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -253,7 +384,7 @@ const BibleStudyLeader = () => {
                             Session {session.sessionNumber}: {session.title}
                           </CardTitle>
                           <CardDescription className="font-semibold">
-                            📖 {session.scripture}
+                            📖 {renderScriptureLink(session.scripture)}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-3 text-sm">
@@ -300,6 +431,7 @@ const BibleStudyLeader = () => {
           </Card>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

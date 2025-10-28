@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Book, CheckCircle2, Circle, BookOpen, Sparkles, Users, Scroll } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { danielCourse, kidsDanielCourse } from "@/data/danielCourseData";
+import { Footer } from "@/components/Footer";
 
 export default function DanielCourse() {
   const [completedDays, setCompletedDays] = useState<number[]>([]);
@@ -181,14 +182,13 @@ export default function DanielCourse() {
                           {currentCourse
                             .filter(day => day.week === weekNum)
                             .map(day => (
-                              <Button
+                              <div
                                 key={day.day}
-                                variant={selectedDay === day.day ? 'default' : 'ghost'}
-                                className="w-full justify-start gap-3 h-auto py-3"
-                                onClick={() => setSelectedDay(day.day)}
+                                className="flex items-start gap-3 p-3 rounded-lg border-2 transition-all hover:border-primary/50 cursor-pointer bg-card"
+                                onClick={() => setSelectedDay(selectedDay === day.day ? day.day : day.day)}
                               >
                                 <div
-                                  className="cursor-pointer"
+                                  className="cursor-pointer flex-shrink-0"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     toggleDayCompletion(day.day);
@@ -206,7 +206,7 @@ export default function DanielCourse() {
                                     {day.title}
                                   </div>
                                 </div>
-                              </Button>
+                              </div>
                             ))}
                         </div>
                       </div>
@@ -386,6 +386,7 @@ export default function DanielCourse() {
           </Card>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

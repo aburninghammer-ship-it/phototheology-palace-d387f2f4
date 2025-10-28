@@ -124,16 +124,17 @@ Biblical Range: ${set.range}
 
 Style: Modern, symbolic, with rich biblical imagery. Use warm golden and deep blue tones. The image should be iconic and memorable, capturing the spiritual essence of this biblical period. Include subtle symbolism that represents the theme without being literal. Professional Bible study visual.`;
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/images/generations', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-image-preview',
-        messages: [{ role: 'user', content: prompt }],
-        modalities: ['image', 'text']
+        model: 'black-forest-labs/flux-1.1-pro',
+        prompt: prompt,
+        width: 1024,
+        height: 1024
       }),
     });
 
@@ -144,10 +145,11 @@ Style: Modern, symbolic, with rich biblical imagery. Use warm golden and deep bl
     }
 
     const data = await response.json();
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    const imageUrl = data.data?.[0]?.url;
 
     if (!imageUrl) {
-      throw new Error('No image generated');
+      console.error('API response:', JSON.stringify(data));
+      throw new Error('No image generated from AI');
     }
 
     // Save to bible_images table

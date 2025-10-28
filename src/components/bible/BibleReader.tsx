@@ -62,6 +62,13 @@ export const BibleReader = () => {
     setLoading(true);
     setError(null);
     try {
+      // Validate book and chapter before API call
+      if (!book || chapter < 1 || chapter > 150) {
+        // Redirect to default Bible page if invalid
+        navigate("/bible/John/3");
+        return;
+      }
+      
       // Use 'kjv' for API call even if 'kjv-strongs' is selected
       const apiTranslation = translation === "kjv-strongs" ? "kjv" : translation;
       const data = await fetchChapter(book, chapter, apiTranslation as Translation);
@@ -73,6 +80,11 @@ export const BibleReader = () => {
         showToast: false,
       });
       setError(message);
+      
+      // Redirect to default if book/chapter doesn't exist
+      if (message.includes("not found") || message.includes("does not exist")) {
+        setTimeout(() => navigate("/bible/John/3"), 2000);
+      }
     } finally {
       setLoading(false);
     }

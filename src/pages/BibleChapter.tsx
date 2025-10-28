@@ -3,6 +3,7 @@ import { BibleReader } from "@/components/bible/BibleReader";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Footer } from "@/components/Footer";
 
 const BibleChapter = () => {
   return (
@@ -21,6 +22,7 @@ const BibleChapter = () => {
           <BibleReader />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

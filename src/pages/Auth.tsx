@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -211,10 +211,10 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center gradient-dreamy p-4">
       <div className="w-full max-w-md">
         {/* Logo Header */}
-        <div className="text-center mb-8">
+        <Link to="/" className="block text-center mb-8 group">
           <div className="inline-flex items-center gap-2 mb-4">
             <div className="relative">
-              <Building2 className="h-12 w-12 text-primary" />
+              <Building2 className="h-12 w-12 text-primary transition-transform group-hover:scale-110" />
               <Sparkles className="h-5 w-5 text-accent absolute -top-1 -right-1 animate-pulse-glow" />
             </div>
           </div>
@@ -222,7 +222,7 @@ export default function Auth() {
             Phototheology
           </h1>
           <p className="text-muted-foreground">The Palace of Biblical Wisdom</p>
-        </div>
+        </Link>
 
         <Card className="glass-card">
           <Tabs defaultValue="login" className="w-full">
