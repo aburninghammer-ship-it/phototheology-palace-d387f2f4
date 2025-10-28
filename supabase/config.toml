@@ -51,3 +51,6 @@ verify_jwt = true
 
 [functions.apply-spiritual-weapon]
 verify_jwt = false
+
+[functions.import-stepbible]
+verify_jwt = true
