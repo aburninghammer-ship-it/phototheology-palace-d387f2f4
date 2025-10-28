@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { palaceFloors } from "@/data/palaceData";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Target, HelpCircle, BookOpen, AlertCircle, CheckCircle, Trophy, Lock, Dumbbell, Brain } from "lucide-react";
+import { ArrowLeft, Target, HelpCircle, BookOpen, AlertCircle, CheckCircle, Trophy, Lock, Dumbbell, Brain, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { JeevesAssistant } from "@/components/JeevesAssistant";
@@ -18,6 +18,9 @@ import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
 import { genesisImages } from "@/assets/24fps/genesis";
 import { UserGemsList } from "@/components/UserGemsList";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
+import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
+import { ValueProposition } from "@/components/palace/ValueProposition";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function RoomDetail() {
   const { floorNumber, roomId } = useParams();
@@ -26,6 +29,12 @@ export default function RoomDetail() {
   const floor = palaceFloors.find(f => f.number === Number(floorNumber));
   const room = floor?.rooms.find(r => r.id === roomId);
   const [showDrill, setShowDrill] = useState(false);
+  const [methodExpanded, setMethodExpanded] = useState(false);
+  const [examplesExpanded, setExamplesExpanded] = useState(false);
+  
+  // Show Quick Start by default for Floor 1-3 rooms
+  const isEarlyFloor = Number(floorNumber) <= 3;
+  const showQuickStart = isEarlyFloor && ['sr', 'ir', '24fps', 'br', 'tr', 'gr', 'or', 'dc', 'st'].includes(roomId || '');
   
   const { 
     progress, 
@@ -136,6 +145,16 @@ export default function RoomDetail() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
+            {/* Value Proposition - Show for early floors */}
+            {showQuickStart && (
+              <ValueProposition roomId={room.id} />
+            )}
+
+            {/* Quick Start Guide - Show for early floors */}
+            {showQuickStart && (
+              <QuickStartGuide roomId={room.id} roomName={room.name} />
+            )}
+
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -161,36 +180,66 @@ export default function RoomDetail() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-primary" />
-                  <CardTitle>Method</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-base leading-relaxed whitespace-pre-line">{room.method}</p>
-              </CardContent>
-            </Card>
+            {/* Method - Collapsible for early floors */}
+            <Collapsible open={methodExpanded} onOpenChange={setMethodExpanded}>
+              <Card>
+                <CardHeader>
+                  <CollapsibleTrigger asChild>
+                    <div className="flex items-center justify-between cursor-pointer group">
+                      <div className="flex items-center gap-2">
+                        <Target className="h-5 w-5 text-primary" />
+                        <CardTitle>Full Methodology</CardTitle>
+                      </div>
+                      <ChevronDown className={`h-5 w-5 transition-transform ${methodExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+                  </CollapsibleTrigger>
+                  {!methodExpanded && isEarlyFloor && (
+                    <CardDescription className="text-sm">
+                      Detailed step-by-step guide (click to expand when ready)
+                    </CardDescription>
+                  )}
+                </CardHeader>
+                <CollapsibleContent>
+                  <CardContent>
+                    <p className="text-base leading-relaxed whitespace-pre-line">{room.method}</p>
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
 
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  <CardTitle>Examples</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {room.examples.map((example, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="text-primary mt-1">•</span>
-                      <span>{example}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+            {/* Examples - Collapsible for early floors */}
+            <Collapsible open={examplesExpanded} onOpenChange={setExamplesExpanded}>
+              <Card>
+                <CardHeader>
+                  <CollapsibleTrigger asChild>
+                    <div className="flex items-center justify-between cursor-pointer group">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-5 w-5 text-primary" />
+                        <CardTitle>Additional Examples</CardTitle>
+                      </div>
+                      <ChevronDown className={`h-5 w-5 transition-transform ${examplesExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+                  </CollapsibleTrigger>
+                  {!examplesExpanded && isEarlyFloor && (
+                    <CardDescription className="text-sm">
+                      More examples to explore (click to expand)
+                    </CardDescription>
+                  )}
+                </CardHeader>
+                <CollapsibleContent>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      {room.examples.map((example, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="text-primary mt-1">•</span>
+                          <span>{example}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
 
             {room.id === "24fps" && (
               <Card>
