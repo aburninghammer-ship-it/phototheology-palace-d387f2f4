@@ -170,7 +170,7 @@ export function RoomPracticeSpace({ floorNumber, roomId, roomName, roomPrinciple
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-primary" />
-            <CardTitle>Practice Space</CardTitle>
+            <CardTitle>Practice Box</CardTitle>
           </div>
           <Button
             onClick={() => {
