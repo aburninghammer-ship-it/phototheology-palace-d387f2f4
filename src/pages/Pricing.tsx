@@ -84,15 +84,16 @@ export default function Pricing() {
       badgeVariant: "secondary" as const,
       ctaText: "Start Free Trial",
       ctaVariant: "default" as const,
-      ctaUrl: "#", // No Stripe link for free trial
+      ctaUrl: "#",
       features: [
-        "FULL ACCESS - Everything unlocked",
-        "Access to The Palace (8 floors, 40+ rooms)",
-        "The Phototheology Bible",
-        "Daily Challenges",
-        "All study tools",
-        "Study groups",
-        "My Studies library",
+        "FULL ACCESS - Everything unlocked for 7 days",
+        "The Palace (8 floors, 40+ rooms)",
+        "Bible Reader with search & Strong's",
+        "Daily Challenges & Training Drills",
+        "Core games (Chain Chess, Verse Match)",
+        "Live Study Rooms",
+        "Community & Study Partners",
+        "Basic AI assistance",
       ],
     },
     {
@@ -103,24 +104,24 @@ export default function Pricing() {
       price: "$9",
       period: "per month",
       description: "Perfect for serious Bible students",
-      badge: "Payment Required",
+      badge: "Best Value",
       badgeVariant: "default" as const,
       ctaText: "Get Essential",
       ctaVariant: "default" as const,
       ctaUrl: "https://buy.stripe.com/4gM8wP6U37zoavefiY6EU07",
       features: [
-        "Everything in Free Trial",
-        "Phototheology GPT (main AI assistant)",
-        "The Blueprint (10-lesson course)",
-        "90-Day Training Course",
-        "Art of War Training",
-        "Unlimited Daily Challenges",
-        "Sermon Builder with 5 Smooth Stones",
+        "Everything in Free Trial (continued)",
+        "Phototheology GPT - Main AI Assistant",
+        "The Blueprint Course (10 lessons)",
+        "90-Day Phototheology Training Course",
+        "Bible Rendered Room with visual frames",
+        "Sermon Builder with 5 Smooth Stones method",
         "Research Mode with citations",
-        "Flashcards & study games",
-        "Bible Image Library",
-        "Unlimited study groups",
-        "Collaborative rooms",
+        "Flashcards & Memory Tools",
+        "Bible Image Library access",
+        "Growth Journal & Spiritual Training",
+        "Unlimited Daily Challenges",
+        "Treasure Hunts & Escape Rooms (limited)",
       ],
     },
     {
@@ -139,13 +140,21 @@ export default function Pricing() {
       popular: true,
       features: [
         "Everything in Essential",
-        "All 5 AI Study GPTs (Kids, Daniel & Revelation, Apologetics, Lesson Quarterly)",
-        "20+ Palace Games",
-        "Chain Chess multiplayer",
-        "Kids Games (all ages)",
+        "All 4 Specialized AI GPTs:",
+        "  • Kid GPT (family-friendly learning)",
+        "  • Daniel & Revelation GPT",
+        "  • Apologetics GPT",
+        "  • Quarterly Study GPT",
+        "All 4 Courses (Daniel, Revelation, Revelation Kids)",
+        "20+ Palace-based Games (Story Room, Blue Room, etc.)",
+        "Advanced multiplayer games",
+        "All Kids Games (age-appropriate content)",
+        "Unlimited Treasure Hunts & Escape Rooms",
         "Prophecy Watch alerts",
         "Culture & Controversy analysis",
+        "Critics Analysis tool",
         "Power of the Lamb devotionals",
+        "Bible Study Leader tools",
         "Priority support",
         "Early access to new features",
       ],
@@ -164,12 +173,13 @@ export default function Pricing() {
       ctaVariant: "default" as const,
       ctaUrl: "/student-verify",
       features: [
-        "Everything in Premium",
-        "100% Free with .edu email",
-        "Valid for 1 year",
-        "Annual renewal required",
-        "Support education",
-        "All features unlocked",
+        "Everything in Premium - 100% FREE",
+        "All AI GPTs unlocked",
+        "All courses & games",
+        "Valid for 1 academic year",
+        "Simple annual renewal with .edu email",
+        "Support Christian education",
+        "No credit card ever required",
       ],
     },
   ];
@@ -337,65 +347,114 @@ export default function Pricing() {
                   </thead>
                   <tbody>
                     <tr className="border-b">
-                      <td className="p-4">Memory Palace Access</td>
+                      <td className="p-4">The Palace (8 Floors, 40+ Rooms)</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-4">Bible Reader & Search</td>
+                      <td className="p-4">Bible Reader with Strong's & Chain References</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-4">Basic Games (Chain Chess, Verse Match)</td>
+                      <td className="p-4">Core Games (Chain Chess, Verse Match, etc.)</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">20+ Palace-Based Games</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Kids Games (All Ages)</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Escape Rooms & Treasure Hunts</td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4">—</td>
                       <td className="text-center p-4 text-muted-foreground">Limited</td>
-                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5">Unlimited</td>
+                      <td className="text-center p-4">Unlimited</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-4">All Courses (Revelation, Daniel, etc.)</td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4 text-muted-foreground">1 Course</td>
-                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-4">AI Study Assistants (Jeeves, GPTs)</td>
+                      <td className="p-4">Phototheology GPT (Main AI)</td>
                       <td className="text-center p-4 text-muted-foreground">Limited</td>
-                      <td className="text-center p-4 text-muted-foreground">10 questions/day</td>
-                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-4">Live Study Rooms</td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-4">Community Features</td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="p-4">Offline Access</td>
+                      <td className="p-4">All 4 Specialized AI GPTs</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">The Blueprint Course</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">All Courses (Daniel, Revelation, Kids)</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Sermon Builder & 5 Smooth Stones</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Research Mode with Citations</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Bible Image Library</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Prophecy Watch & Culture Analysis</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4">—</td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Live Study Rooms & Partners</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4">Community & Leaderboards</td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
+                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
