@@ -74,11 +74,17 @@ const Community = () => {
       // Fetch comments for all posts
       if (data && data.length > 0) {
         const postIds = data.map(p => p.id);
-        const { data: commentsData } = await supabase
+        const { data: commentsData, error: commentsError } = await supabase
           .from("community_comments")
           .select("*, profiles(username, display_name)")
           .in("post_id", postIds)
           .order("created_at", { ascending: true });
+        
+        console.log('Fetched comments:', commentsData);
+        
+        if (commentsError) {
+          console.error('Error fetching comments:', commentsError);
+        }
         
         if (commentsData) {
           const commentsByPost: Record<string, any[]> = {};
@@ -88,6 +94,7 @@ const Community = () => {
             }
             commentsByPost[comment.post_id].push(comment);
           });
+          console.log('Comments by post:', commentsByPost);
           setComments(commentsByPost);
         }
       }
@@ -152,13 +159,16 @@ const Community = () => {
     try {
       const sanitizedContent = sanitizeHtml(content);
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("community_comments")
         .insert({
           post_id: postId,
           user_id: user!.id,
           content: sanitizedContent,
-        });
+        })
+        .select();
+
+      console.log('Comment insert result:', { data, error });
 
       if (error) throw error;
 
@@ -167,8 +177,13 @@ const Community = () => {
       });
 
       setNewComment({ ...newComment, [postId]: "" });
-      fetchPosts(); // Refresh to get new comment
+      
+      // Wait a moment for realtime to propagate, then refetch
+      setTimeout(() => {
+        fetchPosts();
+      }, 500);
     } catch (error: any) {
+      console.error('Error adding comment:', error);
       toast({
         title: "Error",
         description: error.message,
