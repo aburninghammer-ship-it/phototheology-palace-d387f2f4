@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Calculator } from "lucide-react";
+import { ArrowLeft, Calculator, Share2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const EQUATION_PIECES = [
   "1D", "2D", "3D", "4D", "5D",
@@ -29,12 +30,14 @@ const DOCTRINE_PROMPTS = [
 
 export default function EquationBuilder() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [availablePieces, setAvailablePieces] = useState<string[]>([]);
   const [selectedPieces, setSelectedPieces] = useState<string[]>([]);
   const [currentPrompt, setCurrentPrompt] = useState("");
   const [explanation, setExplanation] = useState("");
   const [score, setScore] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sharingToCommunity, setSharingToCommunity] = useState(false);
 
   useEffect(() => {
     startRound();
@@ -57,6 +60,65 @@ export default function EquationBuilder() {
 
   const removePiece = (index: number) => {
     setSelectedPieces(selectedPieces.filter((_, i) => i !== index));
+  };
+
+  const shareEquationToCommunity = async () => {
+    if (!user) {
+      toast.error("Please sign in to share");
+      return;
+    }
+
+    if (selectedPieces.length < 3) {
+      toast.error("Build an equation with at least 3 pieces first");
+      return;
+    }
+
+    if (!explanation.trim()) {
+      toast.error("Add an explanation before sharing");
+      return;
+    }
+
+    setSharingToCommunity(true);
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name, username')
+        .eq('id', user.id)
+        .single();
+
+      const displayName = profile?.display_name || profile?.username || 'A student';
+      const equationString = selectedPieces.join(' ');
+      const postTitle = `Help ${displayName} solve this Phototheology equation!`;
+      const postContent = `**Challenge:** ${currentPrompt}
+
+**Equation:**
+\`\`\`
+${equationString}
+\`\`\`
+
+**Explanation:**
+${explanation}
+
+Can you improve this equation or offer insights? Share your thoughts!`;
+
+      const { error: postError } = await supabase
+        .from('community_posts')
+        .insert({
+          user_id: user.id,
+          title: postTitle,
+          content: postContent,
+          category: 'challenge'
+        });
+
+      if (postError) throw postError;
+
+      toast.success("Equation shared to community!");
+    } catch (error) {
+      console.error("Error sharing to community:", error);
+      toast.error("Failed to share to community");
+    } finally {
+      setSharingToCommunity(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -186,6 +248,29 @@ export default function EquationBuilder() {
                 placeholder="Explain what each piece means and how your equation answers the doctrine challenge..."
                 className="bg-black/60 border-fuchsia-500/30 text-white min-h-32"
               />
+              
+              {/* Share to Community Button */}
+              {selectedPieces.length >= 3 && explanation.trim() && (
+                <Button
+                  onClick={shareEquationToCommunity}
+                  variant="outline"
+                  className="w-full"
+                  disabled={sharingToCommunity}
+                >
+                  {sharingToCommunity ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Sharing...
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share to Community - Get Help Solving This!
+                    </>
+                  )}
+                </Button>
+              )}
+
               <div className="flex gap-2">
                 <Button onClick={handleSubmit} disabled={isSubmitting} className="flex-1">
                   {isSubmitting ? "Validating..." : "Submit Equation"}
