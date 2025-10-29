@@ -407,19 +407,6 @@ export default function Auth() {
           </Tabs>
         </Card>
 
-        <div className="text-center mt-6 text-sm text-muted-foreground">
-          <p>
-            By signing up, you agree to our{" "}
-            <a 
-              href="https://www.termsfeed.com/live/c4c8f8e6-7b0f-4e3d-9a4e-e3f0d4c8f8e6" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              Terms of Service
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );

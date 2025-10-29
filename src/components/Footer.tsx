@@ -92,17 +92,6 @@ export const Footer = () => {
                   Submit Feedback
                 </Link>
               </li>
-              <li>
-                <a 
-                  href="https://www.termsfeed.com/live/c4c8f8e6-7b0f-4e3d-9a4e-e3f0d4c8f8e6" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
-                >
-                  <FileText className="h-3 w-3" />
-                  Terms of Service
-                </a>
-              </li>
             </ul>
           </div>
         </div>
