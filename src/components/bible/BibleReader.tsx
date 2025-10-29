@@ -37,10 +37,10 @@ export const BibleReader = () => {
   
   const { trackReading } = useReadingHistory();
   const { addBookmark, isBookmarked } = useBookmarks();
-  const { preferences } = useUserPreferences();
+  const { preferences, loading: preferencesLoading } = useUserPreferences();
   const { handleError } = useErrorHandler();
   
-  const [translation, setTranslation] = useState<Translation>(preferences.bible_translation as Translation);
+  const [translation, setTranslation] = useState<Translation>("kjv");
 
   useEffect(() => {
     // Get translation from URL parameter or use preference
@@ -48,10 +48,10 @@ export const BibleReader = () => {
     const urlTranslation = params.get("t");
     if (urlTranslation) {
       setTranslation(urlTranslation as Translation);
-    } else {
+    } else if (!preferencesLoading) {
       setTranslation(preferences.bible_translation as Translation);
     }
-  }, [preferences.bible_translation, window.location.search]);
+  }, [preferences.bible_translation, preferencesLoading]);
 
   useEffect(() => {
     loadChapter();
@@ -113,7 +113,7 @@ export const BibleReader = () => {
     }
   };
 
-  if (loading) {
+  if (loading || preferencesLoading) {
     return <BibleReaderSkeleton />;
   }
 
