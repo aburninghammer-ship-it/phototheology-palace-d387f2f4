@@ -116,11 +116,11 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <LiveNotificationsProvider>
-            <Toaster />
-            <Sonner />
-            <OfflineIndicator />
-            <BrowserRouter>
+          <Toaster />
+          <Sonner />
+          <OfflineIndicator />
+          <BrowserRouter>
+            <LiveNotificationsProvider>
               <SidebarProvider defaultOpen={false}>
                 <div className="min-h-screen flex w-full">
                   <MessagingSidebar />
@@ -246,8 +246,8 @@ function App() {
                 </main>
               </div>
             </SidebarProvider>
+            </LiveNotificationsProvider>
           </BrowserRouter>
-          </LiveNotificationsProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
