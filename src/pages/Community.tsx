@@ -56,7 +56,10 @@ const Community = () => {
     try {
       const { data, error } = await supabase
         .from("community_posts")
-        .select("*, profiles(username, display_name)")
+        .select(`
+          *,
+          profiles!community_posts_user_id_fkey(username, display_name)
+        `)
         .order("created_at", { ascending: false });
       
       if (error) {
@@ -76,7 +79,10 @@ const Community = () => {
         const postIds = data.map(p => p.id);
         const { data: commentsData, error: commentsError } = await supabase
           .from("community_comments")
-          .select("*, profiles(username, display_name)")
+          .select(`
+            *,
+            profiles!community_comments_user_id_fkey(username, display_name)
+          `)
           .in("post_id", postIds)
           .order("created_at", { ascending: true });
         
