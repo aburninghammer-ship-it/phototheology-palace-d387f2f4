@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Calculator, Trophy, Target, Clock, RefreshCw, Share2, Plus, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,6 +21,15 @@ interface Equation {
   symbols: string[];
   difficulty: Difficulty;
   explanation: string;
+}
+
+interface PrincipleCode {
+  id: string;
+  code: string;
+  name: string;
+  category: string;
+  description: string;
+  floor_association: string | null;
 }
 
 export default function EquationsChallenge() {
@@ -38,12 +49,61 @@ export default function EquationsChallenge() {
   const [customEquation, setCustomEquation] = useState("");
   const [customExplanation, setCustomExplanation] = useState("");
   const [shareLink, setShareLink] = useState("");
+  
+  // Principle selection state
+  const [availablePrinciples, setAvailablePrinciples] = useState<PrincipleCode[]>([]);
+  const [selectedPrinciples, setSelectedPrinciples] = useState<string[]>([]);
+  const [principlesLoading, setPrinciplesLoading] = useState(false);
 
   const difficultyInfo = {
     easy: { symbols: 3, color: "bg-green-500", description: "3 principles" },
     intermediate: { symbols: 6, color: "bg-yellow-500", description: "6 principles" },
     advanced: { symbols: 9, color: "bg-orange-500", description: "9 principles" },
     pro: { symbols: 12, color: "bg-red-500", description: "12 principles" }
+  };
+
+  // Load available principles on mount
+  useEffect(() => {
+    loadPrinciples();
+  }, []);
+
+  const loadPrinciples = async () => {
+    setPrinciplesLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('equation_codes')
+        .select('*')
+        .order('category', { ascending: true })
+        .order('name', { ascending: true });
+      
+      if (error) throw error;
+      setAvailablePrinciples(data || []);
+    } catch (error) {
+      console.error("Error loading principles:", error);
+      toast.error("Failed to load principles");
+    } finally {
+      setPrinciplesLoading(false);
+    }
+  };
+
+  const togglePrinciple = (code: string) => {
+    setSelectedPrinciples(prev => 
+      prev.includes(code) 
+        ? prev.filter(c => c !== code)
+        : [...prev, code]
+    );
+  };
+
+  const buildEquationFromPrinciples = () => {
+    if (selectedPrinciples.length === 0) {
+      toast.error("Please select at least one principle");
+      return;
+    }
+    
+    // Build equation with selected principles
+    const equation = selectedPrinciples.join(" + ");
+    setCustomEquation(equation);
+    toast.success(`Equation built with ${selectedPrinciples.length} principles`);
   };
 
   const generateEquation = async () => {
@@ -450,7 +510,7 @@ export default function EquationsChallenge() {
                   Build your own equation challenge to share with others
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 <div>
                   <label className="text-sm font-medium mb-2 block">
                     Verse Reference
@@ -462,9 +522,91 @@ export default function EquationsChallenge() {
                   />
                 </div>
 
+                {/* Principle Selector */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">
+                      Select Principles for Your Equation
+                    </label>
+                    <Badge variant="secondary">
+                      {selectedPrinciples.length} selected
+                    </Badge>
+                  </div>
+                  
+                  {principlesLoading ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Loading principles...
+                    </div>
+                  ) : (
+                    <div className="max-h-[400px] overflow-y-auto border rounded-lg p-4 space-y-4">
+                      {Object.entries(
+                        availablePrinciples.reduce((acc, principle) => {
+                          if (!acc[principle.category]) {
+                            acc[principle.category] = [];
+                          }
+                          acc[principle.category].push(principle);
+                          return acc;
+                        }, {} as Record<string, PrincipleCode[]>)
+                      ).map(([category, principles]) => (
+                        <div key={category} className="space-y-2">
+                          <h4 className="font-semibold text-sm text-primary">
+                            {category}
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-2">
+                            {principles.map((principle) => (
+                              <div
+                                key={principle.id}
+                                className="flex items-start space-x-2 p-2 rounded hover:bg-muted/50 transition-colors"
+                              >
+                                <Checkbox
+                                  id={principle.id}
+                                  checked={selectedPrinciples.includes(principle.code)}
+                                  onCheckedChange={() => togglePrinciple(principle.code)}
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <Label
+                                    htmlFor={principle.id}
+                                    className="text-sm font-medium cursor-pointer flex items-center gap-2"
+                                  >
+                                    <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">
+                                      {principle.code}
+                                    </code>
+                                    <span className="truncate">{principle.name}</span>
+                                  </Label>
+                                  {principle.floor_association && (
+                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                      Floor: {principle.floor_association}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {availablePrinciples.length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          No principles available yet
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  <Button
+                    onClick={buildEquationFromPrinciples}
+                    variant="outline"
+                    className="w-full"
+                    disabled={selectedPrinciples.length === 0}
+                  >
+                    <Calculator className="h-4 w-4 mr-2" />
+                    Build Equation from Selected Principles
+                  </Button>
+                </div>
+
                 <div>
                   <label className="text-sm font-medium mb-2 block">
-                    Equation
+                    Equation (or build using principles above)
                   </label>
                   <Input
                     value={customEquation}
