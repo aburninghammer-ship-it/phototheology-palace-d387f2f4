@@ -299,16 +299,49 @@ export default function AdminStrongsImport() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
+            <div className="space-y-3">
+              <label className="block text-sm font-medium">
                 Strong's CSV File (with PT annotations)
               </label>
-              <input
-                type="file"
-                accept=".csv,.txt"
-                onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
-                className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-              />
+              <div className="flex flex-col gap-3">
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="csv-file-input"
+                    accept=".csv,.txt"
+                    onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    onClick={() => document.getElementById('csv-file-input')?.click()}
+                    className="w-full border-2 border-dashed hover:border-primary/50"
+                  >
+                    <Upload className="mr-2 h-5 w-5" />
+                    {csvFile ? 'Change File' : 'Choose File'}
+                  </Button>
+                </div>
+                {csvFile && (
+                  <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                    <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{csvFile.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(csvFile.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setCsvFile(null)}
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
             <Button
               onClick={handleCsvImport}
@@ -342,27 +375,93 @@ export default function AdminStrongsImport() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
+            <div className="space-y-3">
+              <label className="block text-sm font-medium">
                 Hebrew Lexicon (TBESH_*.txt)
               </label>
-              <input
-                type="file"
-                accept=".txt"
-                onChange={(e) => setHebrewFile(e.target.files?.[0] || null)}
-                className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-              />
+              <div className="flex flex-col gap-3">
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="hebrew-file-input"
+                    accept=".txt"
+                    onChange={(e) => setHebrewFile(e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    onClick={() => document.getElementById('hebrew-file-input')?.click()}
+                    className="w-full border-2 border-dashed hover:border-primary/50"
+                  >
+                    <Upload className="mr-2 h-5 w-5" />
+                    {hebrewFile ? 'Change File' : 'Choose Hebrew File'}
+                  </Button>
+                </div>
+                {hebrewFile && (
+                  <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                    <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{hebrewFile.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(hebrewFile.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setHebrewFile(null)}
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">
+            <div className="space-y-3">
+              <label className="block text-sm font-medium">
                 Greek Lexicon (TBESG_*.txt)
               </label>
-              <input
-                type="file"
-                accept=".txt"
-                onChange={(e) => setGreekFile(e.target.files?.[0] || null)}
-                className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-              />
+              <div className="flex flex-col gap-3">
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="greek-file-input"
+                    accept=".txt"
+                    onChange={(e) => setGreekFile(e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    onClick={() => document.getElementById('greek-file-input')?.click()}
+                    className="w-full border-2 border-dashed hover:border-primary/50"
+                  >
+                    <Upload className="mr-2 h-5 w-5" />
+                    {greekFile ? 'Change File' : 'Choose Greek File'}
+                  </Button>
+                </div>
+                {greekFile && (
+                  <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                    <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{greekFile.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(greekFile.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setGreekFile(null)}
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
             <Button
               onClick={handleFileImport}
