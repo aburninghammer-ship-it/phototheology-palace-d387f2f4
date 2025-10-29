@@ -343,20 +343,21 @@ export default function EquationsChallenge() {
       const displayName = profile?.display_name || profile?.username || 'A student';
 
       // Create community post
-      const postTitle = `Help ${displayName} solve this Phototheology equation!`;
-      const postContent = `**Verse:** ${currentEquation.verse}
+      const postTitle = `🧩 Help ${displayName} solve this Phototheology equation!`;
+      const postContent = `📖 **Verse:** ${currentEquation.verse}
 
-**Equation Challenge:**
+🧮 **Equation Challenge:**
 \`\`\`
 ${currentEquation.equation}
 \`\`\`
 
-**Symbols Used:**
-${currentEquation.symbols.map(s => `• ${s}`).join('\n')}
+📚 **Explanation:**
+${currentEquation.explanation}
 
-Can you help solve this equation? Share your interpretation and insights!
+🎯 Can you help solve this equation? Share your interpretation and insights! Also, write out the entire verse.
 
-*Difficulty: ${difficulty}*`;
+⚡ *Difficulty: ${difficulty}*`;
+
 
       const { data: newPost, error: postError } = await supabase
         .from('community_posts')
