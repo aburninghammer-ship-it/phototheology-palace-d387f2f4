@@ -227,122 +227,60 @@ export default function EquationsChallenge() {
           <Card className="mb-6">
           <CardHeader>
             <CardTitle>Principle Codes Reference</CardTitle>
-            <CardDescription>Individual principles used in Phototheology equations</CardDescription>
+            <CardDescription>Approved symbols used in Phototheology equations</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold mb-2 text-primary">Prophecy Principles (PR)</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  <Badge variant="outline" className="justify-start">@2300 - 2300 Days</Badge>
-                  <Badge variant="outline" className="justify-start">@70w - 70 Weeks</Badge>
-                  <Badge variant="outline" className="justify-start">@1260 - 1260 Years</Badge>
-                  <Badge variant="outline" className="justify-start">@1290 - 1290 Days</Badge>
-                  <Badge variant="outline" className="justify-start">@1335 - 1335 Days</Badge>
+            {principlesLoading ? (
+              <div className="text-center py-8">Loading principles...</div>
+            ) : (
+              <div className="space-y-4">
+                {['palace', 'sanctuary', 'feast', 'christ', 'calvary', 'spirit', 'resurrection', 'second_coming', 'new_jerusalem'].map((category) => {
+                  const categoryPrinciples = availablePrinciples.filter(p => p.category === category);
+                  if (categoryPrinciples.length === 0) return null;
+                  
+                  const categoryNames: Record<string, string> = {
+                    palace: 'Palace Foundations',
+                    sanctuary: 'Sanctuary Furniture',
+                    feast: 'Biblical Feasts',
+                    christ: 'Christ',
+                    calvary: 'Calvary',
+                    spirit: 'Holy Spirit',
+                    resurrection: 'Resurrection',
+                    second_coming: 'Second Coming',
+                    new_jerusalem: 'New Jerusalem'
+                  };
+                  
+                  return (
+                    <div key={category}>
+                      <h3 className="font-semibold mb-2 text-primary">{categoryNames[category]}</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {categoryPrinciples.map((principle) => (
+                          <Badge key={principle.id} variant="outline" className="justify-start">
+                            {principle.code} - {principle.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+                
+                <div className="mt-4 p-3 bg-muted rounded-lg">
+                  <h4 className="font-semibold mb-1 text-sm">Example Equations:</h4>
+                  <p className="text-sm text-muted-foreground font-mono mb-2">
+                    PO + BA + MS → CH + GR = NC
+                  </p>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    (Passover + Brazen Altar + Mercy Seat → Christ + Grace = New Creation)
+                  </p>
+                  <p className="text-sm text-muted-foreground font-mono">
+                    FF + PN → RS + HS = GL
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    (Firstfruits + Pentecost → Resurrection + Holy Spirit = Glory)
+                  </p>
                 </div>
               </div>
-
-              <div>
-                <h3 className="font-semibold mb-2 text-primary">Heavens & Cycles</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  <Badge variant="outline" className="justify-start">1H - First Heaven</Badge>
-                  <Badge variant="outline" className="justify-start">2H - Second Heaven</Badge>
-                  <Badge variant="outline" className="justify-start">3H - Third Heaven</Badge>
-                  <Badge variant="outline" className="justify-start">@Ad - Adamic Cycle</Badge>
-                  <Badge variant="outline" className="justify-start">@No - Noahic Cycle</Badge>
-                  <Badge variant="outline" className="justify-start">@Ab - Abrahamic</Badge>
-                  <Badge variant="outline" className="justify-start">@Mo - Mosaic Cycle</Badge>
-                  <Badge variant="outline" className="justify-start">@Cy - Cyrus Cycle</Badge>
-                  <Badge variant="outline" className="justify-start">@CyC - Cyrus-Christ</Badge>
-                  <Badge variant="outline" className="justify-start">@Sp - Spirit Cycle</Badge>
-                  <Badge variant="outline" className="justify-start">@Re - Remnant</Badge>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold mb-2 text-primary">Palace Room Codes</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Badge variant="outline" className="justify-start">SR - Story</Badge>
-                  <Badge variant="outline" className="justify-start">IR - Imagination</Badge>
-                  <Badge variant="outline" className="justify-start">24 - 24FPS</Badge>
-                  <Badge variant="outline" className="justify-start">BR - Bible Rendered</Badge>
-                  <Badge variant="outline" className="justify-start">TR - Translation</Badge>
-                  <Badge variant="outline" className="justify-start">GR - Gems</Badge>
-                  <Badge variant="outline" className="justify-start">OR - Observation</Badge>
-                  <Badge variant="outline" className="justify-start">DC - Def-Com</Badge>
-                  <Badge variant="outline" className="justify-start">ST - Symbols/Types</Badge>
-                  <Badge variant="outline" className="justify-start">QR - Questions</Badge>
-                  <Badge variant="outline" className="justify-start">QA - Q&A Chains</Badge>
-                  <Badge variant="outline" className="justify-start">CR - Concentration</Badge>
-                  <Badge variant="outline" className="justify-start">DR - Dimensions</Badge>
-                  <Badge variant="outline" className="justify-start">C6 - Connect 6</Badge>
-                  <Badge variant="outline" className="justify-start">TRm - Theme</Badge>
-                  <Badge variant="outline" className="justify-start">TZ - Time Zone</Badge>
-                  <Badge variant="outline" className="justify-start">PRm - Patterns</Badge>
-                  <Badge variant="outline" className="justify-start">P‖ - Parallels</Badge>
-                  <Badge variant="outline" className="justify-start">FRt - Fruit</Badge>
-                  <Badge variant="outline" className="justify-start">BL - Blue/Sanctuary</Badge>
-                  <Badge variant="outline" className="justify-start">PR - Prophecy</Badge>
-                  <Badge variant="outline" className="justify-start">3A - Three Angels</Badge>
-                  <Badge variant="outline" className="justify-start">FE - Feasts</Badge>
-                  <Badge variant="outline" className="justify-start">NF - Nature Freestyle</Badge>
-                  <Badge variant="outline" className="justify-start">PF - Personal Freestyle</Badge>
-                  <Badge variant="outline" className="justify-start">BF - Bible Freestyle</Badge>
-                  <Badge variant="outline" className="justify-start">HF - History Freestyle</Badge>
-                  <Badge variant="outline" className="justify-start">LR - Listening</Badge>
-                  <Badge variant="outline" className="justify-start">JR - Juice</Badge>
-                  <Badge variant="outline" className="justify-start">FRm - Fire</Badge>
-                  <Badge variant="outline" className="justify-start">MR - Meditation</Badge>
-                  <Badge variant="outline" className="justify-start">SRm - Speed</Badge>
-                  <Badge variant="outline" className="justify-start">CEC - Christ/Chapter</Badge>
-                  <Badge variant="outline" className="justify-start">R66 - Room 66</Badge>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2 text-primary">Sanctuary Furniture (BL Room)</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Badge variant="outline" className="justify-start">ABO - Altar Burnt Offering</Badge>
-                  <Badge variant="outline" className="justify-start">LV - Laver</Badge>
-                  <Badge variant="outline" className="justify-start">LS - Lampstand</Badge>
-                  <Badge variant="outline" className="justify-start">SB - Showbread Table</Badge>
-                  <Badge variant="outline" className="justify-start">AI - Altar of Incense</Badge>
-                  <Badge variant="outline" className="justify-start">ARK - Ark of Covenant</Badge>
-                  <Badge variant="outline" className="justify-start">MS - Mercy Seat</Badge>
-                  <Badge variant="outline" className="justify-start">VL - Veil</Badge>
-                  <Badge variant="outline" className="justify-start">GT - Gate</Badge>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2 text-primary">Biblical Feasts (FE Room)</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Badge variant="outline" className="justify-start">PO - Passover</Badge>
-                  <Badge variant="outline" className="justify-start">UB - Unleavened Bread</Badge>
-                  <Badge variant="outline" className="justify-start">FF - Firstfruits</Badge>
-                  <Badge variant="outline" className="justify-start">PT - Pentecost</Badge>
-                  <Badge variant="outline" className="justify-start">TR - Trumpets</Badge>
-                  <Badge variant="outline" className="justify-start">DA - Day of Atonement</Badge>
-                  <Badge variant="outline" className="justify-start">TB - Tabernacles</Badge>
-                </div>
-              </div>
-              
-              <div className="mt-4 p-3 bg-muted rounded-lg">
-                <h4 className="font-semibold mb-1 text-sm">Example Equations:</h4>
-                <p className="text-sm text-muted-foreground font-mono mb-2">
-                  @70w + @CyC + PO → CR + ABO + MS = @Re + 3H
-                </p>
-                <p className="text-xs text-muted-foreground mb-3">
-                  (70 weeks prophecy + Cyrus-Christ cycle + Passover → Concentration on Christ + Altar of Burnt Offering + Mercy Seat = Remnant fulfillment in Third Heaven)
-                </p>
-                <p className="text-sm text-muted-foreground font-mono">
-                  PO + @Mo → ABO + @CyC = CR + 2H
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  (Passover + Mosaic cycle → Altar of Burnt Offering + Cyrus-Christ = Concentration on Christ in Second Heaven)
-                </p>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
