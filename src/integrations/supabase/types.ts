@@ -2568,6 +2568,7 @@ export type Database = {
           id: string
           position: number
           strongs_number: string | null
+          testament: string
           verse: number
           word_position: number
           word_text: string
@@ -2579,6 +2580,7 @@ export type Database = {
           id?: string
           position?: number
           strongs_number?: string | null
+          testament?: string
           verse: number
           word_position: number
           word_text: string
@@ -2590,6 +2592,7 @@ export type Database = {
           id?: string
           position?: number
           strongs_number?: string | null
+          testament?: string
           verse?: number
           word_position?: number
           word_text?: string
