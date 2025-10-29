@@ -86,33 +86,6 @@ export const EmpowerYourMembers = () => {
           ))}
         </div>
 
-        {/* What You're NOT Getting */}
-        <Card className="mb-12 border-2 border-destructive/20 bg-destructive/5">
-          <CardHeader>
-            <CardTitle className="text-2xl text-center">What Phototheology for Churches Is NOT</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 text-muted-foreground">
-              <p className="flex items-center gap-2">
-                <span className="text-destructive">✗</span>
-                <span>Not a counseling or crisis response system</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-destructive">✗</span>
-                <span>Not a replacement for pastoral care</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-destructive">✗</span>
-                <span>Not doctrinally flexible (this is distinctly Adventist/prophetic theology)</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-destructive">✗</span>
-                <span>Not "pick and choose" features—you get the full Phototheology method or nothing</span>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* What You ARE Getting */}
         <Card className="mb-12 border-2 border-primary/20 bg-primary/5">
           <CardHeader>
