@@ -58,8 +58,12 @@ export const Navigation = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={toggleSidebar}
+                  onClick={() => {
+                    console.log('💬 Chat button clicked, opening sidebar');
+                    toggleSidebar();
+                  }}
                   className="relative"
+                  aria-label="Open chat"
                 >
                   <MessageCircle className="h-4 w-4" />
                   <span className="ml-1 hidden sm:inline">Chat</span>
