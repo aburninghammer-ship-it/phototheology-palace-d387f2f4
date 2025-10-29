@@ -129,7 +129,21 @@ export default function EquationsChallenge() {
     // Build equation with selected principles
     const equation = selectedPrinciples.join(" + ");
     setCustomEquation(equation);
-    toast.success(`Equation built with ${selectedPrinciples.length} principles`);
+    
+    // Generate explanation paragraph
+    const explanationParts: string[] = [];
+    selectedPrinciples.forEach((code, index) => {
+      const principle = availablePrinciples.find(p => p.code === code);
+      if (principle) {
+        const connector = index === 0 ? "" : index === selectedPrinciples.length - 1 ? " and finally " : ", then ";
+        explanationParts.push(`${connector}${code} (${principle.name} — ${principle.description})`);
+      }
+    });
+    
+    const explanation = `This equation combines: ${explanationParts.join("")}. Together, these principles illuminate the verse by revealing Christ through layered study—observing the text, discovering typological connections, and situating it within the prophetic timeline and sanctuary pattern.`;
+    setCustomExplanation(explanation);
+    
+    toast.success(`Equation and explanation generated with ${selectedPrinciples.length} principles`);
   };
 
   const generateEquation = async () => {
