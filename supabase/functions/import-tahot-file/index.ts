@@ -75,9 +75,9 @@ serve(async (req) => {
       }
 
       const parts = line.split('\t');
-      if (parts.length < 5) continue;
+      if (parts.length < 4) continue;
 
-      // Parse the reference: e.g., "Gen.1.1#01=L"
+      // Parse the reference: e.g., "Gen.1.1#01=L" or "Mat.1.1#01=NKO"
       const refPart = parts[0];
       const refMatch = refPart.match(/^([A-Za-z0-9]+)\.(\d+)\.(\d+)#(\d+)/);
       
@@ -91,10 +91,15 @@ serve(async (req) => {
       const verseNum = parseInt(refMatch[3]);
       const wordNum = parseInt(refMatch[4]);
 
+      // TAGNT/TAHOT format:
+      // parts[0] = Reference (Mat.1.1#01=NKO)
+      // parts[1] = Greek/Hebrew word (Βίβλος)
+      // parts[2] = English translation ([The] book)
+      // parts[3] = dStrongs with grammar (G0976=N-NSF)
       const hebrew = parts[1] || '';
-      const transliteration = parts[2] || '';
-      const translation = parts[3] || '';
-      const dStrongs = parts[4] || '';
+      const translation = parts[2] || '';  // English translation is in column 2
+      const dStrongs = parts[3] || '';      // Strong's is in column 3
+      const transliteration = '';           // Not directly available in this format
 
       // Create verse key
       const verseKey = `${book}:${chapter}:${verseNum}`;
@@ -119,9 +124,9 @@ serve(async (req) => {
 
       // Add token
       verse.tokens.push({
-        t: translation.replace(/[<>\[\]]/g, '').trim(), // Remove angle/square brackets
+        t: translation.replace(/[<>\[\]()]/g, '').trim(), // Remove angle/square/round brackets
         s: strongsNum,
-        h: hebrew.replace(/[\/\\]/g, ''), // Remove separators
+        h: hebrew.replace(/[\/\\()]/g, ''), // Remove separators and parentheses
         tr: transliteration
       });
     }
