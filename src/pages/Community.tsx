@@ -31,15 +31,23 @@ const Community = () => {
     if (user && user.id) {
       fetchPosts();
 
-      const channel = supabase
+      const postsChannel = supabase
         .channel("community_posts_changes")
         .on("postgres_changes", { event: "*", schema: "public", table: "community_posts" }, () => {
           fetchPosts();
         })
         .subscribe();
 
+      const commentsChannel = supabase
+        .channel("community_comments_changes")
+        .on("postgres_changes", { event: "*", schema: "public", table: "community_comments" }, () => {
+          fetchPosts();
+        })
+        .subscribe();
+
       return () => {
-        supabase.removeChannel(channel);
+        supabase.removeChannel(postsChannel);
+        supabase.removeChannel(commentsChannel);
       };
     }
   }, [user]);
