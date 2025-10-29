@@ -15,6 +15,7 @@ export default function AdminStrongsImport() {
   const [result, setResult] = useState<any>(null);
   const [hebrewFile, setHebrewFile] = useState<File | null>(null);
   const [greekFile, setGreekFile] = useState<File | null>(null);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -114,6 +115,61 @@ export default function AdminStrongsImport() {
         toast({
           title: "Import Successful",
           description: `Imported ${response.data.statistics.hebrewImported} Hebrew + ${response.data.statistics.greekImported} Greek entries`,
+        });
+      }
+    } catch (error: any) {
+      console.error("Import error:", error);
+      toast({
+        title: "Import Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      setResult({ success: false, error: error.message });
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const handleCsvImport = async () => {
+    if (!csvFile) {
+      toast({
+        title: "Error",
+        description: "Please select a CSV file to import",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsImporting(true);
+    setResult(null);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Not authenticated");
+      }
+
+      toast({
+        title: "Starting Import",
+        description: "Processing CSV file... This may take a few minutes.",
+      });
+
+      const csvContent = await csvFile.text();
+
+      const response = await supabase.functions.invoke('import-strongs-csv', {
+        body: { csvContent }
+      });
+
+      if (response.error) {
+        throw response.error;
+      }
+
+      setResult(response.data);
+      
+      if (response.data.success) {
+        toast({
+          title: "Import Successful",
+          description: `Imported ${response.data.statistics.imported} Strong's entries`,
         });
       }
     } catch (error: any) {
@@ -236,7 +292,50 @@ export default function AdminStrongsImport() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Upload className="h-5 w-5" />
-              Import Lexicon Files (Recommended)
+              Import CSV with PT Annotations (Recommended)
+            </CardTitle>
+            <CardDescription>
+              Upload a CSV file with Phototheology annotations. Expected format: strongs_id, lemma, language, part_of_speech, short_gloss, long_definition, sanctuary_link, time_zone_code, dimension_code
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Strong's CSV File (with PT annotations)
+              </label>
+              <input
+                type="file"
+                accept=".csv,.txt"
+                onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
+                className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+              />
+            </div>
+            <Button
+              onClick={handleCsvImport}
+              disabled={isImporting || !csvFile}
+              size="lg"
+              className="w-full"
+            >
+              {isImporting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Importing CSV...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Import CSV File
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Import Lexicon Files (STEPBible Format)
             </CardTitle>
             <CardDescription>
               Upload the TBESH (Hebrew) and TBESG (Greek) lexicon files from STEPBible.org. These files contain complete Strong's definitions.
@@ -394,7 +493,7 @@ export default function AdminStrongsImport() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {result.statistics.hebrewImported !== undefined && (
-                      <div className="bg-muted p-4 rounded-lg">
+                  <div className="bg-muted p-4 rounded-lg">
                         <div className="text-2xl font-bold text-green-600">
                           {result.statistics.hebrewImported}
                         </div>
@@ -407,6 +506,14 @@ export default function AdminStrongsImport() {
                           {result.statistics.greekImported}
                         </div>
                         <div className="text-sm text-muted-foreground">Greek Entries</div>
+                      </div>
+                    )}
+                    {result.statistics.imported !== undefined && (
+                      <div className="bg-muted p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-primary">
+                          {result.statistics.imported}
+                        </div>
+                        <div className="text-sm text-muted-foreground">Entries Imported</div>
                       </div>
                     )}
                     {result.statistics.versesInserted !== undefined && (
