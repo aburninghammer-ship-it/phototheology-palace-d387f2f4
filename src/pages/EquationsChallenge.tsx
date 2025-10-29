@@ -130,20 +130,25 @@ export default function EquationsChallenge() {
     const equation = selectedPrinciples.join(" + ");
     setCustomEquation(equation);
     
-    // Generate explanation paragraph
+    // Generate explanation paragraph with narrative flow
     const explanationParts: string[] = [];
     selectedPrinciples.forEach((code, index) => {
       const principle = availablePrinciples.find(p => p.code === code);
       if (principle) {
-        const connector = index === 0 ? "" : index === selectedPrinciples.length - 1 ? " and finally " : ", then ";
-        explanationParts.push(`${connector}${code} (${principle.name} — ${principle.description})`);
+        if (index === 0) {
+          explanationParts.push(`We begin with ${code} (${principle.name}), which ${principle.description.toLowerCase()}`);
+        } else if (index === selectedPrinciples.length - 1) {
+          explanationParts.push(`and finally ${code} (${principle.name}), ${principle.description.toLowerCase()}`);
+        } else {
+          explanationParts.push(`then ${code} (${principle.name}), ${principle.description.toLowerCase()}`);
+        }
       }
     });
     
-    const explanation = `This equation combines: ${explanationParts.join("")}. Together, these principles illuminate the verse by revealing Christ through layered study—observing the text, discovering typological connections, and situating it within the prophetic timeline and sanctuary pattern.`;
+    const explanation = explanationParts.join(", ") + ". Together, these principles illuminate the verse by revealing Christ through multi-dimensional study—observing the text closely, discovering prophetic and typological connections, and situating the passage within the sanctuary pattern and redemptive cycles.";
     setCustomExplanation(explanation);
     
-    toast.success(`Equation and explanation generated with ${selectedPrinciples.length} principles`);
+    toast.success(`Equation and explanation generated!`);
   };
 
   const generateEquation = async () => {
