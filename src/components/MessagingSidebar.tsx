@@ -106,35 +106,7 @@ export const MessagingSidebar = () => {
   };
 
   if (isCollapsed) {
-    return (
-      <Sidebar className="w-16 md:w-14 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" collapsible="icon" side="left">
-        <SidebarContent>
-          <div className="p-2 flex flex-col items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative h-12 w-12 md:h-10 md:w-10"
-              onClick={() => {
-                console.log('🔄 Expanding sidebar from collapsed state');
-                toggleSidebar();
-              }}
-              aria-label="Open messages"
-            >
-              <MessageCircle className="h-6 w-6 md:h-5 md:w-5" />
-              {totalUnread > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 h-5 w-5 md:h-4 md:w-4 p-0 flex items-center justify-center text-[10px] font-bold animate-pulse"
-                >
-                  {totalUnread > 9 ? '9+' : totalUnread}
-                </Badge>
-              )}
-            </Button>
-            <p className="text-[10px] text-muted-foreground mt-1 text-center">Chat</p>
-          </div>
-        </SidebarContent>
-      </Sidebar>
-    );
+    return null;
   }
 
   return (

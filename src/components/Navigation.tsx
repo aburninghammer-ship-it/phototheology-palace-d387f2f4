@@ -35,8 +35,8 @@ export const Navigation = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-12">
+        <div className="w-full px-4">
+          <div className="flex items-center justify-between h-12 max-w-[1400px] mx-auto">
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">
               <Building2 className="h-6 w-6 text-primary transition-all duration-300 group-hover:scale-110" />
@@ -131,7 +131,7 @@ export const Navigation = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant={isBiblePage ? "default" : "ghost"}
                       size="sm"
@@ -140,7 +140,7 @@ export const Navigation = () => {
                       Bible
                     </Button>
                   </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem asChild>
                   <Link to="/bible/John/3">📖 Phototheology Bible</Link>
                 </DropdownMenuItem>
@@ -176,7 +176,7 @@ export const Navigation = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant={location.pathname.startsWith("/games") || location.pathname === "/kids-games" ? "default" : "ghost"}
                       size="sm"
@@ -185,7 +185,7 @@ export const Navigation = () => {
                       Games
                     </Button>
                   </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem asChild>
                   <Link to="/games">🎮 Palace Games</Link>
                 </DropdownMenuItem>
@@ -203,7 +203,7 @@ export const Navigation = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant={location.pathname.includes("gpt") ? "default" : "ghost"}
                       size="sm"
@@ -212,7 +212,7 @@ export const Navigation = () => {
                       GPTs
                     </Button>
                   </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem asChild>
                 <Link to="/phototheologygpt">🤖 Phototheology GPT</Link>
               </DropdownMenuItem>
@@ -236,7 +236,7 @@ export const Navigation = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant={location.pathname === "/spiritual-training" || location.pathname === "/power-of-the-lamb" ? "default" : "ghost"}
                       size="sm"
@@ -245,7 +245,7 @@ export const Navigation = () => {
                       ⚔️ Training
                     </Button>
                   </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem asChild>
                   <Link to="/spiritual-training">⚔️ Spiritual Training</Link>
                 </DropdownMenuItem>
@@ -269,7 +269,7 @@ export const Navigation = () => {
                        Courses
                      </Button>
                    </DropdownMenuTrigger>
-                   <DropdownMenuContent>
+                   <DropdownMenuContent align="start" className="w-56">
                      <DropdownMenuItem asChild>
                        <Link to="/blueprint-course">🗺️ Blueprint Course</Link>
                      </DropdownMenuItem>
@@ -297,7 +297,7 @@ export const Navigation = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant={location.pathname === "/community" || location.pathname === "/achievements" || location.pathname === "/escape-room" || location.pathname === "/leaderboard" || location.pathname === "/study-partners" || location.pathname === "/live-study" || location.pathname === "/streaks" || location.pathname === "/treasure-hunt" ? "default" : "ghost"}
                       size="sm"
@@ -307,7 +307,7 @@ export const Navigation = () => {
                       Community
                     </Button>
                   </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem asChild>
                   <Link to="/community">💬 Community Posts</Link>
                 </DropdownMenuItem>
@@ -345,13 +345,13 @@ export const Navigation = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" className="text-xs">
                           <User className="h-3 w-3 mr-1" />
                           Account
                         </Button>
                       </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent align="start" className="w-56">
                     <DropdownMenuItem asChild>
                       <Link to="/profile">
                         <User className="h-4 w-4 mr-2" />
