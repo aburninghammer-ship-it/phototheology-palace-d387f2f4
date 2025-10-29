@@ -246,9 +246,15 @@ export const StrongsModal = ({ strongsNumber, isOpen, onClose }: StrongsModalPro
             </div>
           </>
         ) : (
-          <div className="text-center p-8 text-muted-foreground">
-            <Book className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>Strong's entry not found for {strongsNumber}</p>
+          <div className="text-center p-8 space-y-3">
+            <Book className="h-12 w-12 mx-auto mb-3 opacity-50 text-muted-foreground" />
+            <p className="text-muted-foreground font-medium">
+              Strong's entry not found for {strongsNumber}
+            </p>
+            <p className="text-sm text-muted-foreground/80">
+              This entry may not be in the lexicon yet. The full Strong's concordance 
+              contains thousands of entries.
+            </p>
           </div>
         )}
       </DialogContent>

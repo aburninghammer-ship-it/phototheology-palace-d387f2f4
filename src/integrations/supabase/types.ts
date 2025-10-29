@@ -550,6 +550,50 @@ export type Database = {
         }
         Relationships: []
       }
+      community_challenge_responses: {
+        Row: {
+          created_at: string
+          grade_score: number | null
+          graded_at: string | null
+          highlighted_parts: string[] | null
+          id: string
+          jeeves_grade: Json | null
+          post_id: string
+          response_text: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          grade_score?: number | null
+          graded_at?: string | null
+          highlighted_parts?: string[] | null
+          id?: string
+          jeeves_grade?: Json | null
+          post_id: string
+          response_text: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          grade_score?: number | null
+          graded_at?: string | null
+          highlighted_parts?: string[] | null
+          id?: string
+          jeeves_grade?: Json | null
+          post_id?: string
+          response_text?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_challenge_responses_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_comments: {
         Row: {
           content: string

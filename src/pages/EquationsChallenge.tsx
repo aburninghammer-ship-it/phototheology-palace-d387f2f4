@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Calculator, Trophy, Target, Clock, RefreshCw, Share2, Plus, Sparkles, Copy, Check } from "lucide-react";
+import { ChallengeShareButton } from "@/components/challenges/ChallengeShareButton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -554,6 +555,16 @@ export default function EquationsChallenge() {
                           <h3 className="font-bold text-lg">Jeeves' Solution:</h3>
                         </div>
                         <p className="whitespace-pre-wrap">{jeevesSolution}</p>
+                        
+                        {/* Share Button */}
+                        {currentEquation && (
+                          <ChallengeShareButton
+                            challengeEquation={currentEquation.equation}
+                            challengeExplanation={currentEquation.explanation}
+                            jeevesSolution={jeevesSolution}
+                            verse={currentEquation.verse}
+                          />
+                        )}
                       </CardContent>
                     </Card>
                   )}

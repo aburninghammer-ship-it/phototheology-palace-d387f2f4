@@ -776,8 +776,9 @@ CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols
   "equation": "Your equation using ONLY codes listed above",
   "symbols": ["@70w: 70 Weeks Prophecy", "PO: Passover - Christ's sacrifice", "ABO: Altar of Burnt Offering - the cross", ...],
   "difficulty": "${difficulty}",
-  "explanation": "3-4 paragraph explanation: (1) Introduce the verse and its context, (2) Walk through each principle in the equation showing how it relates to the verse, (3) Show how the principles connect to form a theological conclusion, (4) Close with the profound insight this equation reveals"
+  "explanation": "Write a clear, well-structured explanation in 3-4 paragraphs:\n\nParagraph 1: Introduce the verse and establish its theological context in 2-3 complete sentences.\n\nParagraph 2: Walk through each principle in the equation, showing how it relates to the verse. Use complete sentences and proper grammar throughout.\n\nParagraph 3: Demonstrate how the principles connect to form a cohesive theological narrative. Show the flow of logic.\n\nParagraph 4: Conclude with the profound insight this equation reveals about Christ, redemption, or God's plan.\n\nIMPORTANT: Use proper English grammar, complete sentences, and clear paragraph structure. Avoid run-on sentences."
 }`;
+
 
     } else if (mode === "solve-equation") {
       systemPrompt = `You are Jeeves, the master Phototheology teacher. When given a biblical equation, you solve it step-by-step, showing how each principle connects to reveal deeper truth about Christ and Scripture.
@@ -796,10 +797,12 @@ Please provide a masterful solution with these sections:
 What's happening in this passage? Set the scene.
 
 **2. Breaking Down the Equation (walk through each symbol)**
-For each principle in the equation, explain:
+For each principle in the equation, explain in well-structured paragraphs:
 • What this principle means
 • How it connects to the verse
 • What insight it reveals
+
+Use complete sentences and proper paragraph structure. Avoid run-on sentences.
 
 **3. The Flow of Logic**
 Show how the operators (+, →, =) connect the principles to build the theological argument. What's the progression of thought?
