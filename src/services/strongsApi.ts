@@ -1198,23 +1198,27 @@ export const getVerseWithStrongs = async (book: string, chapter: number, verse: 
   try {
     // Try to fetch from database first
     const { data, error } = await supabase
-      .from('verses_strongs')
-      .select('*')
+      .from('bible_verses_tokenized')
+      .select('text_kjv, tokens')
       .eq('book', book)
       .eq('chapter', chapter)
-      .eq('verse', verse)
-      .order('word_position');
+      .eq('verse_num', verse)
+      .maybeSingle();
     
-    if (data && data.length > 0 && !error) {
+    if (data && !error) {
       console.log(`[Strong's] Found in database: ${book} ${chapter}:${verse}`);
-      const words = data.map(row => ({
-        text: row.word_text,
-        strongs: row.strongs_number || undefined
+      
+      // Parse the tokens JSONB array
+      const tokens = data.tokens as Array<{ t: string; s: string | null }>;
+      const words = tokens.map(token => ({
+        text: token.t,
+        strongs: token.s || undefined
       }));
       
-      const text = words.map(w => w.text).join(' ');
-      
-      return { text, words };
+      return {
+        text: data.text_kjv,
+        words
+      };
     }
     
     if (error) {
