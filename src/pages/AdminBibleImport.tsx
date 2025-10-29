@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Database, BookOpen } from "lucide-react";
+import { Upload, Database, BookOpen, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function AdminBibleImport() {
@@ -19,6 +19,8 @@ export default function AdminBibleImport() {
   const [importing, setImporting] = useState(false);
   const [autoImporting, setAutoImporting] = useState(false);
   const [importResults, setImportResults] = useState<any>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const parseCSV = (csv: string) => {
     const lines = csv.trim().split('\n');
@@ -146,6 +148,62 @@ export default function AdminBibleImport() {
     }
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingFile(true);
+    setImportResults(null);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+
+      toast({
+        title: "Reading file...",
+        description: `Processing ${file.name}`,
+      });
+
+      const fileContent = await file.text();
+
+      toast({
+        title: "Importing data...",
+        description: "This may take several minutes for large files.",
+      });
+
+      const { data, error } = await supabase.functions.invoke('import-tahot-file', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: { fileContent },
+      });
+
+      if (error) throw error;
+
+      setImportResults(data);
+      toast({
+        title: "Import Complete!",
+        description: data.message,
+      });
+
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error: any) {
+      console.error('File upload error:', error);
+      toast({
+        title: "Import failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
   const importStrongs = async () => {
     setImporting(true);
     try {
@@ -234,6 +292,56 @@ export default function AdminBibleImport() {
             <TabsContent value="verses" className="space-y-4">
               <Card>
                 <CardHeader>
+                  <CardTitle>Upload TAHOT File</CardTitle>
+                  <CardDescription>
+                    Upload a STEPBible TAHOT (Translators Amalgamated Hebrew OT) text file
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                    <p className="text-sm">
+                      Upload the TAHOT file from STEPBible containing Hebrew Old Testament text with Strong's numbers and morphology tags.
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Expected format: Tab-delimited TAHOT file (e.g., TAHOT_Gen-Deu_-_Translators_Amalgamated_Hebrew_OT_-_STEPBible.org_CC_BY.txt)
+                    </p>
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".txt"
+                    onChange={handleFileUpload}
+                    disabled={uploadingFile}
+                    className="hidden"
+                    id="tahot-file-upload"
+                  />
+
+                  <Button 
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingFile}
+                    className="w-full"
+                    size="lg"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    {uploadingFile ? "Uploading and Processing..." : "Choose TAHOT File"}
+                  </Button>
+
+                  {importResults && (
+                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                      <p className="font-semibold text-green-600 dark:text-green-400">
+                        ✓ Import Successful
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Imported {importResults.imported} verses
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
                   <CardTitle>Import from STEPBible (Automatic)</CardTitle>
                   <CardDescription>
                     Automatically fetch and import KJV verses with Strong's numbers from STEPBible
@@ -258,17 +366,6 @@ export default function AdminBibleImport() {
                     <Database className="h-4 w-4 mr-2" />
                     {autoImporting ? "Importing from STEPBible..." : "Start Automatic Import"}
                   </Button>
-
-                  {importResults && (
-                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
-                      <p className="font-semibold text-green-600 dark:text-green-400">
-                        ✓ Import Successful
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Imported {importResults.imported} verses
-                      </p>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 
