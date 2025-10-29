@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Calculator, Trophy, Target, Clock, RefreshCw, Share2, Plus, Sparkles, Copy, Check } from "lucide-react";
+import { Calculator, Trophy, Target, Clock, RefreshCw, Share2, Plus, Sparkles, Copy, Check, Loader2 } from "lucide-react";
 import { ChallengeShareButton } from "@/components/challenges/ChallengeShareButton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -64,6 +64,7 @@ export default function EquationsChallenge() {
   const [shareLink, setShareLink] = useState("");
   const [shareCode, setShareCode] = useState("");
   const [copied, setCopied] = useState(false);
+  const [sharingToCommunity, setSharingToCommunity] = useState(false);
   
   // Principle selection state
   const [availablePrinciples, setAvailablePrinciples] = useState<PrincipleCode[]>([]);
@@ -324,6 +325,59 @@ export default function EquationsChallenge() {
     setCustomDifficulty("easy");
   };
 
+  const shareEquationToCommunity = async () => {
+    if (!user || !currentEquation) {
+      toast.error("Please sign in to share");
+      return;
+    }
+
+    setSharingToCommunity(true);
+    try {
+      // Get user's display name
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name, username')
+        .eq('id', user.id)
+        .single();
+
+      const displayName = profile?.display_name || profile?.username || 'A student';
+
+      // Create community post
+      const postTitle = `Help ${displayName} solve this Phototheology equation!`;
+      const postContent = `**Verse:** ${currentEquation.verse}
+
+**Equation Challenge:**
+\`\`\`
+${currentEquation.equation}
+\`\`\`
+
+**Symbols Used:**
+${currentEquation.symbols.map(s => `• ${s}`).join('\n')}
+
+Can you help solve this equation? Share your interpretation and insights!
+
+*Difficulty: ${difficulty}*`;
+
+      const { error: postError } = await supabase
+        .from('community_posts')
+        .insert({
+          user_id: user.id,
+          title: postTitle,
+          content: postContent,
+          category: 'challenge'
+        });
+
+      if (postError) throw postError;
+
+      toast.success("Equation shared to community!");
+    } catch (error) {
+      console.error("Error sharing to community:", error);
+      toast.error("Failed to share to community");
+    } finally {
+      setSharingToCommunity(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -515,6 +569,26 @@ export default function EquationsChallenge() {
                   ))}
                 </div>
               </div>
+
+              {/* Share to Community Button */}
+              <Button
+                onClick={shareEquationToCommunity}
+                variant="outline"
+                className="w-full"
+                disabled={sharingToCommunity}
+              >
+                {sharingToCommunity ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Sharing...
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share to Community - Get Help Solving This!
+                  </>
+                )}
+              </Button>
 
               {/* Answer Input */}
               {!showResult && (
