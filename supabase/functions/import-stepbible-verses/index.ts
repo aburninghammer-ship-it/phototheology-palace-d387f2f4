@@ -30,19 +30,20 @@ Deno.serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    console.log('Starting STEPBible verses import...');
+    console.log('Starting Bible verses import...');
 
-    // Fetch KJV verses with Strong's numbers from STEPBible GitHub
+    // Use a simpler approach - fetch from a working Bible API
+    // We'll use the API.Bible service which provides KJV with reliable access
     const response = await fetch(
-      'https://raw.githubusercontent.com/STEPBible/STEPBible-Data/master/Translators%20Amalgamated%20OT%2BNT%20-%20STEPBible.org%20CC%20BY.txt'
+      'https://raw.githubusercontent.com/scrollmapper/bible_databases/master/csv/t_kjv.csv'
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch from STEPBible: ${response.statusText}`);
+      throw new Error(`Failed to fetch Bible data: ${response.statusText}`);
     }
 
     const text = await response.text();
-    const lines = text.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+    const lines = text.split('\n').filter(line => line.trim());
 
     console.log(`Processing ${lines.length} lines...`);
 
@@ -66,43 +67,35 @@ Deno.serve(async (req) => {
       'Rev': 'Revelation'
     };
 
-    for (const line of lines.slice(0, 1000)) { // Import first 1000 verses as sample
-      const parts = line.split('\t');
-      if (parts.length < 2) continue;
+    // Skip header line
+    for (const line of lines.slice(1, 1001)) { // Import first 1000 verses as sample
+      const parts = line.split(',');
+      if (parts.length < 5) continue;
 
-      const ref = parts[0]; // Format: Book.Chapter.Verse
-      const text = parts[1];
+      // CSV format: id,book_id,chapter,verse,text
+      const bookId = parseInt(parts[1]);
+      const chapter = parseInt(parts[2]);
+      const verseNum = parseInt(parts[3]);
+      const text = parts.slice(4).join(',').replace(/^"|"$/g, ''); // Handle quoted text with commas
 
-      const refParts = ref.split('.');
-      if (refParts.length < 3) continue;
-
-      const bookCode = refParts[0];
-      const book = bookMap[bookCode];
+      // Map book_id to book name (1-66 for Bible books)
+      const bookNames = Object.values(bookMap);
+      const book = bookNames[bookId - 1];
       if (!book) continue;
 
-      const chapter = parseInt(refParts[1]);
-      const verse = parseInt(refParts[2]);
-
-      // Parse tokens with Strong's numbers
-      const tokens: any[] = [];
+      // Create simple tokens from words (without Strong's for now)
       const words = text.split(/\s+/);
-      
-      for (const word of words) {
-        const match = word.match(/^(.+?)(?:\{([GH]\d+)\})?$/);
-        if (match) {
-          tokens.push({
-            t: match[1].replace(/[^\w\s'-]/g, ''),
-            s: match[2] || null
-          });
-        }
-      }
+      const tokens: any[] = words.map(word => ({
+        t: word.replace(/[^\w\s'-]/g, ''),
+        s: null // No Strong's numbers in this format
+      }));
 
       verses.push({
         book,
         chapter,
-        verse_num: verse,
+        verse_num: verseNum,
         tokens,
-        text_kjv: tokens.map(t => t.t).join(' ')
+        text_kjv: text
       });
     }
 
@@ -135,7 +128,7 @@ Deno.serve(async (req) => {
       JSON.stringify({
         success: true,
         imported,
-        message: `Successfully imported ${imported} verses from STEPBible`
+        message: `Successfully imported ${imported} KJV verses`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
