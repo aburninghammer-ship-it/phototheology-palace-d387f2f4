@@ -112,6 +112,9 @@ serve(async (req) => {
       }
     ];
 
+    console.log(`About to insert ${strongsEntries.length} Strong's entries`);
+    console.log('First entry:', JSON.stringify(strongsEntries[0]));
+    
     let strongsInserted = 0;
     for (const entry of strongsEntries) {
       // Map to strongs_dictionary table columns
