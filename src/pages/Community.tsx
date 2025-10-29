@@ -217,13 +217,23 @@ const Community = () => {
   };
 
   const deleteComment = async (commentId: string) => {
+    console.log('Delete button clicked for comment:', commentId);
+    console.log('Current user ID:', user?.id);
+    
+    if (!confirm('Are you sure you want to delete this comment?')) {
+      return;
+    }
+    
     try {
       const { error } = await supabase
         .from("community_comments")
         .delete()
         .eq("id", commentId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Delete error details:', error);
+        throw error;
+      }
 
       toast({
         title: "Comment deleted",
@@ -233,14 +243,16 @@ const Community = () => {
     } catch (error: any) {
       console.error('Error deleting comment:', error);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Error deleting comment",
+        description: error.message || "Failed to delete comment",
         variant: "destructive",
       });
     }
   };
 
   const startEditComment = (commentId: string, content: string) => {
+    console.log('Edit button clicked for comment:', commentId);
+    console.log('Current user ID:', user?.id);
     setEditingComment(commentId);
     setEditContent(content);
   };
@@ -251,17 +263,30 @@ const Community = () => {
   };
 
   const saveEditComment = async (commentId: string) => {
-    if (!editContent.trim()) return;
+    if (!editContent.trim()) {
+      toast({
+        title: "Error",
+        description: "Comment cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const sanitizedContent = sanitizeHtml(editContent);
       
       const { error } = await supabase
         .from("community_comments")
-        .update({ content: sanitizedContent })
+        .update({ 
+          content: sanitizedContent,
+          updated_at: new Date().toISOString()
+        })
         .eq("id", commentId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Update error details:', error);
+        throw error;
+      }
 
       toast({
         title: "Comment updated",
@@ -273,8 +298,8 @@ const Community = () => {
     } catch (error: any) {
       console.error('Error updating comment:', error);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Error updating comment",
+        description: error.message || "Failed to update comment",
         variant: "destructive",
       });
     }
