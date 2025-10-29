@@ -137,9 +137,9 @@ export const getStrongsEntry = async (number: string): Promise<StrongsEntry | nu
     // Strip morphological codes (e.g., "G3756=PRT-N" -> "G3756")
     const baseNumber = number.split('=')[0];
     
-    // Try to fetch from strongs_entries first
+    // Try to fetch from strongs_dictionary
     const { data, error } = await supabase
-      .from('strongs_entries')
+      .from('strongs_dictionary')
       .select('*')
       .eq('strongs_number', baseNumber)
       .maybeSingle();
@@ -153,21 +153,23 @@ export const getStrongsEntry = async (number: string): Promise<StrongsEntry | nu
     }
     
     if (data && !error) {
+      // Cast to any to handle type mismatch until types are regenerated
+      const entry = data as any;
       return {
-        number: data.strongs_number,
-        word: data.word,
-        transliteration: data.transliteration || '',
-        pronunciation: data.pronunciation || '',
-        language: data.language as 'Hebrew' | 'Greek',
-        definition: data.definition,
-        usage: data.kjv_translations ? data.kjv_translations.split(', ') : [],
-        occurrences: data.occurrences || 0,
-        derivation: data.definition || '',
-        // Phototheology fields
-        sanctuary_link: data.sanctuary_link,
-        time_zone_code: data.time_zone_code,
-        dimension_code: data.dimension_code,
-        cycle_code: data.cycle_association,
+        number: entry.strongs_number,
+        word: entry.word,
+        transliteration: entry.transliteration || '',
+        pronunciation: entry.transliteration || '', // Use transliteration as pronunciation
+        language: entry.language as 'Hebrew' | 'Greek',
+        definition: entry.definition,
+        usage: entry.gloss ? entry.gloss.split(', ') : [], // Use gloss for usage
+        occurrences: 0, // Not available in basic dictionary
+        derivation: entry.definition || '',
+        // Phototheology fields - not in basic dictionary
+        sanctuary_link: undefined,
+        time_zone_code: undefined,
+        dimension_code: undefined,
+        cycle_code: undefined,
         prophecy_link: undefined,
         pt_notes: undefined
       };
