@@ -134,11 +134,14 @@ export const parseStrongsFromText = (text: string): { word: string; strongs: str
 // Get Strong's entry by number
 export const getStrongsEntry = async (number: string): Promise<StrongsEntry | null> => {
   try {
+    // Strip morphological codes (e.g., "G3756=PRT-N" -> "G3756")
+    const baseNumber = number.split('=')[0];
+    
     // Try to fetch from strongs_entries first
     const { data, error } = await supabase
       .from('strongs_entries')
       .select('*')
-      .eq('strongs_number', number)
+      .eq('strongs_number', baseNumber)
       .maybeSingle();
     
     if (error) {
