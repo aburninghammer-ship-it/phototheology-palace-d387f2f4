@@ -555,6 +555,7 @@ export type Database = {
           content: string
           created_at: string | null
           id: string
+          parent_comment_id: string | null
           post_id: string | null
           user_id: string
         }
@@ -562,6 +563,7 @@ export type Database = {
           content: string
           created_at?: string | null
           id?: string
+          parent_comment_id?: string | null
           post_id?: string | null
           user_id: string
         }
@@ -569,10 +571,18 @@ export type Database = {
           content?: string
           created_at?: string | null
           id?: string
+          parent_comment_id?: string | null
           post_id?: string | null
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "community_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "community_comments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "community_comments_post_id_fkey"
             columns: ["post_id"]

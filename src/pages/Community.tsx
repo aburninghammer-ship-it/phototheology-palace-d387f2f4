@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { MessageSquare, Plus, Heart, Users } from "lucide-react";
+import { MessageSquare, Plus, Heart, Users, Reply, Send, Sparkles } from "lucide-react";
 import { EmojiPicker } from "@/components/EmojiPicker";
 import { communityPostSchema } from "@/lib/validationSchemas";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const Community = () => {
   const { user, loading } = useAuth();
@@ -26,6 +28,8 @@ const Community = () => {
   const [newContent, setNewContent] = useState("");
   const [comments, setComments] = useState<Record<string, any[]>>({});
   const [newComment, setNewComment] = useState<Record<string, string>>({});
+  const [replyingTo, setReplyingTo] = useState<Record<string, string | null>>({});
+  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (user && user.id) {
@@ -158,7 +162,7 @@ const Community = () => {
     }
   };
 
-  const addComment = async (postId: string) => {
+  const addComment = async (postId: string, parentCommentId: string | null = null) => {
     const content = newComment[postId];
     if (!content?.trim()) return;
 
@@ -171,18 +175,18 @@ const Community = () => {
           post_id: postId,
           user_id: user!.id,
           content: sanitizedContent,
+          parent_comment_id: parentCommentId,
         })
         .select();
-
-      console.log('Comment insert result:', { data, error });
 
       if (error) throw error;
 
       toast({
-        title: "Comment added!",
+        title: parentCommentId ? "Reply added!" : "Comment added!",
       });
 
       setNewComment({ ...newComment, [postId]: "" });
+      setReplyingTo({ ...replyingTo, [postId]: null });
       
       // Wait a moment for realtime to propagate, then refetch
       setTimeout(() => {
@@ -198,41 +202,73 @@ const Community = () => {
     }
   };
 
+  const organizeComments = (comments: any[]) => {
+    const topLevel = comments.filter(c => !c.parent_comment_id);
+    const replies = comments.filter(c => c.parent_comment_id);
+    
+    const commentMap = new Map();
+    topLevel.forEach(c => {
+      commentMap.set(c.id, { ...c, replies: [] });
+    });
+    
+    replies.forEach(reply => {
+      const parent = commentMap.get(reply.parent_comment_id);
+      if (parent) {
+        parent.replies.push(reply);
+      }
+    });
+    
+    return Array.from(commentMap.values());
+  };
+
   if (!user) return null;
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-4xl font-bold flex items-center gap-2">
-              <MessageSquare className="h-8 w-8" />
-              Community
-            </h1>
-            <Button onClick={() => setShowNewPost(!showNewPost)}>
-              <Plus className="mr-2 h-4 w-4" />
-              New Post
-            </Button>
+        <div className="max-w-5xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/10 to-background p-8 border">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+            <div className="relative z-10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-5xl font-bold flex items-center gap-3 mb-2">
+                    <Sparkles className="h-10 w-10 text-primary" />
+                    Community Hub
+                  </h1>
+                  <p className="text-muted-foreground text-lg">
+                    Connect, share insights, and grow together in faith
+                  </p>
+                </div>
+                <Button onClick={() => setShowNewPost(!showNewPost)} size="lg" className="shadow-lg">
+                  <Plus className="mr-2 h-5 w-5" />
+                  New Post
+                </Button>
+              </div>
+            </div>
           </div>
 
           {/* Who's Online Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Who's Online ({activeCount})
-              </CardTitle>
-              <CardDescription>Members active in the last 5 minutes</CardDescription>
+          <Card className="border-primary/20">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Active Now ({activeCount})
+                </CardTitle>
+              </div>
+              <CardDescription>Connect with members online</CardDescription>
             </CardHeader>
             <CardContent>
               {activeUsers.length > 0 ? (
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2">
                   {activeUsers.map((activeUser) => (
                     <button
                       key={activeUser.id}
                       onClick={() => {
-                        // Dispatch event to open chat sidebar with this user
                         window.dispatchEvent(
                           new CustomEvent('open-chat-sidebar', {
                             detail: { userId: activeUser.id }
@@ -243,18 +279,18 @@ const Community = () => {
                           description: `Starting conversation with ${activeUser.display_name || activeUser.username}`,
                         });
                       }}
-                      className="flex items-center gap-2 bg-accent/50 hover:bg-accent rounded-full px-3 py-1.5 transition-colors cursor-pointer"
+                      className="flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary/20 hover:to-accent/20 rounded-full px-4 py-2 transition-all duration-300 cursor-pointer border border-primary/10"
                     >
-                      <Avatar className="h-6 w-6">
+                      <Avatar className="h-7 w-7 border-2 border-primary/20">
                         <AvatarImage src={activeUser.avatar_url || undefined} />
-                        <AvatarFallback className="text-xs">
+                        <AvatarFallback className="text-xs bg-primary/10">
                           {(activeUser.display_name || activeUser.username).charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-sm font-medium">
                         {activeUser.display_name || activeUser.username}
                       </span>
-                      <MessageSquare className="h-3 w-3 text-muted-foreground" />
+                      <MessageSquare className="h-3.5 w-3.5 text-primary" />
                     </button>
                   ))}
                 </div>
@@ -265,34 +301,46 @@ const Community = () => {
           </Card>
 
           {showNewPost && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Create New Post</CardTitle>
+            <Card className="border-primary/20 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Create New Post
+                </CardTitle>
+                <CardDescription>Share your insights with the community</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-6">
                 <Input
-                  placeholder="Post title..."
+                  placeholder="Give your post a title..."
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   maxLength={200}
+                  className="text-lg font-medium"
                 />
                 <div className="space-y-2">
                   <Textarea
-                    placeholder="Share your thoughts... (emojis supported 😊)"
+                    placeholder="Share your thoughts, insights, or questions... (emojis supported 😊)"
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
-                    rows={4}
+                    rows={6}
                     maxLength={10000}
+                    className="resize-none"
                   />
-                  <div className="flex justify-end">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">
+                      {newContent.length}/10,000 characters
+                    </p>
                     <EmojiPicker 
                       onEmojiSelect={(emoji) => setNewContent(newContent + emoji)}
                     />
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={createPost}>Post</Button>
-                  <Button variant="outline" onClick={() => setShowNewPost(false)}>
+                  <Button onClick={createPost} size="lg" className="flex-1">
+                    <Send className="mr-2 h-4 w-4" />
+                    Publish Post
+                  </Button>
+                  <Button variant="outline" size="lg" onClick={() => setShowNewPost(false)}>
                     Cancel
                   </Button>
                 </div>
@@ -300,79 +348,218 @@ const Community = () => {
             </Card>
           )}
 
-          <div className="space-y-4">
-            {posts.map((post) => (
-              <Card key={post.id}>
-                <CardHeader>
-                  <CardTitle>{post.title}</CardTitle>
-                  <CardDescription>
-                    by {post.profiles?.display_name || post.profiles?.username} •{" "}
-                    {new Date(post.created_at).toLocaleDateString()}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p>{post.content}</p>
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground border-t pt-4">
-                    <button className="flex items-center gap-1 hover:text-foreground">
-                      <Heart className="h-4 w-4" />
-                      {post.likes}
-                    </button>
-                    <span className="flex items-center gap-1">
-                      <MessageSquare className="h-4 w-4" />
-                      {comments[post.id]?.length || 0} Comments
-                    </span>
-                  </div>
+          <div className="space-y-6">
+            {posts.map((post) => {
+              const postComments = organizeComments(comments[post.id] || []);
+              const isExpanded = expandedPosts[post.id];
+              
+              return (
+                <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <Avatar className="h-10 w-10 border-2 border-primary/20">
+                          <AvatarFallback className="bg-primary/10">
+                            {(post.profiles?.display_name || post.profiles?.username || 'U').charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <CardTitle className="text-xl">{post.title}</CardTitle>
+                          <CardDescription className="flex items-center gap-2 mt-1">
+                            <span className="font-medium">{post.profiles?.display_name || post.profiles?.username}</span>
+                            <span>•</span>
+                            <span>{new Date(post.created_at).toLocaleDateString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}</span>
+                          </CardDescription>
+                        </div>
+                      </div>
+                      {post.category && (
+                        <Badge variant="secondary">{post.category}</Badge>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4 pt-6">
+                    <p className="text-base leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                    
+                    <Separator />
+                    
+                    <div className="flex items-center gap-6 text-sm">
+                      <button className="flex items-center gap-2 hover:text-primary transition-colors group">
+                        <Heart className="h-4 w-4 group-hover:fill-primary" />
+                        <span className="font-medium">{post.likes}</span>
+                      </button>
+                      <button 
+                        className="flex items-center gap-2 hover:text-primary transition-colors"
+                        onClick={() => setExpandedPosts({ ...expandedPosts, [post.id]: !isExpanded })}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        <span className="font-medium">{postComments.length} {postComments.length === 1 ? 'Comment' : 'Comments'}</span>
+                      </button>
+                    </div>
 
-                  {/* Comments Section */}
-                  {comments[post.id] && comments[post.id].length > 0 && (
-                    <div className="space-y-3 border-t pt-4">
-                      {comments[post.id].map((comment) => (
-                        <div key={comment.id} className="bg-accent/30 rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Avatar className="h-6 w-6">
-                              <AvatarFallback className="text-xs">
-                                {(comment.profiles?.display_name || comment.profiles?.username).charAt(0).toUpperCase()}
+                    {isExpanded && (
+                      <>
+                        <Separator />
+                        
+                        {/* Comments Section */}
+                        {postComments.length > 0 && (
+                          <div className="space-y-4">
+                            {postComments.map((comment) => (
+                              <div key={comment.id} className="space-y-3">
+                                {/* Top-level Comment */}
+                                <div className="bg-accent/20 rounded-xl p-4 hover:bg-accent/30 transition-colors">
+                                  <div className="flex items-start gap-3">
+                                    <Avatar className="h-8 w-8 border border-primary/20">
+                                      <AvatarFallback className="text-xs bg-primary/10">
+                                        {(comment.profiles?.display_name || comment.profiles?.username || 'U').charAt(0).toUpperCase()}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-1 space-y-2">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-sm font-semibold">
+                                          {comment.profiles?.display_name || comment.profiles?.username}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">
+                                          {new Date(comment.created_at).toLocaleDateString('en-US', { 
+                                            month: 'short', 
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                          })}
+                                        </span>
+                                      </div>
+                                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 px-2 text-xs"
+                                        onClick={() => setReplyingTo({ ...replyingTo, [post.id]: comment.id })}
+                                      >
+                                        <Reply className="h-3 w-3 mr-1" />
+                                        Reply
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Nested Replies */}
+                                {comment.replies && comment.replies.length > 0 && (
+                                  <div className="ml-12 space-y-3">
+                                    {comment.replies.map((reply: any) => (
+                                      <div key={reply.id} className="bg-accent/10 rounded-lg p-3 border-l-2 border-primary/20">
+                                        <div className="flex items-start gap-2">
+                                          <Avatar className="h-7 w-7">
+                                            <AvatarFallback className="text-xs bg-primary/10">
+                                              {(reply.profiles?.display_name || reply.profiles?.username || 'U').charAt(0).toUpperCase()}
+                                            </AvatarFallback>
+                                          </Avatar>
+                                          <div className="flex-1 space-y-1">
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-xs font-semibold">
+                                                {reply.profiles?.display_name || reply.profiles?.username}
+                                              </span>
+                                              <span className="text-xs text-muted-foreground">
+                                                {new Date(reply.created_at).toLocaleDateString('en-US', { 
+                                                  month: 'short', 
+                                                  day: 'numeric',
+                                                  hour: '2-digit',
+                                                  minute: '2-digit'
+                                                })}
+                                              </span>
+                                            </div>
+                                            <p className="text-xs leading-relaxed whitespace-pre-wrap">{reply.content}</p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Reply Input for this comment */}
+                                {replyingTo[post.id] === comment.id && (
+                                  <div className="ml-12 flex gap-2">
+                                    <Textarea
+                                      placeholder={`Reply to ${comment.profiles?.display_name || comment.profiles?.username}...`}
+                                      value={newComment[post.id] || ""}
+                                      onChange={(e) => setNewComment({ ...newComment, [post.id]: e.target.value })}
+                                      rows={2}
+                                      className="flex-1 text-sm"
+                                    />
+                                    <div className="flex flex-col gap-1">
+                                      <Button 
+                                        size="sm"
+                                        onClick={() => addComment(post.id, comment.id)}
+                                        disabled={!newComment[post.id]?.trim()}
+                                      >
+                                        <Send className="h-3 w-3" />
+                                      </Button>
+                                      <Button 
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => setReplyingTo({ ...replyingTo, [post.id]: null })}
+                                      >
+                                        ✕
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Add New Comment */}
+                        {!replyingTo[post.id] && (
+                          <div className="flex gap-3 pt-2">
+                            <Avatar className="h-9 w-9">
+                              <AvatarFallback className="bg-primary/10">
+                                {(user?.email || 'U').charAt(0).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-sm font-medium">
-                              {comment.profiles?.display_name || comment.profiles?.username}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(comment.created_at).toLocaleDateString()}
-                            </span>
+                            <div className="flex-1 flex gap-2">
+                              <Textarea
+                                placeholder="Share your thoughts..."
+                                value={newComment[post.id] || ""}
+                                onChange={(e) => setNewComment({ ...newComment, [post.id]: e.target.value })}
+                                rows={2}
+                                className="flex-1"
+                              />
+                              <Button 
+                                onClick={() => addComment(post.id)}
+                                disabled={!newComment[post.id]?.trim()}
+                                size="sm"
+                              >
+                                <Send className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                          <p className="text-sm">{comment.content}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add Comment */}
-                  <div className="flex gap-2">
-                    <Textarea
-                      placeholder="Add a comment..."
-                      value={newComment[post.id] || ""}
-                      onChange={(e) => setNewComment({ ...newComment, [post.id]: e.target.value })}
-                      rows={2}
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={() => addComment(post.id)}
-                      disabled={!newComment[post.id]?.trim()}
-                    >
-                      Reply
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                        )}
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
-          {posts.length === 0 && (
-            <div className="text-center py-12 text-muted-foreground">
-              No posts yet. Be the first to share!
-            </div>
+          {posts.length === 0 && !showNewPost && (
+            <Card className="text-center py-16 border-dashed">
+              <CardContent>
+                <MessageSquare className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No posts yet</h3>
+                <p className="text-muted-foreground mb-6">
+                  Be the first to share your thoughts with the community!
+                </p>
+                <Button onClick={() => setShowNewPost(true)} size="lg">
+                  <Plus className="mr-2 h-5 w-5" />
+                  Create First Post
+                </Button>
+              </CardContent>
+            </Card>
           )}
         </div>
       </main>
