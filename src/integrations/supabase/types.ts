@@ -2570,6 +2570,7 @@ export type Database = {
           strongs_number: string | null
           testament: string
           verse: number
+          word: string
           word_position: number
           word_text: string
         }
@@ -2582,6 +2583,7 @@ export type Database = {
           strongs_number?: string | null
           testament?: string
           verse: number
+          word?: string
           word_position: number
           word_text: string
         }
@@ -2594,6 +2596,7 @@ export type Database = {
           strongs_number?: string | null
           testament?: string
           verse?: number
+          word?: string
           word_position?: number
           word_text?: string
         }
