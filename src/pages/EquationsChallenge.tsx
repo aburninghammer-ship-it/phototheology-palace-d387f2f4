@@ -234,28 +234,35 @@ export default function EquationsChallenge() {
               <div className="text-center py-8">Loading principles...</div>
             ) : (
               <div className="space-y-4">
-                {['palace', 'sanctuary', 'feast', 'christ', 'calvary', 'spirit', 'resurrection', 'second_coming', 'new_jerusalem'].map((category) => {
-                  const categoryPrinciples = availablePrinciples.filter(p => p.category === category);
+                {[
+                  { key: 'floor1', title: 'Floor 1 — Furnishing Rooms' },
+                  { key: 'floor2', title: 'Floor 2 — Investigation Rooms' },
+                  { key: 'floor3', title: 'Floor 3 — Freestyle Rooms' },
+                  { key: 'floor4', title: 'Floor 4 — Next Level Rooms' },
+                  { key: 'floor4_dimensions', title: 'Floor 4 — Dimensions' },
+                  { key: 'floor4_genres', title: 'Floor 4 — Connect-6 Genres' },
+                  { key: 'floor4_themes', title: 'Floor 4 — Theme Walls' },
+                  { key: 'floor4_timezones', title: 'Floor 4 — Time Zones' },
+                  { key: 'floor4_fruit', title: 'Floor 4 — Fruit of the Spirit' },
+                  { key: 'floor5', title: 'Floor 5 — Vision Rooms' },
+                  { key: 'floor5_sanctuary', title: 'Floor 5 — Sanctuary Furniture' },
+                  { key: 'floor5_prophecy', title: 'Floor 5 — Prophecy Timelines' },
+                  { key: 'floor5_angels', title: 'Floor 5 — Three Angels' },
+                  { key: 'floor5_feasts', title: 'Floor 5 — Biblical Feasts' },
+                  { key: 'floor6_heavens', title: 'Floor 6 — Three Heavens' },
+                  { key: 'floor6_cycles', title: 'Floor 6 — Eight Cycles' },
+                  { key: 'floor6', title: 'Floor 6 — Cycle Rooms' },
+                  { key: 'floor7', title: 'Floor 7 — Spiritual & Emotional' }
+                ].map(({ key, title }) => {
+                  const categoryPrinciples = availablePrinciples.filter(p => p.category === key);
                   if (categoryPrinciples.length === 0) return null;
                   
-                  const categoryNames: Record<string, string> = {
-                    palace: 'Palace Foundations',
-                    sanctuary: 'Sanctuary Furniture',
-                    feast: 'Biblical Feasts',
-                    christ: 'Christ',
-                    calvary: 'Calvary',
-                    spirit: 'Holy Spirit',
-                    resurrection: 'Resurrection',
-                    second_coming: 'Second Coming',
-                    new_jerusalem: 'New Jerusalem'
-                  };
-                  
                   return (
-                    <div key={category}>
-                      <h3 className="font-semibold mb-2 text-primary">{categoryNames[category]}</h3>
+                    <div key={key}>
+                      <h3 className="font-semibold mb-2 text-primary">{title}</h3>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {categoryPrinciples.map((principle) => (
-                          <Badge key={principle.id} variant="outline" className="justify-start">
+                          <Badge key={principle.id} variant="outline" className="justify-start text-xs">
                             {principle.code} - {principle.name}
                           </Badge>
                         ))}
@@ -267,16 +274,16 @@ export default function EquationsChallenge() {
                 <div className="mt-4 p-3 bg-muted rounded-lg">
                   <h4 className="font-semibold mb-1 text-sm">Example Equations:</h4>
                   <p className="text-sm text-muted-foreground font-mono mb-2">
-                    PO + BA + MS → CH + GR = NC
+                    FE-PA + SAN-ALT + SAN-ARK → CR + GR = DoL³/NE³
                   </p>
                   <p className="text-xs text-muted-foreground mb-3">
-                    (Passover + Brazen Altar + Mercy Seat → Christ + Grace = New Creation)
+                    (Passover + Altar of Burnt Offering + Ark/Mercy Seat → Concentration on Christ + Grace = Third Heaven)
                   </p>
                   <p className="text-sm text-muted-foreground font-mono">
-                    FF + PN → RS + HS = GL
+                    @70w + @Mo → SAN-ALT + CR = @Re
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    (Firstfruits + Pentecost → Resurrection + Holy Spirit = Glory)
+                    (70 Weeks + Mosaic Cycle → Altar + Concentration = Remnant)
                   </p>
                 </div>
               </div>
