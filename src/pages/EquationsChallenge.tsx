@@ -828,6 +828,75 @@ Can you help solve this equation? Share your interpretation and insights!
                     Reset
                   </Button>
                 </div>
+
+                {/* Share to Community Button */}
+                {customEquation && customExplanation && (
+                  <Button
+                    onClick={async () => {
+                      if (!user) {
+                        toast.error("Please sign in to share");
+                        return;
+                      }
+
+                      setSharingToCommunity(true);
+                      try {
+                        const { data: profile } = await supabase
+                          .from('profiles')
+                          .select('display_name, username')
+                          .eq('id', user.id)
+                          .single();
+
+                        const displayName = profile?.display_name || profile?.username || 'A student';
+                        const postTitle = `Help ${displayName} solve this Phototheology equation!`;
+                        const postContent = `**Verse:** ${customVerse || 'Custom Challenge'}
+
+**Equation Challenge:**
+\`\`\`
+${customEquation}
+\`\`\`
+
+**Explanation:**
+${customExplanation}
+
+Can you help solve this equation? Share your interpretation and insights!
+
+*Difficulty: ${customDifficulty}*`;
+
+                        const { error: postError } = await supabase
+                          .from('community_posts')
+                          .insert({
+                            user_id: user.id,
+                            title: postTitle,
+                            content: postContent,
+                            category: 'challenge'
+                          });
+
+                        if (postError) throw postError;
+                        toast.success("Custom challenge shared to community!");
+                      } catch (error) {
+                        console.error("Error sharing to community:", error);
+                        toast.error("Failed to share to community");
+                      } finally {
+                        setSharingToCommunity(false);
+                      }
+                    }}
+                    variant="outline"
+                    className="w-full"
+                    disabled={sharingToCommunity}
+                  >
+                    {sharingToCommunity ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Sharing...
+                      </>
+                    ) : (
+                      <>
+                        <Share2 className="h-4 w-4 mr-2" />
+                        Share to Community - Get Help Solving This!
+                      </>
+                    )}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
