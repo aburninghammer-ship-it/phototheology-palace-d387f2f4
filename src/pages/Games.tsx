@@ -56,14 +56,14 @@ const Games = () => {
       route: "/games/verse-match"
     },
     {
-      id: "verse_sequence",
-      name: "Verse Sequence Master",
-      description: "Arrange verses in correct biblical order or thematic sequence. Test your knowledge!",
+      id: "verse_match",
+      name: "Verse Memory Match",
+      description: "Match Bible verses with their references in this classic memory card game!",
       icon: "🔢",
       floor: 1,
       timed: true,
-      rooms: ["BR", "CR"],
-      modes: ["solo", "vs-ai", "2p"],
+      rooms: ["BR"],
+      modes: ["solo", "custom"],
       difficulties: ["easy", "medium", "hard"],
       route: "/games/verse-match"
     },
