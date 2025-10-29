@@ -33,9 +33,10 @@ serve(async (req) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
-      .single();
+      .eq("role", "admin")
+      .maybeSingle();
 
-    if (!roles || roles.role !== "admin") {
+    if (!roles) {
       throw new Error("Forbidden: Admin access required");
     }
 
