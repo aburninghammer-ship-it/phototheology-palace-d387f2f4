@@ -12,7 +12,6 @@ interface VerseViewProps {
 }
 
 export const VerseView = ({ verse, isSelected, onSelect, showPrinciples, isHighlighted, principles }: VerseViewProps) => {
-  const displayPrinciples = principles || ["2D", "@Ab", "Altar", "Passover"];
   const colors = ["gradient-palace", "gradient-ocean", "gradient-sunset", "gradient-warmth", "gradient-royal"];
   return (
     <div
@@ -39,9 +38,9 @@ export const VerseView = ({ verse, isSelected, onSelect, showPrinciples, isHighl
             {verse.text}
           </p>
           
-          {showPrinciples && (
+          {showPrinciples && principles && principles.length > 0 && (
             <div className="flex gap-2 mt-2 flex-wrap">
-              {displayPrinciples.map((principle, idx) => (
+              {principles.map((principle, idx) => (
                 <Badge 
                   key={idx} 
                   variant="outline" 

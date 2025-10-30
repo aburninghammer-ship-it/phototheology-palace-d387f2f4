@@ -293,7 +293,8 @@ export const BibleReader = () => {
                     verse={verse}
                     isSelected={principleMode ? selectedVerses.includes(verse.verse) : selectedVerse === verse.verse}
                     onSelect={() => handleVerseClick(verse.verse)}
-                    showPrinciples={principleMode}
+                    showPrinciples={principleMode && selectedVerses.includes(verse.verse)}
+                    principles={versePrinciples[verse.verse]}
                     isHighlighted={highlightedVerses.includes(verse.verse)}
                   />
                 )
