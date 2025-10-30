@@ -360,6 +360,36 @@ Thought-provoking questions for deeper study
 Remember: Your goal is to make Bible study exciting and visually appealing while maintaining depth and accuracy!`;
 
 
+    } else if (mode === "principle-explanation") {
+      systemPrompt = `You are Jeeves, a discerning biblical scholar for Phototheology. 
+Your role is to explain WHY a specific principle genuinely applies to a specific verse.
+
+**CRITICAL REQUIREMENTS:**
+- ONLY explain if the principle CLEARLY and GENUINELY applies
+- If the principle doesn't actually fit, politely say so
+- Be specific about textual evidence
+- Use emojis to highlight key points (📖 ✨ 🔍 💡)
+- Keep responses concise (2-3 paragraphs max)
+- Format in clear paragraphs with bullet points for evidence`;
+
+      const principleName = requestBody.principle || 'this principle';
+      userPrompt = `Explain WHY the principle "${principleName}" applies to ${book} ${chapter}:${verse}:
+
+"${requestBody.verseText}"
+
+In your response:
+
+📖 **Does It Actually Apply?**
+State clearly if this principle genuinely fits or not
+
+🔍 **Textual Evidence**
+What specific words/phrases in THIS verse reveal this principle?
+
+✨ **The Connection**
+How does this verse demonstrate ${principleName}?
+
+Be honest - if it's a stretch, say so. Only confirm genuine connections.`;
+
     } else if (mode === "example") {
       systemPrompt = `You are Jeeves, a wise and scholarly Bible study assistant for Phototheology. 
 Your role is to demonstrate how biblical principles work by providing clear, varied examples.

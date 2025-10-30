@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StrongsModal } from "./StrongsModal";
 import { getVerseWithStrongs } from "@/services/strongsApi";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, Bot, Loader2 } from "lucide-react";
+import { Sparkles, Bot, Loader2, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
@@ -16,6 +16,8 @@ interface StrongsVerseViewProps {
   showPrinciples?: boolean;
   isHighlighted?: boolean;
   principles?: string[];
+  book?: string;
+  chapter?: number;
 }
 
 export const StrongsVerseView = ({ 
@@ -24,9 +26,14 @@ export const StrongsVerseView = ({
   onSelect, 
   showPrinciples, 
   isHighlighted,
-  principles 
+  principles,
+  book,
+  chapter
 }: StrongsVerseViewProps) => {
   const [selectedStrongs, setSelectedStrongs] = useState<string | null>(null);
+  const [selectedPrinciple, setSelectedPrinciple] = useState<string | null>(null);
+  const [principleExplanation, setPrincipleExplanation] = useState<string | null>(null);
+  const [loadingExplanation, setLoadingExplanation] = useState(false);
   const [strongsData, setStrongsData] = useState<{
     text: string;
     words: Array<{ text: string; strongs?: string }>;
@@ -57,6 +64,40 @@ export const StrongsVerseView = ({
   const handleStrongsClick = (strongsNumber: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedStrongs(strongsNumber);
+  };
+
+  const handlePrincipleClick = async (principle: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedPrinciple(principle);
+    setLoadingExplanation(true);
+    setPrincipleExplanation(null);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke("jeeves", {
+        body: {
+          mode: "principle-explanation",
+          book: book || verse.book,
+          chapter: chapter || verse.chapter,
+          verse: verse.verse,
+          verseText: verse.text,
+          principle: principle
+        },
+      });
+
+      if (error) throw error;
+
+      setPrincipleExplanation(data.content);
+    } catch (error: any) {
+      console.error("Jeeves principle explanation error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to get principle explanation from Jeeves",
+        variant: "destructive",
+      });
+      setPrincipleExplanation("Failed to load explanation. Please try again.");
+    } finally {
+      setLoadingExplanation(false);
+    }
   };
 
   const handleAskJeevesForStrongs = async (e: React.MouseEvent) => {
@@ -180,12 +221,46 @@ export const StrongsVerseView = ({
                   <Badge 
                     key={idx} 
                     variant="outline" 
-                    className={`text-xs ${colors[idx % colors.length]} text-white`}
+                    onClick={(e) => handlePrincipleClick(principle, e)}
+                    className={`text-xs ${colors[idx % colors.length]} text-white cursor-pointer hover:opacity-80 transition-opacity`}
                   >
                     {idx === 0 && <Sparkles className="h-3 w-3 mr-1" />}
                     {principle}
                   </Badge>
                 ))}
+              </div>
+            )}
+
+            {/* Principle Explanation */}
+            {selectedPrinciple && (
+              <div className="mt-3 p-4 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg border border-primary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Bot className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-semibold text-primary">Why {selectedPrinciple}?</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPrinciple(null);
+                      setPrincipleExplanation(null);
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                {loadingExplanation ? (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Jeeves is analyzing...
+                  </div>
+                ) : principleExplanation ? (
+                  <div className="prose prose-sm max-w-none text-foreground">
+                    {formatJeevesResponse(principleExplanation)}
+                  </div>
+                ) : null}
               </div>
             )}
 

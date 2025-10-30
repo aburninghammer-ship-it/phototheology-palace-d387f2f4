@@ -76,20 +76,29 @@ export const BibleReader = () => {
     // Fetch principles for each verse in parallel
     const promises = chapterData.verses.map(async (verse) => {
       try {
-        const annotation = await getVerseAnnotations(book, chapter, verse.verse);
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-verse`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({
+              book,
+              chapter,
+              verse: verse.verse,
+              verseText: verse.text
+            }),
+          }
+        );
         
-        // Filter principles to only floors 3-6 (Freestyle, Next Level, Vision, Three Heavens)
-        const allPrinciples = [
-          ...(annotation.principles.dimensions || []), // Floor 4
-          ...(annotation.principles.cycles || []), // Floor 6
-          ...(annotation.principles.horizons || []), // Floor 6
-          ...(annotation.principles.sanctuary || []), // Floor 5
-          ...(annotation.principles.feasts || []), // Floor 6
-          ...(annotation.principles.timeZones || []), // Floor 4
-          ...(annotation.principles.walls || []), // Floor 4
-        ];
-        
-        principlesMap[verse.verse] = allPrinciples;
+        if (response.ok) {
+          const data = await response.json();
+          principlesMap[verse.verse] = data.principles || [];
+        } else {
+          principlesMap[verse.verse] = [];
+        }
       } catch (error) {
         console.error(`Failed to fetch principles for verse ${verse.verse}:`, error);
         principlesMap[verse.verse] = [];
@@ -313,6 +322,8 @@ export const BibleReader = () => {
                     onSelect={() => handleVerseClick(verse.verse)}
                     showPrinciples={principleMode}
                     principles={versePrinciples[verse.verse]}
+                    book={book}
+                    chapter={chapter}
                     isHighlighted={highlightedVerses.includes(verse.verse)}
                   />
                 ) : (
@@ -323,6 +334,8 @@ export const BibleReader = () => {
                     onSelect={() => handleVerseClick(verse.verse)}
                     showPrinciples={principleMode}
                     principles={versePrinciples[verse.verse]}
+                    book={book}
+                    chapter={chapter}
                     isHighlighted={highlightedVerses.includes(verse.verse)}
                   />
                 )
