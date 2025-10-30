@@ -1125,12 +1125,28 @@ Return JSON format:
 Base it on OBSERVABLE, DOCUMENTABLE trends. Be factual, not sensational.`;
 
     } else if (mode === "daily-encouragement") {
+      // Fetch user's name from profile
+      let userName = "friend";
+      if (userId) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name, email')
+          .eq('id', userId)
+          .single();
+        
+        if (profile?.full_name) {
+          userName = profile.full_name.split(' ')[0]; // Use first name only
+        } else if (profile?.email) {
+          userName = profile.email.split('@')[0]; // Use email prefix as fallback
+        }
+      }
+      
       systemPrompt = `You are Jeeves, a wise and encouraging spiritual mentor. Your role is to provide daily encouragement for Christians fighting the war against self and sin.`;
-      userPrompt = `Generate a brief, powerful daily encouragement (2-3 sentences) that follows this pattern:
+      userPrompt = `Generate a brief, powerful daily encouragement (2-3 sentences) for ${userName} that follows this pattern:
 
-"Today you may be tempted to [common temptation], but in all such cases, remember [biblical truth and encouragement for victory]."
+"${userName}, today you may be tempted to [common temptation], but in all such cases, remember [biblical truth and encouragement for victory]."
 
-Focus on common spiritual battles like anger, pride, lust, fear, discouragement, or compromise. Be specific, practical, and encouraging. Always point to Christ's power and grace.`;
+Focus on common spiritual battles like anger, pride, lust, fear, discouragement, or compromise. Be specific, practical, and encouraging. Always point to Christ's power and grace. Address ${userName} directly and naturally throughout.`;
     
     } else if (mode === "scenario-feedback") {
       systemPrompt = `You are Jeeves, a wise spiritual warfare trainer. You help Christians understand which Fruits of the Spirit are needed for specific trials.`;
