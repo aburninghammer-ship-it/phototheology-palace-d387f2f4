@@ -10,29 +10,29 @@ import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
 const PRINCIPLE_OPTIONS = [
-  // Floor 1 - Furnishing
+  // Floor 1 - Furnishing (Memory & Visualization)
   { id: "sr", label: "Story Room (SR)", color: "gradient-palace" },
   { id: "ir", label: "Imagination Room (IR)", color: "gradient-ocean" },
-  { id: "24fps", label: "24FPS Room", color: "gradient-royal" },
+  { id: "24fps", label: "24FPS Room (24)", color: "gradient-royal" },
   { id: "br", label: "Bible Rendered (BR)", color: "gradient-sunset" },
   { id: "tr", label: "Translation Room (TR)", color: "gradient-warmth" },
   { id: "gr", label: "Gems Room (GR)", color: "gradient-palace" },
   
-  // Floor 2 - Investigation
+  // Floor 2 - Investigation (Detective Work)
   { id: "or", label: "Observation Room (OR)", color: "gradient-ocean" },
   { id: "dc", label: "Def-Com Room (DC)", color: "gradient-royal" },
-  { id: "st", label: "Symbols/Types (ST)", color: "gradient-sunset" },
-  { id: "qr", label: "Questions Room (QR)", color: "gradient-warmth" },
-  { id: "qa", label: "Q&A Chains (QA)", color: "gradient-palace" },
+  { id: "st", label: "Symbols/Types (@T)", color: "gradient-sunset" },
+  { id: "qr", label: "Questions Room (?)", color: "gradient-warmth" },
+  { id: "qa", label: "Q&A Chains (?!)", color: "gradient-palace" },
   
-  // Floor 3 - Freestyle
+  // Floor 3 - Freestyle (Connections)
   { id: "nf", label: "Nature Freestyle (NF)", color: "gradient-ocean" },
   { id: "pf", label: "Personal Freestyle (PF)", color: "gradient-royal" },
-  { id: "bf", label: "Bible Freestyle (BF)", color: "gradient-sunset" },
-  { id: "hf", label: "History Freestyle (HF)", color: "gradient-warmth" },
+  { id: "bf", label: "Bible Freestyle - Verse Genetics (BF)", color: "gradient-sunset" },
+  { id: "hf", label: "History/Social Freestyle (HF)", color: "gradient-warmth" },
   { id: "lr", label: "Listening Room (LR)", color: "gradient-palace" },
   
-  // Floor 4 - Next Level
+  // Floor 4 - Next Level (Christ-Centered Depth)
   { id: "cr", label: "Concentration Room (CR)", color: "gradient-ocean" },
   { id: "dr", label: "Dimensions Room (DR)", color: "gradient-royal" },
   { id: "c6", label: "Connect-6 (C6)", color: "gradient-sunset" },
@@ -41,24 +41,46 @@ const PRINCIPLE_OPTIONS = [
   { id: "prm", label: "Patterns Room (PRm)", color: "gradient-ocean" },
   { id: "p||", label: "Parallels Room (P‖)", color: "gradient-royal" },
   { id: "frt", label: "Fruit Room (FRt)", color: "gradient-sunset" },
+  { id: "cec", label: "Christ in Every Chapter (CEC)", color: "gradient-warmth" },
+  { id: "r66", label: "Room 66 (R66)", color: "gradient-palace" },
   
-  // Floor 5 - Vision
-  { id: "bl", label: "Blue Room - Sanctuary (BL)", color: "gradient-warmth" },
-  { id: "pr", label: "Prophecy Room (PR)", color: "gradient-palace" },
-  { id: "3a", label: "Three Angels (3A)", color: "gradient-ocean" },
-  { id: "fe", label: "Feasts Room (FE)", color: "gradient-royal" },
-  { id: "cec", label: "Christ in Every Chapter (CEC)", color: "gradient-sunset" },
-  { id: "r66", label: "Room 66 (R66)", color: "gradient-warmth" },
+  // Floor 5 - Vision (Prophecy & Sanctuary)
+  { id: "bl", label: "Blue Room - Sanctuary (BL)", color: "gradient-ocean" },
+  { id: "pr", label: "Prophecy Room (PR)", color: "gradient-royal" },
+  { id: "3a", label: "Three Angels (3A)", color: "gradient-sunset" },
+  { id: "fe", label: "Feasts Room (FE)", color: "gradient-warmth" },
   
-  // Floor 6 - Three Heavens & Cycles
-  { id: "123h", label: "Three Heavens (1H/2H/3H)", color: "gradient-palace" },
-  { id: "cycles", label: "Eight Cycles (@)", color: "gradient-ocean" },
-  { id: "jr", label: "Juice Room (JR)", color: "gradient-royal" },
+  // Floor 6 - Three Heavens (Cycles & Cosmic Context)
+  { id: "1h", label: "First Heaven (1H) - DoL¹/NE¹", color: "gradient-palace" },
+  { id: "2h", label: "Second Heaven (2H) - DoL²/NE²", color: "gradient-ocean" },
+  { id: "3h", label: "Third Heaven (3H) - DoL³/NE³", color: "gradient-royal" },
+  { id: "ad", label: "Adamic Cycle (@Ad)", color: "gradient-sunset" },
+  { id: "no", label: "Noahic Cycle (@No)", color: "gradient-warmth" },
+  { id: "ab", label: "Abrahamic Cycle (@Ab)", color: "gradient-palace" },
+  { id: "mo", label: "Mosaic Cycle (@Mo)", color: "gradient-ocean" },
+  { id: "cy", label: "Cyrusic Cycle (@Cy)", color: "gradient-royal" },
+  { id: "cyc", label: "Cyrus-Christ Cycle (@CyC)", color: "gradient-sunset" },
+  { id: "sp", label: "Holy Spirit Cycle (@Sp)", color: "gradient-warmth" },
+  { id: "re", label: "Remnant Cycle (@Re)", color: "gradient-palace" },
+  { id: "jr", label: "Juice Room (JR)", color: "gradient-ocean" },
   
-  // Floor 7 - Spiritual & Emotional
-  { id: "frm", label: "Fire Room (FRm)", color: "gradient-sunset" },
-  { id: "mr", label: "Meditation Room (MR)", color: "gradient-warmth" },
-  { id: "srm", label: "Speed Room (SRm)", color: "gradient-palace" },
+  // Floor 7 - Spiritual & Emotional (Transformation)
+  { id: "frm", label: "Fire Room (FRm)", color: "gradient-royal" },
+  { id: "mr", label: "Meditation Room (MR)", color: "gradient-sunset" },
+  { id: "srm", label: "Speed Room (SRm)", color: "gradient-warmth" },
+  
+  // Expansions
+  { id: "exp-w", label: "Width Expansion (Exp-W)", color: "gradient-palace" },
+  { id: "exp-t", label: "Time Expansion (Exp-T)", color: "gradient-ocean" },
+  { id: "exp-d", label: "Depth Expansion (Exp-D)", color: "gradient-royal" },
+  { id: "exp-h", label: "Height Expansion (Exp-H)", color: "gradient-sunset" },
+  
+  // Ascensions
+  { id: "asc-1", label: "Text Ascension (Asc-1)", color: "gradient-warmth" },
+  { id: "asc-2", label: "Chapter Ascension (Asc-2)", color: "gradient-palace" },
+  { id: "asc-3", label: "Book Ascension (Asc-3)", color: "gradient-ocean" },
+  { id: "asc-4", label: "Cycle Ascension (Asc-4)", color: "gradient-royal" },
+  { id: "asc-5", label: "Heaven Ascension (Asc-5)", color: "gradient-sunset" },
 ];
 
 interface CommentaryPanelProps {
