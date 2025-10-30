@@ -18,6 +18,7 @@ export default function AdminStrongsImport() {
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [tahotFile, setTahotFile] = useState<File | null>(null);
   const [pastedData, setPastedData] = useState<string>("");
+  const [isBibleSDKImporting, setIsBibleSDKImporting] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -184,6 +185,55 @@ export default function AdminStrongsImport() {
       setResult({ success: false, error: error.message });
     } finally {
       setIsImporting(false);
+    }
+  };
+
+  const handleBibleSDKImport = async () => {
+    setIsBibleSDKImporting(true);
+    setResult(null);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Not authenticated");
+      }
+
+      toast({
+        title: "Starting BibleSDK Import",
+        description: "Fetching Bible data from BibleSDK API... This may take several minutes.",
+      });
+
+      // Import Genesis as a test (can be expanded to all books)
+      const response = await supabase.functions.invoke('import-from-biblesdk', {
+        body: { 
+          bookIds: ['GEN'], // Start with Genesis
+          startChapter: 1,
+          endChapter: 50
+        }
+      });
+
+      if (response.error) {
+        throw response.error;
+      }
+
+      setResult(response.data);
+      
+      if (response.data.success) {
+        toast({
+          title: "Import Successful",
+          description: `Imported ${response.data.statistics.versesImported} verses from BibleSDK`,
+        });
+      }
+    } catch (error: any) {
+      console.error("Import error:", error);
+      toast({
+        title: "Import Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      setResult({ success: false, error: error.message });
+    } finally {
+      setIsBibleSDKImporting(false);
     }
   };
 
@@ -404,8 +454,47 @@ export default function AdminStrongsImport() {
         <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Import from BibleSDK API (Recommended!)
+            </CardTitle>
+            <CardDescription>
+              Fetch Bible verses directly from BibleSDK API with Strong's concordance support. No files needed - just click import!
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert>
+              <CheckCircle2 className="h-4 w-4" />
+              <AlertDescription>
+                This will import Bible verses from a free, reliable API. Starting with Genesis as a test.
+              </AlertDescription>
+            </Alert>
+            
+            <Button 
+              onClick={handleBibleSDKImport} 
+              disabled={isBibleSDKImporting}
+              size="lg"
+              className="w-full"
+            >
+              {isBibleSDKImporting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Importing from BibleSDK...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Import Bible Data from BibleSDK
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              Quick Import - Paste Data (Easiest!)
+              Quick Import - Paste Data
             </CardTitle>
             <CardDescription>
               Paste tab-separated or comma-separated data directly. Format: StrongsNumber, Word, Transliteration, Pronunciation, Definition, KJV_Translation
