@@ -116,7 +116,7 @@ const Index = () => {
             <div className="inline-flex items-center justify-center w-12 h-12 gradient-ocean rounded-xl mb-3">
               <Layers className="h-5 w-5 text-white" />
             </div>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-ocean bg-clip-text text-transparent">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-palace-blue to-palace-teal bg-clip-text text-transparent">
               The Vision
             </h2>
           </div>
