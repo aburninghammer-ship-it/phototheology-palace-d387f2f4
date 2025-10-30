@@ -133,10 +133,15 @@ export const parseStrongsFromText = (text: string): { word: string; strongs: str
 
 // Get Strong's entry by number
 export const getStrongsEntry = async (number: string): Promise<StrongsEntry | null> => {
+  // Strip morphological codes (e.g., "G3756=PRT-N" -> "G3756")
+  let baseNumber = number.split('=')[0];
+  
+  // Strip leading zeros (G0444 -> G444, H01234 -> H1234)
+  baseNumber = baseNumber.replace(/^([GH])0+/, '$1');
+  
+  console.log(`[Strong's] Looking up: ${number} -> ${baseNumber}`);
+  
   try {
-    // Strip morphological codes (e.g., "G3756=PRT-N" -> "G3756")
-    const baseNumber = number.split('=')[0];
-    
     // Try to fetch from strongs_dictionary
     const { data, error } = await supabase
       .from('strongs_dictionary')
@@ -178,8 +183,9 @@ export const getStrongsEntry = async (number: string): Promise<StrongsEntry | nu
     console.error('Error fetching Strong\'s entry from database:', error);
   }
   
-  // Fallback to hardcoded data
-  return STRONGS_DATA[number] || null;
+  // Fallback to hardcoded data (merge both dictionaries)
+  const allData = { ...STRONGS_DATA, ...ADDITIONAL_STRONGS };
+  return allData[baseNumber] || allData[number] || null;
 };
 
 // Search Strong's by word
