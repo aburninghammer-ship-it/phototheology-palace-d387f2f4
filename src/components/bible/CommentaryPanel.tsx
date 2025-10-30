@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, MessageSquare, Sparkles, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
 const PRINCIPLE_OPTIONS = [
   // Floor 1 - Furnishing
@@ -269,11 +270,7 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
                 )}
               </div>
               <div className="prose prose-sm max-w-none text-foreground">
-                {commentary.split('\n\n').map((paragraph, idx) => (
-                  <p key={idx} className="mb-3 leading-relaxed">
-                    {paragraph}
-                  </p>
-                ))}
+                {formatJeevesResponse(commentary)}
               </div>
             </div>
           </ScrollArea>
