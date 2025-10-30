@@ -253,23 +253,23 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
 
         {commentary && (
           <ScrollArea className="h-[400px] mt-4">
-            <div className="p-4 rounded-lg bg-gradient-to-br from-primary/5 to-secondary/5 border-2 border-primary/30">
-              <div className="flex items-center justify-between mb-3">
+            <div className="p-6 rounded-lg bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 border-2 border-primary/20 shadow-lg">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-primary/10">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  <span className="font-semibold">Jeeves says:</span>
+                  <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+                  <span className="font-bold text-lg bg-gradient-palace bg-clip-text text-transparent">Jeeves says:</span>
                 </div>
                 {usedPrinciples.length > 0 && (
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 flex-wrap">
                     {usedPrinciples.map((principle, idx) => (
-                      <Badge key={idx} variant="outline" className="text-xs">
+                      <Badge key={idx} variant="outline" className="text-xs gradient-palace text-white">
                         {principle}
                       </Badge>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="prose prose-sm max-w-none text-foreground">
+              <div className="prose prose-sm max-w-none">
                 {formatJeevesResponse(commentary)}
               </div>
             </div>

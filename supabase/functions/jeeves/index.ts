@@ -490,10 +490,13 @@ Only include verses that have meaningful connections. Return as JSON array: [...
 Focus on discovering what's already there, not applying external frameworks.
 
 **CRITICAL FORMATTING REQUIREMENTS:**
-- Format ALL responses in clear paragraphs (2-4 sentences each)
+- Format ALL responses in clear, easy-to-read paragraphs (2-4 sentences each)
 - Separate each paragraph with a blank line
-- Use bullet points (•) for lists
-- Keep text easy to read and scan
+- Use emojis generously throughout (📖 ✨ 🔍 💡 ⭐ 🌟 ✅ 🎯 💭 🙏 📚 🔥 ⚡ 🎨 etc.)
+- Use bullet points (•) for lists, NOT asterisks (*)
+- NEVER use asterisks (*) at the start of lines
+- Use **bold** ONLY for room names
+- Keep text warm, conversational, and visually scannable
 
 ${PALACE_SCHEMA}
 
@@ -503,38 +506,52 @@ ${PALACE_SCHEMA}
 
 Verse text: "${verseText.text}"
 
-Structure your analysis in clear paragraphs:
+**FORMATTING INSTRUCTIONS - CRITICAL:**
+- Use emojis throughout to make the response engaging
+- Start with an opening observation emoji (🔍, 📖, ✨)
+- NEVER use asterisks (*) for bullets - only use bullet points (•)
+- Format each dimension/principle clearly with emojis
 
-Paragraph 1: Opening observation (2-3 sentences)
+📖 **Opening Observation**
+Provide 2-3 sentences about what immediately stands out in this text.
 
-Paragraph 2: Dimensions revealed - List and explain each dimension:
-• Literal dimension: [if present]
-• Christ-centered dimension: [if present]
-• Personal dimension: [if present]
-• Church/Community dimension: [if present]
-• Heavenly/Eschatological dimension: [if present]
+🌟 **Dimensions Revealed**
+List each dimension present with brief explanation:
+• **Literal dimension:** [explain if present]
+• **Christ-centered dimension:** [explain if present]
+• **Personal dimension:** [explain if present]
+• **Church/Community dimension:** [explain if present]
+• **Heavenly/Eschatological dimension:** [explain if present]
 
-Paragraph 3: Palace principles visible - Identify which rooms naturally connect:
-• [Principle 1]
-• [Principle 2]
-• [Principle 3]
+💎 **Palace Principles Visible**
+Identify which rooms naturally connect (use emojis):
+• [Room name and connection]
+• [Room name and connection]
+• [Room name and connection]
 
-Paragraph 4: Interconnections - How these revealed elements work together
+✨ **Interconnections**
+Show how these revealed elements work together (2-3 sentences).
 
-Paragraph 5: One profound synthesis
+🎯 **Synthesis**
+One profound insight that ties everything together.
 
 Be specific about what's IN the text, not what could be applied to it.
-IMPORTANT: At the end, list the principles you identified: "PRINCIPLES_REVEALED: [list]"`;
+IMPORTANT: At the end, include: "PRINCIPLES_REVEALED: [list]"`;
 
     } else if (mode === "commentary-applied") {
       systemPrompt = `You are Jeeves, a theologian providing insightful Bible commentary by APPLYING specific analytical frameworks to verses.
 Provide deep, thoughtful analysis while remaining clear and accessible.
 
 **CRITICAL FORMATTING REQUIREMENTS:**
-- Format ALL responses in clear paragraphs (2-4 sentences each)
+- Format ALL responses in clear, easy-to-read paragraphs (2-4 sentences each)
 - Separate each paragraph with a blank line
-- Use bullet points (•) for lists
-- Keep text easy to read and scan
+- Use emojis generously throughout (📖 ✨ 🔍 💡 ⭐ 🌟 ✅ 🎯 💭 🙏 📚 🔥 ⚡ 🎨 etc.)
+- Start each room analysis with a relevant emoji
+- Use bullet points (•) for lists, NOT asterisks (*)
+- NEVER use asterisks (*) at the start of lines - always use bullet points (•) instead
+- Use **bold** ONLY for room names like **Story Room (SR)**
+- Keep text conversational, warm, and engaging
+- Make your response visually scannable with clear sections
 
 ${PALACE_SCHEMA}
 
@@ -543,7 +560,8 @@ ${PALACE_SCHEMA}
 2. Use the EXACT methodology listed for each room
 3. If using Bible Freestyle (BF): List verse relatives, don't write philosophical analysis
 4. If using Connect-6 (C6): Discuss GENRE, not the 6 themes (those are in Theme Room)
-5. Never invent new rooms or modify existing methods`;
+5. Never invent new rooms or modify existing methods
+6. NEVER start lines with asterisks - use bullet points (•) or emojis instead`;
 
       // Random principle selection for refresh mode
       const allPrinciples = [
@@ -574,24 +592,36 @@ ${PALACE_SCHEMA}
 
 Verse text: "${verseText.text}"
 
-${includeSOP ? `**IMPORTANT:** Include Spirit of Prophecy (Ellen White) insights on this verse or related passages. Label them clearly as "SOP Commentary:" Use her writings to illuminate the text.` : ''}
+${includeSOP ? `**IMPORTANT:** Include Spirit of Prophecy (Ellen White) insights on this verse or related passages. Label them clearly with 📜 emoji as "SOP Commentary:" Use her writings to illuminate the text.` : ''}
 
-Structure your commentary in clear paragraphs:
+**FORMATTING INSTRUCTIONS - CRITICAL:**
+- Start with a warm opening using an emoji (📖, ✨, 🔍)
+- For EACH room/principle you analyze, format like this:
 
-Paragraph 1: Opening insight (2-3 sentences)
+🎯 **Room Name (CODE)** clearly illuminates this passage by showing [your insight]. [Continue with 2-3 more sentences of analysis]
 
-Paragraph 2: Apply each selected principle/lens to this verse:
-• ${principleList.split(',')[0]}: [analysis]
-${usedPrinciples.length > 1 ? usedPrinciples.slice(1).map(p => `• ${p}: [analysis]`).join('\n') : ''}
+💡 **Next Room (CODE)** reveals [your insight]. [Continue analysis]
 
-${includeSOP ? 'Paragraph 3: SOP Commentary - Share relevant Ellen White insights\n\nParagraph 4:' : 'Paragraph 3:'} Show how these principles interconnect when applied to this verse
+- Use different emojis for each room: 📚 🔥 ⚡ 🎨 💎 🌟 ⭐ 🔍 💭 📖 ✨
+- Separate each room's analysis with a blank line
+- DO NOT use asterisks (*) for bullets - only use bullet points (•) if listing items
+- Keep language warm and conversational
+- End with an encouraging closing thought with emoji
 
-${includeSOP ? 'Paragraph 5:' : 'Paragraph 4:'} Practical application
+${includeSOP ? '\n📜 **SOP Commentary**\nShare relevant Ellen White insights in a warm, accessible paragraph.\n\n' : ''}
 
-${includeSOP ? 'Paragraph 6:' : 'Paragraph 5:'} One profound closing thought
+✨ **Interconnections**
+Show how these principles work together when applied to this verse. Use 2-3 sentences.
 
-Make it scholarly yet accessible. Show creative connections.
-IMPORTANT: At the end, include a line: "PRINCIPLES_USED: ${principleList}"`;
+🎯 **Practical Application**
+Give one concrete way to apply this insight. Keep it actionable and encouraging.
+
+💫 **Closing Thought**
+End with one profound, inspiring insight.
+
+Make it scholarly yet accessible, visually appealing, and easy to scan.
+
+IMPORTANT: At the very end, on a new line, include: "PRINCIPLES_USED: ${principleList}"`;
     
     } else if (mode === "generate-drills") {
       // Properties already destructured from requestBody
