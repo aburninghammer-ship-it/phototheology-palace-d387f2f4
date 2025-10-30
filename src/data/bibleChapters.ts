@@ -1,3 +1,5 @@
+import { BIBLE_BOOK_METADATA } from './bibleBooks';
+
 export interface BibleChapterMetadata {
   book: string;
   chapter: number;
@@ -5,59 +7,32 @@ export interface BibleChapterMetadata {
   verses: number;
 }
 
-export const BIBLE_CHAPTER_METADATA: BibleChapterMetadata[] = [
-  // Genesis
-  { book: "GEN", chapter: 1, position: 1, verses: 31 },
-  { book: "GEN", chapter: 2, position: 2, verses: 25 },
-  { book: "GEN", chapter: 3, position: 3, verses: 24 },
-  { book: "GEN", chapter: 4, position: 4, verses: 26 },
-  { book: "GEN", chapter: 5, position: 5, verses: 32 },
-  { book: "GEN", chapter: 6, position: 6, verses: 22 },
-  { book: "GEN", chapter: 7, position: 7, verses: 24 },
-  { book: "GEN", chapter: 8, position: 8, verses: 20 },
-  { book: "GEN", chapter: 9, position: 9, verses: 27 },
-  { book: "GEN", chapter: 10, position: 10, verses: 32 },
-  { book: "GEN", chapter: 11, position: 11, verses: 32 },
-  { book: "GEN", chapter: 12, position: 12, verses: 19 },
-  { book: "GEN", chapter: 13, position: 13, verses: 18 },
-  { book: "GEN", chapter: 14, position: 14, verses: 24 },
-  { book: "GEN", chapter: 15, position: 15, verses: 21 },
-  { book: "GEN", chapter: 16, position: 16, verses: 16 },
-  { book: "GEN", chapter: 17, position: 17, verses: 26 },
-  { book: "GEN", chapter: 18, position: 18, verses: 33 },
-  { book: "GEN", chapter: 19, position: 19, verses: 36 },
-  { book: "GEN", chapter: 20, position: 20, verses: 18 },
-  { book: "GEN", chapter: 21, position: 21, verses: 33 },
-  { book: "GEN", chapter: 22, position: 22, verses: 22 },
-  { book: "GEN", chapter: 23, position: 23, verses: 16 },
-  { book: "GEN", chapter: 24, position: 24, verses: 60 },
-  { book: "GEN", chapter: 25, position: 25, verses: 33 },
-  { book: "GEN", chapter: 26, position: 26, verses: 35 },
-  { book: "GEN", chapter: 27, position: 27, verses: 44 },
-  { book: "GEN", chapter: 28, position: 28, verses: 22 },
-  { book: "GEN", chapter: 29, position: 29, verses: 32 },
-  { book: "GEN", chapter: 30, position: 30, verses: 41 },
-  { book: "GEN", chapter: 31, position: 31, verses: 49 },
-  { book: "GEN", chapter: 32, position: 32, verses: 30 },
-  { book: "GEN", chapter: 33, position: 33, verses: 19 },
-  { book: "GEN", chapter: 34, position: 34, verses: 30 },
-  { book: "GEN", chapter: 35, position: 35, verses: 29 },
-  { book: "GEN", chapter: 36, position: 36, verses: 43 },
-  { book: "GEN", chapter: 37, position: 37, verses: 36 },
-  { book: "GEN", chapter: 38, position: 38, verses: 30 },
-  { book: "GEN", chapter: 39, position: 39, verses: 23 },
-  { book: "GEN", chapter: 40, position: 40, verses: 22 },
-  { book: "GEN", chapter: 41, position: 41, verses: 55 },
-  { book: "GEN", chapter: 42, position: 42, verses: 35 },
-  { book: "GEN", chapter: 43, position: 43, verses: 32 },
-  { book: "GEN", chapter: 44, position: 44, verses: 29 },
-  { book: "GEN", chapter: 45, position: 45, verses: 28 },
-  { book: "GEN", chapter: 46, position: 46, verses: 34 },
-  { book: "GEN", chapter: 47, position: 47, verses: 31 },
-  { book: "GEN", chapter: 48, position: 48, verses: 21 },
-  { book: "GEN", chapter: 49, position: 49, verses: 32 },
-  { book: "GEN", chapter: 50, position: 50, verses: 24 },
-];
+// Generate all 1,189 chapters across all 66 books
+// Note: Verse counts will be populated during import or can be fetched from BibleSDK
+const generateAllChapters = (): BibleChapterMetadata[] => {
+  const chapters: BibleChapterMetadata[] = [];
+  let position = 1;
+
+  // Known verse counts for Genesis (provided)
+  const genesisVerseCounts = [31, 25, 24, 26, 32, 22, 24, 20, 27, 32, 32, 19, 18, 24, 21, 16, 26, 33, 36, 18, 33, 22, 16, 60, 33, 35, 44, 22, 32, 41, 49, 30, 19, 30, 29, 43, 36, 30, 23, 22, 55, 35, 32, 29, 28, 34, 31, 21, 32, 24];
+
+  for (const book of BIBLE_BOOK_METADATA) {
+    for (let chapter = 1; chapter <= book.chapters; chapter++) {
+      chapters.push({
+        book: book.code,
+        chapter,
+        position,
+        // Use known Genesis verse counts, or 0 as placeholder for other books
+        verses: book.code === 'GEN' ? genesisVerseCounts[chapter - 1] : 0
+      });
+      position++;
+    }
+  }
+
+  return chapters;
+};
+
+export const BIBLE_CHAPTER_METADATA: BibleChapterMetadata[] = generateAllChapters();
 
 /**
  * Get verse count for a specific chapter
