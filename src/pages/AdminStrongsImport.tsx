@@ -17,6 +17,7 @@ export default function AdminStrongsImport() {
   const [greekFile, setGreekFile] = useState<File | null>(null);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [tahotFile, setTahotFile] = useState<File | null>(null);
+  const [pastedData, setPastedData] = useState<string>("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -186,6 +187,73 @@ export default function AdminStrongsImport() {
     }
   };
 
+  const handlePastedImport = async () => {
+    if (!pastedData.trim()) {
+      toast({
+        title: "Error",
+        description: "Please paste some data first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsImporting(true);
+    setResult(null);
+
+    try {
+      const lines = pastedData.trim().split('\n');
+      const entries: any[] = [];
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        
+        // Support both tab and comma separated
+        const parts = line.includes('\t') 
+          ? line.split('\t') 
+          : line.split(',').map(p => p.trim().replace(/^["']|["']$/g, ''));
+
+        if (parts.length >= 3) {
+          entries.push({
+            strongs_number: parts[0].trim(),
+            word: parts[1].trim(),
+            transliteration: parts[2]?.trim() || null,
+            pronunciation: parts[3]?.trim() || null,
+            definition: parts[4]?.trim() || null,
+            kjv_translation: parts[5]?.trim() || null,
+            language: parts[0].trim().match(/^H/) ? 'hebrew' : 'greek',
+          });
+        }
+      }
+
+      if (entries.length === 0) {
+        throw new Error("No valid entries found. Check format.");
+      }
+
+      const { data, error } = await supabase.functions.invoke('bulk-import-hardcoded-strongs', {
+        body: { entries }
+      });
+
+      if (error) throw error;
+
+      setResult(data);
+      toast({
+        title: "Success",
+        description: `Imported ${entries.length} Strong's entries`,
+      });
+      setPastedData("");
+    } catch (error: any) {
+      console.error('Import error:', error);
+      toast({
+        title: "Import failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      setResult({ success: false, error: error.message });
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   const handleTahotImport = async () => {
     if (!tahotFile) {
       toast({
@@ -333,6 +401,56 @@ export default function AdminStrongsImport() {
       </div>
 
       <div className="grid gap-6">
+        <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Quick Import - Paste Data (Easiest!)
+            </CardTitle>
+            <CardDescription>
+              Paste tab-separated or comma-separated data directly. Format: StrongsNumber, Word, Transliteration, Pronunciation, Definition, KJV_Translation
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Example format (copy and modify):</strong><br />
+                <code className="text-xs">H1	אָב	'ab	awb	a primitive word; father	father</code><br />
+                <code className="text-xs">G26	ἀγάπη	agape	ag-ah'-pay	love, charity	love</code>
+              </AlertDescription>
+            </Alert>
+            
+            <div>
+              <Textarea
+                value={pastedData}
+                onChange={(e) => setPastedData(e.target.value)}
+                placeholder="Paste your Strong's data here (tab or comma separated)..."
+                className="min-h-[200px] font-mono text-sm"
+              />
+            </div>
+            
+            <Button 
+              onClick={handlePastedImport} 
+              disabled={isImporting || !pastedData.trim()}
+              size="lg"
+              className="w-full"
+            >
+              {isImporting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Importing...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Import Pasted Data
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
