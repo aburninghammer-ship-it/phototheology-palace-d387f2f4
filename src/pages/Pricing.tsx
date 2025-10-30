@@ -1,4 +1,5 @@
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -505,6 +506,8 @@ export default function Pricing() {
           </CardContent>
         </Card>
       </div>
+      
+      <Footer />
     </div>
   );
 }
