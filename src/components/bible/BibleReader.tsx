@@ -4,8 +4,9 @@ import { fetchChapter, Translation } from "@/services/bibleApi";
 import { Chapter } from "@/types/bible";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot, Bookmark } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot, Bookmark, Sparkles } from "lucide-react";
 import { VerseView } from "./VerseView";
+import { StrongsVerseView } from "./StrongsVerseView";
 import { PrinciplePanel } from "./PrinciplePanel";
 import { ChainReferencePanel } from "./ChainReferencePanel";
 import { CommentaryPanel } from "./CommentaryPanel";
@@ -32,6 +33,7 @@ export const BibleReader = () => {
   const [chainReferenceMode, setChainReferenceMode] = useState(false);
   const [commentaryMode, setCommentaryMode] = useState(false);
   const [jeevesMode, setJeevesMode] = useState(false);
+  const [strongsMode, setStrongsMode] = useState(false);
   const [highlightedVerses, setHighlightedVerses] = useState<number[]>([]);
   
   const { trackReading } = useReadingHistory();
@@ -186,10 +188,26 @@ export const BibleReader = () => {
       {/* Mode Toggles */}
       <div className="flex gap-2 flex-wrap">
         <Button
+          variant={strongsMode ? "default" : "outline"}
+          size="sm"
+          onClick={() => {
+            setStrongsMode(!strongsMode);
+            setPrincipleMode(false);
+            setChainReferenceMode(false);
+            setCommentaryMode(false);
+            setJeevesMode(false);
+          }}
+          className={strongsMode ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg" : ""}
+        >
+          <Sparkles className="h-4 w-4 mr-2" />
+          Strong's Numbers
+        </Button>
+        <Button
           variant={principleMode ? "default" : "outline"}
           size="sm"
           onClick={() => {
             setPrincipleMode(!principleMode);
+            setStrongsMode(false);
             setChainReferenceMode(false);
             setCommentaryMode(false);
             setJeevesMode(false);
@@ -206,6 +224,7 @@ export const BibleReader = () => {
           size="sm"
           onClick={() => {
             setChainReferenceMode(!chainReferenceMode);
+            setStrongsMode(false);
             setPrincipleMode(false);
             setCommentaryMode(false);
             setJeevesMode(false);
@@ -214,13 +233,14 @@ export const BibleReader = () => {
           className={chainReferenceMode ? "gradient-palace" : ""}
         >
           <Link2 className="h-4 w-4 mr-2" />
-          Chain Reference
+          Links
         </Button>
         <Button
           variant={commentaryMode ? "default" : "outline"}
           size="sm"
           onClick={() => {
             setCommentaryMode(!commentaryMode);
+            setStrongsMode(false);
             setPrincipleMode(false);
             setChainReferenceMode(false);
             setJeevesMode(false);
@@ -235,6 +255,7 @@ export const BibleReader = () => {
           size="sm"
           onClick={() => {
             setJeevesMode(!jeevesMode);
+            setStrongsMode(false);
             setPrincipleMode(false);
             setChainReferenceMode(false);
             setCommentaryMode(false);
@@ -251,18 +272,31 @@ export const BibleReader = () => {
         <div className="lg:col-span-2">
           <Card className={`p-6 shadow-elegant hover:shadow-hover transition-smooth ${preferences.reading_mode === 'focus' ? 'max-w-3xl mx-auto' : ''}`}>
             <div className={`space-y-4 ${fontSizeClass}`}>
-              {chapterData.verses.map((verse) => (
-                <VerseView
-                  key={`${verse.book}-${verse.chapter}-${verse.verse}`}
-                  verse={verse}
-                  book={book}
-                  chapter={chapter}
-                  isSelected={principleMode ? selectedVerses.includes(verse.verse) : selectedVerse === verse.verse}
-                  onSelect={() => handleVerseClick(verse.verse)}
-                  showPrinciples={principleMode}
-                  isHighlighted={highlightedVerses.includes(verse.verse)}
-                />
-              ))}
+              {strongsMode ? (
+                chapterData.verses.map((verse) => (
+                  <StrongsVerseView
+                    key={`${verse.book}-${verse.chapter}-${verse.verse}`}
+                    verse={verse}
+                    isSelected={selectedVerse === verse.verse}
+                    onSelect={() => handleVerseClick(verse.verse)}
+                    showPrinciples={false}
+                    isHighlighted={highlightedVerses.includes(verse.verse)}
+                  />
+                ))
+              ) : (
+                chapterData.verses.map((verse) => (
+                  <VerseView
+                    key={`${verse.book}-${verse.chapter}-${verse.verse}`}
+                    verse={verse}
+                    book={book}
+                    chapter={chapter}
+                    isSelected={principleMode ? selectedVerses.includes(verse.verse) : selectedVerse === verse.verse}
+                    onSelect={() => handleVerseClick(verse.verse)}
+                    showPrinciples={principleMode}
+                    isHighlighted={highlightedVerses.includes(verse.verse)}
+                  />
+                ))
+              )}
             </div>
           </Card>
         </div>
@@ -330,7 +364,9 @@ export const BibleReader = () => {
             <Card className="p-6 text-center text-muted-foreground sticky top-24">
               <BookOpen className="h-12 w-12 mx-auto mb-3 text-primary/50" />
               <p className="text-sm">
-                {principleMode
+                {strongsMode
+                  ? "Click on words with ✨ for AI Hebrew/Greek analysis, or click Strong's numbers for definitions"
+                  : principleMode
                   ? "Select one or more verses to analyze with Phototheology principles"
                   : jeevesMode
                   ? "Select a verse to ask Jeeves questions using any room or principle"
