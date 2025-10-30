@@ -264,34 +264,36 @@ export const StrongsVerseView = ({
               </div>
             )}
 
-            {strongsData?.words && !isLoading && (
-              <div className="mt-2 text-xs text-primary/60 italic font-semibold">
-                ✨ Click superscript numbers to see Hebrew/Greek definitions
+            {/* Strong's Section - Always available */}
+            {!isLoading && (
+              <div className="mt-3">
+                {!jeevesResponse ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAskJeevesForStrongs}
+                    disabled={jeevesLoading}
+                    className="w-full"
+                  >
+                    {jeevesLoading ? (
+                      <>
+                        <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                        Jeeves is fetching Strong's data...
+                      </>
+                    ) : (
+                      <>
+                        <Bot className="h-3 w-3 mr-2" />
+                        {strongsData?.words ? "View Full Strong's Analysis" : "Ask Jeeves for Strong's Numbers"}
+                      </>
+                    )}
+                  </Button>
+                ) : null}
               </div>
             )}
-
-            {/* Jeeves Strong's Lookup Button */}
-            {!strongsData?.words && !isLoading && (
-              <div className="mt-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAskJeevesForStrongs}
-                  disabled={jeevesLoading}
-                  className="w-full"
-                >
-                  {jeevesLoading ? (
-                    <>
-                      <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                      Jeeves is fetching Strong's data...
-                    </>
-                  ) : (
-                    <>
-                      <Bot className="h-3 w-3 mr-2" />
-                      Ask Jeeves for Strong's Numbers
-                    </>
-                  )}
-                </Button>
+            
+            {strongsData?.words && !isLoading && !jeevesResponse && (
+              <div className="mt-2 text-xs text-primary/60 italic font-semibold">
+                ✨ Click superscript numbers or the button above for full Hebrew/Greek analysis
               </div>
             )}
 
