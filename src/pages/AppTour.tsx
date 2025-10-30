@@ -147,7 +147,7 @@ const AppTour = () => {
             <Zap className="h-4 w-4 text-palace-blue" />
             <span className="text-sm font-semibold text-palace-blue">App Tour</span>
           </div>
-          <h1 className="font-serif text-5xl md:text-6xl font-bold mb-4 bg-gradient-ocean bg-clip-text text-transparent">
+          <h1 className="font-serif text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-palace-blue to-palace-teal bg-clip-text text-transparent">
             How to Use Phototheology
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
