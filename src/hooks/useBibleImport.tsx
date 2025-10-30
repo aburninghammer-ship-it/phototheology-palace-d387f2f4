@@ -49,8 +49,17 @@ export const useBibleImport = () => {
           versesImported: totalVersesImported,
         });
 
+        console.log(`Fetching ${bookCode} chapter ${chapter}...`);
+        
         // Fetch verses for this chapter from BibleSDK
-        const response = await getVerses(bookCode, chapter, [1, 999]) as unknown as BibleSDKResponse;
+        let response;
+        try {
+          response = await getVerses(bookCode, chapter, [1, 999]) as unknown as BibleSDKResponse;
+          console.log(`Received response for ${bookCode} ${chapter}:`, response);
+        } catch (sdkError: any) {
+          console.error(`BibleSDK error for ${bookCode} chapter ${chapter}:`, sdkError);
+          throw new Error(`Failed to fetch verses from BibleSDK: ${sdkError.message}`);
+        }
         
         if (!response || !response.phrases || response.phrases.length === 0) {
           console.warn(`No verses found for ${bookCode} chapter ${chapter}`);
