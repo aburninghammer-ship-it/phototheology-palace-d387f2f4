@@ -269,6 +269,19 @@ const ChainChess = () => {
     console.log("=== Loading Moves ===");
     console.log("Game ID:", gameId);
     
+    // Also fetch game state to check whose turn it is
+    const { data: gameData } = await supabase
+      .from("games")
+      .select("current_turn")
+      .eq("id", gameId)
+      .single();
+
+    if (gameData) {
+      console.log("Current turn from DB:", gameData.current_turn);
+      console.log("User ID:", user?.id);
+      setIsMyTurn(gameData.current_turn === user!.id);
+    }
+    
     const { data, error } = await supabase
       .from("game_moves")
       .select("*")
@@ -1017,7 +1030,7 @@ const ChainChess = () => {
                       )}
                     </div>
                   ) : (
-                    <div className="text-center py-8 border-t">
+                    <div className="text-center py-8 border-t space-y-4">
                       {processing ? (
                         <>
                           <Sparkles className="h-8 w-8 animate-spin mx-auto mb-2 text-purple-500" />
@@ -1026,9 +1039,25 @@ const ChainChess = () => {
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-muted-foreground">
-                          Waiting for your turn...
-                        </p>
+                        <>
+                          <p className="text-sm text-muted-foreground">
+                            {isVsJeeves ? "Jeeves' Turn" : "Waiting for opponent's turn..."}
+                          </p>
+                          {isVsJeeves && (
+                            <Button 
+                              onClick={() => {
+                                const lastMove = moves[moves.length - 1];
+                                const lastChallenge = lastMove?.challengeCategory;
+                                jeevesMove(gameId!, false, lastChallenge);
+                              }}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <Sparkles className="h-4 w-4 mr-2" />
+                              Nudge Jeeves
+                            </Button>
+                          )}
+                        </>
                       )}
                     </div>
                   )}
