@@ -78,7 +78,7 @@ export const VerseView = ({ verse, isSelected, onSelect, showPrinciples, isHighl
     [verse.verse, principles]
   );
   
-  const colors = ["gradient-palace", "gradient-ocean", "gradient-sunset", "gradient-warmth", "gradient-royal"];
+  const colors = ["bg-blue-600", "bg-green-600", "bg-orange-600", "bg-red-600"];
 
   const handlePrincipleClick = async (principle: string, e: React.MouseEvent) => {
     e.stopPropagation();
