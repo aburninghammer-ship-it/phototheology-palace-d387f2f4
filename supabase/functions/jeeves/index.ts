@@ -529,6 +529,9 @@ Identify which rooms naturally connect (use emojis):
 • [Room name and connection]
 • [Room name and connection]
 
+⚠️ **CRITICAL CONSTRAINT:** Select a maximum of ONE principle from each room. NEVER show multiple principles from the same room.
+For example: If you identify Story Room (SR), do not also identify Imagination Room (IR) or any other Floor 1 room. Choose the MOST RELEVANT principle from each floor.
+
 ✨ **Interconnections**
 Show how these revealed elements work together (2-3 sentences).
 
