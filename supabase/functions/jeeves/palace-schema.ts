@@ -291,8 +291,6 @@ export const PALACE_SCHEMA = `
 4. MAINTAIN PROGRESSIVE REVELATION: Show how theme STARTS → DEVELOPS → CLIMAXES in Christ → CONSUMMATES in Revelation
 5. WRITE A CONSTELLATION (100-120 words): Synthesize the entire 66-book journey in narrative form
 
-**Example:** The Lamb theme: From substitute ram in Genesis 22 → Passover sacrifice in Exodus 12 → suffering servant in Isaiah 53 → Christ crucified in the Gospels → victorious Lion-Lamb in Revelation 5
-
 ### MATH - Mathematics Room
 **Purpose:** Read Scripture through the lens of six major time prophecies that structure salvation history
 **Core Question:** Which time prophecy does this passage fulfill, foreshadow, or connect to, and how does it reveal God's precise timing in redemptive history?
@@ -313,7 +311,7 @@ export const PALACE_SCHEMA = `
 
 ---
 
-## FLOOR 6: THREE HEAVENS & CYCLES
+## FLOOR 7: SPIRITUAL & EMOTIONAL
 
 ### 1H/2H/3H - Three Heavens
 **Purpose:** Recognize multiple horizons of prophetic fulfillment

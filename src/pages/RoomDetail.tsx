@@ -21,6 +21,7 @@ import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChristChapterFindings } from "@/components/ChristChapterFindings";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -35,7 +36,7 @@ const QUICK_START_ROOMS = new Set([
   // Floor 5
   'bl', 'pr', '3a', 'fe',
   // Floor 6
-  '123h', 'cycles', 'jr',
+  '123h', 'cycles', 'jr', 'math',
   // Floor 7
   'frm', 'mr', 'srm'
 ]);
@@ -319,6 +320,20 @@ export default function RoomDetail() {
 
             {room.id === "gr" && (
               <UserGemsList floorNumber={floor.number} roomId={room.id} />
+            )}
+
+            {room.id === "cec" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Your Christ-in-Every-Chapter Findings</CardTitle>
+                  <CardDescription>
+                    Record Christ's presence in each chapter: His name, His action, and NT crosslinks
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChristChapterFindings />
+                </CardContent>
+              </Card>
             )}
 
             <RoomPracticeSpace

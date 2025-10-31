@@ -325,6 +325,45 @@ export type Database = {
         }
         Relationships: []
       }
+      christ_chapter_findings: {
+        Row: {
+          book: string
+          chapter: number
+          christ_action: string
+          christ_name: string
+          created_at: string
+          crosslink_verses: string[]
+          id: string
+          notes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book: string
+          chapter: number
+          christ_action: string
+          christ_name: string
+          created_at?: string
+          crosslink_verses?: string[]
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          christ_action?: string
+          christ_name?: string
+          created_at?: string
+          crosslink_verses?: string[]
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       church_campaign_participation: {
         Row: {
           campaign_id: string
