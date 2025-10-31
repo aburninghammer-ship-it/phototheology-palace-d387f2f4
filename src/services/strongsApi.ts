@@ -543,6 +543,94 @@ const VERSES_WITH_STRONGS: Record<string, {
 
 // Additional Strong's entries
 const ADDITIONAL_STRONGS: Record<string, StrongsEntry> = {
+  "G3588": {
+    number: "G3588",
+    word: "ὁ",
+    transliteration: "ho",
+    pronunciation: "ho",
+    language: "Greek",
+    definition: "The definite article",
+    usage: ["the", "this", "that"],
+    occurrences: 19870,
+    derivation: "The Greek article"
+  },
+  "G2532": {
+    number: "G2532",
+    word: "καί",
+    transliteration: "kai",
+    pronunciation: "kahee",
+    language: "Greek",
+    definition: "And, even, also, namely",
+    usage: ["and", "also", "even", "both"],
+    occurrences: 9018,
+    derivation: "Apparently a primary particle"
+  },
+  "G1722": {
+    number: "G1722",
+    word: "ἐν",
+    transliteration: "en",
+    pronunciation: "en",
+    language: "Greek",
+    definition: "In, on, at, by, with",
+    usage: ["in", "by", "with", "among"],
+    occurrences: 2757,
+    derivation: "A primary preposition"
+  },
+  "G1510": {
+    number: "G1510",
+    word: "εἰμί",
+    transliteration: "eimi",
+    pronunciation: "i-mee'",
+    language: "Greek",
+    definition: "I am, exist",
+    usage: ["am", "is", "are", "was", "be"],
+    occurrences: 2462,
+    derivation: "First person singular present indicative"
+  },
+  "G846": {
+    number: "G846",
+    word: "αὐτός",
+    transliteration: "autos",
+    pronunciation: "ow-tos'",
+    language: "Greek",
+    definition: "He, she, it, self, same",
+    usage: ["him", "them", "her", "it", "same", "self"],
+    occurrences: 5595,
+    derivation: "From the particle au"
+  },
+  "G3056": {
+    number: "G3056",
+    word: "λόγος",
+    transliteration: "logos",
+    pronunciation: "log'-os",
+    language: "Greek",
+    definition: "Word, speech, reason, the divine Word",
+    usage: ["word", "saying", "speech", "reason"],
+    occurrences: 330,
+    derivation: "From lego"
+  },
+  "G1096": {
+    number: "G1096",
+    word: "γίνομαι",
+    transliteration: "ginomai",
+    pronunciation: "ghin'-om-ahee",
+    language: "Greek",
+    definition: "To become, be made, happen",
+    usage: ["be", "become", "come to pass", "be made"],
+    occurrences: 669,
+    derivation: "A primary verb"
+  },
+  "G4314": {
+    number: "G4314",
+    word: "πρός",
+    transliteration: "pros",
+    pronunciation: "pros",
+    language: "Greek",
+    definition: "To, towards, with, at",
+    usage: ["unto", "to", "with", "for"],
+    occurrences: 700,
+    derivation: "A strengthened form of pro"
+  },
   "G444": {
     number: "G444",
     word: "ἄνθρωπος",
@@ -608,17 +696,6 @@ const ADDITIONAL_STRONGS: Record<string, StrongsEntry> = {
     usage: ["beginning", "principality", "rule"],
     occurrences: 58,
     derivation: "From archomai"
-  },
-  "G3056": {
-    number: "G3056",
-    word: "λόγος",
-    transliteration: "logos",
-    pronunciation: "log'-os",
-    language: "Greek",
-    definition: "Word, speech, divine utterance",
-    usage: ["word", "saying", "speech"],
-    occurrences: 330,
-    derivation: "From lego"
   },
   "G3598": {
     number: "G3598",
