@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Gift } from "lucide-react";
+import { Loader2, Gift, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function AccessCode() {
   const [searchParams] = useSearchParams();
@@ -14,6 +15,23 @@ export default function AccessCode() {
   const { toast } = useToast();
   const [code, setCode] = useState(searchParams.get('code') || '');
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Check authentication status
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleRedeem = async () => {
     if (!code.trim()) {
@@ -73,17 +91,33 @@ export default function AccessCode() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {isAuthenticated === false && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  You must be logged in to redeem an access code.{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto"
+                    onClick={() => navigate('/auth')}
+                  >
+                    Sign in here
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
+            
             <div className="space-y-2">
               <Input
                 placeholder="Enter access code (e.g., PT-XXXXXXXX)"
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                disabled={loading}
+                disabled={loading || isAuthenticated === false}
               />
             </div>
             <Button
               onClick={handleRedeem}
-              disabled={loading || !code.trim()}
+              disabled={loading || !code.trim() || isAuthenticated === false}
               className="w-full"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
