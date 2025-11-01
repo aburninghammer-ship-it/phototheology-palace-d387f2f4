@@ -243,7 +243,6 @@ export const BibleReader = () => {
             setStrongsMode(false);
             setPrincipleMode(false);
             setChainReferenceMode(false);
-            setJeevesMode(false);
           }}
           className={commentaryMode ? "gradient-ocean" : ""}
         >
@@ -258,7 +257,6 @@ export const BibleReader = () => {
             setStrongsMode(false);
             setPrincipleMode(false);
             setChainReferenceMode(false);
-            setCommentaryMode(false);
           }}
           className={jeevesMode ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg" : ""}
         >
@@ -302,7 +300,7 @@ export const BibleReader = () => {
         </div>
 
         {/* Right Panel - Dynamic based on mode */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-6">
           {chainReferenceMode ? (
             <ChainReferencePanel
               book={book}
@@ -310,22 +308,27 @@ export const BibleReader = () => {
               verses={chapterData.verses}
               onHighlight={setHighlightedVerses}
             />
-          ) : jeevesMode && selectedVerse ? (
-            <JeevesVerseAssistant
-              book={book}
-              chapter={chapter}
-              verse={selectedVerse}
-              verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
-              onClose={() => setSelectedVerse(null)}
-            />
-          ) : commentaryMode && selectedVerse ? (
-            <CommentaryPanel
-              book={book}
-              chapter={chapter}
-              verse={selectedVerse}
-              verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
-              onClose={() => setSelectedVerse(null)}
-            />
+          ) : (commentaryMode || jeevesMode) && selectedVerse ? (
+            <>
+              {commentaryMode && (
+                <CommentaryPanel
+                  book={book}
+                  chapter={chapter}
+                  verse={selectedVerse}
+                  verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+                  onClose={() => setCommentaryMode(false)}
+                />
+              )}
+              {jeevesMode && (
+                <JeevesVerseAssistant
+                  book={book}
+                  chapter={chapter}
+                  verse={selectedVerse}
+                  verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+                  onClose={() => setJeevesMode(false)}
+                />
+              )}
+            </>
           ) : principleMode && selectedVerses.length > 0 ? (
             <Card className="p-6 sticky top-24 space-y-4">
               <div className="flex items-center justify-between">
@@ -368,10 +371,8 @@ export const BibleReader = () => {
                   ? "Click on words with ✨ for AI Hebrew/Greek analysis, or click Strong's numbers for definitions"
                   : principleMode
                   ? "Select one or more verses to analyze with Phototheology principles"
-                  : jeevesMode
-                  ? "Select a verse to ask Jeeves questions using any room or principle"
-                  : commentaryMode
-                  ? "Select a verse for AI-powered commentary using your chosen principles"
+                  : (jeevesMode || commentaryMode)
+                  ? "Select a verse to interact with AI commentary and ask questions"
                   : "Select a verse to view principles, cross-references, and commentary"}
               </p>
             </Card>
