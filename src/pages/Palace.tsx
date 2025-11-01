@@ -6,19 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
-import { useCourseProgress } from "@/hooks/useCourseProgress";
+import { usePalaceProgress } from "@/hooks/usePalaceProgress";
 import { Link, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { Footer } from "@/components/Footer";
 
 const Palace = () => {
   const { user } = useAuth();
-  const { progress } = useCourseProgress("Memory Palace");
+  const { completedRooms, totalRooms, progressPercentage, loading } = usePalaceProgress();
   const [searchParams] = useSearchParams();
-  
-  const totalRooms = 38;
-  const completedRooms = progress?.completed_lessons?.length || 0;
-  const progressPercentage = progress?.progress_percentage || 0;
 
   useEffect(() => {
     const roomParam = searchParams.get('room');
@@ -61,7 +57,7 @@ const Palace = () => {
               Master Bible typology through our revolutionary <strong>8-floor, 38-room memory system</strong>. See Christ everywhere in Scripture.
             </p>
 
-            {user && (
+            {user && !loading && (
               <Card className="max-w-md mx-auto mb-6">
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between mb-2">
@@ -88,7 +84,7 @@ const Palace = () => {
                   {user ? "Continue Learning" : "Start Your Journey"}
                 </Link>
               </Button>
-              {progress?.completed_at && (
+              {completedRooms === totalRooms && (
                 <Button asChild size="lg" variant="outline">
                   <Link to="/certificates">
                     <Award className="mr-2 h-4 w-4" />
