@@ -1521,6 +1521,83 @@ Paragraph 3: Apply relevant Palace principles when helpful using bullet points i
 Paragraph 4: Provide encouragement and practical application
 
 Keep it conversational and practical.`;
+    } else if (mode === "room-insight-chat") {
+      // Room Insight Chat mode - for asking questions about specific room analysis
+      const { roomCode, roomName, roomContent, conversationHistory } = requestBody;
+      
+      systemPrompt = `You are Jeeves, a wise Bible study assistant helping students understand Phototheology room insights.
+
+**CONTEXT:**
+You are having a conversation about the ${roomName} (${roomCode}) analysis of ${book} ${chapter}:${verse}.
+
+**THE ROOM INSIGHT BEING DISCUSSED:**
+${roomContent}
+
+**YOUR ROLE:**
+- Answer questions specifically about this room's insight
+- Help students understand the connections and implications
+- Reference the original verse: "${verseText}"
+- Keep responses clear, concise (2-3 paragraphs max)
+- Use emojis appropriately (📖 ✨ 🔍 💡 etc.)
+- Format with clear paragraph breaks
+
+**FORMATTING:**
+- Use bullet points (•) for lists
+- Separate paragraphs with blank lines
+- Be conversational and encouraging`;
+
+      // Build conversation context
+      const conversationMessages = [
+        { role: "system", content: systemPrompt }
+      ];
+      
+      // Add conversation history if exists
+      if (conversationHistory && Array.isArray(conversationHistory)) {
+        conversationHistory.forEach((msg: any) => {
+          conversationMessages.push({
+            role: msg.role,
+            content: msg.content
+          });
+        });
+      }
+      
+      // Add current question
+      conversationMessages.push({
+        role: "user",
+        content: question
+      });
+      
+      // Use the conversation messages in the API call
+      const chatResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: conversationMessages,
+          temperature: 0.8,
+        }),
+      });
+
+      if (!chatResponse.ok) {
+        if (chatResponse.status === 429) {
+          return new Response(
+            JSON.stringify({ error: "Too many requests. Please try again in a few minutes." }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        throw new Error("Failed to get response from AI");
+      }
+
+      const chatData = await chatResponse.json();
+      const responseContent = chatData.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+      
+      return new Response(
+        JSON.stringify({ response: responseContent }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

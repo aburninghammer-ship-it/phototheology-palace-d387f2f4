@@ -8,6 +8,38 @@ import { Loader2, MessageSquare, Sparkles, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
+import { RoomInsightChat } from "./RoomInsightChat";
+
+// Helper function to parse room insights from commentary
+const parseRoomInsights = (commentary: string) => {
+  const rooms: Array<{ code: string; name: string; content: string }> = [];
+  
+  // Split by room codes (e.g., "SR (Story Room)", "IR (Imagination Room)")
+  const roomPattern = /([A-Z@]+(?:\d+)?)\s*\(([^)]+)\)[\s\n]*([^]*?)(?=(?:[A-Z@]+(?:\d+)?)\s*\([^)]+\)|$)/g;
+  let match;
+  
+  while ((match = roomPattern.exec(commentary)) !== null) {
+    const [, code, name, content] = match;
+    if (content.trim()) {
+      rooms.push({
+        code: code.trim(),
+        name: name.trim(),
+        content: content.trim()
+      });
+    }
+  }
+  
+  // If no rooms found, return the whole commentary as a general insight
+  if (rooms.length === 0) {
+    return [{
+      code: "GEN",
+      name: "General Insights",
+      content: commentary
+    }];
+  }
+  
+  return rooms;
+};
 
 const PRINCIPLE_OPTIONS = [
   // Floor 1 - Furnishing (Memory & Visualization)
@@ -274,12 +306,12 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
         </div>
 
         {commentary && (
-          <ScrollArea className="h-[400px] mt-4">
+          <ScrollArea className="h-[500px] mt-4">
             <div className="p-6 rounded-lg bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 border-2 border-primary/20 shadow-lg">
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-primary/10">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-                  <span className="font-bold text-lg bg-gradient-palace bg-clip-text text-transparent">Jeeves says:</span>
+                  <span className="font-bold text-lg bg-gradient-palace bg-clip-text text-transparent">Room Insights</span>
                 </div>
                 {usedPrinciples.length > 0 && (
                   <div className="flex gap-1 flex-wrap">
@@ -291,8 +323,20 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
                   </div>
                 )}
               </div>
-              <div className="prose prose-sm max-w-none">
-                {formatJeevesResponse(commentary)}
+              
+              <div className="space-y-6">
+                {parseRoomInsights(commentary).map((room, idx) => (
+                  <RoomInsightChat
+                    key={idx}
+                    roomCode={room.code}
+                    roomName={room.name}
+                    roomContent={room.content}
+                    book={book}
+                    chapter={chapter}
+                    verse={verse}
+                    verseText={verseText}
+                  />
+                ))}
               </div>
             </div>
           </ScrollArea>
