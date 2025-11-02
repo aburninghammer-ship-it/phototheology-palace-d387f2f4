@@ -152,6 +152,7 @@ Deno.serve(async (req) => {
             try {
               console.log(`Trying ${book.code} ${chapter} with range [1, ${maxVerse}]`);
               response = await getVerses(book.code, chapter, [1, maxVerse]) as unknown as BibleSDKResponse;
+              console.log(`✓ Raw response:`, JSON.stringify(response).substring(0, 500));
               console.log(`✓ Successfully fetched ${book.code} ${chapter} with range [1, ${maxVerse}]`);
               break;
             } catch (rangeError: any) {
