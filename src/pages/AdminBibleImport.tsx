@@ -259,6 +259,126 @@ export default function AdminBibleImport() {
     }
   };
 
+  const handleOldTestamentImport = async () => {
+    setAutoImporting(true);
+    setImportResults(null);
+    
+    const otBooks = [
+      { code: 'Gen', name: 'Genesis' },
+      { code: 'Exo', name: 'Exodus' },
+      { code: 'Lev', name: 'Leviticus' },
+      { code: 'Num', name: 'Numbers' },
+      { code: 'Deu', name: 'Deuteronomy' },
+      { code: 'Jos', name: 'Joshua' },
+      { code: 'Jdg', name: 'Judges' },
+      { code: 'Rut', name: 'Ruth' },
+      { code: '1Sa', name: '1 Samuel' },
+      { code: '2Sa', name: '2 Samuel' },
+      { code: '1Ki', name: '1 Kings' },
+      { code: '2Ki', name: '2 Kings' },
+      { code: '1Ch', name: '1 Chronicles' },
+      { code: '2Ch', name: '2 Chronicles' },
+      { code: 'Ezr', name: 'Ezra' },
+      { code: 'Neh', name: 'Nehemiah' },
+      { code: 'Est', name: 'Esther' },
+      { code: 'Job', name: 'Job' },
+      { code: 'Psa', name: 'Psalms' },
+      { code: 'Pro', name: 'Proverbs' },
+      { code: 'Ecc', name: 'Ecclesiastes' },
+      { code: 'Sng', name: 'Song of Solomon' },
+      { code: 'Isa', name: 'Isaiah' },
+      { code: 'Jer', name: 'Jeremiah' },
+      { code: 'Lam', name: 'Lamentations' },
+      { code: 'Ezk', name: 'Ezekiel' },
+      { code: 'Dan', name: 'Daniel' },
+      { code: 'Hos', name: 'Hosea' },
+      { code: 'Jol', name: 'Joel' },
+      { code: 'Amo', name: 'Amos' },
+      { code: 'Oba', name: 'Obadiah' },
+      { code: 'Jon', name: 'Jonah' },
+      { code: 'Mic', name: 'Micah' },
+      { code: 'Nam', name: 'Nahum' },
+      { code: 'Hab', name: 'Habakkuk' },
+      { code: 'Zep', name: 'Zephaniah' },
+      { code: 'Hag', name: 'Haggai' },
+      { code: 'Zec', name: 'Zechariah' },
+      { code: 'Mal', name: 'Malachi' }
+    ];
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+
+      toast({
+        title: "Starting Old Testament import",
+        description: "Importing all 39 OT books with Strong's data...",
+      });
+
+      let imported = 0;
+      let failed = 0;
+      let totalVerses = 0;
+      const errors: string[] = [];
+
+      for (const book of otBooks) {
+        try {
+          toast({
+            title: `Importing ${book.name}...`,
+            description: `Processing book ${imported + 1} of ${otBooks.length}`,
+          });
+          
+          const { data, error } = await supabase.functions.invoke('import-bible-verses', {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: { bookCode: book.code }
+          });
+          
+          if (error) {
+            failed++;
+            errors.push(`${book.name}: ${error.message}`);
+          } else {
+            imported++;
+            if (data?.totalVerses) {
+              totalVerses += data.totalVerses;
+            }
+          }
+          
+          // Small delay to avoid rate limits
+          await new Promise(resolve => setTimeout(resolve, 500));
+        } catch (err: any) {
+          failed++;
+          errors.push(`${book.name}: ${err.message}`);
+        }
+      }
+
+      const resultData = {
+        message: `Imported ${imported} of ${otBooks.length} OT books`,
+        imported,
+        failed,
+        totalVerses,
+        errors: errors.length > 0 ? errors : undefined
+      };
+      
+      setImportResults(resultData);
+      
+      toast({
+        title: "Import complete!",
+        description: `Successfully imported ${imported} books with ${totalVerses} verses`,
+      });
+    } catch (error: any) {
+      console.error('OT import error:', error);
+      toast({
+        title: "Import failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setAutoImporting(false);
+    }
+  };
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -468,6 +588,59 @@ export default function AdminBibleImport() {
               {/* BibleSDK Import Panel */}
               <BibleImportPanel />
               
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Import Old Testament
+                  </CardTitle>
+                  <CardDescription>
+                    Import all 39 Old Testament books (Genesis through Malachi) with Strong's numbers from BibleSDK
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                    <p className="text-sm">
+                      This will automatically import all Old Testament books with Hebrew Strong's numbers. The process may take 20-30 minutes.
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Books included: Genesis, Exodus, Leviticus, Numbers, Deuteronomy, Joshua, Judges, Ruth, 1-2 Samuel, 1-2 Kings, 1-2 Chronicles, Ezra, Nehemiah, Esther, Job, Psalms, Proverbs, Ecclesiastes, Song of Solomon, Isaiah, Jeremiah, Lamentations, Ezekiel, Daniel, Hosea, Joel, Amos, Obadiah, Jonah, Micah, Nahum, Habakkuk, Zephaniah, Haggai, Zechariah, Malachi
+                    </p>
+                  </div>
+
+                  <Button 
+                    onClick={handleOldTestamentImport}
+                    disabled={autoImporting}
+                    className="w-full"
+                    size="lg"
+                  >
+                    <Database className="h-4 w-4 mr-2" />
+                    {autoImporting ? "Importing Old Testament..." : "Import All Old Testament Books"}
+                  </Button>
+
+                  {importResults && (
+                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 space-y-2">
+                      <p className="font-semibold text-green-600 dark:text-green-400">
+                        ✓ {importResults.message}
+                      </p>
+                      {importResults.totalVerses && (
+                        <p className="text-sm text-muted-foreground">
+                          Total verses imported: {importResults.totalVerses}
+                        </p>
+                      )}
+                      {importResults.errors && importResults.errors.length > 0 && (
+                        <div className="mt-2 text-xs text-red-600 dark:text-red-400">
+                          <p className="font-semibold">Errors:</p>
+                          {importResults.errors.map((err: string, i: number) => (
+                            <p key={i}>• {err}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
