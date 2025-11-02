@@ -606,20 +606,41 @@ ${currentEquation.explanation}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-              {/* Verse Reference */}
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="font-semibold text-lg mb-2">{currentEquation.verse}</p>
-                <p className="text-2xl font-mono font-bold text-primary">
-                  {currentEquation.equation}
+              {/* Verse Reference - Enhanced with colors and emojis */}
+              <div className="relative p-6 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-xl border-2 border-purple-500/30 shadow-lg">
+                <div className="absolute top-2 right-2 text-2xl animate-bounce">✨</div>
+                <div className="absolute bottom-2 left-2 text-xl">📖</div>
+                <p className="font-semibold text-lg mb-4 flex items-center gap-2">
+                  <span className="text-2xl">🎯</span>
+                  <span className="text-purple-600 dark:text-purple-400">{currentEquation.verse}</span>
                 </p>
+                <div className="relative p-4 bg-gradient-to-br from-amber-100 via-orange-100 to-yellow-100 dark:from-amber-900/40 dark:via-orange-900/40 dark:to-yellow-900/40 rounded-lg border-2 border-amber-500/50 shadow-inner">
+                  <div className="absolute -top-3 left-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                    🧮 EQUATION 🧮
+                  </div>
+                  <p className="text-3xl font-mono font-black text-center bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent pt-2 animate-pulse">
+                    {currentEquation.equation}
+                  </p>
+                </div>
+                <div className="flex justify-around mt-4 text-2xl">
+                  <span className="animate-bounce" style={{animationDelay: '0ms'}}>🌟</span>
+                  <span className="animate-bounce" style={{animationDelay: '100ms'}}>⭐</span>
+                  <span className="animate-bounce" style={{animationDelay: '200ms'}}>💫</span>
+                  <span className="animate-bounce" style={{animationDelay: '300ms'}}>✨</span>
+                </div>
               </div>
 
-              {/* Symbol Legend */}
-              <div>
-                <h3 className="font-semibold mb-3">Symbols in this equation:</h3>
+              {/* Symbol Legend - Enhanced */}
+              <div className="p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-500/20">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <span className="text-xl">🔑</span>
+                  Symbols in this equation:
+                  <span className="text-xl">🔓</span>
+                </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {currentEquation.symbols.map((symbol, idx) => (
-                    <Badge key={idx} variant="outline" className="justify-start">
+                    <Badge key={idx} variant="outline" className="justify-start bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30 hover:scale-105 transition-transform">
+                      <span className="mr-1">💎</span>
                       {symbol}
                     </Badge>
                   ))}
