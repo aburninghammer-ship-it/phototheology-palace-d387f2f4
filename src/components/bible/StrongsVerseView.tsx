@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Verse } from "@/types/bible";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { StrongsModal } from "./StrongsModal";
-import { HebrewGreekAnalysisDialog } from "./HebrewGreekAnalysisDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { getVerseWithStrongs } from "@/services/strongsApi";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, Bot, Loader2 } from "lucide-react";
@@ -26,7 +26,6 @@ export const StrongsVerseView = ({
   isHighlighted,
   principles 
 }: StrongsVerseViewProps) => {
-  const [selectedStrongs, setSelectedStrongs] = useState<string | null>(null);
   const [strongsData, setStrongsData] = useState<{
     text: string;
     words: Array<{ text: string; strongs?: string; lemma?: string; transliteration?: string; part_of_speech?: string }>;
@@ -35,7 +34,9 @@ export const StrongsVerseView = ({
   const [jeevesLoading, setJeevesLoading] = useState(false);
   const [jeevesResponse, setJeevesResponse] = useState<string | null>(null);
   const [analysisDialogOpen, setAnalysisDialogOpen] = useState(false);
-  const [selectedWordForAnalysis, setSelectedWordForAnalysis] = useState<any>(null);
+  const [selectedWord, setSelectedWord] = useState<string | null>(null);
+  const [wordAnalysis, setWordAnalysis] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
   
   const displayPrinciples = principles || ["2D", "@Ab", "Altar", "Passover"];
@@ -57,24 +58,37 @@ export const StrongsVerseView = ({
     fetchStrongsData();
   }, [verse.book, verse.chapter, verse.verse]);
 
-  const handleStrongsClick = (strongsNumber: string, e: React.MouseEvent) => {
+  const handleWordAnalysis = async (word: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedStrongs(strongsNumber);
-  };
-
-  const handleAIAnalysisClick = (word: any, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedWordForAnalysis({
-      strongsNumber: word.strongs,
-      lemma: word.lemma || word.text,
-      transliteration: word.transliteration || 'N/A',
-      part_of_speech: word.part_of_speech || 'N/A',
-      verseText: verse.text,
-      book: verse.book,
-      chapter: verse.chapter,
-      verse: verse.verse
-    });
+    setSelectedWord(word);
+    setIsAnalyzing(true);
     setAnalysisDialogOpen(true);
+    setWordAnalysis(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-hebrew-greek', {
+        body: {
+          word,
+          verse: verse.text,
+          context: verse.text,
+          book: verse.book,
+        }
+      });
+
+      if (error) throw error;
+
+      setWordAnalysis(data.analysis);
+    } catch (error) {
+      console.error('Error analyzing word:', error);
+      toast({
+        title: "Analysis Failed",
+        description: "Unable to analyze this word. Please try again.",
+        variant: "destructive",
+      });
+      setAnalysisDialogOpen(false);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleAskJeevesForStrongs = async (e: React.MouseEvent) => {
@@ -140,26 +154,28 @@ export const StrongsVerseView = ({
                 <span>
                   {strongsData.words.map((word, idx) => (
                     <span key={idx} className="relative group/word">
-                      {word.text}
+                      <button
+                        className="hover:text-primary transition-colors hover:underline decoration-dotted"
+                        onClick={(e) => handleWordAnalysis(word.text, e)}
+                        title="Click for AI Hebrew/Greek analysis"
+                      >
+                        {word.text}
+                      </button>
                       {word.strongs && (
-                        <>
+                        <span 
+                          className="inline-flex items-center gap-0.5 ml-0.5"
+                        >
                           <sup 
-                            className="text-xs text-primary/70 hover:text-primary cursor-pointer font-semibold ml-0.5 transition-colors"
-                            onClick={(e) => handleStrongsClick(word.strongs!, e)}
-                            title={`Click to see Strong's ${word.strongs}`}
+                            className="text-xs text-primary/70 hover:text-primary cursor-pointer font-semibold transition-colors"
+                            onClick={(e) => handleWordAnalysis(word.text, e)}
+                            title={`Click for AI analysis (${word.strongs})`}
                           >
                             {word.strongs.replace(/[GH]/, "")}
                           </sup>
-                          <span 
-                            className="inline-block ml-1 cursor-pointer"
-                            onClick={(e) => handleAIAnalysisClick(word, e)}
-                            title="AI Analysis of this word"
-                          >
-                            <Sparkles 
-                              className="w-3 h-3 opacity-0 group-hover/word:opacity-100 transition-opacity text-primary"
-                            />
-                          </span>
-                        </>
+                          <Sparkles 
+                            className="w-3 h-3 opacity-0 group-hover/word:opacity-100 transition-opacity text-amber-500"
+                          />
+                        </span>
                       )}
                       {idx < strongsData.words.length - 1 && " "}
                     </span>
@@ -221,7 +237,7 @@ export const StrongsVerseView = ({
             {strongsData?.words && !isLoading && (
               <div className="mt-2 text-xs text-primary/60 italic font-semibold flex items-center gap-2">
                 <Sparkles className="h-3 w-3" />
-                Hover over words & click ✨ for AI Hebrew/Greek analysis, or click numbers for definitions
+                Click any word or Strong's number for instant AI Hebrew/Greek analysis
               </div>
             )}
 
@@ -266,22 +282,28 @@ export const StrongsVerseView = ({
         </div>
       </div>
 
-      <StrongsModal
-        strongsNumber={selectedStrongs || ""}
-        isOpen={!!selectedStrongs}
-        onClose={() => setSelectedStrongs(null)}
-      />
-
-      {selectedWordForAnalysis && (
-        <HebrewGreekAnalysisDialog
-          isOpen={analysisDialogOpen}
-          onClose={() => {
-            setAnalysisDialogOpen(false);
-            setSelectedWordForAnalysis(null);
-          }}
-          wordData={selectedWordForAnalysis}
-        />
-      )}
+      <Dialog open={analysisDialogOpen} onOpenChange={setAnalysisDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-amber-500" />
+              AI Hebrew/Greek Analysis: "{selectedWord}"
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh]">
+            {isAnalyzing ? (
+              <div className="flex items-center justify-center p-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-3 text-muted-foreground">Analyzing word...</span>
+              </div>
+            ) : wordAnalysis ? (
+              <div className="prose prose-sm dark:prose-invert max-w-none p-4">
+                <div dangerouslySetInnerHTML={{ __html: wordAnalysis.replace(/\n/g, '<br/>') }} />
+              </div>
+            ) : null}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
