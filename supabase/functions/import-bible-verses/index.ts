@@ -142,7 +142,8 @@ Deno.serve(async (req) => {
 
         try {
           console.log(`Calling BibleSDK getVerses with code: ${book.code}`);
-          const response = await getVerses(book.code, chapter, [1, 999]) as unknown as BibleSDKResponse;
+          // Fetch verses 1-176 (longest chapter is Psalm 119 with 176 verses)
+          const response = await getVerses(book.code, chapter, [1, 176]) as unknown as BibleSDKResponse;
           console.log(`BibleSDK response for ${book.code} ${chapter}:`, response ? 'received' : 'null', response?.phrases?.length || 0, 'phrases');
           
           if (!response || !response.phrases || response.phrases.length === 0) {
