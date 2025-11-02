@@ -1331,8 +1331,8 @@ export const getVerseWithStrongs = async (book: string, chapter: number, verse: 
       }>;
       
       const words = tokens.map(token => ({
-        text: token.word || token.t || '',
-        strongs: token.strongs || token.s || undefined
+        text: token.t || token.word || '',
+        strongs: token.s || token.strongs || undefined
       }));
       
       return {
