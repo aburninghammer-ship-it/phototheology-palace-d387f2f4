@@ -1318,11 +1318,21 @@ export const getVerseWithStrongs = async (book: string, chapter: number, verse: 
     if (data && !error) {
       console.log(`[Strong's] Found in database: ${book} ${chapter}:${verse}`);
       
-      // Parse the tokens JSONB array
-      const tokens = data.tokens as Array<{ t: string; s: string | null }>;
+      // Parse the tokens JSONB array - handle both old format (t/s) and new format (word/strongs)
+      const tokens = data.tokens as Array<{ 
+        t?: string; 
+        s?: string | null; 
+        word?: string; 
+        strongs?: string | null;
+        position?: number;
+        definition?: string | null;
+        hebrew_word?: string | null;
+        greek_word?: string | null;
+      }>;
+      
       const words = tokens.map(token => ({
-        text: token.t,
-        strongs: token.s || undefined
+        text: token.word || token.t || '',
+        strongs: token.strongs || token.s || undefined
       }));
       
       return {
