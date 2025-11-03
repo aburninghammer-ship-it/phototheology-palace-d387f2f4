@@ -72,7 +72,7 @@ const CriticsAnalysis = lazy(() => import("./pages/CriticsAnalysis"));
 const Referrals = lazy(() => import("./pages/Referrals"));
 const StudentVerification = lazy(() => import("./pages/StudentVerification"));
 const AccessCode = lazy(() => import("./pages/AccessCode"));
-const AdminAccessCodes = lazy(() => import("./pages/AdminAccessCodes"));
+import AdminAccessCodes from "./pages/AdminAccessCodes";
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const BibleRenderedRoom = lazy(() => import("./pages/BibleRenderedRoom"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
