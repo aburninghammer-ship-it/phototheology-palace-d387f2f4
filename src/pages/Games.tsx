@@ -53,7 +53,7 @@ const Games = () => {
       rooms: ["BR"],
       modes: ["solo", "vs-ai", "2p"],
       difficulties: ["easy", "medium", "hard", "expert"],
-      route: "/games/verse-match"
+      route: "/games/verse_match"
     },
     {
       id: "verse_match",
@@ -65,7 +65,7 @@ const Games = () => {
       rooms: ["BR"],
       modes: ["solo", "custom"],
       difficulties: ["easy", "medium", "hard"],
-      route: "/games/verse-match"
+      route: "/games/verse_match"
     },
     {
       id: "observation_room",
