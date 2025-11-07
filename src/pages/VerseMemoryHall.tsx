@@ -7,7 +7,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { BIBLE_TRANSLATIONS } from "@/services/bibleApi";
 import { 
   Brain, 
   Trophy, 
@@ -44,6 +46,7 @@ export default function VerseMemoryHall() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("flashcards");
   const [progress, setProgress] = useState<UserProgress | null>(null);
+  const [selectedTranslation, setSelectedTranslation] = useState("kjv");
   
   // Flashcard state
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -259,10 +262,27 @@ export default function VerseMemoryHall() {
             <Card className="bg-white/95 backdrop-blur-sm">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Verse Flashcards</CardTitle>
-                  <span className="text-sm text-muted-foreground">
-                    Card {currentCardIndex + 1} of {verseCards.length}
-                  </span>
+                  <div>
+                    <CardTitle>Verse Flashcards</CardTitle>
+                    <span className="text-sm text-muted-foreground">
+                      Card {currentCardIndex + 1} of {verseCards.length}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium">Bible Version:</label>
+                    <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border z-50">
+                        {BIBLE_TRANSLATIONS.map((trans) => (
+                          <SelectItem key={trans.value} value={trans.value}>
+                            {trans.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
