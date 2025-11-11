@@ -194,7 +194,13 @@ serve(async (req) => {
       chartTitle,
       roomMethod,
       strongsWord,
-      strongsNumber
+      strongsNumber,
+      // Series builder properties
+      audienceType,
+      context,
+      primaryGoal,
+      themeSubject,
+      lessonCount
     } = requestBody;
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -1229,6 +1235,45 @@ Suggest how to structure this like a movie:
 
 Be specific but flexible. Help them see the cinematic potential.`;
 
+    } else if (mode === "generate-series-outline") {
+      systemPrompt = `You are Jeeves, a Bible study expert specializing in creating Christ-centered, Palace-integrated lesson series. You design engaging, transformational series that teach people to see Jesus at the center of Scripture and apply Phototheology principles.
+
+Return your response as valid JSON only.`;
+
+      userPrompt = `Create a ${lessonCount}-lesson Bible study series with these parameters:
+
+**Audience:** ${audienceType}
+**Context:** ${context}
+**Goal:** ${primaryGoal}
+**Theme/Subject:** ${themeSubject}
+
+Return ONLY valid JSON in this exact format:
+{
+  "outline": [
+    {
+      "lessonNumber": 1,
+      "title": "Lesson title here",
+      "bigIdea": "One-sentence summary",
+      "keyPassages": "Scripture references",
+      "corePoints": ["Point 1", "Point 2", "Point 3"],
+      "christEmphasis": "How this lesson reveals Christ",
+      "mainFloors": ["Floor 1 Name", "Floor 4 Name"],
+      "keyRooms": ["Room code 1", "Room code 2"],
+      "palaceActivity": "Hands-on Palace practice activity",
+      "discussionQuestions": ["Question 1", "Question 2", "Question 3"]
+    }
+  ]
+}
+
+Guidelines:
+- Each lesson builds on the previous
+- Christ must be central to every lesson
+- Include 2-3 Palace floors/rooms per lesson
+- Activities should be practical and doable
+- Questions should prompt deeper thinking
+- Adjust tone/depth for the audience type
+- Align with the stated goal and theme`;
+
     } else if (mode === "verse-assistant") {
       systemPrompt = `You are Jeeves, a friendly and insightful Bible study assistant for Phototheology.
 Your role is to help friends understand Scripture deeply by applying specific study methods (rooms) and principles.
@@ -1700,6 +1745,26 @@ ${roomContent}
         return new Response(
           JSON.stringify({
             flashcards: []
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // For generate-series-outline mode, parse JSON
+    if (mode === "generate-series-outline") {
+      try {
+        const parsed = JSON.parse(content);
+        return new Response(
+          JSON.stringify(parsed),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (error) {
+        console.error('Error parsing series outline:', error);
+        return new Response(
+          JSON.stringify({
+            error: 'Failed to generate series outline',
+            outline: []
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );

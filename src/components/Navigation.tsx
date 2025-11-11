@@ -86,6 +86,10 @@ export const Navigation = () => {
                       <Link to="/community">Community</Link>
                     </Button>
                     
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/series-builder">Series Builder</Link>
+                    </Button>
+                    
                     {/* Account Dropdown */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -135,6 +139,10 @@ export const Navigation = () => {
                     
                     <Button variant="ghost" asChild size="sm">
                       <Link to="/community">Community</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/series-builder">Series Builder</Link>
                     </Button>
                     
                     <Button asChild size="sm">

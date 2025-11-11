@@ -1,0 +1,351 @@
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Navigation } from "@/components/Navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Save, Loader2, Plus, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+export default function SeriesLessonEditor() {
+  const { seriesId, lessonNumber } = useParams();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [lesson, setLesson] = useState<any>(null);
+  const [series, setSeries] = useState<any>(null);
+
+  useEffect(() => {
+    loadData();
+  }, [seriesId, lessonNumber]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+
+      // Load series info
+      const { data: seriesData, error: seriesError } = await supabase
+        .from('bible_study_series')
+        .select('*')
+        .eq('id', seriesId)
+        .single();
+
+      if (seriesError) throw seriesError;
+      setSeries(seriesData);
+
+      // Load lesson
+      const { data: lessonData, error: lessonError } = await supabase
+        .from('bible_study_lessons')
+        .select('*')
+        .eq('series_id', seriesId)
+        .eq('lesson_number', parseInt(lessonNumber!))
+        .single();
+
+      if (lessonError) throw lessonError;
+      setLesson(lessonData);
+    } catch (error: any) {
+      console.error('Error loading lesson:', error);
+      toast.error('Failed to load lesson');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+
+      const { error } = await supabase
+        .from('bible_study_lessons')
+        .update({
+          title: lesson.title,
+          big_idea: lesson.big_idea,
+          key_passages: lesson.key_passages,
+          core_points: lesson.core_points,
+          discussion_questions: lesson.discussion_questions,
+          palace_activity: lesson.palace_activity,
+          main_floors: lesson.main_floors,
+          key_rooms: lesson.key_rooms,
+          christ_emphasis: lesson.christ_emphasis,
+          palace_mapping_notes: lesson.palace_mapping_notes,
+          take_home_challenge: lesson.take_home_challenge
+        })
+        .eq('id', lesson.id);
+
+      if (error) throw error;
+
+      toast.success('Lesson saved successfully!');
+    } catch (error: any) {
+      console.error('Error saving lesson:', error);
+      toast.error('Failed to save lesson');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateLesson = (field: string, value: any) => {
+    setLesson((prev: any) => ({ ...prev, [field]: value }));
+  };
+
+  const addArrayItem = (field: string) => {
+    const currentArray = lesson[field] || [];
+    updateLesson(field, [...currentArray, '']);
+  };
+
+  const updateArrayItem = (field: string, index: number, value: string) => {
+    const currentArray = [...lesson[field]];
+    currentArray[index] = value;
+    updateLesson(field, currentArray);
+  };
+
+  const removeArrayItem = (field: string, index: number) => {
+    const currentArray = [...lesson[field]];
+    currentArray.splice(index, 1);
+    updateLesson(field, currentArray);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!lesson || !series) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Lesson not found</p>
+            <Button onClick={() => navigate('/series-builder')} className="mt-4">
+              Back to Series
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" onClick={() => navigate('/series-builder')}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Series
+              </Button>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-3xl font-bold">Lesson {lessonNumber}</h1>
+                  <Badge variant="outline">{series.title}</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">{lesson.title}</p>
+              </div>
+            </div>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Basic Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Basic Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Lesson Title</Label>
+                <Input
+                  id="title"
+                  value={lesson.title}
+                  onChange={(e) => updateLesson('title', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="bigIdea">Big Idea (One sentence)</Label>
+                <Textarea
+                  id="bigIdea"
+                  value={lesson.big_idea || ''}
+                  onChange={(e) => updateLesson('big_idea', e.target.value)}
+                  rows={2}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="keyPassages">Key Passages</Label>
+                <Input
+                  id="keyPassages"
+                  value={lesson.key_passages || ''}
+                  onChange={(e) => updateLesson('key_passages', e.target.value)}
+                  placeholder="e.g., Genesis 3:15, John 14:6"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Core Points */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Core Points</CardTitle>
+                <Button size="sm" variant="outline" onClick={() => addArrayItem('core_points')}>
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Point
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {(lesson.core_points || []).map((point: string, index: number) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={point}
+                    onChange={(e) => updateArrayItem('core_points', index, e.target.value)}
+                    placeholder={`Point ${index + 1}`}
+                  />
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => removeArrayItem('core_points', index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Discussion Questions */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Discussion Questions</CardTitle>
+                <Button size="sm" variant="outline" onClick={() => addArrayItem('discussion_questions')}>
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Question
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {(lesson.discussion_questions || []).map((question: string, index: number) => (
+                <div key={index} className="flex gap-2">
+                  <Textarea
+                    value={question}
+                    onChange={(e) => updateArrayItem('discussion_questions', index, e.target.value)}
+                    placeholder={`Question ${index + 1}`}
+                    rows={2}
+                  />
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => removeArrayItem('discussion_questions', index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Palace Integration */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Palace Integration</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="christEmphasis">Christ Emphasis</Label>
+                <Textarea
+                  id="christEmphasis"
+                  value={lesson.christ_emphasis || ''}
+                  onChange={(e) => updateLesson('christ_emphasis', e.target.value)}
+                  rows={3}
+                  placeholder="How does this lesson point to Christ?"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="palaceActivity">Palace Activity</Label>
+                <Textarea
+                  id="palaceActivity"
+                  value={lesson.palace_activity || ''}
+                  onChange={(e) => updateLesson('palace_activity', e.target.value)}
+                  rows={3}
+                  placeholder="Hands-on activity to practice a Palace principle"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="palaceMappingNotes">Palace Mapping Notes</Label>
+                <Textarea
+                  id="palaceMappingNotes"
+                  value={lesson.palace_mapping_notes || ''}
+                  onChange={(e) => updateLesson('palace_mapping_notes', e.target.value)}
+                  rows={3}
+                  placeholder="How this lesson connects to Palace floors and rooms"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Take-Home Challenge */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Take-Home Challenge</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={lesson.take_home_challenge || ''}
+                onChange={(e) => updateLesson('take_home_challenge', e.target.value)}
+                rows={3}
+                placeholder="What should participants do this week?"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Save Button (Bottom) */}
+          <div className="flex justify-end">
+            <Button size="lg" onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
