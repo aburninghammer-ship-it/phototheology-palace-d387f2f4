@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Download, Share2 } from "lucide-react";
+import { Edit, Trash2, Download, Share2, Presentation } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -86,6 +86,13 @@ export const SeriesList = ({ series, onUpdate }: SeriesListProps) => {
               >
                 <Edit className="h-4 w-4 mr-1" />
                 Edit
+              </Button>
+              <Button
+                size="sm"
+                variant="default"
+                onClick={() => navigate(`/series/${s.id}/present`)}
+              >
+                <Presentation className="h-4 w-4" />
               </Button>
               <Button
                 size="sm"

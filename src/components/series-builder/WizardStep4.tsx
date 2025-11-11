@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SeriesFormData } from "./SeriesWizard";
-import { CheckCircle2, Edit } from "lucide-react";
+import { CheckCircle2, Edit, Presentation } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface WizardStep4Props {
@@ -97,10 +97,20 @@ export const WizardStep4 = ({ formData, onComplete }: WizardStep4Props) => {
         <Button 
           size="lg" 
           variant="outline" 
+          onClick={() => navigate(`/series/${formData.seriesId}/present`)}
+          className="flex-1"
+        >
+          <Presentation className="mr-2 h-4 w-4" />
+          Start Presenting
+        </Button>
+        <Button 
+          size="lg" 
+          variant="outline" 
           onClick={() => handleEditLesson(1)}
           className="flex-1"
         >
-          Start Customizing
+          <Edit className="mr-2 h-4 w-4" />
+          Customize
         </Button>
       </div>
     </div>
