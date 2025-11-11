@@ -1,355 +1,580 @@
-import { Link } from "react-router-dom";
-import { Building2, Sparkles, Users, BookOpen, Lightbulb, Crown, Layers, Zap, Scale, Telescope, Search, Image, Film, Brain, Share2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
-import { useActiveUsers } from "@/hooks/useActiveUsers";
-import { useToast } from "@/hooks/use-toast";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { EmpowerYourMembers } from "@/components/churches/EmpowerYourMembers";
-import phototheologyHero from "@/assets/phototheology-hero.png";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  BookOpen, 
+  Brain,
+  Users,
+  ChevronRight,
+  Check,
+  Church,
+  GraduationCap,
+  Heart,
+  Sparkles,
+  Image as ImageIcon,
+  FileText,
+  TrendingUp,
+  Target,
+  Search,
+  Layers
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import heroImage from "@/assets/phototheology-hero.png";
 
 const Index = () => {
-  const { toast } = useToast();
+  const navigate = useNavigate();
   const { user } = useAuth();
-  const { activeCount } = useActiveUsers();
-
-  const handleShare = () => {
-    const shareData = {
-      title: 'Phototheology - The Palace of Biblical Wisdom',
-      text: 'Transform Bible study into a palace of meaning through an 8-floor, 38-room method.',
-      url: window.location.origin
-    };
-
-    if (navigator.share) {
-      navigator.share(shareData).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
-      toast({
-        title: "Link copied!",
-        description: "Share link copied to clipboard",
-      });
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-palace-blue/20 via-palace-teal/15 to-palace-purple/20" style={{ background: 'linear-gradient(135deg, hsl(210 75% 65%) 0%, hsl(190 60% 65%) 50%, hsl(180 70% 60%) 100%)' }}>
+    <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="pt-28 pb-16 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_60%),radial-gradient(circle_at_70%_60%,rgba(20,184,166,0.08),transparent_60%)]" />
-        
-        <div className="container mx-auto max-w-4xl text-center relative z-10">
-          {/* Hero Image */}
-          <div className="mb-8 animate-fade-in">
-            <img 
-              src={phototheologyHero} 
-              alt="Phototheology - See the Bible with New Eyes" 
-              className="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl"
-            />
-          </div>
+      {/* Hero Section - Pain First */}
+      <section className="relative overflow-hidden pt-32 pb-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+        <div className="max-w-6xl mx-auto text-center">
+          <Badge className="mb-6 text-sm px-4 py-2" variant="secondary">
+            Rooted in Adventist study, useful to any Christian hungry for serious Bible study
+          </Badge>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full gradient-ocean border border-white/10 shadow-sm animate-fade-in">
-              <Building2 className="h-4 w-4 text-white" />
-              <span className="text-sm font-semibold text-white">The Phototheology Palace</span>
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
-            
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-card/80 backdrop-blur-sm border border-border shadow-sm animate-fade-in">
-              <Users className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold text-foreground">{activeCount} online now</span>
-            </div>
-          </div>
-          
-          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-5 bg-gradient-ocean bg-clip-text text-transparent animate-slide-up">
-            Transform Your Bible Study Forever
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            Your Mind Was Designed to<br />
+            <span className="text-primary">Remember the Bible Visually</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-foreground mb-4 leading-relaxed max-w-2xl mx-auto animate-fade-in font-normal">
-            The only app that teaches you to <strong className="font-bold">see Christ everywhere in Scripture</strong> through interactive games, memory techniques, and prophetic connections.
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+            Stop forgetting what you study. The Palace Method transforms Scripture into a visual memory system—
+            <span className="font-semibold text-foreground"> where every story, verse, and prophecy has its place.</span>
           </p>
           
-          <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-            Join thousands learning Biblical typology through the <strong>8-floor Memory Palace method</strong>
-          </p>
-          
-          {/* Prominent Tour CTA */}
-          <div className="mb-6 animate-fade-in">
-            <Button asChild size="lg" variant="outline" className="border-2 border-palace-blue text-palace-blue hover:bg-palace-blue hover:text-white font-semibold shadow-lg hover:shadow-xl transition-all">
-              <Link to="/app-tour">
-                <BookOpen className="mr-2 h-5 w-5" />
-                Take a Tour First →
-              </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <Button 
+              size="lg" 
+              onClick={() => navigate(user ? "/palace" : "/auth")}
+              className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-shadow"
+            >
+              Start Free Trial <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
-            <p className="text-sm text-muted-foreground mt-2">
-              See how everything works in 5 minutes
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={() => navigate("/app-tour")}
+              className="text-lg px-8 py-6"
+            >
+              Watch How It Works
+            </Button>
+          </div>
+          
+          <div className="relative max-w-4xl mx-auto">
+            <img 
+              src={heroImage} 
+              alt="Phototheology Palace Interface" 
+              className="rounded-lg shadow-2xl border-2 border-border"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works - 3 Steps */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">How Phototheology Works</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Three simple steps to transform how you remember and apply Scripture
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slide-up">
-            <Button asChild size="lg" className="gradient-ocean text-white hover:opacity-90 transition-all">
-              <Link to="/auth">
-                <Building2 className="mr-2 h-4 w-4" />
-                Get Started Free
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-palace-blue hover:bg-palace-blue/10">
-              <Link to="/pricing">
-                <Sparkles className="mr-2 h-4 w-4" />
-                View Pricing
-              </Link>
-            </Button>
-            <Button size="lg" variant="ghost" onClick={handleShare} className="gap-2 hover:bg-palace-teal/10">
-              <Share2 className="h-4 w-4" />
-              Share
-            </Button>
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-bl-full" />
+              <CardHeader>
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                  <span className="text-3xl font-bold text-primary">1</span>
+                </div>
+                <CardTitle className="text-2xl">Build Your Palace</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Start on Floor 1—learn to turn Bible stories into vivid mental images. Each floor adds a new skill: detective observation, freestyle connections, Christ-centered depth.
+                </p>
+                <img src={heroImage} alt="Palace floors" className="rounded border border-border" />
+              </CardContent>
+            </Card>
+            
+            <Card className="relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-bl-full" />
+              <CardHeader>
+                <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mb-4">
+                  <span className="text-3xl font-bold text-accent">2</span>
+                </div>
+                <CardTitle className="text-2xl">Practice with AI</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Jeeves, your AI study partner, guides you through drills, answers questions, and validates your insights using the Palace framework—like having a seminary professor 24/7.
+                </p>
+                <div className="bg-muted p-4 rounded border border-border">
+                  <p className="text-sm italic">"Let's map this verse into the Concentration Room and test it with the Fruit Room..."</p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-bl-full" />
+              <CardHeader>
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                  <span className="text-3xl font-bold text-primary">3</span>
+                </div>
+                <CardTitle className="text-2xl">Master & Deploy</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  By Floor 8, the Palace becomes reflexive—you think Phototheologically without trying. Then deploy: build sermons, teach classes, lead ministries with confidence.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary">Sermon Builder</Badge>
+                  <Badge variant="secondary">Teaching Tools</Badge>
+                  <Badge variant="secondary">Ministry Launch</Badge>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Vision Section */}
-      <section className="py-16 px-4 bg-card/40 backdrop-blur-sm">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-12 h-12 gradient-ocean rounded-xl mb-3">
-              <Layers className="h-5 w-5 text-white" />
-            </div>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-palace-blue to-palace-teal bg-clip-text text-transparent">
-              The Vision
-            </h2>
+      {/* Who It's For */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Who It's For</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Whether you're leading a church or studying alone, Phototheology meets you where you are
+            </p>
           </div>
           
-          <div className="space-y-5 text-lg leading-relaxed">
-            <div className="p-6 rounded-xl bg-gradient-to-r from-palace-blue/5 to-palace-teal/5 border border-palace-blue/10 transition-all hover:border-palace-blue/20">
-              <p className="text-foreground/85">
-                Phototheology exists because the Bible is not only a book of words; it is a book of{" "}
-                <span className="font-bold text-foreground">images, symbols, and living stories</span>. 
-                God has always taught visually and narratively—Adam clothed in skins, 
-                Noah's rainbow, Abraham's stars, Moses' sanctuary, Jesus' parables, John's Revelation movie.
-              </p>
-            </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="text-center hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
+                  <Church className="w-8 h-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Pastors & Leaders</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Turn your congregation into a unified discipleship force. Get ready-to-use curriculum, track engagement, and identify emerging leaders.
+                </p>
+              </CardContent>
+            </Card>
             
-            <div className="p-6 rounded-xl bg-gradient-to-r from-palace-teal/5 to-palace-green/5 border border-palace-teal/10 transition-all hover:border-palace-teal/20">
-              <p className="text-foreground/85">
-                Phototheology restores that method. It teaches you to store Scripture as{" "}
-                <span className="font-bold text-foreground">images, patterns, and structures</span>. 
-                Instead of random notes scattered across a page, your mind becomes a{" "}
-                <em className="text-foreground font-semibold">palace of meaning</em>, 
-                with every story, verse, and prophecy stored in its proper chamber.
-              </p>
-            </div>
+            <Card className="text-center hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
+                  <Brain className="w-8 h-8 text-accent" />
+                </div>
+                <CardTitle className="text-xl">Serious Students</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Go beyond surface reading. Master prophecy, sanctuary, and typology with a proven system that builds deep, lasting comprehension.
+                </p>
+              </CardContent>
+            </Card>
             
-            <div className="p-7 rounded-xl gradient-ocean text-white text-center">
-              <Sparkles className="h-10 w-10 mx-auto mb-4" />
-              <p className="font-semibold text-xl mb-3">
-                The vision is not just information—it is <strong>formation</strong>.
-              </p>
-              <p className="text-base text-white/95 leading-relaxed">
-                Think Phototheologically: reflexively seeing Christ in all Scripture, 
-                instinctively mapping verses into cycles, instantly recalling patterns and prophecies.
-              </p>
-            </div>
+            <Card className="text-center hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-8 h-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Parents & Teachers</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Age-appropriate content for kids and teens. Finally, tools that match your theology without requiring you to be a Bible scholar.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="text-center hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
+                  <GraduationCap className="w-8 h-8 text-accent" />
+                </div>
+                <CardTitle className="text-xl">Young Adults</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Build confidence in what you believe. Engage with prophecy, apologetics, and real-world application through interactive challenges.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 px-4 gradient-dreamy">
-        <div className="container mx-auto max-w-6xl">
+      {/* Trust Signals - Testimonials */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">What Users Are Saying</h2>
+            <p className="text-xl text-muted-foreground">Real results from pastors, students, and families</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                    <Users className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">Pastor John R.</p>
+                    <p className="text-sm text-muted-foreground">Senior Pastor</p>
+                  </div>
+                </div>
+                <p className="text-muted-foreground italic">
+                  "Finally, a system our entire church can use together. We launched a Daniel study campaign and saw 70% engagement across all age groups. Game changer."
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mr-3">
+                    <Brain className="w-6 h-6 text-accent" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">Sarah M.</p>
+                    <p className="text-sm text-muted-foreground">Bible Study Leader</p>
+                  </div>
+                </div>
+                <p className="text-muted-foreground italic">
+                  "I've studied the Bible for 20 years, but Phototheology gave me a structure I never had. Now I can recall passages instantly and teach with confidence."
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                    <Heart className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">David & Lisa K.</p>
+                    <p className="text-sm text-muted-foreground">Homeschool Parents</p>
+                  </div>
+                </div>
+                <p className="text-muted-foreground italic">
+                  "Our kids actually remember what they study now! The visual memory approach works perfectly for their learning style. Worth every penny."
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* The Vision */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-12 h-12 gradient-forest rounded-xl mb-3">
-              <Zap className="h-5 w-5 text-white" />
-            </div>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-palace-green to-palace-teal bg-clip-text text-transparent">
-              The Eight-Floor Method
-            </h2>
-            <p className="text-lg text-foreground/75 max-w-2xl mx-auto font-medium">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">The Vision</h2>
+          </div>
+          
+          <div className="prose prose-lg max-w-none text-foreground">
+            <p className="text-lg leading-relaxed mb-6">
+              Phototheology exists because the Bible is not only a book of words; it is a book of images, symbols, and living stories. God has always taught visually and narratively—Adam clothed in skins, Noah's rainbow, Abraham's stars, Moses' sanctuary, Jesus' parables, John's Revelation movie.
+            </p>
+            
+            <p className="text-lg leading-relaxed mb-6">
+              Phototheology restores that method. It teaches you to store Scripture as images, patterns, and structures. Instead of random notes scattered across a page, your mind becomes a palace of meaning, with every story, verse, and prophecy stored in its proper chamber.
+            </p>
+            
+            <p className="text-lg leading-relaxed font-semibold">
+              The vision is not just information—it is formation. Think Phototheologically: reflexively seeing Christ in all Scripture, instinctively mapping verses into cycles, instantly recalling patterns and prophecies.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* The Eight-Floor Method */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">The Eight-Floor Method</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Each floor builds upon the last, creating a complete system for biblical mastery
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-xl bg-card border border-palace-blue/20 hover:border-palace-blue/40 transition-all group">
-              <div className="w-11 h-11 rounded-lg gradient-ocean flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <BookOpen className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-2 text-palace-blue">Floors 1-2</h3>
-              <p className="text-base text-foreground/80 leading-relaxed">
-                <strong className="text-foreground font-semibold">Furnishing & Investigation</strong> — Fill your shelves with stories 
-                and become a detective of the Word.
-              </p>
-            </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                  <BookOpen className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Floors 1-2</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  <span className="font-semibold">Furnishing & Investigation</span> — Fill your shelves with stories and become a detective of the Word.
+                </p>
+              </CardContent>
+            </Card>
             
-            <div className="p-5 rounded-xl bg-card border border-palace-teal/20 hover:border-palace-teal/40 transition-all group">
-              <div className="w-11 h-11 rounded-lg gradient-forest flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <Lightbulb className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-2 text-palace-teal">Floors 3-4</h3>
-              <p className="text-base text-foreground/80 leading-relaxed">
-                <strong className="text-foreground font-semibold">Freestyle & Next Level</strong> — Connect Scripture to daily life 
-                and expand through Christ-centered dimensions.
-              </p>
-            </div>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mb-4">
+                  <Target className="w-6 h-6 text-accent" />
+                </div>
+                <CardTitle className="text-xl">Floors 3-4</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  <span className="font-semibold">Freestyle & Next Level</span> — Connect Scripture to daily life and expand through Christ-centered dimensions.
+                </p>
+              </CardContent>
+            </Card>
             
-            <div className="p-5 rounded-xl bg-card border border-palace-green/20 hover:border-palace-green/40 transition-all group">
-              <div className="w-11 h-11 rounded-lg gradient-forest flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <Building2 className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-2 text-palace-green">Floors 5-6</h3>
-              <p className="text-base text-foreground/80 leading-relaxed">
-                <strong className="text-foreground font-semibold">Vision & Horizons</strong> — Open the prophetic telescope; 
-                see sanctuary, feasts, cycles, and cosmic dimensions.
-              </p>
-            </div>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                  <Layers className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Floors 5-6</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  <span className="font-semibold">Vision & Horizons</span> — Open the prophetic telescope; see sanctuary, feasts, cycles, and cosmic dimensions.
+                </p>
+              </CardContent>
+            </Card>
             
-            <div className="p-5 rounded-xl bg-card border border-palace-orange/20 hover:border-palace-orange/40 transition-all group">
-              <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-palace-orange to-palace-yellow flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <Crown className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-2 text-palace-orange">Floors 7-8</h3>
-              <p className="text-base text-foreground/80 leading-relaxed">
-                <strong className="text-foreground font-semibold">Spiritual & Master</strong> — Bring heart into fire, 
-                then let the palace become reflexive thought.
-              </p>
-            </div>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mb-4">
+                  <Sparkles className="w-6 h-6 text-accent" />
+                </div>
+                <CardTitle className="text-xl">Floors 7-8</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  <span className="font-semibold">Spiritual & Master</span> — Bring heart into fire, then let the palace become reflexive thought.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Advanced Modes Section */}
-      <section className="py-16 px-4 bg-card/40 backdrop-blur-sm">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-palace-teal/5 border border-palace-teal/10 mb-3">
-              <Sparkles className="h-3.5 w-3.5 text-palace-teal" />
-              <span className="text-xs font-medium text-palace-teal">Floor 0 - Advanced Modes</span>
-            </div>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-palace-blue to-palace-teal bg-clip-text text-transparent">
-              AI-Powered Study Tools
-            </h2>
-            <p className="text-lg text-foreground/75 max-w-2xl mx-auto font-medium">
+      {/* Advanced Modes - Floor 0 */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <Badge className="mb-4" variant="secondary">Floor 0</Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">AI-Powered Study Tools</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Specialized tools for deep analysis and real-world application
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Link to="/culture-controversy" className="group">
-              <div className="h-full p-6 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/50 dark:to-orange-950/50 border border-red-200/50 dark:border-red-800/50 hover:border-red-400 dark:hover:border-red-700 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-white/80 dark:bg-gray-800/80 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                  <Scale className="h-6 w-6 text-red-500" />
-                </div>
-                <h3 className="font-serif text-xl font-bold mb-2 text-foreground">Culture & Controversy</h3>
-                <p className="text-base text-foreground/75 leading-relaxed">
-                  Analyze current events through Jesus' teachings.
-                </p>
-              </div>
-            </Link>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/culture-controversy")}>
+              <CardHeader>
+                <TrendingUp className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                <CardTitle>Culture & Controversy</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Analyze current events through Jesus' teachings.</p>
+              </CardContent>
+            </Card>
             
-            <Link to="/prophecy-watch" className="group">
-              <div className="h-full p-6 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 border border-blue-200/50 dark:border-blue-800/50 hover:border-blue-400 dark:hover:border-blue-700 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-white/80 dark:bg-gray-800/80 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                  <Telescope className="h-6 w-6 text-blue-600" />
-                </div>
-                <h3 className="font-serif text-xl font-bold mb-2 text-foreground">Prophecy Watch</h3>
-                <p className="text-base text-foreground/75 leading-relaxed">
-                  Monitor end-time events and fulfillment of prophecy.
-                </p>
-              </div>
-            </Link>
+            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/prophecy-watch")}>
+              <CardHeader>
+                <Sparkles className="w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform" />
+                <CardTitle>Prophecy Watch</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Monitor end-time events and fulfillment of prophecy.</p>
+              </CardContent>
+            </Card>
             
-            <Link to="/research-mode" className="group">
-              <div className="h-full p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-indigo-900/50 border border-blue-200/50 dark:border-blue-800/50 hover:border-blue-400 dark:hover:border-blue-700 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-white/80 dark:bg-gray-800/80 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                  <Search className="h-6 w-6 text-blue-600" />
-                </div>
-                <h3 className="font-serif text-xl font-bold mb-2 text-foreground">Research Mode</h3>
-                <p className="text-base text-foreground/75 leading-relaxed">
-                  Deep biblical study with comprehensive research.
-                </p>
-              </div>
-            </Link>
+            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/bible-image-library")}>
+              <CardHeader>
+                <ImageIcon className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                <CardTitle>Bible Image Library</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">AI-generated visual interpretations of Scripture.</p>
+              </CardContent>
+            </Card>
             
-            <Link to="/bible-image-library" className="group">
-              <div className="h-full p-6 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50 border border-purple-200/50 dark:border-purple-800/50 hover:border-purple-400 dark:hover:border-purple-700 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-white/80 dark:bg-gray-800/80 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                  <Image className="h-6 w-6 text-purple-600" />
-                </div>
-                <h3 className="font-serif text-xl font-bold mb-2 text-foreground">Bible Image Library</h3>
-                <p className="text-base text-foreground/75 leading-relaxed">
-                  AI-generated visual interpretations of Scripture.
-                </p>
-              </div>
-            </Link>
+            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/sermon-builder")}>
+              <CardHeader>
+                <FileText className="w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform" />
+                <CardTitle>Sermon Builder</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Build sermons with 5 Smooth Stones methodology.</p>
+              </CardContent>
+            </Card>
             
-            <Link to="/sermon-builder" className="group">
-              <div className="h-full p-6 rounded-xl bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/50 dark:to-red-950/50 border border-orange-200/50 dark:border-orange-800/50 hover:border-orange-400 dark:hover:border-orange-700 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-white/80 dark:bg-gray-800/80 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                  <Film className="h-6 w-6 text-orange-600" />
-                </div>
-                <h3 className="font-serif text-xl font-bold mb-2 text-foreground">Sermon Builder</h3>
-                <p className="text-base text-foreground/75 leading-relaxed">
-                  Build sermons with 5 Smooth Stones methodology.
-                </p>
-              </div>
-            </Link>
+            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/research-mode")}>
+              <CardHeader>
+                <Search className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                <CardTitle>Research Mode</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Deep biblical study with comprehensive research.</p>
+              </CardContent>
+            </Card>
             
-            <Link to="/flashcards" className="group">
-              <div className="h-full p-6 rounded-xl bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950/50 dark:to-teal-950/50 border border-green-200/50 dark:border-green-800/50 hover:border-green-400 dark:hover:border-green-700 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-white/80 dark:bg-gray-800/80 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                  <Brain className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="font-serif text-xl font-bold mb-2 text-foreground">Flashcards</h3>
-                <p className="text-base text-foreground/75 leading-relaxed">
-                  Master Bible knowledge with interactive study cards.
-                </p>
-              </div>
-            </Link>
+            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/flashcards")}>
+              <CardHeader>
+                <Brain className="w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform" />
+                <CardTitle>Flashcards</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Master Bible knowledge with interactive study cards.</p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Empower Your Members Section */}
-      <EmpowerYourMembers />
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-card/40 backdrop-blur-sm relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(210,100%,56%,0.05),transparent_70%)]" />
-        
-        <div className="container mx-auto max-w-3xl text-center relative z-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 gradient-ocean rounded-2xl mb-5">
-            <Building2 className="h-7 w-7 text-white" />
+      {/* Pricing Preview + CTA */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Choose Your Path</h2>
+            <p className="text-xl text-muted-foreground">For individuals or churches—start free, upgrade when ready</p>
           </div>
           
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-5 bg-gradient-ocean bg-clip-text text-transparent">
-            Enter the Palace
-          </h2>
-          
-          <p className="text-xl md:text-2xl text-foreground/80 mb-8 leading-relaxed font-medium">
-            Each floor has its own discipline. Together they form a <span className="text-foreground font-bold">complete method</span> of Bible study 
-            that combines <span className="text-foreground font-bold">memory</span>, <span className="text-foreground font-bold">imagination</span>, 
-            <span className="text-foreground font-bold">theology</span>, <span className="text-foreground font-bold">prophecy</span>, 
-            and <span className="text-foreground font-bold">devotion</span>.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button asChild size="lg" className="gradient-ocean text-white hover:opacity-90 transition-all">
-              <Link to="/palace">
-                <Building2 className="mr-2 h-4 w-4" />
-                Begin Your Journey
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-2 border-palace-blue hover:bg-palace-blue hover:text-white">
-              <Link to="/palace">
-                Start Learning
-              </Link>
-            </Button>
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <Card className="relative">
+              <CardHeader>
+                <CardTitle className="text-2xl">Free Trial</CardTitle>
+                <p className="text-3xl font-bold mt-2">$0</p>
+                <p className="text-sm text-muted-foreground">7 days, then $9/month</p>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">All 8 Palace Floors</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">AI Study Assistant (Jeeves)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Interactive Challenges</span>
+                  </li>
+                </ul>
+                <Button className="w-full mt-6" onClick={() => navigate("/auth")}>
+                  Start Free Trial
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="relative border-2 border-primary">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
+              </div>
+              <CardHeader>
+                <CardTitle className="text-2xl">Individual</CardTitle>
+                <p className="text-3xl font-bold mt-2">$9</p>
+                <p className="text-sm text-muted-foreground">per month</p>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Everything in Free</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Advanced AI Tools (Research, Culture Analysis)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Sermon Builder</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Progress Tracking</span>
+                  </li>
+                </ul>
+                <Button className="w-full mt-6" onClick={() => navigate("/pricing")}>
+                  View Plans
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="relative">
+              <CardHeader>
+                <CardTitle className="text-2xl">Church License</CardTitle>
+                <p className="text-3xl font-bold mt-2">Custom</p>
+                <p className="text-sm text-muted-foreground">Based on congregation size</p>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Everything in Individual</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Church Admin Dashboard</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Ready-to-Use Curriculum</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Ministry Launch Academy</span>
+                  </li>
+                </ul>
+                <Button className="w-full mt-6" variant="outline" onClick={() => navigate("/church-signup")}>
+                  Contact Us
+                </Button>
+              </CardContent>
+            </Card>
           </div>
+          
+          <Card className="bg-primary text-primary-foreground border-0 p-8 text-center">
+            <h3 className="text-3xl font-bold mb-4">Ready to Transform Your Bible Study?</h3>
+            <p className="text-lg mb-6 opacity-90">
+              Join thousands who are building a palace of Scripture memory that lasts.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg" 
+                variant="secondary"
+                onClick={() => navigate(user ? "/palace" : "/auth")}
+                className="text-lg px-8 py-6"
+              >
+                Enter the Palace <ChevronRight className="ml-2" />
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                onClick={() => navigate("/app-tour")}
+                className="text-lg px-8 py-6 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
+              >
+                Take the Tour
+              </Button>
+            </div>
+          </Card>
         </div>
       </section>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

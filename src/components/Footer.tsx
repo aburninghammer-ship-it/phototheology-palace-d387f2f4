@@ -65,31 +65,38 @@ export const Footer = () => {
                   Achievements
                 </Link>
               </li>
-              <li>
-                <Link to="/feedback" className="text-muted-foreground hover:text-primary transition-colors">
-                  Feedback
-                </Link>
-              </li>
             </ul>
           </div>
 
           {/* Contact & Legal */}
           <div>
-            <h3 className="font-semibold mb-3 text-foreground">Contact & Legal</h3>
+            <h3 className="font-semibold mb-3 text-foreground">Support & Legal</h3>
             <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/feedback" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <MessageSquare className="h-3 w-3" />
+                  Submit Feedback
+                </Link>
+              </li>
               <li>
                 <a 
                   href="mailto:support@phototheology.com" 
                   className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
                 >
                   <Mail className="h-3 w-3" />
-                  support@phototheology.com
+                  Email Support
                 </a>
               </li>
               <li>
-                <Link to="/feedback" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
-                  <MessageSquare className="h-3 w-3" />
-                  Submit Feedback
+                <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <FileText className="h-3 w-3" />
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <FileText className="h-3 w-3" />
+                  Terms of Service
                 </Link>
               </li>
             </ul>
