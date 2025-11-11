@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,12 @@ import {
   ChevronLeft,
   CheckCircle2,
   Sparkles,
-  Brain
+  Brain,
+  RotateCcw
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DemoCompletionCertificate } from "@/components/DemoCompletionCertificate";
+import { useToast } from "@/hooks/use-toast";
 
 const demoSteps = [
   {
@@ -145,19 +148,68 @@ const demoSteps = [
 
 export default function InteractiveDemo() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [userInput, setUserInput] = useState("");
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [userName, setUserName] = useState("");
 
   const step = demoSteps[currentStep];
   const progress = ((currentStep + 1) / demoSteps.length) * 100;
 
+  // Load progress from localStorage on mount
+  useEffect(() => {
+    const savedProgress = localStorage.getItem("demo_progress");
+    if (savedProgress) {
+      try {
+        const data = JSON.parse(savedProgress);
+        setCurrentStep(data.currentStep || 0);
+        setCompletedSteps(data.completedSteps || []);
+        setUserName(data.userName || "");
+        
+        toast({
+          title: "Welcome back!",
+          description: "Your progress has been restored.",
+        });
+      } catch (error) {
+        console.error("Error loading demo progress:", error);
+      }
+    }
+  }, []);
+
+  // Save progress to localStorage whenever it changes
+  useEffect(() => {
+    if (currentStep > 0 || completedSteps.length > 0) {
+      const progressData = {
+        currentStep,
+        completedSteps,
+        userName,
+        lastUpdated: new Date().toISOString(),
+      };
+      localStorage.setItem("demo_progress", JSON.stringify(progressData));
+    }
+  }, [currentStep, completedSteps, userName]);
+
   const handleNext = () => {
+    // Mark current step as completed
+    if (!completedSteps.includes(currentStep)) {
+      setCompletedSteps([...completedSteps, currentStep]);
+    }
+
     if (currentStep < demoSteps.length - 1) {
       setCurrentStep(currentStep + 1);
       setUserInput("");
       setHasInteracted(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // Demo completed - show certificate
+      setShowCertificate(true);
+      
+      // Mark demo as completed in localStorage
+      localStorage.setItem("demo_completed", "true");
+      localStorage.setItem("demo_completion_date", new Date().toISOString());
     }
   };
 
@@ -170,6 +222,27 @@ export default function InteractiveDemo() {
     }
   };
 
+  const resetProgress = () => {
+    if (confirm("Are you sure you want to restart the demo? Your progress will be lost.")) {
+      localStorage.removeItem("demo_progress");
+      setCurrentStep(0);
+      setCompletedSteps([]);
+      setUserInput("");
+      setHasInteracted(false);
+      setUserName("");
+      
+      toast({
+        title: "Demo reset",
+        description: "Starting from the beginning.",
+      });
+    }
+  };
+
+  const handleCertificateClose = () => {
+    setShowCertificate(false);
+    navigate("/auth");
+  };
+
   const StepIcon = step.icon;
 
   return (
@@ -180,10 +253,30 @@ export default function InteractiveDemo() {
       <div className="fixed top-16 left-0 right-0 z-40 bg-background border-b">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">
-              Step {currentStep + 1} of {demoSteps.length}
-            </span>
-            <span className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</span>
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium">
+                Step {currentStep + 1} of {demoSteps.length}
+              </span>
+              {completedSteps.length > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  {completedSteps.length} completed
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</span>
+              {currentStep > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetProgress}
+                  className="h-7 text-xs"
+                >
+                  <RotateCcw className="h-3 w-3 mr-1" />
+                  Reset
+                </Button>
+              )}
+            </div>
           </div>
           <Progress value={progress} className="h-2" />
         </div>
@@ -213,6 +306,24 @@ export default function InteractiveDemo() {
                 {step.content.type === "intro" && (
                   <div className="space-y-6">
                     <p className="text-lg leading-relaxed">{step.content.text}</p>
+
+                    {/* Optional: Collect user name */}
+                    {!userName && (
+                      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                        <label className="block text-sm font-medium mb-2">
+                          What's your name? (Optional - for your certificate)
+                        </label>
+                        <Input
+                          value={userInput}
+                          onChange={(e) => {
+                            setUserInput(e.target.value);
+                            setUserName(e.target.value);
+                          }}
+                          placeholder="Enter your name"
+                          className="max-w-xs"
+                        />
+                      </div>
+                    )}
                     
                     <div className="grid md:grid-cols-3 gap-4 mt-8">
                       <div className="text-center p-4 rounded-lg bg-primary/5">
@@ -539,6 +650,13 @@ export default function InteractiveDemo() {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      {/* Completion Certificate */}
+      <DemoCompletionCertificate
+        open={showCertificate}
+        onClose={handleCertificateClose}
+        userName={userName || "Student"}
+      />
     </div>
   );
 }
