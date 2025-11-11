@@ -22,11 +22,37 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/phototheology-hero.png";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Redirect authenticated users to onboarding if they haven't completed it
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (user) {
+        const hasCompletedOnboarding = localStorage.getItem("onboarding_completed");
+        
+        if (!hasCompletedOnboarding) {
+          // Check database for onboarding status
+          const { data } = await supabase
+            .from("profiles")
+            .select("onboarding_completed")
+            .eq("id", user.id)
+            .maybeSingle();
+          
+          if (!data?.onboarding_completed) {
+            navigate("/onboarding");
+          }
+        }
+      }
+    };
+
+    checkOnboarding();
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-background">

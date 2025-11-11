@@ -18,27 +18,19 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
       }
 
       try {
-        // TEMPORARY: All authenticated users have full access (maker mode)
-        // TODO: Implement proper role-based access control
-        setIsUnlocked(true);
-        setLoading(false);
-        return;
-
-        /* Commented out for now - will re-enable with proper admin setup
         // Check if user is admin - admins bypass all locks
         const { data: roleData, error: roleError } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", user.id)
           .eq("role", "admin")
-          .single();
+          .maybeSingle();
 
         if (!roleError && roleData) {
           setIsUnlocked(true);
           setLoading(false);
           return;
         }
-        */
 
         const floor = palaceFloors.find(f => f.number === floorNumber);
         const room = floor?.rooms.find(r => r.id === roomId);

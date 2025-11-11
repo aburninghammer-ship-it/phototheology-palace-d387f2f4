@@ -2,103 +2,141 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Gamepad2, Brain, Zap, ChevronRight, ChevronLeft, Building2 } from "lucide-react";
+import { BookOpen, Users, Heart, Church, ChevronRight, ChevronLeft, Building2, Sparkles, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { Progress } from "@/components/ui/progress";
 
-const quizQuestions = [
+type OnboardingStep = "welcome" | "role" | "tutorial" | "quick-win" | "complete";
+
+const roles = [
   {
-    id: "learning-style",
-    question: "How do you learn best?",
-    options: [
-      { value: "visual", label: "Visual & Interactive", description: "I love images, diagrams, and hands-on activities", icon: Building2 },
-      { value: "reading", label: "Reading & Deep Study", description: "I prefer reading text and detailed explanations", icon: BookOpen },
-      { value: "games", label: "Games & Challenges", description: "I learn best through fun, competitive activities", icon: Gamepad2 },
-      { value: "social", label: "Discussion & Community", description: "I thrive when learning with others", icon: Brain },
-    ],
+    value: "teacher",
+    label: "Teacher / Pastor",
+    description: "Leading Bible studies and teaching others",
+    icon: BookOpen,
+    features: ["Lesson plans", "Teaching tools", "Series builder"]
   },
   {
-    id: "experience",
-    question: "What's your Bible study experience?",
-    options: [
-      { value: "beginner", label: "Just Getting Started", description: "New to Bible study or typology" },
-      { value: "intermediate", label: "Some Experience", description: "I know the basics and want to go deeper" },
-      { value: "advanced", label: "Well-Studied", description: "I'm familiar with prophecy and typology" },
-    ],
+    value: "student",
+    label: "Student",
+    description: "Learning and growing in biblical knowledge",
+    icon: Target,
+    features: ["Structured courses", "Interactive drills", "Progress tracking"]
   },
   {
-    id: "time",
-    question: "How much time can you dedicate daily?",
-    options: [
-      { value: "5-10", label: "5-10 minutes", description: "Quick daily practice" },
-      { value: "15-30", label: "15-30 minutes", description: "Regular study sessions" },
-      { value: "30+", label: "30+ minutes", description: "Deep dive study time" },
-    ],
+    value: "personal",
+    label: "Personal Growth",
+    description: "Deepening my personal walk with God",
+    icon: Heart,
+    features: ["Daily devotions", "Memory tools", "Journaling"]
   },
+  {
+    value: "church_leader",
+    label: "Church Leader",
+    description: "Equipping and empowering my congregation",
+    icon: Church,
+    features: ["Church dashboard", "Member tracking", "Group challenges"]
+  }
 ];
 
-const getRecommendation = (answers: Record<string, string>) => {
-  const style = answers["learning-style"];
-  
-  if (style === "visual") {
-    return { path: "/palace", feature: "Memory Palace", description: "Explore the visual Memory Palace to understand Bible typology through an immersive 3D experience." };
-  } else if (style === "games") {
-    return { path: "/chain-chess", feature: "Chain Chess", description: "Start with Chain Chess - a fun game that teaches you to connect Bible verses through typological principles." };
-  } else if (style === "social") {
-    return { path: "/community", feature: "Community", description: "Join the community to discuss, share insights, and learn alongside other students." };
-  } else {
-    return { path: "/revelation-course", feature: "Revelation Course", description: "Begin with the structured Revelation course for comprehensive, in-depth Bible study." };
-  }
-};
-
 export default function Onboarding() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [step, setStep] = useState<OnboardingStep>("welcome");
+  const [selectedRole, setSelectedRole] = useState<string>("");
+  const [tutorialIndex, setTutorialIndex] = useState(0);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const handleAnswer = (questionId: string, value: string) => {
-    setAnswers({ ...answers, [questionId]: value });
-  };
+  const tutorialSteps = [
+    {
+      title: "Welcome to the Palace",
+      description: "Phototheology uses the 'Memory Palace' method - 8 floors, each with specific rooms that teach you how to study the Bible using mental images and structured principles.",
+      icon: Building2
+    },
+    {
+      title: "Each Floor Has a Purpose",
+      description: "Floor 1 helps you memorize stories. Floor 2 teaches investigation. Floor 3 trains freestyle thinking. And so on, building your skills progressively.",
+      icon: Sparkles
+    },
+    {
+      title: "Rooms = Techniques",
+      description: "Inside each floor are 'rooms' - specific techniques like the Story Room (memorizing narratives) or the Concentration Room (finding Christ in every text).",
+      icon: Target
+    }
+  ];
+
+  const progressPercentage = 
+    step === "welcome" ? 0 :
+    step === "role" ? 25 :
+    step === "tutorial" ? 50 :
+    step === "quick-win" ? 75 :
+    100;
 
   const handleNext = () => {
-    if (currentStep < quizQuestions.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      handleComplete();
+    if (step === "welcome") setStep("role");
+    else if (step === "role" && selectedRole) setStep("tutorial");
+    else if (step === "tutorial") {
+      if (tutorialIndex < tutorialSteps.length - 1) {
+        setTutorialIndex(tutorialIndex + 1);
+      } else {
+        setStep("quick-win");
+      }
     }
   };
 
   const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+    if (step === "role") setStep("welcome");
+    else if (step === "tutorial") {
+      if (tutorialIndex > 0) {
+        setTutorialIndex(tutorialIndex - 1);
+      } else {
+        setStep("role");
+      }
     }
+    else if (step === "quick-win") setStep("tutorial");
   };
 
   const handleComplete = async () => {
-    const recommendation = getRecommendation(answers);
-    
-    if (user) {
-      await supabase
-        .from("profiles")
-        .update({ 
-          learning_style: answers["learning-style"],
-          preferred_features: [recommendation.feature],
-          onboarding_completed: true,
-        })
-        .eq("id", user.id);
+    if (!selectedRole) return;
+
+    try {
+      if (user) {
+        // Insert role into user_roles table
+        await supabase
+          .from("user_roles")
+          .insert({ user_id: user.id, role: selectedRole as any });
+
+        // Update profile
+        await supabase
+          .from("profiles")
+          .update({ 
+            primary_role: selectedRole,
+            onboarding_step: 100,
+            onboarding_completed: true,
+          })
+          .eq("id", user.id);
+      }
+      
+      localStorage.setItem("onboarding_completed", "true");
+      
+      toast({
+        title: "Welcome to Phototheology! 🎉",
+        description: "Let's start your journey in the Story Room",
+      });
+      
+      // Navigate to Story Room for quick win
+      navigate("/palace/floor/1/room/sr");
+    } catch (error) {
+      console.error("Error saving onboarding:", error);
+      toast({
+        title: "Something went wrong",
+        description: "But don't worry, you can still continue!",
+        variant: "destructive"
+      });
+      navigate("/palace");
     }
-    
-    localStorage.setItem("onboarding_completed", "true");
-    
-    toast({
-      title: "Welcome to Phototheology! 🎉",
-      description: `Based on your preferences, we recommend starting with ${recommendation.feature}`,
-    });
-    
-    navigate(recommendation.path);
   };
 
   const handleSkip = () => {
@@ -106,111 +144,240 @@ export default function Onboarding() {
     navigate("/dashboard");
   };
 
-  const currentQuestion = quizQuestions[currentStep];
-  const canProceed = answers[currentQuestion.id];
-
   return (
     <div className="min-h-screen gradient-dreamy flex items-center justify-center p-4">
-      <Card className="max-w-3xl w-full">
+      <Card className="max-w-4xl w-full">
         <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 rounded-full gradient-ocean flex items-center justify-center mb-4">
-            <Zap className="h-8 w-8 text-white" />
-          </div>
-          <CardTitle className="text-3xl font-bold">Welcome to Phototheology! 🎉</CardTitle>
-          <CardDescription className="text-lg mt-2">
-            Let's personalize your Bible learning journey
-          </CardDescription>
-          <div className="mt-4 p-3 bg-muted/50 rounded-lg text-sm text-left">
-            <p className="text-muted-foreground">
-              <strong className="text-foreground">Your preferences help us:</strong> Recommend the best starting point and tailor your experience. 
-              You can change these anytime in your profile settings.
-            </p>
-          </div>
+          {step !== "complete" && (
+            <>
+              <div className="mb-4">
+                <Progress value={progressPercentage} className="h-2" />
+              </div>
+              <div className="mx-auto w-16 h-16 rounded-full gradient-ocean flex items-center justify-center mb-4">
+                <Building2 className="h-8 w-8 text-white" />
+              </div>
+            </>
+          )}
+          
+          {step === "welcome" && (
+            <>
+              <CardTitle className="text-4xl font-bold">Welcome to Phototheology! 🎉</CardTitle>
+              <CardDescription className="text-lg mt-2">
+                Master the Bible through the ancient Memory Palace method
+              </CardDescription>
+            </>
+          )}
         </CardHeader>
+
         <CardContent className="space-y-6">
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-4">{currentQuestion.question}</h3>
-            
-            <div className="grid gap-3">
-              {currentQuestion.options.map((option) => {
-                const OptionIcon = option.icon;
-                const isSelected = answers[currentQuestion.id] === option.value;
-                
-                return (
-                  <button
-                    key={option.value}
-                    onClick={() => handleAnswer(currentQuestion.id, option.value)}
-                    className={`p-4 rounded-lg border-2 transition-all text-left hover:border-primary/50 ${
-                      isSelected 
-                        ? "border-primary bg-primary/5" 
-                        : "border-border bg-card"
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      {OptionIcon && (
-                        <div className={`p-2 rounded-lg ${isSelected ? "bg-primary/10" : "bg-muted"}`}>
-                          <OptionIcon className={`h-5 w-5 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
-                        </div>
-                      )}
-                      <div className="flex-1">
-                        <div className="font-semibold mb-1">{option.label}</div>
-                        {option.description && (
-                          <div className="text-sm text-muted-foreground">{option.description}</div>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          {/* WELCOME STEP */}
+          {step === "welcome" && (
+            <div className="space-y-6">
+              <div className="prose prose-sm max-w-none">
+                <p className="text-center text-lg">
+                  Phototheology trains you to <strong>see</strong>, <strong>remember</strong>, and <strong>teach</strong> Scripture 
+                  like never before. Using mental imagery and structured techniques, you'll build a permanent biblical memory system.
+                </p>
+              </div>
 
-          <div className="flex justify-center gap-2 mb-6">
-            {quizQuestions.map((_, index) => (
-              <div
-                key={index}
-                className={`h-2 rounded-full transition-all ${
-                  index === currentStep
-                    ? "w-8 bg-primary"
-                    : index < currentStep
-                    ? "w-2 bg-primary/50"
-                    : "w-2 bg-muted"
-                }`}
-              />
-            ))}
-          </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg border bg-card">
+                  <Building2 className="h-8 w-8 text-primary mb-2" />
+                  <h3 className="font-semibold mb-1">8 Floors</h3>
+                  <p className="text-sm text-muted-foreground">Progressive levels from memory to mastery</p>
+                </div>
+                <div className="p-4 rounded-lg border bg-card">
+                  <Sparkles className="h-8 w-8 text-primary mb-2" />
+                  <h3 className="font-semibold mb-1">38+ Rooms</h3>
+                  <p className="text-sm text-muted-foreground">Specific techniques for Bible study</p>
+                </div>
+                <div className="p-4 rounded-lg border bg-card">
+                  <Target className="h-8 w-8 text-primary mb-2" />
+                  <h3 className="font-semibold mb-1">Christ-Centered</h3>
+                  <p className="text-sm text-muted-foreground">Every text points to Jesus</p>
+                </div>
+              </div>
 
-          <div className="flex justify-between items-center">
-            <Button
-              variant="ghost"
-              onClick={handleBack}
-              disabled={currentStep === 0}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-
-            <Button
-              variant="ghost"
-              onClick={handleSkip}
-            >
-              Skip & Explore
-            </Button>
-
-            <Button 
-              onClick={handleNext}
-              disabled={!canProceed}
-            >
-              {currentStep === quizQuestions.length - 1 ? (
-                "Get Started"
-              ) : (
-                <>
-                  Next
+              <div className="flex justify-between">
+                <Button variant="ghost" onClick={handleSkip}>
+                  Skip Tour
+                </Button>
+                <Button onClick={handleNext}>
+                  Get Started
                   <ChevronRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </div>
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* ROLE SELECTION STEP */}
+          {step === "role" && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold mb-2">I'm here as a...</h3>
+                <p className="text-muted-foreground">Choose your primary role (you can change this later)</p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                {roles.map((role) => {
+                  const RoleIcon = role.icon;
+                  const isSelected = selectedRole === role.value;
+                  
+                  return (
+                    <button
+                      key={role.value}
+                      onClick={() => setSelectedRole(role.value)}
+                      className={`p-6 rounded-lg border-2 transition-all text-left hover:border-primary/50 ${
+                        isSelected 
+                          ? "border-primary bg-primary/5 shadow-lg" 
+                          : "border-border bg-card"
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`p-3 rounded-lg ${isSelected ? "bg-primary/10" : "bg-muted"}`}>
+                          <RoleIcon className={`h-6 w-6 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-bold text-lg mb-1">{role.label}</div>
+                          <div className="text-sm text-muted-foreground mb-3">{role.description}</div>
+                          <div className="space-y-1">
+                            {role.features.map((feature, i) => (
+                              <div key={i} className="text-xs flex items-center gap-2">
+                                <div className={`w-1 h-1 rounded-full ${isSelected ? "bg-primary" : "bg-muted-foreground"}`} />
+                                {feature}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex justify-between">
+                <Button variant="ghost" onClick={handleBack}>
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+                <Button onClick={handleNext} disabled={!selectedRole}>
+                  Continue
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* TUTORIAL STEP */}
+          {step === "tutorial" && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  {(() => {
+                    const StepIcon = tutorialSteps[tutorialIndex].icon;
+                    return <StepIcon className="h-10 w-10 text-primary" />;
+                  })()}
+                </div>
+                <h3 className="text-2xl font-bold mb-2">{tutorialSteps[tutorialIndex].title}</h3>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  {tutorialSteps[tutorialIndex].description}
+                </p>
+              </div>
+
+              <div className="flex justify-center gap-2">
+                {tutorialSteps.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`h-2 rounded-full transition-all ${
+                      index === tutorialIndex
+                        ? "w-8 bg-primary"
+                        : index < tutorialIndex
+                        ? "w-2 bg-primary/50"
+                        : "w-2 bg-muted"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <div className="flex justify-between">
+                <Button variant="ghost" onClick={handleBack}>
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+                <Button onClick={handleNext}>
+                  {tutorialIndex === tutorialSteps.length - 1 ? "Try It Now" : "Next"}
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* QUICK WIN STEP */}
+          {step === "quick-win" && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center mb-4 animate-pulse">
+                  <Target className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold mb-2">Your First Quick Win!</h3>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  Let's start with the <strong>Story Room</strong> on Floor 1. You'll learn to break down 
+                  any Bible story into 3-7 memorable "beats" - like movie frames.
+                </p>
+              </div>
+
+              <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+                <h4 className="font-semibold text-lg">What you'll do:</h4>
+                <div className="space-y-3">
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-bold text-primary">1</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Pick a story</p>
+                      <p className="text-sm text-muted-foreground">Choose from Joseph, David & Goliath, or Daniel in the lions' den</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-bold text-primary">2</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Break it into beats</p>
+                      <p className="text-sm text-muted-foreground">Write 3-7 punchy words that capture the key moments</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-bold text-primary">3</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Get feedback</p>
+                      <p className="text-sm text-muted-foreground">Our AI assistant Jeeves will guide you</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-primary/5 border-l-4 border-primary p-4 rounded">
+                <p className="text-sm">
+                  <strong>Pro tip:</strong> This will take about 5 minutes. Once you complete it, 
+                  you'll have the foundation for memorizing any Bible story!
+                </p>
+              </div>
+
+              <div className="flex justify-between">
+                <Button variant="ghost" onClick={handleBack}>
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+                <Button onClick={handleComplete} size="lg" className="shadow-lg">
+                  Start Story Room
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

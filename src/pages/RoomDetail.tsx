@@ -22,6 +22,7 @@ import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChristChapterFindings } from "@/components/ChristChapterFindings";
+import { OnboardingGuide } from "@/components/palace/OnboardingGuide";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -50,6 +51,11 @@ export default function RoomDetail() {
   const [showDrill, setShowDrill] = useState(false);
   const [methodExpanded, setMethodExpanded] = useState(false);
   const [examplesExpanded, setExamplesExpanded] = useState(false);
+  const [showOnboardingGuide, setShowOnboardingGuide] = useState(true);
+  
+  // Check if this is the first room visit after onboarding (Story Room)
+  const isFirstRoomVisit = Number(floorNumber) === 1 && roomId === "sr" && 
+    !localStorage.getItem("onboarding_guide_sr");
   
   // Show Quick Start by default for ALL rooms that have quick starts defined
   const showQuickStart = room && QUICK_START_ROOMS.has(room.id);
@@ -119,6 +125,15 @@ export default function RoomDetail() {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      {/* Show onboarding guide for first room visit */}
+      {isFirstRoomVisit && showOnboardingGuide && room && (
+        <OnboardingGuide
+          roomId={room.id}
+          roomName={room.name}
+          onComplete={() => setShowOnboardingGuide(false)}
+        />
+      )}
+      
       <div className="container mx-auto px-4 py-8">
         <Link to={`/palace/floor/${floor.number}`}>
           <Button variant="ghost" className="mb-6">

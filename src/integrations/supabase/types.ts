@@ -1838,8 +1838,10 @@ export type Database = {
           longest_gem_streak: number | null
           longest_study_streak: number | null
           onboarding_completed: boolean | null
+          onboarding_step: number | null
           points: number | null
           preferred_features: string[] | null
+          primary_role: string | null
           promotional_access_expires_at: string | null
           referral_code: string | null
           stripe_customer_id: string | null
@@ -1873,8 +1875,10 @@ export type Database = {
           longest_gem_streak?: number | null
           longest_study_streak?: number | null
           onboarding_completed?: boolean | null
+          onboarding_step?: number | null
           points?: number | null
           preferred_features?: string[] | null
+          primary_role?: string | null
           promotional_access_expires_at?: string | null
           referral_code?: string | null
           stripe_customer_id?: string | null
@@ -1908,8 +1912,10 @@ export type Database = {
           longest_gem_streak?: number | null
           longest_study_streak?: number | null
           onboarding_completed?: boolean | null
+          onboarding_step?: number | null
           points?: number | null
           preferred_features?: string[] | null
+          primary_role?: string | null
           promotional_access_expires_at?: string | null
           referral_code?: string | null
           stripe_customer_id?: string | null
