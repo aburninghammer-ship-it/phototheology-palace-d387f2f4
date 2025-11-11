@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Award, Lock, Share2, Grid3x3, List, Trophy, FileText } from "lucide-react";
@@ -13,6 +14,7 @@ import { ShareAchievementButton } from "@/components/ShareAchievementButton";
 import { AchievementProgress } from "@/components/AchievementProgress";
 import { AchievementCertificate } from "@/components/AchievementCertificate";
 import { useToast } from "@/hooks/use-toast";
+import { categoryIcons, categoryDescriptions, categoryColors } from "@/utils/categoryIcons";
 
 const Achievements = () => {
   const { user, loading } = useAuth();
@@ -104,11 +106,20 @@ const Achievements = () => {
   });
 
   const categories = Array.from(new Set(achievements.map(a => a.category || 'general')));
-  const categoryStats = categories.map(cat => ({
-    category: cat,
-    total: achievements.filter(a => a.category === cat).length,
-    unlocked: achievements.filter(a => a.category === cat && userAchievements.has(a.id)).length,
-  }));
+  const categoryStats = categories.map(cat => {
+    const CategoryIcon = categoryIcons[cat as keyof typeof categoryIcons] || Trophy;
+    const description = categoryDescriptions[cat as keyof typeof categoryDescriptions] || '';
+    const colorGradient = categoryColors[cat as keyof typeof categoryColors] || categoryColors.general;
+    
+    return {
+      category: cat,
+      total: achievements.filter(a => a.category === cat).length,
+      unlocked: achievements.filter(a => a.category === cat && userAchievements.has(a.id)).length,
+      icon: CategoryIcon,
+      description,
+      colorGradient,
+    };
+  });
 
   const toggleSelection = (id: string) => {
     const newSelection = new Set(selectedIds);
@@ -205,35 +216,50 @@ const Achievements = () => {
         {/* Category Stats & Progress */}
         <div className="mb-8 space-y-4">
           {/* Category Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            <Card 
-              className={`cursor-pointer transition-all ${
-                categoryFilter === "all" ? 'ring-2 ring-primary' : ''
-              }`}
-              onClick={() => setCategoryFilter('all')}
-            >
-              <CardContent className="p-3 text-center">
-                <div className="text-2xl font-bold text-primary">
-                  {userAchievements.size}/{achievements.length}
-                </div>
-                <div className="text-xs text-muted-foreground">All</div>
-              </CardContent>
-            </Card>
-            {categoryStats.map(stat => (
+          <TooltipProvider>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               <Card 
-                key={stat.category}
                 className={`cursor-pointer transition-all ${
-                  categoryFilter === stat.category ? 'ring-2 ring-primary' : ''
+                  categoryFilter === "all" ? 'ring-2 ring-primary' : ''
                 }`}
-                onClick={() => setCategoryFilter(stat.category === categoryFilter ? 'all' : stat.category)}
+                onClick={() => setCategoryFilter('all')}
               >
                 <CardContent className="p-3 text-center">
-                  <div className="text-2xl font-bold text-primary">{stat.unlocked}/{stat.total}</div>
-                  <div className="text-xs text-muted-foreground capitalize">{stat.category}</div>
+                  <Trophy className="h-6 w-6 mx-auto mb-1 text-primary" />
+                  <div className="text-2xl font-bold text-primary">
+                    {userAchievements.size}/{achievements.length}
+                  </div>
+                  <div className="text-xs text-muted-foreground">All</div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              {categoryStats.map(stat => {
+                const CategoryIcon = stat.icon;
+                return (
+                  <Tooltip key={stat.category}>
+                    <TooltipTrigger asChild>
+                      <Card 
+                        className={`cursor-pointer transition-all hover:shadow-md ${
+                          categoryFilter === stat.category ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => setCategoryFilter(stat.category === categoryFilter ? 'all' : stat.category)}
+                      >
+                        <CardContent className="p-3 text-center">
+                          <div className={`w-8 h-8 mx-auto mb-1 rounded-lg bg-gradient-to-br ${stat.colorGradient} flex items-center justify-center`}>
+                            <CategoryIcon className="h-4 w-4 text-white" />
+                          </div>
+                          <div className="text-2xl font-bold text-primary">{stat.unlocked}/{stat.total}</div>
+                          <div className="text-xs text-muted-foreground capitalize">{stat.category}</div>
+                        </CardContent>
+                      </Card>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">{stat.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          </TooltipProvider>
 
           {/* Achievement Progress */}
           <AchievementProgress 
@@ -324,6 +350,8 @@ const Achievements = () => {
             {filteredAchievements.map((achievement) => {
               const isUnlocked = userAchievements.has(achievement.id);
               const isSelected = selectedIds.has(achievement.id);
+              const CategoryIcon = categoryIcons[achievement.category as keyof typeof categoryIcons] || Trophy;
+              const colorGradient = categoryColors[achievement.category as keyof typeof categoryColors] || categoryColors.general;
 
               return (
                 <Card
@@ -337,7 +365,12 @@ const Achievements = () => {
                 >
                   <CardHeader className="space-y-3">
                     <div className="flex items-start justify-between">
-                      <div className="text-5xl mb-2">{achievement.icon || '🏆'}</div>
+                      <div className="relative">
+                        <div className="text-5xl mb-2">{achievement.icon || '🏆'}</div>
+                        <div className={`absolute -bottom-1 -right-1 p-1 rounded-full bg-gradient-to-br ${colorGradient}`}>
+                          <CategoryIcon className="h-3 w-3 text-white" />
+                        </div>
+                      </div>
                       {isUnlocked && (
                         <Checkbox
                           checked={isSelected}
@@ -365,6 +398,10 @@ const Achievements = () => {
                       <Badge variant="secondary" className="font-semibold">
                         +{achievement.points} pts
                       </Badge>
+                      <Badge variant="outline" className="capitalize gap-1">
+                        <CategoryIcon className="h-3 w-3" />
+                        {achievement.category || 'general'}
+                      </Badge>
                     </div>
                     {isUnlocked && (
                       <ShareAchievementButton
@@ -383,6 +420,8 @@ const Achievements = () => {
             {filteredAchievements.map((achievement) => {
               const isUnlocked = userAchievements.has(achievement.id);
               const isSelected = selectedIds.has(achievement.id);
+              const CategoryIcon = categoryIcons[achievement.category as keyof typeof categoryIcons] || Trophy;
+              const colorGradient = categoryColors[achievement.category as keyof typeof categoryColors] || categoryColors.general;
 
               return (
                 <Card
@@ -403,7 +442,12 @@ const Achievements = () => {
                           onClick={(e) => e.stopPropagation()}
                         />
                       )}
-                      <div className="text-3xl">{achievement.icon || '🏆'}</div>
+                      <div className="relative">
+                        <div className="text-3xl">{achievement.icon || '🏆'}</div>
+                        <div className={`absolute -bottom-1 -right-1 p-0.5 rounded-full bg-gradient-to-br ${colorGradient}`}>
+                          <CategoryIcon className="h-2.5 w-2.5 text-white" />
+                        </div>
+                      </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-semibold">{achievement.name}</h3>
@@ -418,6 +462,10 @@ const Achievements = () => {
                       <div className="flex items-center gap-3">
                         <Badge variant="secondary" className="font-semibold">
                           +{achievement.points} pts
+                        </Badge>
+                        <Badge variant="outline" className="capitalize gap-1">
+                          <CategoryIcon className="h-3 w-3" />
+                          {achievement.category || 'general'}
                         </Badge>
                         {isUnlocked && (
                           <>

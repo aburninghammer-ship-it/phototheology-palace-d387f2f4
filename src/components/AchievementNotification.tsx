@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles, Trophy, Star, Award, Crown, Flame, Share2 } from "lucide-react";
+import { X, Sparkles, Trophy, Star, Award, Crown, Flame, Share2, Printer } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Confetti from "react-confetti";
 import { ShareAchievementDialog } from "./ShareAchievementDialog";
+import { AchievementCertificate } from "./AchievementCertificate";
 
 interface Achievement {
   id: string;
@@ -32,6 +33,7 @@ export function AchievementNotification({ achievement, onClose }: AchievementNot
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
 
   useEffect(() => {
     if (achievement) {
@@ -182,20 +184,30 @@ export function AchievementNotification({ achievement, onClose }: AchievementNot
                       </span>
                     </motion.div>
 
-                    {/* Share Button */}
+                    {/* Action Buttons */}
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.7 }}
+                      className="mt-2 flex gap-2"
                     >
                       <Button
                         onClick={() => setShowShareDialog(true)}
                         size="sm"
                         variant="secondary"
-                        className="mt-2 gap-2"
+                        className="gap-2"
                       >
                         <Share2 className="h-3.5 w-3.5" />
                         Share
+                      </Button>
+                      <Button
+                        onClick={() => setShowCertificate(true)}
+                        size="sm"
+                        variant="outline"
+                        className="gap-2"
+                      >
+                        <Printer className="h-3.5 w-3.5" />
+                        Print
                       </Button>
                     </motion.div>
                   </div>
@@ -210,6 +222,12 @@ export function AchievementNotification({ achievement, onClose }: AchievementNot
           <ShareAchievementDialog
             open={showShareDialog}
             onClose={() => setShowShareDialog(false)}
+            achievement={achievement}
+          />
+
+          <AchievementCertificate
+            open={showCertificate}
+            onClose={() => setShowCertificate(false)}
             achievement={achievement}
           />
         </>

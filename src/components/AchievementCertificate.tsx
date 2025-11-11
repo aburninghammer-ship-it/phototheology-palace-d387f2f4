@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Download, Share2 } from "lucide-react";
 import jsPDF from "jspdf";
 import { useAuth } from "@/hooks/useAuth";
+import { ShareAchievementDialog } from "./ShareAchievementDialog";
 
 interface AchievementCertificateProps {
   open: boolean;
@@ -24,6 +26,7 @@ export function AchievementCertificate({
   unlockedAt 
 }: AchievementCertificateProps) {
   const { user } = useAuth();
+  const [showShareDialog, setShowShareDialog] = useState(false);
   
   const generatePDF = () => {
     const doc = new jsPDF({
@@ -120,12 +123,22 @@ export function AchievementCertificate({
             <Download className="h-4 w-4" />
             Download PDF
           </Button>
-          <Button variant="outline" className="flex-1 gap-2">
+          <Button 
+            onClick={() => setShowShareDialog(true)} 
+            variant="outline" 
+            className="flex-1 gap-2"
+          >
             <Share2 className="h-4 w-4" />
             Share Certificate
           </Button>
         </div>
       </DialogContent>
+
+      <ShareAchievementDialog
+        open={showShareDialog}
+        onClose={() => setShowShareDialog(false)}
+        achievement={achievement}
+      />
     </Dialog>
   );
 }
