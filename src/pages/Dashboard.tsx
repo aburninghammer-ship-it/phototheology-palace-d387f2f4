@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
 import { SpacedRepetitionReview } from "@/components/SpacedRepetitionReview";
 import { DashboardSkeleton } from "@/components/SkeletonLoader";
+import { PalaceProgressDashboard } from "@/components/PalaceProgressDashboard";
 import { Brain, Building2 } from "lucide-react";
 import { 
   BookOpen, 
@@ -258,61 +259,65 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Quick Actions */}
+        {/* Palace Progress & Quick Actions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Play className="h-5 w-5" />
-                Continue Learning
-              </CardTitle>
-              <CardDescription>Pick up where you left off</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button 
-                variant="outline" 
-                className="w-full justify-start"
-                onClick={() => navigate("/palace")}
-              >
-                <BookOpen className="mr-2 h-4 w-4" />
-                Explore Memory Palace
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full justify-start"
-                onClick={() => navigate("/bible")}
-              >
-                <BookOpen className="mr-2 h-4 w-4" />
-                Read Bible
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full justify-start"
-                onClick={() => navigate("/revelation-course")}
-              >
-                <BookOpen className="mr-2 h-4 w-4" />
-                Continue Revelation Course
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full justify-start"
-                onClick={() => navigate("/certificates")}
-              >
-                <Award className="mr-2 h-4 w-4" />
-                My Certificates
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full justify-start"
-                onClick={() => navigate("/study-partners")}
-              >
-                <Users className="mr-2 h-4 w-4" />
-                Study Partners
-              </Button>
-            </CardContent>
-          </Card>
+          <PalaceProgressDashboard />
+          
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Play className="h-5 w-5" />
+                  Continue Learning
+                </CardTitle>
+                <CardDescription>Pick up where you left off</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => navigate("/palace")}
+                >
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Explore Memory Palace
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => navigate("/bible")}
+                >
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Read Bible
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => navigate("/revelation-course")}
+                >
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Continue Revelation Course
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => navigate("/certificates")}
+                >
+                  <Award className="mr-2 h-4 w-4" />
+                  My Certificates
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => navigate("/study-partners")}
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  Study Partners
+                </Button>
+              </CardContent>
+            </Card>
 
-          <SpacedRepetitionReview />
+            <SpacedRepetitionReview />
+          </div>
         </div>
 
         {/* Recent Reading */}
