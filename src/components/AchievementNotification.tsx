@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles, Trophy, Star, Award, Crown, Flame } from "lucide-react";
+import { X, Sparkles, Trophy, Star, Award, Crown, Flame, Share2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Confetti from "react-confetti";
+import { ShareAchievementDialog } from "./ShareAchievementDialog";
 
 interface Achievement {
   id: string;
@@ -29,6 +31,7 @@ const iconMap: Record<string, any> = {
 export function AchievementNotification({ achievement, onClose }: AchievementNotificationProps) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   useEffect(() => {
     if (achievement) {
@@ -178,6 +181,23 @@ export function AchievementNotification({ achievement, onClose }: AchievementNot
                         +{achievement.points} Points
                       </span>
                     </motion.div>
+
+                    {/* Share Button */}
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.7 }}
+                    >
+                      <Button
+                        onClick={() => setShowShareDialog(true)}
+                        size="sm"
+                        variant="secondary"
+                        className="mt-2 gap-2"
+                      >
+                        <Share2 className="h-3.5 w-3.5" />
+                        Share
+                      </Button>
+                    </motion.div>
                   </div>
                 </div>
               </div>
@@ -186,6 +206,12 @@ export function AchievementNotification({ achievement, onClose }: AchievementNot
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-primary animate-pulse" />
             </Card>
           </motion.div>
+
+          <ShareAchievementDialog
+            open={showShareDialog}
+            onClose={() => setShowShareDialog(false)}
+            achievement={achievement}
+          />
         </>
       )}
     </AnimatePresence>
