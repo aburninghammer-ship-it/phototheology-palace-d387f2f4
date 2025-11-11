@@ -63,12 +63,12 @@ const Index = () => {
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
             Your Mind Was Designed to<br />
-            <span className="text-primary">Remember the Bible Visually</span>
+            <span className="text-primary">Understand and Remember the Bible Visually</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Stop forgetting what you study. The Palace Method transforms Scripture into a visual memory system—
-            <span className="font-semibold text-foreground"> where every story, verse, and prophecy has its place.</span>
+            Stop closing your Bible confused. The Palace Method shows you how to study step-by-step and turns Scripture into a visual map—
+            <span className="font-semibold text-foreground">so every story, verse, and prophecy finally makes sense and sticks.</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
