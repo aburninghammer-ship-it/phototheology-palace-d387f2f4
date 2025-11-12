@@ -1823,6 +1823,7 @@ export type Database = {
         Row: {
           access_code_used: string | null
           avatar_url: string | null
+          bio: string | null
           chain_chess_streak: number | null
           created_at: string | null
           daily_study_streak: number | null
@@ -1836,6 +1837,7 @@ export type Database = {
           learning_style: string | null
           level: number | null
           lifetime_access_granted_at: string | null
+          location: string | null
           longest_chess_streak: number | null
           longest_equations_streak: number | null
           longest_gem_streak: number | null
@@ -1856,10 +1858,12 @@ export type Database = {
           trial_started_at: string | null
           updated_at: string | null
           username: string
+          website: string | null
         }
         Insert: {
           access_code_used?: string | null
           avatar_url?: string | null
+          bio?: string | null
           chain_chess_streak?: number | null
           created_at?: string | null
           daily_study_streak?: number | null
@@ -1873,6 +1877,7 @@ export type Database = {
           learning_style?: string | null
           level?: number | null
           lifetime_access_granted_at?: string | null
+          location?: string | null
           longest_chess_streak?: number | null
           longest_equations_streak?: number | null
           longest_gem_streak?: number | null
@@ -1893,10 +1898,12 @@ export type Database = {
           trial_started_at?: string | null
           updated_at?: string | null
           username: string
+          website?: string | null
         }
         Update: {
           access_code_used?: string | null
           avatar_url?: string | null
+          bio?: string | null
           chain_chess_streak?: number | null
           created_at?: string | null
           daily_study_streak?: number | null
@@ -1910,6 +1917,7 @@ export type Database = {
           learning_style?: string | null
           level?: number | null
           lifetime_access_granted_at?: string | null
+          location?: string | null
           longest_chess_streak?: number | null
           longest_equations_streak?: number | null
           longest_gem_streak?: number | null
@@ -1930,6 +1938,7 @@ export type Database = {
           trial_started_at?: string | null
           updated_at?: string | null
           username?: string
+          website?: string | null
         }
         Relationships: []
       }
@@ -2933,6 +2942,27 @@ export type Database = {
           total_sessions?: number | null
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
         }
         Relationships: []
       }

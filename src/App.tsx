@@ -73,6 +73,7 @@ const TrainingDrills = lazy(() => import("./pages/TrainingDrills"));
 const EscapeRoom = lazy(() => import("./pages/EscapeRoom"));
 const EscapeRoomPlay = lazy(() => import("./pages/EscapeRoomPlay"));
 const Profile = lazy(() => import("./pages/Profile"));
+const UserProfile = lazy(() => import("./pages/UserProfile"));
 const CriticsAnalysis = lazy(() => import("./pages/CriticsAnalysis"));
 const Referrals = lazy(() => import("./pages/Referrals"));
 const StudentVerification = lazy(() => import("./pages/StudentVerification"));
@@ -253,6 +254,7 @@ function App() {
             <Route path="/app-update-ideas" element={<ProtectedRoute><AppUpdateIdeas /></ProtectedRoute>} />
             <Route path="/offline-content" element={<ProtectedRoute><OfflineContent /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
             <Route path="/critics-analysis" element={<ProtectedRoute><CriticsAnalysis /></ProtectedRoute>} />
             <Route path="/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
             <Route path="/student-verify" element={<ProtectedRoute><StudentVerification /></ProtectedRoute>} />

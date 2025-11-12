@@ -1,0 +1,375 @@
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Navigation } from "@/components/Navigation";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  UserPlus, 
+  UserMinus, 
+  MapPin, 
+  Globe, 
+  Calendar,
+  Trophy,
+  Flame,
+  MessageCircle,
+  Users,
+  Loader2
+} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useFollow } from "@/hooks/useFollow";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+
+interface UserProfile {
+  id: string;
+  display_name: string;
+  avatar_url: string | null;
+  bio: string | null;
+  location: string | null;
+  website: string | null;
+  points: number;
+  level: number;
+  daily_study_streak: number;
+  created_at: string;
+}
+
+export default function UserProfile() {
+  const { userId } = useParams<{ userId: string }>();
+  const { user: currentUser } = useAuth();
+  const { toast } = useToast();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [sharedChallenges, setSharedChallenges] = useState<any[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<any[]>([]);
+  
+  const { 
+    isFollowing, 
+    followersCount, 
+    followingCount, 
+    toggleFollow, 
+    loading: followLoading 
+  } = useFollow(userId || "");
+
+  const isOwnProfile = currentUser?.id === userId;
+
+  useEffect(() => {
+    if (userId) {
+      fetchProfile();
+      fetchSharedChallenges();
+      fetchPosts();
+      fetchAchievements();
+    }
+  }, [userId]);
+
+  const fetchProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (error) throw error;
+      setProfile(data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load user profile",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSharedChallenges = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("equation_challenges")
+        .select("*")
+        .eq("created_by", userId)
+        .eq("is_public", true)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      setSharedChallenges(data || []);
+    } catch (error) {
+      console.error("Error fetching challenges:", error);
+    }
+  };
+
+  const fetchPosts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("community_posts")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      setPosts(data || []);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  const fetchAchievements = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("user_achievements")
+        .select(`
+          unlocked_at,
+          achievements (
+            id,
+            name,
+            description,
+            icon,
+            points
+          )
+        `)
+        .eq("user_id", userId)
+        .order("unlocked_at", { ascending: false });
+
+      if (error) throw error;
+      setAchievements(data || []);
+    } catch (error) {
+      console.error("Error fetching achievements:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 py-24 text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 py-24 text-center">
+          <h1 className="text-2xl font-bold">User not found</h1>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      
+      <div className="container mx-auto px-4 py-8 pt-24 max-w-5xl">
+        {/* Profile Header */}
+        <Card className="p-6 mb-6">
+          <div className="flex flex-col md:flex-row gap-6">
+            <Avatar className="w-32 h-32">
+              <AvatarImage src={profile.avatar_url || undefined} />
+              <AvatarFallback className="text-4xl">
+                {profile.display_name.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex-1">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h1 className="text-3xl font-bold mb-2">{profile.display_name}</h1>
+                  {profile.bio && (
+                    <p className="text-muted-foreground mb-3">{profile.bio}</p>
+                  )}
+                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                    {profile.location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4" />
+                        {profile.location}
+                      </span>
+                    )}
+                    {profile.website && (
+                      <a 
+                        href={profile.website} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 hover:text-primary"
+                      >
+                        <Globe className="w-4 h-4" />
+                        {profile.website}
+                      </a>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      Joined {format(new Date(profile.created_at), "MMMM yyyy")}
+                    </span>
+                  </div>
+                </div>
+                
+                {!isOwnProfile && currentUser && (
+                  <Button
+                    onClick={toggleFollow}
+                    disabled={followLoading}
+                    variant={isFollowing ? "outline" : "default"}
+                    className="gap-2"
+                  >
+                    {isFollowing ? (
+                      <>
+                        <UserMinus className="w-4 h-4" />
+                        Unfollow
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4" />
+                        Follow
+                      </>
+                    )}
+                  </Button>
+                )}
+                
+                {isOwnProfile && (
+                  <Button asChild variant="outline">
+                    <Link to="/profile">Edit Profile</Link>
+                  </Button>
+                )}
+              </div>
+
+              {/* Stats */}
+              <div className="flex flex-wrap gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">{followersCount}</div>
+                  <div className="text-sm text-muted-foreground">Followers</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">{followingCount}</div>
+                  <div className="text-sm text-muted-foreground">Following</div>
+                </div>
+                <div className="text-center flex flex-col items-center">
+                  <div className="flex items-center gap-1">
+                    <Trophy className="w-5 h-5 text-amber-500" />
+                    <span className="text-2xl font-bold">{profile.points}</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">Points</div>
+                </div>
+                <div className="text-center flex flex-col items-center">
+                  <div className="flex items-center gap-1">
+                    <Flame className="w-5 h-5 text-orange-500" />
+                    <span className="text-2xl font-bold">{profile.daily_study_streak}</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">Day Streak</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Content Tabs */}
+        <Tabs defaultValue="challenges" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="challenges">Challenges</TabsTrigger>
+            <TabsTrigger value="posts">Posts</TabsTrigger>
+            <TabsTrigger value="achievements">Achievements</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="challenges" className="space-y-4">
+            {sharedChallenges.length === 0 ? (
+              <Card className="p-8 text-center">
+                <p className="text-muted-foreground">No shared challenges yet</p>
+              </Card>
+            ) : (
+              sharedChallenges.map((challenge) => (
+                <Card key={challenge.id} className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-2">{challenge.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        {challenge.explanation}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary">{challenge.difficulty}</Badge>
+                        <span className="text-sm text-muted-foreground">
+                          {challenge.solve_count} solves
+                        </span>
+                      </div>
+                    </div>
+                    <Button asChild variant="outline" size="sm">
+                      <Link to={`/equations?code=${challenge.share_code}`}>
+                        Try Challenge
+                      </Link>
+                    </Button>
+                  </div>
+                </Card>
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="posts" className="space-y-4">
+            {posts.length === 0 ? (
+              <Card className="p-8 text-center">
+                <p className="text-muted-foreground">No posts yet</p>
+              </Card>
+            ) : (
+              posts.map((post) => (
+                <Card key={post.id} className="p-4">
+                  <h3 className="font-semibold mb-2">{post.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                    {post.content}
+                  </p>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <MessageCircle className="w-4 h-4" />
+                      {format(new Date(post.created_at), "MMM d, yyyy")}
+                    </span>
+                    {post.category && <Badge variant="secondary">{post.category}</Badge>}
+                  </div>
+                </Card>
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="achievements" className="space-y-4">
+            {achievements.length === 0 ? (
+              <Card className="p-8 text-center">
+                <p className="text-muted-foreground">No achievements unlocked yet</p>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {achievements.map((achievement: any) => (
+                  <Card key={achievement.achievements.id} className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="text-4xl">{achievement.achievements.icon}</div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold mb-1">
+                          {achievement.achievements.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {achievement.achievements.description}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary">
+                            {achievement.achievements.points} pts
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {format(new Date(achievement.unlocked_at), "MMM d, yyyy")}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}

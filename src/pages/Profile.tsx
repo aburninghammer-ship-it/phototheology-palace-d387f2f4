@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -119,6 +120,9 @@ export default function Profile() {
         .from("profiles")
         .update({
           display_name: displayName,
+          bio: profile?.bio,
+          location: profile?.location,
+          website: profile?.website,
         })
         .eq("id", user.id);
 
@@ -242,6 +246,35 @@ export default function Profile() {
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Enter your display name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bio">Bio</Label>
+                <Textarea
+                  id="bio"
+                  value={profile?.bio || ""}
+                  onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                  placeholder="Tell us about yourself..."
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={profile?.location || ""}
+                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                  placeholder="City, Country"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="website">Website</Label>
+                <Input
+                  id="website"
+                  type="url"
+                  value={profile?.website || ""}
+                  onChange={(e) => setProfile({ ...profile, website: e.target.value })}
+                  placeholder="https://yourwebsite.com"
                 />
               </div>
               <Separator />
