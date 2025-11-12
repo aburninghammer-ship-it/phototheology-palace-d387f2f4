@@ -27,12 +27,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { JeevesStudyAssistant } from "@/components/studies/JeevesStudyAssistant";
 import { ScriptureInsertDialog } from "@/components/studies/ScriptureInsertDialog";
-import { TextFormatToolbar } from "@/components/studies/TextFormatToolbar";
 import { ShareStudyDialog } from "@/components/studies/ShareStudyDialog";
 import { VoiceRecorder } from "@/components/studies/VoiceRecorder";
 import { CollaboratorManager } from "@/components/studies/CollaboratorManager";
 import { useCollaborativeStudy } from "@/hooks/useCollaborativeStudy";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { RichTextEditor } from "@/components/studies/RichTextEditor";
 
 interface Study {
   id: string;
@@ -60,7 +60,6 @@ const StudyEditor = () => {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [studyOwnerId, setStudyOwnerId] = useState<string>("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Collaborative features
@@ -301,79 +300,9 @@ const StudyEditor = () => {
     }
   };
 
-  const handleFormat = (format: string) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = content.substring(start, end);
-    
-    let newText = content;
-    let newCursorPos = start;
-
-    if (format.startsWith("#") || format.startsWith(">") || format.startsWith("•")) {
-      // For headings, quotes, and bullets, insert at line start
-      const lineStart = content.lastIndexOf("\n", start - 1) + 1;
-      newText = content.substring(0, lineStart) + format + " " + content.substring(lineStart);
-      newCursorPos = lineStart + format.length + 1;
-    } else {
-      // For bold/italic, wrap selection
-      const wrapper = format;
-      if (selectedText) {
-        newText = content.substring(0, start) + wrapper.replace(/\*/g, selectedText) + content.substring(end);
-        newCursorPos = start + wrapper.length;
-      } else {
-        newText = content.substring(0, start) + wrapper + content.substring(end);
-        newCursorPos = start + Math.floor(wrapper.length / 2);
-      }
-    }
-
-    setContent(newText);
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent);
     setHasChanges(true);
-    
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
-  };
-
-  const handleInsertScripture = (text: string) => {
-    const textarea = textareaRef.current;
-    if (!textarea) {
-      setContent(content + text);
-      setHasChanges(true);
-      return;
-    }
-
-    const start = textarea.selectionStart;
-    const newText = content.substring(0, start) + text + content.substring(start);
-    setContent(newText);
-    setHasChanges(true);
-    
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + text.length, start + text.length);
-    }, 0);
-  };
-
-  const handleVoiceTranscription = (text: string) => {
-    const textarea = textareaRef.current;
-    if (!textarea) {
-      setContent(content + " " + text);
-      setHasChanges(true);
-      return;
-    }
-
-    const start = textarea.selectionStart;
-    const newText = content.substring(0, start) + " " + text + content.substring(start);
-    setContent(newText);
-    setHasChanges(true);
-    
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + text.length + 1, start + text.length + 1);
-    }, 0);
   };
 
   if (loading) {
@@ -534,38 +463,12 @@ const StudyEditor = () => {
                 </div>
               </div>
 
-              {/* Formatting Toolbar */}
-              <div className="mb-4 flex gap-2">
-                <TextFormatToolbar onFormat={handleFormat} />
-                <ScriptureInsertDialog onInsert={handleInsertScripture} />
-                <VoiceRecorder onTranscription={handleVoiceTranscription} />
-              </div>
-
-              {/* Content */}
-              <Textarea
-                ref={textareaRef}
-                value={content}
-                onChange={(e) => {
-                  setContent(e.target.value);
-                  setHasChanges(true);
-                  updateCursorPosition(e.target.selectionStart);
-                }}
-                onSelect={(e) => {
-                  const target = e.target as HTMLTextAreaElement;
-                  updateCursorPosition(target.selectionStart);
-                }}
+              {/* Rich Text Editor */}
+              <RichTextEditor
+                content={content}
+                onChange={handleContentChange}
                 disabled={!canEdit}
-                placeholder={canEdit ? `Start writing your study notes here...
-
-You can use:
-• **bold** for emphasis
-• *italic* for subtle emphasis
-• # for headings
-• > for quotes
-• • for bullet points
-
-Or use the formatting toolbar above!` : "View only - you cannot edit this study"}
-                className="min-h-[500px] border-0 px-0 focus-visible:ring-0 resize-none text-base leading-relaxed"
+                placeholder={canEdit ? "Start writing your study notes here..." : "View only - you cannot edit this study"}
               />
             </Card>
           </div>

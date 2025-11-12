@@ -277,4 +277,99 @@ All colors MUST be HSL.
       transform: scale(1.02);
     }
   }
+
+  /* TipTap Rich Text Editor Styles */
+  .prose-editor .ProseMirror {
+    outline: none;
+  }
+
+  .prose-editor .ProseMirror p.is-editor-empty:first-child::before {
+    color: hsl(var(--muted-foreground));
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .prose-editor .ProseMirror h1 {
+    font-size: 2em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    color: hsl(var(--foreground));
+  }
+
+  .prose-editor .ProseMirror h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    line-height: 1.3;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+    color: hsl(var(--foreground));
+  }
+
+  .prose-editor .ProseMirror h3 {
+    font-size: 1.17em;
+    font-weight: bold;
+    line-height: 1.4;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    color: hsl(var(--foreground));
+  }
+
+  .prose-editor .ProseMirror p {
+    margin: 1em 0;
+    line-height: 1.7;
+  }
+
+  .prose-editor .ProseMirror ul,
+  .prose-editor .ProseMirror ol {
+    padding-left: 1.5em;
+    margin: 1em 0;
+  }
+
+  .prose-editor .ProseMirror ul li {
+    list-style-type: disc;
+    margin: 0.5em 0;
+  }
+
+  .prose-editor .ProseMirror ol li {
+    list-style-type: decimal;
+    margin: 0.5em 0;
+  }
+
+  .prose-editor .ProseMirror blockquote {
+    border-left: 3px solid hsl(var(--primary));
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .prose-editor .ProseMirror a {
+    color: hsl(var(--primary));
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .prose-editor .ProseMirror a:hover {
+    color: hsl(var(--primary) / 0.8);
+  }
+
+  .prose-editor .ProseMirror code {
+    background-color: hsl(var(--muted));
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: 'Courier New', monospace;
+  }
+
+  .prose-editor .ProseMirror strong {
+    font-weight: bold;
+  }
+
+  .prose-editor .ProseMirror em {
+    font-style: italic;
+  }
 }
