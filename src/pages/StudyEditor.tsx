@@ -11,8 +11,16 @@ import {
   Star,
   Tag,
   X,
-  Loader2
+  Loader2,
+  Download
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import jsPDF from "jspdf";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -45,13 +53,37 @@ const StudyEditor = () => {
   const [tagInput, setTagInput] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (id && user) {
       fetchStudy();
     }
   }, [id, user]);
+
+  // Auto-save every 30 seconds
+  useEffect(() => {
+    if (hasChanges && !saving) {
+      // Clear existing timer
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+
+      // Set new timer
+      autoSaveTimerRef.current = setTimeout(() => {
+        handleAutoSave();
+      }, 30000); // 30 seconds
+    }
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [hasChanges, title, content, tags, isFavorite, saving]);
 
   const fetchStudy = async () => {
     try {
@@ -80,6 +112,32 @@ const StudyEditor = () => {
     }
   };
 
+  const handleAutoSave = async () => {
+    if (!hasChanges || saving || isAutoSaving) return;
+
+    setIsAutoSaving(true);
+    try {
+      const { error } = await supabase
+        .from("user_studies")
+        .update({
+          title,
+          content,
+          tags,
+          is_favorite: isFavorite,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setHasChanges(false);
+      setLastSaved(new Date());
+    } catch (error) {
+      console.error("Error auto-saving study:", error);
+    } finally {
+      setIsAutoSaving(false);
+    }
+  };
+
   const saveStudy = async () => {
     setSaving(true);
     try {
@@ -96,6 +154,7 @@ const StudyEditor = () => {
       if (error) throw error;
 
       setHasChanges(false);
+      setLastSaved(new Date());
       toast({
         title: "Success",
         description: "Study saved successfully",
@@ -110,6 +169,86 @@ const StudyEditor = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const exportAsPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const maxWidth = pageWidth - (margin * 2);
+    
+    // Title
+    doc.setFontSize(18);
+    doc.text(title || "Untitled Study", margin, margin);
+    
+    // Tags
+    if (tags.length > 0) {
+      doc.setFontSize(10);
+      doc.text(`Tags: ${tags.join(", ")}`, margin, margin + 10);
+    }
+    
+    // Content
+    doc.setFontSize(12);
+    const lines = doc.splitTextToSize(content, maxWidth);
+    doc.text(lines, margin, margin + 20);
+    
+    // Save
+    doc.save(`${title || "study"}.pdf`);
+    
+    toast({
+      title: "Export successful",
+      description: "Study exported as PDF",
+    });
+  };
+
+  const exportAsMarkdown = () => {
+    let markdown = `# ${title}\n\n`;
+    
+    if (tags.length > 0) {
+      markdown += `*Tags: ${tags.join(", ")}*\n\n`;
+    }
+    
+    markdown += content;
+    
+    const blob = new Blob([markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title || "study"}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export successful",
+      description: "Study exported as Markdown",
+    });
+  };
+
+  const exportAsText = () => {
+    let text = `${title}\n\n`;
+    
+    if (tags.length > 0) {
+      text += `Tags: ${tags.join(", ")}\n\n`;
+    }
+    
+    text += content;
+    
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title || "study"}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export successful",
+      description: "Study exported as text file",
+    });
   };
 
   const addTag = () => {
@@ -237,6 +376,26 @@ const StudyEditor = () => {
           </Button>
           
           <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Download className="w-4 h-4" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={exportAsPDF}>
+                  Export as PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportAsMarkdown}>
+                  Export as Markdown
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportAsText}>
+                  Export as Text
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <ShareStudyDialog title={title} content={content} />
             <Button
               variant="ghost"
@@ -359,13 +518,22 @@ Or use the formatting toolbar above!"
         </div>
 
         {/* Auto-save indicator */}
-        {hasChanges && (
-          <div className="mt-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              You have unsaved changes
+        <div className="mt-4 text-center">
+          {isAutoSaving ? (
+            <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Auto-saving...
             </p>
-          </div>
-        )}
+          ) : lastSaved ? (
+            <p className="text-sm text-muted-foreground">
+              Last saved: {lastSaved.toLocaleTimeString()}
+            </p>
+          ) : hasChanges ? (
+            <p className="text-sm text-muted-foreground">
+              You have unsaved changes (auto-saves every 30s)
+            </p>
+          ) : null}
+        </div>
       </div>
     </div>
   );
