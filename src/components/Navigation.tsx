@@ -72,41 +72,45 @@ export const Navigation = () => {
 
               {user ? (
                 <>
-                  {/* Desktop Navigation - Lean */}
-                  <div className="hidden md:flex items-center gap-2">
-                    <Button variant="ghost" asChild size="sm">
+                  {/* Desktop Navigation - Horizontal Scroll on Smaller Screens */}
+                  <div className="hidden md:flex items-center gap-2 overflow-x-auto scrollbar-hide max-w-2xl">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/palace">Palace</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/bible">Bible</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/games">Games</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/phototheology-gpt">GPTs</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/phototheology-course">Courses</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/daily-challenges">Challenges</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/series-builder">Series</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
+                      <Link to="/install-app">Download</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/pricing">Pricing</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/community">Community</Link>
                     </Button>
                     
@@ -147,45 +151,49 @@ export const Navigation = () => {
                 </>
               ) : (
                 <>
-                  {/* Desktop Navigation for logged-out users */}
-                  <div className="hidden md:flex items-center gap-2">
-                    <Button variant="ghost" asChild size="sm">
+                  {/* Desktop Navigation for logged-out users - Horizontal Scroll */}
+                  <div className="hidden md:flex items-center gap-2 overflow-x-auto scrollbar-hide max-w-2xl">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/palace">Palace</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/bible">Bible</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/games">Games</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/phototheology-gpt">GPTs</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/phototheology-course">Courses</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/daily-challenges">Challenges</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/series-builder">Series</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
+                      <Link to="/install-app">Download</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/pricing">Pricing</Link>
                     </Button>
                     
-                    <Button variant="ghost" asChild size="sm">
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/community">Community</Link>
                     </Button>
                     
-                    <Button asChild size="sm">
+                    <Button asChild size="sm" className="whitespace-nowrap">
                       <Link to="/auth">Log In</Link>
                     </Button>
                   </div>
