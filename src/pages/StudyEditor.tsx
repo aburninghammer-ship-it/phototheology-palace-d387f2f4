@@ -30,6 +30,9 @@ import { ScriptureInsertDialog } from "@/components/studies/ScriptureInsertDialo
 import { TextFormatToolbar } from "@/components/studies/TextFormatToolbar";
 import { ShareStudyDialog } from "@/components/studies/ShareStudyDialog";
 import { VoiceRecorder } from "@/components/studies/VoiceRecorder";
+import { CollaboratorManager } from "@/components/studies/CollaboratorManager";
+import { useCollaborativeStudy } from "@/hooks/useCollaborativeStudy";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface Study {
   id: string;
@@ -37,6 +40,7 @@ interface Study {
   content: string;
   tags: string[];
   is_favorite: boolean;
+  user_id: string;
 }
 
 const StudyEditor = () => {
@@ -55,8 +59,21 @@ const StudyEditor = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [studyOwnerId, setStudyOwnerId] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Collaborative features
+  const { activeUsers, isOwner, canEdit, updateCursorPosition } = useCollaborativeStudy(
+    id || "",
+    (update) => {
+      // Handle external updates from other collaborators
+      if (update.title !== undefined) setTitle(update.title);
+      if (update.content !== undefined) setContent(update.content);
+      if (update.tags !== undefined) setTags(update.tags);
+      if (update.is_favorite !== undefined) setIsFavorite(update.is_favorite);
+    }
+  );
 
   useEffect(() => {
     if (id && user) {
@@ -99,6 +116,7 @@ const StudyEditor = () => {
       setContent(data.content);
       setTags(data.tags || []);
       setIsFavorite(data.is_favorite);
+      setStudyOwnerId(data.user_id);
     } catch (error) {
       console.error("Error fetching study:", error);
       toast({
@@ -113,7 +131,7 @@ const StudyEditor = () => {
   };
 
   const handleAutoSave = async () => {
-    if (!hasChanges || saving || isAutoSaving) return;
+    if (!hasChanges || saving || isAutoSaving || !canEdit) return;
 
     setIsAutoSaving(true);
     try {
@@ -124,6 +142,7 @@ const StudyEditor = () => {
           content,
           tags,
           is_favorite: isFavorite,
+          updated_by: user?.id,
         })
         .eq("id", id);
 
@@ -139,6 +158,15 @@ const StudyEditor = () => {
   };
 
   const saveStudy = async () => {
+    if (!canEdit) {
+      toast({
+        title: "Permission denied",
+        description: "You only have view access to this study",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
     try {
       const { error } = await supabase
@@ -148,6 +176,7 @@ const StudyEditor = () => {
           content,
           tags,
           is_favorite: isFavorite,
+          updated_by: user?.id,
         })
         .eq("id", id);
 
@@ -376,6 +405,26 @@ const StudyEditor = () => {
           </Button>
           
           <div className="flex items-center gap-2">
+            {/* Active collaborators */}
+            {activeUsers.length > 0 && (
+              <div className="flex items-center gap-1 mr-2">
+                {activeUsers.slice(0, 3).map((user) => (
+                  <Avatar key={user.user_id} className="w-7 h-7 border-2 border-background">
+                    <AvatarFallback className="text-xs bg-primary/10">
+                      {user.display_name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                ))}
+                {activeUsers.length > 3 && (
+                  <span className="text-xs text-muted-foreground ml-1">
+                    +{activeUsers.length - 3}
+                  </span>
+                )}
+              </div>
+            )}
+
+            <CollaboratorManager studyId={id || ""} isOwner={isOwner} />
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
@@ -397,37 +446,41 @@ const StudyEditor = () => {
             </DropdownMenu>
             
             <ShareStudyDialog title={title} content={content} />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setIsFavorite(!isFavorite);
-                setHasChanges(true);
-              }}
-            >
-              <Star
-                className={`w-5 h-5 ${
-                  isFavorite ? "fill-amber-500 text-amber-500" : ""
-                }`}
-              />
-            </Button>
-            <Button
-              onClick={saveStudy}
-              disabled={saving || !hasChanges}
-              className="gap-2"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  Save
-                </>
-              )}
-            </Button>
+            {canEdit && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setIsFavorite(!isFavorite);
+                    setHasChanges(true);
+                  }}
+                >
+                  <Star
+                    className={`w-5 h-5 ${
+                      isFavorite ? "fill-amber-500 text-amber-500" : ""
+                    }`}
+                  />
+                </Button>
+                <Button
+                  onClick={saveStudy}
+                  disabled={saving || !hasChanges}
+                  className="gap-2"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      Save
+                    </>
+                  )}
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
@@ -495,8 +548,14 @@ const StudyEditor = () => {
                 onChange={(e) => {
                   setContent(e.target.value);
                   setHasChanges(true);
+                  updateCursorPosition(e.target.selectionStart);
                 }}
-                placeholder="Start writing your study notes here...
+                onSelect={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  updateCursorPosition(target.selectionStart);
+                }}
+                disabled={!canEdit}
+                placeholder={canEdit ? `Start writing your study notes here...
 
 You can use:
 • **bold** for emphasis
@@ -505,7 +564,7 @@ You can use:
 • > for quotes
 • • for bullet points
 
-Or use the formatting toolbar above!"
+Or use the formatting toolbar above!` : "View only - you cannot edit this study"}
                 className="min-h-[500px] border-0 px-0 focus-visible:ring-0 resize-none text-base leading-relaxed"
               />
             </Card>

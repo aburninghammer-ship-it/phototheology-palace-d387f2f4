@@ -2434,6 +2434,41 @@ export type Database = {
         }
         Relationships: []
       }
+      study_collaborators: {
+        Row: {
+          id: string
+          invited_at: string
+          invited_by: string
+          permission: string
+          study_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          invited_at?: string
+          invited_by: string
+          permission: string
+          study_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          invited_at?: string
+          invited_by?: string
+          permission?: string
+          study_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_collaborators_study_id_fkey"
+            columns: ["study_id"]
+            isOneToOne: false
+            referencedRelation: "user_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_partners: {
         Row: {
           accepted_at: string | null
