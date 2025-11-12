@@ -116,6 +116,8 @@ const ChurchSignupCancelled = lazy(() => import("./pages/ChurchSignupCancelled")
 const AdminStrongsImport = lazy(() => import("./pages/AdminStrongsImport"));
 const AdminBibleImport = lazy(() => import("./pages/AdminBibleImport"));
 const OfflineContent = lazy(() => import("./pages/OfflineContent"));
+const MyStudies = lazy(() => import("./pages/MyStudies"));
+const StudyEditor = lazy(() => import("./pages/StudyEditor"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -225,10 +227,12 @@ function App() {
           <Route path="/culture-controversy" element={<ProtectedRoute><CultureControversy /></ProtectedRoute>} />
           <Route path="/prophecy-watch" element={<ProtectedRoute><ProphecyWatch /></ProtectedRoute>} />
           <Route path="/research-mode" element={<ProtectedRoute><ResearchMode /></ProtectedRoute>} />
-          <Route path="/bible-image-library" element={<ProtectedRoute><BibleImageLibrary /></ProtectedRoute>} />
+            <Route path="/bible-image-library" element={<ProtectedRoute><BibleImageLibrary /></ProtectedRoute>} />
           <Route path="/sermon-builder" element={<ProtectedRoute><SermonBuilder /></ProtectedRoute>} />
           <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
           <Route path="/bible-rendered-room" element={<ProtectedRoute><BibleRenderedRoom /></ProtectedRoute>} />
+          <Route path="/my-studies" element={<ProtectedRoute><MyStudies /></ProtectedRoute>} />
+          <Route path="/my-studies/:id" element={<ProtectedRoute><StudyEditor /></ProtectedRoute>} />
           <Route path="/power-of-the-lamb" element={<ProtectedRoute><PowerOfTheLamb /></ProtectedRoute>} />
           <Route path="/spiritual-training" element={<ProtectedRoute><SpiritualTraining /></ProtectedRoute>} />
           <Route path="/blueprint-course" element={<ProtectedRoute><BlueprintCourse /></ProtectedRoute>} />

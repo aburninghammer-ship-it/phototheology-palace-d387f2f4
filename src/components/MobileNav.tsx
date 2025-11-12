@@ -86,6 +86,11 @@ export const MobileNav = () => {
                   🎨 Image Library
                 </Button>
               </Link>
+              <Link to="/my-studies">
+                <Button variant="ghost" className="w-full justify-start" size="sm">
+                  📝 My Studies
+                </Button>
+              </Link>
               <Link to="/public-image-library">
                 <Button variant="ghost" className="w-full justify-start" size="sm">
                   🌐 Public Gallery
