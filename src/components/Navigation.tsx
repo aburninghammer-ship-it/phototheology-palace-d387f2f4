@@ -8,6 +8,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { useDirectMessages } from "@/hooks/useDirectMessages";
 import { Badge } from "@/components/ui/badge";
 import { NotificationCenter } from "@/components/NotificationCenter";
+import { PWAInstallButton } from "@/components/PWAInstallButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,6 +68,8 @@ export const Navigation = () => {
                   </Button>
 
                   <NotificationCenter />
+                  
+                  <PWAInstallButton />
                 </>
               )}
 
@@ -185,6 +188,8 @@ export const Navigation = () => {
                       <Link to="/community">Community</Link>
                     </Button>
                     
+                    <PWAInstallButton />
+                    
                     <Button asChild size="sm" className="whitespace-nowrap">
                       <Link to="/auth">Log In</Link>
                     </Button>
@@ -192,6 +197,8 @@ export const Navigation = () => {
 
                   {/* Mobile Navigation for logged-out users */}
                   <div className="md:hidden">
+                    <PWAInstallButton />
+                    
                     <Button asChild size="sm">
                       <Link to="/auth">Log In</Link>
                     </Button>
