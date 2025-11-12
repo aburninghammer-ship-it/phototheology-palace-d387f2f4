@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { MessageCircle, Users as UsersIcon, X } from 'lucide-react';
+import { MessageCircle, Users as UsersIcon, X, Check, CheckCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 export const MessagingSidebar = () => {
@@ -340,14 +340,20 @@ export const MessagingSidebar = () => {
                             }`}
                           >
                             <p className="text-base break-words leading-relaxed">{message.content}</p>
-                            <div className="flex items-center gap-1 mt-1">
+                            <div className="flex items-center justify-end gap-1.5 mt-1">
                               <span className="text-[10px] opacity-70">
                                 {formatDistanceToNow(new Date(message.created_at), { 
                                   addSuffix: true 
                                 })}
                               </span>
-                              {isOwn && isRead && (
-                                <span className="text-[10px] opacity-70">• Read</span>
+                              {isOwn && (
+                                <span className="flex items-center">
+                                  {isRead ? (
+                                    <CheckCheck className="h-3.5 w-3.5 opacity-70 text-blue-400" />
+                                  ) : (
+                                    <Check className="h-3.5 w-3.5 opacity-70" />
+                                  )}
+                                </span>
                               )}
                             </div>
                           </div>
