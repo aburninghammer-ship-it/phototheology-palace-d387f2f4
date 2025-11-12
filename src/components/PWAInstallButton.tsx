@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, Chrome, Globe, Apple } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -14,6 +15,7 @@ export function PWAInstallButton() {
   const [isInstallable, setIsInstallable] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [browserType, setBrowserType] = useState<'chrome' | 'edge' | 'firefox' | 'safari' | 'other'>('other');
 
   useEffect(() => {
     // Check if already installed
@@ -32,6 +34,18 @@ export function PWAInstallButton() {
     const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     setIsIOS(isIOSDevice);
     
+    // Detect browser type
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.includes('edg/')) {
+      setBrowserType('edge');
+    } else if (userAgent.includes('chrome') && !userAgent.includes('edg')) {
+      setBrowserType('chrome');
+    } else if (userAgent.includes('firefox')) {
+      setBrowserType('firefox');
+    } else if (userAgent.includes('safari') && !userAgent.includes('chrome')) {
+      setBrowserType('safari');
+    }
+    
     // Check if mobile (any mobile device)
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
@@ -39,6 +53,7 @@ export function PWAInstallButton() {
       isIOSDevice, 
       isMobile, 
       isStandalone,
+      browserType,
       userAgent: navigator.userAgent 
     });
     
@@ -111,47 +126,176 @@ export function PWAInstallButton() {
       </Button>
 
       <Dialog open={showInstructions} onOpenChange={setShowInstructions}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Install Phototheology App</DialogTitle>
+            <DialogTitle className="text-2xl">Install Phototheology App</DialogTitle>
             <DialogDescription>
-              Follow these steps to install the app on your device
+              Choose your browser below for specific installation instructions
             </DialogDescription>
           </DialogHeader>
           
-          {isIOS ? (
-            <div className="space-y-4 text-sm">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</div>
-                <p>Tap the <strong>Share</strong> button (square with arrow) at the bottom of Safari</p>
+          <Tabs defaultValue={isIOS ? 'safari' : browserType} className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="chrome" className="flex items-center gap-2">
+                <Chrome className="h-4 w-4" />
+                <span className="hidden sm:inline">Chrome</span>
+              </TabsTrigger>
+              <TabsTrigger value="edge" className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                <span className="hidden sm:inline">Edge</span>
+              </TabsTrigger>
+              <TabsTrigger value="firefox" className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                <span className="hidden sm:inline">Firefox</span>
+              </TabsTrigger>
+              <TabsTrigger value="safari" className="flex items-center gap-2">
+                <Apple className="h-4 w-4" />
+                <span className="hidden sm:inline">Safari</span>
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Chrome Instructions */}
+            <TabsContent value="chrome" className="space-y-4 mt-4">
+              <div className="bg-muted/50 p-4 rounded-lg border border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Chrome className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">Google Chrome</h3>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</div>
+                    <div>
+                      <p className="font-medium mb-1">Click the <strong>install icon</strong> in the address bar</p>
+                      <p className="text-muted-foreground text-xs">Look for a small computer/mobile icon or ⊕ plus icon on the right side of the URL</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</div>
+                    <div>
+                      <p className="font-medium mb-1">Or use the <strong>three-dot menu</strong> (⋮)</p>
+                      <p className="text-muted-foreground text-xs">Click the menu → Select "Install Phototheology" or "Install app"</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">3</div>
+                    <div>
+                      <p className="font-medium mb-1">Confirm installation</p>
+                      <p className="text-muted-foreground text-xs">Click "Install" in the popup dialog</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</div>
-                <p>Scroll down and tap <strong>"Add to Home Screen"</strong></p>
+              <p className="text-muted-foreground text-xs">✨ The app will open in its own window and be accessible from your desktop/home screen!</p>
+            </TabsContent>
+
+            {/* Edge Instructions */}
+            <TabsContent value="edge" className="space-y-4 mt-4">
+              <div className="bg-muted/50 p-4 rounded-lg border border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Globe className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">Microsoft Edge</h3>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</div>
+                    <div>
+                      <p className="font-medium mb-1">Look for the <strong>app available</strong> icon</p>
+                      <p className="text-muted-foreground text-xs">A small ⊕ plus or download icon will appear in the address bar</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</div>
+                    <div>
+                      <p className="font-medium mb-1">Or click the <strong>Settings menu</strong> (⋯)</p>
+                      <p className="text-muted-foreground text-xs">Select "Apps" → "Install this site as an app"</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">3</div>
+                    <div>
+                      <p className="font-medium mb-1">Click <strong>Install</strong></p>
+                      <p className="text-muted-foreground text-xs">The app will pin to your taskbar and start menu</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">3</div>
-                <p>Tap <strong>"Add"</strong> in the top right corner</p>
+              <p className="text-muted-foreground text-xs">✨ Edge offers excellent PWA support with desktop integration!</p>
+            </TabsContent>
+
+            {/* Firefox Instructions */}
+            <TabsContent value="firefox" className="space-y-4 mt-4">
+              <div className="bg-muted/50 p-4 rounded-lg border border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Globe className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">Mozilla Firefox</h3>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</div>
+                    <div>
+                      <p className="font-medium mb-1">Click the <strong>three-line menu</strong> (☰)</p>
+                      <p className="text-muted-foreground text-xs">Located in the top-right corner of Firefox</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</div>
+                    <div>
+                      <p className="font-medium mb-1">Select <strong>"Install"</strong> or <strong>"Install Site as App"</strong></p>
+                      <p className="text-muted-foreground text-xs">This option appears for installable web apps</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">3</div>
+                    <div>
+                      <p className="font-medium mb-1">Confirm installation</p>
+                      <p className="text-muted-foreground text-xs">The app will be added to your applications</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-muted-foreground text-xs mt-4">The app will appear on your home screen like a native app!</p>
-            </div>
-          ) : (
-            <div className="space-y-4 text-sm">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</div>
-                <p>Tap the <strong>menu</strong> button (three dots) in your browser</p>
+              <p className="text-muted-foreground text-xs">💡 Note: Firefox mobile on Android supports "Add to Home Screen" from the menu</p>
+            </TabsContent>
+
+            {/* Safari Instructions */}
+            <TabsContent value="safari" className="space-y-4 mt-4">
+              <div className="bg-muted/50 p-4 rounded-lg border border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Apple className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">Safari (iOS/Mac)</h3>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</div>
+                    <div>
+                      <p className="font-medium mb-1">Tap the <strong>Share</strong> button</p>
+                      <p className="text-muted-foreground text-xs">On iOS: Square with arrow at bottom. On Mac: Share icon in toolbar</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</div>
+                    <div>
+                      <p className="font-medium mb-1">Scroll and tap <strong>"Add to Home Screen"</strong></p>
+                      <p className="text-muted-foreground text-xs">On Mac, select "Add to Dock"</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">3</div>
+                    <div>
+                      <p className="font-medium mb-1">Tap <strong>"Add"</strong> in the top-right</p>
+                      <p className="text-muted-foreground text-xs">The app icon will appear on your home screen/dock</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</div>
-                <p>Look for <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong></p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">3</div>
-                <p>Follow the prompts to install</p>
-              </div>
-              <p className="text-muted-foreground text-xs mt-4">The app will work offline and load faster once installed!</p>
-            </div>
-          )}
+              <p className="text-muted-foreground text-xs">🍎 Works on iPhone, iPad, and Mac with Safari 16+</p>
+            </TabsContent>
+          </Tabs>
+
+          <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
+            <p className="text-sm text-center">
+              <strong>Benefits:</strong> Offline access • Faster loading • Home screen icon • Native app feel
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
     </>
