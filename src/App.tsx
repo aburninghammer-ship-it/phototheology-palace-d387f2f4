@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
-import { SyncStatusIndicator } from "@/components/SyncStatusIndicator";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -19,8 +18,6 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Pricing from "./pages/Pricing";
 import InteractiveDemo from "./pages/InteractiveDemo";
-import Install from "./pages/Install";
-import OfflineManager from "./pages/OfflineManager";
 
 // Lazy load all other pages
 const Palace = lazy(() => import("./pages/Palace"));
@@ -126,9 +123,8 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <OfflineIndicator />
           <BrowserRouter>
-            <OfflineIndicator />
-            <SyncStatusIndicator />
             <LiveNotificationsProvider>
               <AchievementProvider>
                 <SidebarProvider defaultOpen={false}>
@@ -139,8 +135,6 @@ function App() {
                        <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/install" element={<Install />} />
-            <Route path="/offline-manager" element={<OfflineManager />} />
             <Route path="/interactive-demo" element={<InteractiveDemo />} />
             <Route path="/onboarding" element={
               <ProtectedRoute>
@@ -266,8 +260,6 @@ function App() {
               </AchievementProvider>
             </LiveNotificationsProvider>
           </BrowserRouter>
-          <OfflineIndicator />
-          <SyncStatusIndicator />
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>

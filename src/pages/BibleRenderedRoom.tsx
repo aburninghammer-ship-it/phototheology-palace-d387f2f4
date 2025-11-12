@@ -9,7 +9,6 @@ import { bibleRenderedSets } from "@/data/bibleRenderedSets";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Footer } from "@/components/Footer";
-import { LazyImage } from "@/components/LazyImage";
 
 const BibleRenderedRoom = () => {
   const navigate = useNavigate();
@@ -177,11 +176,10 @@ const BibleRenderedRoom = () => {
                       <CardContent className="space-y-3">
                         {setImages[set.number] && (
                           <div className="rounded-lg overflow-hidden border border-border">
-                            <LazyImage
+                            <img 
                               src={setImages[set.number]} 
                               alt={`${set.name} - ${set.range}`}
                               className="w-full h-48 object-cover"
-                              placeholderClassName="w-full h-48 bg-muted rounded-lg"
                             />
                           </div>
                         )}

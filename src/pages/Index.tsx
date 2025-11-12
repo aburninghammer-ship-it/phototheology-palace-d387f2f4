@@ -25,42 +25,17 @@ import {
   Target,
   Search,
   Layers,
-  HelpCircle,
-  Download,
-  Smartphone
+  HelpCircle
 } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import heroImage from "@/assets/phototheology-hero.png";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [heroImage, setHeroImage] = useState<string>('');
-  const heroRef = useRef<HTMLDivElement>(null);
-
-  // Lazy load hero image
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !heroImage) {
-            import('@/assets/phototheology-hero.png').then((module) => {
-              setHeroImage(module.default);
-            });
-          }
-        });
-      },
-      { rootMargin: '50px' }
-    );
-
-    if (heroRef.current) {
-      observer.observe(heroRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [heroImage]);
 
   // Redirect authenticated users to onboarding if they haven't completed it
   useEffect(() => {
@@ -89,31 +64,6 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
-      {/* Download App Banner */}
-      <div className="bg-gradient-to-r from-primary via-primary/90 to-accent py-3 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
-              <Smartphone className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-white">
-              <p className="font-semibold text-sm sm:text-base">Get the Phototheology App</p>
-              <p className="text-xs sm:text-sm text-white/90">Works offline • Fast loading • Home screen icon</p>
-            </div>
-          </div>
-          <Button 
-            asChild 
-            size="sm" 
-            className="bg-white text-primary hover:bg-white/90 gap-2 shadow-lg"
-          >
-            <Link to="/install">
-              <Download className="h-4 w-4" />
-              Download Now
-            </Link>
-          </Button>
-        </div>
-      </div>
       
       {/* Hero Section - Pain First */}
       <section className="relative overflow-hidden pt-32 pb-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-background to-accent/5">
@@ -146,17 +96,12 @@ const Index = () => {
             </Button>
           </div>
           
-          <div ref={heroRef} className="relative max-w-4xl mx-auto min-h-[400px] bg-muted/20 rounded-lg flex items-center justify-center">
-            {heroImage ? (
-              <img 
-                src={heroImage} 
-                alt="Phototheology Palace Interface" 
-                className="rounded-lg shadow-2xl border-2 border-border w-full"
-                loading="lazy"
-              />
-            ) : (
-              <div className="animate-pulse w-full h-[400px] bg-muted rounded-lg" />
-            )}
+          <div className="relative max-w-4xl mx-auto">
+            <img 
+              src={heroImage} 
+              alt="Phototheology Palace Interface" 
+              className="rounded-lg shadow-2xl border-2 border-border"
+            />
           </div>
         </div>
       </section>
@@ -184,14 +129,7 @@ const Index = () => {
                 <p className="text-muted-foreground mb-4">
                   Start on Floor 1—learn to turn Bible stories into vivid mental images. Each floor adds a new skill: detective observation, freestyle connections, Christ-centered depth.
                 </p>
-                {heroImage && (
-                  <img 
-                    src={heroImage} 
-                    alt="Palace floors" 
-                    className="rounded border border-border" 
-                    loading="lazy"
-                  />
-                )}
+                <img src={heroImage} alt="Palace floors" className="rounded border border-border" />
               </CardContent>
             </Card>
             
@@ -477,168 +415,6 @@ const Index = () => {
                 <p className="text-muted-foreground">
                   <span className="font-semibold">Spiritual & Master</span> — Bring heart into fire, then let the palace become reflexive thought.
                 </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Games Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Interactive Games & Challenges</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Master biblical concepts through engaging gameplay and competitive challenges
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/concentration-game")}>
-              <CardHeader>
-                <Brain className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Concentration Game</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Match verses with their principles in this memory challenge.</p>
-              </CardContent>
-            </Card>
-            
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/chain-chess")}>
-              <CardHeader>
-                <Target className="w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Chain Chess</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Build verse chains and connect Scripture strategically.</p>
-              </CardContent>
-            </Card>
-            
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/escape-room")}>
-              <CardHeader>
-                <Sparkles className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Escape Rooms</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Solve biblical puzzles to escape themed rooms.</p>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="mt-8 text-center">
-            <Button size="lg" onClick={() => navigate("/games")} className="gap-2">
-              View All Games <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* GPTs Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">AI Study Assistants</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Specialized AI tools for deep analysis and personalized guidance
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/phototheology-gpt")}>
-              <CardHeader>
-                <ImageIcon className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Phototheology GPT</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Visual theology and image analysis assistant.</p>
-              </CardContent>
-            </Card>
-            
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/daniel-revelation-gpt")}>
-              <CardHeader>
-                <Sparkles className="w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Daniel & Revelation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Prophecy expert for end-time studies.</p>
-              </CardContent>
-            </Card>
-            
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/apologetics-gpt")}>
-              <CardHeader>
-                <Brain className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Apologetics GPT</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Defend your faith with biblical reasoning.</p>
-              </CardContent>
-            </Card>
-            
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/kid-gpt")}>
-              <CardHeader>
-                <Heart className="w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Kid GPT</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Age-appropriate Bible study for children.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Courses Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Structured Courses</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive guided studies for mastering biblical books and concepts
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/phototheology-course")}>
-              <CardHeader>
-                <BookOpen className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Phototheology Course</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">50-day journey through the complete Palace Method.</p>
-                <Badge className="mt-2" variant="secondary">50 Days</Badge>
-              </CardContent>
-            </Card>
-            
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/daniel-course")}>
-              <CardHeader>
-                <Layers className="w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Daniel Course</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Deep dive into prophecy and God's sovereignty.</p>
-                <Badge className="mt-2" variant="secondary">12 Chapters</Badge>
-              </CardContent>
-            </Card>
-            
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/revelation-course")}>
-              <CardHeader>
-                <Sparkles className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Revelation Course</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Unlock the mysteries of end-time prophecy.</p>
-                <Badge className="mt-2" variant="secondary">22 Chapters</Badge>
-              </CardContent>
-            </Card>
-            
-            <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/blueprint-course")}>
-              <CardHeader>
-                <Target className="w-12 h-12 text-accent mb-4 group-hover:scale-110 transition-transform" />
-                <CardTitle>Blueprint Course</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Master the sanctuary system and its meaning.</p>
-                <Badge className="mt-2" variant="secondary">Structured Path</Badge>
               </CardContent>
             </Card>
           </div>

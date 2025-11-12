@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, Download } from "lucide-react";
+import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
@@ -75,27 +75,7 @@ export const Navigation = () => {
                   {/* Desktop Navigation - Lean */}
                   <div className="hidden md:flex items-center gap-2">
                     <Button variant="ghost" asChild size="sm">
-                      <Link to="/palace">Palace</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/bible">Bible</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/games">Games</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/phototheology-gpt">GPTs</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/phototheology-course">Courses</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/series-builder">Series</Link>
+                      <Link to="/palace">Product</Link>
                     </Button>
                     
                     <Button variant="ghost" asChild size="sm">
@@ -106,11 +86,8 @@ export const Navigation = () => {
                       <Link to="/community">Community</Link>
                     </Button>
                     
-                    <Button asChild size="sm" className="gap-2 bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90">
-                      <Link to="/install">
-                        <Download className="h-4 w-4" />
-                        Download App
-                      </Link>
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/series-builder">Series Builder</Link>
                     </Button>
                     
                     {/* Account Dropdown */}
@@ -153,27 +130,7 @@ export const Navigation = () => {
                   {/* Desktop Navigation for logged-out users */}
                   <div className="hidden md:flex items-center gap-2">
                     <Button variant="ghost" asChild size="sm">
-                      <Link to="/palace">Palace</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/bible">Bible</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/games">Games</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/phototheology-gpt">GPTs</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/phototheology-course">Courses</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/series-builder">Series</Link>
+                      <Link to="/palace">Product</Link>
                     </Button>
                     
                     <Button variant="ghost" asChild size="sm">
@@ -184,11 +141,8 @@ export const Navigation = () => {
                       <Link to="/community">Community</Link>
                     </Button>
                     
-                    <Button asChild size="sm" variant="outline" className="gap-2">
-                      <Link to="/install">
-                        <Download className="h-4 w-4" />
-                        Download App
-                      </Link>
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/series-builder">Series Builder</Link>
                     </Button>
                     
                     <Button asChild size="sm">

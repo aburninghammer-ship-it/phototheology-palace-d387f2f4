@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { MessageCircle, Users as UsersIcon, X, Check, CheckCheck } from 'lucide-react';
+import { MessageCircle, Users as UsersIcon, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 export const MessagingSidebar = () => {
@@ -160,8 +160,8 @@ export const MessagingSidebar = () => {
 
         {/* Split Layout */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Left Panel - User List - Show on mobile when no active conversation */}
-          <div className={`w-full md:w-72 lg:w-80 md:border-r flex flex-col ${activeConversationId && !isMobile ? 'hidden md:flex' : isMobile && activeConversationId ? 'hidden' : 'flex'}`}>
+          {/* Left Panel - User List */}
+          <div className="w-full md:w-72 lg:w-80 border-r flex flex-col md:block hidden">
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="flex flex-col h-full">
               <TabsList className="grid w-full grid-cols-2 m-2">
                 <TabsTrigger value="active" className="text-xs">
@@ -283,23 +283,13 @@ export const MessagingSidebar = () => {
             </Tabs>
           </div>
 
-          {/* Right Panel - Chat Window - Show on mobile only when conversation is active */}
-          <div className={`flex-1 flex flex-col ${isMobile && !activeConversationId ? 'hidden' : 'flex'}`}>
+          {/* Right Panel - Chat Window */}
+          <div className="flex-1 flex flex-col">
             {activeConversationId ? (
               activeConversation ? (
                 <>
                   {/* Chat Header */}
                   <div className="flex items-center gap-2 p-3 border-b">
-                  {isMobile && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setActiveConversationId(null)}
-                      className="mr-2"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
                   <Avatar className="h-9 w-9">
                     <AvatarImage src={activeConversation.other_user.avatar_url || undefined} />
                     <AvatarFallback>
@@ -340,20 +330,14 @@ export const MessagingSidebar = () => {
                             }`}
                           >
                             <p className="text-base break-words leading-relaxed">{message.content}</p>
-                            <div className="flex items-center justify-end gap-1.5 mt-1">
+                            <div className="flex items-center gap-1 mt-1">
                               <span className="text-[10px] opacity-70">
                                 {formatDistanceToNow(new Date(message.created_at), { 
                                   addSuffix: true 
                                 })}
                               </span>
-                              {isOwn && (
-                                <span className="flex items-center">
-                                  {isRead ? (
-                                    <CheckCheck className="h-3.5 w-3.5 opacity-70 text-blue-400" />
-                                  ) : (
-                                    <Check className="h-3.5 w-3.5 opacity-70" />
-                                  )}
-                                </span>
+                              {isOwn && isRead && (
+                                <span className="text-[10px] opacity-70">• Read</span>
                               )}
                             </div>
                           </div>
