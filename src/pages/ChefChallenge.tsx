@@ -9,6 +9,7 @@ import { ChefHat, Clock, Trophy, ArrowLeft, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { ShareChallengeButton } from "@/components/ShareChallengeButton";
 
 const DIFFICULTY_LEVELS = [
   { name: "Apprentice", time: 20, ingredients: 3, description: "3 Bible verses, 20 minutes" },
@@ -210,6 +211,14 @@ export default function ChefChallenge() {
                   <Send className="mr-2" />
                   {isSubmitting ? "Submitting..." : "Submit Recipe"}
                 </Button>
+                <ShareChallengeButton
+                  challengeData={{
+                    type: "chef",
+                    title: `${difficulty?.name} Chef Challenge: ${theme}`,
+                    content: `Create a biblical recipe on the theme: "${theme}"\n\nRequirements:\n- ${difficulty?.ingredients} verses minimum\n- ${difficulty?.time} minutes time limit\n- Build a complete theological point using ONLY Bible verse references`,
+                    difficulty: difficulty?.name
+                  }}
+                />
                 <Button variant="outline" onClick={() => setStarted(false)}>
                   Cancel
                 </Button>

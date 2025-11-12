@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Lightbulb, CheckCircle2, Link2 } from "lucide-react";
+import { ShareChallengeButton } from "@/components/ShareChallengeButton";
 
 interface SubjectConnectionChallengeProps {
   challenge: any;
@@ -129,15 +130,26 @@ export const SubjectConnectionChallenge = ({
           </div>
         )}
 
-        {/* Submit Button */}
-        <Button 
-          onClick={handleSubmit}
-          disabled={!connections.trim()}
-          className="w-full"
-          size="lg"
-        >
-          Submit Connections
-        </Button>
+        {/* Submit and Share Buttons */}
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleSubmit}
+            disabled={!connections.trim()}
+            className="flex-1"
+            size="lg"
+          >
+            Submit Connections
+          </Button>
+          <ShareChallengeButton
+            challengeData={{
+              type: "subject-connection",
+              title: challenge.title,
+              content: `${challenge.description}\n\nSubjects to Connect:\n${subjects.map((s: string, i: number) => `${i + 1}. ${s}`).join('\n')}\n\nCan you discover the connections?`,
+              difficulty: challenge.difficulty
+            }}
+            size="lg"
+          />
+        </div>
       </CardContent>
     </Card>
   );
