@@ -15,7 +15,7 @@ import { PracticeDrill } from "@/components/practice/PracticeDrill";
 import { getDrillsByRoom, getDrillName } from "@/data/drillQuestions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
-import { genesisImages } from "@/assets/24fps/genesis";
+import { getGenesisImage } from "@/assets/24fps/genesis";
 import { UserGemsList } from "@/components/UserGemsList";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
@@ -52,6 +52,7 @@ export default function RoomDetail() {
   const [methodExpanded, setMethodExpanded] = useState(false);
   const [examplesExpanded, setExamplesExpanded] = useState(false);
   const [showOnboardingGuide, setShowOnboardingGuide] = useState(true);
+  const [loadedGenesisImages, setLoadedGenesisImages] = useState<Record<number, string>>({});
   
   // Check if this is the first room visit after onboarding (Story Room)
   const isFirstRoomVisit = Number(floorNumber) === 1 && roomId === "sr" && 
@@ -73,6 +74,24 @@ export default function RoomDetail() {
   );
   
   const { addItem } = useSpacedRepetition();
+
+  // Load Genesis images if this is the 24FPS room
+  useEffect(() => {
+    if (roomId === '24fps') {
+      const loadImages = async () => {
+        const loaded: Record<number, string> = {};
+        for (let i = 1; i <= 24; i++) {
+          try {
+            loaded[i] = await getGenesisImage(i);
+          } catch (error) {
+            console.error(`Error loading Genesis ${i}:`, error);
+          }
+        }
+        setLoadedGenesisImages(loaded);
+      };
+      loadImages();
+    }
+  }, [roomId]);
 
   const drillQuestions = room ? getDrillsByRoom(room.id) : [];
   const drillName = room ? getDrillName(room.id) : "Practice Drill";
@@ -290,8 +309,12 @@ export default function RoomDetail() {
                     </TabsList>
                     <TabsContent value="grid" className="mt-4">
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {genesisImages.map((image, index) => {
+                        {Array.from({ length: 24 }, (_, index) => {
                           const chapter = index + 1;
+                          const image = loadedGenesisImages[chapter];
+                          
+                          if (!image) return null;
+                          
                           return (
                             <div key={chapter} className="relative group">
                               <div className="aspect-square rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-colors">
@@ -312,8 +335,12 @@ export default function RoomDetail() {
                     </TabsContent>
                     <TabsContent value="list" className="mt-4">
                       <div className="space-y-2 max-h-96 overflow-y-auto">
-                        {genesisImages.map((image, index) => {
+                        {Array.from({ length: 24 }, (_, index) => {
                           const chapter = index + 1;
+                          const image = loadedGenesisImages[chapter];
+                          
+                          if (!image) return null;
+                          
                           return (
                             <div key={chapter} className="flex items-center gap-4 p-3 rounded-lg border hover:bg-accent transition-colors">
                               <img

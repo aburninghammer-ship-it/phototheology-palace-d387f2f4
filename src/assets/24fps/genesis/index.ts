@@ -1,59 +1,37 @@
 // Genesis 1-24 24FPS Room Images
-import genesis01 from "./genesis-01.jpg";
-import genesis02 from "./genesis-02.jpg";
-import genesis03 from "./genesis-03.jpg";
-import genesis04 from "./genesis-04.jpg";
-import genesis05 from "./genesis-05.jpg";
-import genesis06 from "./genesis-06.jpg";
-import genesis07 from "./genesis-07.jpg";
-import genesis08 from "./genesis-08.jpg";
-import genesis09 from "./genesis-09.jpg";
-import genesis10 from "./genesis-10.jpg";
-import genesis11 from "./genesis-11.jpg";
-import genesis12 from "./genesis-12.jpg";
-import genesis13 from "./genesis-13.jpg";
-import genesis14 from "./genesis-14.jpg";
-import genesis15 from "./genesis-15.jpg";
-import genesis16 from "./genesis-16.jpg";
-import genesis17 from "./genesis-17.jpg";
-import genesis18 from "./genesis-18.jpg";
-import genesis19 from "./genesis-19.jpg";
-import genesis20 from "./genesis-20.jpg";
-import genesis21 from "./genesis-21.jpg";
-import genesis22 from "./genesis-22.jpg";
-import genesis23 from "./genesis-23.jpg";
-import genesis24 from "./genesis-24.jpg";
+// Using dynamic imports for better performance
 
-export const genesisImages = [
-  genesis01,
-  genesis02,
-  genesis03,
-  genesis04,
-  genesis05,
-  genesis06,
-  genesis07,
-  genesis08,
-  genesis09,
-  genesis10,
-  genesis11,
-  genesis12,
-  genesis13,
-  genesis14,
-  genesis15,
-  genesis16,
-  genesis17,
-  genesis18,
-  genesis19,
-  genesis20,
-  genesis21,
-  genesis22,
-  genesis23,
-  genesis24,
-];
+export const genesisImages: Record<number, () => Promise<{ default: string }>> = {
+  1: () => import("./genesis-01.jpg"),
+  2: () => import("./genesis-02.jpg"),
+  3: () => import("./genesis-03.jpg"),
+  4: () => import("./genesis-04.jpg"),
+  5: () => import("./genesis-05.jpg"),
+  6: () => import("./genesis-06.jpg"),
+  7: () => import("./genesis-07.jpg"),
+  8: () => import("./genesis-08.jpg"),
+  9: () => import("./genesis-09.jpg"),
+  10: () => import("./genesis-10.jpg"),
+  11: () => import("./genesis-11.jpg"),
+  12: () => import("./genesis-12.jpg"),
+  13: () => import("./genesis-13.jpg"),
+  14: () => import("./genesis-14.jpg"),
+  15: () => import("./genesis-15.jpg"),
+  16: () => import("./genesis-16.jpg"),
+  17: () => import("./genesis-17.jpg"),
+  18: () => import("./genesis-18.jpg"),
+  19: () => import("./genesis-19.jpg"),
+  20: () => import("./genesis-20.jpg"),
+  21: () => import("./genesis-21.jpg"),
+  22: () => import("./genesis-22.jpg"),
+  23: () => import("./genesis-23.jpg"),
+  24: () => import("./genesis-24.jpg"),
+};
 
-export const getGenesisImage = (chapter: number): string => {
+export const getGenesisImage = async (chapter: number): Promise<string> => {
   if (chapter < 1 || chapter > 24) {
     throw new Error(`Chapter ${chapter} is out of range. Must be between 1 and 24.`);
   }
-  return genesisImages[chapter - 1];
+  const imageModule = await genesisImages[chapter]();
+  return imageModule.default;
 };

@@ -31,13 +31,36 @@ import {
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import heroImage from "@/assets/phototheology-hero.png";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [heroImage, setHeroImage] = useState<string>('');
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  // Lazy load hero image
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !heroImage) {
+            import('@/assets/phototheology-hero.png').then((module) => {
+              setHeroImage(module.default);
+            });
+          }
+        });
+      },
+      { rootMargin: '50px' }
+    );
+
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [heroImage]);
 
   // Redirect authenticated users to onboarding if they haven't completed it
   useEffect(() => {
@@ -123,12 +146,17 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="relative max-w-4xl mx-auto">
-            <img 
-              src={heroImage} 
-              alt="Phototheology Palace Interface" 
-              className="rounded-lg shadow-2xl border-2 border-border"
-            />
+          <div ref={heroRef} className="relative max-w-4xl mx-auto min-h-[400px] bg-muted/20 rounded-lg flex items-center justify-center">
+            {heroImage ? (
+              <img 
+                src={heroImage} 
+                alt="Phototheology Palace Interface" 
+                className="rounded-lg shadow-2xl border-2 border-border w-full"
+                loading="lazy"
+              />
+            ) : (
+              <div className="animate-pulse w-full h-[400px] bg-muted rounded-lg" />
+            )}
           </div>
         </div>
       </section>
@@ -156,7 +184,14 @@ const Index = () => {
                 <p className="text-muted-foreground mb-4">
                   Start on Floor 1—learn to turn Bible stories into vivid mental images. Each floor adds a new skill: detective observation, freestyle connections, Christ-centered depth.
                 </p>
-                <img src={heroImage} alt="Palace floors" className="rounded border border-border" />
+                {heroImage && (
+                  <img 
+                    src={heroImage} 
+                    alt="Palace floors" 
+                    className="rounded border border-border" 
+                    loading="lazy"
+                  />
+                )}
               </CardContent>
             </Card>
             

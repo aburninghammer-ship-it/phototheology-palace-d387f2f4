@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Image, Search, Heart, Trash2, RefreshCw, Loader2, ArrowLeft, MessageCircle, Send, X, Edit, Package, Download, Share2, Globe } from "lucide-react";
-import { genesisImages } from "@/assets/24fps/genesis";
+import { getGenesisImage } from "@/assets/24fps/genesis";
 
 interface BibleImage {
   id: string;
@@ -28,6 +28,7 @@ export default function BibleImageLibrary() {
   const [filteredImages, setFilteredImages] = useState<BibleImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [loadedGenesisImages, setLoadedGenesisImages] = useState<Record<number, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "translation" | "24fps">("all");
   const [activeTab, setActiveTab] = useState<"all" | "favorites" | "genesis-pack">("all");
@@ -53,11 +54,24 @@ export default function BibleImageLibrary() {
   useEffect(() => {
     checkAuth();
     fetchImages();
+    loadGenesisImages();
   }, []);
 
   useEffect(() => {
     filterImages();
   }, [images, searchQuery, activeFilter, activeTab]);
+
+  const loadGenesisImages = async () => {
+    const loaded: Record<number, string> = {};
+    for (let i = 1; i <= 24; i++) {
+      try {
+        loaded[i] = await getGenesisImage(i);
+      } catch (error) {
+        console.error(`Error loading Genesis ${i}:`, error);
+      }
+    }
+    setLoadedGenesisImages(loaded);
+  };
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -361,7 +375,7 @@ export default function BibleImageLibrary() {
   const importGenesisImage = async (chapterIndex: number) => {
     try {
       const chapter = chapterIndex + 1;
-      const imageSrc = genesisImages[chapterIndex];
+      const imageSrc = await getGenesisImage(chapter);
       
       // Fetch the image as a blob
       const response = await fetch(imageSrc);
@@ -807,8 +821,12 @@ export default function BibleImageLibrary() {
             </Card>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {genesisImages.map((image, index) => {
+              {Array.from({ length: 24 }, (_, index) => {
                 const chapter = index + 1;
+                const image = loadedGenesisImages[chapter];
+                
+                if (!image) return null;
+                
                 return (
                   <Card key={chapter} className="bg-white/10 backdrop-blur-sm border-white/20 overflow-hidden group">
                     <div className="relative aspect-square">
@@ -816,6 +834,7 @@ export default function BibleImageLibrary() {
                         src={image}
                         alt={`Genesis Chapter ${chapter}`}
                         className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <Button
