@@ -22,9 +22,20 @@ export function NotificationCenter() {
     
     // Handle message notifications by opening the messaging sidebar
     if (notification.type === 'message' || notification.type === 'direct_message') {
+      console.log('📬 Message notification clicked:', notification);
+      
+      // Try to get conversation ID or user ID from metadata
+      const conversationId = notification.metadata?.conversation_id || notification.metadata?.conversationId;
+      const userId = notification.metadata?.sender_id || notification.metadata?.user_id || notification.metadata?.userId;
+      
+      console.log('📬 Dispatching open-chat-sidebar event with:', { conversationId, userId });
+      
       // Dispatch custom event to open messaging sidebar
       window.dispatchEvent(new CustomEvent('open-chat-sidebar', {
-        detail: { conversationId: notification.metadata?.conversation_id }
+        detail: { 
+          conversationId,
+          userId 
+        }
       }));
     } else if (notification.link) {
       navigate(notification.link);
