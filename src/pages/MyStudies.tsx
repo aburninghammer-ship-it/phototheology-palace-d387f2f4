@@ -79,7 +79,11 @@ const MyStudies = () => {
   };
 
   const createNewStudy = async (title = "Untitled Study", content = "") => {
+    console.log("createNewStudy called, user:", user);
+    console.log("authLoading:", authLoading);
+    
     if (!user?.id) {
+      console.error("No user ID available");
       toast({
         title: "Authentication Required",
         description: "Please sign in to create a study",
@@ -89,6 +93,7 @@ const MyStudies = () => {
     }
 
     try {
+      console.log("Attempting to insert study with user_id:", user.id);
       const { data, error } = await supabase
         .from("user_studies")
         .insert([
@@ -101,13 +106,17 @@ const MyStudies = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+      console.log("Study created successfully:", data);
       navigate(`/my-studies/${data.id}`);
     } catch (error) {
       console.error("Error creating study:", error);
       toast({
         title: "Error",
-        description: "Failed to create new study",
+        description: error instanceof Error ? error.message : "Failed to create new study",
         variant: "destructive",
       });
     }
