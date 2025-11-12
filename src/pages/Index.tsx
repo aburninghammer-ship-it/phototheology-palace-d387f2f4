@@ -67,25 +67,26 @@ const Index = () => {
       
       {/* Quick Access Banner for Authenticated Users */}
       {user && (
-        <div className="sticky top-0 z-40 bg-gradient-to-r from-primary to-accent border-b border-border/50 backdrop-blur-sm shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-white" />
+        <div className="sticky top-0 z-50 bg-gradient-to-r from-primary to-accent border-b border-border/50 backdrop-blur-sm shadow-lg">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
-                <div>
-                  <p className="text-white font-semibold text-sm">Welcome back!</p>
-                  <p className="text-white/80 text-xs">Continue your journey through the Palace</p>
+                <div className="min-w-0 hidden xs:block">
+                  <p className="text-white font-semibold text-xs sm:text-sm truncate">Welcome back!</p>
+                  <p className="text-white/80 text-[10px] sm:text-xs truncate">Continue your journey</p>
                 </div>
               </div>
               <Button 
                 onClick={() => navigate("/palace")}
-                className="bg-white text-primary hover:bg-white/90 shadow-lg font-semibold"
-                size="lg"
+                className="bg-white text-primary hover:bg-white/90 shadow-lg font-semibold flex-shrink-0 text-sm sm:text-base"
+                size="sm"
               >
-                Enter Palace
-                <ChevronRight className="ml-2 h-5 w-5" />
+                <span className="hidden xs:inline">Enter Palace</span>
+                <span className="xs:hidden">Enter</span>
+                <ChevronRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
           </div>
