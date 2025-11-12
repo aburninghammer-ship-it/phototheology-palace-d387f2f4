@@ -45,7 +45,7 @@ export const JeevesStudyAssistant = ({ studyContext }: JeevesStudyAssistantProps
 
       setMessages(prev => [
         ...prev,
-        { role: "assistant", content: data.response || "I'm here to help with your study!" }
+        { role: "assistant", content: data.content || "I'm here to help with your study!" }
       ]);
     } catch (error) {
       console.error("Error asking Jeeves:", error);
