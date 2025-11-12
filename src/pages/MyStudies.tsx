@@ -79,12 +79,21 @@ const MyStudies = () => {
   };
 
   const createNewStudy = async (title = "Untitled Study", content = "") => {
+    if (!user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to create a study",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from("user_studies")
         .insert([
           {
-            user_id: user?.id,
+            user_id: user.id,
             title,
             content,
           },
