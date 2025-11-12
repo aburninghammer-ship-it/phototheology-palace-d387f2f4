@@ -102,6 +102,10 @@ export const Navigation = () => {
                     </Button>
                     
                     <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
+                      <Link to="/achievements">Achievements</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                       <Link to="/series-builder">Series</Link>
                     </Button>
                     
