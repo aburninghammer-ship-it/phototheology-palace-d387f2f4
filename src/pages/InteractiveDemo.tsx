@@ -351,23 +351,20 @@ export default function InteractiveDemo() {
                     <p className="text-lg leading-relaxed">{step.content.text}</p>
 
                     {/* Optional: Collect user name */}
-                    {!userName && (
-                      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                        <label className="block text-sm font-medium mb-2">
-                          What's your name? (Optional - for your certificate)
-                        </label>
-                        <Input
-                          value={userInput}
-                          onChange={(e) => {
-                            setUserInput(e.target.value);
-                            setUserName(e.target.value);
-                            trackInteraction();
-                          }}
-                          placeholder="Enter your name"
-                          className="max-w-xs"
-                        />
-                      </div>
-                    )}
+                    <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                      <label className="block text-sm font-medium mb-2">
+                        What's your name? (Optional - for your certificate)
+                      </label>
+                      <Input
+                        value={userName}
+                        onChange={(e) => {
+                          setUserName(e.target.value);
+                          trackInteraction();
+                        }}
+                        placeholder="Enter your name"
+                        className="max-w-xs"
+                      />
+                    </div>
                     
                     <div className="grid md:grid-cols-3 gap-4 mt-8">
                       <div className="text-center p-4 rounded-lg bg-primary/5">
