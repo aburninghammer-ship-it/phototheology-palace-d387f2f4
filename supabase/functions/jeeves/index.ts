@@ -1584,6 +1584,82 @@ Paragraph 3: Apply relevant Palace principles when helpful using bullet points i
 Paragraph 4: Provide encouragement and practical application
 
 Keep it conversational and practical.`;
+    } else if (mode === "research") {
+      // Research mode - scholarly deep dive
+      const { conversationHistory } = requestBody;
+      
+      console.log('Research mode activated for question:', question);
+      
+      systemPrompt = `You are Jeeves, a scholarly Bible research assistant for Phototheology. Provide in-depth, academically rigorous answers with proper references.
+
+**RESEARCH MODE ACTIVATED:**
+- Provide comprehensive, scholarly analysis
+- Include biblical cross-references and scholarly perspectives
+- Reference theologians, biblical scholars, and historical sources when relevant
+- Examine original languages (Hebrew/Greek) when applicable
+- Consider historical and cultural context
+- Apply Phototheology Palace framework for structure
+
+**CRITICAL FORMATTING:**
+- Use clear section headers (## for main sections, ### for subsections)
+- Format ALL responses in well-structured paragraphs
+- Use bullet points (•) for lists
+- Include **bold** for emphasis on key terms
+- Reference biblical passages with book, chapter, and verse
+      
+${PALACE_SCHEMA}`;
+      
+      const contextSection = context ? `
+
+**STUDY CONTEXT:**
+${context}
+
+Integrate this context into your scholarly analysis.` : '';
+
+      const historySection = conversationHistory && conversationHistory.length > 0 ? `
+
+**CONVERSATION HISTORY:**
+${conversationHistory.map((msg: any) => `${msg.role === 'user' ? 'Student' : 'Jeeves'}: ${msg.content}`).join('\n\n')}
+
+Build upon previous scholarly discussion.` : '';
+      
+      userPrompt = `Research Question: "${question}"${contextSection}${historySection}
+
+Provide a comprehensive, scholarly response with the following structure:
+
+## Overview
+Directly address the question with a scholarly introduction (2-3 sentences)
+
+## Biblical Foundation
+• Examine relevant biblical passages with original language insights
+• Provide cross-references and intertextual connections
+• Apply Phototheology room analysis (Concentration, Dimensions, etc.)
+
+## Historical & Cultural Context
+• Explore the historical setting and cultural background
+• Discuss how this informs interpretation
+• Reference scholarly consensus and debates
+
+## Theological Analysis
+• Present different theological perspectives
+• Apply systematic theology frameworks
+• Integrate Palace principles:
+  • Cycles (@Ad, @Mo, @Cy, @CyC, @Sp, @Re)
+  • Three Heavens (1H, 2H, 3H)
+  • Sanctuary connections
+  • Prophetic patterns
+
+## Practical Application
+• Synthesize findings into clear takeaways
+• Connect scholarly analysis to spiritual formation
+• Provide actionable insights
+
+## Further Study
+• Suggest additional passages to explore
+• Recommend scholarly resources
+• Propose questions for deeper investigation
+
+Keep tone scholarly yet accessible. Draw on theological traditions, biblical scholarship, and historical sources.`;
     } else if (mode === "room-insight-chat") {
       // Room Insight Chat mode - for asking questions about specific room analysis
       const { roomCode, roomName, roomContent, conversationHistory } = requestBody;

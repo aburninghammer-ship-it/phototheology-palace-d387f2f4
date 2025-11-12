@@ -3,7 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sparkles, Send, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Sparkles, Send, Loader2, ChevronDown, ChevronUp, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
@@ -22,6 +24,7 @@ export const JeevesStudyAssistant = ({ studyContext }: JeevesStudyAssistantProps
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [researchMode, setResearchMode] = useState(false);
   const { toast } = useToast();
 
   const sendMessage = async () => {
@@ -37,7 +40,7 @@ export const JeevesStudyAssistant = ({ studyContext }: JeevesStudyAssistantProps
     try {
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
-          mode: "qa",
+          mode: researchMode ? "research" : "qa",
           question: userMessage,
           context: studyContext || "General Bible study assistance",
           conversationHistory: messages, // Send previous messages for context
@@ -64,20 +67,44 @@ export const JeevesStudyAssistant = ({ studyContext }: JeevesStudyAssistantProps
 
   return (
     <Card className="border-primary/20">
-      <Button
-        variant="ghost"
-        className="w-full flex items-center justify-between p-4"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <span className="font-semibold">Ask Jeeves</span>
-        </div>
-        {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-      </Button>
+      <div className="p-4">
+        <Button
+          variant="ghost"
+          className="w-full flex items-center justify-between"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <span className="font-semibold">Ask Jeeves</span>
+          </div>
+          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </Button>
+
+        {isOpen && (
+          <div className="flex items-center justify-between mt-3 px-2 py-2 bg-muted/50 rounded-md">
+            <div className="flex items-center gap-2">
+              <Search className="w-4 h-4 text-primary" />
+              <Label htmlFor="research-mode" className="text-sm font-medium cursor-pointer">
+                Research Mode
+              </Label>
+            </div>
+            <Switch
+              id="research-mode"
+              checked={researchMode}
+              onCheckedChange={setResearchMode}
+            />
+          </div>
+        )}
+        
+        {researchMode && isOpen && (
+          <p className="text-xs text-muted-foreground mt-2 px-2">
+            🔍 Scholarly research enabled - Jeeves will search academic sources and provide detailed, referenced answers
+          </p>
+        )}
+      </div>
 
       {isOpen && (
-        <div className="p-4 pt-0">
+        <div className="px-4 pb-4 pt-0">
           <ScrollArea className="h-[300px] pr-4 mb-4">
             {messages.length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
