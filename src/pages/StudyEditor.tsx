@@ -21,6 +21,7 @@ import { JeevesStudyAssistant } from "@/components/studies/JeevesStudyAssistant"
 import { ScriptureInsertDialog } from "@/components/studies/ScriptureInsertDialog";
 import { TextFormatToolbar } from "@/components/studies/TextFormatToolbar";
 import { ShareStudyDialog } from "@/components/studies/ShareStudyDialog";
+import { VoiceRecorder } from "@/components/studies/VoiceRecorder";
 
 interface Study {
   id: string;
@@ -188,6 +189,25 @@ const StudyEditor = () => {
     }, 0);
   };
 
+  const handleVoiceTranscription = (text: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      setContent(content + " " + text);
+      setHasChanges(true);
+      return;
+    }
+
+    const start = textarea.selectionStart;
+    const newText = content.substring(0, start) + " " + text + content.substring(start);
+    setContent(newText);
+    setHasChanges(true);
+    
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + text.length + 1, start + text.length + 1);
+    }, 0);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -306,6 +326,7 @@ const StudyEditor = () => {
               <div className="mb-4 flex gap-2">
                 <TextFormatToolbar onFormat={handleFormat} />
                 <ScriptureInsertDialog onInsert={handleInsertScripture} />
+                <VoiceRecorder onTranscription={handleVoiceTranscription} />
               </div>
 
               {/* Content */}
