@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { WifiOff, Wifi } from "lucide-react";
+import { WifiOff, Wifi, Sparkles } from "lucide-react";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -9,18 +9,33 @@ interface SplashScreenProps {
 export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; delay: number }>>([]);
 
   useEffect(() => {
-    // Check online status
+    // Generate random particles
+    const particleArray = Array.from({ length: 25 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 3
+    }));
+    setParticles(particleArray);
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Simulate loading progress
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
-      setProgress(prev => {
+      setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           setTimeout(onComplete, 500);
@@ -30,279 +45,347 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       });
     }, 30);
 
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
+    return () => clearInterval(interval);
   }, [onComplete]);
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      style={{
-        background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)"
-      }}
-      initial={{ opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
     >
-      {/* Divine light rays background */}
+      {/* Dynamic gradient background */}
+      <motion.div
+        animate={{
+          background: [
+            'linear-gradient(135deg, hsl(280, 70%, 30%) 0%, hsl(280, 60%, 40%) 50%, hsl(45, 80%, 50%) 100%)',
+            'linear-gradient(135deg, hsl(280, 60%, 40%) 0%, hsl(45, 80%, 50%) 50%, hsl(280, 70%, 30%) 100%)',
+            'linear-gradient(135deg, hsl(280, 70%, 30%) 0%, hsl(280, 60%, 40%) 50%, hsl(45, 80%, 50%) 100%)',
+          ],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute inset-0"
+      />
+
+      {/* Floating sparkle particles */}
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            background: "radial-gradient(ellipse at center, rgba(255,215,0,0.3) 0%, transparent 70%)"
-          }}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
+        {particles.map((particle) => (
+          <motion.div
+            key={particle.id}
+            initial={{ opacity: 0, scale: 0, x: `${particle.x}%`, y: `${particle.y}%` }}
+            animate={{
+              opacity: [0, 1, 0],
+              scale: [0, 1.5, 0],
+              y: [`${particle.y}%`, `${particle.y - 20}%`],
+            }}
+            transition={{
+              duration: 4 + particle.delay,
+              repeat: Infinity,
+              delay: particle.delay,
+              ease: "easeInOut",
+            }}
+            className="absolute"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+          </motion.div>
+        ))}
       </div>
 
-      {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center gap-8">
-        {/* Animated Palace Tower Icon */}
+      {/* Rotating divine light rays */}
+      <motion.div
+        animate={{
+          rotate: 360,
+        }}
+        transition={{
+          duration: 40,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        className="absolute inset-0"
+        style={{
+          background: `conic-gradient(from 0deg at 50% 50%, 
+            transparent 0deg, 
+            rgba(255, 215, 0, 0.15) 45deg, 
+            transparent 90deg,
+            rgba(255, 215, 0, 0.15) 135deg,
+            transparent 180deg,
+            rgba(255, 215, 0, 0.15) 225deg,
+            transparent 270deg,
+            rgba(255, 215, 0, 0.15) 315deg,
+            transparent 360deg
+          )`,
+        }}
+      />
+
+      <div className="relative z-10 text-center space-y-8 px-4 max-w-md">
+        {/* Animated Palace Icon */}
         <motion.div
-          className="relative"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ 
+            scale: 1, 
+            rotate: 0,
+          }}
           transition={{
             type: "spring",
-            stiffness: 260,
-            damping: 20,
-            delay: 0.2
+            stiffness: 120,
+            damping: 12,
           }}
+          className="relative inline-block"
         >
-          {/* Glow effect */}
+          {/* Dynamic pulsing glow */}
           <motion.div
-            className="absolute inset-0 rounded-full blur-3xl"
-            style={{
-              background: "radial-gradient(circle, rgba(255,215,0,0.6) 0%, transparent 70%)"
-            }}
             animate={{
               scale: [1, 1.3, 1],
-              opacity: [0.5, 0.8, 0.5]
+              opacity: [0.3, 0.6, 0.3],
             }}
             transition={{
-              duration: 2,
+              duration: 2.5,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
+            className="absolute inset-0 rounded-full bg-amber-400/40 blur-3xl"
           />
-
-          {/* Palace Icon */}
+          
+          {/* Palace structure with 3D effect */}
           <motion.div
-            className="relative"
             animate={{
-              y: [0, -10, 0]
+              y: [0, -8, 0],
+              rotateY: [0, 5, 0],
             }}
             transition={{
-              duration: 3,
+              duration: 4,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
+            className="relative w-32 h-32"
+            style={{ transformStyle: 'preserve-3d' }}
           >
-            <svg
-              width="120"
-              height="120"
-              viewBox="0 0 120 120"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Open Bible */}
-              <motion.path
-                d="M20 80 L60 70 L100 80 L100 90 L60 85 L20 90 Z"
-                fill="url(#bibleGradient)"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+            {/* Main tower */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 h-24 bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 rounded-t-lg shadow-2xl">
+              {/* Glowing windows with individual animations */}
+              <motion.div
+                animate={{ opacity: [0.6, 1, 0.6] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0 }}
+                className="absolute top-6 left-1/2 -translate-x-1/2 w-3 h-4 bg-purple-300 rounded-sm shadow-lg shadow-purple-400/50"
               />
-              
-              {/* Palace Tower */}
-              <motion.g
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-                {/* Tower base */}
-                <rect x="40" y="40" width="40" height="40" rx="2" fill="url(#towerGradient)" />
-                
-                {/* Gothic arch window */}
-                <path
-                  d="M50 50 Q50 45 55 45 L65 45 Q70 45 70 50 L70 65 L50 65 Z"
-                  fill="url(#glassGradient)"
+              <motion.div
+                animate={{ opacity: [0.6, 1, 0.6] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                className="absolute top-12 left-1/2 -translate-x-1/2 w-4 h-5 bg-blue-300 rounded-sm shadow-lg shadow-blue-400/50"
+              />
+            </div>
+            
+            {/* Spire */}
+            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-t from-amber-500 to-amber-300">
+              <div 
+                className="absolute -top-4 left-1/2 -translate-x-1/2 w-0 h-0" 
+                style={{ 
+                  borderLeft: '24px solid transparent',
+                  borderRight: '24px solid transparent',
+                  borderBottom: '32px solid hsl(45, 90%, 60%)'
+                }}
+              />
+            </div>
+            
+            {/* Animated cross on top */}
+            <motion.div
+              animate={{
+                scale: [1, 1.15, 1],
+                rotate: [0, 8, -8, 0],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute -top-2 left-1/2 -translate-x-1/2"
+            >
+              <div className="w-1.5 h-8 bg-amber-100 rounded-full shadow-lg" />
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-6 h-1.5 bg-amber-100 rounded-full shadow-lg" />
+              <motion.div
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 bg-amber-200 blur-sm"
+              />
+            </motion.div>
+
+            {/* Open Bible with 3D rotation */}
+            <motion.div
+              animate={{
+                rotateX: [0, 15, 0],
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-4 bg-white rounded-sm shadow-2xl"
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              <div className="absolute inset-0 flex">
+                <div className="flex-1 border-r border-gray-300 bg-gradient-to-r from-gray-50 to-white" />
+                <div className="flex-1 bg-gradient-to-l from-gray-50 to-white" />
+              </div>
+              {/* Glowing text lines */}
+              <div className="absolute inset-2 space-y-1">
+                <motion.div
+                  animate={{ opacity: [0.4, 0.8, 0.4] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="h-px bg-gray-400"
                 />
-                
-                {/* Cross on top */}
-                <motion.g
-                  animate={{
-                    filter: [
-                      "drop-shadow(0 0 10px rgba(255,215,0,0.8))",
-                      "drop-shadow(0 0 20px rgba(255,215,0,1))",
-                      "drop-shadow(0 0 10px rgba(255,215,0,0.8))"
-                    ]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <rect x="58" y="20" width="4" height="15" fill="#FFD700" />
-                  <rect x="52" y="26" width="16" height="4" fill="#FFD700" />
-                </motion.g>
-              </motion.g>
-
-              {/* Light rays */}
-              <motion.g
-                opacity={0.6}
-                animate={{
-                  opacity: [0.3, 0.6, 0.3]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <path d="M60 75 L50 90" stroke="url(#rayGradient)" strokeWidth="2" />
-                <path d="M60 75 L60 95" stroke="url(#rayGradient)" strokeWidth="2" />
-                <path d="M60 75 L70 90" stroke="url(#rayGradient)" strokeWidth="2" />
-              </motion.g>
-
-              {/* Gradients */}
-              <defs>
-                <linearGradient id="bibleGradient" x1="20" y1="70" x2="100" y2="90">
-                  <stop offset="0%" stopColor="#8B4513" />
-                  <stop offset="50%" stopColor="#D4AF37" />
-                  <stop offset="100%" stopColor="#8B4513" />
-                </linearGradient>
-                
-                <linearGradient id="towerGradient" x1="40" y1="40" x2="80" y2="80">
-                  <stop offset="0%" stopColor="#FFD700" />
-                  <stop offset="100%" stopColor="#FFA500" />
-                </linearGradient>
-                
-                <linearGradient id="glassGradient" x1="50" y1="45" x2="70" y2="65">
-                  <stop offset="0%" stopColor="#E6E6FA" />
-                  <stop offset="100%" stopColor="#9370DB" />
-                </linearGradient>
-                
-                <linearGradient id="rayGradient" x1="60" y1="75" x2="60" y2="95">
-                  <stop offset="0%" stopColor="#FFD700" />
-                  <stop offset="100%" stopColor="transparent" />
-                </linearGradient>
-              </defs>
-            </svg>
+              </div>
+            </motion.div>
           </motion.div>
         </motion.div>
 
-        {/* App Name */}
+        {/* App title with shimmer effect */}
         <motion.div
-          className="text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="relative"
         >
-          <h1 className="text-4xl font-bold text-white mb-2 tracking-wide">
-            Phototheology
-          </h1>
-          <p className="text-lg text-white/90 font-light tracking-widest">
-            PALACE
-          </p>
-        </motion.div>
-
-        {/* Loading bar */}
-        <motion.div
-          className="w-64 h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1 }}
-        >
-          <motion.div
-            className="h-full rounded-full"
-            style={{
-              background: "linear-gradient(90deg, #FFD700 0%, #FFA500 100%)",
-              boxShadow: "0 0 20px rgba(255, 215, 0, 0.6)"
+          <motion.h1
+            animate={{
+              textShadow: [
+                '0 0 20px rgba(251, 191, 36, 0.5)',
+                '0 0 40px rgba(251, 191, 36, 0.8)',
+                '0 0 20px rgba(251, 191, 36, 0.5)',
+              ],
             }}
-            initial={{ width: "0%" }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
-          />
+            transition={{ duration: 3, repeat: Infinity }}
+            className="text-6xl font-bold text-amber-50 mb-2"
+          >
+            Phototheology
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-3xl text-amber-100 font-light tracking-widest"
+          >
+            PALACE
+          </motion.p>
         </motion.div>
 
-        {/* Connection Status & Loading text */}
+        {/* Enhanced progress bar with shimmer */}
+        <div className="w-72 mx-auto space-y-4">
+          <div className="relative h-3 bg-purple-950/40 rounded-full overflow-hidden backdrop-blur-md border border-amber-400/20">
+            <motion.div
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="h-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 rounded-full relative overflow-hidden"
+            >
+              {/* Shimmer effect */}
+              <motion.div
+                animate={{
+                  x: ['-100%', '200%'],
+                }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent"
+              />
+            </motion.div>
+            
+            {/* Glow effect */}
+            <motion.div
+              animate={{
+                opacity: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+              }}
+              style={{ width: `${progress}%` }}
+              className="absolute top-0 left-0 h-full bg-amber-300/30 blur-xl"
+            />
+          </div>
+          
+          <motion.p
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-amber-50/90 text-base font-medium"
+          >
+            Preparing your sanctuary... {Math.round(progress)}%
+          </motion.p>
+        </div>
+
+        {/* Connection status */}
         <motion.div
-          className="flex flex-col items-center gap-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/15 backdrop-blur-lg border border-white/30 shadow-xl"
         >
-          {!isOnline ? (
+          {isOnline ? (
             <>
               <motion.div
-                className="flex items-center gap-2 px-4 py-2 bg-amber-500/20 border border-amber-500/30 rounded-full backdrop-blur-sm"
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 1.5,
-                  repeatType: "reverse"
-                }}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
               >
-                <WifiOff className="w-4 h-4 text-amber-300" />
-                <span className="text-amber-100 text-xs font-medium">Offline Mode</span>
+                <Wifi className="w-5 h-5 text-green-300" />
               </motion.div>
-              <p className="text-white/80 text-sm tracking-wide text-center max-w-xs">
-                No internet connection detected.<br />
-                <span className="text-white/60 text-xs">You can still access saved content and features.</span>
-              </p>
+              <span className="text-sm text-green-200 font-semibold">Connected</span>
             </>
           ) : (
             <>
               <motion.div
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full backdrop-blur-sm"
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
+                animate={{ opacity: [1, 0.4, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
               >
-                <Wifi className="w-4 h-4 text-emerald-300" />
-                <span className="text-emerald-100 text-xs font-medium">Connected</span>
+                <WifiOff className="w-5 h-5 text-amber-300" />
               </motion.div>
-              <p className="text-white/70 text-sm tracking-wider">
-                Entering the Palace...
-              </p>
+              <span className="text-sm text-amber-200 font-semibold">Offline Mode</span>
             </>
           )}
         </motion.div>
+
+        {!isOnline && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="text-amber-100/80 text-sm max-w-xs mx-auto px-4"
+          >
+            Your saved content remains accessible offline
+          </motion.p>
+        )}
       </div>
 
-      {/* Decorative stars */}
-      {[...Array(20)].map((_, i) => (
+      {/* Corner sparkles */}
+      {[
+        { top: '10%', left: '15%' },
+        { top: '20%', right: '20%' },
+        { bottom: '15%', left: '10%' },
+        { bottom: '25%', right: '15%' },
+      ].map((pos, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-white rounded-full"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`
-          }}
+          initial={{ opacity: 0, scale: 0, rotate: 0 }}
           animate={{
             opacity: [0, 1, 0],
-            scale: [0, 1, 0]
+            scale: [0, 1.5, 0],
+            rotate: [0, 180, 360],
           }}
           transition={{
-            duration: 2 + Math.random() * 2,
+            duration: 4,
             repeat: Infinity,
-            delay: Math.random() * 2,
-            ease: "easeInOut"
+            delay: i * 0.8,
+            ease: "easeInOut",
           }}
-        />
+          className="absolute"
+          style={pos}
+        >
+          <Sparkles className="w-6 h-6 text-amber-200" />
+        </motion.div>
       ))}
     </motion.div>
   );

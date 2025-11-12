@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "./ui/alert";
 import { WifiOff, Wifi, HardDrive } from "lucide-react";
 import { Button } from "./ui/button";
-import { useNavigate } from "react-router-dom";
 
 export const OfflineIndicator = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [wasOffline, setWasOffline] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleOnline = () => {
@@ -56,7 +54,7 @@ export const OfflineIndicator = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('/offline-content')}
+              onClick={() => window.location.href = '/offline-content'}
               className="ml-2 flex-shrink-0"
             >
               <HardDrive className="w-3 h-3 mr-1" />
