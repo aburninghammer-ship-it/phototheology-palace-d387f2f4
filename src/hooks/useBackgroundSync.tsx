@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { syncQueue, SyncAction } from "@/services/syncQueue";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./use-toast";
@@ -17,13 +17,13 @@ export const useBackgroundSync = () => {
   }, []);
 
   // Update pending count
-  const updatePendingCount = async () => {
+  const updatePendingCount = useCallback(async () => {
     const count = await syncQueue.getPendingCount();
     setPendingCount(count);
-  };
+  }, []);
 
   // Sync handler for different action types
-  const handleSync = async (action: SyncAction) => {
+  const handleSync = useCallback(async (action: SyncAction) => {
     if (!user) throw new Error("User not authenticated");
 
     try {
@@ -64,21 +64,23 @@ export const useBackgroundSync = () => {
       console.error(`Failed to sync ${action.type}:`, error);
       throw error;
     }
-  };
+  }, [user]);
 
   // Process sync queue
-  const processSync = async () => {
+  const processSync = useCallback(async () => {
     if (!navigator.onLine || !user) return;
 
     setIsSyncing(true);
+    const currentPending = await syncQueue.getPendingCount();
+    
     try {
       await syncQueue.processQueue(handleSync);
       await updatePendingCount();
 
-      if (pendingCount > 0) {
+      if (currentPending > 0) {
         toast({
           title: "Sync complete",
-          description: `${pendingCount} action${pendingCount !== 1 ? 's' : ''} synced successfully`,
+          description: `${currentPending} action${currentPending !== 1 ? 's' : ''} synced successfully`,
         });
       }
     } catch (error) {
@@ -91,7 +93,7 @@ export const useBackgroundSync = () => {
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [user, handleSync, updatePendingCount, toast]);
 
   // Auto-sync when coming online
   useEffect(() => {
@@ -101,14 +103,14 @@ export const useBackgroundSync = () => {
 
     window.addEventListener('online', handleOnline);
     return () => window.removeEventListener('online', handleOnline);
-  }, [user]);
+  }, [processSync]);
 
   // Initial sync on mount if online
   useEffect(() => {
     if (navigator.onLine && user) {
       processSync();
     }
-  }, [user]);
+  }, [user, processSync]);
 
   // Subscribe to queue changes
   useEffect(() => {
@@ -119,7 +121,7 @@ export const useBackgroundSync = () => {
     updatePendingCount();
 
     return unsubscribe;
-  }, []);
+  }, [updatePendingCount]);
 
   return {
     pendingCount,
