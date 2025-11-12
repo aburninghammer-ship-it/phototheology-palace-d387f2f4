@@ -3,7 +3,7 @@ import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle } f
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
-import { MobileNav } from "@/components/MobileNav";
+import { EnhancedMobileDrawer } from "@/components/EnhancedMobileDrawer";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useDirectMessages } from "@/hooks/useDirectMessages";
 import { Badge } from "@/components/ui/badge";
@@ -184,7 +184,7 @@ export const Navigation = () => {
 
                   {/* Mobile Navigation */}
                   <div className="md:hidden">
-                    <MobileNav />
+                    <EnhancedMobileDrawer />
                   </div>
                 </>
               ) : (
