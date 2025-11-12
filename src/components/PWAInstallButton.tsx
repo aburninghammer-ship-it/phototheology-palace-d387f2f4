@@ -64,15 +64,18 @@ export function PWAInstallButton() {
     }
   };
 
+  // Debug logging
+  console.log('PWA Install Button State:', { isInstallable, isIOS, hasPrompt: !!deferredPrompt });
+
   if (!isInstallable) return null;
 
   return (
     <Button
       onClick={handleInstall}
       size="sm"
-      className="relative gap-2 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-subtle font-semibold"
+      className="relative gap-2 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 font-semibold flex-shrink-0"
     >
-      <Download className="h-4 w-4 animate-bounce" />
+      <Download className="h-4 w-4" />
       <span className="hidden sm:inline">Install App</span>
       <Badge 
         variant="secondary" 
