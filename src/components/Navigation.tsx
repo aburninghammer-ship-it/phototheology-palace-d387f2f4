@@ -75,7 +75,31 @@ export const Navigation = () => {
                   {/* Desktop Navigation - Lean */}
                   <div className="hidden md:flex items-center gap-2">
                     <Button variant="ghost" asChild size="sm">
-                      <Link to="/palace">Product</Link>
+                      <Link to="/palace">Palace</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/bible">Bible</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/games">Games</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/phototheology-gpt">GPTs</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/phototheology-course">Courses</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/daily-challenges">Challenges</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/series-builder">Series</Link>
                     </Button>
                     
                     <Button variant="ghost" asChild size="sm">
@@ -84,10 +108,6 @@ export const Navigation = () => {
                     
                     <Button variant="ghost" asChild size="sm">
                       <Link to="/community">Community</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/series-builder">Series Builder</Link>
                     </Button>
                     
                     {/* Account Dropdown */}
@@ -130,7 +150,31 @@ export const Navigation = () => {
                   {/* Desktop Navigation for logged-out users */}
                   <div className="hidden md:flex items-center gap-2">
                     <Button variant="ghost" asChild size="sm">
-                      <Link to="/palace">Product</Link>
+                      <Link to="/palace">Palace</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/bible">Bible</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/games">Games</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/phototheology-gpt">GPTs</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/phototheology-course">Courses</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/daily-challenges">Challenges</Link>
+                    </Button>
+                    
+                    <Button variant="ghost" asChild size="sm">
+                      <Link to="/series-builder">Series</Link>
                     </Button>
                     
                     <Button variant="ghost" asChild size="sm">
@@ -139,10 +183,6 @@ export const Navigation = () => {
                     
                     <Button variant="ghost" asChild size="sm">
                       <Link to="/community">Community</Link>
-                    </Button>
-                    
-                    <Button variant="ghost" asChild size="sm">
-                      <Link to="/series-builder">Series Builder</Link>
                     </Button>
                     
                     <Button asChild size="sm">
