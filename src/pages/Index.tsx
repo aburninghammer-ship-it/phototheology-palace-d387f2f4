@@ -34,6 +34,7 @@ import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/phototheology-hero.png";
 import practiceWithAi from "@/assets/practice-with-ai.png";
 import masterDeploy from "@/assets/master-deploy.png";
+import { UserCountBadge } from "@/components/UserCountBadge";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -98,6 +99,10 @@ const Index = () => {
       {/* Hero Section - Pain First */}
       <section className="relative overflow-hidden pt-32 pb-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-background to-accent/5">
         <div className="max-w-6xl mx-auto text-center">
+          <div className="flex justify-center mb-6">
+            <UserCountBadge />
+          </div>
+          
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
             Your Mind Was Designed to<br />
             <span className="text-primary">Understand and Remember the Bible Visually</span>
