@@ -19,6 +19,7 @@ export function NotificationPreferences() {
     fruit_check_challenges: true,
     community_posts: true,
     study_reminders: true,
+    renewal_reminders: true,
   });
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export function NotificationPreferences() {
           fruit_check_challenges: data.fruit_check_challenges,
           community_posts: data.community_posts,
           study_reminders: data.study_reminders,
+          renewal_reminders: data.renewal_reminders ?? true,
         });
       }
     } catch (error) {
@@ -220,6 +222,20 @@ export function NotificationPreferences() {
             id="study-reminders"
             checked={preferences.study_reminders}
             onCheckedChange={(checked) => updatePreference('study_reminders', checked)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="renewal-reminders">Subscription Renewal Reminders</Label>
+            <p className="text-sm text-muted-foreground">
+              Get notified 30 days before your annual subscription renews
+            </p>
+          </div>
+          <Switch
+            id="renewal-reminders"
+            checked={preferences.renewal_reminders}
+            onCheckedChange={(checked) => updatePreference('renewal_reminders', checked)}
           />
         </div>
       </CardContent>

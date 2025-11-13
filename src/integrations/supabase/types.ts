@@ -1748,6 +1748,7 @@ export type Database = {
           equation_challenges: boolean
           fruit_check_challenges: boolean
           id: string
+          renewal_reminders: boolean
           sanctuary_challenges: boolean
           study_reminders: boolean
           updated_at: string
@@ -1762,6 +1763,7 @@ export type Database = {
           equation_challenges?: boolean
           fruit_check_challenges?: boolean
           id?: string
+          renewal_reminders?: boolean
           sanctuary_challenges?: boolean
           study_reminders?: boolean
           updated_at?: string
@@ -1776,6 +1778,7 @@ export type Database = {
           equation_challenges?: boolean
           fruit_check_challenges?: boolean
           id?: string
+          renewal_reminders?: boolean
           sanctuary_challenges?: boolean
           study_reminders?: boolean
           updated_at?: string
