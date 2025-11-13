@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { playAchievementNotification } from "@/utils/notificationSound";
 
 export const useAchievements = () => {
   const { user } = useAuth();
@@ -129,6 +130,9 @@ export const useAchievements = () => {
         .update({ points: (profile?.points || 0) + (achievement.points || 0) })
         .eq("id", user.id);
 
+      // Play achievement sound
+      playAchievementNotification();
+      
       // Trigger animated notification
       setUnlockedAchievement(achievement);
     }

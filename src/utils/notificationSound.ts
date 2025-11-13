@@ -1,57 +1,72 @@
 // Notification sound and vibration utility
 let audioContext: AudioContext | null = null;
 
-// Create a simple notification beep using Web Audio API
-const playNotificationBeep = () => {
-  try {
-    if (!audioContext) {
-      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
+// Helper to create and play a tone
+const playTone = (frequency: number, duration: number, delay: number = 0) => {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
 
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+  setTimeout(() => {
+    const oscillator = audioContext!.createOscillator();
+    const gainNode = audioContext!.createGain();
 
     oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(audioContext!.destination);
 
-    // Create a pleasant notification tone (two quick beeps)
-    oscillator.frequency.value = 800;
+    oscillator.frequency.value = frequency;
     oscillator.type = 'sine';
 
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    gainNode.gain.setValueAtTime(0.3, audioContext!.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext!.currentTime + duration);
 
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.1);
+    oscillator.start(audioContext!.currentTime);
+    oscillator.stop(audioContext!.currentTime + duration);
+  }, delay);
+};
 
-    // Second beep
-    setTimeout(() => {
-      const oscillator2 = audioContext!.createOscillator();
-      const gainNode2 = audioContext!.createGain();
-
-      oscillator2.connect(gainNode2);
-      gainNode2.connect(audioContext!.destination);
-
-      oscillator2.frequency.value = 1000;
-      oscillator2.type = 'sine';
-
-      gainNode2.gain.setValueAtTime(0.3, audioContext!.currentTime);
-      gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext!.currentTime + 0.1);
-
-      oscillator2.start(audioContext!.currentTime);
-      oscillator2.stop(audioContext!.currentTime + 0.1);
-    }, 120);
+// Message notification: Two quick beeps (medium pitch)
+const playMessageSound = () => {
+  try {
+    playTone(800, 0.1, 0);
+    playTone(1000, 0.1, 120);
   } catch (error) {
-    console.error('Error playing notification sound:', error);
+    console.error('Error playing message sound:', error);
   }
 };
 
-// Vibrate device (mobile)
-const vibrateDevice = () => {
+// Challenge notification: Three ascending tones (playful)
+const playChallengeSound = () => {
+  try {
+    playTone(600, 0.08, 0);
+    playTone(800, 0.08, 100);
+    playTone(1000, 0.12, 200);
+  } catch (error) {
+    console.error('Error playing challenge sound:', error);
+  }
+};
+
+// Achievement notification: Victory fanfare (celebratory)
+const playAchievementSound = () => {
+  try {
+    playTone(523, 0.15, 0);      // C
+    playTone(659, 0.15, 150);    // E
+    playTone(784, 0.25, 300);    // G
+  } catch (error) {
+    console.error('Error playing achievement sound:', error);
+  }
+};
+
+// Vibrate device (mobile) with different patterns
+const vibrateDevice = (pattern: 'message' | 'challenge' | 'achievement' = 'message') => {
   try {
     if ('vibrate' in navigator) {
-      // Two short vibrations: [duration, pause, duration]
-      navigator.vibrate([100, 50, 100]);
+      const patterns = {
+        message: [100, 50, 100],           // Two short
+        challenge: [50, 50, 50, 50, 150],  // Three quick + long
+        achievement: [200, 100, 200, 100, 300] // Victory pattern
+      };
+      navigator.vibrate(patterns[pattern]);
     }
   } catch (error) {
     console.error('Error vibrating device:', error);
@@ -78,14 +93,31 @@ const isVibrationEnabled = (): boolean => {
   }
 };
 
-// Main function to play notification
+// Main functions to play notifications by type
 export const playMessageNotification = () => {
   if (isSoundEnabled()) {
-    playNotificationBeep();
+    playMessageSound();
   }
-  
   if (isVibrationEnabled()) {
-    vibrateDevice();
+    vibrateDevice('message');
+  }
+};
+
+export const playChallengeNotification = () => {
+  if (isSoundEnabled()) {
+    playChallengeSound();
+  }
+  if (isVibrationEnabled()) {
+    vibrateDevice('challenge');
+  }
+};
+
+export const playAchievementNotification = () => {
+  if (isSoundEnabled()) {
+    playAchievementSound();
+  }
+  if (isVibrationEnabled()) {
+    vibrateDevice('achievement');
   }
 };
 

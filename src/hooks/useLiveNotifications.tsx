@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { playChallengeNotification } from "@/utils/notificationSound";
 
 interface LiveNotification {
   type: string;
@@ -30,6 +31,9 @@ export function useLiveNotifications() {
     liveChannel
       .on('broadcast', { event: 'challenge-shared' }, (payload) => {
         const notification = payload.payload as LiveNotification;
+        
+        // Play challenge sound
+        playChallengeNotification();
         
         // Show toast notification
         toast(notification.message, {
