@@ -18,12 +18,39 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const Navigation = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const { activeCount } = useActiveUsers();
   const { toggleSidebar } = useSidebar();
   const { conversations } = useDirectMessages();
   
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread_count, 0);
+
+  // Don't render logged-out view while still checking auth
+  if (loading) {
+    return (
+      <>
+        <nav className="fixed top-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm">
+          <div className="w-full px-4">
+            <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
+              <Link to="/" className="flex items-center gap-2 group">
+                <div className="relative">
+                  <Building2 className="h-6 w-6 text-primary transition-all duration-300 group-hover:scale-110" />
+                  <Sparkles className="h-3 w-3 text-accent absolute -top-1 -right-1 animate-pulse-glow" />
+                </div>
+                <span className="font-serif text-xl font-semibold bg-gradient-palace bg-clip-text text-transparent">
+                  Phototheology
+                </span>
+              </Link>
+              <div className="flex items-center gap-2">
+                <PWAInstallButton />
+              </div>
+            </div>
+          </div>
+        </nav>
+        <div className="h-16" />
+      </>
+    );
+  }
   
   return (
     <>

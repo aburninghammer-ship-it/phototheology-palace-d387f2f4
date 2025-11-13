@@ -31,7 +31,7 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRecentPages } from "@/hooks/useRecentPages";
 import { usePageBookmarks } from "@/hooks/usePageBookmarks";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 const categoryConfig = {
@@ -103,6 +103,11 @@ export const EnhancedMobileDrawer = () => {
   const handleLinkClick = () => {
     setOpen(false);
   };
+
+  // Close drawer when auth state changes to force re-render with new state
+  useEffect(() => {
+    setOpen(false);
+  }, [user]);
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
