@@ -16,6 +16,35 @@ export function UserCountBadge() {
     };
 
     fetchUserCount();
+
+    // Subscribe to real-time INSERT events on profiles table
+    const channel = supabase
+      .channel('user-count-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'profiles'
+        },
+        (payload) => {
+          console.log('New user signed up:', payload);
+          // Increment count when new user signs up with active or trial status
+          const newProfile = payload.new as any;
+          if (
+            newProfile.subscription_status === 'active' || 
+            newProfile.subscription_status === 'trial' ||
+            newProfile.has_lifetime_access === true
+          ) {
+            setUserCount((prev) => (prev || 0) + 1);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (userCount === null) return null;
