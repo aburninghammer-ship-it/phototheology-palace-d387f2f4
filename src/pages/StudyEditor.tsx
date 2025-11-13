@@ -479,7 +479,15 @@ const StudyEditor = () => {
 
           {/* Sidebar with Jeeves */}
           <div className="lg:col-span-1">
-            <JeevesStudyAssistant studyContext={`Title: ${title}\n\nContent: ${content.substring(0, 500)}`} />
+            <JeevesStudyAssistant 
+              studyContext={`Title: ${title}\n\nContent: ${content.substring(0, 500)}`}
+              studyId={id}
+              onContentUpdate={(updatedContent, updatedTags) => {
+                setContent(updatedContent);
+                setTags(updatedTags);
+                setHasChanges(true);
+              }}
+            />
           </div>
         </div>
 
