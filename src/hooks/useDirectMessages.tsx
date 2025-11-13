@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/toast';
+import { playMessageNotification } from '@/utils/notificationSound';
 
 export interface Message {
   id: string;
@@ -375,6 +376,9 @@ export const useDirectMessages = () => {
           if (newMessage.sender_id !== user.id && newMessage.conversation_id !== activeConversationId) {
             const convId = newMessage.conversation_id;
             console.log('Showing notification for message from:', newMessage.sender_id, 'in conversation:', convId);
+            
+            // Play sound and vibrate
+            playMessageNotification();
             
             toast({
               title: 'New Message',

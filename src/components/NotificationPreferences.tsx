@@ -5,11 +5,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Bell } from "lucide-react";
+import { Bell, Volume2, Vibrate } from "lucide-react";
+import { 
+  getNotificationSoundEnabled, 
+  setNotificationSoundEnabled,
+  getNotificationVibrationEnabled,
+  setNotificationVibrationEnabled 
+} from "@/utils/notificationSound";
 
 export function NotificationPreferences() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [vibrationEnabled, setVibrationEnabled] = useState(true);
   const [preferences, setPreferences] = useState({
     equation_challenges: true,
     christ_chapter_challenges: true,
@@ -24,6 +32,9 @@ export function NotificationPreferences() {
 
   useEffect(() => {
     fetchPreferences();
+    // Load local preferences for sound and vibration
+    setSoundEnabled(getNotificationSoundEnabled());
+    setVibrationEnabled(getNotificationVibrationEnabled());
   }, [user]);
 
   const fetchPreferences = async () => {
@@ -236,6 +247,60 @@ export function NotificationPreferences() {
             id="renewal-reminders"
             checked={preferences.renewal_reminders}
             onCheckedChange={(checked) => updatePreference('renewal_reminders', checked)}
+          />
+        </div>
+
+        <div className="border-t pt-4 mt-4">
+          <h3 className="font-semibold mb-4">Notification Settings</h3>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5 flex items-center gap-2">
+            <Volume2 className="h-4 w-4 text-muted-foreground" />
+            <div>
+              <Label htmlFor="sound-notifications">Notification Sound</Label>
+              <p className="text-sm text-muted-foreground">
+                Play sound when receiving messages
+              </p>
+            </div>
+          </div>
+          <Switch
+            id="sound-notifications"
+            checked={soundEnabled}
+            onCheckedChange={(checked) => {
+              setSoundEnabled(checked);
+              setNotificationSoundEnabled(checked);
+              toast.success(checked ? 'Sound enabled' : 'Sound disabled', {
+                description: checked 
+                  ? 'You will now hear sounds for new messages' 
+                  : 'Message sounds are now muted',
+              });
+            }}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5 flex items-center gap-2">
+            <Vibrate className="h-4 w-4 text-muted-foreground" />
+            <div>
+              <Label htmlFor="vibration-notifications">Vibration</Label>
+              <p className="text-sm text-muted-foreground">
+                Vibrate device when receiving messages (mobile)
+              </p>
+            </div>
+          </div>
+          <Switch
+            id="vibration-notifications"
+            checked={vibrationEnabled}
+            onCheckedChange={(checked) => {
+              setVibrationEnabled(checked);
+              setNotificationVibrationEnabled(checked);
+              toast.success(checked ? 'Vibration enabled' : 'Vibration disabled', {
+                description: checked 
+                  ? 'Device will vibrate for new messages' 
+                  : 'Vibration is now disabled',
+              });
+            }}
           />
         </div>
       </CardContent>
