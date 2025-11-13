@@ -98,6 +98,29 @@ serve(async (req) => {
           break;
         }
 
+        // Send purchase notification email
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('display_name')
+            .eq('id', metadata.user_id)
+            .single();
+
+          await supabase.functions.invoke('send-purchase-notification', {
+            body: {
+              userEmail: metadata.billing_email,
+              userName: profile?.display_name || metadata.contact_person,
+              amount: session.amount_total || 0,
+              currency: session.currency || 'usd',
+              product: 'Church Subscription',
+              subscriptionTier: metadata.tier,
+            }
+          });
+        } catch (emailError) {
+          console.error('Failed to send purchase notification:', emailError);
+          // Don't fail the whole operation if email fails
+        }
+
         // Get subscription details to set renewal date
         if (session.subscription) {
           try {
