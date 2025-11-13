@@ -2144,6 +2144,7 @@ export type Database = {
           stripe_customer_id: string | null
           student_expires_at: string | null
           student_verified_at: string | null
+          subscription_renewal_date: string | null
           subscription_status: string | null
           subscription_tier: string | null
           trial_ends_at: string | null
@@ -2184,6 +2185,7 @@ export type Database = {
           stripe_customer_id?: string | null
           student_expires_at?: string | null
           student_verified_at?: string | null
+          subscription_renewal_date?: string | null
           subscription_status?: string | null
           subscription_tier?: string | null
           trial_ends_at?: string | null
@@ -2224,6 +2226,7 @@ export type Database = {
           stripe_customer_id?: string | null
           student_expires_at?: string | null
           student_verified_at?: string | null
+          subscription_renewal_date?: string | null
           subscription_status?: string | null
           subscription_tier?: string | null
           trial_ends_at?: string | null
@@ -2324,6 +2327,36 @@ export type Database = {
           referrer_id?: string
           reward_given?: boolean | null
           status?: string
+        }
+        Relationships: []
+      }
+      renewal_reminders: {
+        Row: {
+          billing_period: string
+          created_at: string
+          id: string
+          reminder_sent_at: string
+          renewal_date: string
+          subscription_type: string
+          user_id: string
+        }
+        Insert: {
+          billing_period: string
+          created_at?: string
+          id?: string
+          reminder_sent_at?: string
+          renewal_date: string
+          subscription_type: string
+          user_id: string
+        }
+        Update: {
+          billing_period?: string
+          created_at?: string
+          id?: string
+          reminder_sent_at?: string
+          renewal_date?: string
+          subscription_type?: string
+          user_id?: string
         }
         Relationships: []
       }
