@@ -237,7 +237,7 @@ const DailyChallenges = () => {
                   <p className="text-muted-foreground max-w-md mx-auto">
                     Create "biblical recipes" – coherent mini-sermons using only Bible verse references
                   </p>
-                  <Button onClick={() => navigate("/chef-challenge")} size="lg">
+                  <Button onClick={() => navigate("/games/chef-challenge")} size="lg">
                     Start Chef Challenge
                   </Button>
                 </CardContent>
