@@ -102,8 +102,8 @@ export const Navigation = () => {
 
               {user ? (
                 <>
-                  {/* Desktop Navigation - Horizontal Scroll on Smaller Screens */}
-                  <div className="hidden md:flex items-center gap-2 overflow-x-auto scrollbar-hide max-w-2xl">
+                  {/* Desktop Navigation - Horizontal Scroll */}
+                  <div className="hidden md:flex items-center gap-2 overflow-x-auto scrollbar-hide flex-1">
                   <Button variant="ghost" asChild size="sm" className="whitespace-nowrap">
                     <Link to="/palace">Palace</Link>
                   </Button>

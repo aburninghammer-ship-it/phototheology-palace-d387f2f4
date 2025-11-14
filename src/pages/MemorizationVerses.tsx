@@ -51,6 +51,8 @@ const MemorizationVerses = () => {
   const [notes, setNotes] = useState("");
   const [fetchingVerse, setFetchingVerse] = useState(false);
   const [bookSearchOpen, setBookSearchOpen] = useState(false);
+  const [showFirstLetterOnly, setShowFirstLetterOnly] = useState<{[key: string]: boolean}>({});
+  const [reviewInterval, setReviewInterval] = useState<number>(7); // Default 7 days
 
   useEffect(() => {
     if (user) {
@@ -196,6 +198,48 @@ const MemorizationVerses = () => {
     setSelectedVerse("");
     setVerseText("");
     setNotes("");
+  };
+
+  const toggleFirstLetter = (verseId: string) => {
+    setShowFirstLetterOnly(prev => ({
+      ...prev,
+      [verseId]: !prev[verseId]
+    }));
+  };
+
+  const getFirstLetters = (text: string) => {
+    return text.split(' ').map(word => word.charAt(0)).join(' ');
+  };
+
+  const updateReviewSchedule = async (verseId: string, intervalDays: number) => {
+    try {
+      const nextReview = new Date();
+      nextReview.setDate(nextReview.getDate() + intervalDays);
+      
+      const { error } = await supabase
+        .from("memorization_verses")
+        .update({ 
+          next_review_date: nextReview.toISOString(),
+          review_interval_days: intervalDays
+        })
+        .eq("id", verseId);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Schedule updated",
+        description: `Next review in ${intervalDays} days`,
+      });
+      
+      loadVerses();
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update review schedule",
+        variant: "destructive",
+      });
+    }
   };
 
   if (!user) return null;
@@ -408,9 +452,48 @@ const MemorizationVerses = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm leading-relaxed mb-3">
-                      {verse.verse_text}
-                    </p>
+                    <div className="mb-3">
+                      <div className="flex gap-2 mb-2">
+                        <Button
+                          size="sm"
+                          variant={showFirstLetterOnly[verse.id] ? "default" : "outline"}
+                          onClick={() => toggleFirstLetter(verse.id)}
+                          className="text-xs"
+                        >
+                          {showFirstLetterOnly[verse.id] ? "Show Full" : "First Letters"}
+                        </Button>
+                      </div>
+                      <p className="text-sm leading-relaxed">
+                        {showFirstLetterOnly[verse.id] 
+                          ? getFirstLetters(verse.verse_text)
+                          : verse.verse_text
+                        }
+                      </p>
+                    </div>
+                    
+                    <div className="mb-3">
+                      <Label className="text-xs mb-1 block">Review Schedule</Label>
+                      <Select
+                        value={reviewInterval.toString()}
+                        onValueChange={(value) => {
+                          const days = parseInt(value);
+                          setReviewInterval(days);
+                          updateReviewSchedule(verse.id, days);
+                        }}
+                      >
+                        <SelectTrigger className="w-full h-8 text-xs">
+                          <SelectValue placeholder="Review frequency" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border z-50">
+                          <SelectItem value="1">Daily</SelectItem>
+                          <SelectItem value="3">Every 3 days</SelectItem>
+                          <SelectItem value="7">Weekly</SelectItem>
+                          <SelectItem value="14">Every 2 weeks</SelectItem>
+                          <SelectItem value="30">Monthly</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
                     {verse.notes && (
                       <div className="pt-3 border-t">
                         <p className="text-xs text-muted-foreground italic">
