@@ -206,17 +206,11 @@ const RoomDoor = ({ room, floorNumber, theme, user }: RoomDoorProps) => {
             </div>
           </div>
 
-          {/* Lock/Unlock indicator - Show actual status */}
+          {/* Lock/Unlock indicator - Always unlocked in preview */}
           <div className="absolute bottom-3 right-3">
-            {isUnlocked ? (
-              <div className="w-6 h-6 rounded-full bg-green-500/30 backdrop-blur-sm border border-green-400/50 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-green-400" />
-              </div>
-            ) : (
-              <div className="w-6 h-6 rounded-full bg-amber-500/30 backdrop-blur-sm border border-amber-400/50 flex items-center justify-center">
-                <Lock className="h-3 w-3 text-amber-400" />
-              </div>
-            )}
+            <div className="w-6 h-6 rounded-full bg-green-500/30 backdrop-blur-sm border border-green-400/50 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-green-400" />
+            </div>
           </div>
 
           {/* Subtle shine on hover */}
