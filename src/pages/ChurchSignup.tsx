@@ -46,7 +46,7 @@ const tiers = {
   },
   tier3: {
     name: "Growth & Evangelism Suite",
-    price: 799,
+    price: 899,
     seats: 500,
     icon: TrendingUp,
     popular: true,
