@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { Lock, Sparkles, Eye, Search, Zap, BookOpen, Telescope, Globe, Flame, Crown } from "lucide-react";
+import { Sparkles, Eye, Search, Zap, BookOpen, Telescope, Globe, Flame, Crown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useRoomUnlock } from "@/hooks/useRoomUnlock";
 import { palaceFloors } from "@/data/palaceData";
 
 // Floor-specific icons and theming
@@ -164,13 +163,7 @@ interface RoomDoorProps {
 }
 
 const RoomDoor = ({ room, floorNumber, theme, user }: RoomDoorProps) => {
-  const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
-
-  console.log(`RoomDoor: floor=${floorNumber}, roomId=${room.id}, name=${room.name}, isUnlocked=${isUnlocked}, loading=${loading}`);
-
-  // Always show as unlocked in the visual palace (preview mode)
-  const showAsUnlocked = true;
-
+  // Always show rooms as unlocked in preview mode on home page
   return (
     <Link
       to={`/palace/floor/${floorNumber}/room/${room.id}`}
