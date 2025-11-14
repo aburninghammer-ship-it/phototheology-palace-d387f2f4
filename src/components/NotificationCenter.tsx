@@ -34,8 +34,12 @@ export function NotificationCenter() {
           userId 
         }
       }));
-    } else if (notification.link) {
-      navigate(notification.link);
+    } else {
+      // Check for link in notification or metadata (backwards compatibility)
+      const link = notification.link || notification.metadata?.link;
+      if (link) {
+        navigate(link);
+      }
     }
   };
 

@@ -69,11 +69,11 @@ Deno.serve(async (req) => {
       type: 'daily_challenge',
       title: '🌅 Daily Challenge Available!',
       message: `Today's challenge: ${challenge.title}`,
+      link: '/daily-challenges',
       metadata: {
         challengeId: challenge.id,
         challengeType: challenge.challenge_subtype,
-        difficulty: challenge.difficulty,
-        link: '/daily-challenges'
+        difficulty: challenge.difficulty
       }
     }));
 
