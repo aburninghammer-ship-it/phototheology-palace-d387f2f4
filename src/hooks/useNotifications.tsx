@@ -94,6 +94,13 @@ export function useNotifications() {
 
   const markAsRead = async (notificationId: string) => {
     try {
+      // Optimistic update - update local state immediately
+      setNotifications(prev =>
+        prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n)
+      );
+      setUnreadCount(prev => Math.max(0, prev - 1));
+
+      // Then update the database
       const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
@@ -102,6 +109,8 @@ export function useNotifications() {
       if (error) throw error;
     } catch (error) {
       console.error('Error marking notification as read:', error);
+      // Revert optimistic update on error
+      fetchNotifications();
     }
   };
 
@@ -109,6 +118,12 @@ export function useNotifications() {
     if (!user) return;
 
     try {
+      // Optimistic update - update local state immediately
+      const previousUnreadCount = unreadCount;
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+      setUnreadCount(0);
+
+      // Then update the database
       const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
@@ -116,10 +131,10 @@ export function useNotifications() {
         .eq('is_read', false);
 
       if (error) throw error;
-
-      setUnreadCount(0);
     } catch (error) {
       console.error('Error marking all as read:', error);
+      // Revert optimistic update on error
+      fetchNotifications();
     }
   };
 
