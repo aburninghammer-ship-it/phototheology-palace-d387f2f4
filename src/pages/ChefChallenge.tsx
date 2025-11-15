@@ -250,8 +250,8 @@ export default function ChefChallenge() {
                 <Badge>Quick • 5-10 min</Badge>
                 {verses.length > 0 && (
                   <SocialShareButton
-                    title="🍳 Chef Challenge - Bible Study Recipe"
-                    description={`I just completed the Chef Challenge on Phototheology! 🍳\n\nCreated a Bible study from ${verses.length} random verses:\n${verses.slice(0, 3).join(", ")}${verses.length > 3 ? "..." : ""}\n\n✨ Can you create a meaningful recipe from random ingredients?`}
+                    title="🍳 Chef Challenge - Help Me Make a Bible Study Recipe!"
+                    description={`🧑‍🍳 Can you help me with this Chef Challenge on Phototheology?\n\n🎲 I've been given ${verses.length} completely RANDOM Bible verses that seem totally unrelated:\n\n📖 ${verses.slice(0, 3).map(v => v.reference).join("\n📖 ")}${verses.length > 3 ? `\n📖 ...and ${verses.length - 3} more!` : ""}\n\n🎯 The Challenge: Tie them together into ONE creative, meaningful Bible study!\n\n💡 Think you can find the connections? Can you help me "cook up" something amazing from these random ingredients?\n\n✨ Join me and see what recipe we can create together!`}
                     url={window.location.href}
                     variant="dropdown"
                     size="sm"
