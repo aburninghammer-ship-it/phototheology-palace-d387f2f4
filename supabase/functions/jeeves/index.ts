@@ -911,72 +911,36 @@ Return JSON: { "verse": "reference", "commentary": "...", "challengeCategory": "
       }
 
     } else if (mode === "equations-challenge") {
-      // Diverse pool of verses and Bible stories
-      const versePool = [
-        "Genesis 22:1-14 (Abraham offering Isaac)",
-        "Exodus 12:1-13 (Passover night in Egypt)",
-        "Exodus 25:8-9 (God's sanctuary blueprint)",
-        "Leviticus 16:29-34 (Day of Atonement)",
-        "Numbers 21:4-9 (Bronze serpent lifted up)",
-        "Deuteronomy 18:15-19 (Prophet like Moses)",
-        "Joshua 3:14-17 (Crossing the Jordan)",
-        "Ruth 2:1-13 (Ruth meets Boaz in the field)",
-        "1 Samuel 17:45-50 (David defeats Goliath)",
-        "2 Samuel 7:12-16 (David's covenant)",
-        "1 Kings 8:10-11 (Glory fills the temple)",
-        "2 Kings 2:11-12 (Elijah taken to heaven)",
-        "Isaiah 53:4-6 (The suffering servant)",
-        "Isaiah 7:14 (Virgin shall conceive)",
-        "Jeremiah 31:31-34 (New covenant promise)",
-        "Ezekiel 37:1-10 (Valley of dry bones)",
-        "Daniel 2:44-45 (Stone kingdom)",
-        "Daniel 7:13-14 (Son of Man comes)",
-        "Daniel 8:14 (2300 days sanctuary cleansed)",
-        "Daniel 9:24-27 (70 weeks prophecy)",
-        "Jonah 1:17-2:10 (Jonah in the fish)",
-        "Micah 5:2 (Born in Bethlehem)",
-        "Zechariah 9:9 (King comes on donkey)",
-        "Zechariah 13:6 (Wounds in His hands)",
-        "Malachi 3:1 (Messenger prepares the way)",
-        "Matthew 3:13-17 (Jesus' baptism)",
-        "Matthew 17:1-5 (Transfiguration)",
-        "Matthew 26:26-28 (Last Supper instituted)",
-        "Matthew 27:45-54 (Crucifixion scene)",
-        "Luke 1:26-38 (Angel visits Mary)",
-        "Luke 2:8-14 (Angels announce birth)",
-        "Luke 15:11-24 (Prodigal son returns)",
-        "Luke 24:13-32 (Road to Emmaus)",
-        "John 1:29 (Behold the Lamb of God)",
-        "John 3:14-16 (Serpent lifted up)",
-        "John 6:35-40 (Bread of life)",
-        "John 10:11-18 (Good Shepherd lays down life)",
-        "John 11:25-26 (I am the resurrection)",
-        "John 13:1-17 (Jesus washes disciples' feet)",
-        "John 19:28-30 (It is finished)",
-        "John 20:24-29 (Thomas believes)",
-        "Acts 2:1-4 (Day of Pentecost)",
-        "Acts 9:1-9 (Saul's Damascus road)",
-        "Romans 5:8-11 (Christ died for the ungodly)",
-        "Romans 6:3-5 (Baptized into His death)",
-        "1 Corinthians 5:7 (Christ our Passover)",
-        "1 Corinthians 15:3-8 (Resurrection appearances)",
-        "Ephesians 2:13-16 (Peace through the cross)",
-        "Philippians 2:5-11 (Christ humbled Himself)",
-        "Colossians 2:16-17 (Shadow of things to come)",
-        "Hebrews 4:14-16 (Our great High Priest)",
-        "Hebrews 9:11-14 (Greater tabernacle)",
-        "Hebrews 10:19-22 (Enter the holiest by blood)",
-        "1 Peter 1:18-21 (Redeemed with precious blood)",
-        "1 Peter 2:24 (Bore our sins on the tree)",
-        "1 John 2:1-2 (Propitiation for our sins)",
-        "Revelation 1:5-6 (Freed us by His blood)",
-        "Revelation 5:9-10 (Worthy to take the scroll)",
-        "Revelation 12:7-11 (War in heaven)",
-        "Revelation 21:1-4 (New heaven and earth)"
+      // Complete Bible book and chapter data
+      const bibleBooks = [
+        { name: "Genesis", chapters: 50 }, { name: "Exodus", chapters: 40 }, { name: "Leviticus", chapters: 27 },
+        { name: "Numbers", chapters: 36 }, { name: "Deuteronomy", chapters: 34 }, { name: "Joshua", chapters: 24 },
+        { name: "Judges", chapters: 21 }, { name: "Ruth", chapters: 4 }, { name: "1 Samuel", chapters: 31 },
+        { name: "2 Samuel", chapters: 24 }, { name: "1 Kings", chapters: 22 }, { name: "2 Kings", chapters: 25 },
+        { name: "1 Chronicles", chapters: 29 }, { name: "2 Chronicles", chapters: 36 }, { name: "Ezra", chapters: 10 },
+        { name: "Nehemiah", chapters: 13 }, { name: "Esther", chapters: 10 }, { name: "Job", chapters: 42 },
+        { name: "Psalms", chapters: 150 }, { name: "Proverbs", chapters: 31 }, { name: "Ecclesiastes", chapters: 12 },
+        { name: "Song of Solomon", chapters: 8 }, { name: "Isaiah", chapters: 66 }, { name: "Jeremiah", chapters: 52 },
+        { name: "Lamentations", chapters: 5 }, { name: "Ezekiel", chapters: 48 }, { name: "Daniel", chapters: 12 },
+        { name: "Hosea", chapters: 14 }, { name: "Joel", chapters: 3 }, { name: "Amos", chapters: 9 },
+        { name: "Obadiah", chapters: 1 }, { name: "Jonah", chapters: 4 }, { name: "Micah", chapters: 7 },
+        { name: "Nahum", chapters: 3 }, { name: "Habakkuk", chapters: 3 }, { name: "Zephaniah", chapters: 3 },
+        { name: "Haggai", chapters: 2 }, { name: "Zechariah", chapters: 14 }, { name: "Malachi", chapters: 4 },
+        { name: "Matthew", chapters: 28 }, { name: "Mark", chapters: 16 }, { name: "Luke", chapters: 24 },
+        { name: "John", chapters: 21 }, { name: "Acts", chapters: 28 }, { name: "Romans", chapters: 16 },
+        { name: "1 Corinthians", chapters: 16 }, { name: "2 Corinthians", chapters: 13 }, { name: "Galatians", chapters: 6 },
+        { name: "Ephesians", chapters: 6 }, { name: "Philippians", chapters: 4 }, { name: "Colossians", chapters: 4 },
+        { name: "1 Thessalonians", chapters: 5 }, { name: "2 Thessalonians", chapters: 3 }, { name: "1 Timothy", chapters: 6 },
+        { name: "2 Timothy", chapters: 4 }, { name: "Titus", chapters: 3 }, { name: "Philemon", chapters: 1 },
+        { name: "Hebrews", chapters: 13 }, { name: "James", chapters: 5 }, { name: "1 Peter", chapters: 5 },
+        { name: "2 Peter", chapters: 3 }, { name: "1 John", chapters: 5 }, { name: "2 John", chapters: 1 },
+        { name: "3 John", chapters: 1 }, { name: "Jude", chapters: 1 }, { name: "Revelation", chapters: 22 }
       ];
       
-      // Randomly select a verse/story
-      const selectedVerse = versePool[Math.floor(Math.random() * versePool.length)];
+      // Randomly select book and chapter from entire Bible
+      const randomBook = bibleBooks[Math.floor(Math.random() * bibleBooks.length)];
+      const randomChapter = Math.floor(Math.random() * randomBook.chapters) + 1;
+      const selectedPassage = `${randomBook.name} ${randomChapter}`;
       
       systemPrompt = `You are Jeeves, the Phototheology equations master. Generate biblical equation challenges using ONLY authentic Phototheology principle codes from the official system.
 
@@ -984,9 +948,9 @@ CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols
 
       userPrompt = `Create a biblical equation challenge at "${difficulty}" difficulty with ${symbolCount} principles.
 
-**YOU MUST USE THIS SPECIFIC VERSE/STORY AS THE FOUNDATION:** ${selectedVerse}
+**YOU MUST USE THIS SPECIFIC BIBLE PASSAGE AS THE FOUNDATION:** ${selectedPassage}
 
-Build your equation to illuminate THIS passage specifically.
+Build your equation to illuminate THIS chapter specifically. Select key verses or themes from this chapter that connect to the principles you choose.
 
 **USE ONLY THESE AUTHENTIC PHOTOTHEOLOGY CODES:**
 
@@ -1061,8 +1025,8 @@ Build your equation to illuminate THIS passage specifically.
 2. PREFER specific furniture/feast codes over general room codes (use ABO, PO instead of just BL, FE)
 3. NO hallucinated symbols beyond what's listed
 4. Prefer @ codes (prophecy/cycles) and specific sanctuary/feast principles
-5. BUILD YOUR EQUATION TO ILLUMINATE THE VERSE/STORY: ${selectedVerse}
-6. Create a coherent theological narrative through the equation that reveals Christ in this specific passage
+5. BUILD YOUR EQUATION TO ILLUMINATE THE PASSAGE: ${selectedPassage}
+6. Create a coherent theological narrative through the equation that reveals Christ in this specific chapter
 7. Show progressive relationships using operators
 
 **EXAMPLE for pro level (12 principles):**
@@ -1071,11 +1035,11 @@ Build your equation to illuminate THIS passage specifically.
 
 **Return this JSON format:**
 {
-  "verse": "${selectedVerse}",
+  "verse": "${selectedPassage}",
   "equation": "Your equation using ONLY codes listed above",
   "symbols": ["@70w: 70 Weeks Prophecy", "PO: Passover - Christ's sacrifice", "ABO: Altar of Burnt Offering - the cross", ...],
   "difficulty": "${difficulty}",
-  "explanation": "Write a clear, instructional guide for people NEW to Phototheology that explains HOW to approach this challenge WITHOUT giving away the solution. Structure it in 4 paragraphs:\n\n**Paragraph 1 - Introduction (2-3 sentences):** Briefly introduce the verse/story (${selectedVerse}) and what Phototheology principles are (they're like 'study lenses' or 'interpretive keys' that help reveal deeper patterns in Scripture).\n\n**Paragraph 2 - Your Challenge Instructions (main section):** For EACH principle in the equation, write one clear instruction telling the user HOW to apply it to their study. Use this format:\n\n• Apply the [Principle Name] ([brief definition]) to your study of this verse/story. Consider how [what to look for / what questions to ask / what connections to make].\n\nExample: 'Apply the Second Heaven principle (the time period covering 70 AD and the New Covenant cycle) to your study of this passage. Consider how this text relates to that era and the transition from old to new covenant.'\n\nExample: 'Apply the Passover feast (Christ's sacrifice and deliverance) to your study. Look for themes of blood, sacrifice, deliverance, or lamb imagery in this passage.'\n\nExample: 'Apply the Veil (the separation that was removed through Christ) to your study. Ask yourself: what barrier or separation does this passage address? How does Christ remove it?'\n\nDo this for ALL principles in the equation.\n\n**Paragraph 3 - Understanding the Operators (2-3 sentences):** Explain that the + means 'combine these insights together,' → means 'this principle leads to or results in the next,' and = means 'all of this equals or fulfills this truth.' Tell them to trace the logical flow from principle to principle.\n\n**Paragraph 4 - Your Goal (1-2 sentences):** Remind them that their goal is to discover how all these principles work together to reveal something profound about Christ, salvation, or God's plan in this specific passage. Encourage them to write out their findings and share them with the community!\n\nIMPORTANT: DO NOT solve the equation or give away answers. Only give instructions on HOW to apply each principle. Write in a warm, encouraging, teaching tone with clear formatting and bullet points."
+  "explanation": "Write a clear, instructional guide for people NEW to Phototheology that explains HOW to approach this challenge WITHOUT giving away the solution. Structure it in 4 paragraphs:\n\n**Paragraph 1 - Introduction (2-3 sentences):** Briefly introduce the chapter ${selectedPassage} and what Phototheology principles are (they're like 'study lenses' or 'interpretive keys' that help reveal deeper patterns in Scripture).\n\n**Paragraph 2 - Your Challenge Instructions (main section):** For EACH principle in the equation, write one clear instruction telling the user HOW to apply it to their study. Use this format:\n\n• Apply the [Principle Name] ([brief definition]) to your study of this chapter. Consider how [what to look for / what questions to ask / what connections to make].\n\nExample: 'Apply the Second Heaven principle (the time period covering 70 AD and the New Covenant cycle) to your study of this chapter. Consider how this text relates to that era and the transition from old to new covenant.'\n\nExample: 'Apply the Passover feast (Christ's sacrifice and deliverance) to your study. Look for themes of blood, sacrifice, deliverance, or lamb imagery in this passage.'\n\nExample: 'Apply the Veil (the separation that was removed through Christ) to your study. Ask yourself: what barrier or separation does this passage address? How does Christ remove it?'\n\nDo this for ALL principles in the equation.\n\n**Paragraph 3 - Understanding the Operators (2-3 sentences):** Explain that the + means 'combine these insights together,' → means 'this principle leads to or results in the next,' and = means 'all of this equals or fulfills this truth.' Tell them to trace the logical flow from principle to principle.\n\n**Paragraph 4 - Your Goal (1-2 sentences):** Remind them that their goal is to discover how all these principles work together to reveal something profound about Christ, salvation, or God's plan in this specific chapter. Encourage them to write out their findings and share them with the community!\n\nIMPORTANT: DO NOT solve the equation or give away answers. Only give instructions on HOW to apply each principle. Write in a warm, encouraging, teaching tone with clear formatting and bullet points."
 }`;
 
 
