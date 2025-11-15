@@ -940,7 +940,26 @@ Return JSON: { "verse": "reference", "commentary": "...", "challengeCategory": "
       // Randomly select book and chapter from entire Bible
       const randomBook = bibleBooks[Math.floor(Math.random() * bibleBooks.length)];
       const randomChapter = Math.floor(Math.random() * randomBook.chapters) + 1;
-      const selectedPassage = `${randomBook.name} ${randomChapter}`;
+      
+      // Generate verse reference (single verse, verse range, or story/account)
+      const referenceType = Math.random();
+      let selectedPassage: string;
+      
+      if (referenceType < 0.33) {
+        // Single verse (e.g., "John 3:16")
+        const verse = Math.floor(Math.random() * 30) + 1; // Most chapters have at least 30 verses
+        selectedPassage = `${randomBook.name} ${randomChapter}:${verse}`;
+      } else if (referenceType < 0.67) {
+        // Verse range (e.g., "Genesis 22:1-14")
+        const startVerse = Math.floor(Math.random() * 20) + 1;
+        const endVerse = startVerse + Math.floor(Math.random() * 10) + 3; // Range of 3-12 verses
+        selectedPassage = `${randomBook.name} ${randomChapter}:${startVerse}-${endVerse}`;
+      } else {
+        // Story/account description with verse range
+        const startVerse = Math.floor(Math.random() * 15) + 1;
+        const endVerse = startVerse + Math.floor(Math.random() * 15) + 5;
+        selectedPassage = `${randomBook.name} ${randomChapter}:${startVerse}-${endVerse}`;
+      }
       
       systemPrompt = `You are Jeeves, the Phototheology equations master. Generate biblical equation challenges using ONLY authentic Phototheology principle codes from the official system.
 
@@ -950,7 +969,7 @@ CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols
 
 **YOU MUST USE THIS SPECIFIC BIBLE PASSAGE AS THE FOUNDATION:** ${selectedPassage}
 
-Build your equation to illuminate THIS chapter specifically. Select key verses or themes from this chapter that connect to the principles you choose.
+Build your equation to illuminate THIS specific passage. If it's a well-known story or account, identify it briefly (e.g., "The Binding of Isaac" for Genesis 22:1-14).
 
 **USE ONLY THESE AUTHENTIC PHOTOTHEOLOGY CODES:**
 
