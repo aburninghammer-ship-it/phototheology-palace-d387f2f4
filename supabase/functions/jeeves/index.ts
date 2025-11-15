@@ -988,7 +988,9 @@ Return JSON: { "verse": "reference", "commentary": "...", "challengeCategory": "
 
 Return valid JSON only.`;
 
-      userPrompt = `Create a biblical equation challenge at "${difficulty}" difficulty with ${symbolCount} principles.
+      userPrompt = `Create a biblical equation challenge at "${difficulty}" difficulty with EXACTLY ${symbolCount} principles.
+
+**CRITICAL REQUIREMENT: Your equation MUST include EXACTLY ${symbolCount} Phototheology codes - no more, no less!**
 
 **YOU MUST USE THIS SPECIFIC BIBLE PASSAGE AS THE FOUNDATION:** ${selectedPassage}
 
@@ -1027,20 +1029,23 @@ Example verse field format:
 **NEVER use these invalid codes:** CH, NC, Grace, New Creation, Christ (use CR for Christ-centered study)
 
 **REQUIREMENTS:**
-1. Use exactly ${symbolCount} codes from the approved list above
+1. **CRITICAL: Use EXACTLY ${symbolCount} codes from the approved list above - NOT MORE, NOT LESS**
 2. Build your equation to illuminate ${selectedPassage}
 3. NO hallucinated symbols beyond what's listed
 4. Create a coherent theological narrative
 5. Show progressive relationships using operators
+6. **The equation MUST contain exactly ${symbolCount} distinct Phototheology codes**
 
 **Return JSON:**
 {
   "verse": "FULL KJV text of ${selectedPassage} here",
-  "equation": "${selectedPassage} (CODE + CODE → CODE) =?",
-  "symbols": ["CODE: Full principle name", ...],
+  "equation": "${selectedPassage} (CODE1 + CODE2 + CODE3 ${symbolCount > 3 ? '+ ...' : ''} → FINAL_CODE) =?",
+  "symbols": ["CODE: Full principle name", "CODE2: Full principle name", ${symbolCount > 3 ? '"CODE3: Full principle name", ...' : ''} /* MUST be exactly ${symbolCount} symbols */],
   "difficulty": "${difficulty}",
   "explanation": "Write a clear, instructional guide for people NEW to Phototheology that explains HOW to approach this challenge WITHOUT giving away the solution. Structure it in 4 paragraphs:\n\n**Paragraph 1 - Introduction (2-3 sentences):** Briefly introduce the chapter ${selectedPassage} and what Phototheology principles are (they're like 'study lenses' or 'interpretive keys' that help reveal deeper patterns in Scripture).\n\n**Paragraph 2 - Your Challenge Instructions (main section):** For EACH principle in the equation, write one clear instruction telling the user HOW to apply it to their study. Use this format:\n\n• Apply the [Principle Name] ([brief definition]) to your study of this chapter. Consider how [what to look for / what questions to ask / what connections to make].\n\nExample: 'Apply the Second Heaven principle (the time period covering the New Covenant cycle) to your study of this chapter. Consider how this text relates to that era and the transition from old to new covenant.'\n\nExample: 'Apply the Passover feast (Christ's sacrifice and deliverance) to your study. Look for themes of blood, sacrifice, deliverance, or lamb imagery in this passage.'\n\nDo this for ALL principles in the equation.\n\n**Paragraph 3 - Understanding the Operators (2-3 sentences):** Explain that the + means 'combine these insights together,' → means 'this principle leads to or results in the next,' and = means 'all of this equals or fulfills this truth.' Tell them to trace the logical flow from principle to principle.\n\n**Paragraph 4 - Your Goal (1-2 sentences):** Remind them that their goal is to discover how all these principles work together to reveal something profound about Christ, salvation, or God's plan in this specific chapter. Encourage them to write out their findings and share them with the community!\n\nIMPORTANT: DO NOT solve the equation or give away answers. Only give instructions on HOW to apply each principle. Write in a warm, encouraging, teaching tone with clear formatting and bullet points."
 }
+
+**FINAL REMINDER: Count your codes! Your equation and symbols array MUST contain exactly ${symbolCount} Phototheology codes. Do not generate less than ${symbolCount} codes!**
 
 Make the equation specifically illuminate ${selectedPassage}.`;
 
