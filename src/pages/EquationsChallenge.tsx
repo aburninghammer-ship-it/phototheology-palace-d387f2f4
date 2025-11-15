@@ -54,6 +54,11 @@ export default function EquationsChallenge() {
   const [jeevesLoading, setJeevesLoading] = useState(false);
   const [jeevesSolution, setJeevesSolution] = useState("");
   
+  // Timer state
+  const [timerEnabled, setTimerEnabled] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes default
+  const [timerActive, setTimerActive] = useState(false);
+  
   // Custom challenge creation state
   const [customTitle, setCustomTitle] = useState("");
   const [customVerse, setCustomVerse] = useState("");
@@ -76,6 +81,30 @@ export default function EquationsChallenge() {
     intermediate: { symbols: 6, color: "bg-yellow-500", description: "6 principles" },
     advanced: { symbols: 9, color: "bg-orange-500", description: "9 principles" },
     pro: { symbols: 12, color: "bg-red-500", description: "12 principles" }
+  };
+
+  // Timer countdown effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timerActive && timeRemaining > 0) {
+      interval = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            setTimerActive(false);
+            toast.error("Time's up!");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timerActive, timeRemaining]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   // Load available principles on mount
@@ -170,6 +199,12 @@ export default function EquationsChallenge() {
       if (error) throw error;
 
       setCurrentEquation(data);
+      
+      // Start timer if enabled
+      if (timerEnabled) {
+        setTimeRemaining(300); // Reset to 5 minutes
+        setTimerActive(true);
+      }
     } catch (error) {
       console.error("Error generating equation:", error);
       toast.error("Failed to generate equation");
@@ -538,7 +573,7 @@ ${currentEquation.explanation}
                 <CardTitle>Select Difficulty</CardTitle>
                 <CardDescription>Choose your challenge level</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {(Object.keys(difficultyInfo) as Difficulty[]).map((diff) => (
                     <Button
@@ -553,6 +588,30 @@ ${currentEquation.explanation}
                       </span>
                     </Button>
                   ))}
+                </div>
+                
+                {/* Timer Toggle */}
+                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">Enable Timer</p>
+                      <p className="text-xs text-muted-foreground">5 minute countdown per challenge</p>
+                    </div>
+                  </div>
+                  <Label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
+                      checked={timerEnabled}
+                      onCheckedChange={(checked) => {
+                        setTimerEnabled(checked as boolean);
+                        if (!checked) {
+                          setTimerActive(false);
+                          setTimeRemaining(300);
+                        }
+                      }}
+                    />
+                    <span className="sr-only">Enable timer</span>
+                  </Label>
                 </div>
               </CardContent>
             </Card>
@@ -590,6 +649,15 @@ ${currentEquation.explanation}
                 <CardTitle className="flex items-center justify-between">
                   <span>Current Challenge</span>
                   <div className="flex items-center gap-2">
+                    {timerEnabled && (
+                      <Badge 
+                        variant={timeRemaining < 60 ? "destructive" : "secondary"}
+                        className="flex items-center gap-1"
+                      >
+                        <Clock className="h-3 w-3" />
+                        {formatTime(timeRemaining)}
+                      </Badge>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"
