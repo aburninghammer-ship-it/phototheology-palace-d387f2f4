@@ -196,7 +196,16 @@ export const ChefRecipeChallenge = ({ challenge, onSubmit, hasSubmitted }: ChefR
             <ChefHat className="h-5 w-5 text-orange-600" />
             <CardTitle>{challenge.title}</CardTitle>
           </div>
-          <Badge>Quick • 5-10 min</Badge>
+          <div className="flex items-center gap-2">
+            <Badge>Quick • 5-10 min</Badge>
+            <EnhancedSocialShare
+              title={`Chef Challenge: ${challenge.title}`}
+              content={`🍳 ${challenge.ui_config?.theme || challenge.description}\n\nJoin me in creating a creative Bible study from random verses! Can you connect unrelated scriptures into a coherent theological message?`}
+              url={`${window.location.origin}/daily-challenges`}
+              buttonText="Share"
+              buttonVariant="ghost"
+            />
+          </div>
         </div>
         <CardDescription className="mt-2">
           Use the verses (ingredients) Jeeves has provided and create a recipe from it.
@@ -281,7 +290,7 @@ export const ChefRecipeChallenge = ({ challenge, onSubmit, hasSubmitted }: ChefR
                 ))}
               </div>
               <p className="text-xs text-muted-foreground italic">
-                ⚡ Challenge: These verses are intentionally unrelated! Weave them into a coherent theological narrative addressing the theme.
+                ⚡ Challenge: These verses are intentionally random and unrelated! Your goal is to creatively weave them into a coherent Bible study.
               </p>
             </div>
 
@@ -320,14 +329,14 @@ export const ChefRecipeChallenge = ({ challenge, onSubmit, hasSubmitted }: ChefR
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Your Biblical Recipe:</label>
                   <Textarea
-                    placeholder="Use the verses above to build a theological narrative.&#10;&#10;Example:&#10;Start with Romans 3:23 to establish the problem...&#10;Then Romans 6:23 shows the consequence...&#10;John 3:16 reveals God's solution...&#10;&#10;Be creative and make connections!"
+                    placeholder="Use ONLY the verses provided above to build a creative Bible study.&#10;&#10;Example:&#10;Start with Genesis 1:1 to establish creation...&#10;Then connect Psalm 23:1 to show God as provider...&#10;Finally, John 3:16 reveals the ultimate provision...&#10;&#10;Be creative and make unexpected connections!"
                     value={recipe}
                     onChange={(e) => setRecipe(e.target.value)}
                     rows={10}
                     className="font-mono"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Explain how these verses connect to make a complete theological point on the theme.
+                    Use ONLY the ingredient verses above - do not add extra verses. Explain how these specific verses connect to address the theme.
                   </p>
                 </div>
 

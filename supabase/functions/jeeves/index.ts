@@ -1700,7 +1700,8 @@ Grade on:
 1. Creativity - Innovative connections?
 2. Biblical Accuracy - Proper context?
 3. Coherence - Logical flow?
-4. Integration - Used all verses?
+4. Integration - Used ALL verses provided?
+5. **CRITICAL** - Did they ONLY use the verses provided, or did they add extra verses? (They must ONLY use the ingredient verses given!)
 
 Be encouraging. Use emojis.
 
