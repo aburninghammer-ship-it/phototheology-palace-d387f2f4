@@ -289,26 +289,24 @@ export const ChefRecipeChallenge = ({ challenge, onSubmit, hasSubmitted }: ChefR
             </div>
 
             {!hasSubmitted && verses.length > 0 && (
-              <div className="flex gap-2">
-                <Button 
-                  onClick={generateVerses} 
-                  variant="outline"
-                  className="flex-1"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Regenerating...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="mr-2 h-4 w-4" />
-                      Regenerate Ingredients
-                    </>
-                  )}
-                </Button>
-              </div>
+              <Button 
+                onClick={generateVerses} 
+                variant="outline"
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Regenerating...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Regenerate Challenge
+                  </>
+                )}
+              </Button>
             )}
 
             {!hasSubmitted ? (

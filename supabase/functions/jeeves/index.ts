@@ -1674,6 +1674,8 @@ Return JSON: { "coherent": true/false, "feedback": "brief comment" }`;
       
       systemPrompt = `You are Jeeves, evaluating a creative Bible study. Student had ${verses.length} random, unrelated verses to tie together.
 
+**IMPORTANT:** Verses can be analyzed in ANY ORDER - there is no requirement to follow the sequence given. Students may rearrange verses to best support their theological connections.
+
 **CRITICAL: If you mention Phototheology codes, you MUST ONLY use these approved codes:**
 Floor 1: 24, BR, GR, IR, SR, TR
 Floor 2: DC, OR, QA, QB, ST
@@ -1726,6 +1728,8 @@ Evaluate this creative connection.`;
       
       systemPrompt = `You are Jeeves, demonstrating how to creatively tie random, unrelated Bible verses into a cohesive Bible study.
 
+**IMPORTANT:** You can analyze and present verses in ANY ORDER that best supports your theological connections. Do not feel constrained to follow the sequence given - rearrange freely to create the strongest narrative flow.
+
 **CRITICAL: If you mention Phototheology codes, you MUST ONLY use these approved codes:**
 Floor 1: 24, BR, GR, IR, SR, TR
 Floor 2: DC, OR, QA, QB, ST
@@ -1750,6 +1754,7 @@ Floor 7: FRM, MR, SRM
 
 Requirements:
 - Use ALL ${verses.length} verses naturally
+- Analyze verses in whatever order creates the best flow
 - Maintain biblical accuracy
 - Create logical flow
 - Show creative connections
