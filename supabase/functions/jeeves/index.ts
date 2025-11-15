@@ -1601,29 +1601,35 @@ Return JSON: { "coherent": true/false, "feedback": "brief comment" }`;
       const uniqueBooks = Array.from(new Set(allVerses.map(v => v.book)));
       console.log(`Found ${uniqueBooks.length} unique books in database`);
       
-      if (uniqueBooks.length < numVerses) {
-        console.error(`Not enough unique books (${uniqueBooks.length}) for ${numVerses} verses`);
-        return new Response(
-          JSON.stringify({ 
-            error: `Not enough unique books available. Try a lower difficulty level.`,
-            verses: [] 
-          }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-        );
-      }
-      
-      // Step 3: Select random books
-      const selectedBooks = uniqueBooks.sort(() => 0.5 - Math.random()).slice(0, numVerses);
-      console.log(`Selected books: ${selectedBooks.join(', ')}`);
-      
-      // Step 4: Get one random verse from each selected book
+      // Step 3: Select verses (prefer unique books, but allow repeats if needed)
       const selectedRefs: Array<{ book: string; chapter: number; verse_num: number }> = [];
       
-      for (const book of selectedBooks) {
-        const bookVerses = allVerses.filter(v => v.book === book);
-        if (bookVerses.length > 0) {
-          const randomVerse = bookVerses[Math.floor(Math.random() * bookVerses.length)];
-          selectedRefs.push(randomVerse);
+      if (uniqueBooks.length >= numVerses) {
+        // Ideal case: enough unique books for one verse per book
+        const selectedBooks = uniqueBooks.sort(() => 0.5 - Math.random()).slice(0, numVerses);
+        console.log(`Selected books: ${selectedBooks.join(', ')}`);
+        
+        for (const book of selectedBooks) {
+          const bookVerses = allVerses.filter(v => v.book === book);
+          if (bookVerses.length > 0) {
+            const randomVerse = bookVerses[Math.floor(Math.random() * bookVerses.length)];
+            selectedRefs.push(randomVerse);
+          }
+        }
+      } else {
+        // Fallback: not enough books, so allow multiple verses from same books
+        console.log(`Warning: Only ${uniqueBooks.length} books available for ${numVerses} verses - allowing repeats`);
+        const shuffledVerses = allVerses.sort(() => 0.5 - Math.random());
+        
+        // Select random verses, avoiding exact duplicates (same book+chapter+verse)
+        const usedKeys = new Set<string>();
+        for (const verse of shuffledVerses) {
+          const key = `${verse.book}-${verse.chapter}-${verse.verse_num}`;
+          if (!usedKeys.has(key)) {
+            selectedRefs.push(verse);
+            usedKeys.add(key);
+            if (selectedRefs.length >= numVerses) break;
+          }
         }
       }
       
