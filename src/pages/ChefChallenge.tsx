@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ChefHat, ArrowLeft, Loader2, Eye, Share2, Facebook } from "lucide-react";
+import { ChefHat, ArrowLeft, Loader2, Eye, Share2 } from "lucide-react";
+import { SocialShareButton } from "@/components/SocialShareButton";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -229,12 +230,6 @@ export default function ChefChallenge() {
       setIsLoading(false);
     }
   };
-
-  const shareToFacebook = () => {
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`I just completed the Chef Challenge on Phototheology! 🍳 Can you create a Bible study from ${verses.length} random verses?`);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank', 'width=600,height=400');
-  };
   return <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-950 dark:via-amber-950 dark:to-yellow-950">
       <Navigation />
       <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -252,15 +247,16 @@ export default function ChefChallenge() {
               </div>
               <div className="flex items-center gap-2">
                 <Badge>Quick • 5-10 min</Badge>
-                <Button
-                  onClick={shareToFacebook}
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                >
-                  <Facebook className="h-4 w-4" />
-                  Share
-                </Button>
+                {verses.length > 0 && (
+                  <SocialShareButton
+                    title="🍳 Chef Challenge - Bible Study Recipe"
+                    description={`I just completed the Chef Challenge on Phototheology! 🍳\n\nCreated a Bible study from ${verses.length} random verses:\n${verses.slice(0, 3).join(", ")}${verses.length > 3 ? "..." : ""}\n\n✨ Can you create a meaningful recipe from random ingredients?`}
+                    url={window.location.href}
+                    variant="dropdown"
+                    size="sm"
+                    buttonText="Share"
+                  />
+                )}
               </div>
             </div>
             <CardDescription className="mt-2">
