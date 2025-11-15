@@ -198,7 +198,7 @@ export const ChefRecipeChallenge = ({ challenge, onSubmit, hasSubmitted }: ChefR
           <Badge>Quick • 5-10 min</Badge>
         </div>
         <CardDescription className="mt-2">
-          Jeeves provides random "ingredients" (Bible verses). You cook up a coherent theological "recipe" connecting them!
+          Use the verses (ingredients) Jeeves has provided and create a recipe from it.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
