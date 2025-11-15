@@ -61,9 +61,30 @@ export const SocialShareButton: React.FC<SocialShareButtonProps> = ({
     window.open(twitterUrl, '_blank', 'width=600,height=400');
   };
   
-  const shareToFacebook = () => {
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-    window.open(facebookUrl, '_blank', 'width=600,height=400');
+  const shareToFacebook = async () => {
+    // Try native share first (works on mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text: description,
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        // User cancelled or error occurred
+      }
+    }
+    
+    // For development/preview URLs, copy link instead
+    if (shareUrl.includes('localhost') || shareUrl.includes('lovableproject.com')) {
+      await copyToClipboard();
+      toast.info("Link copied! Facebook sharing requires a public URL. Paste this link on Facebook to share.");
+    } else {
+      // Try Facebook sharer for production URLs
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+      window.open(facebookUrl, '_blank', 'width=600,height=400');
+    }
   };
   
   const shareToLinkedIn = () => {
