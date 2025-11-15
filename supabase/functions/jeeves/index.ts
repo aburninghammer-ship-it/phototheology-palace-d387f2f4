@@ -963,7 +963,30 @@ Return JSON: { "verse": "reference", "commentary": "...", "challengeCategory": "
       
       systemPrompt = `You are Jeeves, the Phototheology equations master. Generate biblical equation challenges using ONLY authentic Phototheology principle codes from the official system.
 
-CRITICAL: Use EXCLUSIVELY these codes - DO NOT invent or hallucinate any symbols. Return valid JSON only.`;
+**CRITICAL: ONLY USE THESE APPROVED CODES - NEVER INVENT OR HALLUCINATE SYMBOLS:**
+
+**Floor 1 (Furnishing):** 24, BR, GR, IR, SR, TR
+**Floor 2 (Investigation):** DC, OR, QA, QB, ST
+**Floor 3 (Freestyle):** BF, HF, LR, NF, PF
+**Floor 4 Rooms:** CR, C6, DR, FRT, ∥, ≈, TRM, TZ
+**Floor 4 Dimensions:** 1D, 2D, 3D, 4D, 5D
+**Floor 4 Connect-6 Genres:** Ep, Go, Hi, Pa, Po, Pr
+**Floor 4 Theme Walls:** \\G, |GC, \\H, |LC, |S, |TP
+**Floor 4 Time Zones:** Ef, En, Epa, Hf, Hpa, Hp
+**Floor 4 Fruit:** -f, -ge, -g, -j, -ls, -lv, -m, -p, -t
+**Floor 5 (Vision):** BL, CEC, FE, PR, R66, 3A
+**Floor 5 Sanctuary:** SAN-ALT, SAN-INCENSE, SAN-ARK, SAN-LAMP, SAN-LAVER, SAN-BREAD
+**Floor 5 Prophecy:** @120, @1260, @2300, @400, @70w, @70y
+**Floor 5 Angels:** 3AM-1, 3AM-2, 3AM-3
+**Floor 5 Feasts:** FE-AT, FE-FI, FE-PA, FE-PE, FE-TA, FE-TR, FE-UN
+**Floor 6 (Three Heavens):** DoL¹/NE¹, DoL²/NE², DoL³/NE³
+**Floor 6 Cycles:** @Ab, @Ad, @Cy, @Sp, @Mo, @No, @Re, @Se
+**Floor 6 Rooms:** 8C, JR
+**Floor 7 (Spiritual):** FRM, MR, SRM
+
+**NEVER USE THESE - THEY ARE NOT VALID CODES:** CH, NC, Grace, New Creation, Christ (use CR for Concentration on Christ instead)
+
+Return valid JSON only.`;
 
       userPrompt = `Create a biblical equation challenge at "${difficulty}" difficulty with ${symbolCount} principles.
 
@@ -978,95 +1001,49 @@ CRITICAL INSTRUCTIONS:
 Example verse field format:
 "verse": "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life. (John 3:16)"
 
-**USE ONLY THESE AUTHENTIC PHOTOTHEOLOGY CODES:**
+**USE ONLY THESE APPROVED PHOTOTHEOLOGY CODES (from the official Principle Codes Reference):**
 
-**PROPHECY PRINCIPLES (individual principles from PR Room):**
-- @2300 (2300 Days prophecy - Daniel 8:14)
-- @70w (70 Weeks prophecy - Daniel 9:24-27)
-- @1260 (1260 Years/Days - Time, times, half a time)
-- @1290 (1290 Days - Daniel 12:11)
-- @1335 (1335 Days - Daniel 12:12)
+**Floor 1 (Furnishing):** 24 (24FPS), BR (Bible Rendered), GR (Gems), IR (Imagination), SR (Story), TR (Translation)
+**Floor 2 (Investigation):** DC (Def-Com), OR (Observation), QA (Q&A Chains), QB (Questions), ST (Symbols/Types)
+**Floor 3 (Freestyle):** BF (Bible Freestyle), HF (History Freestyle), LR (Listening), NF (Nature Freestyle), PF (Personal Freestyle)
+**Floor 4 Rooms:** CR (Concentration on Christ), C6 (Connect-6), DR (Dimensions), FRT (Fruit), ∥ (Parallels), ≈ (Patterns), TRM (Theme), TZ (Time Zone)
+**Floor 4 Dimensions:** 1D (Literal), 2D (Christ), 3D (Personal), 4D (Church), 5D (Heaven)
+**Floor 4 Genres:** Ep (Epistle), Go (Gospel), Hi (History), Pa (Parable), Po (Poetry), Pr (Prophecy)
+**Floor 4 Themes:** \\G (Gospel Floor), |GC (Great Controversy), \\H (Heaven Ceiling), |LC (Life of Christ), |S (Sanctuary), |TP (Time Prophecy)
+**Floor 4 Time Zones:** Ef (Earth Future), En (Earth Now), Epa (Earth Past), Hf (Heaven Future), Hpa (Heaven Past), Hp (Heaven Present)
+**Floor 4 Fruit:** -f (Faith), -ge (Gentleness), -g (Goodness), -j (Joy), -ls (Longsuffering), -lv (Love), -m (Meekness), -p (Peace), -t (Temperance)
+**Floor 5 (Vision):** BL (Blue Room), CEC (Christ Every Chapter), FE (Feasts), PR (Prophecy), R66 (Room 66), 3A (Three Angels)
+**Floor 5 Sanctuary:** SAN-ALT (Altar), SAN-INCENSE (Incense), SAN-ARK (Ark), SAN-LAMP (Lampstand), SAN-LAVER (Laver), SAN-BREAD (Showbread)
+**Floor 5 Prophecy:** @120 (120 Years), @1260 (1260 Days), @2300 (2300 Days), @400 (400 Years), @70w (70 Weeks), @70y (70 Years)
+**Floor 5 Angels:** 3AM-1 (First Angel), 3AM-2 (Second Angel), 3AM-3 (Third Angel)
+**Floor 5 Feasts:** FE-AT (Atonement), FE-FI (Firstfruits), FE-PA (Passover), FE-PE (Pentecost), FE-TA (Tabernacles), FE-TR (Trumpets), FE-UN (Unleavened Bread)
+**Floor 6 Heavens:** DoL¹/NE¹ (First Day of LORD), DoL²/NE² (Second Day of LORD), DoL³/NE³ (Third Day of LORD)
+**Floor 6 Cycles:** @Ab (Abrahamic), @Ad (Adamic), @Cy (Cyrusic), @Sp (Spirit), @Mo (Mosaic), @No (Noahic), @Re (Remnant), @Se (Seth)
+**Floor 6 Rooms:** 8C (Eight Cycles), JR (Juice Room)
+**Floor 7 (Spiritual):** FRM (Fire), MR (Meditation), SRM (Speed)
 
-**HEAVENS & DAY OF THE LORD CYCLES:**
-- 1H (First Heaven - DoL¹/NE¹ - Babylon destruction → post-exilic restoration)
-- 2H (Second Heaven - DoL²/NE² - 70 AD destruction → New Covenant order)
-- 3H (Third Heaven - DoL³/NE³ - Final judgment → Literal New Creation)
+**OPERATORS:** + (and/with), → (leads to/results in), = (equals/is)
 
-**HISTORICAL CYCLES:**
-- @Ad (Adamic Cycle - Eden → Fall → Promise)
-- @No (Noahic Cycle - Flood → Covenant → Rainbow)
-- @Ab (Abrahamic Cycle - Call → Covenant → Promise fulfilled)
-- @Mo (Mosaic Cycle - Exodus → Law → Tabernacle)
-- @Cy (Cyrusic Cycle - Exile → Return → Rebuild)
-- @CyC (Cyrus-Christ Cycle - Type → Antitype fulfillment)
-- @Sp (Spirit Cycle - Pentecost → Church → Mission)
-- @Re (Remnant Cycle - End-time witness → Second Coming)
-
-**PALACE ROOM CODES (1st-2nd Floor - Furnishing & Investigation):**
-- SR (Story Room), IR (Imagination Room), 24 (24FPS), BR (Bible Rendered)
-- TR (Translation Room), GR (Gems Room)
-- OR (Observation Room), DC (Def-Com), ST (Symbols/Types)
-- QR (Questions Room), QA (Q&A Chains)
-
-**PALACE ROOM CODES (3rd-4th Floor - Freestyle & Next Level):**
-- NF (Nature Freestyle), PF (Personal Freestyle), BF (Bible Freestyle)
-- HF (History Freestyle), LR (Listening Room)
-- CR (Concentration on Christ), DR (Dimensions Room), C6 (Connect-6 genres)
-- TRm (Theme Room), TZ (Time Zone), PRm (Patterns Room), P‖ (Parallels Room)
-- FRt (Fruit Room)
-
-**PALACE ROOM CODES (5th-7th Floor - Vision & Spiritual):**
-- BL (Blue Room/Sanctuary - general), PR (Prophecy Room), 3A (Three Angels' Messages)
-- FE (Feasts Room - general), CEC (Christ in Every Chapter), R66 (Room 66)
-- JR (Juice Room)
-- FRm (Fire Room), MR (Meditation Room), SRm (Speed Room)
-
-**SANCTUARY FURNITURE (BL Room individual principles):**
-- ABO (Altar of Burnt Offering - the cross, sacrifice)
-- LV (Laver - baptism, cleansing)
-- LS (Lampstand - light of the Spirit, witness)
-- SB (Showbread Table - Word of God, spiritual nourishment)
-- AI (Altar of Incense - intercession, prayer)
-- ARK (Ark of the Covenant - God's throne, law)
-- MS (Mercy Seat - atonement, grace)
-- VL (Veil - separation removed through Christ)
-- GT (Gate - entrance, way to God)
-
-**BIBLICAL FEASTS (FE Room individual principles):**
-- PO (Passover - Christ's sacrifice, deliverance)
-- UB (Unleavened Bread - sinless life, sanctification)
-- FF (Firstfruits - Christ's resurrection)
-- PT (Pentecost - Holy Spirit outpouring)
-- TR (Trumpets - Second Coming announcement)
-- DA (Day of Atonement - judgment hour, sanctuary cleansing)
-- TB (Tabernacles - God dwelling with His people, eternal rest)
-
-**OPERATORS:** 
-- + (and/with/plus)
-- → (leads to/results in/points to)
-- = (equals/completes/fulfills)
+**NEVER use these invalid codes:** CH, NC, Grace, New Creation, Christ (use CR for Christ-centered study)
 
 **REQUIREMENTS:**
-1. Use exactly ${symbolCount} INDIVIDUAL PRINCIPLES from the codes listed above
-2. PREFER specific furniture/feast codes over general room codes (use ABO, PO instead of just BL, FE)
+1. Use exactly ${symbolCount} codes from the approved list above
+2. Build your equation to illuminate ${selectedPassage}
 3. NO hallucinated symbols beyond what's listed
-4. Prefer @ codes (prophecy/cycles) and specific sanctuary/feast principles
-5. BUILD YOUR EQUATION TO ILLUMINATE THE PASSAGE: ${selectedPassage}
-6. Create a coherent theological narrative through the equation that reveals Christ in this specific chapter
-7. Show progressive relationships using operators
+4. Create a coherent theological narrative
+5. Show progressive relationships using operators
 
-**EXAMPLE for pro level (12 principles):**
-"@70w + @Mo + PO + @1260 → ABO + MS + @CyC + CR = 2H + @Sp → 3A + @Re"
-(70 weeks prophecy + Mosaic cycle + Passover + 1260 years → Altar of Burnt Offering + Mercy Seat + Cyrus-Christ fulfillment + Concentration on Christ = Second Heaven order + Spirit cycle → Three Angels' Messages + Remnant)
-
-**Return this JSON format:**
+**Return JSON:**
 {
-  "verse": "${selectedPassage}",
-  "equation": "Your equation using ONLY codes listed above",
-  "symbols": ["@70w: 70 Weeks Prophecy", "PO: Passover - Christ's sacrifice", "ABO: Altar of Burnt Offering - the cross", ...],
+  "verse": "FULL KJV text of ${selectedPassage} here (Reference)",
+  "equation": "CODE + CODE → CODE",
+  "symbols": ["CODE: Full principle name", ...],
   "difficulty": "${difficulty}",
-  "explanation": "Write a clear, instructional guide for people NEW to Phototheology that explains HOW to approach this challenge WITHOUT giving away the solution. Structure it in 4 paragraphs:\n\n**Paragraph 1 - Introduction (2-3 sentences):** Briefly introduce the chapter ${selectedPassage} and what Phototheology principles are (they're like 'study lenses' or 'interpretive keys' that help reveal deeper patterns in Scripture).\n\n**Paragraph 2 - Your Challenge Instructions (main section):** For EACH principle in the equation, write one clear instruction telling the user HOW to apply it to their study. Use this format:\n\n• Apply the [Principle Name] ([brief definition]) to your study of this chapter. Consider how [what to look for / what questions to ask / what connections to make].\n\nExample: 'Apply the Second Heaven principle (the time period covering 70 AD and the New Covenant cycle) to your study of this chapter. Consider how this text relates to that era and the transition from old to new covenant.'\n\nExample: 'Apply the Passover feast (Christ's sacrifice and deliverance) to your study. Look for themes of blood, sacrifice, deliverance, or lamb imagery in this passage.'\n\nExample: 'Apply the Veil (the separation that was removed through Christ) to your study. Ask yourself: what barrier or separation does this passage address? How does Christ remove it?'\n\nDo this for ALL principles in the equation.\n\n**Paragraph 3 - Understanding the Operators (2-3 sentences):** Explain that the + means 'combine these insights together,' → means 'this principle leads to or results in the next,' and = means 'all of this equals or fulfills this truth.' Tell them to trace the logical flow from principle to principle.\n\n**Paragraph 4 - Your Goal (1-2 sentences):** Remind them that their goal is to discover how all these principles work together to reveal something profound about Christ, salvation, or God's plan in this specific chapter. Encourage them to write out their findings and share them with the community!\n\nIMPORTANT: DO NOT solve the equation or give away answers. Only give instructions on HOW to apply each principle. Write in a warm, encouraging, teaching tone with clear formatting and bullet points."
-}`;
+  "explanation": "Write a clear, instructional guide for people NEW to Phototheology that explains HOW to approach this challenge WITHOUT giving away the solution. Structure it in 4 paragraphs:\n\n**Paragraph 1 - Introduction (2-3 sentences):** Briefly introduce the chapter ${selectedPassage} and what Phototheology principles are (they're like 'study lenses' or 'interpretive keys' that help reveal deeper patterns in Scripture).\n\n**Paragraph 2 - Your Challenge Instructions (main section):** For EACH principle in the equation, write one clear instruction telling the user HOW to apply it to their study. Use this format:\n\n• Apply the [Principle Name] ([brief definition]) to your study of this chapter. Consider how [what to look for / what questions to ask / what connections to make].\n\nExample: 'Apply the Second Heaven principle (the time period covering the New Covenant cycle) to your study of this chapter. Consider how this text relates to that era and the transition from old to new covenant.'\n\nExample: 'Apply the Passover feast (Christ's sacrifice and deliverance) to your study. Look for themes of blood, sacrifice, deliverance, or lamb imagery in this passage.'\n\nDo this for ALL principles in the equation.\n\n**Paragraph 3 - Understanding the Operators (2-3 sentences):** Explain that the + means 'combine these insights together,' → means 'this principle leads to or results in the next,' and = means 'all of this equals or fulfills this truth.' Tell them to trace the logical flow from principle to principle.\n\n**Paragraph 4 - Your Goal (1-2 sentences):** Remind them that their goal is to discover how all these principles work together to reveal something profound about Christ, salvation, or God's plan in this specific chapter. Encourage them to write out their findings and share them with the community!\n\nIMPORTANT: DO NOT solve the equation or give away answers. Only give instructions on HOW to apply each principle. Write in a warm, encouraging, teaching tone with clear formatting and bullet points."
+}
+
+Make the equation specifically illuminate ${selectedPassage}.`;
+
 
 
     } else if (mode === "solve-equation") {
@@ -2000,9 +1977,9 @@ ${roomContent}
       } catch {
         return new Response(
           JSON.stringify({
-            verse: "John 3:16",
-            equation: "CH + GR → NC",
-            symbols: ["CH: Christ", "GR: Grace", "NC: New Creation"],
+            verse: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life. (John 3:16)",
+            equation: "CR + GR → 2D",
+            symbols: ["CR: Concentration Room (Christ-centered)", "GR: Gems Room", "2D: Christ Dimension"],
             difficulty: difficulty || "easy",
             explanation: "Unable to generate equation. Please try again."
           }),
