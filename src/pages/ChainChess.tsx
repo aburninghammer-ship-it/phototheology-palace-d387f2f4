@@ -1092,9 +1092,34 @@ const ChainChess = () => {
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-muted-foreground">
-                          Waiting for your turn...
-                        </p>
+                        <div className="space-y-4">
+                          <p className="text-sm text-muted-foreground">
+                            Waiting for your turn...
+                          </p>
+                          
+                          {/* Fallback button to manually trigger Jeeves if he's stuck */}
+                          {(isVsJeeves || game?.game_state?.isVsJeeves) && gameStarted && moves.length > 0 && (
+                            <div className="mt-4 pt-4 border-t">
+                              <p className="text-xs text-muted-foreground mb-2">
+                                Jeeves not responding?
+                              </p>
+                              <Button
+                                onClick={() => {
+                                  const lastMove = moves[moves.length - 1];
+                                  const userChallenge = lastMove?.challengeCategory;
+                                  console.log("Manual Jeeves trigger - last challenge:", userChallenge);
+                                  jeevesMove(gameId!, false, userChallenge);
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="w-full"
+                              >
+                                <Sparkles className="mr-2 h-4 w-4" />
+                                Jeeves, it's your turn
+                              </Button>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
