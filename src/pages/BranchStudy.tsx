@@ -83,7 +83,7 @@ export default function BranchStudy() {
   const sendMessage = async () => {
     if (!userInput.trim() || !studyState.anchorText) return;
 
-    const isOptionSelection = /^[ABC]$/i.test(userInput.trim());
+    const isOptionSelection = /^[ABCDE]$/i.test(userInput.trim());
     const userMessage: Message = { role: "user", content: userInput.trim() };
 
     setStudyState((prev) => ({
