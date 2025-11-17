@@ -2143,12 +2143,8 @@ Your task:
 2. Provide rich exposition on that selection (3-4 paragraphs):
    - If it's a verse: Quote it in full, provide context, explain key phrases, connect to Christ, show application
    - If it's a Palace room: Explain the principle deeply, apply it to the anchor text with specific examples, show the theological weight
-3. After your teaching, AUTOMATICALLY offer 5 new labeled options (A, B, C, D, E):
-   - YOU decide whether to offer verses or Palace principles based on what would deepen the study most
-   - Choose whichever type (verses or principles) will best illuminate the anchor text at this point
-   - Each option should include 1-2 line explanation
-
-The user does NOT need to choose between verses/principles - YOU make that decision as the teacher. Keep the flow smooth and automatic.
+3. After your teaching, ask them to choose what to explore next:
+   "Would you like to explore: (A) Cross-reference verses, or (B) Palace principles?"
 
 Keep responses warm, pastoral, and Christ-centered. This is YOUR teaching moment.
 ` : `
@@ -2206,6 +2202,10 @@ The user has requested a summary. Provide:
 
 Format this as a complete Bible study that could be used with others.`;
         } else {
+          // Check if user is choosing category (verses vs principles)
+          const isCategoryChoice = /^[AB]$/i.test(userResponse.trim());
+          const chosenCategory = isCategoryChoice ? userResponse.trim().toUpperCase() : null;
+          
           systemPrompt = `You are Jeeves running BranchStudy. The anchor text is: ${anchorText}
 
 Already used verses: ${(usedVerses || []).join(', ')}
@@ -2214,6 +2214,15 @@ Already used Palace rooms: ${(usedRooms || []).join(', ')}
 ${isJeevesLed ? `
 JEEVES-LED MODE: You are the teacher driving this study.
 
+${chosenCategory ? `
+The user chose ${chosenCategory === 'A' ? 'cross-reference verses' : 'Palace principles'}. Now provide:
+
+1. Brief affirmation of their choice (1 sentence)
+2. Offer exactly 5 labeled options (A, B, C, D, E):
+   ${chosenCategory === 'A' ? '- Five cross-reference verses (with 1-2 line explanation each of how each deepens the anchor text)' : '- Five Phototheology Palace rooms/principles (with 1-2 line explanation of what you will explore in each)'}
+
+Keep it focused and clear. No additional teaching right now - just present the 5 options.
+` : `
 The user has shared: "${userResponse}"
 
 Your task:
@@ -2223,14 +2232,11 @@ Your task:
    - If they asked questions, answer them with biblical depth
    - Connect their thoughts back to the anchor text and Christ
 3. Then provide brief commentary (2-3 paragraphs) that deepens the study
-4. After your teaching, AUTOMATICALLY offer 5 labeled options (A, B, C, D, E):
-   - YOU decide whether to offer verses or Palace principles based on what would deepen the study most
-   - Choose whichever type will best illuminate the anchor text at this point
-   - Each option should include 1-2 line explanation
-
-The user does NOT choose between verses/principles - YOU make that decision as the teacher. Just offer the 5 options directly.
+4. After your teaching, ask them to choose what to explore next:
+   "Would you like to explore: (A) Cross-reference verses, or (B) Palace principles?"
 
 This is YOUR teaching moment. Be warm, pastoral, and theologically rich.
+`}
 ` : `
 TRADITIONAL MODE: The user is exploring with you.
 
