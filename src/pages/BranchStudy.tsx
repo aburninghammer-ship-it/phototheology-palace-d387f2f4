@@ -96,14 +96,17 @@ export default function BranchStudy() {
     setLoading(true);
 
     try {
+      // Determine action based on input
+      const action = isOptionSelection ? "select_option" : "continue";
+      
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "branch_study",
-          action: isOptionSelection ? "select_option" : "continue",
+          action,
           anchorText: studyState.anchorText,
+          userResponse: userMessage.content,
           usedVerses: studyState.usedVerses,
           usedRooms: studyState.usedRooms,
-          userResponse: userMessage.content,
           conversationHistory: studyState.messages,
           studyMode: studyState.mode,
         },
@@ -136,10 +139,14 @@ export default function BranchStudy() {
 
   const parseOptions = (content: string): { type: "verse" | "principle"; options: Array<{ label: string; content: string }> } | null => {
     // Look for options formatted as "A. Genesis 22:8" or "A. CR (Concentration)"
-    const optionRegex = /([A-E])\.\s+([^\n]+)/g;
+    const optionRegex = /^([A-E])\.\s+([^\n]+)/gm;
     const matches = Array.from(content.matchAll(optionRegex));
     
-    if (matches.length !== 5) return null;
+    // Only parse if we have exactly 5 options (the final verse/principle choices)
+    if (matches.length !== 5) {
+      console.log(`Found ${matches.length} options, need exactly 5`);
+      return null;
+    }
     
     const options = matches.map(match => ({
       label: match[1],
@@ -149,6 +156,8 @@ export default function BranchStudy() {
     // Detect type based on content
     const firstContent = options[0].content;
     const isVerse = /\d+:\d+/.test(firstContent) || /^[1-3]?\s*[A-Z][a-z]+\s+\d+/.test(firstContent);
+    
+    console.log(`Parsed 5 ${isVerse ? 'verse' : 'principle'} options:`, options);
     
     return {
       type: isVerse ? "verse" : "principle",
