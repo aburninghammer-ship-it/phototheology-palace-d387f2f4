@@ -274,10 +274,14 @@ export default function BranchStudy() {
                     Start New Study
                   </Button>
                 </div>
+                
+                <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
+                  Debug: {studyState.messages.length} message(s) in state
+                </div>
 
                 <ScrollArea className="h-[500px] border rounded-lg p-4">
                   <div className="space-y-4">
-                    {studyState.messages.map((msg, idx) => (
+                     {studyState.messages.map((msg, idx) => (
                       <div
                         key={idx}
                         className={`p-4 rounded-lg ${
@@ -289,9 +293,15 @@ export default function BranchStudy() {
                         <div className="font-semibold text-xs mb-2 text-muted-foreground uppercase">
                           {msg.role === "user" ? "You" : "Jeeves"}
                         </div>
-                        <div className="prose prose-sm max-w-none dark:prose-invert">
-                          {formatJeevesResponse(msg.content)}
-                        </div>
+                        {msg.content ? (
+                          <div className="prose prose-sm max-w-none dark:prose-invert">
+                            {formatJeevesResponse(msg.content)}
+                          </div>
+                        ) : (
+                          <div className="text-destructive text-sm">
+                            [No content - Debug: {JSON.stringify(msg)}]
+                          </div>
+                        )}
                       </div>
                     ))}
                     {loading && (
