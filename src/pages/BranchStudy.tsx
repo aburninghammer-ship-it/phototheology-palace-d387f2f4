@@ -117,6 +117,8 @@ export default function BranchStudy() {
 
       const content = data.content || data.response;
       if (!content) throw new Error("Jeeves did not provide a response");
+      
+      console.log("📨 Jeeves response:", content.substring(0, 200));
 
       setStudyState((prev) => ({
         ...prev,
@@ -240,18 +242,22 @@ export default function BranchStudy() {
                     {studyState.messages.map((msg, idx) => {
                       const parsedOptions = msg.role === "assistant" ? parseOptions(msg.content) : null;
                       
+                      if (parsedOptions) {
+                        console.log("✅ Displaying option cards for message:", idx);
+                      }
+                      
                       return (
                         <div key={idx}>
                           <div className={`p-4 rounded-lg ${msg.role === "user" ? "bg-primary text-primary-foreground ml-8" : "bg-muted mr-8"}`}>
                             {parsedOptions ? (
-                              <>
-                                {formatJeevesResponse(msg.content.split(/[A-E]\./)[0])}
+                              <div className="space-y-4">
+                                <div>{formatJeevesResponse(msg.content.split(/^[A-E]\./m)[0])}</div>
                                 <OptionCards
                                   options={parsedOptions.options}
                                   onSelect={handleOptionSelect}
                                   type={parsedOptions.type}
                                 />
-                              </>
+                              </div>
                             ) : (
                               formatJeevesResponse(msg.content)
                             )}
