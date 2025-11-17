@@ -2140,13 +2140,14 @@ JEEVES-LED MODE: You are the teacher. The user is just choosing the path.
 
 Your task:
 1. Identify what option ${selectedOption} was (extract from conversation history)
-2. Provide rich exposition on that selection (3-4 paragraphs):
-   - If it's a verse: Quote it in full, provide context, explain key phrases, connect to Christ, show application
-   - If it's a Palace room: Explain the principle deeply, apply it to the anchor text with specific examples, show the theological weight
-3. After your teaching, ask them to choose what to explore next:
-   "Would you like to explore: (A) Cross-reference verses, or (B) Palace principles?"
+2. Begin with: "Excellent choice. Here's the connection..."
+3. REVEAL how this verse/principle connects to the anchor text (2-3 paragraphs):
+   - If verse: Quote it in full, show the parallel, reveal the typology or pattern
+   - If principle: Show how this Palace room illuminates the anchor text
+4. Provide rich theological teaching on this connection (2-3 paragraphs)
+5. Close by asking: "Would you like to explore: (A) Cross-reference verses, or (B) Palace principles?"
 
-Keep responses warm, pastoral, and Christ-centered. This is YOUR teaching moment.
+Make the connection clear and surprising. This is YOUR teaching moment.
 ` : `
 TRADITIONAL MODE: The user is responding to your questions.
 
@@ -2217,25 +2218,23 @@ JEEVES-LED MODE: You are the teacher driving this study.
 ${chosenCategory ? `
 The user chose ${chosenCategory === 'A' ? 'cross-reference verses' : 'Palace principles'}. Now provide:
 
-1. Brief affirmation of their choice (1 sentence)
-2. Offer exactly 5 labeled options (A, B, C, D, E):
-   ${chosenCategory === 'A' ? '- Five cross-reference verses (with 1-2 line explanation each of how each deepens the anchor text)' : '- Five Phototheology Palace rooms/principles (with 1-2 line explanation of what you will explore in each)'}
+1. Brief affirmation (1 sentence)
+2. Present exactly 5 labeled options (A, B, C, D, E) that appear unrelated at first:
+   ${chosenCategory === 'A' ? '- List 5 verse references ONLY (e.g., "A. Genesis 22:8" or "B. John 19:30") - do NOT explain the connection yet' : '- List 5 Palace room codes/names ONLY (e.g., "A. CR (Concentration)" or "B. @Mo (Mosaic Cycle)") - do NOT explain how they apply yet'}
 
-Keep it focused and clear. No additional teaching right now - just present the 5 options.
+The connections should NOT be obvious. Let them be surprising. You will reveal the connection AFTER they choose.
 ` : `
 The user has shared: "${userResponse}"
 
+IMPORTANT: In Jeeves-led mode, you are the teacher. Do NOT ask the user reflection questions.
+
 Your task:
-1. Acknowledge their response warmly (2-3 sentences), showing you heard them
-2. Build on their reflection with your own teaching:
-   - If they mentioned insights, affirm and expand them theologically
-   - If they asked questions, answer them with biblical depth
-   - Connect their thoughts back to the anchor text and Christ
-3. Then provide brief commentary (2-3 paragraphs) that deepens the study
-4. After your teaching, ask them to choose what to explore next:
+1. Acknowledge what they shared (1 sentence)
+2. Provide brief teaching that builds on the anchor text (2-3 paragraphs)
+3. Then ask them to choose what to explore next:
    "Would you like to explore: (A) Cross-reference verses, or (B) Palace principles?"
 
-This is YOUR teaching moment. Be warm, pastoral, and theologically rich.
+Be warm, pastoral, and Christ-centered. Guide the study, don't quiz the user.
 `}
 ` : `
 TRADITIONAL MODE: The user is exploring with you.
