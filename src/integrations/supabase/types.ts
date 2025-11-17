@@ -2477,6 +2477,42 @@ export type Database = {
         }
         Relationships: []
       }
+      sermon_titles: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_ai_generated: boolean | null
+          scripture_references: string[] | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          scripture_references?: string[] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          scripture_references?: string[] | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       sermons: {
         Row: {
           bridges: Json | null
