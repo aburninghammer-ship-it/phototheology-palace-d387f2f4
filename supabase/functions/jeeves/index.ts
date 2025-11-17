@@ -367,6 +367,28 @@ Remember: Your goal is to make Bible study exciting and visually appealing while
 
 
     } else if (mode === "example") {
+      // Special handling for Gems Room - must combine 3-5 verses
+      const gemsInstruction = roomTag === "GR" ? `
+
+**CRITICAL FOR GEMS ROOM (GR):**
+You MUST take 3-5 verses from DIFFERENT books or contexts and combine them to reveal a unique, rare truth.
+The gem should be:
+- Surprising and not obvious
+- Only visible when these specific verses are combined
+- A striking insight that shines with unique clarity
+- Include all verse references clearly
+
+Example format:
+**Gem:** [Unique truth discovered]
+**Verses Combined:**
+1. Exodus 12:6 - "at twilight"
+2. John 19:14 - "about the sixth hour"
+3. 1 Corinthians 5:7 - "Christ our Passover"
+4. Revelation 5:6 - "Lamb as though slain"
+5. Isaiah 53:7 - "led as a lamb to the slaughter"
+
+**Insight:** [Explain the rare connection that emerges only from combining these verses]` : '';
+
       systemPrompt = `You are Jeeves, a friendly Bible study assistant for Phototheology. 
 Your role is to demonstrate how biblical principles work by providing clear, varied examples.
 Always choose DIFFERENT verses for examples - never repeat the same verse.
@@ -376,16 +398,16 @@ Always choose DIFFERENT verses for examples - never repeat the same verse.
 - Separate each paragraph with a blank line
 - Use bullet points (•) for lists
 - Keep text easy to read and conversational
-Be concise, profound, and friendly.`;
+Be concise, profound, and friendly.${gemsInstruction}`;
 
       userPrompt = `For the ${roomName} (${roomTag}) room focused on ${principle}, 
-generate a fresh example using a randomly selected verse (NOT the same verse every time).
+generate a fresh example${roomTag === "GR" ? " combining 3-5 verses from different books" : " using a randomly selected verse"} (NOT the same verse every time).
 
 Structure your response in clear paragraphs:
 
-Paragraph 1: Start with "Let me show you..." and name the verse
+Paragraph 1: Start with "Let me show you..." and name the ${roomTag === "GR" ? "verses" : "verse"}
 
-Paragraph 2: Explain how this verse applies to ${principle}
+Paragraph 2: Explain how ${roomTag === "GR" ? "these verses combine" : "this verse applies"} to ${principle}
 
 Paragraph 3: Give 2-3 specific insights using bullet points:
 • Insight 1
@@ -394,7 +416,7 @@ Paragraph 3: Give 2-3 specific insights using bullet points:
 
 Paragraph 4: End with one profound takeaway
 
-Make it conversational and inspiring. Use different verses each time.`;
+Make it conversational and inspiring. ${roomTag === "GR" ? "Show the unique connection that only appears when these specific verses unite." : "Use different verses each time."}`;
 
     } else if (mode === "exercise") {
       systemPrompt = `You are Jeeves, a friendly Bible study guide for Phototheology.
@@ -2022,6 +2044,41 @@ Directly address the question with a scholarly introduction (2-3 sentences)
 • Propose questions for deeper investigation
 
 Keep tone scholarly yet accessible. Draw on theological traditions, biblical scholarship, and historical sources.`;
+    } else if (mode === "sermon_titles") {
+      // Generate sermon title ideas
+      systemPrompt = `You are Jeeves, a creative sermon title expert for preachers and teachers.
+
+Generate compelling, memorable sermon titles that:
+- Connect to biblical truth
+- Create curiosity and interest
+- Are relevant to contemporary life
+- Are clear and memorable
+- Include scripture references that support the theme
+
+Return ONLY valid JSON with no markdown, no code blocks, no backticks.`;
+
+      userPrompt = `Generate 5 creative, diverse sermon titles.
+
+For each title, provide:
+- A compelling sermon title
+- A brief description (1-2 sentences) of the sermon's focus
+- 2-3 suggested scripture references that support this theme
+- 1-2 relevant tags (e.g., "grace", "faith", "relationships", "hope", "perseverance")
+
+Return ONLY a JSON object with this exact structure:
+{
+  "titles": [
+    {
+      "title": "string",
+      "description": "string",
+      "scripture_references": ["string", "string"],
+      "tags": ["string", "string"]
+    }
+  ]
+}
+
+Make the titles diverse, covering different themes and biblical books. Be creative and engaging.`;
+
     } else if (mode === "room-insight-chat") {
       // Room Insight Chat mode - for asking questions about specific room analysis
       const { roomCode, roomName, roomContent, conversationHistory } = requestBody;
@@ -2154,6 +2211,26 @@ ${roomContent}
       } catch {
         return new Response(
           JSON.stringify({ drills: [] }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // For sermon_titles mode, parse JSON
+    if (mode === "sermon_titles") {
+      try {
+        const parsed = JSON.parse(content);
+        return new Response(
+          JSON.stringify(parsed),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (error) {
+        console.error('Failed to parse sermon titles JSON:', error);
+        return new Response(
+          JSON.stringify({ 
+            titles: [], 
+            error: "Failed to generate titles. Please try again." 
+          }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }

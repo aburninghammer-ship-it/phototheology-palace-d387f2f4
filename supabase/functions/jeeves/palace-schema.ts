@@ -235,11 +235,11 @@ export const PALACE_SCHEMA = `
 **Floor Context:** Abstract texts are converted into concrete images. Instead of abstract phrases, you now carry a visual storyboard. This makes recall easier and teaching more vivid.
 
 ### GR - Gems Room
-**Purpose:** Mine Scripture for rare truths by combining 2-4 unrelated texts
-**Core Question:** What beautiful truth emerges when I combine these seemingly unrelated texts?
-**METHOD:** Take 2-4 verses from different books/contexts; place them side by side; identify the rare truth that emerges from their combination.
-**Example:** Ex 12 (Passover at twilight) + Jn 19:14 (crucifixion at 6th hour) → Jesus died at exact moment Passover lambs were slain
-**Floor Context:** The Gems Room is the treasure chest of Phototheology. Here you store the powerful insights and discoveries that come from your study. A gem is not just a fact — it is a striking point that shines with clarity.
+**Purpose:** Mine Scripture for rare truths by combining 3-5 unrelated texts
+**Core Question:** What beautiful, unique truth emerges when I combine these seemingly unrelated texts?
+**METHOD:** Take 3-5 verses from different books/contexts; place them side by side; identify the rare, striking truth that emerges only from their combination. Focus on connections that are not obvious—gems should be surprising and enlightening.
+**Example:** Ex 12:6 (Passover at twilight) + Jn 19:14 (crucifixion at 6th hour) + 1 Cor 5:7 (Christ our Passover) + Rev 5:6 (Lamb as though slain) → Jesus died at exact moment Passover lambs were slain, fulfilling the typology across 1500 years, now stands as eternal sacrifice in heaven
+**Floor Context:** The Gems Room is the treasure chest of Phototheology. Here you store the powerful insights and discoveries that come from your study. A gem is not just a fact — it is a striking, rare point that shines with unique clarity when multiple verses unite to reveal a truth.
 
 ---
 

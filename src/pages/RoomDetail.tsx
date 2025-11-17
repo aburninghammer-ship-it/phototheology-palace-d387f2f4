@@ -23,6 +23,7 @@ import { ValueProposition } from "@/components/palace/ValueProposition";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChristChapterFindings } from "@/components/ChristChapterFindings";
 import { OnboardingGuide } from "@/components/palace/OnboardingGuide";
+import { SermonTitlesList } from "@/components/SermonTitlesList";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -334,7 +335,10 @@ export default function RoomDetail() {
             )}
 
             {room.id === "gr" && (
-              <UserGemsList floorNumber={floor.number} roomId={room.id} />
+              <>
+                <UserGemsList floorNumber={floor.number} roomId={room.id} />
+                <SermonTitlesList />
+              </>
             )}
 
             {room.id === "cec" && (
