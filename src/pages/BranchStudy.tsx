@@ -27,6 +27,7 @@ interface StudyState {
   usedRooms: string[];
   messages: Message[];
   mode: "traditional" | "jeeves-led";
+  level: "easy" | "intermediate" | "pro" | "master";
 }
 
 export default function BranchStudy() {
@@ -37,6 +38,7 @@ export default function BranchStudy() {
     usedRooms: [],
     messages: [],
     mode: "traditional",
+    level: "easy",
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -60,6 +62,7 @@ export default function BranchStudy() {
           action: "start",
           verseReference: verseReference.trim(),
           studyMode: studyState.mode,
+          level: studyState.level,
         },
       });
 
@@ -75,6 +78,7 @@ export default function BranchStudy() {
         usedRooms: [],
         messages: [{ role: "assistant", content }],
         mode: studyState.mode,
+        level: studyState.level,
       });
     } catch (error: any) {
       handleError(error, { title: "Failed to Start Study", showToast: true });
@@ -111,6 +115,7 @@ export default function BranchStudy() {
           usedRooms: studyState.usedRooms,
           conversationHistory: studyState.messages,
           studyMode: studyState.mode,
+          level: studyState.level,
         },
       });
 
@@ -136,7 +141,7 @@ export default function BranchStudy() {
   };
 
   const resetStudy = () => {
-    setStudyState({ usedVerses: [], usedRooms: [], messages: [], mode: "traditional" });
+    setStudyState({ usedVerses: [], usedRooms: [], messages: [], mode: "traditional", level: "easy" });
     setVerseReference("");
     setUserInput("");
   };
@@ -219,6 +224,30 @@ export default function BranchStudy() {
                       </div>
                     </div>
                   </Label>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Difficulty Level</Label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {(['easy', 'intermediate', 'pro', 'master'] as const).map((lvl) => (
+                      <Button
+                        key={lvl}
+                        type="button"
+                        variant={studyState.level === lvl ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setStudyState((prev) => ({ ...prev, level: lvl }))}
+                        className="capitalize"
+                      >
+                        {lvl}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {studyState.level === 'easy' && 'Verses follow the general theme'}
+                    {studyState.level === 'intermediate' && 'Verses require some thought to connect'}
+                    {studyState.level === 'pro' && 'Tangentially related verses'}
+                    {studyState.level === 'master' && 'Seemingly random verses'}
+                  </p>
                 </div>
                 
                 <Button onClick={startStudy} disabled={loading || !verseReference.trim()} className="w-full">

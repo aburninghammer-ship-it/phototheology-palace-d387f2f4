@@ -2081,20 +2081,29 @@ Make the titles diverse, covering different themes and biblical books. Be creati
 
     } else if (mode === "branch_study") {
       // BranchStudy mode - interactive branching Bible study
-      const { action, verseReference, anchorText, usedVerses, usedRooms, userResponse, conversationHistory, studyMode } = requestBody;
+      const { action, verseReference, anchorText, usedVerses, usedRooms, userResponse, conversationHistory, studyMode, level = 'easy' } = requestBody;
       
       console.log("=== BRANCH STUDY REQUEST ===");
       console.log("Action:", action);
       console.log("Study Mode:", studyMode);
+      console.log("Difficulty Level:", level);
       console.log("Verse/Story:", verseReference || anchorText);
       
       if (action === "start") {
         // Starting a new branch study
         const isJeevesLed = studyMode === "jeeves-led";
         
+        const levelInstructions = {
+          easy: 'Choose verses that follow the general theme and topic of the anchor text. Make connections clear and intuitive.',
+          intermediate: 'Choose verses that relate to the theme but require some thought to connect. Mix obvious and subtle connections.',
+          pro: 'Choose verses that are tangentially related - same keywords or concepts but from different contexts. Connections require deeper analysis.',
+          master: 'Choose verses that appear COMPLETELY RANDOM - from vastly different books, genres, and contexts. The student must work hard to find any connection at all.'
+        };
+
         systemPrompt = `You are Jeeves running BranchStudy, a branching Bible study mode. Stay in Bible exposition, theology, and application—no fictional role-play.
 
 The user has provided an anchor text: ${verseReference}
+Difficulty Level: ${level.toUpperCase()}
 
 This may be a verse reference (e.g., "John 3:16") OR a story/parable name (e.g., "Parable of the Wheat and Tares", "Good Samaritan", "David and Goliath").
 
@@ -2131,6 +2140,9 @@ Your task:
 4. End with: "Take a moment to reflect on these questions. When you're ready, share your thoughts and I'll offer you paths to explore further."
 `}
 
+VERSE SELECTION STRATEGY (for when user chooses verses):
+${levelInstructions[level as keyof typeof levelInstructions]}
+
 Keep a warm, pastoral tone. Be clear about sin, judgment, and grace.`;
 
         userPrompt = `Begin a BranchStudy session with the anchor text: ${verseReference}
@@ -2148,7 +2160,15 @@ ${isJeevesLed ? 'Teach richly using PT principles, then IMMEDIATELY present the 
         const selectedOption = userResponse.trim().toUpperCase();
         const isJeevesLed = studyMode === "jeeves-led";
         
+        const levelInstructions = {
+          easy: 'Choose verses that follow the general theme and topic of the anchor text. Make connections clear and intuitive.',
+          intermediate: 'Choose verses that relate to the theme but require some thought to connect. Mix obvious and subtle connections.',
+          pro: 'Choose verses that are tangentially related - same keywords or concepts but from different contexts. Connections require deeper analysis.',
+          master: 'Choose verses that appear COMPLETELY RANDOM - from vastly different books, genres, and contexts. The student must work hard to find any connection at all.'
+        };
+
         systemPrompt = `You are Jeeves running BranchStudy. The anchor text is: ${anchorText}
+Difficulty Level: ${level.toUpperCase()}
 
 Already used verses: ${(usedVerses || []).join(', ')}
 Already used Palace rooms: ${(usedRooms || []).join(', ')}
@@ -2162,13 +2182,9 @@ JEEVES-LED MODE: You teach, user chooses paths. NO reflection questions ever.
 Present 5 options in EXACT format:
 
 If VERSES (option A):
-CRITICAL: Choose RANDOM verses that DON'T obviously connect to the anchor.
-- Pick from diverse books (different genres: law, poetry, wisdom, prophecy, gospels, epistles)
-- Avoid obvious thematic matches or cross-references
-- Choose verses that seem unrelated at first glance
-- YOU will later reveal the surprising connection
+VERSE SELECTION STRATEGY: ${levelInstructions[level as keyof typeof levelInstructions]}
 
-Format:
+Format (MUST include full verse text):
 A. [Book Chapter:Verse] "[Full verse text quoted]"
 B. [Book Chapter:Verse] "[Full verse text quoted]"
 C. [Book Chapter:Verse] "[Full verse text quoted]"
