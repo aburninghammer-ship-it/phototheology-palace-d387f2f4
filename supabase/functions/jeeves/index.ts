@@ -2090,15 +2090,18 @@ Make the titles diverse, covering different themes and biblical books. Be creati
       
       if (action === "start") {
         // Starting a new branch study
+        const isJeevesLed = studyMode === "jeeves-led";
+        
         systemPrompt = `You are Jeeves running BranchStudy, a branching Bible study mode. Stay in Bible exposition, theology, and application—no fictional role-play.
 
 The user has provided an anchor text: ${verseReference}
 
 This may be a verse reference (e.g., "John 3:16") OR a story/parable name (e.g., "Parable of the Wheat and Tares", "Good Samaritan", "David and Goliath").
 
-CRITICAL: This is the INITIAL exposition. Do NOT offer A/B/C options yet. Only exposition and questions.
+${isJeevesLed ? `
+JEEVES-LED MODE: You are the teacher. The user only chooses paths.
 
-Your task (in this exact order):
+Your task:
 1. Identify and locate the text:
    - If it's a verse reference, quote it in full
    - If it's a story/parable name, identify the biblical location(s) and provide a brief summary of the narrative
@@ -2106,18 +2109,28 @@ Your task (in this exact order):
    - Historical/literary context (who wrote it, to whom, when, why)
    - Key elements and their significance (phrases for verses, plot points for stories)
    - Main theological point (Christ-centered)
+3. Immediately ask: "Would you like to explore: (A) Cross-reference verses, or (B) Palace principles?"
+
+DO NOT ask reflection questions. DO NOT wait for user thoughts. Just teach, then offer the A/B choice.
+` : `
+TRADITIONAL MODE: Interactive study with user reflection.
+
+Your task:
+1. Identify and locate the text:
+   - If it's a verse reference, quote it in full
+   - If it's a story/parable name, identify the biblical location(s) and provide a brief summary
+2. Provide concise exposition in 2-3 paragraphs
 3. Ask 1-3 reflection/application questions for the user to consider
 4. End with: "Take a moment to reflect on these questions. When you're ready, share your thoughts and I'll offer you paths to explore further."
-
-DO NOT offer verse options or Palace room options yet. That comes after the user responds.
+`}
 
 Keep a warm, pastoral tone. Be clear about sin, judgment, and grace.`;
 
         userPrompt = `Begin a BranchStudy session with the anchor text: ${verseReference}
 
 Note: This may be a specific verse reference or a story/parable name. If it's a story, identify where it's found in Scripture and provide context.
-        
-Provide exposition and reflection questions. Do NOT offer A/B/C options yet.`;
+
+${isJeevesLed ? 'Provide exposition, then immediately ask the user to choose between (A) Cross-reference verses or (B) Palace principles. Do NOT ask for user thoughts or reflection.' : 'Provide exposition and reflection questions. Do NOT offer verse/principle options yet.'}`;
         
         console.log("Starting new BranchStudy with:", verseReference);
         console.log("System prompt length:", systemPrompt.length);
@@ -2689,7 +2702,16 @@ ${roomContent}
     if (mode === "branch_study") {
       console.log("=== BRANCH STUDY RESPONSE ===");
       console.log("Response length:", content.length);
-      console.log("First 200 chars:", content.substring(0, 200));
+      console.log("First 300 chars:", content.substring(0, 300));
+      console.log("Checking for option pattern (A. B. C. D. E.)...");
+      
+      // Check if response contains the 5 options
+      const optionMatches = content.match(/^[A-E]\.\s+/gm);
+      if (optionMatches) {
+        console.log(`✅ Found ${optionMatches.length} options in response`);
+      } else {
+        console.log("❌ No options found in response");
+      }
       
       const { usedVerses = [], usedRooms = [] } = requestBody;
       const newUsedVerses = [...usedVerses];
