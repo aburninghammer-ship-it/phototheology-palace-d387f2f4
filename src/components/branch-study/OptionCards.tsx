@@ -1,0 +1,42 @@
+import { Card, CardContent } from "@/components/ui/card";
+import { BookOpen, Compass } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface OptionCardsProps {
+  options: Array<{ label: string; content: string }>;
+  onSelect: (label: string) => void;
+  type: "verse" | "principle";
+}
+
+export function OptionCards({ options, onSelect, type }: OptionCardsProps) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 my-6">
+      {options.map((option, idx) => (
+        <Card
+          key={option.label}
+          className={cn(
+            "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 hover:border-primary",
+            type === "principle" && "animate-in fade-in slide-in-from-bottom-4",
+            type === "principle" && `[animation-delay:${idx * 100}ms]`
+          )}
+          style={{
+            animationDelay: type === "principle" ? `${idx * 100}ms` : undefined,
+          }}
+          onClick={() => onSelect(option.label)}
+        >
+          <CardContent className="p-4 flex flex-col items-center justify-center min-h-[120px] text-center">
+            <div className="mb-2">
+              {type === "verse" ? (
+                <BookOpen className="h-6 w-6 text-primary" />
+              ) : (
+                <Compass className="h-6 w-6 text-primary" />
+              )}
+            </div>
+            <div className="text-lg font-semibold mb-1">{option.label}</div>
+            <div className="text-sm text-muted-foreground">{option.content}</div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
