@@ -2089,15 +2089,24 @@ Make the titles diverse, covering different themes and biblical books. Be creati
 
 The user has provided an anchor text: ${verseReference}
 
-Your task:
-1. Quote the verse text (if you know it, otherwise acknowledge the reference)
-2. Give concise exposition (context, key phrases, main theology) in 2-3 paragraphs
-3. Ask 1-3 reflection/application questions
-4. Wait for the user's response (indicate this clearly)
+CRITICAL: This is the INITIAL exposition. Do NOT offer A/B/C options yet. Only exposition and questions.
 
-Keep a warm, pastoral tone. Be clear about sin, judgment, and grace. Focus on Christ-centered interpretation.`;
+Your task (in this exact order):
+1. Quote the verse text in full (if you know it)
+2. Provide concise exposition in 2-3 paragraphs:
+   - Historical/literary context (who wrote it, to whom, when, why)
+   - Key phrases and their significance
+   - Main theological point (Christ-centered)
+3. Ask 1-3 reflection/application questions for the user to consider
+4. End with: "Take a moment to reflect on these questions. When you're ready, share your thoughts and I'll offer you paths to explore further."
 
-        userPrompt = `Begin a BranchStudy session with the anchor text: ${verseReference}`;
+DO NOT offer verse options or Palace room options yet. That comes after the user responds.
+
+Keep a warm, pastoral tone. Be clear about sin, judgment, and grace.`;
+
+        userPrompt = `Begin a BranchStudy session with the anchor text: ${verseReference}
+        
+Provide the verse text, exposition, and reflection questions. Do NOT offer A/B/C options yet.`;
         
       } else if (action === "continue") {
         // Continuing an existing study
