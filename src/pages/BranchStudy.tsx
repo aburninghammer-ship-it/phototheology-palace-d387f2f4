@@ -13,6 +13,7 @@ import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { JeevesResponseValidator } from "@/components/bible/JeevesResponseValidator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { OptionCards } from "@/components/branch-study/OptionCards";
 
 interface Message {
   role: "user" | "assistant";
@@ -133,6 +134,33 @@ export default function BranchStudy() {
     setUserInput("");
   };
 
+  const parseOptions = (content: string): { type: "verse" | "principle"; options: Array<{ label: string; content: string }> } | null => {
+    // Look for options formatted as "A. Genesis 22:8" or "A. CR (Concentration)"
+    const optionRegex = /([A-E])\.\s+([^\n]+)/g;
+    const matches = Array.from(content.matchAll(optionRegex));
+    
+    if (matches.length !== 5) return null;
+    
+    const options = matches.map(match => ({
+      label: match[1],
+      content: match[2].trim()
+    }));
+    
+    // Detect type based on content
+    const firstContent = options[0].content;
+    const isVerse = /\d+:\d+/.test(firstContent) || /^[1-3]?\s*[A-Z][a-z]+\s+\d+/.test(firstContent);
+    
+    return {
+      type: isVerse ? "verse" : "principle",
+      options
+    };
+  };
+
+  const handleOptionSelect = (label: string) => {
+    setUserInput(label);
+    setTimeout(() => sendMessage(), 100);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -198,16 +226,31 @@ export default function BranchStudy() {
                   <Button variant="outline" onClick={resetStudy}>New Study</Button>
                 </div>
 
-                <ScrollArea className="h-[400px] border rounded-lg p-4">
+                <ScrollArea className="h-[500px] border rounded-lg p-4">
                   <div className="space-y-4">
-                    {studyState.messages.map((msg, idx) => (
-                      <div key={idx}>
-                        <div className={`p-4 rounded-lg ${msg.role === "user" ? "bg-primary text-primary-foreground ml-8" : "bg-muted mr-8"}`}>
-                          {formatJeevesResponse(msg.content)}
+                    {studyState.messages.map((msg, idx) => {
+                      const parsedOptions = msg.role === "assistant" ? parseOptions(msg.content) : null;
+                      
+                      return (
+                        <div key={idx}>
+                          <div className={`p-4 rounded-lg ${msg.role === "user" ? "bg-primary text-primary-foreground ml-8" : "bg-muted mr-8"}`}>
+                            {parsedOptions ? (
+                              <>
+                                {formatJeevesResponse(msg.content.split(/[A-E]\./)[0])}
+                                <OptionCards
+                                  options={parsedOptions.options}
+                                  onSelect={handleOptionSelect}
+                                  type={parsedOptions.type}
+                                />
+                              </>
+                            ) : (
+                              formatJeevesResponse(msg.content)
+                            )}
+                          </div>
+                          {msg.role === "assistant" && <JeevesResponseValidator response={msg.content} />}
                         </div>
-                        {msg.role === "assistant" && <JeevesResponseValidator response={msg.content} />}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </ScrollArea>
 
