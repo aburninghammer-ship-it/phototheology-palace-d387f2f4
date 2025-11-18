@@ -27,6 +27,7 @@ import InteractiveDemo from "./pages/InteractiveDemo";
 const Palace = lazy(() => import("./pages/Palace"));
 const FloorDetail = lazy(() => import("./pages/FloorDetail"));
 const RoomDetail = lazy(() => import("./pages/RoomDetail"));
+const GenesisHighRise = lazy(() => import("./pages/GenesisHighRise"));
 const Bible = lazy(() => import("./pages/Bible"));
 const BibleChapter = lazy(() => import("./pages/BibleChapter"));
 const BibleSearch = lazy(() => import("./pages/BibleSearch"));
@@ -159,8 +160,9 @@ function App() {
                     <MessagingSidebar />
                     <main className="flex-1 w-full overflow-x-hidden">
                       <Suspense fallback={<LoadingScreen />}>
-                       <Routes>
+                        <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/genesis-challenge" element={<GenesisHighRise />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/interactive-demo" element={<InteractiveDemo />} />
             <Route path="/onboarding" element={
