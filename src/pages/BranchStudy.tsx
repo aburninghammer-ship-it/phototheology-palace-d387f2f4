@@ -67,6 +67,46 @@ export default function BranchStudy() {
       });
 
       if (error) throw error;
+      
+      // Check for validation error (hallucinated principles)
+      if (data?.error && data?.invalidPrinciples) {
+        console.log("🔄 Hallucination detected on start, auto-retrying...");
+        toast({
+          title: "Regenerating response",
+          description: "Jeeves made an error. Trying again...",
+        });
+        
+        // Auto-retry once
+        const { data: retryData, error: retryError } = await supabase.functions.invoke("jeeves", {
+          body: {
+            mode: "branch_study",
+            action: "start",
+            verseReference: verseReference.trim(),
+            studyMode: studyState.mode,
+            level: studyState.level,
+          },
+        });
+        
+        if (retryError) throw retryError;
+        if (!retryData || retryData.error) {
+          throw new Error(retryData?.error || "Failed after retry");
+        }
+        
+        const content = retryData.content || retryData.response;
+        if (!content) throw new Error("No response after retry");
+        
+        console.log("✅ Start retry successful");
+        setStudyState({
+          anchorText: verseReference.trim(),
+          usedVerses: [verseReference.trim()],
+          usedRooms: [],
+          messages: [{ role: "assistant", content }],
+          mode: studyState.mode,
+          level: studyState.level,
+        });
+        return;
+      }
+      
       if (!data || data.error) throw new Error(data?.error || "No response from Jeeves");
 
       const content = data.content || data.response;
@@ -120,6 +160,49 @@ export default function BranchStudy() {
       });
 
       if (error) throw error;
+      
+      // Check for validation error (hallucinated principles)
+      if (data?.error && data?.invalidPrinciples) {
+        console.log("🔄 Hallucination detected, auto-retrying...");
+        toast({
+          title: "Regenerating response",
+          description: "Jeeves made an error. Trying again...",
+        });
+        
+        // Auto-retry once
+        const { data: retryData, error: retryError } = await supabase.functions.invoke("jeeves", {
+          body: {
+            mode: "branch_study",
+            action,
+            anchorText: studyState.anchorText,
+            userResponse: userMessage.content,
+            usedVerses: studyState.usedVerses,
+            usedRooms: studyState.usedRooms,
+            conversationHistory: studyState.messages,
+            studyMode: studyState.mode,
+            level: studyState.level,
+          },
+        });
+        
+        if (retryError) throw retryError;
+        if (!retryData || retryData.error) {
+          throw new Error(retryData?.error || "Failed after retry");
+        }
+        
+        // Use retry data
+        const content = retryData.content || retryData.response;
+        if (!content) throw new Error("No response after retry");
+        
+        console.log("✅ Retry successful");
+        setStudyState((prev) => ({
+          ...prev,
+          messages: [...prev.messages, { role: "assistant", content }],
+          usedVerses: retryData.usedVerses || prev.usedVerses,
+          usedRooms: retryData.usedRooms || prev.usedRooms,
+        }));
+        return;
+      }
+      
       if (!data || data.error) throw new Error(data?.error || "No response");
 
       const content = data.content || data.response;
