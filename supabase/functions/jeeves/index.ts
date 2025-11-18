@@ -2235,13 +2235,21 @@ A. Proverbs 3:5 "Trust in the LORD with all thine heart; and lean not unto thine
 Present 5 Palace rooms/principles showing how they unlock this anchor text.
 
 **CRITICAL SPECIFICITY REQUIREMENT:**
-- For rooms with multiple principles (Dimensions, Time Zones, Connect-6, Theme Room), you MUST specify the EXACT principle, not just the room code.
-- Examples: 
-  - "A. (DR - 3D) (Dimensions Room - Me Application)" NOT just "(DR) (Dimensions Room)"
-  - "B. (TZ - Earth-Past) (Time Zone Room - Historical Context)" NOT just "(TZ) (Time Zone Room)"
-  - "C. (C6 - Prophecy) (Connect-6 - Prophetic Genre)" NOT just "(C6) (Connect-6)"
-  - "D. (TRm - Sanctuary Wall) (Theme Room - Sanctuary Wall)" NOT just "(TRm) (Theme Room)"
-  - "E. (@Mo) (Mosaic Cycle) - [How it applies]" (single-principle rooms remain as is)
+- For rooms with multiple principles, you MUST specify the EXACT principle from the lists below.
+- NEVER invent new sub-principles that aren't on these lists.
+
+**EXACT VALID SUB-PRINCIPLES (use ONLY these):**
+- DR (Dimensions): Literal, Christ, Me, Church, Heaven
+- C6 (Connect-6): Prophecy, Parable, Epistle, History, Gospel, Poetry
+- TZ (Time Zone): 1H, 2H, 3H, Earth-Past, Earth-Present, Earth-Future, Heaven-Past, Heaven-Present, Heaven-Future
+- TRm (Theme Room): Life of Christ Wall, Sanctuary Wall, Time Prophecy Wall, Great Controversy Wall, Heaven Ceiling, Gospel Floor
+
+**Examples (showing CORRECT format):** 
+  - "A. (DR - Me) (Dimensions Room - Me Application)" NOT just "(DR)"
+  - "B. (C6 - Prophecy) (Connect-6 - Prophecy Genre)" NOT "(C6 - Divine Attributes)" ← WRONG, not a real principle!
+  - "C. (TZ - 1H) (Time Zone - First Heaven)" NOT just "(TZ)"
+  - "D. (TRm - Sanctuary Wall) (Theme Room - Sanctuary Wall)" NOT just "(TRm)"
+  - "E. (@Mo) (Mosaic Cycle)" ← single-principle rooms remain as is
 
 Format for multi-principle rooms: "A. ([ROOM] - [Specific Principle]) ([Room Name] - [Specific Application]) - Brief explanation..."
 Format for single-principle rooms: "A. ([ROOM]) ([Room Name]) - Brief explanation..."
@@ -2258,7 +2266,11 @@ ${isSelectingSpecific ? `**User chose from A-E options - Teach and present NEW b
 
 1. Begin: "Excellent choice. Here's the connection..."
 2. TEACH deeply on this connection (2-3 paragraphs minimum) - explain how this verse/principle connects to the anchor text using PT principles
-   **IMPORTANT:** If teaching a principle, be SPECIFIC about which aspect/dimension you're exploring (e.g., "3D - Me Application" not just "Dimensions Room")
+   **IMPORTANT:** If teaching a principle, be SPECIFIC about which aspect you're exploring and ONLY use valid sub-principles:
+   - For DR: Literal, Christ, Me, Church, or Heaven
+   - For C6: Prophecy, Parable, Epistle, History, Gospel, or Poetry (NOT "Divine Attributes" or other invented categories)
+   - For TZ: Specific heaven/time combination
+   - For TRm: Specific wall/floor from the valid list
 3. Then present NEW branch:
 
 **Choose your next branch:**
@@ -2815,6 +2827,51 @@ ${roomContent}
         console.log(`✅ Found ${optionMatches.length} options in response`);
       } else {
         console.log("❌ No options found in response");
+      }
+      
+      // VALIDATE SUB-PRINCIPLES: Check for hallucinated sub-principles
+      const validSubPrinciples: { [key: string]: string[] } = {
+        'DR': ['Literal', 'Christ', 'Me', 'Church', 'Heaven'],
+        'C6': ['Prophecy', 'Parable', 'Epistle', 'History', 'Gospel', 'Poetry'],
+        'TZ': ['1H', '2H', '3H', 'Earth-Past', 'Earth-Present', 'Earth-Future', 'Heaven-Past', 'Heaven-Present', 'Heaven-Future'],
+        'TRm': ['Life of Christ Wall', 'Sanctuary Wall', 'Time Prophecy Wall', 'Great Controversy Wall', 'Heaven Ceiling', 'Gospel Floor']
+      };
+      
+      // Check for invalid sub-principles in the response
+      const invalidPrinciples: string[] = [];
+      Object.keys(validSubPrinciples).forEach(roomCode => {
+        const subPrinciplePattern = new RegExp(`\\(${roomCode}\\s*-\\s*([^)]+)\\)`, 'gi');
+        let match;
+        while ((match = subPrinciplePattern.exec(content)) !== null) {
+          const subPrinciple = match[1].trim();
+          const validList = validSubPrinciples[roomCode];
+          
+          // Check if the sub-principle is valid (case-insensitive)
+          const isValid = validList.some(valid => 
+            valid.toLowerCase() === subPrinciple.toLowerCase()
+          );
+          
+          if (!isValid) {
+            invalidPrinciples.push(`${roomCode} - ${subPrinciple} (not in valid list: ${validList.join(', ')})`);
+            console.log(`❌ HALLUCINATION DETECTED: ${roomCode} - ${subPrinciple}`);
+          }
+        }
+      });
+      
+      // If hallucinations detected, return error to retry
+      if (invalidPrinciples.length > 0) {
+        console.log("❌ VALIDATION FAILED - Invalid sub-principles detected");
+        return new Response(
+          JSON.stringify({ 
+            error: "Jeeves hallucinated invalid principles. Please try again.",
+            invalidPrinciples,
+            hint: "The AI invented sub-principles that don't exist in the Palace. Regenerating..."
+          }),
+          { 
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          }
+        );
       }
       
       const { usedVerses = [], usedRooms = [] } = requestBody;
