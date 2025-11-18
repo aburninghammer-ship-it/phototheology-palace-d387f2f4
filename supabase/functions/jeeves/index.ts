@@ -2232,11 +2232,25 @@ E. [Book Chapter:Verse] "[Full verse text quoted]"
 
 Example:
 A. Proverbs 3:5 "Trust in the LORD with all thine heart; and lean not unto thine own understanding."` : `If PRINCIPLES:
-A. [Room Code] ([Room Name]) - [How it applies]
-B. [Room Code] ([Room Name]) - [How it applies]
-C. [Room Code] ([Room Name]) - [How it applies]
-D. [Room Code] ([Room Name]) - [How it applies]
-E. [Room Code] ([Room Name]) - [How it applies]`}
+Present 5 Palace rooms/principles showing how they unlock this anchor text.
+
+**CRITICAL SPECIFICITY REQUIREMENT:**
+- For rooms with multiple principles (Dimensions, Time Zones, Connect-6, Theme Room), you MUST specify the EXACT principle, not just the room code.
+- Examples: 
+  - "A. (DR - 3D) (Dimensions Room - Me Application)" NOT just "(DR) (Dimensions Room)"
+  - "B. (TZ - Earth-Past) (Time Zone Room - Historical Context)" NOT just "(TZ) (Time Zone Room)"
+  - "C. (C6 - Prophecy) (Connect-6 - Prophetic Genre)" NOT just "(C6) (Connect-6)"
+  - "D. (TRm - Sanctuary Wall) (Theme Room - Sanctuary Wall)" NOT just "(TRm) (Theme Room)"
+  - "E. (@Mo) (Mosaic Cycle) - [How it applies]" (single-principle rooms remain as is)
+
+Format for multi-principle rooms: "A. ([ROOM] - [Specific Principle]) ([Room Name] - [Specific Application]) - Brief explanation..."
+Format for single-principle rooms: "A. ([ROOM]) ([Room Name]) - Brief explanation..."
+
+A. [Room with specifics] - [How it applies]
+B. [Room with specifics] - [How it applies]
+C. [Room with specifics] - [How it applies]
+D. [Room with specifics] - [How it applies]
+E. [Room with specifics] - [How it applies]`}
 
 Choose A, B, C, D, or E.` : ''}
 
@@ -2244,6 +2258,7 @@ ${isSelectingSpecific ? `**User chose from A-E options - Teach and present NEW b
 
 1. Begin: "Excellent choice. Here's the connection..."
 2. TEACH deeply on this connection (2-3 paragraphs minimum) - explain how this verse/principle connects to the anchor text using PT principles
+   **IMPORTANT:** If teaching a principle, be SPECIFIC about which aspect/dimension you're exploring (e.g., "3D - Me Application" not just "Dimensions Room")
 3. Then present NEW branch:
 
 **Choose your next branch:**
