@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,98 +7,272 @@ import { Badge } from "@/components/ui/badge";
 import { Navigation } from "@/components/Navigation";
 import {
   Book,
-  MapPin,
-  Clock,
-  BarChart3,
-  Users,
-  Calendar,
-  Globe,
-  Scroll,
+  Layers,
+  Code,
+  Image as ImageIcon,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Building2,
+  Clock,
+  Target
 } from "lucide-react";
 
 const BibleReference = () => {
   const navigate = useNavigate();
 
-  const factCategories = [
+  // PT Principles - Floors and Rooms
+  const floors = [
     {
-      title: "Books of the Bible",
-      icon: Book,
-      description: "66 books written over 1,500 years by 40+ authors",
-      items: ["39 Old Testament books", "27 New Testament books", "5 books of Law (Torah)", "12 books of History", "5 books of Poetry", "17 books of Prophecy", "4 Gospels", "21 Epistles"]
-    },
-    {
-      title: "Key Numbers",
-      icon: BarChart3,
-      description: "Biblical numerology and significant counts",
-      items: ["7 - Days of creation", "12 - Tribes of Israel, Apostles", "40 - Days of testing", "70 - Years of captivity", "3 - Days in tomb", "50 - Days to Pentecost"]
-    },
-    {
-      title: "Biblical People",
-      icon: Users,
-      description: "Major figures in Scripture",
-      items: ["Patriarchs: Abraham, Isaac, Jacob", "Moses - Lawgiver", "David - King after God's heart", "Prophets: Isaiah, Jeremiah, Ezekiel, Daniel", "Jesus Christ - Messiah", "12 Apostles"]
-    }
-  ];
-
-  const timelines = [
-    {
-      title: "Old Testament Timeline",
-      period: "~2000 BC - 400 BC",
-      events: [
-        { year: "~2000 BC", event: "Abraham called" },
-        { year: "~1446 BC", event: "Exodus from Egypt" },
-        { year: "~1010 BC", event: "David becomes king" },
-        { year: "~970 BC", event: "Solomon builds Temple" },
-        { year: "931 BC", event: "Kingdom divides" },
-        { year: "722 BC", event: "Israel falls to Assyria" },
-        { year: "586 BC", event: "Judah exiled to Babylon" },
-        { year: "538 BC", event: "Return from exile" }
+      number: 1,
+      name: "Furnishing Floor",
+      focus: "Memory & Visualization (Width)",
+      rooms: [
+        { code: "SR", name: "Story Room", purpose: "Collect & memorize Bible stories in sequence" },
+        { code: "IR", name: "Imagination Room", purpose: "Immersive participation in biblical scenes" },
+        { code: "24F", name: "24FPS Room", purpose: "One symbolic image per chapter" },
+        { code: "BR", name: "Bible Rendered", purpose: "One master image per 24-chapter block" },
+        { code: "TR", name: "Translation Room", purpose: "Turn abstract texts into concrete images" },
+        { code: "GR", name: "Gems Room", purpose: "Store powerful insights & discoveries" }
       ]
     },
     {
-      title: "New Testament Timeline",
-      period: "~4 BC - 95 AD",
-      events: [
-        { year: "~4 BC", event: "Jesus born in Bethlehem" },
-        { year: "~27 AD", event: "Jesus begins ministry" },
-        { year: "~30 AD", event: "Crucifixion & Resurrection" },
-        { year: "~33 AD", event: "Pentecost - Church born" },
-        { year: "~34 AD", event: "Paul's conversion" },
-        { year: "~46-48 AD", event: "First missionary journey" },
-        { year: "~70 AD", event: "Jerusalem destroyed" },
-        { year: "~95 AD", event: "Revelation written" }
+      number: 2,
+      name: "Investigation Floor",
+      focus: "Detective Work (Width)",
+      rooms: [
+        { code: "OR", name: "Observation Room", purpose: "Notice details without rushing to meaning" },
+        { code: "DC", name: "Def-Com Room", purpose: "Greek/Hebrew definitions & commentary" },
+        { code: "@T", name: "Symbols/Types", purpose: "God's universal language & shadows of Christ" },
+        { code: "QR", name: "Questions Room", purpose: "75 questions per passage (intra/inter/PT)" },
+        { code: "QA", name: "Q&A Chains", purpose: "Scripture answers Scripture" }
+      ]
+    },
+    {
+      number: 3,
+      name: "Freestyle Floor",
+      focus: "Spontaneous Connections (Time)",
+      rooms: [
+        { code: "NF", name: "Nature Freestyle", purpose: "Creation as second book" },
+        { code: "PF", name: "Personal Freestyle", purpose: "Life experiences as object lessons" },
+        { code: "BF", name: "Bible Freestyle", purpose: "Verse genetics - every verse has relatives" },
+        { code: "HF", name: "History/Social Freestyle", purpose: "Culture & current events" },
+        { code: "LR", name: "Listening Room", purpose: "Turn conversations into connections" }
+      ]
+    },
+    {
+      number: 4,
+      name: "Next Level Floor",
+      focus: "Christ-Centered Depth",
+      rooms: [
+        { code: "CR", name: "Concentration Room", purpose: "Every text reveals Christ" },
+        { code: "DR", name: "Dimensions Room", purpose: "5D: Literal, Christ, Me, Church, Heaven" },
+        { code: "C6", name: "Connect 6", purpose: "Genre classification (prophecy, poetry, etc.)" },
+        { code: "TRm", name: "Theme Room", purpose: "Great walls: Sanctuary, Life of Christ, etc." },
+        { code: "TZ", name: "Time Zone", purpose: "Past, present, future (heaven/earth)" },
+        { code: "PRm", name: "Patterns Room", purpose: "God's recurring motifs" },
+        { code: "P‖", name: "Parallels Room", purpose: "Mirrored actions across time" },
+        { code: "FRt", name: "Fruit Room", purpose: "Does it produce Christlike character?" }
+      ]
+    },
+    {
+      number: 5,
+      name: "Vision Floor",
+      focus: "Prophecy & Sanctuary",
+      rooms: [
+        { code: "BL", name: "Blue Room", purpose: "Sanctuary as redemption blueprint" },
+        { code: "PR", name: "Prophecy Room", purpose: "Daniel & Revelation timelines" },
+        { code: "3A", name: "Three Angels' Room", purpose: "Final gospel appeal (Rev 14:6-12)" }
+      ]
+    },
+    {
+      number: 6,
+      name: "Three Heavens Floor",
+      focus: "Cycles & Cosmic Context",
+      description: "Situate texts in cycles and heavens - never read in isolation"
+    },
+    {
+      number: 7,
+      name: "Spiritual & Emotional Floor",
+      focus: "Transformation (Height)",
+      rooms: [
+        { code: "FRm", name: "Fire Room", purpose: "Emotional weight & conviction" },
+        { code: "MR", name: "Meditation Room", purpose: "Slow marination in truth" },
+        { code: "SRm", name: "Speed Room", purpose: "Rapid application & reflexes" }
+      ]
+    },
+    {
+      number: 8,
+      name: "Master Floor",
+      focus: "Reflexive Mastery",
+      description: "No rooms - the palace is inside you. PT becomes natural thought."
+    }
+  ];
+
+  // The Eight Cycles
+  const cycles = [
+    {
+      code: "@Ad",
+      name: "Adamic Cycle",
+      pattern: "Fall → Covenant (Gen 3:15) → Sanctuary (Skins, Abel's offering) → Enemy (Serpent, Cain) → Restoration (Seth's line)",
+      description: "Pilot episode - every theme appears here first"
+    },
+    {
+      code: "@No",
+      name: "Noahic Cycle",
+      pattern: "Fall (Violence) → Covenant (Ark) → Sanctuary (Floating temple) → Enemy (Mockery, judgment waters) → Restoration (Rainbow covenant)",
+      description: "Reset button - external cleansing can't solve internal problem"
+    },
+    {
+      code: "@Ab",
+      name: "Abrahamic Cycle",
+      pattern: "Fall (Babel scatter) → Covenant (Father of nations) → Sanctuary (Altars, Moriah) → Enemy (Famine, foreign kings) → Restoration (Isaac's miracle birth)",
+      description: "Main character selected - one family for the Seed"
+    },
+    {
+      code: "@Mo",
+      name: "Mosaic Cycle",
+      pattern: "Fall (Egyptian slavery) → Covenant (Sinai) → Sanctuary (Tabernacle pattern) → Enemy (Pharaoh, wilderness rebellion) → Restoration (Canaan conquest)",
+      description: "Nation-state launch - covenant goes public"
+    },
+    {
+      code: "@Cy",
+      name: "Cyrusic Cycle",
+      pattern: "Fall (Babylon exile) → Covenant (Return promised) → Sanctuary (Temple rebuilt) → Enemy (Local opposition) → Restoration (Ezra/Nehemiah reforms)",
+      description: "Rebuilding season - house restored but fragile"
+    },
+    {
+      code: "@CyC",
+      name: "Cyrus–Christ Cycle",
+      pattern: "Fall (Post-exilic weakness) → Covenant (True Anointed appears) → Sanctuary (Christ as temple) → Enemy (Herod, Caesar, Satan, death) → Restoration (Resurrection, heavenly ministry)",
+      description: "Fulfillment arc - type meets antitype"
+    },
+    {
+      code: "@Sp",
+      name: "Holy Spirit Cycle",
+      pattern: "Fall (Disciples scatter) → Covenant (Spirit promise) → Sanctuary (Pentecost - homes as temples) → Enemy (Persecution, heresies) → Restoration (Revivals, Reformation, missions)",
+      description: "Spread arc - global by Spirit, not might"
+    },
+    {
+      code: "@Re",
+      name: "Remnant Cycle",
+      pattern: "Fall (Final apostasy) → Covenant (Rev 12:17 remnant) → Sanctuary (Heavenly judgment - Dan 8:14) → Enemy (Dragon, beast, false prophet) → Restoration (Second Coming, new heaven/earth)",
+      description: "Final season - great controversy ends"
+    }
+  ];
+
+  // Three Heavens (Day-of-the-LORD Model)
+  const heavens = [
+    {
+      code: "1H",
+      name: "DoL¹/NE¹",
+      judgment: "586 BC - Babylon destroys Jerusalem",
+      renewal: "Post-exilic restoration under Cyrus",
+      description: "First Day of LORD → First New Heavens & Earth (typological)",
+      cycles: "@Mo → @Cy",
+      texts: "Jeremiah, Ezekiel, Isaiah 40–66, Ezra–Nehemiah"
+    },
+    {
+      code: "2H",
+      name: "DoL²/NE²",
+      judgment: "70 AD - Rome destroys Jerusalem/Temple",
+      renewal: "New-Covenant order: church as temple, heavenly sanctuary",
+      description: "Second Day of LORD → Second New Heavens & Earth (covenantal/ecclesial)",
+      cycles: "@CyC → @Sp",
+      texts: "Synoptics (Olivet), Acts, Hebrews, 1 Peter, Revelation 1–3"
+    },
+    {
+      code: "3H",
+      name: "DoL³/NE³",
+      judgment: "Final global judgment - elements melt (2 Pet 3)",
+      renewal: "Literal New Creation - no temple, no night, no death",
+      description: "Final Day of LORD → Final/Literal New Heavens & Earth",
+      cycles: "@Re",
+      texts: "2 Peter 3, Revelation 19–22, Isaiah 66 (ultimate horizon)"
+    }
+  ];
+
+  // Symbol Library
+  const symbols = [
+    {
+      category: "Christ Symbols",
+      items: [
+        { symbol: "Lamb", meaning: "Christ as sacrifice (John 1:29)" },
+        { symbol: "Rock", meaning: "Christ as foundation (1 Cor 10:4)" },
+        { symbol: "Light", meaning: "Truth/Christ (John 8:12)" },
+        { symbol: "Bread", meaning: "Word/Christ (John 6:35)" },
+        { symbol: "Water", meaning: "Spirit/Word (John 7:38; Eph 5:26)" },
+        { symbol: "Vine", meaning: "Christ, we are branches (John 15:5)" }
+      ]
+    },
+    {
+      category: "Types (Shadows → Christ)",
+      items: [
+        { symbol: "Passover Lamb", meaning: "Calvary sacrifice" },
+        { symbol: "Manna", meaning: "Bread of Life" },
+        { symbol: "Ark", meaning: "Salvation in Christ" },
+        { symbol: "High Priest", meaning: "Christ's intercession" },
+        { symbol: "Brazen Serpent", meaning: "Christ lifted up (John 3:14)" },
+        { symbol: "Day of Atonement", meaning: "Final judgment" }
+      ]
+    },
+    {
+      category: "Parallels (Mirrored Actions)",
+      items: [
+        { event1: "Tower of Babel", event2: "Pentecost", parallel: "Languages divided → Languages united" },
+        { event1: "Israel leaving Egypt", event2: "Israel leaving Babylon", parallel: "Exodus pattern repeats" },
+        { event1: "Jesus fasting 40 days", event2: "Israel wandering 40 years", parallel: "Testing period mirror" }
       ]
     }
   ];
 
-  const mapLocations = [
+  // Memory Tools
+  const memoryTools = [
     {
-      region: "Holy Land",
-      locations: ["Jerusalem - City of David", "Bethlehem - Birthplace of Jesus", "Nazareth - Jesus' hometown", "Galilee - Ministry center", "Jericho - Oldest city", "Dead Sea - Lowest point on earth"]
+      name: "24FPS System",
+      description: "One symbolic image per chapter - 1,189 chapters total",
+      example: "Genesis 1 = birthday cake earth (creation), Genesis 3 = snake biting apple-clock (fall into time)",
+      purpose: "Flip through books mentally like a movie strip"
     },
     {
-      region: "Ancient Empires",
-      locations: ["Egypt - Land of bondage", "Babylon - City of captivity", "Assyria - Northern kingdom's conqueror", "Persia - Return enabler", "Greece - Cultural influence", "Rome - Jesus' era empire"]
+      name: "Bible Rendered",
+      description: "One master image per 24-chapter block - only 51 images for entire Bible",
+      example: "Genesis 1–24 = slash '/' (division theme), Genesis 25–50 = '×' (multiplication theme)",
+      purpose: "Scan entire Bible in under 1 minute"
+    },
+    {
+      name: "Five Ascensions",
+      description: "Text → Chapter → Book → Cycle → Heaven",
+      purpose: "Never read a verse in isolation - always climb to cosmic context"
+    },
+    {
+      name: "Four Expansions",
+      description: "Width (content), Time (daily practice), Depth (structure), Height (transformation)",
+      purpose: "Stretch study in every direction"
     }
   ];
 
-  const charts = [
+  // Ascensions & Expansions
+  const framework = [
     {
-      title: "Covenants",
-      description: "God's promises through history",
-      data: ["Adamic - Promise of redemption", "Noahic - Never flood again", "Abrahamic - Father of nations", "Mosaic - Law covenant", "Davidic - Eternal kingdom", "New - Through Christ's blood"]
+      title: "Five Ascensions",
+      subtitle: "Climb from text to cosmos",
+      steps: [
+        { level: "Asc-1", name: "Text", focus: "Word-level analysis (definitions, grammar)" },
+        { level: "Asc-2", name: "Chapter", focus: "Place verse in chapter storyline" },
+        { level: "Asc-3", name: "Book", focus: "Fit chapter into book's theme" },
+        { level: "Asc-4", name: "Cycle", focus: "Place book in covenant cycle (@Ad → @Re)" },
+        { level: "Asc-5", name: "Heaven", focus: "Locate in Day-of-LORD horizon (1H/2H/3H)" }
+      ]
     },
     {
-      title: "Prophetic Cycles",
-      description: "Major prophetic timelines",
-      data: ["70 Weeks of Daniel", "2300 Days - Sanctuary cleansed", "1260 Days - Time of persecution", "Seven Seals", "Seven Trumpets", "Three Angels' Messages"]
-    },
-    {
-      title: "Sanctuary System",
-      description: "Types pointing to Christ",
-      data: ["Daily Service - Continual intercession", "Yearly Service - Day of Atonement", "Furniture - Christ's work revealed", "Priesthood - Christ our High Priest", "Sacrifices - Lamb of God", "Feast Days - Prophetic calendar"]
+      title: "Four Expansions",
+      subtitle: "Stretch study in all directions",
+      dimensions: [
+        { code: "Exp-W", name: "Width", focus: "Raw content & memory (Floors 1-2)" },
+        { code: "Exp-T", name: "Time", focus: "Continuous freestyle practice (Floor 3)" },
+        { code: "Exp-D", name: "Depth", focus: "Christ-centered structure, prophecy (Floors 4-6)" },
+        { code: "Exp-H", name: "Height", focus: "Transformation & mastery (Floors 7-8)" }
+      ]
     }
   ];
 
@@ -110,178 +283,295 @@ const BibleReference = () => {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Book className="h-12 w-12 text-primary" />
+            <Building2 className="h-12 w-12 text-primary" />
             <h1 className="text-4xl md:text-5xl font-bold">
-              The Everything Bible
+              Phototheology Codebook
             </h1>
           </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            The Ultimate Collection of Bible Facts, Timelines, Maps, and Charts
+            Complete Reference Manual: Principles, Cycles, Symbols & Memory Tools
           </p>
-          <Badge variant="secondary" className="mt-4">
-            <Sparkles className="h-3 w-3 mr-1" />
-            Comprehensive Reference Library
-          </Badge>
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <Badge variant="secondary">
+              <Sparkles className="h-3 w-3 mr-1" />
+              8 Floors • 8 Cycles • 3 Heavens
+            </Badge>
+            <Badge variant="outline">
+              Complete PT System
+            </Badge>
+          </div>
         </div>
 
-        <Tabs defaultValue="facts" className="space-y-6">
+        <Tabs defaultValue="principles" className="space-y-6">
           <TabsList className="grid grid-cols-4 w-full max-w-2xl mx-auto">
-            <TabsTrigger value="facts" className="gap-2">
-              <Scroll className="h-4 w-4" />
-              Facts
+            <TabsTrigger value="principles" className="gap-2">
+              <Building2 className="h-4 w-4" />
+              PT Principles
             </TabsTrigger>
-            <TabsTrigger value="timelines" className="gap-2">
+            <TabsTrigger value="cycles" className="gap-2">
               <Clock className="h-4 w-4" />
-              Timelines
+              Cycles & Heavens
             </TabsTrigger>
-            <TabsTrigger value="maps" className="gap-2">
-              <MapPin className="h-4 w-4" />
-              Maps
+            <TabsTrigger value="symbols" className="gap-2">
+              <Code className="h-4 w-4" />
+              Symbol Library
             </TabsTrigger>
-            <TabsTrigger value="charts" className="gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Charts
+            <TabsTrigger value="memory" className="gap-2">
+              <ImageIcon className="h-4 w-4" />
+              Memory Tools
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="facts" className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {factCategories.map((category, idx) => {
-                const Icon = category.icon;
-                return (
-                  <Card key={idx} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 rounded-lg bg-primary/10">
-                          <Icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <CardTitle className="text-xl">{category.title}</CardTitle>
+          <TabsContent value="principles" className="space-y-6">
+            {/* Palace Floors */}
+            <div className="space-y-4">
+              <div className="text-center mb-6">
+                <h2 className="text-3xl font-bold mb-2">The Eight-Floor Palace</h2>
+                <p className="text-muted-foreground">Each floor builds on the one below - ascending from memory to mastery</p>
+              </div>
+              
+              {floors.map((floor) => (
+                <Card key={floor.number} className="overflow-hidden">
+                  <CardHeader className="bg-accent/50">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <Badge variant="outline" className="mb-2">Floor {floor.number}</Badge>
+                        <CardTitle className="text-2xl">{floor.name}</CardTitle>
+                        <CardDescription className="mt-1">{floor.focus}</CardDescription>
                       </div>
-                      <CardDescription>{category.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2">
-                        {category.items.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm">
-                            <ChevronRight className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="timelines" className="space-y-6">
-            {timelines.map((timeline, idx) => (
-              <Card key={idx}>
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <Calendar className="h-6 w-6 text-primary" />
-                    <div>
-                      <CardTitle>{timeline.title}</CardTitle>
-                      <CardDescription>{timeline.period}</CardDescription>
+                      <Building2 className="h-8 w-8 text-primary opacity-50" />
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ScrollArea className="h-96">
-                    <div className="relative space-y-4 pl-6">
-                      <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-primary/20" />
-                      {timeline.events.map((event, i) => (
-                        <div key={i} className="relative">
-                          <div className="absolute -left-[1.3rem] top-2 h-3 w-3 rounded-full bg-primary border-4 border-background" />
-                          <div className="bg-accent/50 rounded-lg p-4">
-                            <div className="font-semibold text-primary">{event.year}</div>
-                            <div className="text-sm mt-1">{event.event}</div>
+                  </CardHeader>
+                  {floor.rooms ? (
+                    <CardContent className="pt-6">
+                      <div className="grid gap-3 md:grid-cols-2">
+                        {floor.rooms.map((room, i) => (
+                          <div key={i} className="p-3 rounded-lg bg-accent/30 hover:bg-accent/50 transition-colors">
+                            <div className="flex items-start gap-2">
+                              <Badge variant="secondary" className="text-xs">{room.code}</Badge>
+                              <div className="flex-1">
+                                <div className="font-semibold text-sm">{room.name}</div>
+                                <div className="text-xs text-muted-foreground mt-1">{room.purpose}</div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  ) : (
+                    <CardContent className="pt-6">
+                      <p className="text-sm text-muted-foreground italic">{floor.description}</p>
+                    </CardContent>
+                  )}
+                </Card>
+              ))}
+            </div>
+
+            {/* Five Ascensions & Four Expansions */}
+            <div className="grid gap-6 md:grid-cols-2 mt-8">
+              {framework.map((item, idx) => (
+                <Card key={idx} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <Layers className="h-6 w-6 text-primary" />
+                      <div>
+                        <CardTitle>{item.title}</CardTitle>
+                        <CardDescription>{item.subtitle}</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {item.steps?.map((step, i) => (
+                        <div key={i} className="flex items-start gap-2 p-2 rounded bg-accent/50">
+                          <Badge variant="outline" className="text-xs">{step.level}</Badge>
+                          <div className="flex-1">
+                            <div className="font-semibold text-sm">{step.name}</div>
+                            <div className="text-xs text-muted-foreground">{step.focus}</div>
+                          </div>
+                        </div>
+                      ))}
+                      {item.dimensions?.map((dim, i) => (
+                        <div key={i} className="flex items-start gap-2 p-2 rounded bg-accent/50">
+                          <Badge variant="outline" className="text-xs">{dim.code}</Badge>
+                          <div className="flex-1">
+                            <div className="font-semibold text-sm">{dim.name}</div>
+                            <div className="text-xs text-muted-foreground">{dim.focus}</div>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </ScrollArea>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
 
-          <TabsContent value="maps" className="space-y-6">
-            {mapLocations.map((region, idx) => (
-              <Card key={idx}>
+          <TabsContent value="cycles" className="space-y-6">
+            {/* The Eight Cycles */}
+            <div>
+              <div className="text-center mb-6">
+                <h2 className="text-3xl font-bold mb-2">The Eight Cycles</h2>
+                <p className="text-muted-foreground">Fall → Covenant → Sanctuary → Enemy → Restoration</p>
+              </div>
+              
+              <div className="space-y-4">
+                {cycles.map((cycle) => (
+                  <Card key={cycle.code} className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="secondary">{cycle.code}</Badge>
+                            <CardTitle className="text-xl">{cycle.name}</CardTitle>
+                          </div>
+                          <CardDescription className="text-sm italic mb-3">
+                            {cycle.description}
+                          </CardDescription>
+                          <div className="p-3 rounded-lg bg-accent/30 text-sm">
+                            <div className="font-mono text-xs leading-relaxed">{cycle.pattern}</div>
+                          </div>
+                        </div>
+                        <Target className="h-6 w-6 text-primary opacity-50 flex-shrink-0" />
+                      </div>
+                    </CardHeader>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Three Heavens */}
+            <div className="mt-8">
+              <div className="text-center mb-6">
+                <h2 className="text-3xl font-bold mb-2">The Three Heavens</h2>
+                <p className="text-muted-foreground">Day-of-the-LORD Horizons: Judgment → Renewal</p>
+              </div>
+              
+              <div className="space-y-4">
+                {heavens.map((heaven) => (
+                  <Card key={heaven.code} className="hover:shadow-lg transition-shadow border-primary/30">
+                    <CardHeader>
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 rounded-lg bg-primary/10">
+                          <Badge className="text-lg px-3 py-1">{heaven.code}</Badge>
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-xl mb-2">{heaven.name}</CardTitle>
+                          <CardDescription className="mb-3">{heaven.description}</CardDescription>
+                          <div className="space-y-2 text-sm">
+                            <div className="p-2 rounded bg-destructive/10">
+                              <span className="font-semibold">Judgment:</span> {heaven.judgment}
+                            </div>
+                            <div className="p-2 rounded bg-primary/10">
+                              <span className="font-semibold">Renewal:</span> {heaven.renewal}
+                            </div>
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
+                              <div><span className="font-semibold">Cycles:</span> {heaven.cycles}</div>
+                              <div><span className="font-semibold">Key Texts:</span> {heaven.texts}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="symbols" className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold mb-2">Symbol Library</h2>
+              <p className="text-muted-foreground">God's universal language across Scripture</p>
+            </div>
+
+            {symbols.map((section, idx) => (
+              <Card key={idx} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center gap-3">
-                    <Globe className="h-6 w-6 text-primary" />
-                    <CardTitle>{region.region}</CardTitle>
+                    <Code className="h-6 w-6 text-primary" />
+                    <CardTitle>{section.category}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {region.locations.map((location, i) => (
-                      <div key={i} className="flex items-start gap-2 p-3 rounded-lg bg-accent/50">
-                        <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{location}</span>
+                  <div className="space-y-2">
+                    {section.items.map((item, i) => (
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-accent/50 hover:bg-accent transition-colors">
+                        {item.symbol && (
+                          <>
+                            <div className="flex-shrink-0 w-32">
+                              <Badge variant="outline" className="w-full justify-center">{item.symbol}</Badge>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                            <div className="text-sm flex-1">{item.meaning}</div>
+                          </>
+                        )}
+                        {item.event1 && (
+                          <div className="flex-1 space-y-1 text-sm">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">{item.event1}</Badge>
+                              <span className="text-muted-foreground">↔</span>
+                              <Badge variant="outline" className="text-xs">{item.event2}</Badge>
+                            </div>
+                            <div className="text-muted-foreground">{item.parallel}</div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
             ))}
-            
-            <Card className="border-primary/50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5" />
-                  Interactive Biblical Maps Coming Soon
-                </CardTitle>
-                <CardDescription>
-                  Explore journeys of Abraham, Exodus route, Paul's missionary trips, and more
-                </CardDescription>
-              </CardHeader>
-            </Card>
           </TabsContent>
 
-          <TabsContent value="charts" className="space-y-6">
+          <TabsContent value="memory" className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold mb-2">Memory Tools</h2>
+              <p className="text-muted-foreground">Transform Scripture into unforgettable visual patterns</p>
+            </div>
+
             <div className="grid gap-6 md:grid-cols-2">
-              {charts.map((chart, idx) => (
+              {memoryTools.map((tool, idx) => (
                 <Card key={idx} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-center gap-3">
-                      <BarChart3 className="h-6 w-6 text-primary" />
-                      <div>
-                        <CardTitle>{chart.title}</CardTitle>
-                        <CardDescription>{chart.description}</CardDescription>
-                      </div>
+                      <ImageIcon className="h-6 w-6 text-primary" />
+                      <CardTitle>{tool.name}</CardTitle>
                     </div>
+                    <CardDescription>{tool.description}</CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {chart.data.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm p-2 rounded bg-accent/50">
-                          <ChevronRight className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <CardContent className="space-y-3">
+                    <div className="p-3 rounded-lg bg-accent/50">
+                      <div className="text-xs font-semibold text-muted-foreground mb-1">Example:</div>
+                      <div className="text-sm">{tool.example}</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-primary/10">
+                      <div className="text-xs font-semibold text-muted-foreground mb-1">Purpose:</div>
+                      <div className="text-sm">{tool.purpose}</div>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            <Card className="border-primary/50">
+            {/* Integration Card */}
+            <Card className="border-primary/50 mt-8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5" />
-                  Phototheology Integration
+                  Start Using These Tools
                 </CardTitle>
                 <CardDescription>
-                  All charts connect to Palace Rooms and Phototheology principles
+                  All memory tools are integrated throughout the Phototheology app
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button variant="outline" className="w-full justify-between" onClick={() => navigate("/palace")}>
                   Explore the Palace
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" className="w-full justify-between" onClick={() => navigate("/bible-rendered-room")}>
+                  Bible Rendered Room
                   <ChevronRight className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" className="w-full justify-between" onClick={() => navigate("/bible")}>
