@@ -80,7 +80,7 @@ const BibleReference = () => {
       focus: "Prophecy & Sanctuary",
       rooms: [
         { code: "BL", name: "Blue Room", purpose: "Sanctuary as redemption blueprint" },
-        { code: "PR", name: "Prophecy Room", purpose: "Daniel & Revelation timelines" },
+        { code: "PR", name: "Prophecy Room", purpose: "Daniel & Revelation timelines", link: "/prophecy-watch" },
         { code: "3A", name: "Three Angels' Room", purpose: "Final gospel appeal (Rev 14:6-12)" }
       ]
     },
@@ -347,12 +347,24 @@ const BibleReference = () => {
                       <div className="grid gap-3 md:grid-cols-2">
                         {floor.rooms.map((room, i) => (
                           <div key={i} className="p-3 rounded-lg bg-accent/30 hover:bg-accent/50 transition-colors">
-                            <div className="flex items-start gap-2">
-                              <Badge variant="secondary" className="text-xs">{room.code}</Badge>
-                              <div className="flex-1">
-                                <div className="font-semibold text-sm">{room.name}</div>
-                                <div className="text-xs text-muted-foreground mt-1">{room.purpose}</div>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-start gap-2 flex-1">
+                                <Badge variant="secondary" className="text-xs">{room.code}</Badge>
+                                <div className="flex-1">
+                                  <div className="font-semibold text-sm">{room.name}</div>
+                                  <div className="text-xs text-muted-foreground mt-1">{room.purpose}</div>
+                                </div>
                               </div>
+                              {room.link && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-6 px-2"
+                                  onClick={() => navigate(room.link)}
+                                >
+                                  <ChevronRight className="h-3 w-3" />
+                                </Button>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -477,6 +489,49 @@ const BibleReference = () => {
                 ))}
               </div>
             </div>
+
+            {/* Prophecy Watch Link */}
+            <Card className="bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 border-primary/30">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <Sparkles className="h-6 w-6 text-primary" />
+                      Current Prophecy Updates
+                    </CardTitle>
+                    <CardDescription className="mt-2">
+                      Track real-time fulfillment of biblical prophecy in today's world
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => navigate('/prophecy-watch')} className="gap-2">
+                    View Updates
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-3 md:grid-cols-3">
+                  <div className="p-3 rounded-lg bg-background/50">
+                    <div className="font-semibold text-sm mb-1">World Events</div>
+                    <div className="text-xs text-muted-foreground">
+                      Current events mapped to prophetic timelines
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-lg bg-background/50">
+                    <div className="font-semibold text-sm mb-1">Signs Tracking</div>
+                    <div className="text-xs text-muted-foreground">
+                      Monitor fulfillment of end-time signs
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-lg bg-background/50">
+                    <div className="font-semibold text-sm mb-1">Biblical Analysis</div>
+                    <div className="text-xs text-muted-foreground">
+                      Compare headlines with Scripture
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="symbols" className="space-y-6">
