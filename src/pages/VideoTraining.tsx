@@ -38,6 +38,7 @@ const VideoTraining = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("general");
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
   // Check if user is video admin
   const { data: isVideoAdmin } = useQuery({
@@ -97,6 +98,25 @@ const VideoTraining = () => {
         .from("training-videos")
         .getPublicUrl(filePath);
       
+      // Upload thumbnail if provided
+      let thumbnailUrl = null;
+      if (thumbnailFile) {
+        const thumbExt = thumbnailFile.name.split(".").pop();
+        const thumbPath = `thumbnails/${crypto.randomUUID()}.${thumbExt}`;
+        
+        const { error: thumbUploadError } = await supabase.storage
+          .from("training-videos")
+          .upload(thumbPath, thumbnailFile);
+        
+        if (thumbUploadError) throw thumbUploadError;
+        
+        const { data: { publicUrl: thumbPublicUrl } } = supabase.storage
+          .from("training-videos")
+          .getPublicUrl(thumbPath);
+        
+        thumbnailUrl = thumbPublicUrl;
+      }
+      
       // Create database record
       const { error: dbError } = await supabase
         .from("training_videos")
@@ -105,6 +125,7 @@ const VideoTraining = () => {
           description,
           category,
           video_url: publicUrl,
+          thumbnail_url: thumbnailUrl,
           created_by: user?.id,
         });
       
@@ -119,6 +140,7 @@ const VideoTraining = () => {
       setDescription("");
       setCategory("general");
       setVideoFile(null);
+      setThumbnailFile(null);
       setIsUploading(false);
     },
     onError: (error) => {
@@ -224,6 +246,19 @@ const VideoTraining = () => {
                     accept="video/*"
                     onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
                   />
+                </div>
+                
+                <div>
+                  <Label htmlFor="thumbnail">Thumbnail Image (Optional)</Label>
+                  <Input
+                    id="thumbnail"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Recommended size: 1280x720 (16:9 ratio)
+                  </p>
                 </div>
                 
                 <Button
