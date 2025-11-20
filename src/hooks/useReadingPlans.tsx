@@ -70,9 +70,11 @@ export const useReadingPlans = () => {
         .select("*")
         .eq("user_id", user.id)
         .eq("is_active", true)
-        .single();
+        .order("started_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error) throw error;
       setUserProgress(data);
     } catch (error) {
       console.error("Error loading user progress:", error);
@@ -131,18 +133,13 @@ export const useReadingPlans = () => {
       // Upsert the new plan (insert or update if exists)
       const { data, error } = await supabase
         .from("user_reading_progress")
-        .upsert(
-          {
-            user_id: user.id,
-            plan_id: planId,
-            current_day: 1,
-            is_active: true,
-            started_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "user_id,plan_id,is_active",
-          }
-        )
+        .insert({
+          user_id: user.id,
+          plan_id: planId,
+          current_day: 1,
+          is_active: true,
+          started_at: new Date().toISOString(),
+        })
         .select()
         .single();
 
