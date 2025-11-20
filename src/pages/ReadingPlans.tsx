@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ReadingPlans() {
-  const { plans, userProgress, loading, startPlan } = useReadingPlans();
+  const { plans, userProgress, loading, startPlan, refetchProgress } = useReadingPlans();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -33,6 +33,8 @@ export default function ReadingPlans() {
 
   const handleStartPlan = async (planId: string) => {
     await startPlan(planId);
+    await refetchProgress();
+    navigate("/daily-reading");
   };
 
   const bookPlans = plans.filter(p => p.plan_type === 'book-monthly');
