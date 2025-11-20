@@ -79,6 +79,10 @@ export const useReadingPlans = () => {
     }
   };
 
+  const refetchProgress = async () => {
+    await loadUserProgress();
+  };
+
   const startPlan = async (planId: string) => {
     if (!user) {
       toast({
@@ -135,5 +139,6 @@ export const useReadingPlans = () => {
     loading,
     startPlan,
     refetch: loadPlans,
+    refetchProgress,
   };
 };
