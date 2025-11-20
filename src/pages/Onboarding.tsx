@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 
-type OnboardingStep = "welcome" | "role" | "tutorial" | "quick-win" | "complete";
+type OnboardingStep = "welcome" | "discovery" | "role" | "tutorial" | "quick-win" | "complete";
 
 const roles = [
   {
@@ -69,13 +69,15 @@ export default function Onboarding() {
 
   const progressPercentage = 
     step === "welcome" ? 0 :
-    step === "role" ? 25 :
-    step === "tutorial" ? 50 :
-    step === "quick-win" ? 75 :
+    step === "discovery" ? 20 :
+    step === "role" ? 40 :
+    step === "tutorial" ? 60 :
+    step === "quick-win" ? 80 :
     100;
 
   const handleNext = () => {
-    if (step === "welcome") setStep("role");
+    if (step === "welcome") setStep("discovery");
+    else if (step === "discovery") setStep("role");
     else if (step === "role" && selectedRole) setStep("tutorial");
     else if (step === "tutorial") {
       if (tutorialIndex < tutorialSteps.length - 1) {
@@ -87,7 +89,8 @@ export default function Onboarding() {
   };
 
   const handleBack = () => {
-    if (step === "role") setStep("welcome");
+    if (step === "discovery") setStep("welcome");
+    else if (step === "role") setStep("discovery");
     else if (step === "tutorial") {
       if (tutorialIndex > 0) {
         setTutorialIndex(tutorialIndex - 1);
@@ -167,6 +170,15 @@ export default function Onboarding() {
               </CardDescription>
             </>
           )}
+
+          {step === "discovery" && (
+            <>
+              <CardTitle className="text-4xl font-bold">See What Others Miss</CardTitle>
+              <CardDescription className="text-lg mt-2">
+                Discovering hidden patterns in Scripture
+              </CardDescription>
+            </>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-6">
@@ -204,6 +216,61 @@ export default function Onboarding() {
                 </Button>
                 <Button onClick={handleNext}>
                   Get Started
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* DISCOVERY STEP - THE UNNAMED SON OF DAVID */}
+          {step === "discovery" && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h3 className="text-3xl font-bold mb-2">The Unnamed Son of David</h3>
+                <p className="text-muted-foreground">A hidden gem from 2 Samuel 12</p>
+              </div>
+
+              <div className="bg-background/80 backdrop-blur-sm p-6 rounded-lg border border-border/50 space-y-4">
+                <p className="text-lg leading-relaxed">
+                  In 2 Samuel 12, a male child is born to David. He is never given a name—he is simply identified as <span className="font-semibold italic">"the son of David."</span>
+                </p>
+                
+                <div className="pl-4 border-l-4 border-primary/30 space-y-2">
+                  <p className="text-base text-muted-foreground">
+                    He enters the world because of someone else's sin.
+                  </p>
+                  <p className="text-base text-muted-foreground">
+                    He commits no wrong.
+                  </p>
+                  <p className="text-base text-muted-foreground">
+                    Yet he dies in the place of the guilty.
+                  </p>
+                </div>
+
+                <p className="text-lg leading-relaxed pt-2">
+                  A quiet shadow of the <span className="font-semibold text-primary">Greater Son of David</span> who would enter the world because of our sin… and die, though innocent, to bring peace, restoration, and a new covenant.
+                </p>
+              </div>
+
+              <div className="bg-primary/5 p-6 rounded-lg border border-primary/20">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-bold text-lg mb-2">If connections like this make Scripture come alive...</h4>
+                    <p className="text-muted-foreground leading-relaxed">
+                      This app is for you. Phototheology trains you to see patterns, recognize types, and discover Christ in every chapter—from Genesis to Revelation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between">
+                <Button variant="ghost" onClick={handleBack}>
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+                <Button onClick={handleNext}>
+                  Find More Hidden Gems
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>

@@ -12,55 +12,69 @@ export const InstantDemo = () => {
       <div className="text-center mb-8">
         <Badge variant="secondary" className="mb-4">
           <Sparkles className="w-4 h-4 mr-2" />
-          Try it now - No signup required
+          Hidden Gems Revealed
         </Badge>
         <h2 className="text-3xl md:text-4xl font-bold mb-3">
-          See How It Works Instantly
+          The Unnamed Son of David
         </h2>
         <p className="text-muted-foreground text-lg">
-          Here's a sample of how Phototheology transforms your Bible study
+          See what most readers overlook in 2 Samuel 12
         </p>
       </div>
 
       <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20 shadow-xl">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <CardTitle className="text-2xl flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-primary" />
-              John 3:16 (KJV)
+              2 Samuel 12
             </CardTitle>
-            <Badge variant="outline" className="text-xs">Floor 1: Story Room</Badge>
+            <Badge variant="outline" className="text-xs">Typology · Christ-Centered</Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Bible Verse */}
-          <div className="bg-background/80 backdrop-blur-sm p-6 rounded-lg border border-border/50">
-            <p className="text-lg leading-relaxed italic">
-              "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."
+          {/* The Discovery */}
+          <div className="bg-background/80 backdrop-blur-sm p-6 rounded-lg border border-border/50 space-y-4">
+            <p className="text-lg leading-relaxed">
+              In 2 Samuel 12, a male child is born to David. He is never given a name—he is simply identified as <span className="font-semibold italic">"the son of David."</span>
+            </p>
+            
+            <div className="pl-4 border-l-4 border-primary/30 space-y-2">
+              <p className="text-base text-muted-foreground">
+                He enters the world because of someone else's sin.
+              </p>
+              <p className="text-base text-muted-foreground">
+                He commits no wrong.
+              </p>
+              <p className="text-base text-muted-foreground">
+                Yet he dies in the place of the guilty.
+              </p>
+            </div>
+
+            <p className="text-lg leading-relaxed pt-2">
+              A quiet shadow of the <span className="font-semibold text-primary">Greater Son of David</span> who would enter the world because of our sin… and die, though innocent, to bring peace, restoration, and a new covenant.
             </p>
           </div>
 
-          {/* AI-Powered Insight */}
+          {/* Phototheology Insight */}
           <div className="bg-primary/5 p-6 rounded-lg border border-primary/20">
             <div className="flex items-start gap-3 mb-3">
               <Sparkles className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-bold text-lg mb-2">Visual Memory Hook</h3>
+                <h3 className="font-bold text-lg mb-2">This Is Phototheology</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Picture a massive gift box labeled "The World" with arms wrapped around it. 
-                  Inside the box is a radiant figure—God's Son—stepping out toward you. 
-                  The gift tag reads: "Believe = Everlasting Life." This image captures God's 
-                  sacrificial love and the simple condition of belief leading to eternal life.
+                  Connections like this make Scripture come alive. Phototheology trains you to see patterns, recognize types, and discover Christ in every chapter—from Genesis to Revelation.
                 </p>
               </div>
             </div>
 
             <div className="mt-4 p-4 bg-background/60 rounded border border-border/30">
-              <p className="text-sm font-semibold mb-2">🎯 Key Connections:</p>
+              <p className="text-sm font-semibold mb-2">🎯 Palace Principles Applied:</p>
               <ul className="text-sm space-y-1 text-muted-foreground">
-                <li>• <span className="font-medium">Cross-reference:</span> 1 John 4:9-10 (God's love made manifest)</li>
-                <li>• <span className="font-medium">Type fulfilled:</span> Bronze serpent (Numbers 21:9) → Christ lifted up</li>
-                <li>• <span className="font-medium">Palace room:</span> Concentration Room (Christ-centered)</li>
+                <li>• <span className="font-medium">Concentration Room (CR):</span> Every text reveals Christ</li>
+                <li>• <span className="font-medium">Symbols/Types Room (@T):</span> Unnamed child → Jesus the substitutionary sacrifice</li>
+                <li>• <span className="font-medium">Parallels Room (P‖):</span> David's son dies → Christ dies for us</li>
+                <li>• <span className="font-medium">Cycle:</span> @Mo (Mosaic) → @CyC (Cyrus-Christ fulfillment)</li>
               </ul>
             </div>
           </div>
@@ -72,7 +86,7 @@ export const InstantDemo = () => {
               onClick={() => navigate("/auth")}
               className="flex-1"
             >
-              Start Your Journey Free
+              Find More Hidden Gems
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
@@ -81,12 +95,12 @@ export const InstantDemo = () => {
               onClick={() => navigate("/interactive-demo")}
               className="flex-1"
             >
-              Take Full Tour
+              Explore the Palace
             </Button>
           </div>
 
           <p className="text-xs text-center text-muted-foreground">
-            ✨ Unlock full access to all 8 floors, games, and personalized AI coaching
+            ✨ Join thousands discovering deeper meaning in Scripture
           </p>
         </CardContent>
       </Card>
