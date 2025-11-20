@@ -179,6 +179,33 @@ export default function Onboarding() {
               </CardDescription>
             </>
           )}
+
+          {step === "role" && (
+            <>
+              <CardTitle className="text-4xl font-bold">Choose Your Path</CardTitle>
+              <CardDescription className="text-lg mt-2">
+                Personalize your Phototheology experience
+              </CardDescription>
+            </>
+          )}
+
+          {step === "tutorial" && (
+            <>
+              <CardTitle className="text-4xl font-bold">The Palace Method</CardTitle>
+              <CardDescription className="text-lg mt-2">
+                Understanding the 8-floor structure
+              </CardDescription>
+            </>
+          )}
+
+          {step === "quick-win" && (
+            <>
+              <CardTitle className="text-4xl font-bold">Your First Win</CardTitle>
+              <CardDescription className="text-lg mt-2">
+                Master the Story Room technique
+              </CardDescription>
+            </>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-6">
