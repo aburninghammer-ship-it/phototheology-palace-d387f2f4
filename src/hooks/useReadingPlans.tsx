@@ -131,15 +131,18 @@ export const useReadingPlans = () => {
       // Upsert the new plan (insert or update if exists)
       const { data, error } = await supabase
         .from("user_reading_progress")
-        .upsert({
-          user_id: user.id,
-          plan_id: planId,
-          current_day: 1,
-          is_active: true,
-          started_at: new Date().toISOString(),
-        }, {
-          onConflict: 'user_id,plan_id',
-        })
+        .upsert(
+          {
+            user_id: user.id,
+            plan_id: planId,
+            current_day: 1,
+            is_active: true,
+            started_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "user_id,plan_id,is_active",
+          }
+        )
         .select()
         .single();
 
