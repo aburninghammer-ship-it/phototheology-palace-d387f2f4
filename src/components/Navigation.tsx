@@ -291,6 +291,12 @@ export const Navigation = () => {
                     Series
                   </Link>
                   <Link 
+                    to="/sermon-builder" 
+                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap"
+                  >
+                    Sermon Builder
+                  </Link>
+                  <Link 
                     to="/pricing" 
                     className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap"
                   >
