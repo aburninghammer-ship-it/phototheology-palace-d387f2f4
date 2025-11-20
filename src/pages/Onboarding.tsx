@@ -257,25 +257,46 @@ export default function Onboarding() {
                 <p className="text-muted-foreground">A hidden gem from 2 Samuel 12</p>
               </div>
 
+              {/* Context Setting */}
+              <div className="bg-muted/30 rounded-lg p-5 space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">The Context:</span> King David has committed adultery with Bathsheba and arranged for her husband Uriah to be killed in battle. 
+                  The prophet Nathan confronts David with his sin, and David repents. But Nathan delivers God's judgment:
+                </p>
+                <p className="text-sm italic text-muted-foreground pl-4 border-l-2 border-border">
+                  "The child also that is born unto thee shall surely die." (2 Samuel 12:14)
+                </p>
+              </div>
+
+              {/* The Story */}
               <div className="bg-background/80 backdrop-blur-sm p-6 rounded-lg border border-border/50 space-y-4">
                 <p className="text-lg leading-relaxed">
-                  In 2 Samuel 12, a male child is born to David. He is never given a name—he is simply identified as <span className="font-semibold italic">"the son of David."</span>
+                  Then, in 2 Samuel 12:15-23, a male child is born to David and Bathsheba. He is never given a name—he is simply identified as <span className="font-semibold italic">"the son of David."</span>
                 </p>
                 
-                <div className="pl-4 border-l-4 border-primary/30 space-y-2">
-                  <p className="text-base text-muted-foreground">
-                    He enters the world because of someone else's sin.
-                  </p>
-                  <p className="text-base text-muted-foreground">
-                    He commits no wrong.
-                  </p>
-                  <p className="text-base text-muted-foreground">
-                    Yet he dies in the place of the guilty.
-                  </p>
+                <p className="text-base leading-relaxed text-muted-foreground">
+                  David fasts and prays desperately for seven days while the child lies sick. But on the seventh day, the child dies. 
+                  David rises, washes, worships, and eats—shocking his servants with his composure.
+                </p>
+
+                <div className="bg-muted/30 p-4 rounded-lg space-y-2">
+                  <p className="text-sm font-semibold text-foreground">Notice the pattern:</p>
+                  <div className="pl-4 border-l-4 border-primary/30 space-y-2">
+                    <p className="text-base text-muted-foreground">
+                      • He enters the world <span className="font-medium text-foreground">because of someone else's sin</span>
+                    </p>
+                    <p className="text-base text-muted-foreground">
+                      • He <span className="font-medium text-foreground">commits no wrong</span>—an innocent child
+                    </p>
+                    <p className="text-base text-muted-foreground">
+                      • Yet he <span className="font-medium text-foreground">dies in the place of the guilty</span>
+                    </p>
+                  </div>
                 </div>
 
                 <p className="text-lg leading-relaxed pt-2">
-                  A quiet shadow of the <span className="font-semibold text-primary">Greater Son of David</span> who would enter the world because of our sin… and die, though innocent, to bring peace, restoration, and a new covenant.
+                  A quiet shadow of the <span className="font-semibold text-primary">Greater Son of David</span>—Jesus Christ—who would enter the world because of <span className="italic">our</span> sin, 
+                  and die as the innocent substitute to bear the judgment we deserved.
                 </p>
               </div>
 
