@@ -144,11 +144,28 @@ Each exercise should have ${floorsConfig.roomsPerFloor} rooms combined, with one
 
     let parsed;
     try {
+      // First attempt: parse the content directly
       parsed = JSON.parse(jsonString);
     } catch (parseError) {
-      console.error('JSON parse error:', parseError);
-      console.error('Failed to parse content:', jsonString.substring(0, 500));
-      throw new Error(`Invalid JSON from AI: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+      console.error('JSON parse error (first attempt):', parseError);
+      console.error('Failed to parse content (first 500 chars):', jsonString.substring(0, 500));
+
+      // Fallback 1: try to extract the JSON object between the first '{' and last '}'
+      const firstBrace = jsonString.indexOf('{');
+      const lastBrace = jsonString.lastIndexOf('}');
+
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        const sliced = jsonString.slice(firstBrace, lastBrace + 1);
+        try {
+          parsed = JSON.parse(sliced);
+        } catch (secondError) {
+          console.error('JSON parse error (second attempt):', secondError);
+          console.error('Failed sliced content (first 500 chars):', sliced.substring(0, 500));
+          throw new Error(`Invalid JSON from AI after cleanup: ${secondError instanceof Error ? secondError.message : 'Unknown error'}`);
+        }
+      } else {
+        throw new Error(`Invalid JSON from AI: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+      }
     }
     
     const exercises = parsed.exercises || [];
