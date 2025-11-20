@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -128,6 +129,7 @@ export default function SeriesPresenter() {
   if (showOverview) {
     return (
       <div className="min-h-screen bg-background p-8">
+        <Navigation />
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -175,6 +177,7 @@ export default function SeriesPresenter() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex flex-col">
+      <Navigation />
       {/* Header Controls */}
       <div className="flex items-center justify-between p-4 border-b bg-card/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
