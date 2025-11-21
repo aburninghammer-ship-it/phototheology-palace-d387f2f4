@@ -4,11 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getVerseAnnotations } from "@/services/bibleApi";
 import { VerseAnnotation } from "@/types/bible";
-import { X, ExternalLink, Heart, BookOpen, Layers, Calendar, Building2, Save } from "lucide-react";
+import { X, ExternalLink, Heart, BookOpen, Layers, Calendar, Building2, Save, Loader2, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PrinciplePanelProps {
   book: string;
@@ -18,9 +20,40 @@ interface PrinciplePanelProps {
   onClose: () => void;
 }
 
+const PRINCIPLES = [
+  { value: "parables", label: "Parables of Jesus" },
+  { value: "prophecy", label: "Prophecy Connections" },
+  { value: "life-of-christ", label: "Life of Christ Wall" },
+  { value: "70-weeks", label: "70 Week Connections" },
+  { value: "2d", label: "2D Christ Dimension" },
+  { value: "3d", label: "3D Kingdom Dimension" },
+  { value: "sanctuary", label: "Sanctuary Principles" },
+  { value: "feasts", label: "Feast Connections" },
+  { value: "types", label: "Types & Shadows" },
+  { value: "covenant", label: "Covenant Themes" },
+];
+
+interface ChainReference {
+  verse: number;
+  reference: string;
+  principle: string;
+  ptCodes: string[];
+  connection: string;
+  crossReferences: Array<{
+    reference: string;
+    relationship: string;
+    confidence: number;
+    note: string;
+  }>;
+  expounded: string;
+}
+
 export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: PrinciplePanelProps) => {
   const [annotation, setAnnotation] = useState<VerseAnnotation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [linksLoading, setLinksLoading] = useState(false);
+  const [chainReferences, setChainReferences] = useState<ChainReference[]>([]);
+  const [selectedPrinciple, setSelectedPrinciple] = useState<string>("parables");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -44,10 +77,59 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: Pri
     }
   };
 
+  const generateLinks = async () => {
+    setLinksLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("jeeves", {
+        body: {
+          mode: "chain-reference",
+          principle: selectedPrinciple,
+          book,
+          chapter,
+          verses: [{ verse, text: verseText }],
+        },
+      });
+
+      if (error) throw error;
+
+      let parsedResults: ChainReference[] = [];
+      try {
+        const content = data.content;
+        const jsonMatch = content.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          parsedResults = JSON.parse(jsonMatch[0]);
+        }
+      } catch (parseError) {
+        console.error("Failed to parse AI response:", parseError);
+        toast({
+          title: "Error",
+          description: "Failed to parse scripture links",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setChainReferences(parsedResults);
+      const principleLabel = PRINCIPLES.find(p => p.value === selectedPrinciple)?.label;
+      toast({
+        title: "Links Generated",
+        description: `Found ${parsedResults.length} ${principleLabel} connections`,
+      });
+    } catch (error: any) {
+      console.error("Chain reference error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to generate links",
+        variant: "destructive",
+      });
+    } finally {
+      setLinksLoading(false);
+    }
+  };
+
   const handleSaveAsGem = () => {
     if (!annotation) return;
     
-    // Create gem text
     const gemText = `${book} ${chapter}:${verse}\n"${verseText}"\n\nPrinciples: ${
       [
         ...(annotation.principles.dimensions || []),
@@ -60,7 +142,6 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: Pri
       ].join(", ")
     }\n\n${annotation.commentary}`;
     
-    // Copy to clipboard
     navigator.clipboard.writeText(gemText);
     
     toast({
@@ -133,7 +214,7 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: Pri
             </TabsTrigger>
             <TabsTrigger value="cross-refs">
               <ExternalLink className="h-4 w-4 mr-1" />
-              Links
+              Scripture Link
             </TabsTrigger>
             <TabsTrigger value="christ">
               <Heart className="h-4 w-4 mr-1" />
@@ -314,55 +395,99 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: Pri
             </TabsContent>
             
             <TabsContent value="cross-refs" className="space-y-3 mt-0">
-              {annotation.crossReferences.length > 0 ? (
-                annotation.crossReferences.map((ref, idx) => (
-                  <Link
-                    key={idx}
-                    to={`/bible/${ref.book}/${ref.chapter}`}
-                    className="block"
-                  >
-                    <div className="p-3 rounded-lg border-2 border-border hover:border-primary hover-lift bg-card">
-                      <div className="flex items-start justify-between mb-2">
-                        <span className="font-semibold text-primary">
-                          {ref.book} {ref.chapter}:{ref.verse}
-                        </span>
-                        <Badge variant="outline" className="text-xs">
-                          {ref.confidence}%
-                        </Badge>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Principle to Analyze</label>
+                  <Select value={selectedPrinciple} onValueChange={setSelectedPrinciple}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose a principle" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRINCIPLES.map((principle) => (
+                        <SelectItem key={principle.value} value={principle.value}>
+                          {principle.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  onClick={generateLinks}
+                  disabled={linksLoading}
+                  className="w-full gradient-royal text-white"
+                  size="sm"
+                >
+                  {linksLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Generating Links...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Generate Links
+                    </>
+                  )}
+                </Button>
+
+                {chainReferences.length > 0 ? (
+                  <div className="space-y-3">
+                    {chainReferences.map((result, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-lg border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5"
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge className="gradient-palace text-white text-xs">
+                              {result.reference}
+                            </Badge>
+                            {result.ptCodes && result.ptCodes.length > 0 && (
+                              <div className="flex gap-1">
+                                {result.ptCodes.map((code, i) => (
+                                  <Badge key={i} variant="outline" className="text-xs">
+                                    {code}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <p className="text-xs text-foreground leading-relaxed mb-2">
+                          {result.connection}
+                        </p>
+
+                        {result.crossReferences && result.crossReferences.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-xs font-semibold text-muted-foreground">Cross References:</p>
+                            {result.crossReferences.map((ref, i) => (
+                              <div key={i} className="flex items-start gap-2 text-xs bg-card/50 p-2 rounded">
+                                <Badge variant="secondary" className="text-xs shrink-0">
+                                  {ref.reference}
+                                </Badge>
+                                <div className="flex-1 min-w-0">
+                                  <span className="font-medium text-primary">{ref.relationship}</span>
+                                  <span className="text-muted-foreground"> ({ref.confidence}%)</span>
+                                  <p className="text-muted-foreground mt-0.5">{ref.note}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <p className="text-xs text-muted-foreground mb-1">
-                        <strong className="text-foreground">{ref.principleType}:</strong> {ref.reason}
-                      </p>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div className="p-6 rounded-lg bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 border border-primary/20 text-center space-y-3">
-                  <ExternalLink className="h-12 w-12 mx-auto text-primary/60" />
-                  <div>
-                    <h4 className="font-semibold text-sm mb-2">Cross-References</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      Cross-references connect this verse to related scriptures throughout the Bible. 
-                      These links help you trace themes, principles, and prophetic patterns across chapters and books.
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <ExternalLink className="h-10 w-10 mx-auto mb-2 text-primary/50" />
+                    <p className="text-xs">
+                      Select a principle and generate links to discover related scriptures
                     </p>
                   </div>
-                  <div className="pt-3 space-y-2 text-xs text-muted-foreground">
-                    <p>• <strong>Typology:</strong> Old Testament types pointing to New Testament fulfillment</p>
-                    <p>• <strong>Parallels:</strong> Similar events or teachings in different contexts</p>
-                    <p>• <strong>Principle Echoes:</strong> Related passages using similar PT codes</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    onClick={loadAnnotation}
-                    disabled={loading}
-                    className="mt-3"
-                    variant="outline"
-                  >
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Generate Links
-                  </Button>
-                </div>
-              )}
+                )}
+              </div>
             </TabsContent>
             
             <TabsContent value="christ" className="mt-0">
