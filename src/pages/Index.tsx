@@ -31,7 +31,9 @@ import {
   X,
   Building2,
   Play,
-  ArrowRight
+  ArrowRight,
+  Sword,
+  Shield
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -339,6 +341,53 @@ const Index = () => {
                   >
                     <Building2 className="h-5 w-5" />
                     Start Genesis Challenge
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Christian Art of War Dojo */}
+          <div className="mt-8">
+            <Card className="bg-gradient-to-br from-red-500/10 via-orange-500/5 to-red-500/10 border-red-500/30 overflow-hidden">
+              <CardContent className="py-8 relative">
+                <div className="absolute top-0 right-0 opacity-10">
+                  <Sword className="h-32 w-32" />
+                </div>
+                <div className="relative z-10">
+                  <Badge className="mb-4 bg-red-500/20 text-red-600 dark:text-red-400 border-red-500/30">
+                    ⚔️ Spiritual Training
+                  </Badge>
+                  <h3 className="text-2xl font-bold mb-3 flex items-center justify-center gap-2">
+                    <Sword className="h-6 w-6 text-red-500" />
+                    Christian Art of War Dojo
+                    <Shield className="h-6 w-6 text-red-500" />
+                  </h3>
+                  <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                    "The greatest battle humanity faces is the war against self. This is true holy war." Train your spirit with spiritual weapons, practice drills, and master the art of warfare against self.
+                  </p>
+                  <div className="flex flex-wrap gap-3 justify-center mb-6">
+                    <Badge variant="outline" className="gap-1">
+                      <Sword className="h-3 w-3" />
+                      Spiritual Weapons
+                    </Badge>
+                    <Badge variant="outline" className="gap-1">
+                      <Shield className="h-3 w-3" />
+                      Battle Drills
+                    </Badge>
+                    <Badge variant="outline" className="gap-1">
+                      <Target className="h-3 w-3" />
+                      Daily Practice
+                    </Badge>
+                  </div>
+                  <Button 
+                    size="lg"
+                    onClick={() => navigate("/spiritual-training")}
+                    className="gap-2 bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    <Sword className="h-5 w-5" />
+                    Enter the Dojo
                     <ArrowRight className="h-5 w-5" />
                   </Button>
                 </div>
