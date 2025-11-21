@@ -18,12 +18,16 @@ export const BibleNavigation = () => {
   const navigate = useNavigate();
   const [selectedBook, setSelectedBook] = useState("John");
   const [chapter, setChapter] = useState("1");
+  const [verse, setVerse] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMode, setSearchMode] = useState<"reference" | "word">("reference");
 
   const handleNavigate = () => {
     if (selectedBook && chapter) {
-      navigate(`/bible/${selectedBook}/${chapter}`);
+      const path = verse 
+        ? `/bible/${selectedBook}/${chapter}?verse=${verse}`
+        : `/bible/${selectedBook}/${chapter}`;
+      navigate(path);
     }
   };
 
@@ -43,29 +47,36 @@ export const BibleNavigation = () => {
         </div>
         
         {/* Quick Navigation */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="col-span-2">
-            <Select value={selectedBook} onValueChange={setSelectedBook}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select book" />
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                {BIBLE_BOOKS.map((book) => (
-                  <SelectItem key={book} value={book}>
-                    {book}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="space-y-3">
+          <Select value={selectedBook} onValueChange={setSelectedBook}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select book" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              {BIBLE_BOOKS.map((book) => (
+                <SelectItem key={book} value={book}>
+                  {book}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           
-          <Input
-            type="number"
-            placeholder="Ch"
-            value={chapter}
-            onChange={(e) => setChapter(e.target.value)}
-            min="1"
-          />
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              type="number"
+              placeholder="Chapter"
+              value={chapter}
+              onChange={(e) => setChapter(e.target.value)}
+              min="1"
+            />
+            <Input
+              type="number"
+              placeholder="Verse (optional)"
+              value={verse}
+              onChange={(e) => setVerse(e.target.value)}
+              min="1"
+            />
+          </div>
         </div>
         
         <Button 
