@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchChapter, Translation } from "@/services/bibleApi";
 import { Chapter } from "@/types/bible";
@@ -44,6 +44,7 @@ export const BibleReader = () => {
   const { handleError } = useErrorHandler();
   
   const [translation, setTranslation] = useState<Translation>("kjv");
+  const jeevesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Get translation from URL parameter or use preference
@@ -255,10 +256,18 @@ export const BibleReader = () => {
           variant={jeevesMode ? "default" : "outline"}
           size="sm"
           onClick={() => {
-            setJeevesMode(!jeevesMode);
+            const newJeevesMode = !jeevesMode;
+            setJeevesMode(newJeevesMode);
             setStrongsMode(false);
             setPrincipleMode(false);
             setChainReferenceMode(false);
+            
+            // Scroll to Jeeves section when opening
+            if (newJeevesMode) {
+              setTimeout(() => {
+                jeevesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 100);
+            }
           }}
           className={jeevesMode ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg" : ""}
         >
@@ -320,7 +329,7 @@ export const BibleReader = () => {
         </div>
 
         {/* Right Panel - Dynamic based on mode */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1 space-y-6" ref={jeevesRef}>
           {chainReferenceMode ? (
             <ChainReferencePanel
               book={book}
