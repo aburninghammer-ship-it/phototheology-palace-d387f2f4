@@ -6,16 +6,16 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { searchBible, searchBibleByWord, BIBLE_TRANSLATIONS, Translation } from "@/services/bibleApi";
+import { searchBible, searchBibleByWord } from "@/services/bibleApi";
 import { Verse } from "@/types/bible";
 
 const BibleSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
   const searchMode = searchParams.get("mode") || "reference";
-  const searchType = searchParams.get("type") || "contains";
-  const translation = (searchParams.get("translation") as Translation) || "kjv";
+  const searchScope = (searchParams.get("scope") as "all" | "ot" | "nt") || "all";
   
   const [results, setResults] = useState<Verse[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,14 +26,10 @@ const BibleSearch = () => {
     setLoading(true);
     try {
       if (searchMode === "word") {
-        const wordResults = await searchBibleByWord(
-          query,
-          translation,
-          searchType as "contains" | "exact" | "starts"
-        );
+        const wordResults = await searchBibleByWord(query, searchScope);
         setResults(wordResults);
       } else {
-        const refResults = await searchBible(query, translation);
+        const refResults = await searchBible(query, "kjv");
         setResults(refResults);
       }
     } finally {
@@ -43,7 +39,7 @@ const BibleSearch = () => {
 
   useEffect(() => {
     performSearch();
-  }, [query, searchMode, searchType, translation]);
+  }, [query, searchMode, searchScope]);
 
   return (
     <div className="min-h-screen gradient-subtle">
@@ -62,9 +58,24 @@ const BibleSearch = () => {
             <h1 className="font-serif text-4xl md:text-5xl font-bold mb-2 bg-gradient-palace bg-clip-text text-transparent">
               Bible Search
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Searching for: <span className="font-semibold">{query}</span>
-            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-lg text-muted-foreground">
+                Searching for: <span className="font-semibold">{query}</span>
+              </p>
+              {searchMode === "word" && (
+                <Badge variant="outline">
+                  {searchScope === "all" && "All Bible (66 books)"}
+                  {searchScope === "ot" && "Old Testament (39 books)"}
+                  {searchScope === "nt" && "New Testament (27 books)"}
+                </Badge>
+              )}
+            </div>
+            {results.length > 0 && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Found {results.length} {results.length === 1 ? "verse" : "verses"}
+                {results.length === 1000 && " (showing first 1000)"}
+              </p>
+            )}
           </div>
 
           {/* Search Options */}
@@ -89,56 +100,30 @@ const BibleSearch = () => {
               
               <TabsContent value="word" className="space-y-4">
                 <div className="text-sm text-muted-foreground mb-4">
-                  Search for words across the Bible
+                  Search for words or phrases across the entire Bible
                 </div>
                 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label>Search Type</Label>
-                    <Select
-                      value={searchType}
-                      onValueChange={(value) => {
-                        searchParams.set("type", value);
-                        setSearchParams(searchParams);
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="contains">Contains Word</SelectItem>
-                        <SelectItem value="exact">Exact Word Match</SelectItem>
-                        <SelectItem value="starts">Starts With</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label>Search Scope</Label>
+                  <Select
+                    value={searchScope}
+                    onValueChange={(value) => {
+                      searchParams.set("scope", value);
+                      setSearchParams(searchParams);
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Bible (66 books)</SelectItem>
+                      <SelectItem value="ot">Old Testament (39 books)</SelectItem>
+                      <SelectItem value="nt">New Testament (27 books)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </TabsContent>
             </Tabs>
-
-            <div className="mt-4 pt-4 border-t">
-              <div className="space-y-2">
-                <Label>Translation</Label>
-                <Select
-                  value={translation}
-                  onValueChange={(value) => {
-                    searchParams.set("translation", value);
-                    setSearchParams(searchParams);
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BIBLE_TRANSLATIONS.map((trans) => (
-                      <SelectItem key={trans.value} value={trans.value}>
-                        {trans.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
           </Card>
 
           {loading ? (
@@ -169,7 +154,7 @@ const BibleSearch = () => {
             <Card className="p-12 text-center">
               <p className="text-muted-foreground">
                 {searchMode === "word" 
-                  ? `No results found for "${query}". Try a different word or search type. Note: Word search searches common books (John, Genesis, Psalms, Matthew, Romans) for demonstration.`
+                  ? `No results found for "${query}" in the ${searchScope === "all" ? "entire Bible" : searchScope === "ot" ? "Old Testament" : "New Testament"}. Try a different search term.`
                   : `No results found for "${query}". Try searching for a specific verse reference like "John 3:16" or a book and chapter like "Genesis 1".`
                 }
               </p>

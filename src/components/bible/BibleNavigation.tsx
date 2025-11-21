@@ -14,6 +14,9 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BIBLE_BOOKS } from "@/types/bible";
 import { Search, BookOpen } from "lucide-react";
 
+const OLD_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(0, 39);
+const NEW_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(39);
+
 export const BibleNavigation = () => {
   const navigate = useNavigate();
   const [selectedBook, setSelectedBook] = useState("John");
@@ -21,6 +24,7 @@ export const BibleNavigation = () => {
   const [verse, setVerse] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMode, setSearchMode] = useState<"reference" | "word">("reference");
+  const [searchScope, setSearchScope] = useState<"all" | "ot" | "nt">("all");
 
   const handleNavigate = () => {
     if (selectedBook && chapter) {
@@ -34,7 +38,7 @@ export const BibleNavigation = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery) {
-      navigate(`/bible/search?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}`);
+      navigate(`/bible/search?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}&scope=${searchScope}`);
     }
   };
 
@@ -95,9 +99,22 @@ export const BibleNavigation = () => {
             </TabsList>
           </Tabs>
           
+          {searchMode === "word" && (
+            <Select value={searchScope} onValueChange={(value) => setSearchScope(value as "all" | "ot" | "nt")}>
+              <SelectTrigger>
+                <SelectValue placeholder="Search scope" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Bible (66 books)</SelectItem>
+                <SelectItem value="ot">Old Testament (39 books)</SelectItem>
+                <SelectItem value="nt">New Testament (27 books)</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+          
           <form onSubmit={handleSearch} className="flex gap-2">
             <Input
-              placeholder={searchMode === "reference" ? "Search Bible (e.g., John 3:16)" : "Search for words (e.g., faith)"}
+              placeholder={searchMode === "reference" ? "Search Bible (e.g., John 3:16)" : "Search for words or phrases (e.g., love one another)"}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
