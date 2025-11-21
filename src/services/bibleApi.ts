@@ -1,4 +1,6 @@
 import { Chapter, Verse } from "@/types/bible";
+import { supabase } from "@/integrations/supabase/client";
+import { BIBLE_BOOKS } from "@/types/bible";
 
 // Using Bible API - you can switch to different APIs or local data
 const BIBLE_API_BASE = "https://bible-api.com";
@@ -113,55 +115,47 @@ export const searchBible = async (query: string, translation: Translation = "kjv
   }
 };
 
-// Word search across multiple verses
+// Word search across the entire Bible using Supabase
 export const searchBibleByWord = async (
-  word: string,
-  translation: Translation = "kjv",
-  searchType: "contains" | "exact" | "starts" = "contains"
+  searchTerm: string,
+  scope: "all" | "ot" | "nt" = "all"
 ): Promise<Verse[]> => {
-  // For word search, we'll use common passages as a demo
-  // In production, you'd want a full-text search API
-  const commonBooks = ["John", "Genesis", "Psalms", "Matthew", "Romans"];
-  const results: Verse[] = [];
-  
   try {
-    for (const book of commonBooks) {
-      // Search first few chapters of each book
-      for (let chapter = 1; chapter <= 3; chapter++) {
-        try {
-          const chapterData = await fetchChapter(book, chapter, translation);
-          
-          const matchingVerses = chapterData.verses.filter(verse => {
-            const text = verse.text.toLowerCase();
-            const searchTerm = word.toLowerCase();
-            
-            switch (searchType) {
-              case "exact":
-                return text.split(/\s+/).includes(searchTerm);
-              case "starts":
-                return text.split(/\s+/).some(w => w.startsWith(searchTerm));
-              case "contains":
-              default:
-                return text.includes(searchTerm);
-            }
-          });
-          
-          results.push(...matchingVerses);
-          
-          // Limit results to prevent too many
-          if (results.length >= 20) {
-            return results.slice(0, 20);
-          }
-        } catch (err) {
-          // Continue with next chapter
-          continue;
-        }
-      }
+    const OLD_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(0, 39);
+    const NEW_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(39);
+    
+    let query = supabase
+      .from('bible_verses_tokenized')
+      .select('book, chapter, verse_num, text_kjv')
+      .ilike('text_kjv', `%${searchTerm}%`)
+      .order('book', { ascending: true })
+      .order('chapter', { ascending: true })
+      .order('verse_num', { ascending: true })
+      .limit(1000); // Set a reasonable limit
+    
+    // Filter by scope
+    if (scope === "ot") {
+      query = query.in('book', OLD_TESTAMENT_BOOKS);
+    } else if (scope === "nt") {
+      query = query.in('book', NEW_TESTAMENT_BOOKS);
     }
     
-    return results;
+    const { data, error } = await query;
+    
+    if (error) {
+      console.error('Error searching Bible:', error);
+      return [];
+    }
+    
+    // Transform to Verse format
+    return (data || []).map(row => ({
+      book: row.book,
+      chapter: row.chapter,
+      verse: row.verse_num,
+      text: row.text_kjv
+    }));
   } catch (error) {
-    console.error("Error in word search:", error);
+    console.error('Error in searchBibleByWord:', error);
     return [];
   }
 };
