@@ -77,11 +77,26 @@ export const fetchChapter = async (book: string, chapter: number, translation: T
     };
   } catch (error) {
     console.error("Error fetching chapter:", error);
-    // Return placeholder verses when API fails
+    
+    // Get the correct verse count from metadata if available
+    const bookMeta = BIBLE_BOOKS.find(b => b === book || b.toLowerCase() === book.toLowerCase());
+    
+    // Default verse counts for common chapters (approximate)
+    // This provides better fallback than fixed 20 verses
+    let verseCount = 31; // Default
+    
+    // Try to estimate based on typical verse counts
+    if (chapter === 1) verseCount = 31;
+    else if (chapter <= 10) verseCount = 35;
+    else if (chapter <= 50) verseCount = 30;
+    else if (chapter <= 100) verseCount = 20;
+    else verseCount = 15; // Psalms have varying lengths
+    
+    // Return placeholder verses with estimated count
     return {
       book,
       chapter,
-      verses: Array.from({ length: 20 }, (_, i) => ({
+      verses: Array.from({ length: verseCount }, (_, i) => ({
         book,
         chapter,
         verse: i + 1,
