@@ -29,6 +29,7 @@ export function NotificationPreferences() {
     study_reminders: true,
     renewal_reminders: true,
     video_tutorials: true,
+    daily_verse: true,
   });
 
   useEffect(() => {
@@ -64,6 +65,7 @@ export function NotificationPreferences() {
           study_reminders: data.study_reminders,
           renewal_reminders: data.renewal_reminders ?? true,
           video_tutorials: data.video_tutorials ?? true,
+          daily_verse: data.daily_verse ?? true,
         });
       }
     } catch (error) {
@@ -235,6 +237,20 @@ export function NotificationPreferences() {
             id="study-reminders"
             checked={preferences.study_reminders}
             onCheckedChange={(checked) => updatePreference('study_reminders', checked)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="daily-verse">Daily Verse of the Day</Label>
+            <p className="text-sm text-muted-foreground">
+              Receive notifications for the daily verse and its breakdown
+            </p>
+          </div>
+          <Switch
+            id="daily-verse"
+            checked={preferences.daily_verse}
+            onCheckedChange={(checked) => updatePreference('daily_verse', checked)}
           />
         </div>
 

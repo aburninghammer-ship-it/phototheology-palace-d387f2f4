@@ -229,7 +229,7 @@ Make it engaging, Christ-centered, specific, and practically applicable.`;
     const { data: usersWithPrefs } = await supabase
       .from('notification_preferences')
       .select('user_id')
-      .eq('daily_verse_enabled', true);
+      .eq('daily_verse', true);
     
     // Get all users who don't have preferences set (default to enabled)
     const { data: allProfiles } = await supabase
