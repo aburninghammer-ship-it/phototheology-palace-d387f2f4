@@ -2900,6 +2900,7 @@ export type Database = {
           stripe_subscription_id: string | null
           student_expires_at: string | null
           student_verified_at: string | null
+          subscription_cancelled_at: string | null
           subscription_renewal_date: string | null
           subscription_status: string | null
           subscription_tier: string | null
@@ -2947,6 +2948,7 @@ export type Database = {
           stripe_subscription_id?: string | null
           student_expires_at?: string | null
           student_verified_at?: string | null
+          subscription_cancelled_at?: string | null
           subscription_renewal_date?: string | null
           subscription_status?: string | null
           subscription_tier?: string | null
@@ -2994,6 +2996,7 @@ export type Database = {
           stripe_subscription_id?: string | null
           student_expires_at?: string | null
           student_verified_at?: string | null
+          subscription_cancelled_at?: string | null
           subscription_renewal_date?: string | null
           subscription_status?: string | null
           subscription_tier?: string | null
@@ -4721,6 +4724,7 @@ export type Database = {
       }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_typing_indicators: { Args: never; Returns: undefined }
+      delete_cancelled_user_data: { Args: never; Returns: undefined }
       generate_challenge_share_code: { Args: never; Returns: string }
       generate_referral_code: { Args: { user_id: string }; Returns: string }
       get_available_seats: { Args: { _church_id: string }; Returns: number }

@@ -181,17 +181,31 @@ serve(async (req) => {
         const customerId = subscription.customer as string;
 
         // Mark church subscription as cancelled
-        const { error } = await supabase
+        const { error: churchError } = await supabase
           .from('churches')
           .update({
             subscription_status: 'cancelled',
           })
           .eq('stripe_customer_id', customerId);
 
-        if (error) {
-          console.error('Error cancelling subscription:', error);
+        if (churchError) {
+          console.error('Error cancelling church subscription:', churchError);
         } else {
-          console.log(`Subscription cancelled for customer ${customerId}`);
+          console.log(`Church subscription cancelled for customer ${customerId}`);
+        }
+
+        // Mark user profile with cancellation date for data deletion after 30 days
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            subscription_cancelled_at: new Date().toISOString(),
+          })
+          .eq('stripe_customer_id', customerId);
+
+        if (profileError) {
+          console.error('Error tracking cancellation date:', profileError);
+        } else {
+          console.log(`Cancellation tracked for customer ${customerId}, data will be deleted after 30 days`);
         }
         break;
       }
