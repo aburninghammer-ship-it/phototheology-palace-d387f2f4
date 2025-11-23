@@ -8,21 +8,22 @@ const corsHeaders = {
 
 // Palace principles that can be applied
 const PALACE_PRINCIPLES = [
-  { code: "SR", name: "Story Room", description: "Recall narratives and visualize scenes" },
-  { code: "IR", name: "Imagination Room", description: "Step inside the story with immersive empathy" },
-  { code: "OR", name: "Observation Room", description: "Notice details like a detective" },
+  { code: "SR", name: "Story Room", description: "Turn verse into vivid mental movie with concrete imagery" },
+  { code: "IR", name: "Imagination Room", description: "Immerse yourself IN the scene - sensory details as if present" },
+  { code: "OR", name: "Observation Room", description: "Notice specific details, literary devices, textual clues" },
   { code: "DC", name: "Def-Com", description: "Examine Greek/Hebrew meanings and context" },
-  { code: "ST", name: "Symbols/Types", description: "Identify types and symbols pointing to Christ" },
-  { code: "CR", name: "Concentration Room", description: "Find Christ in every text" },
-  { code: "DR", name: "Dimensions Room", description: "View text across 5 dimensions: Literal, Christ, Me, Church, Heaven" },
-  { code: "C6", name: "Connect 6", description: "Classify by genre (prophecy, poetry, history, etc.)" },
+  { code: "ST", name: "Symbols/Types", description: "Identify concrete symbols/types pointing to Christ (e.g., lamb=Christ)" },
+  { code: "CR", name: "Concentration Room", description: "Show HOW Christ is revealed in this verse" },
+  { code: "DR", name: "Dimensions Room", description: "Move through MULTIPLE dimensions showing meaning unfold (Literal→Christ→Me→Church→Heaven)" },
+  { code: "C6", name: "Connect 6", description: "Connect to SPECIFIC verse from DIFFERENT genre with full reference" },
   { code: "TRm", name: "Theme Room", description: "Map to Palace walls (Sanctuary, Life of Christ, Great Controversy, etc.)" },
-  { code: "TZ", name: "Time Zone", description: "Locate in past, present, or future contexts" },
-  { code: "PRm", name: "Patterns Room", description: "Recognize recurring motifs across Scripture" },
-  { code: "P‖", name: "Parallels Room", description: "Find mirrored actions and events" },
-  { code: "FRt", name: "Fruit Room", description: "Test if interpretation produces Christlike character" },
-  { code: "BL", name: "Blue Room", description: "Connect to sanctuary furniture and services" },
+  { code: "TZ", name: "Time Zone (6 zones)", description: "Map to specific zones: EARTH Past/Present/Future and HEAVEN Past/Present/Future" },
+  { code: "PRm", name: "Patterns Room", description: "Name pattern and give at least one other biblical example with reference" },
+  { code: "P‖", name: "Parallels Room", description: "Cite at least ONE specific parallel event with reference" },
+  { code: "FRt", name: "Fruit Room", description: "Name specific Christlike character trait this cultivates" },
+  { code: "BL", name: "Blue Room", description: "Connect to specific sanctuary furniture/services" },
   { code: "PR", name: "Prophecy Room", description: "Align with prophetic timelines" },
+  { code: "@Cycles", name: "Cycles Room", description: "Identify which cycle this belongs to and connect to another cycle" },
   { code: "@Ad", name: "Adamic Cycle", description: "First cycle: Fall → Promise → Seed conflict" },
   { code: "@Mo", name: "Mosaic Cycle", description: "Exodus → Covenant → Sanctuary nation" },
   { code: "@CyC", name: "Cyrus-Christ Cycle", description: "Type meets antitype in Christ" },
@@ -78,19 +79,41 @@ ${principlesDesc}
 Verse: ${verseReference}
 "${verseText}"
 
-CRITICAL INSTRUCTIONS FOR EACH PRINCIPLE:
+CRITICAL INSTRUCTIONS FOR EACH PRINCIPLE TYPE:
 
-- For "C6" (Connect 6): DO NOT just identify what genre this verse belongs to. Instead, CONNECT this verse to a specific verse or story from a DIFFERENT genre. Example: If this is a Gospel passage, connect it to a prophecy from Isaiah, a Psalm, or a story from Genesis.
+**Story Room (SR)**: Create a vivid scene with concrete imagery (not generic statements).
 
-- For "DR" (Dimensions Room): DO NOT just identify which dimension (Literal, Christ, Me, Church, Heaven) this verse operates in. Instead, ANALYZE the verse THROUGH multiple dimensions. Show how the verse moves from one dimension to another (e.g., from Literal to Christ to Me).
+**Imagination Room (IR)**: Place yourself IN the scene - describe sensory details as if you were actually present.
 
-- For "ST" (Symbols/Types): Identify specific symbols and show what they typify (e.g., "lamb = Christ", "water = Holy Spirit"). Be concrete.
+**Observation Room (OR)**: Point out specific words, literary devices, or textual patterns IN THE TEXT.
 
-- For "PRm" (Patterns Room): Name specific recurring patterns (e.g., "40 days pattern: Noah's flood, Moses on Sinai, Jesus in wilderness").
+**Symbols/Types (ST)**: Name specific symbols with what they represent (e.g., "lamb = Christ in John 1:29", "water = Spirit in John 7:38").
 
-- For "P‖" (Parallels Room): Give specific parallel events or actions (e.g., "Tower of Babel (languages divided) parallels Pentecost (languages united)").
+**Concentration Room (CR)**: Explicitly show HOW Christ is revealed in this specific verse.
 
-- For ALL principles: Be SPECIFIC, CONCRETE, and ACTIONABLE. No vague generalities.
+**Dimensions Room (DR)**: Move through AT LEAST TWO dimensions showing how meaning unfolds. Example: "Literal: the text says X. Christ dimension: this reveals Christ as Y. Me dimension: this means for me Z."
+
+**Connect 6 (C6)**: You MUST connect to a SPECIFIC verse or story from a DIFFERENT GENRE with full reference. 
+- If verse is Gospel → connect to Prophecy, Psalm, Law, History, or Epistle
+- If verse is Prophecy → connect to Gospel, History, Poetry, Law, or Epistle
+- Example: "This Gospel verse (John 3:16) connects to Leviticus 16:15-16 (Law/Type) - the atoning sacrifice on the Day of Atonement foreshadows God giving His Son."
+
+**Time Zone (TZ)**: You MUST specify which of the 6 TIME ZONES apply:
+- EARTH Past (historical events)
+- EARTH Present (ongoing reality)  
+- EARTH Future (prophecy on earth)
+- HEAVEN Past (what happened in heaven)
+- HEAVEN Present (current heavenly ministry)
+- HEAVEN Future (eternal promises)
+Example: "This verse spans multiple zones: EARTH Past - the cross event (He gave His Son); EARTH Present - ongoing choice to believe; HEAVEN Future - eternal life in God's presence realized."
+
+**Patterns Room (PRm)**: Name the pattern and give at least ONE other biblical example with reference (e.g., "The 'only son' pattern: Isaac (Gen 22), Christ (John 3:16)").
+
+**Parallels Room (P‖)**: Cite at least ONE specific parallel event with reference (e.g., "This mirrors the bronze serpent in Numbers 21:8-9 - lifted up for healing").
+
+**Fruit Room (FRt)**: Name the specific fruit of the Spirit (Gal 5:22-23) or Christlike trait this cultivates.
+
+**Cycles Room (@Cycles)**: Identify which cycle this verse belongs to (e.g., @CyC for Gospel era, @Mo for Exodus era) AND connect to another cycle. Example: "This @CyC (Christ) verse echoes @Mo (Mosaic) - as Moses lifted the serpent (Num 21:9), so Christ was lifted up."
 
 For EACH principle, provide:
 1. application: A specific, concrete application showing HOW the principle is applied to this verse (not just what the principle is)
