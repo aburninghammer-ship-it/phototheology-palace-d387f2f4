@@ -124,12 +124,11 @@ export const useReadingPlans = () => {
     }
 
     try {
-      // First, deactivate any currently active plans for this user
+      // First, deactivate ALL plans for this user (including any duplicates)
       await supabase
         .from("user_reading_progress")
         .update({ is_active: false })
-        .eq("user_id", user.id)
-        .eq("is_active", true);
+        .eq("user_id", user.id);
 
       // Check if there is already progress for this specific plan
       const { data: existing, error: existingError } = await supabase
@@ -137,6 +136,8 @@ export const useReadingPlans = () => {
         .select("*")
         .eq("user_id", user.id)
         .eq("plan_id", planId)
+        .order("started_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (existingError && (existingError as any).code !== "PGRST116") throw existingError;
@@ -144,7 +145,7 @@ export const useReadingPlans = () => {
       let activeProgress: UserProgress | null = null;
 
       if (existing) {
-        // Reactivate existing progress for this plan instead of inserting a duplicate
+        // Reactivate existing progress for this plan
         const { data: updated, error: updateError } = await supabase
           .from("user_reading_progress")
           .update({
