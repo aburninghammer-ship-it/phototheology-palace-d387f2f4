@@ -370,9 +370,9 @@ function App() {
                 </div>
               </SidebarProvider>
             </UserPreferencesProvider>
-            </AchievementProvider>
-          </LiveNotificationsProvider>
-        </BrowserRouter>
+          </AchievementProvider>
+        </LiveNotificationsProvider>
+      </BrowserRouter>
           )}
         </TooltipProvider>
         </ThemeProvider>
