@@ -104,32 +104,32 @@ const Palace = () => {
             </h2>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
               <div>
-                <p id="floor-1" className="mb-2 scroll-mt-24">
+                <Link to="/palace/floor/1" id="floor-1" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 1st Floor</strong> fills your shelves with stories and images (width).
-                </p>
-                <p id="floor-2" className="mb-2 scroll-mt-24">
+                </Link>
+                <Link to="/palace/floor/2" id="floor-2" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 2nd Floor</strong> trains you as a detective with magnifying glass in hand.
-                </p>
-                <p id="floor-3" className="mb-2 scroll-mt-24">
+                </Link>
+                <Link to="/palace/floor/3" id="floor-3" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 3rd Floor</strong> teaches freestyle, spontaneous connections in daily life.
-                </p>
-                <p id="floor-4" className="mb-2 scroll-mt-24">
+                </Link>
+                <Link to="/palace/floor/4" id="floor-4" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 4th Floor</strong> expands depth through Christ-centered, dimensional study.
-                </p>
+                </Link>
               </div>
               <div>
-                <p id="floor-5" className="mb-2 scroll-mt-24">
+                <Link to="/palace/floor/5" id="floor-5" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 5th Floor</strong> opens the prophetic telescope.
-                </p>
-                <p id="floor-6" className="mb-2 scroll-mt-24">
+                </Link>
+                <Link to="/palace/floor/6" id="floor-6" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 6th Floor</strong> situates everything in the cycles of history and the heavens.
-                </p>
-                <p id="floor-7" className="mb-2 scroll-mt-24">
+                </Link>
+                <Link to="/palace/floor/7" id="floor-7" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 7th Floor</strong> brings heart and soul into the fire of experience.
-                </p>
-                <p id="floor-8" className="scroll-mt-24">
+                </Link>
+                <Link to="/palace/floor/8" id="floor-8" className="block scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 8th Floor</strong> removes the scaffolding altogether: Phototheology becomes reflexive thought.
-                </p>
+                </Link>
               </div>
             </div>
           </div>
