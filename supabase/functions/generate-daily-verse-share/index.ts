@@ -12,6 +12,10 @@ serve(async (req) => {
 
   try {
     const { verseReference, verseText, breakdown } = await req.json();
+    
+    if (!breakdown || !Array.isArray(breakdown)) {
+      throw new Error('Breakdown data is required and must be an array');
+    }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -105,6 +109,7 @@ Style: Clean, modern, with elegant typography. Use warm, inspiring colors. The v
 
   } catch (error) {
     console.error('Error in generate-daily-verse-share:', error);
+    console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return new Response(
       JSON.stringify({ error: errorMessage }),
