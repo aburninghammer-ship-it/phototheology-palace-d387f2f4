@@ -1888,6 +1888,63 @@ export type Database = {
         }
         Relationships: []
       }
+      learning_predictions: {
+        Row: {
+          actual_outcome: string | null
+          based_on_patterns: Json | null
+          confidence_score: number
+          created_at: string
+          expires_at: string | null
+          id: string
+          predicted_at: string
+          prediction_type: string
+          principle_code: string | null
+          reasoning: string
+          room_id: string
+          user_feedback: string | null
+          user_id: string
+          validated_at: string | null
+          verse_reference: string | null
+          was_accurate: boolean | null
+        }
+        Insert: {
+          actual_outcome?: string | null
+          based_on_patterns?: Json | null
+          confidence_score: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          predicted_at?: string
+          prediction_type: string
+          principle_code?: string | null
+          reasoning: string
+          room_id: string
+          user_feedback?: string | null
+          user_id: string
+          validated_at?: string | null
+          verse_reference?: string | null
+          was_accurate?: boolean | null
+        }
+        Update: {
+          actual_outcome?: string | null
+          based_on_patterns?: Json | null
+          confidence_score?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          predicted_at?: string
+          prediction_type?: string
+          principle_code?: string | null
+          reasoning?: string
+          room_id?: string
+          user_feedback?: string | null
+          user_id?: string
+          validated_at?: string | null
+          verse_reference?: string | null
+          was_accurate?: boolean | null
+        }
+        Relationships: []
+      }
       marriage_blueprint_progress: {
         Row: {
           article_id: number
@@ -2303,6 +2360,147 @@ export type Database = {
           title?: string
           type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      personalized_drills: {
+        Row: {
+          addresses_weakness: boolean | null
+          attempts_count: number | null
+          avg_time_seconds: number | null
+          completed_at: string | null
+          created_at: string
+          difficulty_level: string
+          drill_type: string
+          expected_answer: string | null
+          expires_at: string | null
+          floor_number: number
+          generated_reason: string | null
+          hints: Json | null
+          id: string
+          is_completed: boolean | null
+          principles_tested: string[] | null
+          priority: number | null
+          prompt: string
+          reinforces_strength: boolean | null
+          room_id: string
+          scheduled_for: string | null
+          success_rate: number | null
+          target_skill: string
+          tests_prediction: boolean | null
+          updated_at: string
+          user_id: string
+          verses_involved: string[] | null
+        }
+        Insert: {
+          addresses_weakness?: boolean | null
+          attempts_count?: number | null
+          avg_time_seconds?: number | null
+          completed_at?: string | null
+          created_at?: string
+          difficulty_level: string
+          drill_type: string
+          expected_answer?: string | null
+          expires_at?: string | null
+          floor_number: number
+          generated_reason?: string | null
+          hints?: Json | null
+          id?: string
+          is_completed?: boolean | null
+          principles_tested?: string[] | null
+          priority?: number | null
+          prompt: string
+          reinforces_strength?: boolean | null
+          room_id: string
+          scheduled_for?: string | null
+          success_rate?: number | null
+          target_skill: string
+          tests_prediction?: boolean | null
+          updated_at?: string
+          user_id: string
+          verses_involved?: string[] | null
+        }
+        Update: {
+          addresses_weakness?: boolean | null
+          attempts_count?: number | null
+          avg_time_seconds?: number | null
+          completed_at?: string | null
+          created_at?: string
+          difficulty_level?: string
+          drill_type?: string
+          expected_answer?: string | null
+          expires_at?: string | null
+          floor_number?: number
+          generated_reason?: string | null
+          hints?: Json | null
+          id?: string
+          is_completed?: boolean | null
+          principles_tested?: string[] | null
+          priority?: number | null
+          prompt?: string
+          reinforces_strength?: boolean | null
+          room_id?: string
+          scheduled_for?: string | null
+          success_rate?: number | null
+          target_skill?: string
+          tests_prediction?: boolean | null
+          updated_at?: string
+          user_id?: string
+          verses_involved?: string[] | null
+        }
+        Relationships: []
+      }
+      practice_schedules: {
+        Row: {
+          adjusts_to_progress: boolean | null
+          completion_rate: number | null
+          created_at: string
+          daily_goals: Json | null
+          difficulty_progression: string | null
+          end_date: string | null
+          focus_rooms: string[]
+          id: string
+          is_active: boolean | null
+          schedule_name: string
+          schedule_type: string
+          start_date: string
+          updated_at: string
+          user_id: string
+          weekly_milestones: Json | null
+        }
+        Insert: {
+          adjusts_to_progress?: boolean | null
+          completion_rate?: number | null
+          created_at?: string
+          daily_goals?: Json | null
+          difficulty_progression?: string | null
+          end_date?: string | null
+          focus_rooms: string[]
+          id?: string
+          is_active?: boolean | null
+          schedule_name: string
+          schedule_type: string
+          start_date: string
+          updated_at?: string
+          user_id: string
+          weekly_milestones?: Json | null
+        }
+        Update: {
+          adjusts_to_progress?: boolean | null
+          completion_rate?: number | null
+          created_at?: string
+          daily_goals?: Json | null
+          difficulty_progression?: string | null
+          end_date?: string | null
+          focus_rooms?: string[]
+          id?: string
+          is_active?: boolean | null
+          schedule_name?: string
+          schedule_type?: string
+          start_date?: string
+          updated_at?: string
+          user_id?: string
+          weekly_milestones?: Json | null
         }
         Relationships: []
       }
@@ -4155,6 +4353,75 @@ export type Database = {
           gem_name?: string
           id?: string
           room_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_learning_profiles: {
+        Row: {
+          accuracy_trend: Json | null
+          attention_span_minutes: number | null
+          auto_adjust_difficulty: boolean | null
+          best_study_times: string[] | null
+          blind_spots: Json | null
+          consistency_score: number | null
+          created_at: string
+          id: string
+          identified_weaknesses: Json | null
+          last_analysis_at: string | null
+          learning_style: string | null
+          next_challenge_level: string | null
+          optimal_difficulty: string | null
+          personalization_level: string | null
+          predicted_struggles: Json | null
+          recommended_focus_areas: string[] | null
+          speed_improvement: Json | null
+          top_strengths: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accuracy_trend?: Json | null
+          attention_span_minutes?: number | null
+          auto_adjust_difficulty?: boolean | null
+          best_study_times?: string[] | null
+          blind_spots?: Json | null
+          consistency_score?: number | null
+          created_at?: string
+          id?: string
+          identified_weaknesses?: Json | null
+          last_analysis_at?: string | null
+          learning_style?: string | null
+          next_challenge_level?: string | null
+          optimal_difficulty?: string | null
+          personalization_level?: string | null
+          predicted_struggles?: Json | null
+          recommended_focus_areas?: string[] | null
+          speed_improvement?: Json | null
+          top_strengths?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accuracy_trend?: Json | null
+          attention_span_minutes?: number | null
+          auto_adjust_difficulty?: boolean | null
+          best_study_times?: string[] | null
+          blind_spots?: Json | null
+          consistency_score?: number | null
+          created_at?: string
+          id?: string
+          identified_weaknesses?: Json | null
+          last_analysis_at?: string | null
+          learning_style?: string | null
+          next_challenge_level?: string | null
+          optimal_difficulty?: string | null
+          personalization_level?: string | null
+          predicted_struggles?: Json | null
+          recommended_focus_areas?: string[] | null
+          speed_improvement?: Json | null
+          top_strengths?: Json | null
           updated_at?: string
           user_id?: string
         }

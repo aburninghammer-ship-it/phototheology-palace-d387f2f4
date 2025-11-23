@@ -144,6 +144,7 @@ const VideoTraining = lazy(() => import("./pages/VideoTraining"));
 const MyStudies = lazy(() => import("./pages/MyStudies"));
 const StudyEditor = lazy(() => import("./pages/StudyEditor"));
 const MasteryDashboard = lazy(() => import("./pages/MasteryDashboard"));
+const PalaceAI = lazy(() => import("./pages/PalaceAI"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -334,6 +335,11 @@ function App() {
             <Route path="/mastery" element={
               <ProtectedRoute>
                 <MasteryDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/palace-ai" element={
+              <ProtectedRoute>
+                <PalaceAI />
               </ProtectedRoute>
             } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
