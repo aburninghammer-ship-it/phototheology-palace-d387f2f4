@@ -80,21 +80,24 @@ serve(async (req) => {
     // Generate breakdown using Lovable AI with specific instructions per principle
     const principlesDesc = selectedPrinciples.map(p => `- ${p.code} (${p.name}): ${p.description}`).join('\n');
     
-    const prompt = `You are a Phototheology expert analyzing Scripture. Break down this verse using EXACTLY 7 palace principles listed below.
-
-**CRITICAL**: You MUST use EXACTLY these 7 principles - do NOT add any other principles or codes not listed here:
-
-${principlesDesc}
+    const prompt = `You are a Phototheology expert analyzing Scripture.
 
 Verse: ${verseReference}
 "${verseText}"
 
-**GENRE IDENTIFICATION**: First, identify what genre/category this verse belongs to (Gospel, Law, History, Poetry, Prophecy, or Epistle). This will be the "principle_revealed".
+**STEP 1 - IDENTIFY GENRE (Principles Revealed)**:
+First, identify what genre/category this verse belongs to: Gospel, Law, History, Poetry, Prophecy, or Epistle.
+Use these codes: 📖Gospel, ⚖️Law, 📜History, 🎵Poetry, 🔮Prophecy, or ✉️Epistle
+
+**STEP 2 - APPLY 7 PRINCIPLES (Principles Applied)**:
+Now apply EXACTLY these 7 palace principles listed below:
+
+${principlesDesc}
 
 **SPECIFIC CODES FOR MULTI-CATEGORY PRINCIPLES**:
-- For Connect 6: Use specific genre codes (📖Gospel, ⚖️Law, 📜History, 🎵Poetry, 🔮Prophecy, ✉️Epistle) not "C6"
-- For Time Zone: Use specific zone codes (🌍Past, 🌍Now, 🌍Future, ☁️Past, ☁️Now, ☁️Future) not "TZ"
-- For Cycles: Use specific cycle codes (@Ad, @Mo, @CyC, @Sp, @Re) not "@Cycles"
+- For Connect 6: Use specific genre codes (📖Gospel, ⚖️Law, 📜History, 🎵Poetry, 🔮Prophecy, ✉️Epistle) - connect to DIFFERENT genre than verse
+- For Time Zone: Use specific zone codes (🌍Past, 🌍Now, 🌍Future, ☁️Past, ☁️Now, ☁️Future)
+- For Cycles: Use specific cycle codes (@Ad, @Mo, @CyC, @Sp, @Re)
 
 CRITICAL INSTRUCTIONS FOR EACH PRINCIPLE TYPE:
 
@@ -133,20 +136,21 @@ Example: "This verse spans multiple zones: EARTH Past - the cross event (He gave
 **Cycles Room (@Cycles)**: Identify which cycle this verse belongs to (e.g., @CyC for Gospel era, @Mo for Exodus era) AND connect to another cycle. Example: "This @CyC (Christ) verse echoes @Mo (Mosaic) - as Moses lifted the serpent (Num 21:9), so Christ was lifted up."
 
 For EACH of the 7 principles listed above, provide:
-1. principle_revealed: The CATEGORY this verse belongs to (e.g., "📖Gospel" if it's from a Gospel)
-2. principle_applied: The SPECIFIC code applied (use specific genre/zone/cycle codes, not general room codes)
-3. application: A specific, concrete application showing HOW the principle is applied
-4. key_insight: A memorable "gem" from this application
-5. practical_takeaway: A clear action step
+1. principle_applied: The SPECIFIC code applied (use specific genre/zone/cycle codes like 📜History, 🌍Now, @Mo)
+2. application: A specific, concrete application showing HOW the principle is applied
+3. key_insight: A memorable "gem" from this application
+4. practical_takeaway: A clear action step
 
-**CRITICAL VALIDATION**: Your response MUST contain EXACTLY 7 items in the breakdown array.
+**CRITICAL VALIDATION**: Your response MUST contain:
+- verse_genre: ONE genre code for the verse itself (📖Gospel, ⚖️Law, 📜History, 🎵Poetry, 🔮Prophecy, or ✉️Epistle)
+- breakdown: EXACTLY 7 items
 
 Format your response as a structured JSON with this exact schema:
 {
+  "verse_genre": "📖Gospel",
   "breakdown": [
     {
-      "principle_revealed": "category this verse belongs to (e.g., 📖Gospel, 🎵Poetry, etc.)",
-      "principle_applied": "specific code applied (e.g., 📜History for C6 connection, 🌍Now for TZ, @Mo for cycles)",
+      "principle_applied": "specific code (e.g., 📜History for C6, 🌍Now for TZ, @Mo for cycles)",
       "principle_code": "code from principles list",
       "principle_name": "name from principles list",
       "application": "specific, concrete application",
@@ -156,7 +160,7 @@ Format your response as a structured JSON with this exact schema:
   ]
 }
 
-Make it engaging, Christ-centered, specific, and practically applicable. Remember: Use EXACTLY 7 principles with specific category codes.`;
+Make it engaging, Christ-centered, specific, and practically applicable. Remember: Identify verse_genre first, then apply EXACTLY 7 principles.`;
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',

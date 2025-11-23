@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
 interface PrincipleBreakdown {
-  principle_revealed: string;
   principle_applied: string;
   principle_code: string;
   principle_name: string;
@@ -24,6 +23,7 @@ interface DailyVerse {
   verse_text: string;
   principles_used: string[];
   breakdown: {
+    verse_genre: string;
     breakdown: PrincipleBreakdown[];
   };
   date: string;
@@ -158,30 +158,23 @@ export default function DailyVerse() {
           </CardContent>
         </Card>
 
-        {/* Principles Applied */}
+        {/* Principles */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Book className="h-5 w-5" />
-              Palace Principles Applied
+              Palace Principles
             </CardTitle>
-            <CardDescription>
-              Today we're exploring this verse through 7 powerful principles
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-semibold mb-2 text-sm">Principles Revealed (Categories)</h4>
-              <div className="flex flex-wrap gap-2">
-                {todayVerse.breakdown.breakdown.map((item, idx) => (
-                  <Badge key={`revealed-${idx}`} variant="secondary">
-                    {item.principle_revealed}
-                  </Badge>
-                ))}
-              </div>
+              <h4 className="font-semibold mb-2 text-sm">Principle Revealed (Verse Category)</h4>
+              <Badge variant="secondary" className="text-lg px-4 py-2">
+                {todayVerse.breakdown.verse_genre}
+              </Badge>
             </div>
             <div>
-              <h4 className="font-semibold mb-2 text-sm">Principles Applied (Specific Applications)</h4>
+              <h4 className="font-semibold mb-2 text-sm">7 Principles Applied</h4>
               <div className="flex flex-wrap gap-2">
                 {todayVerse.breakdown.breakdown.map((item, idx) => (
                   <Badge key={`applied-${idx}`} variant="outline">
@@ -199,11 +192,7 @@ export default function DailyVerse() {
             <Card key={index}>
               <CardHeader>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="secondary">{item.principle_revealed}</Badge>
-                    <span className="text-muted-foreground">→</span>
-                    <Badge>{item.principle_applied}</Badge>
-                  </div>
+                  <Badge className="w-fit">{item.principle_applied}</Badge>
                   <CardTitle className="text-lg">
                     {item.principle_name}
                   </CardTitle>
