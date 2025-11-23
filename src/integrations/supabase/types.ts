@@ -2550,6 +2550,7 @@ export type Database = {
           community_posts: boolean
           connect6_challenges: boolean
           created_at: string
+          daily_verse: boolean | null
           dimension_challenges: boolean
           equation_challenges: boolean
           fruit_check_challenges: boolean
@@ -2566,6 +2567,7 @@ export type Database = {
           community_posts?: boolean
           connect6_challenges?: boolean
           created_at?: string
+          daily_verse?: boolean | null
           dimension_challenges?: boolean
           equation_challenges?: boolean
           fruit_check_challenges?: boolean
@@ -2582,6 +2584,7 @@ export type Database = {
           community_posts?: boolean
           connect6_challenges?: boolean
           created_at?: string
+          daily_verse?: boolean | null
           dimension_challenges?: boolean
           equation_challenges?: boolean
           fruit_check_challenges?: boolean
