@@ -16,6 +16,7 @@ import { AchievementProvider } from "@/components/AchievementProvider";
 import { SplashScreen } from "@/components/SplashScreen";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "next-themes";
+import { UserPreferencesProvider } from "@/hooks/useUserPreferences";
 
 // Critical pages - load immediately
 import Index from "./pages/Index";
@@ -176,14 +177,15 @@ function App() {
           </AnimatePresence>
           {!showSplash && (
             <BrowserRouter>
-            <LiveNotificationsProvider>
-              <AchievementProvider>
-                <SidebarProvider defaultOpen={false}>
-                  <div className="min-h-screen flex w-full">
-                    <MessagingSidebar />
-                    <main className="flex-1 w-full overflow-x-hidden">
-                      <Suspense fallback={<LoadingScreen />}>
-                        <Routes>
+              <LiveNotificationsProvider>
+                <AchievementProvider>
+                  <UserPreferencesProvider>
+                    <SidebarProvider defaultOpen={false}>
+                      <div className="min-h-screen flex w-full">
+                        <MessagingSidebar />
+                        <main className="flex-1 w-full overflow-x-hidden">
+                          <Suspense fallback={<LoadingScreen />}>
+                            <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/genesis-challenge" element={<GenesisHighRise />} />
             <Route path="/auth" element={<Auth />} />
@@ -367,9 +369,10 @@ function App() {
                   </main>
                 </div>
               </SidebarProvider>
-              </AchievementProvider>
-            </LiveNotificationsProvider>
-          </BrowserRouter>
+            </UserPreferencesProvider>
+            </AchievementProvider>
+          </LiveNotificationsProvider>
+        </BrowserRouter>
           )}
         </TooltipProvider>
         </ThemeProvider>
