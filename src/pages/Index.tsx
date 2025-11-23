@@ -1,4 +1,6 @@
 import { Navigation } from "@/components/Navigation";
+import { SimplifiedNav } from "@/components/SimplifiedNav";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,6 +39,7 @@ import { Testimonials } from "@/components/Testimonials";
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { preferences } = useUserPreferences();
   const [showInstallBanner, setShowInstallBanner] = useState(false);
 
   useEffect(() => {
@@ -58,7 +61,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      {preferences.navigation_style === "simplified" ? <SimplifiedNav /> : <Navigation />}
       
       {/* Install App Banner */}
       {showInstallBanner && (

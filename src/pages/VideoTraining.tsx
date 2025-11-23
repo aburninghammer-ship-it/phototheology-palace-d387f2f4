@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigation } from "@/components/Navigation";
+import { SimplifiedNav } from "@/components/SimplifiedNav";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -35,6 +37,7 @@ interface TrainingVideo {
 
 const VideoTraining = () => {
   const { user } = useAuth();
+  const { preferences } = useUserPreferences();
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const [selectedVideo, setSelectedVideo] = useState<TrainingVideo | null>(null);
@@ -232,7 +235,7 @@ const VideoTraining = () => {
         <meta name="twitter:image" content={shareImage} />
       </Helmet>
       
-      <Navigation />
+      {preferences.navigation_style === "simplified" ? <SimplifiedNav /> : <Navigation />}
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">Video Training</h1>
