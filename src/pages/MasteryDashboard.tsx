@@ -158,52 +158,119 @@ export default function MasteryDashboard() {
               <CardContent>
                 <div className="space-y-2">
                   {[
-                    { level: 1, title: "Novice Scholar", rooms: 0, color: "text-gray-400" },
-                    { level: 2, title: "Diligent Student", rooms: 5, color: "text-blue-400" },
-                    { level: 3, title: "Devoted Learner", rooms: 10, color: "text-green-400" },
-                    { level: 4, title: "Palace Navigator", rooms: 20, color: "text-purple-400" },
-                    { level: 5, title: "Wisdom Seeker", rooms: 30, color: "text-pink-400" },
-                    { level: 6, title: "Palace Guardian", rooms: 45, color: "text-orange-400" },
-                    { level: 7, title: "Master Theologian", rooms: 60, color: "text-red-400" },
-                    { level: 8, title: "Grand Palace Master", rooms: 80, color: "text-amber-400" },
-                  ].map((titleInfo) => {
-                    const isUnlocked = roomsMastered >= titleInfo.rooms;
+                    { 
+                      emoji: "🟦", 
+                      title: "Blue Master", 
+                      rooms: "1–3", 
+                      roomsMin: 1,
+                      color: "text-blue-500",
+                      bgColor: "bg-blue-500/10",
+                      borderColor: "border-blue-500/30",
+                      requirements: "None beyond room mastery",
+                      rewards: "Blue Master title"
+                    },
+                    { 
+                      emoji: "🔴", 
+                      title: "Red Master", 
+                      rooms: "4–9", 
+                      roomsMin: 4,
+                      color: "text-red-500",
+                      bgColor: "bg-red-500/10",
+                      borderColor: "border-red-500/30",
+                      requirements: "7-day global streak",
+                      rewards: "Red Master title + Red Challenges"
+                    },
+                    { 
+                      emoji: "🟡", 
+                      title: "Gold Master", 
+                      rooms: "10–18", 
+                      roomsMin: 10,
+                      color: "text-yellow-500",
+                      bgColor: "bg-yellow-500/10",
+                      borderColor: "border-yellow-500/30",
+                      requirements: "14-day global streak",
+                      rewards: "Gold Master title + advanced chain tools"
+                    },
+                    { 
+                      emoji: "🟣", 
+                      title: "Purple Master", 
+                      rooms: "19–27", 
+                      roomsMin: 19,
+                      color: "text-purple-500",
+                      bgColor: "bg-purple-500/10",
+                      borderColor: "border-purple-500/30",
+                      requirements: "21-day global streak",
+                      rewards: "Purple Master title + create-your-own drills"
+                    },
+                    { 
+                      emoji: "⚪", 
+                      title: "White Master", 
+                      rooms: "28–37", 
+                      roomsMin: 28,
+                      color: "text-gray-400",
+                      bgColor: "bg-gray-500/10",
+                      borderColor: "border-gray-500/30",
+                      requirements: "30-day global streak",
+                      rewards: "White Master title + Temple Mode + prophecy maps"
+                    },
+                    { 
+                      emoji: "⚫", 
+                      title: "Black Master", 
+                      rooms: "38", 
+                      roomsMin: 38,
+                      color: "text-gray-900 dark:text-white",
+                      bgColor: "bg-gray-900/10 dark:bg-white/10",
+                      borderColor: "border-gray-900/30 dark:border-white/30",
+                      requirements: "60-day streak + Final Master Exam + 12-verse chain + Teach-the-Palace test + 3 prophetic exercises",
+                      rewards: "Black Master title + Black Palace Mode + Shadow Chains + Prophetic Lattice Engine + Mentor privileges + 8th-floor Revelation Chamber",
+                      isFinal: true
+                    },
+                  ].map((titleInfo, index) => {
+                    const isUnlocked = roomsMastered >= titleInfo.roomsMin;
                     const isCurrent = currentGlobalTitle === titleInfo.title;
                     
                     return (
                       <div
-                        key={titleInfo.level}
+                        key={index}
                         className={cn(
-                          "flex items-center justify-between p-3 rounded-lg border transition-all",
-                          isCurrent && "bg-primary/10 border-primary/30",
+                          "p-4 rounded-lg border transition-all",
+                          isCurrent && titleInfo.bgColor + " " + titleInfo.borderColor,
                           isUnlocked && !isCurrent && "bg-accent/5 border-accent/20",
                           !isUnlocked && "opacity-50 bg-muted/5"
                         )}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center font-bold",
-                            isUnlocked ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
-                          )}>
-                            {titleInfo.level}
-                          </div>
-                          <div>
-                            <div className={cn("font-semibold", titleInfo.color)}>
-                              {titleInfo.title}
+                        <div className="flex items-start gap-3">
+                          <div className="text-2xl">{titleInfo.emoji}</div>
+                          <div className="flex-1">
+                            <div className={cn("font-bold text-lg", titleInfo.color)}>
+                              {titleInfo.title.toUpperCase()} — {titleInfo.rooms} Rooms Mastered
                               {isCurrent && <span className="ml-2 text-xs text-primary">(Current)</span>}
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                              {titleInfo.rooms === 0 ? "Starting title" : `${titleInfo.rooms} rooms mastered`}
+                            <div className="mt-2 space-y-1 text-sm">
+                              <div>
+                                <span className="font-semibold">Requirements:</span>{" "}
+                                <span className="text-muted-foreground">{titleInfo.requirements}</span>
+                              </div>
+                              <div>
+                                <span className="font-semibold">Reward:</span>{" "}
+                                <span className="text-muted-foreground">{titleInfo.rewards}</span>
+                              </div>
+                              {titleInfo.isFinal && (
+                                <div className="mt-2 p-2 bg-background/50 rounded text-xs">
+                                  <strong>The Final Rank</strong> — Only the most disciplined, consistent, and skilled users will ever reach this tier.
+                                </div>
+                              )}
                             </div>
+                            {!isUnlocked && (
+                              <div className="mt-2 text-xs text-muted-foreground">
+                                {titleInfo.roomsMin - roomsMastered} more rooms to unlock
+                              </div>
+                            )}
                           </div>
+                          {isUnlocked && (
+                            <Crown className="h-5 w-5 text-amber-500" />
+                          )}
                         </div>
-                        {isUnlocked ? (
-                          <Crown className="h-5 w-5 text-amber-500" />
-                        ) : (
-                          <div className="text-xs text-muted-foreground">
-                            {titleInfo.rooms - roomsMastered} more
-                          </div>
-                        )}
                       </div>
                     );
                   })}
