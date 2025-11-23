@@ -48,11 +48,23 @@ export function NotificationCenter() {
       
       console.log('🔔 NotificationCenter: Event dispatched successfully');
     } else {
-      // Check for link in notification or metadata (backwards compatibility)
-      const link = notification.link || notification.metadata?.link;
+      // Handle non-message notifications with navigation links
+      // Prefer explicit link field, then metadata.link, then type-specific defaults
+      const explicitLink = notification.link || notification.metadata?.link;
+      const fallbackLink = !explicitLink && notification.type === 'daily_verse'
+        ? '/daily-verse'
+        : undefined;
+      const link = explicitLink || fallbackLink;
+
       if (link) {
         console.log('🔔 NotificationCenter: Navigating to', link);
         navigate(link);
+      } else {
+        console.log('🔔 NotificationCenter: No navigation link found for notification', {
+          id: notification.id,
+          type: notification.type,
+          metadata: notification.metadata,
+        });
       }
     }
   };
