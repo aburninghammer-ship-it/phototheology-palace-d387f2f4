@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { palaceFloors } from "@/data/palaceData";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Target, HelpCircle, BookOpen, AlertCircle, CheckCircle, Trophy, Lock, Dumbbell, Brain, ChevronDown, Swords, Crown, FileText } from "lucide-react";
+import { ArrowLeft, Target, HelpCircle, BookOpen, AlertCircle, CheckCircle, Trophy, Lock, Dumbbell, Brain, ChevronDown, Swords, Crown, FileText, Star, Award, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { JeevesAssistant } from "@/components/JeevesAssistant";
@@ -400,6 +400,100 @@ export default function RoomDetail() {
 
               {/* MASTER THIS ROOM TAB */}
               <TabsContent value="master" className="space-y-6 mt-6">
+                {/* Mastery System Explanation */}
+                <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-primary" />
+                      Understanding Room Mastery
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Mastery transforms casual Bible study into permanent understanding. By mastering a room, you build neural pathways that make Scripture stick—not just today, but for life.
+                    </p>
+
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-sm">The Five Mastery Levels:</h4>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-start gap-3 p-2 rounded-lg bg-slate-500/10">
+                          <Star className="h-4 w-4 text-slate-500 mt-0.5" />
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">Level 1: Novice</div>
+                            <div className="text-xs text-muted-foreground">Starting point. Begin exploring the room's principles.</div>
+                            <div className="text-xs font-semibold mt-1">→ Reach 100 XP to advance</div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-2 rounded-lg bg-blue-500/10">
+                          <Award className="h-4 w-4 text-blue-500 mt-0.5" />
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">Level 2: Apprentice</div>
+                            <div className="text-xs text-muted-foreground">Building familiarity. You're making connections.</div>
+                            <div className="text-xs font-semibold mt-1">→ Reach 250 XP to advance</div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-2 rounded-lg bg-purple-500/10">
+                          <Trophy className="h-4 w-4 text-purple-500 mt-0.5" />
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">Level 3: Practitioner</div>
+                            <div className="text-xs text-muted-foreground">Confident application. You can teach this room's principles.</div>
+                            <div className="text-xs font-semibold mt-1">→ Reach 500 XP to advance</div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-2 rounded-lg bg-amber-500/10">
+                          <Crown className="h-4 w-4 text-amber-500 mt-0.5" />
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">Level 4: Expert</div>
+                            <div className="text-xs text-muted-foreground">Deep understanding. Mentor Mode unlocked for personalized AI guidance.</div>
+                            <div className="text-xs font-semibold mt-1">→ Reach 1,000 XP to advance</div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-2 rounded-lg bg-gradient-to-r from-amber-500/20 to-yellow-300/20 border border-amber-500/30">
+                          <Sparkles className="h-4 w-4 text-amber-500 mt-0.5" />
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">Level 5: Master</div>
+                            <div className="text-xs text-muted-foreground">Complete mastery. This room's patterns are permanently encoded in your mind.</div>
+                            <div className="text-xs font-semibold mt-1 text-amber-600">✨ Maximum Level Reached</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">How to Earn XP:</h4>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                          <span>Complete drills: <strong>25 XP</strong></span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 w-1.5 rounded-full bg-accent" />
+                          <span>Finish exercises: <strong>15 XP</strong></span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                          <span>Perfect score: <strong>+50 XP</strong></span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                          <span>Speed bonus: <strong>+10 XP</strong></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-muted-foreground pt-2 border-t">
+                      <strong>Pro tip:</strong> Mastering a room contributes to your Global Palace Title. Master more rooms to unlock higher titles and recognition in the community.
+                    </div>
+                  </CardContent>
+                </Card>
+
                 {/* Show Onboarding for Novices (Level 1 with 0 XP) */}
                 {mastery && mastery.mastery_level === 1 && mastery.xp_current === 0 && (
                   <MasteryOnboarding 
