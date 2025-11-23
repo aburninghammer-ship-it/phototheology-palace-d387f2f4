@@ -68,7 +68,7 @@ serve(async (req) => {
     const verseReference = "John 3:16";
     const verseText = "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.";
     
-    // Generate breakdown using Lovable AI
+    // Generate breakdown using Lovable AI with specific instructions per principle
     const principlesDesc = selectedPrinciples.map(p => `- ${p.code} (${p.name}): ${p.description}`).join('\n');
     
     const prompt = `You are a Phototheology expert analyzing Scripture. Break down this verse using the following ${numPrinciples} palace principles:
@@ -78,10 +78,24 @@ ${principlesDesc}
 Verse: ${verseReference}
 "${verseText}"
 
-For EACH principle listed above, provide:
-1. A brief application (2-3 sentences)
-2. A key insight
-3. A practical takeaway
+CRITICAL INSTRUCTIONS FOR EACH PRINCIPLE:
+
+- For "C6" (Connect 6): DO NOT just identify what genre this verse belongs to. Instead, CONNECT this verse to a specific verse or story from a DIFFERENT genre. Example: If this is a Gospel passage, connect it to a prophecy from Isaiah, a Psalm, or a story from Genesis.
+
+- For "DR" (Dimensions Room): DO NOT just identify which dimension (Literal, Christ, Me, Church, Heaven) this verse operates in. Instead, ANALYZE the verse THROUGH multiple dimensions. Show how the verse moves from one dimension to another (e.g., from Literal to Christ to Me).
+
+- For "ST" (Symbols/Types): Identify specific symbols and show what they typify (e.g., "lamb = Christ", "water = Holy Spirit"). Be concrete.
+
+- For "PRm" (Patterns Room): Name specific recurring patterns (e.g., "40 days pattern: Noah's flood, Moses on Sinai, Jesus in wilderness").
+
+- For "P‖" (Parallels Room): Give specific parallel events or actions (e.g., "Tower of Babel (languages divided) parallels Pentecost (languages united)").
+
+- For ALL principles: Be SPECIFIC, CONCRETE, and ACTIONABLE. No vague generalities.
+
+For EACH principle, provide:
+1. application: A specific, concrete application showing HOW the principle is applied to this verse (not just what the principle is)
+2. key_insight: A memorable "gem" that comes from applying this principle
+3. practical_takeaway: A clear action step the reader can take today
 
 Format your response as a structured JSON with this exact schema:
 {
@@ -89,14 +103,14 @@ Format your response as a structured JSON with this exact schema:
     {
       "principle_code": "code",
       "principle_name": "name",
-      "application": "detailed application text",
-      "key_insight": "main insight",
-      "practical_takeaway": "action step"
+      "application": "specific, concrete application showing HOW this principle reveals something in the verse",
+      "key_insight": "memorable insight from this application",
+      "practical_takeaway": "clear action step"
     }
   ]
 }
 
-Make it engaging, Christ-centered, and practically applicable.`;
+Make it engaging, Christ-centered, specific, and practically applicable.`;
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
