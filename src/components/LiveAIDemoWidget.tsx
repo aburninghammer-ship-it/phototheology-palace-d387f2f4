@@ -29,6 +29,8 @@ export const LiveAIDemoWidget = () => {
     setResponse("");
 
     try {
+      console.log('🤖 Calling Jeeves with:', { message: q, context: "demo" });
+      
       const { data, error } = await supabase.functions.invoke('jeeves', {
         body: { 
           message: q,
@@ -36,18 +38,28 @@ export const LiveAIDemoWidget = () => {
         }
       });
 
-      if (error) throw error;
+      console.log('🤖 Jeeves response:', { data, error });
 
-      setResponse(data.content || data.response || "No response received");
-    } catch (error) {
+      if (error) {
+        console.error('Jeeves error:', error);
+        throw error;
+      }
+
+      const responseText = data?.content || data?.response || "No response received";
+      console.log('🤖 Setting response:', responseText);
+      setResponse(responseText);
+    } catch (error: any) {
       console.error('Error asking Jeeves:', error);
-      const errorMessage = user 
-        ? "Unable to process your question. Please try again."
-        : "This is a preview. Sign up to chat with Jeeves, your AI study assistant who knows the Phototheology Palace method inside and out!";
+      
+      // Show detailed error for debugging
+      const errorDetails = error?.message || JSON.stringify(error);
+      console.error('Detailed error:', errorDetails);
+      
+      const errorMessage = `Unable to reach Jeeves. ${user ? 'Please try again.' : 'Please sign up or try again later.'}\n\nError: ${errorDetails}`;
       
       toast({
-        title: user ? "Error" : "Demo unavailable",
-        description: user ? "Please try again" : "Please sign up to access the full AI assistant",
+        title: "Connection Error",
+        description: `Unable to connect to Jeeves. ${errorDetails.substring(0, 100)}`,
         variant: "destructive",
       });
       setResponse(errorMessage);
