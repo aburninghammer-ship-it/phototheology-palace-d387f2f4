@@ -175,7 +175,7 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Welcome back! 👋</h1>
-          <p className="text-muted-foreground">Here's your learning progress</p>
+          <p className="text-foreground/80">Here's your learning progress</p>
         </div>
 
         {/* Featured Today */}

@@ -84,7 +84,7 @@ export default function ChurchAdmin() {
       <div className="min-h-screen flex items-center justify-center gradient-dreamy">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading church dashboard...</p>
+          <p className="text-foreground/80">Loading church dashboard...</p>
         </div>
       </div>
     );

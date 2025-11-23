@@ -82,7 +82,7 @@ export default function Certificates() {
       <div className="min-h-screen gradient-dreamy">
         <SimplifiedNav />
         <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <p className="text-center text-muted-foreground">Loading certificates...</p>
+          <p className="text-center text-foreground/80">Loading certificates...</p>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export default function Certificates() {
             <Award className="h-8 w-8" />
             My Certificates
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-foreground/80">
             Your achievements and completed courses
           </p>
         </div>
