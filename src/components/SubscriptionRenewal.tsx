@@ -4,9 +4,33 @@ import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Calendar, CreditCard, AlertCircle, CheckCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export function SubscriptionRenewal() {
   const { subscription, loading } = useSubscription();
+  const [managingBilling, setManagingBilling] = useState(false);
+
+  const handleManageBilling = async () => {
+    setManagingBilling(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        throw new Error('No portal URL returned');
+      }
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      toast.error('Failed to open billing portal. Please try again.');
+    } finally {
+      setManagingBilling(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -144,10 +168,20 @@ export function SubscriptionRenewal() {
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => window.open('https://billing.stripe.com/p/login/test_your_link', '_blank')}
+                onClick={handleManageBilling}
+                disabled={managingBilling}
               >
-                <CreditCard className="h-4 w-4 mr-2" />
-                Manage Billing
+                {managingBilling ? (
+                  <>
+                    <CreditCard className="h-4 w-4 mr-2 animate-spin" />
+                    Opening...
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Manage Billing
+                  </>
+                )}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
                 Update payment method, view invoices, or cancel subscription
