@@ -85,3 +85,6 @@ verify_jwt = true
 
 [functions.generate-reading-exercises]
 verify_jwt = true
+
+[functions.cleanup-cancelled-users]
+verify_jwt = false
