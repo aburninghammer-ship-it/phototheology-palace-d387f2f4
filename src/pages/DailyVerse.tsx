@@ -117,7 +117,7 @@ export default function DailyVerse() {
               <Sparkles className="h-8 w-8 text-primary" />
               Verse of the Day
             </h1>
-            <p className="text-muted-foreground flex items-center gap-2">
+            <p className="text-foreground/80 font-medium flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               {new Date(todayVerse.date).toLocaleDateString('en-US', { 
                 weekday: 'long', 

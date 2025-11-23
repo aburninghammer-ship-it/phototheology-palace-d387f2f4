@@ -227,7 +227,7 @@ export default function StudyPartners() {
             <Users className="h-8 w-8" />
             Study Partners
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-foreground/80">
             Connect with others to learn together
           </p>
         </div>
