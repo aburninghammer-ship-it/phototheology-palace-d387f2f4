@@ -337,10 +337,10 @@ export const Navigation = () => {
                         <Link to="/blueprint-stronghold">Breaking Strongholds</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to="/blueprint-weightloss">Weight Loss</Link>
+                        <Link to="/blueprint-weight-loss">Weight Loss</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to="/blueprint-mentalhealth">Mental Health</Link>
+                        <Link to="/blueprint-mental-health">Mental Health</Link>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -406,7 +406,7 @@ export const Navigation = () => {
                         <Link to="/bible-reference">PT Codebook</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to="/bible-encyclopedia">Bible Encyclopedia</Link>
+                        <Link to="/encyclopedia">Bible Encyclopedia</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link to="/quarterly-study">Sabbath School</Link>
