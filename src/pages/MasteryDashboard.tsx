@@ -249,11 +249,11 @@ export default function MasteryDashboard() {
                             <div className="mt-2 space-y-1 text-sm">
                               <div>
                                 <span className="font-semibold">Requirements:</span>{" "}
-                                <span className="text-muted-foreground">{titleInfo.requirements}</span>
+                                <span className={cn(isUnlocked ? "text-foreground" : "text-muted-foreground")}>{titleInfo.requirements}</span>
                               </div>
                               <div>
                                 <span className="font-semibold">Reward:</span>{" "}
-                                <span className="text-muted-foreground">{titleInfo.rewards}</span>
+                                <span className={cn(isUnlocked ? "text-foreground" : "text-muted-foreground")}>{titleInfo.rewards}</span>
                               </div>
                               {titleInfo.isFinal && (
                                 <div className="mt-2 p-2 bg-background/50 rounded text-xs">
