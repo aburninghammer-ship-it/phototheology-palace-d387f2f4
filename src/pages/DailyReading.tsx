@@ -329,7 +329,7 @@ export default function DailyReading() {
                         <Badge variant="outline" className="text-xs">Floor {exercise.floorNumber}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">
-                        Rooms: {exercise.rooms.join(" • ")}
+                        Rooms: {exercise.rooms && Array.isArray(exercise.rooms) ? exercise.rooms.join(" • ") : "Various rooms"}
                       </p>
                     </div>
                   </div>
