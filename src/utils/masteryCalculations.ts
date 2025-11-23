@@ -46,14 +46,60 @@ export const MASTERY_TITLES = {
  * Global title progression (based on rooms mastered)
  */
 export const GLOBAL_TITLES = [
-  { level: 1, title: "Novice Scholar", roomsRequired: 0 },
-  { level: 2, title: "Diligent Student", roomsRequired: 5 },
-  { level: 3, title: "Devoted Learner", roomsRequired: 10 },
-  { level: 4, title: "Palace Navigator", roomsRequired: 20 },
-  { level: 5, title: "Wisdom Seeker", roomsRequired: 30 },
-  { level: 6, title: "Palace Guardian", roomsRequired: 45 },
-  { level: 7, title: "Master Theologian", roomsRequired: 60 },
-  { level: 8, title: "Grand Palace Master", roomsRequired: 80 },
+  { 
+    level: 1, 
+    title: "Blue Master", 
+    roomsRequired: 1,
+    roomsMax: 3,
+    streakRequired: 0,
+    color: "blue",
+    rewards: ["Blue Master title"]
+  },
+  { 
+    level: 2, 
+    title: "Red Master", 
+    roomsRequired: 4,
+    roomsMax: 9,
+    streakRequired: 7,
+    color: "red",
+    rewards: ["Red Master title", "Red Challenges"]
+  },
+  { 
+    level: 3, 
+    title: "Gold Master", 
+    roomsRequired: 10,
+    roomsMax: 18,
+    streakRequired: 14,
+    color: "yellow",
+    rewards: ["Gold Master title", "Advanced chain tools"]
+  },
+  { 
+    level: 4, 
+    title: "Purple Master", 
+    roomsRequired: 19,
+    roomsMax: 27,
+    streakRequired: 21,
+    color: "purple",
+    rewards: ["Purple Master title", "Create-your-own drills"]
+  },
+  { 
+    level: 5, 
+    title: "White Master", 
+    roomsRequired: 28,
+    roomsMax: 37,
+    streakRequired: 30,
+    color: "gray",
+    rewards: ["White Master title", "Temple Mode", "Prophecy maps"]
+  },
+  { 
+    level: 6, 
+    title: "Black Master", 
+    roomsRequired: 38,
+    roomsMax: 38,
+    streakRequired: 60,
+    color: "black",
+    rewards: ["Black Master title", "Black Palace Mode", "Shadow Chains", "Prophetic Lattice Engine", "Mentor privileges", "8th-floor Revelation Chamber"]
+  },
 ] as const;
 
 /**
@@ -115,11 +161,13 @@ export const getMasteryTitle = (level: number): string => {
  * Get global title based on rooms mastered
  */
 export const getGlobalTitle = (roomsMastered: number): string => {
+  if (roomsMastered === 0) return "Aspiring Scholar";
+  
   const title = [...GLOBAL_TITLES]
     .reverse()
-    .find((t) => roomsMastered >= t.roomsRequired);
+    .find((t) => roomsMastered >= t.roomsRequired && roomsMastered <= t.roomsMax);
   
-  return title?.title || "Novice Scholar";
+  return title?.title || "Aspiring Scholar";
 };
 
 /**
