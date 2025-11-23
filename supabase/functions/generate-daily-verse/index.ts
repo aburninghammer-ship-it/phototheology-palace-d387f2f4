@@ -161,9 +161,9 @@ Example: "This verse spans multiple zones: EARTH Past - the cross event (He gave
 
 For EACH of the 7 principles listed above, provide:
 1. principle_applied: The SPECIFIC emoji/symbol code (MUST be exact: 📖Gospel, 🌍Now, @Mo, SR, etc.)
-2. application: A specific, concrete application showing HOW the principle is applied
+2. application: A ROBUST, detailed paragraph (2-3 sentences minimum) showing HOW the principle is applied. Do not give a single sentence - develop the thought fully with concrete examples and connections.
 3. key_insight: A memorable "gem" from this application
-4. practical_takeaway: A clear action step
+4. practical_takeaway: A clear, actionable step the reader can take today
 
 **CRITICAL VALIDATION**: 
 - verse_genre: ONE genre code (📖Gospel, ⚖️Law, 📜History, 🎵Poetry, 🔮Prophecy, or ✉️Epistle)
