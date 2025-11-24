@@ -71,12 +71,12 @@ export const MagicEyeHero = () => {
               Focus on the image below. At first it looks chaotic—just colors and noise.
             </p>
             <p className="text-lg font-semibold text-foreground">
-              But if you hold your gaze, a hidden pattern emerges...
+              But if you hold your gaze, a hidden message emerges...
             </p>
             <div className="flex flex-col items-center gap-2 text-primary">
-              <p className="text-base font-medium">A sanctuary…</p>
-              <p className="text-base font-medium">A palace…</p>
-              <p className="text-base font-medium">A structure suddenly coming into focus.</p>
+              <p className="text-base font-medium">Words forming…</p>
+              <p className="text-base font-medium">A message…</p>
+              <p className="text-base font-medium">God's love suddenly coming into focus.</p>
             </div>
           </div>
 
@@ -116,8 +116,8 @@ export const MagicEyeHero = () => {
                   >
                     <div className="text-center text-primary-foreground p-8">
                       <Building2 className="h-24 w-24 mx-auto mb-4" />
-                      <p className="text-2xl font-bold">The Sanctuary</p>
-                      <p className="text-lg mt-2">The hidden structure revealed</p>
+                      <p className="text-2xl font-bold">"I Love You"</p>
+                      <p className="text-lg mt-2">God's message revealed</p>
                     </div>
                   </motion.div>
                 )}
