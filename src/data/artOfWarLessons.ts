@@ -429,6 +429,530 @@ export const DOJO_LESSONS: DojoLesson[] = [
       "What would my life look like if I had complete self-control in one area?"
     ],
     warriorCharacteristics: ["faithfulness", "self-control", "discipline", "mastery"]
+  },
+  // SECTION II: THE WEAPONS OF WAR
+  {
+    id: "armory-intro",
+    chapter: 5,
+    title: "The Armory of Fire",
+    subtitle: "Introduction to Supernatural Weapons",
+    description: "Spiritual warfare requires supernatural weapons. Carnal weapons fail against spiritual enemies. God has provided an arsenal of divine weapons that are 'mighty through God to the pulling down of strongholds' (2 Cor 10:4). Each weapon serves a specific purpose in the holy war against self.",
+    keyPoints: [
+      "Our weapons are not carnal but mighty through God (2 Corinthians 10:4-5)",
+      "Each weapon has a specific function in containing and destroying self",
+      "Mastery requires practice, not just knowledge",
+      "Weapons must be used in combination for maximum effectiveness",
+      "The Armor of God (Ephesians 6) provides both defensive and offensive capabilities"
+    ],
+    scriptureReferences: [
+      "2 Corinthians 10:4-5",
+      "Ephesians 6:10-17",
+      "Hebrews 4:12",
+      "Psalm 18:34-35"
+    ],
+    practicalApplication: "Survey your spiritual arsenal today. Make a list of the weapons you know how to use versus those you've never practiced with. Choose one unfamiliar weapon to study and practice this week.",
+    reflectionQuestions: [
+      "Which spiritual weapons am I most comfortable using?",
+      "Which weapons have I neglected or never learned to use?",
+      "Am I fighting with the full armor of God, or just pieces of it?"
+    ],
+    warriorCharacteristics: ["preparedness", "study", "discipline"]
+  },
+  {
+    id: "myrrh-power",
+    chapter: 5,
+    title: "Myrrh-Power",
+    subtitle: "The Weapon of Endurance and Faithfulness Unto Death",
+    description: "Myrrh represents death, suffering, and sacrifice. It was brought to baby Jesus, used in His burial, and symbolizes the willingness to suffer and die rather than betray. Myrrh-power is the spirit of 'faithful unto death' (Revelation 2:10)—the determination to endure anything rather than yield to self.",
+    keyPoints: [
+      "Myrrh was one of the three gifts brought to Jesus, foreshadowing His death",
+      "This weapon gives the power to choose death over sin",
+      "It's the spirit of the martyrs who loved not their lives unto death",
+      "Myrrh-power transforms suffering into victory",
+      "It enables you to say 'I would rather die than sin'",
+      "This is the opposite of self-preservation—it's self-crucifixion"
+    ],
+    scriptureReferences: [
+      "Revelation 2:10 - Be faithful unto death",
+      "Matthew 2:11 - Gold, frankincense, and myrrh",
+      "John 19:39 - Myrrh and aloes for Jesus' burial",
+      "Revelation 12:11 - They loved not their lives unto death"
+    ],
+    practicalApplication: "Identify one area where you've been compromising because 'dying to self' feels too hard. Today, invoke myrrh-power: choose the harder right over the easier wrong, even if it costs you comfort, reputation, or pleasure. Pray: 'Lord, give me myrrh-power to be faithful unto death in this area.'",
+    reflectionQuestions: [
+      "Am I willing to suffer for righteousness, or do I always choose the path of least resistance?",
+      "What would I rather die than do? Is that list growing or shrinking?",
+      "Do I have the spirit of the martyrs, or the spirit of self-preservation?"
+    ],
+    warriorCharacteristics: ["endurance", "sacrifice", "faithfulness", "courage"]
+  },
+  {
+    id: "burning-hammer",
+    chapter: 5,
+    title: "The Burning Hammer",
+    subtitle: "Shattering Illusions and Breaking Strongholds",
+    description: "The Burning Hammer is God's Word that breaks apart false beliefs, illusions, and mental strongholds. Like Jeremiah's hammer that breaks the rock in pieces, this weapon demolishes Satan's lies and the deceptive 'eyeglasses' through which self views sin as attractive.",
+    keyPoints: [
+      "God's Word is like a hammer that breaks the rock (Jeremiah 23:29)",
+      "Satan gives you false eyeglasses that make sin look good",
+      "The Hammer shatters these illusions and reveals sin's true ugliness",
+      "It's a boomerang weapon—Scripture you speak returns with power",
+      "Behind every temptation is a lie; the Hammer exposes and destroys it"
+    ],
+    scriptureReferences: [
+      "Jeremiah 23:29 - Is not my word like a hammer?",
+      "Hebrews 4:12 - The Word is sharper than any two-edged sword",
+      "2 Corinthians 10:4-5 - Pulling down strongholds and imaginations",
+      "Isaiah 55:11 - My word shall not return void"
+    ],
+    practicalApplication: "Identify one recurring temptation. Ask: 'What lie am I believing about this sin?' Then find a Scripture that directly contradicts that lie. Memorize it. When tempted, speak that Scripture aloud as a hammer-strike against the illusion.",
+    reflectionQuestions: [
+      "What false beliefs do I have about my favorite sins?",
+      "Am I wearing Satan's eyeglasses, seeing sin as more attractive than it really is?",
+      "Which strongholds in my mind need to be demolished with God's hammer?"
+    ],
+    warriorCharacteristics: ["discernment", "truth-focus", "boldness"]
+  },
+  {
+    id: "battle-axe",
+    chapter: 5,
+    title: "The Battle Axe",
+    subtitle: "Cutting Sin at the Root",
+    description: "The Battle Axe goes to the ROOT of sin, not just the visible branches. It identifies and severs the underlying desire, motivation, or belief system that feeds the temptation. Surface-level behavior modification leaves roots intact; the Axe digs deep.",
+    keyPoints: [
+      "Sin has roots—deeper desires that fuel surface behaviors",
+      "Cutting branches (stopping behaviors) without cutting roots (desires) leads to regrowth",
+      "The Axe requires brutal self-examination: WHY do I want this sin?",
+      "Root sins often include pride, fear, unbelief, or selfishness",
+      "Jesus' teaching in Matthew 5 uses the Axe—He targets heart roots, not just actions"
+    ],
+    scriptureReferences: [
+      "Matthew 3:10 - The axe is laid at the root of the trees",
+      "Matthew 5:27-30 - Cut off what causes you to sin",
+      "Luke 3:9 - Every tree not bearing good fruit is cut down",
+      "Hebrews 12:1 - Lay aside every weight and the sin that easily ensnares"
+    ],
+    practicalApplication: "Choose your most persistent sin. Don't just identify the behavior—dig for the root. Ask 'Why?' five times: 'Why do I do this? Why do I want that? Why does that matter?' Keep digging until you reach the root desire. Then ask God to cut it out with His axe.",
+    reflectionQuestions: [
+      "Am I treating symptoms or killing roots?",
+      "What deeper desires are feeding my surface sins?",
+      "Am I willing to let God cut out what I've been protecting?"
+    ],
+    warriorCharacteristics: ["self-examination", "thoroughness", "honesty", "courage"]
+  },
+  {
+    id: "shield-of-faith",
+    chapter: 5,
+    title: "The Shield of Faith",
+    subtitle: "Quenching the Fiery Darts",
+    description: "The Shield of Faith is your defensive weapon that intercepts Satan's fiery missiles—sudden, rapid-fire thoughts designed to ignite sin. Faith trusts God's promises more than self's desires, blocking temptation before it penetrates.",
+    keyPoints: [
+      "Above all, take the shield of faith (Ephesians 6:16)",
+      "Fiery darts are rapid, unexpected, explosive thoughts",
+      "The shield doesn't remove temptation—it stops it from penetrating",
+      "Faith believes God's 'way of escape' exists (1 Cor 10:13)",
+      "Activating the shield requires instant response—no hesitation"
+    ],
+    scriptureReferences: [
+      "Ephesians 6:16 - Shield of faith quenches fiery darts",
+      "1 Corinthians 10:13 - God will provide a way of escape",
+      "Psalm 91:4 - His truth shall be your shield",
+      "Proverbs 30:5 - He is a shield to those who trust Him"
+    ],
+    practicalApplication: "Practice 'shield activation' drills. When a tempting thought strikes, immediately raise your shield by declaring a promise of God aloud: 'God will provide my way of escape' or 'Greater is He that is in me than he that is in the world.' Make it reflexive—shield up, dart quenched, move forward.",
+    reflectionQuestions: [
+      "Do I respond to temptation instantly with faith, or do I linger and consider it?",
+      "Which of God's promises do I need to memorize as shield-verses?",
+      "Am I fighting defensively (shield up) as well as offensively?"
+    ],
+    warriorCharacteristics: ["faith", "trust", "quick-response", "defense"]
+  },
+  {
+    id: "mind-of-christ",
+    chapter: 6,
+    title: "The Mind of Christ",
+    subtitle: "The Most Dangerous Weapon",
+    description: "The Mind of Christ is the ultimate weapon—thinking, feeling, and responding exactly as Jesus would. This isn't imitation; it's transformation. When you possess Christ's mind, self has nowhere to hide because you see through His eyes, feel with His heart, and choose with His will.",
+    keyPoints: [
+      "Let this mind be in you which was also in Christ Jesus (Philippians 2:5)",
+      "This weapon requires asking: What would Jesus think? Feel? Choose?",
+      "Christ's mind combines all nine fruits perfectly",
+      "Self is defeated when Christ's thoughts replace yours",
+      "The renewed mind is the battleground of transformation (Romans 12:2)"
+    ],
+    scriptureReferences: [
+      "Philippians 2:5-8 - Let this mind be in you",
+      "1 Corinthians 2:16 - We have the mind of Christ",
+      "Romans 12:2 - Be transformed by the renewing of your mind",
+      "Colossians 3:2 - Set your mind on things above"
+    ],
+    practicalApplication: "In every decision today, pause and ask: 'What would Jesus think about this? How would He feel? What would He choose?' Don't rush—actually wait for the answer. Practice mind-swapping: replace your first thought (usually self's thought) with Christ's thought.",
+    reflectionQuestions: [
+      "How different are my thoughts from Christ's thoughts?",
+      "Do I instinctively think like Jesus, or do I have to consciously override my default thinking?",
+      "What mental patterns need to be completely replaced?"
+    ],
+    warriorCharacteristics: ["transformation", "christ-likeness", "renewal", "wisdom"]
+  },
+  {
+    id: "sword-of-word",
+    chapter: 6,
+    title: "The Sword of the Spirit",
+    subtitle: "Dividing Soul and Spirit",
+    description: "The Sword of the Spirit is the Word of God—both defensive and offensive. It cuts between what comes from self (soul) and what comes from God (spirit), exposing motives and intentions. This weapon requires precision and skill.",
+    keyPoints: [
+      "The Word of God is living, active, sharper than any two-edged sword (Hebrews 4:12)",
+      "It divides soul from spirit, joints from marrow",
+      "The Sword exposes the thoughts and intentions of the heart",
+      "Jesus wielded this weapon perfectly in His temptation (Matthew 4)",
+      "Memorized Scripture becomes a ready weapon"
+    ],
+    scriptureReferences: [
+      "Hebrews 4:12 - The Word is living and active",
+      "Ephesians 6:17 - The sword of the Spirit, which is the word of God",
+      "Matthew 4:4-10 - It is written... It is written... It is written",
+      "Psalm 119:11 - Your word I have hidden in my heart"
+    ],
+    practicalApplication: "Memorize one sword-verse this week for your most common temptation. When attacked, slash back immediately with 'It is written...' Jesus didn't explain or debate—He quoted and conquered.",
+    reflectionQuestions: [
+      "How sharp is my sword? How much Scripture have I memorized?",
+      "Can I distinguish between my soulish desires and the Spirit's leading?",
+      "Am I speaking God's Word in battle, or just my opinions?"
+    ],
+    warriorCharacteristics: ["precision", "scripture-mastery", "discernment"]
+  },
+  {
+    id: "gospel-boots",
+    chapter: 6,
+    title: "Gospel Boots of Peace",
+    subtitle: "Sure-Footed in the Storm",
+    description: "The Gospel Boots give you stable footing in unstable circumstances. They enable you to walk through temptation's storms without slipping, maintaining peace when chaos surrounds you.",
+    keyPoints: [
+      "Feet shod with the preparation of the gospel of peace (Ephesians 6:15)",
+      "The gospel gives firm footing—you're secure in Christ",
+      "Peace isn't the absence of battle; it's confidence in God during battle",
+      "These boots let you walk through temptation without stumbling"
+    ],
+    scriptureReferences: [
+      "Ephesians 6:15",
+      "Isaiah 52:7 - How beautiful are the feet of those who bring good news",
+      "Romans 10:15",
+      "Philippians 4:7 - Peace that surpasses understanding"
+    ],
+    practicalApplication: "Practice 'peace walking' today. When circumstances trigger anxiety or temptation, stand still, remember the gospel (you are justified, forgiven, sealed), and let peace stabilize your emotions before you respond.",
+    reflectionQuestions: [
+      "Do I lose my footing easily when circumstances change?",
+      "Is the gospel my foundation, or am I standing on shifting sand?",
+      "Can I maintain peace during spiritual storms?"
+    ],
+    warriorCharacteristics: ["peace", "stability", "gospel-confidence"]
+  },
+  {
+    id: "additional-weapons",
+    chapter: 6,
+    title: "Wings of Faith, Stones of Fire, Sonic Weapons",
+    subtitle: "Advanced Arsenal",
+    description: "Beyond the basic weapons lie advanced capabilities: Wings of Faith for rising above temptation, Stones of Fire for returning good for evil, and Sonic Weapons of prayer and spoken Scripture that create shockwaves in the spiritual realm.",
+    keyPoints: [
+      "Wings of Faith: Mount up with wings like eagles (Isaiah 40:31)—rise above temptation",
+      "Stones of Fire: Overcome evil with good (Romans 12:20-21)—heap burning coals",
+      "Sonic Weapons: The sound of prayer and declared Scripture shakes strongholds",
+      "Advanced weapons require greater skill and spiritual maturity"
+    ],
+    scriptureReferences: [
+      "Isaiah 40:31 - Mount up with wings like eagles",
+      "Romans 12:20-21 - Overcome evil with good",
+      "James 5:16 - The effectual fervent prayer of a righteous man",
+      "Psalm 29:3-9 - The voice of the LORD is powerful"
+    ],
+    practicalApplication: "This week, practice 'flying' by choosing to focus on eternal realities when earthly temptations pull downward. Practice 'fire stones' by blessing someone who has wronged you. Practice 'sonic warfare' by praying aloud and declaring Scripture when under attack.",
+    reflectionQuestions: [
+      "Am I using only basic weapons, or am I developing advanced capabilities?",
+      "Can I rise above temptation instead of just resisting at ground level?",
+      "Do I know how to turn enemies into friends through spiritual kindness?"
+    ],
+    warriorCharacteristics: ["advancement", "creativity", "spiritual-maturity"]
+  },
+  // SECTION III: THE CREATURE STYLES
+  {
+    id: "creature-styles-intro",
+    chapter: 7,
+    title: "The Way of the Animal Warriors",
+    subtitle: "Four Creature Combat Styles",
+    description: "God's creation teaches warfare principles. Four creature styles—Crane, Mantis, Snake, and Dragon—each offer unique approaches to combating self. Master all four to become a complete warrior.",
+    keyPoints: [
+      "Each style emphasizes different aspects of spiritual combat",
+      "Crane: Graceful defense and precise counter-strikes",
+      "Mantis: Patient waiting and sudden overwhelming force",
+      "Snake: Fluid adaptation and redirection of temptation's energy",
+      "Dragon: Bold, fierce, Spirit-filled aggression against sin",
+      "Warriors must be versatile—knowing when to use which style"
+    ],
+    scriptureReferences: [
+      "Job 12:7-8 - Ask the beasts and they will teach you",
+      "Proverbs 6:6 - Go to the ant, you sluggard",
+      "Matthew 10:16 - Wise as serpents, harmless as doves",
+      "Proverbs 28:1 - The righteous are bold as a lion"
+    ],
+    practicalApplication: "Study your natural fighting style. Are you naturally defensive (Crane), patient (Mantis), adaptive (Snake), or aggressive (Dragon)? This week, intentionally practice the style that's least natural to you.",
+    reflectionQuestions: [
+      "Which creature style describes my default approach to temptation?",
+      "Which style do I avoid or fear to use?",
+      "Can I match the right style to the right battle situation?"
+    ],
+    warriorCharacteristics: ["versatility", "adaptability", "wisdom", "strategy"]
+  },
+  // SECTION IV: SPIRITUAL EPONYMS
+  {
+    id: "eponyms-intro",
+    chapter: 8,
+    title: "Know Your Inner Enemies",
+    subtitle: "Spiritual Eponyms and Character Flaws",
+    description: "Within every believer lurks potential versions of biblical failures: Goliath's pride, Judas's betrayal, Peter's impulsiveness, Jacob's manipulation, Pharaoh's stubbornness. These 'eponyms' are specific manifestations of self that must be identified, diagnosed, and destroyed.",
+    keyPoints: [
+      "Eponyms are biblical characters whose names represent specific character flaws",
+      "Every believer has potential for every eponym—none are immune",
+      "Identifying your active eponyms helps you fight with precision",
+      "Each eponym has a specific counter-strategy",
+      "Victory over one eponym strengthens you against all others"
+    ],
+    scriptureReferences: [
+      "1 Corinthians 10:11 - These things happened as examples for us",
+      "Romans 15:4 - Written for our learning",
+      "Hebrews 11 - Examples of faith (positive eponyms)",
+      "Jude 11 - The way of Cain, error of Balaam, rebellion of Korah"
+    ],
+    practicalApplication: "Take an eponym inventory this week. Which biblical character's failures most resemble your own patterns? Study that character's story, identify the warning signs, and develop a personalized battle plan against that specific eponym.",
+    reflectionQuestions: [
+      "Which biblical failure am I most in danger of repeating?",
+      "Do I see myself in Goliath's pride? Judas's compromise? Peter's impulsiveness?",
+      "What counter-strategy does Scripture provide for my dominant eponym?"
+    ],
+    warriorCharacteristics: ["self-knowledge", "pattern-recognition", "biblical-literacy"]
+  },
+  // SECTION V: THE MIND SANCTUM
+  {
+    id: "mind-sanctum",
+    chapter: 9,
+    title: "The Mind Sanctum",
+    subtitle: "Christ-Conformity Laboratory",
+    description: "The battlefield is the mind. The Mind Sanctum is where warriors train to think, feel, and respond exactly as Christ would. This is the highest form of spiritual warfare—complete mental transformation.",
+    keyPoints: [
+      "Arm yourselves with the same mind as Christ (1 Peter 4:1)",
+      "The mind is the control center—win here, win everywhere",
+      "Christ-conformity means thinking His thoughts, feeling His emotions, choosing His responses",
+      "This requires conscious, repetitive practice—mind-swapping",
+      "The renewed mind is God's primary tool for transformation"
+    ],
+    scriptureReferences: [
+      "1 Peter 4:1 - Arm yourselves with the same mind",
+      "Romans 12:2 - Be transformed by the renewing of your mind",
+      "Philippians 2:5 - Let this mind be in you",
+      "2 Corinthians 10:5 - Bringing every thought into captivity"
+    ],
+    practicalApplication: "Create a 'Mind Sanctum' routine: Every morning, spend 10 minutes asking: 'How would Jesus think about my day ahead? What would He feel about my challenges? How would He respond to my temptations?' Journal His responses. Throughout the day, return to this mindset.",
+    reflectionQuestions: [
+      "How much time do I spend consciously training my mind to think like Christ?",
+      "What's the gap between my default thoughts and Christ's thoughts?",
+      "Am I content with occasional God-thoughts, or am I pursuing continuous Christ-mindedness?"
+    ],
+    warriorCharacteristics: ["transformation", "mindfulness", "christ-focus"]
+  },
+  // SECTION VI: SPIRITUAL PHYSICS
+  {
+    id: "spiritual-physics",
+    chapter: 10,
+    title: "Laws of Spiritual Warfare",
+    subtitle: "Momentum, Magnetism, Gravity, and Codes",
+    description: "Spiritual warfare operates according to divine laws as reliable as physical laws. Understanding these laws—momentum, magnetism, gravity, combination codes, containment, and destruction—gives warriors predictive power and strategic advantage.",
+    keyPoints: [
+      "Law of Momentum: Small victories create acceleration; defeats create downward spirals",
+      "Law of Magnetism: You become what you behold; guard your gaze carefully",
+      "Law of Gravity: Self pulls downward; Spirit lifts upward—constant force",
+      "Law of Combination Codes: Every temptation has a specific fruit-combination solution",
+      "Law of Containment: Self must be contained immediately or it escapes externally",
+      "Law of Destruction: Self cannot be reformed—only crucified"
+    ],
+    scriptureReferences: [
+      "2 Corinthians 3:18 - Beholding as in a mirror, transformed",
+      "James 1:14-15 - Desire conceives and brings forth sin",
+      "Galatians 6:7 - Whatever a man sows, he reaps",
+      "Romans 8:6 - The mind set on the flesh is death; on the Spirit is life"
+    ],
+    practicalApplication: "This week, observe these laws in action: Track momentum (do victories breed more victories?), test magnetism (what are you beholding most?), feel gravity (where does self pull you?), decode temptations (what fruit combinations work?). Journal your observations.",
+    reflectionQuestions: [
+      "Which spiritual law am I most often violating?",
+      "Am I building positive momentum or stuck in a downward spiral?",
+      "What am I beholding that's transforming me—for better or worse?"
+    ],
+    warriorCharacteristics: ["understanding", "strategy", "observation", "wisdom"]
+  },
+  // SECTION VII: TIME ZONES
+  {
+    id: "minute-warrior",
+    chapter: 11,
+    title: "The Minute Warrior",
+    subtitle: "From Yearly to Minute-by-Minute Combat",
+    description: "Most Christians fight yearly (New Year's resolutions), monthly (special commitments), or weekly (Sunday decisions). True warriors fight MINUTE BY MINUTE. The goal is to ascend from Yearly Warrior to Minute Warrior—engaging self in continuous, moment-by-moment combat.",
+    keyPoints: [
+      "Five Time Zones: Yearly → Monthly → Weekly → Daily → MINUTE",
+      "Minute Warriors win because they never stop fighting",
+      "Self waits for gaps in vigilance—minute warfare eliminates gaps",
+      "Each minute is a fresh opportunity for victory or defeat",
+      "This is what 'pray without ceasing' means in warfare terms"
+    ],
+    scriptureReferences: [
+      "1 Thessalonians 5:17 - Pray without ceasing",
+      "Luke 9:23 - Take up your cross daily",
+      "Lamentations 3:22-23 - His mercies are new every morning",
+      "Psalm 119:164 - Seven times a day I praise You"
+    ],
+    practicalApplication: "Set hourly alarms today. At each alarm, ask: 'In this past hour, did I win or lose against self? Where did self gain ground?' Then reset and fight for the next hour. Track your wins and losses. The goal is awareness first, then victory.",
+    reflectionQuestions: [
+      "How long can I maintain vigilance before I 'forget' I'm in a war?",
+      "What would change if I fought self minute-by-minute instead of occasionally?",
+      "Am I a Yearly Warrior trying to survive on annual resolutions?"
+    ],
+    warriorCharacteristics: ["vigilance", "consistency", "endurance", "awareness"]
+  },
+  // SECTION VIII: ADVANCED TACTICS
+  {
+    id: "war-council",
+    chapter: 12,
+    title: "The War Council Chamber",
+    subtitle: "Strategic Battle Planning",
+    description: "Every successful military campaign requires strategic planning. The War Council Chamber is where warriors assess risks, identify eponyms, predict self's counterattacks, choose weapons, select creature-styles, and determine fruit combinations BEFORE entering battle.",
+    keyPoints: [
+      "Failing to plan is planning to fail",
+      "Pre-battle assessment prevents mid-battle panic",
+      "Know your enemy (self), know your terrain (your weaknesses), know your weapons",
+      "Strategic planning includes: threat assessment, weapon selection, backup plans",
+      "The best warriors win battles before they begin through superior planning"
+    ],
+    scriptureReferences: [
+      "Luke 14:31 - What king going to war doesn't first sit down and consider?",
+      "Proverbs 24:6 - By wise counsel you will wage war",
+      "Proverbs 21:31 - The horse is prepared for battle, but victory is of the Lord",
+      "Proverbs 16:9 - A man's heart plans his way, but the Lord directs his steps"
+    ],
+    practicalApplication: "Before entering a situation where you know you'll be tempted (party, work stress, difficult relationship), hold a War Council: What specific temptations will I face? Which eponym might activate? Which weapons will I need? What fruit combination? What's my escape route? Write it down. Execute the plan.",
+    reflectionQuestions: [
+      "Do I enter tempting situations with a battle plan or just 'hope for the best'?",
+      "How often do my battles fail because I didn't plan ahead?",
+      "Am I reactive (responding to attacks) or proactive (planning before attacks)?"
+    ],
+    warriorCharacteristics: ["strategy", "planning", "wisdom", "foresight"]
+  },
+  {
+    id: "sparring-simulator",
+    chapter: 12,
+    title: "The Sparring Simulator",
+    subtitle: "Practice Before Battle",
+    description: "Athletes don't wait for game day to practice. Warriors don't wait for real temptation to train. The Sparring Simulator creates controlled practice scenarios where you can drill responses, test weapons, and build reflexes WITHOUT the stakes of real combat.",
+    keyPoints: [
+      "Mental rehearsal builds neural pathways for victory",
+      "Visualization of successful resistance strengthens actual resistance",
+      "Practice scenarios: 'Temptation enters the room...' 'Self disguises itself as...' 'Deploy burning hammer...'",
+      "Sparring reveals which weapons you can't access quickly enough",
+      "Repetition creates reflexes—automatic, instant responses"
+    ],
+    scriptureReferences: [
+      "1 Corinthians 9:26-27 - I discipline my body like an athlete",
+      "2 Timothy 2:15 - Study to show yourself approved",
+      "Hebrews 5:14 - Those who by reason of use have their senses exercised",
+      "Proverbs 22:3 - The prudent foresees evil and hides himself"
+    ],
+    practicalApplication: "Create a sparring routine: Mentally rehearse your top three temptations. Visualize them happening. Practice your response in your imagination: What weapon? What Scripture? What fruit? Do this daily. When real temptation strikes, your mind will already know the drill.",
+    reflectionQuestions: [
+      "Am I training for battle, or just hoping to survive when it comes?",
+      "Which temptations should I be 'sparring' against regularly?",
+      "Can I execute my battle plans under pressure, or do I freeze?"
+    ],
+    warriorCharacteristics: ["preparation", "discipline", "practice", "readiness"]
+  },
+  {
+    id: "after-action",
+    chapter: 13,
+    title: "After-Action War Analysis",
+    subtitle: "Learning from Every Battle",
+    description: "Every military operation ends with After-Action Review: What went right? What went wrong? What can we learn? Warriors who skip this step repeat the same mistakes. Those who analyze become unstoppable.",
+    keyPoints: [
+      "After every victory: What fruit combination worked? What weapon was decisive? How can I replicate this?",
+      "After every defeat: Where did containment fail? What fruit was missing? Where was self hiding?",
+      "Document patterns: Are you losing the same battles repeatedly?",
+      "Honest assessment requires brutal honesty—no excuses",
+      "The goal isn't condemnation—it's strategic improvement"
+    ],
+    scriptureReferences: [
+      "Lamentations 3:40 - Let us search out and examine our ways",
+      "Psalm 139:23-24 - Search me, O God, and know my heart",
+      "1 Corinthians 11:28 - Let a man examine himself",
+      "2 Corinthians 13:5 - Examine yourselves whether you are in the faith"
+    ],
+    practicalApplication: "Start an After-Action Journal. After each significant temptation (win or loss), write: Date, Temptation, Fruit Combination Needed, Weapon Used, Result, Lessons Learned, Adjustments for Next Time. Review weekly for patterns.",
+    reflectionQuestions: [
+      "Do I learn from defeats, or just feel guilty and move on?",
+      "What patterns emerge when I review my spiritual battles?",
+      "Am I making the same mistakes repeatedly because I'm not analyzing them?"
+    ],
+    warriorCharacteristics: ["reflection", "honesty", "improvement", "learning"]
+  },
+  {
+    id: "surrender-room",
+    chapter: 14,
+    title: "The Surrender Room",
+    subtitle: "The Daily White-Flag Ritual",
+    description: "This is the foundation of all holy warfare. Before you can fight self, you must surrender TO GOD. The Surrender Room contains the Daily White-Flag Ritual: 'I surrender my will, my opinion, my desires, my rights.' Without this, all other warfare fails.",
+    keyPoints: [
+      "Paradox: You win by surrendering—but surrendering to GOD, not to self",
+      "The White-Flag Ritual disarms self by removing its power sources",
+      "Surrender is not passivity—it's the most active choice you can make",
+      "Four daily surrenders: Will, Opinion, Desires, Rights",
+      "Self hates the Surrender Room because it exposes its impotence"
+    ],
+    scriptureReferences: [
+      "Luke 9:23 - Deny yourself, take up your cross daily",
+      "Matthew 26:39 - Not my will, but Yours be done",
+      "Galatians 2:20 - I am crucified with Christ",
+      "John 12:24-25 - Unless a grain of wheat falls and dies"
+    ],
+    practicalApplication: "Begin every day in the Surrender Room. Pray aloud: 'Father, I surrender my will to You today. I surrender my opinions—Your truth is what matters. I surrender my desires—may Your desires become mine. I surrender my rights—I have no rights except what Christ purchased for me. I am Yours. Do with me as You will.' Then live surrendered.",
+    reflectionQuestions: [
+      "Have I truly surrendered, or am I still negotiating with God?",
+      "Which of the four (will, opinion, desires, rights) is hardest for me to surrender?",
+      "Do I surrender once and think it's done, or do I surrender daily?"
+    ],
+    warriorCharacteristics: ["surrender", "humility", "obedience", "submission"]
+  },
+  {
+    id: "lion-faced",
+    chapter: 15,
+    title: "Lion-Faced Champions",
+    subtitle: "The Final Rank—Graduating Warriors",
+    description: "The highest rank in God's holy army is Lion-Faced Champion—one who has faces like lions, is swift as roes, expert in all instruments of war, keeps rank, and is not of double heart. This is the goal: complete mastery over self, total surrender to God, and unstoppable effectiveness in spiritual combat.",
+    keyPoints: [
+      "Progression: Observer → Recruit → Footsoldier → Specialist → Elite Fighter → Mighty Warrior → Lion-Faced Champion",
+      "Lion-Faced means: bold, courageous, fearless, unintimidated by self or Satan",
+      "Swift as roes: agile, quick to respond, maintaining spiritual footing",
+      "Expert in war: mastery of all weapons, fruits, creature-styles",
+      "Not of double heart: single-minded devotion, no compromise",
+      "The goal isn't perfection—it's progress and persistence"
+    ],
+    scriptureReferences: [
+      "1 Chronicles 12:8 - Faces like lions, swift as roes",
+      "Proverbs 28:1 - The righteous are bold as a lion",
+      "Revelation 5:5 - The Lion of the tribe of Judah has prevailed",
+      "2 Timothy 4:7 - I have fought the good fight, finished the race"
+    ],
+    practicalApplication: "Assess your current rank honestly. Where are you? Observer (just learning)? Footsoldier (basic engagement)? Mighty Warrior (consistent victories)? Don't be discouraged by your current rank—be motivated. Identify one area to advance this week. Move from observer to recruit, recruit to footsoldier, etc. Advancement comes through practice, not perfection.",
+    reflectionQuestions: [
+      "What rank honestly describes my current spiritual warfare effectiveness?",
+      "Am I advancing or stagnant in my warrior development?",
+      "What specific training do I need to reach the next rank?",
+      "Am I fighting like a lion, or hiding like a lamb?",
+      "Do I have the heart of a champion, or am I satisfied with mediocrity?"
+    ],
+    warriorCharacteristics: ["mastery", "boldness", "completion", "championship"]
   }
 ];
 
