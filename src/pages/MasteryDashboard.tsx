@@ -8,6 +8,8 @@ import { MasteryMap } from "@/components/mastery/MasteryMap";
 import { ReportCardDisplay } from "@/components/mastery/ReportCardDisplay";
 import { useMastery, useAllRoomMasteries, useGlobalMasterTitle } from "@/hooks/useMastery";
 import { useMasteryStreak } from "@/hooks/useMasteryStreak";
+import { Link } from "react-router-dom";
+import { Sword } from "lucide-react";
 import { Flame, Trophy, Crown, Target, TrendingUp, Zap, Map as MapIcon, FileText, ChevronDown } from "lucide-react";
 import { getGlobalTitle, getNextGlobalTitleMilestone } from "@/utils/masteryCalculations";
 import { cn } from "@/lib/utils";
@@ -165,36 +167,50 @@ export default function MasteryDashboard() {
               <CardContent className="space-y-4">
                 <div className="text-sm">
                   <p className="mb-4 text-foreground/90">
-                    The mastery system has evolved! Instead of counting total rooms mastered, you now progress floor by floor through the Palace:
+                    The mastery system has evolved! Instead of counting total rooms mastered, you now progress floor by floor through the Palace. Click any floor to learn how to master it:
                   </p>
                   <ul className="space-y-3 mb-4">
-                    <li className="flex items-center gap-3 p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                      <span className="text-2xl">🟦</span>
-                      <span><strong className="text-blue-500">Floor 1:</strong> <span className="text-foreground">Blue Master (Furnishing)</span></span>
+                    <li>
+                      <Link to="/mastery/floor/1" className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
+                        <Sword className="h-6 w-6 text-blue-500" />
+                        <span><strong className="text-blue-500">Floor 1:</strong> <span className="text-foreground">Blue Master (Furnishing)</span></span>
+                      </Link>
                     </li>
-                    <li className="flex items-center gap-3 p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                      <span className="text-2xl">🔴</span>
-                      <span><strong className="text-red-500">Floor 2:</strong> <span className="text-foreground">Red Master (Investigation)</span></span>
+                    <li>
+                      <Link to="/mastery/floor/2" className="flex items-center gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer">
+                        <Sword className="h-6 w-6 text-red-500" />
+                        <span><strong className="text-red-500">Floor 2:</strong> <span className="text-foreground">Red Master (Investigation)</span></span>
+                      </Link>
                     </li>
-                    <li className="flex items-center gap-3 p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                      <span className="text-2xl">🟡</span>
-                      <span><strong className="text-yellow-600 dark:text-yellow-500">Floor 3:</strong> <span className="text-foreground">Gold Master (Freestyle)</span></span>
+                    <li>
+                      <Link to="/mastery/floor/3" className="flex items-center gap-3 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/20 transition-colors cursor-pointer">
+                        <Sword className="h-6 w-6 text-yellow-600" />
+                        <span><strong className="text-yellow-600 dark:text-yellow-500">Floor 3:</strong> <span className="text-foreground">Gold Master (Freestyle)</span></span>
+                      </Link>
                     </li>
-                    <li className="flex items-center gap-3 p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                      <span className="text-2xl">🟣</span>
-                      <span><strong className="text-purple-500">Floor 4:</strong> <span className="text-foreground">Purple Master (Next Level)</span></span>
+                    <li>
+                      <Link to="/mastery/floor/4" className="flex items-center gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-pointer">
+                        <Sword className="h-6 w-6 text-purple-500" />
+                        <span><strong className="text-purple-500">Floor 4:</strong> <span className="text-foreground">Purple Master (Next Level)</span></span>
+                      </Link>
                     </li>
-                    <li className="flex items-center gap-3 p-2 rounded-lg bg-gray-500/10 border border-gray-500/20">
-                      <span className="text-2xl">⚪</span>
-                      <span><strong className="text-gray-700 dark:text-gray-300">Floors 5-6:</strong> <span className="text-foreground">White Master (Vision & Three Heavens)</span></span>
+                    <li>
+                      <Link to="/mastery/floor/5" className="flex items-center gap-3 p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 hover:bg-gray-500/20 transition-colors cursor-pointer">
+                        <Sword className="h-6 w-6 text-gray-400" />
+                        <span><strong className="text-gray-700 dark:text-gray-300">Floors 5-6:</strong> <span className="text-foreground">White Master (Vision & Three Heavens)</span></span>
+                      </Link>
                     </li>
-                    <li className="flex items-center gap-3 p-2 rounded-lg bg-gray-700/10 border border-gray-700/20">
-                      <span className="text-2xl">⚫</span>
-                      <span><strong className="text-gray-800 dark:text-gray-200">Floor 7:</strong> <span className="text-foreground">Black Candidate (Transformation)</span></span>
+                    <li>
+                      <Link to="/mastery/floor/7" className="flex items-center gap-3 p-3 rounded-lg bg-gray-700/10 border border-gray-700/20 hover:bg-gray-700/20 transition-colors cursor-pointer">
+                        <Sword className="h-6 w-6 text-gray-600" />
+                        <span><strong className="text-gray-800 dark:text-gray-200">Floor 7:</strong> <span className="text-foreground">Black Candidate (Transformation)</span></span>
+                      </Link>
                     </li>
-                    <li className="flex items-center gap-3 p-2 rounded-lg bg-black/10 dark:bg-white/10 border border-black/30 dark:border-white/30">
-                      <span className="text-2xl">⚫</span>
-                      <span><strong className="text-black dark:text-white">Floor 8:</strong> <span className="text-foreground">Black Master (Reflexive Mastery)</span></span>
+                    <li>
+                      <Link to="/mastery/floor/8" className="flex items-center gap-3 p-3 rounded-lg bg-black/10 dark:bg-white/10 border border-black/30 dark:border-white/30 hover:bg-black/20 dark:hover:bg-white/20 transition-colors cursor-pointer">
+                        <Sword className="h-6 w-6 text-black dark:text-white" />
+                        <span><strong className="text-black dark:text-white">Floor 8:</strong> <span className="text-foreground">Black Master (Reflexive Mastery)</span></span>
+                      </Link>
                     </li>
                   </ul>
                   <p className="text-foreground/90">
