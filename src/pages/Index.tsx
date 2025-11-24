@@ -35,6 +35,7 @@ import { PWAInstallButton } from "@/components/PWAInstallButton";
 import { LiveAIDemoWidget } from "@/components/LiveAIDemoWidget";
 import { Download } from "lucide-react";
 import { Testimonials } from "@/components/Testimonials";
+import { MagicEyeHero } from "@/components/MagicEyeHero";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -91,71 +92,8 @@ const Index = () => {
         </div>
       )}
 
-      {/* SECTION 1 — The Hero (5-Second Impression) */}
-      <section className="relative overflow-hidden pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-background to-accent/5">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex justify-center items-center gap-4 mb-8">
-            <UserCountBadge />
-            <SocialShareButton
-              title="Phototheology - Understand the Bible Clearly"
-              description="Most Bible apps help you read more. Phototheology helps you actually understand what you read — and remember it for life."
-              url={window.location.origin}
-              variant="dialog"
-              size="default"
-              buttonText="Share"
-              className="bg-primary hover:bg-primary/90"
-            />
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            Understand the Bible Clearly.<br />
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Remember It Permanently.
-            </span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Most Bible apps help you <span className="line-through">read more</span>.<br />
-            Phototheology helps you <span className="font-semibold text-foreground">actually understand</span> what you read — and <span className="font-semibold text-primary">remember it for life</span>.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button 
-              size="lg" 
-              onClick={() => navigate(user ? "/palace" : "/auth")}
-              className="text-lg px-8 py-6 shadow-lg gradient-palace"
-            >
-              Get Started Free
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => navigate("/interactive-demo")}
-              className="text-lg px-8 py-6"
-            >
-              <Play className="mr-2 h-5 w-5" />
-              Watch 15-Second Demo
-            </Button>
-          </div>
-
-          {/* Hero Visual */}
-          <div className="relative max-w-4xl mx-auto">
-            <video 
-              autoPlay 
-              loop 
-              muted
-              playsInline
-              controls
-              className="rounded-lg shadow-2xl border-2 border-border w-full"
-              poster={heroImage}
-            >
-              <source src="/videos/app-opener.mp4" type="video/mp4" />
-              <img src={heroImage} alt="Phototheology Palace" className="rounded-lg" />
-            </video>
-          </div>
-        </div>
-      </section>
+      {/* Magic Eye Hero Section */}
+      <MagicEyeHero />
 
       {/* SECTION 2 — The Pain Point */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
