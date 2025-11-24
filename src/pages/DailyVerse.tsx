@@ -12,7 +12,6 @@ import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { Navigation } from "@/components/Navigation";
-import { RegenerateDailyVerse } from "@/components/RegenerateDailyVerse";
 
 interface PrincipleBreakdown {
   principle_applied: string;
@@ -48,7 +47,7 @@ export default function DailyVerse() {
   } | null>(null);
   const [isGeneratingShare, setIsGeneratingShare] = useState(false);
   
-  const { data: todayVerse, isLoading } = useQuery({
+  const { data: todayVerse, isLoading, refetch } = useQuery({
     queryKey: ['daily-verse', new Date().toISOString().split('T')[0]],
     queryFn: async () => {
       const today = new Date().toISOString().split('T')[0];
@@ -59,6 +58,19 @@ export default function DailyVerse() {
         .single();
       
       if (error) throw error;
+      
+      // If it's John 3:16, trigger regeneration with the new system
+      if (data.verse_reference === 'John 3:16') {
+        console.log('Detected old verse, triggering regeneration...');
+        const { error: regenError } = await supabase.functions.invoke('generate-daily-verse', {
+          body: { force: true }
+        });
+        if (!regenError) {
+          // Wait a moment then refetch
+          setTimeout(() => window.location.reload(), 2000);
+        }
+      }
+      
       return data as unknown as DailyVerse;
     },
   });
@@ -222,7 +234,6 @@ export default function DailyVerse() {
             </p>
           </div>
           <div className="flex gap-2">
-            <RegenerateDailyVerse onRegenerated={() => queryClient.invalidateQueries({ queryKey: ['daily-verse'] })} />
             {user && !hasRead && (
               <Button
                 onClick={() => markAsReadMutation.mutate()}
