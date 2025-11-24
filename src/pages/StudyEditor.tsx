@@ -20,6 +20,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import jsPDF from "jspdf";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -33,6 +39,7 @@ import { CollaboratorManager } from "@/components/studies/CollaboratorManager";
 import { useCollaborativeStudy } from "@/hooks/useCollaborativeStudy";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { RichTextEditor } from "@/components/studies/RichTextEditor";
+import { FormattedStudyView } from "@/components/studies/FormattedStudyView";
 
 interface Study {
   id: string;
@@ -467,13 +474,26 @@ const StudyEditor = () => {
                 </div>
               </div>
 
-              {/* Rich Text Editor */}
-              <RichTextEditor
-                content={content}
-                onChange={handleContentChange}
-                disabled={!canEdit}
-                placeholder={canEdit ? "Start writing your study notes here..." : "View only - you cannot edit this study"}
-              />
+              {/* Content Tabs - Edit vs Formatted View */}
+              <Tabs defaultValue="formatted" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="formatted">📖 Formatted View</TabsTrigger>
+                  <TabsTrigger value="edit">✏️ Edit Mode</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="formatted" className="mt-0">
+                  <FormattedStudyView content={content} />
+                </TabsContent>
+                
+                <TabsContent value="edit" className="mt-0">
+                  <RichTextEditor
+                    content={content}
+                    onChange={handleContentChange}
+                    disabled={!canEdit}
+                    placeholder={canEdit ? "Start writing your study notes here..." : "View only - you cannot edit this study"}
+                  />
+                </TabsContent>
+              </Tabs>
             </Card>
           </div>
 
