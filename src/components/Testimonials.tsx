@@ -41,6 +41,10 @@ const testimonials: Testimonial[] = [
   {
     quote: "This has truly been a blessing. We're on a beautiful journey.",
     author: "B.D."
+  },
+  {
+    quote: "Thank you so much for bringing this incredible app to the masses like me. What a gift from God! I've already started exploring and am already \"addicted\" to more in depth Bible study. The Bible is becoming more alive and meaningful to me already! God bless you!",
+    author: "Bert"
   }
 ];
 
