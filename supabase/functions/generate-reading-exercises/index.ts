@@ -90,7 +90,28 @@ serve(async (req) => {
 
     const passageText = passages.map((p: any) => `${p.book} ${p.chapter}${p.verses ? `:${p.verses}` : ''}`).join(', ');
 
-    const systemPrompt = "You are a Phototheology Palace guide. Generate floor exercises for today's Bible reading that train students in the 8-Floor method. Use only the floor numbers provided in the user message and return ONLY valid JSON with an 'exercises' array. Each exercise object MUST have: floorNumber (number), floorName (string), title (string), rooms (array of strings), prompt (string), questions (array of strings).";
+    // Phototheology Palace Structure - MUST use exact floor and room names
+    const palaceStructure = {
+      1: { name: "Furnishing Floor", rooms: ["Story Room (SR)", "Imagination Room (IR)", "24FPS (24)", "Bible Rendered (BR)", "Translation Room (TR)", "Gems Room (GR)"] },
+      2: { name: "Investigation Floor", rooms: ["Observation Room (OR)", "Def-Com (DC)", "Symbols/Types (ST)", "Questions Room (QR)", "Q&A Chains (QA)"] },
+      3: { name: "Freestyle Floor", rooms: ["Nature Freestyle (NF)", "Personal Freestyle (PF)", "Bible Freestyle (BF)", "History/Social Freestyle (HF)", "Listening Room (LR)"] },
+      4: { name: "Next Level Floor", rooms: ["Concentration (CR)", "Dimensions (DR)", "Connect 6 (C6)", "Theme Room (TRm)", "Time Zone (TZ)", "Patterns (PRm)", "Parallels (P‖)", "Fruit (FRt)"] },
+      5: { name: "Vision Floor", rooms: ["Blue/Sanctuary (BL)", "Prophecy (PR)", "Three Angels (3A)"] },
+      6: { name: "Three Heavens Floor", rooms: ["Cycles (@Ad-@Re)", "Juice Room (JR)"] },
+      7: { name: "Spiritual & Emotional Floor", rooms: ["Fire (FRm)", "Meditation (MR)", "Speed (SRm)"] },
+      8: { name: "Master Floor", rooms: ["Reflexive Mastery (∞)"] }
+    };
+
+    const systemPrompt = `You are a Phototheology Palace guide. Generate floor exercises for today's Bible reading using the EXACT floor names and room names from this structure:
+
+${JSON.stringify(palaceStructure, null, 2)}
+
+CRITICAL RULES:
+1. Use ONLY the exact floorName from the structure above (e.g., "Investigation Floor", "Next Level Floor")
+2. Choose rooms ONLY from the rooms array for that floor
+3. The 'title' field should be a short, engaging exercise title (NOT the floor name)
+4. Return ONLY valid JSON with an 'exercises' array
+5. Each exercise MUST have: floorNumber (number), floorName (string from structure), title (string - engaging exercise name), rooms (array of room names from that floor's rooms), prompt (string), questions (array of 3 strings)`;
 
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -108,11 +129,21 @@ serve(async (req) => {
           { role: "system", content: systemPrompt },
           { 
             role: "user", 
-            content: `Generate ${floorsConfig.floors.length} floor exercises (floors ${floorsConfig.floors.join(', ')}) for: ${passageText}. 
-            
-Each exercise should combine ${floorsConfig.roomsPerFloor} different rooms from that floor. Make the prompts engaging, Christ-centered, and practical. Vary which rooms are used to keep it fresh.
+            content: `Generate ${floorsConfig.floors.length} floor exercises (floors ${floorsConfig.floors.join(', ')}) for: ${passageText}
 
-IMPORTANT: The 'rooms' field MUST be an array of strings, for example: ["Story Room", "Observation Room"] or ["Concentration", "Dimensions", "Theme"].` 
+For each floor, select ${floorsConfig.roomsPerFloor} different rooms from that floor's available rooms. Make prompts Christ-centered, engaging, and practical.
+
+Example for Floor 2 (Investigation Floor):
+{
+  "floorNumber": 2,
+  "floorName": "Investigation Floor",
+  "title": "Detective Work in Matthew 1",
+  "rooms": ["Observation Room (OR)", "Symbols/Types (ST)"],
+  "prompt": "Observe the genealogy details and identify the Christ-types present...",
+  "questions": ["What patterns repeat?", "Which symbols point to Christ?", "What cultural details matter?"]
+}
+
+Remember: Use EXACT floor names from the structure provided. Choose room names from each floor's rooms array.` 
           }
         ],
         response_format: { type: "json_object" }
