@@ -148,6 +148,8 @@ const VideoTraining = lazy(() => import("./pages/VideoTraining"));
 const MyStudies = lazy(() => import("./pages/MyStudies"));
 const StudyEditor = lazy(() => import("./pages/StudyEditor"));
 const MasteryDashboard = lazy(() => import("./pages/MasteryDashboard"));
+const FloorMastery = lazy(() => import("./pages/FloorMastery"));
+const FloorDetailPage = lazy(() => import("./pages/FloorDetail"));
 const PalaceAI = lazy(() => import("./pages/PalaceAI"));
 const Guilds = lazy(() => import("./pages/Guilds"));
 const GuildDetail = lazy(() => import("./pages/GuildDetail"));
@@ -343,6 +345,16 @@ function App() {
               </Suspense>
             } />
             <Route path="/mastery" element={
+              <ProtectedRoute>
+                <FloorMastery />
+              </ProtectedRoute>
+            } />
+            <Route path="/mastery/floor/:floorNumber" element={
+              <ProtectedRoute>
+                <FloorDetailPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/mastery-dashboard" element={
               <ProtectedRoute>
                 <MasteryDashboard />
               </ProtectedRoute>

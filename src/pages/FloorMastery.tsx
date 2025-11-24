@@ -4,6 +4,7 @@ import { FloorRequirementsCard } from "@/components/mastery/FloorRequirementsCar
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { Navigation } from "@/components/Navigation";
 import { Badge } from "@/components/ui/badge";
+import { UserMasterySword } from "@/components/mastery/UserMasterySword";
 
 const FLOOR_REQUIREMENTS = {
   1: { roomsRequired: 3, xpPerRoom: 100, streakDays: 3, curriculumPercent: 50, assessmentRequired: true },
@@ -54,10 +55,17 @@ export default function FloorMastery() {
       <Navigation />
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Floor-Based Mastery</h1>
+          <div className="flex items-center gap-4 mb-4">
+            <h1 className="text-4xl font-bold">Floor-Based Mastery</h1>
+            <UserMasterySword 
+              masterTitle={globalTitle?.master_title} 
+              currentFloor={globalTitle?.current_floor || 0}
+              size="lg"
+            />
+          </div>
           <p className="text-foreground/80">
             Climb the Palace floor by floor. Each level builds on the previous. Only the worthy
-            reach the 8th Floor.
+            reach the 8th Floor. Your sword color shows your current mastery level.
           </p>
         </div>
 
