@@ -124,7 +124,7 @@ export const MessagingSidebar = () => {
       console.log('📬 MessagingSidebar: Removing event listener');
       window.removeEventListener('open-chat-sidebar' as any, handleOpenChat);
     };
-  }, [setActiveConversationId, toggleSidebar, setOpen, state, startConversation, setActiveTab]);
+  }, [setActiveConversationId, toggleSidebar, setOpen, state, startConversation, setActiveTab, isMobile]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
