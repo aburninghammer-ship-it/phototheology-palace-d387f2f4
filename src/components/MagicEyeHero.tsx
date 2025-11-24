@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import magicEyeImage from "@/assets/magic-eye.png";
 
 export const MagicEyeHero = () => {
   const [showReveal, setShowReveal] = useState(false);
@@ -92,17 +93,12 @@ export const MagicEyeHero = () => {
               className="relative"
             >
               <img
-                src="/magic-eye.png"
-                alt="Magic Eye - Find the hidden sanctuary"
+                src={magicEyeImage}
+                alt="Magic Eye - Find God's hidden message"
                 className="w-full h-auto"
                 style={{
                   minHeight: "300px",
                 }}
-                onError={(e) => {
-                  console.error("Image failed to load:", e);
-                  console.log("Image src:", e.currentTarget.src);
-                }}
-                onLoad={() => console.log("Image loaded successfully")}
               />
               
               {/* Reveal overlay */}
