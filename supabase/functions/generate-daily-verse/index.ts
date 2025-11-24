@@ -235,6 +235,10 @@ Example: "This verse spans multiple zones: EARTH Past - the cross event (He gave
 
 **Fruit Room (FRt)**: Name the specific fruit of the Spirit (Gal 5:22-23) or Christlike trait this cultivates.
 
+**Blue Room (BL)**: Connect this verse to SPECIFIC sanctuary furniture or services with reference. Example: "This promise of divine strength connects to the altar of incense (Exo 30:7-8) - continual prayer empowers the believer, just as the perpetual incense represents ceaseless intercession before God's throne."
+
+**Prophecy Room (PR)**: You MUST connect this verse to a SPECIFIC prophetic passage from Daniel, Revelation, Matthew 24, or other end-time prophecy with full reference. The goal is NOT to assess if the verse itself is prophetic, but to LINK it TO prophetic themes. Example: "This promise of power, love, and sound mind connects directly to Revelation 14:12 - 'Here is the patience of the saints' - equipping God's remnant people to stand firm during the final crisis when the enemy uses fear to silence truth, enabling them to boldly proclaim the three angels' messages."
+
 **Cycles Room (@Cycles)**: Identify which cycle this verse belongs to (e.g., @CyC for Gospel era, @Mo for Exodus era) AND connect to another cycle. Example: "This @CyC (Christ) verse echoes @Mo (Mosaic) - as Moses lifted the serpent (Num 21:9), so Christ was lifted up."
 
 For EACH of the 7 principles listed above, provide:
