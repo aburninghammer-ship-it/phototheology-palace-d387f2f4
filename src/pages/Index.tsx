@@ -429,33 +429,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* SECTION 8 — Show the App */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-12">
-            See Phototheology in Action
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <img src={heroImage} alt="Palace Floors" className="rounded-lg border-2 border-border shadow-lg mb-4" />
-              <h3 className="font-bold mb-2">Eight Floors of Mastery</h3>
-              <p className="text-sm text-muted-foreground">Each floor builds upon the last, creating complete biblical understanding</p>
-            </div>
-            <div>
-              <img src={practiceWithAi} alt="AI Practice" className="rounded-lg border-2 border-border shadow-lg mb-4" />
-              <h3 className="font-bold mb-2">AI-Guided Practice</h3>
-              <p className="text-sm text-muted-foreground">Jeeves walks with you through every drill and exercise</p>
-            </div>
-            <div>
-              <img src={masterDeploy} alt="Deploy Your Skills" className="rounded-lg border-2 border-border shadow-lg mb-4" />
-              <h3 className="font-bold mb-2">Deploy Your Mastery</h3>
-              <p className="text-sm text-muted-foreground">Build sermons, teach classes, lead with confidence</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* SECTION 9 — Pricing */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-4xl mx-auto text-center">
