@@ -402,8 +402,8 @@ export const MessagingSidebar = () => {
                 {/* Message Input */}
                 <div className="p-4 md:p-6 border-t bg-background/50">
                   <ChatInput
-                    onSend={async (message) => {
-                      await sendMessage(message);
+                    onSend={async (message, images) => {
+                      await sendMessage(message, images);
                       updateTypingIndicator(false);
                     }}
                     placeholder="Type a message..."
