@@ -18,106 +18,153 @@ export const DOJO_LESSONS: DojoLesson[] = [
     id: "holy-war",
     chapter: 1,
     title: "Holy War",
-    subtitle: "Understanding the True Battle",
-    description: "The greatest battle humanity faces is not against terrorists, nations, or external enemies. It is the war against self—our own carnal nature in alliance with Satan. This is true holy war.",
+    subtitle: "Understanding the True Battle - The Most Psychologically Demanding War",
+    description: "September 11, 2001 awakened America to jihad—holy war from external enemies. But there exists a far more deadly holy war being waged against every person on this planet. The stakes are eternal, the enemy closer than your best friend. It is the war against self—your own carnal nature in alliance with Satan. This is the greatest battle humanity will ever face.",
     keyPoints: [
-      "Our enemy is not flesh and blood, but spiritual wickedness (Ephesians 6:12)",
-      "Self is the personal terrorist—24/7 access to your mind, thoughts, and weaknesses",
-      "All external warfare results from poorly fought internal warfare (James 4:1)",
-      "There can be no peaceful coexistence with self; one must die that the other may live"
+      "We wrestle not against flesh and blood, but against principalities, powers, rulers of darkness, and spiritual wickedness in high places (Ephesians 6:12)",
+      "Self is your personal terrorist with 24/7 access to your mind, thoughts, weaknesses, and deepest vulnerabilities",
+      "All external warfare—broken relationships, church conflicts, family strife—results from poorly fought internal warfare (James 4:1)",
+      "There can be no treaty, no peaceful coexistence with self. One must die that the other may live",
+      "To lose this war is to lose everlasting life. To win will cost everything",
+      "How does one fight an enemy who is closer than the best of friends? How does one engage in combat against an enemy who hides within?",
+      "The Bible reveals our true enemy: principalities, powers, rulers of darkness, spiritual wickedness—yet self is in alliance with these forces",
+      "Jihad means 'holy struggle'—our Christian jihad is the struggle against the carnal mind, which is enmity against God"
     ],
     scriptureReferences: [
       "Ephesians 6:12",
-      "1 Peter 2:11",
-      "Ephesians 4:22",
-      "James 4:1",
-      "Revelation 12:12"
+      "1 Peter 2:11 - Abstain from fleshly lusts which war against the soul",
+      "Ephesians 4:22 - Put off the old man which is corrupt",
+      "James 4:1 - Wars and fightings come from lusts that war in your members",
+      "Revelation 12:12 - The devil has come down with great wrath",
+      "Romans 7:23 - I see another law warring against the law of my mind",
+      "Galatians 5:17 - The flesh lusts against the Spirit, and the Spirit against the flesh",
+      "Romans 8:6-7 - The carnal mind is enmity against God"
     ],
-    practicalApplication: "Today, identify one area where 'self' is demanding control. Instead of blaming external circumstances or people, recognize the internal enemy. Declare war on that specific manifestation of self.",
+    practicalApplication: "Today, stop blaming external circumstances or people for your struggles. Make a list of three recent conflicts or frustrations. For each one, ask: 'What aspect of SELF was fighting for control here?' Identify whether it was pride, anger, lust, greed, or another manifestation of self. Then, instead of trying to change others or circumstances, declare war on that specific internal enemy. Write a one-sentence declaration: 'I declare war on [specific aspect of self] today, by God's grace.'",
     reflectionQuestions: [
-      "What recurring sin patterns reveal where 'self' is winning battles in my life?",
-      "Am I treating sin as a minor inconvenience or as a deadly enemy?",
-      "Where am I harboring and protecting 'self' instead of containing and destroying it?"
+      "What recurring sin patterns reveal where 'self' is currently winning battles in my life?",
+      "Am I treating sin as a minor inconvenience to manage, or as a deadly enemy to destroy?",
+      "Where am I harboring and protecting 'self' instead of containing and destroying it?",
+      "Do I truly believe that the war within me is more dangerous than any external threat?",
+      "When was the last time I consciously engaged in holy war against my own carnal nature?",
+      "How would my relationships change if I won the internal battles before they became external conflicts?",
+      "Am I willing to pay the cost of winning this war—which is everything I have and am?"
     ],
-    warriorCharacteristics: ["self-awareness", "honesty", "courage"]
+    warriorCharacteristics: ["self-awareness", "honesty", "courage", "spiritual-vision"]
   },
   {
     id: "underestimating-enemy",
     chapter: 1,
     title: "Know Thy Enemy",
-    subtitle: "Underestimating Self is Fatal",
-    description: "The fatal mistake in warfare is underestimating your opponent. Christians often minimize self, thinking 'I would never do that.' This attitude harbors the terrorist within.",
+    subtitle: "The Fatal Mistake—Underestimating Self",
+    description: "The most fatal mistake in warfare is underestimating your opponent. Post-9/11, America learned this painful lesson. Christians today make the same deadly error with self. We think, 'I would never do THAT.' But self is capable of ANYTHING. The moment you say 'I could never,' you have harbored the terrorist and given it sanctuary. Underestimation is how self survives and eventually destroys.",
     keyPoints: [
-      "Self is capable of ANYTHING—there are no limits to its wickedness",
-      "The carnal mind is enmity against God and cannot be subject to His law (Romans 8:6-7)",
-      "Self is a relentless traitor working with Satan, plotting to lure you into danger",
-      "Temptation is your early warning system that self is launching an offensive"
+      "Self is capable of ANYTHING—there are NO limits to its wickedness. If David could commit adultery and murder, if Peter could deny Christ, YOU can too",
+      "The carnal mind is enmity (hatred, hostility, warfare) against God and CANNOT be subject to His law (Romans 8:6-7)",
+      "Self is a relentless traitor, constantly working with Satan, plotting 24/7 to lure you into danger and destruction",
+      "Temptation is your early warning system that self is launching an offensive. Never ignore the sirens",
+      "The heart is deceitful above all things and desperately wicked—who can know it? (Jeremiah 17:9)",
+      "Self will use your strengths against you. Your spiritual gifts, talents, and victories become Satan's ammunition",
+      "Every thought of 'I would never' creates a blind spot that self will exploit",
+      "The greatest saints had the deepest understanding of their own potential for evil"
     ],
     scriptureReferences: [
-      "Romans 8:6-7",
-      "Jeremiah 17:9",
-      "Genesis 6:5",
-      "Mark 7:21-23"
+      "Romans 8:6-7 - The carnal mind is enmity against God",
+      "Jeremiah 17:9 - The heart is deceitful above all things",
+      "Genesis 6:5 - Every imagination of the thoughts of man's heart was only evil continually",
+      "Mark 7:21-23 - Out of the heart proceed evil thoughts, murders, adulteries",
+      "Proverbs 28:26 - He that trusts in his own heart is a fool",
+      "1 Corinthians 10:12 - Let him who thinks he stands take heed lest he fall",
+      "Galatians 6:1 - Considering yourself, lest you also be tempted",
+      "Matthew 26:41 - The spirit is willing but the flesh is weak"
     ],
-    practicalApplication: "Write down the three thoughts you've had recently that you'd be ashamed for anyone to know. This reveals self's true nature. Stop saying 'I would never...' and start saying 'I am capable of anything without God's grace.'",
+    practicalApplication: "Write down three thoughts you've had recently that you'd be ashamed for anyone to know. This exercise reveals self's true nature operating beneath the surface. Then write three statements that start with 'I would never...' For each one, replace it with: 'Without God's grace, I am capable of anything, including [that sin].' This destroys self's hiding places. Finally, ask God to show you which of your strengths self might try to weaponize against you.",
     reflectionQuestions: [
-      "What thoughts have crossed my mind that reveal self's true wickedness?",
-      "Am I underestimating how far self will go to satisfy its desires?",
-      "Do I view temptation as a warning system or as something I can handle on my own?"
+      "What thoughts have crossed my mind that reveal self's true wickedness beneath my 'Christian' exterior?",
+      "Am I underestimating how far self will go to satisfy its desires? What evidence suggests this?",
+      "Do I view temptation as a warning system or as something I can 'handle' on my own?",
+      "Which 'I would never' statements am I making that could be creating dangerous blind spots?",
+      "Have I ever been shocked by my own thoughts, words, or actions? What does that reveal about self?",
+      "How quickly do I respond to temptation's early warnings, or do I linger and rationalize?",
+      "Am I spiritually 'asleep' like the disciples in Gethsemane, unaware of the danger I'm in?"
     ],
-    warriorCharacteristics: ["vigilance", "honesty", "humility"]
+    warriorCharacteristics: ["vigilance", "honesty", "humility", "realism", "alertness"]
   },
   {
     id: "declaration-of-war",
     chapter: 2,
     title: "Declaration of War",
-    subtitle: "No Longer a Civilian",
-    description: "There comes a time when a nation under attack must declare war to survive. Many Christians have never made a decided declaration of war against self. This refusal allows self to strengthen and wreak havoc.",
+    subtitle: "From Civilian to Soldier—No Longer Optional",
+    description: "There comes a defining moment when a nation under attack must formally declare war to mobilize resources and survive. Many Christians have never made this decided declaration of war against self. They remain spiritual civilians—surprised by trials, shocked by temptations, and confused about their identity. This refusal to declare war allows self to strengthen, entrench, and eventually wreak havoc. You cannot fight effectively what you have never officially declared war against.",
     keyPoints: [
-      "Refusal to declare war on self results in wars with others (James 4:1)",
-      "Christians cannot remain civilians—we are called to be soldiers (2 Timothy 2:3-4)",
-      "A soldier expects hardship and trial; a civilian is surprised by it",
-      "Warriors view themselves as hunters, not victims or hunted"
+      "Refusal to declare war on self results in wars with others. Your internal civil war becomes external collateral damage (James 4:1)",
+      "Christians cannot remain civilians—we are CALLED to be soldiers. Paul says: 'Endure hardship as a good soldier of Jesus Christ' (2 Timothy 2:3-4)",
+      "A soldier EXPECTS hardship, trial, and warfare. A civilian is SURPRISED and offended by it",
+      "Soldiers don't entangle themselves with civilian affairs—they have singular focus and mission clarity",
+      "Warriors view themselves as HUNTERS, not victims or the hunted. Mindset determines outcome",
+      "A declaration is public, formal, binding. It's not a private wish—it's an irrevocable commitment",
+      "Without declaration, you fight halfheartedly, retreat easily, and negotiate with the enemy",
+      "The moment of declaration is the moment you stop making excuses and start taking responsibility"
     ],
     scriptureReferences: [
-      "2 Timothy 2:3-4",
-      "1 Timothy 6:12",
-      "James 1:12",
-      "1 Peter 4:12-13"
+      "2 Timothy 2:3-4 - Endure hardship as a good soldier; no soldier entangles himself with civilian affairs",
+      "1 Timothy 6:12 - Fight the good fight of faith",
+      "James 1:12 - Blessed is the man who endures temptation",
+      "1 Peter 4:12-13 - Don't think it strange concerning fiery trials",
+      "Luke 14:31-32 - A king going to war considers whether he's able",
+      "Hebrews 10:32 - Remember the former days when you endured a great struggle",
+      "Philippians 1:30 - You have the same conflict which you saw in me",
+      "1 Corinthians 9:26 - I do not fight as one beating the air"
     ],
-    practicalApplication: "Make a formal declaration of war today. Write it out: 'I, [your name], do hereby declare total war against my carnal nature. I will no longer harbor self, protect self, or make excuses for self. By God's grace, I am a soldier, not a civilian.'",
+    practicalApplication: "Make a formal, written Declaration of War today. Use this template or create your own: 'I, [your full name], do hereby declare TOTAL and UNCONDITIONAL war against my carnal nature and all its manifestations. I will no longer harbor self, protect self, make excuses for self, or negotiate with self. By God's grace, I am a SOLDIER, not a civilian. I expect trials. I anticipate battles. I embrace hardship as proof that I am in the fight. From this day forward, I am a hunter of righteousness, not the hunted prey of temptation. Signed: [Your Name], Date: [Today's Date].' Post this where you'll see it daily. Read it aloud when tempted.",
     reflectionQuestions: [
-      "Have I truly declared war on self, or am I still living as a spiritual civilian?",
-      "When trials come, do I respond like a soldier (expecting battle) or a civilian (surprised and complaining)?",
-      "Am I viewing myself as a victim or a warrior?"
+      "Have I truly declared war on self, or am I still playing spiritual civilian—hoping for comfort and ease?",
+      "When trials come, do I respond like a soldier (this is expected) or a civilian (why is this happening to me)?",
+      "Am I viewing myself as a victim of circumstances, or as a warrior engaged in purposeful combat?",
+      "What 'civilian affairs' am I still entangled in that are compromising my spiritual warfare effectiveness?",
+      "Do I have a clear sense of mission, or am I just drifting through Christian life without focus?",
+      "What would change in my life if I truly saw every temptation as an opportunity to prove my soldier status?",
+      "Am I willing to publicly declare this war, or do I want to keep my options open for retreat?"
     ],
-    warriorCharacteristics: ["decisiveness", "commitment", "soldier-mindset"]
+    warriorCharacteristics: ["decisiveness", "commitment", "soldier-mindset", "responsibility", "courage"]
   },
   {
     id: "divine-objective",
     chapter: 2,
     title: "Divine Objective",
-    subtitle: "Contain and Destroy",
-    description: "Every war needs a clear objective. The divine objective in holy war is twofold: CONTAIN self (keep warfare internal) and DESTROY self (eliminate it within).",
+    subtitle: "Contain and Destroy—The Two-Fold Mission",
+    description: "Every successful war campaign requires a clear, measurable objective. The divine objective in holy war against self is precise and uncompromising: CONTAIN self (prevent internal warfare from becoming external sin) and DESTROY self (eliminate the carnal mind entirely). Half-measures and partial victories are meaningless. Self must be both contained and destroyed, or the war is lost.",
     keyPoints: [
-      "Contain: Keep the battle internal—don't let self 'get out' through sinful actions",
-      "Destroy: Win the battle within—eliminate angry thoughts, not just angry words",
-      "External sin reveals failed internal containment",
-      "True victory requires both containment AND destruction"
+      "CONTAIN: Keep the battle INTERNAL. Don't let self 'get out' through sinful words, actions, or attitudes. Containment prevents collateral damage",
+      "DESTROY: Win the battle WITHIN. Eliminate angry thoughts, not just angry words. Destroy lustful imagination, not just lustful actions",
+      "External sin is the visible proof of failed internal containment. When self 'gets out,' containment has already been breached",
+      "True victory requires BOTH containment AND destruction working simultaneously. Containment without destruction is management. Destruction without containment causes chaos",
+      "Jesus' teaching in Matthew 5 sets the standard: don't just avoid murder—destroy anger. Don't just avoid adultery—destroy lust",
+      "The battlefield is the MIND. Whoever controls the thought life controls the war",
+      "Containment is defensive warfare (guarding the heart). Destruction is offensive warfare (taking thoughts captive)",
+      "Every temptation is an opportunity to practice both skills: contain the impulse, then destroy the desire"
     ],
     scriptureReferences: [
-      "Matthew 5:28",
-      "Proverbs 4:23",
-      "2 Corinthians 10:5",
-      "James 1:14-15"
+      "Matthew 5:28 - Whoever looks on a woman to lust has already committed adultery in his heart",
+      "Proverbs 4:23 - Keep your heart with all diligence, for out of it are the issues of life",
+      "2 Corinthians 10:5 - Casting down imaginations and bringing every thought into captivity",
+      "James 1:14-15 - When desire has conceived, it brings forth sin; sin when finished brings death",
+      "Romans 12:2 - Be transformed by the renewing of your mind",
+      "Philippians 4:8 - Think on these things: whatever is true, noble, just, pure, lovely",
+      "Colossians 3:5 - Put to death your members which are on the earth",
+      "Matthew 5:29-30 - If your eye causes you to sin, pluck it out"
     ],
-    practicalApplication: "Today, practice containment. When tempted to lash out, gossip, or indulge, contain the battle internally. Then practice destruction: take the thought captive immediately (2 Cor 10:5). Don't just avoid the action—kill the desire.",
+    practicalApplication: "Choose one recurring temptation you face. Create a two-phase battle plan: PHASE 1 (Containment): Write down three practical ways you will CONTAIN this battle internally when tempted (e.g., if tempted to gossip: leave the room, change the subject, pray silently). PHASE 2 (Destruction): Write down three ways you will DESTROY the desire at its root (e.g., pray for the person you want to gossip about, memorize James 3:5-10, ask God why you feel the need to tear others down). Practice both phases the next time temptation strikes. Journal the results: Did I successfully contain? Did I work toward destruction?",
     reflectionQuestions: [
-      "Where is self 'getting out' through my words or actions?",
-      "Am I winning the internal battle, or just avoiding external manifestations?",
-      "What thought patterns need to be destroyed, not just contained?"
+      "Where is self consistently 'getting out' through my words, actions, or attitudes? This reveals containment failures",
+      "Am I winning the internal battle, or am I just successfully avoiding external manifestations while harboring sin internally?",
+      "What specific thought patterns need to be DESTROYED, not just managed or contained?",
+      "Do I treat Jesus' standard in Matthew 5 as impossible idealism, or as the actual target for victory?",
+      "How much of my spiritual warfare is defensive (containment) versus offensive (destruction)?",
+      "What would total victory look like in my most persistent area of temptation—both containment AND destruction?",
+      "Am I satisfied with behavior modification, or am I pursuing heart transformation?"
     ],
-    warriorCharacteristics: ["self-control", "internal-focus", "thoroughness"]
+    warriorCharacteristics: ["self-control", "internal-focus", "thoroughness", "mind-mastery", "persistence"]
   },
   {
     id: "righteous-anger",
@@ -179,53 +226,78 @@ export const DOJO_LESSONS: DojoLesson[] = [
     id: "spirit-of-war",
     chapter: 4,
     title: "The Spirit of War",
-    subtitle: "Nine Fruits, Infinite Combinations",
-    description: "The Spirit of God produces nine fruits (Galatians 5:22-23). These are not just virtues—they are the 'combinations' or codes that unlock victory over every temptation.",
+    subtitle: "Nine Fruits, Infinite Combinations—The Code to Every Victory",
+    description: "The Spirit of God produces nine fruits (Galatians 5:22-23): Love, Joy, Peace, Patience, Kindness, Goodness, Faithfulness, Gentleness, Self-Control. These are not merely Christian virtues to admire—they are the COMBINATIONS or CODES that unlock victory over every single temptation you will ever face. Like a master lock with nine tumblers, each temptation requires a specific combination of fruits to escape. Master these nine, and you master righteousness itself.",
     keyPoints: [
-      "The nine fruits are: Love, Joy, Peace, Patience, Kindness, Goodness, Faithfulness, Gentleness, Self-Control",
-      "Each temptation has a 'code'—a specific combination of fruits that provides escape",
-      "Failure in one or more fruits creates a 'weak spot' self can exploit",
-      "Mastery of these nine spirits is mastery of righteousness"
+      "The nine fruits are: Love, Joy, Peace, Patience (Longsuffering), Kindness (Gentleness), Goodness, Faithfulness (Faith), Gentleness (Meekness), Self-Control (Temperance)",
+      "Every temptation has a specific 'code'—a unique combination of fruits that provides the way of escape promised in 1 Cor 10:13",
+      "Failure or weakness in one or more fruits creates a 'weak spot' that self and Satan can exploit to bring you down",
+      "These fruits are not produced by human effort but by yielding to the Holy Spirit. Trying to manufacture them in your own strength leads to hypocrisy",
+      "The nine fruits are the OPPOSITE of the works of the flesh (Galatians 5:19-21). They are the antidote, the cure, the counter-weapon",
+      "Mastery of these nine spirits is mastery of the entire battlefield. They are your complete spiritual arsenal",
+      "Each fruit represents a different dimension of Christlikeness. Together they form the full character of Jesus",
+      "The fruits work in combination—rarely does one fruit alone solve a temptation. You need multiple fruits working together"
     ],
     scriptureReferences: [
-      "Galatians 5:22-23",
-      "Galatians 5:16-17",
-      "1 Corinthians 10:13",
-      "John 15:13-14"
+      "Galatians 5:22-23 - The fruit of the Spirit is love, joy, peace...",
+      "Galatians 5:16-17 - Walk in the Spirit and you shall not fulfill the lust of the flesh",
+      "1 Corinthians 10:13 - God will make a way of escape with every temptation",
+      "John 15:4-5 - Abide in me and I in you. Without me you can do nothing",
+      "John 15:13-14 - No greater love than to lay down one's life",
+      "Romans 8:5-6 - Those who live according to the Spirit set their minds on the Spirit",
+      "Ephesians 5:9 - The fruit of the Spirit is in all goodness, righteousness, and truth",
+      "2 Peter 1:5-7 - Add to your faith virtue, knowledge, self-control, perseverance, godliness"
     ],
-    practicalApplication: "When facing temptation today, pause and ask: 'Which fruits do I need right now?' Practice identifying the combination. Example: Tempted to gossip? Code = Love + Self-Control + Kindness.",
+    practicalApplication: "Today, practice 'code-breaking' with your temptations. When facing ANY temptation, PAUSE and ask: 'Which fruits do I need right now?' Don't guess—analyze the temptation carefully. Examples: Tempted to gossip? CODE = Love (for the person) + Self-Control (over your tongue) + Kindness (choosing gentleness). Tempted to quit when ministry is hard? CODE = Joy (finding delight in obedience) + Faithfulness (staying committed) + Patience (enduring difficulty). Keep a 'Code Journal' for one week. Write down each major temptation and identify the fruit-combination needed to defeat it. You'll discover patterns in your weaknesses.",
     reflectionQuestions: [
-      "Which of the nine fruits is my greatest weakness?",
-      "Can I identify the 'code' for my most common temptations?",
-      "Am I relying on God's Spirit to produce these fruits, or trying in my own strength?"
+      "Which of the nine fruits is my greatest current weakness? (This is where self will attack)",
+      "Can I identify the specific 'code' for my three most common temptations?",
+      "Am I relying on God's Spirit to produce these fruits, or am I trying to manufacture them through willpower and self-improvement?",
+      "Do I see the fruits as personality traits to develop, or as Spirit-empowered weapons to wield?",
+      "Which fruit do I most consistently ignore or undervalue in spiritual warfare?",
+      "When was the last time I consciously deployed a specific fruit against a specific temptation?",
+      "Am I abiding in Christ (John 15) in a way that naturally produces these fruits, or am I trying to produce them while disconnected from the Vine?"
     ],
-    warriorCharacteristics: ["discernment", "spirit-reliance", "fruit-mastery"]
+    warriorCharacteristics: ["discernment", "spirit-reliance", "fruit-mastery", "analysis", "strategy"]
   },
   {
     id: "love",
     chapter: 4,
     title: "The Spirit of Love",
-    subtitle: "The Foundation of All Warfare",
-    description: "Love is the first and greatest fruit. Warriors must possess love for their Master (Jesus), love for their country (Kingdom of Heaven), and love for righteousness itself.",
+    subtitle: "The Foundation of All Warfare—Agape, The Unconquerable Force",
+    description: "Love is the first and greatest fruit because without it, all other fruits are meaningless (1 Cor 13:1-3). In spiritual warfare, love is not a soft sentiment—it is the most powerful force in the universe. True Christian warriors must possess three dimensions of love: love for their Master (Jesus Christ), love for their country (the Kingdom of Heaven), and love for righteousness itself. Love gives you something worth fighting for—and Someone worth dying for.",
     keyPoints: [
-      "Love is willing to give all, even life itself (John 15:13)",
-      "Love for Jesus motivates us to crucify self rather than betray Him",
-      "Love for righteousness makes us emotionally connected to holiness",
-      "Without love, there is no desire to stand or fight"
+      "Love (Agape) is willing to give ALL, even life itself. 'Greater love has no man than this, that a man lay down his life' (John 15:13)",
+      "Love for Jesus motivates us to crucify self rather than betray Him. Every sin is a betrayal of the One who died for us",
+      "Love for righteousness makes us emotionally CONNECTED to holiness, not just intellectually convinced of it",
+      "Without love, there is no desire to stand, no motivation to fight, no reason to endure",
+      "Love is the ONLY force stronger than self's desires. When you love Christ more than comfort, victory becomes possible",
+      "Many waters cannot quench love, neither can floods drown it (Song of Solomon 8:7). Love makes you unconquerable",
+      "Love is patient and kind, but it is also fierce—jealous for God's glory and intolerant of sin",
+      "Jesus' love for you is the SOURCE. You can only love Him because He first loved you (1 John 4:19)"
     ],
     scriptureReferences: [
-      "Song of Solomon 8:7",
-      "John 15:13-14",
-      "Hebrews 1:9",
-      "1 John 4:19"
+      "Song of Solomon 8:7 - Many waters cannot quench love, floods cannot drown it",
+      "John 15:13-14 - Greater love has no one than to lay down his life for his friends",
+      "Hebrews 1:9 - You have loved righteousness and hated lawlessness",
+      "1 John 4:19 - We love Him because He first loved us",
+      "Matthew 22:37-38 - Love the Lord with all your heart, soul, and mind",
+      "1 Corinthians 13:1-3 - Without love, I am nothing",
+      "Romans 5:5 - The love of God has been poured out in our hearts by the Holy Spirit",
+      "John 14:15 - If you love Me, keep My commandments",
+      "Revelation 2:4 - You have left your first love"
     ],
-    practicalApplication: "Meditate on Christ's love for you. Ask Him to transfer that love into your heart—love for Him, love for His kingdom, love for righteousness. When tempted, remember: 'Will I betray the One who died for me?'",
+    practicalApplication: "Spend 30 minutes today in deliberate meditation on Christ's love for YOU. Read the crucifixion account slowly (Matthew 27, Mark 15, Luke 23, or John 19). Picture each detail: the mocking, the beating, the nails, the crown of thorns, the cry of abandonment. This was love. Then pray: 'Lord Jesus, transfer that love into MY heart. Give me love for You that is stronger than my love for comfort, pleasure, approval, or ease. Give me love for righteousness—not just intellectual agreement, but emotional passion. Make me LOVE what You love and HATE what You hate.' Journal your reflections. Return to this meditation whenever temptation seems overwhelming.",
     reflectionQuestions: [
-      "Do I love Jesus enough to die to self?",
-      "Is righteousness my burden or my delight?",
-      "What would I be willing to sacrifice for the Kingdom of Heaven?"
+      "Do I love Jesus enough to die to self—not just theoretically, but practically, daily?",
+      "Is righteousness my burden (something I have to do) or my delight (something I love to do)?",
+      "What would I be willing to sacrifice for the Kingdom of Heaven? Does my calendar and bank account reflect that?",
+      "When was the last time I wept over my own sin because of how it grieves the One who loves me?",
+      "Do I have a FIRST love relationship with Jesus, or has He become one among many loves?",
+      "Can I honestly say I love righteousness and HATE lawlessness, or am I comfortable with both?",
+      "Where is my love for comfort, success, or approval competing with my love for Christ?"
     ],
-    warriorCharacteristics: ["love", "loyalty", "devotion"]
+    warriorCharacteristics: ["love", "loyalty", "devotion", "passion", "sacrifice"]
   },
   {
     id: "joy",
