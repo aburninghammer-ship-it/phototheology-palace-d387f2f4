@@ -443,8 +443,9 @@ const Community = () => {
                       </Avatar>
                       <UserMasterySword 
                         masterTitle={activeUser.master_title} 
-                        currentFloor={activeUser.current_floor || 0}
+                        currentFloor={activeUser.current_floor}
                         size="sm"
+                        isOwner={activeUser.id === 'a0e64f17-c9f0-4f71-ac72-d1ca52c8b99b'}
                       />
                       <span className="text-sm font-medium">
                         {activeUser.display_name || activeUser.username}

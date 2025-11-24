@@ -7,9 +7,8 @@ interface ActiveUser {
   display_name: string | null;
   avatar_url: string | null;
   last_seen: string;
-  current_floor?: number;
-  master_title?: string | null;
-  is_owner?: boolean;
+  current_floor: number;
+  master_title: string | null;
 }
 
 export const useActiveUsers = () => {
@@ -46,39 +45,13 @@ export const useActiveUsers = () => {
         const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
         const { data, count, error } = await supabase
           .from("profiles")
-          .select("id, username, display_name, avatar_url, last_seen", { count: "exact" })
+          .select("id, username, display_name, avatar_url, last_seen, current_floor, master_title", { count: "exact" })
           .gte("last_seen", fifteenMinutesAgo)
           .order("last_seen", { ascending: false });
         
         if (!error && isSubscribed && data) {
-          // Fetch mastery data for active users
-          const userIds = data.map(u => u.id);
-          const { data: masteryData } = await supabase
-            .from("global_master_titles")
-            .select("user_id, current_floor, master_title")
-            .in("user_id", userIds);
-          
-          // Check for owner role
-          const { data: ownerData } = await supabase
-            .from("user_roles")
-            .select("user_id")
-            .in("user_id", userIds)
-            .eq("role", "owner");
-          
-          // Merge mastery data with user data
-          const usersWithMastery = data.map(user => {
-            const mastery = masteryData?.find(m => m.user_id === user.id);
-            const isOwner = ownerData?.some(o => o.user_id === user.id) || false;
-            return {
-              ...user,
-              current_floor: mastery?.current_floor || 0,
-              master_title: isOwner ? 'black' : (mastery?.master_title || null),
-              is_owner: isOwner,
-            };
-          });
-          
           setActiveCount(count || 0);
-          setActiveUsers(usersWithMastery);
+          setActiveUsers(data);
         }
       } catch (error) {
         // Silently fail - this is not critical functionality

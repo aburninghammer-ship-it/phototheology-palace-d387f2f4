@@ -18,6 +18,7 @@ import {
   Users,
   Loader2
 } from "lucide-react";
+import { UserMasterySword } from "@/components/mastery/UserMasterySword";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFollow } from "@/hooks/useFollow";
@@ -35,6 +36,8 @@ interface UserProfile {
   level: number;
   daily_study_streak: number;
   created_at: string;
+  current_floor: number;
+  master_title: string | null;
 }
 
 export default function UserProfile() {
@@ -185,7 +188,15 @@ export default function UserProfile() {
             <div className="flex-1">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold mb-2">{profile.display_name}</h1>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h1 className="text-3xl font-bold">{profile.display_name}</h1>
+                    <UserMasterySword 
+                      masterTitle={profile.master_title} 
+                      currentFloor={profile.current_floor}
+                      size="md"
+                      isOwner={profile.id === 'a0e64f17-c9f0-4f71-ac72-d1ca52c8b99b'}
+                    />
+                  </div>
                   {profile.bio && (
                     <p className="text-muted-foreground mb-3">{profile.bio}</p>
                   )}
@@ -336,6 +347,23 @@ export default function UserProfile() {
           </TabsContent>
 
           <TabsContent value="achievements" className="space-y-4">
+            <Card className="p-6 mb-4 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">Mastery Progress</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {profile.master_title ? `${profile.master_title.charAt(0).toUpperCase() + profile.master_title.slice(1)} Master` : 'Apprentice'} - Floor {profile.current_floor}
+                  </p>
+                </div>
+                <UserMasterySword 
+                  masterTitle={profile.master_title} 
+                  currentFloor={profile.current_floor}
+                  size="lg"
+                  isOwner={profile.id === 'a0e64f17-c9f0-4f71-ac72-d1ca52c8b99b'}
+                />
+              </div>
+            </Card>
+
             {achievements.length === 0 ? (
               <Card className="p-8 text-center">
                 <p className="text-muted-foreground">No achievements unlocked yet</p>
