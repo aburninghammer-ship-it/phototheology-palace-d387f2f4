@@ -72,10 +72,7 @@ export default function FloorMastery() {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Left: Tower Visualization */}
           <div>
-            <FloorProgressTower 
-              globalTitle={globalTitle} 
-              totalRoomsMastered={floorProgress?.reduce((sum: number, f: any) => sum + f.rooms_completed, 0) || 0}
-            />
+            <FloorProgressTower floors={floorProgress || []} globalTitle={globalTitle} />
           </div>
 
           {/* Right: Requirements Breakdown */}
