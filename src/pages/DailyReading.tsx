@@ -34,73 +34,134 @@ export default function DailyReading() {
   const loadPlanAndExercises = async () => {
     if (!userProgress) return;
 
-    // Fetch the plan details
-    const { data: planData, error: planError } = await supabase
-      .from('reading_plans')
-      .select('*')
-      .eq('id', userProgress.plan_id)
-      .single();
+    try {
+      // Fetch the plan details
+      const { data: planData, error: planError } = await supabase
+        .from('reading_plans')
+        .select('*')
+        .eq('id', userProgress.plan_id)
+        .maybeSingle();
 
-    if (planError || !planData) {
-      console.error('Error loading plan:', planError);
-      return;
-    }
-
-    setPlan(planData);
-
-    // Extract today's passages from the plan's daily_schedule
-    const schedule = planData.daily_schedule as any;
-    const dayIndex = userProgress.current_day - 1;
-    
-    // Parse passages based on schedule structure
-    let passages: any[] = [];
-    if (schedule?.chapters && Array.isArray(schedule.chapters)) {
-      // For book-monthly plans that already have an explicit chapter list
-      const chapterNumber = schedule.chapters[dayIndex];
-      if (chapterNumber) {
-        passages = [{
-          book: schedule.book || planData.name.split(' ')[0],
-          chapter: chapterNumber,
-          verses: "1-end",
-        }];
+      if (planError || !planData) {
+        console.error('Error loading plan:', planError);
+        toast({
+          title: "Error",
+          description: "Failed to load reading plan",
+          variant: "destructive",
+        });
+        return;
       }
-    } else if (schedule?.daily_readings && Array.isArray(schedule.daily_readings)) {
-      // For plans with structured daily readings
-      passages = schedule.daily_readings[dayIndex] || [];
-    } else if (schedule?.book) {
-      // Fallback for simple book-monthly plans that only specify a book and chapters_per_day
-      const bookMeta = BIBLE_BOOK_METADATA.find(
-        (b) => b.name.toLowerCase() === String(schedule.book).toLowerCase()
-      );
 
-      if (bookMeta) {
-        const chaptersPerDay = Number(schedule.chapters_per_day) || 1;
-        const approxChapter = Math.ceil(userProgress.current_day * chaptersPerDay);
-        const chapterNumber = Math.min(approxChapter, bookMeta.chapters);
+      setPlan(planData);
 
-        passages = [
-          {
-            book: bookMeta.name,
+      // Extract today's passages from the plan's daily_schedule
+      const schedule = planData.daily_schedule as any;
+      const dayIndex = userProgress.current_day - 1;
+      
+      // Parse passages based on schedule structure
+      let passages: any[] = [];
+      if (schedule?.chapters && Array.isArray(schedule.chapters)) {
+        // For book-monthly plans that already have an explicit chapter list
+        const chapterNumber = schedule.chapters[dayIndex];
+        if (chapterNumber) {
+          passages = [{
+            book: schedule.book || planData.name.split(' ')[0],
             chapter: chapterNumber,
             verses: "1-end",
-          },
-        ];
+          }];
+        }
+      } else if (schedule?.daily_readings && Array.isArray(schedule.daily_readings)) {
+        // For plans with structured daily readings
+        passages = schedule.daily_readings[dayIndex] || [];
+      } else if (schedule?.book) {
+        // Fallback for simple book-monthly plans that only specify a book and chapters_per_day
+        const bookMeta = BIBLE_BOOK_METADATA.find(
+          (b) => b.name.toLowerCase() === String(schedule.book).toLowerCase()
+        );
+
+        if (bookMeta) {
+          const chaptersPerDay = Number(schedule.chapters_per_day) || 1;
+          const approxChapter = Math.ceil(userProgress.current_day * chaptersPerDay);
+          const chapterNumber = Math.min(approxChapter, bookMeta.chapters);
+
+          passages = [
+            {
+              book: bookMeta.name,
+              chapter: chapterNumber,
+              verses: "1-end",
+            },
+          ];
+        }
       }
+
+      console.log('Loaded passages for day', userProgress.current_day, ':', passages);
+      
+      if (passages.length === 0) {
+        console.warn('No passages found for current day. Schedule:', schedule);
+        toast({
+          title: "No Passages",
+          description: "Unable to determine today's reading. Please check your plan.",
+          variant: "destructive",
+        });
+      }
+
+      setTodaysPassages(passages);
+
+      // Generate exercises with the actual passages and depth mode
+      const result = await generateExercisesWithPassages(passages, planData.depth_mode, false);
+      if (result) {
+        setExercises(result);
+      }
+    } catch (error) {
+      console.error('Error in loadPlanAndExercises:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load today's reading",
+        variant: "destructive",
+      });
     }
+  };
 
-    setTodaysPassages(passages);
+  const generateExercisesWithPassages = async (passages: any[], depthMode: string, regenerate: boolean) => {
+    if (!userProgress) return null;
 
-    // Generate exercises with real passages
-    const result = await generateExercises(false);
-    if (result) {
-      setExercises(result);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-reading-exercises', {
+        body: {
+          userProgressId: userProgress.id,
+          dayNumber: userProgress.current_day,
+          passages: passages,
+          depthMode: depthMode,
+          regenerate
+        }
+      });
+
+      if (error) throw error;
+      return data?.exercises || null;
+    } catch (error) {
+      console.error('Error generating exercises:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate exercises",
+        variant: "destructive",
+      });
+      return null;
     }
   };
 
   const handleRegenerateExercises = async () => {
+    if (!plan || todaysPassages.length === 0) {
+      toast({
+        title: "Error",
+        description: "Unable to regenerate without passages",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setRegenerating(true);
     try {
-      const result = await generateExercises(true);
+      const result = await generateExercisesWithPassages(todaysPassages, plan.depth_mode, true);
       if (result) {
         setExercises(result);
         toast({

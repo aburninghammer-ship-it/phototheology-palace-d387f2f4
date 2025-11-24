@@ -14,6 +14,22 @@ serve(async (req) => {
   try {
     const { userProgressId, dayNumber, passages, depthMode, regenerate } = await req.json();
 
+    // Validate required parameters
+    if (!userProgressId || !dayNumber) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required parameters: userProgressId and dayNumber' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!passages || passages.length === 0) {
+      console.error('No passages provided for exercise generation');
+      return new Response(
+        JSON.stringify({ error: 'No passages provided. Please ensure your reading plan has valid daily readings.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
