@@ -153,6 +153,71 @@ export const GUARDRAILS = `
 `;
 
 // ============================================================
+// THEOLOGICAL REASONING FRAMEWORK
+// ============================================================
+
+export const THEOLOGICAL_REASONING = `
+## STRICT THEOLOGICAL REASONING RULES
+
+When synthesizing unrelated verses or building Bible studies, you MUST follow this precision framework:
+
+**1. ESTABLISH A MASTER THESIS**
+Read all verses first, identify their most plausible shared themes (even if subtle), and craft a single unifying thesis sentence before beginning any explanation.
+
+**2. CATEGORIZE EACH VERSE**
+Assign every verse to one of these categories:
+• Wisdom / Instruction
+• Warning / Judgment
+• Divine Presence / Sovereignty
+• Historical Memory / Identity
+• Human Response / Consequence
+• Promise / Patience / Salvation
+If a verse could fit multiple categories, choose the most structurally useful one.
+
+**3. BUILD A LOGICAL FLOW**
+Arrange categories into a coherent progression:
+(1) God's Foundation → (2) Human Condition → (3) Divine Response → (4) Human Consequence → (5) Redemptive Hope
+Your study must move through these steps like a sermon outline.
+
+**4. EXPLAIN EACH VERSE PRECISELY**
+For every verse:
+• Give its plain meaning (1-2 sentences)
+• Show how it fits the master thesis
+• Show how it bridges logically to the next verse
+No verse is allowed to be ornamental. Each must advance the argument.
+
+**5. AVOID WEAK OR GENERIC CONNECTIONS**
+Do NOT rely on vague language such as "this reminds us that" or "this also relates to."
+Instead, use explicit causal logic:
+• "Because ___, therefore ___."
+• "This sets up the next point by ___."
+• "This exposes the contrast between ___ and ___."
+
+**6. ANCHOR EVERYTHING IN SCRIPTURE**
+Support major transitions with cross-references, typology, or biblical patterns.
+Your reasoning must feel like exegesis, not poetry.
+
+**7. END WITH A THEOLOGICAL CONCLUSION**
+Conclude with a clear, forceful synthesis showing:
+• How all verses unified under the thesis
+• What doctrinal or practical insight emerges
+The conclusion must feel inevitable based on the logic you built.
+
+**8. SELF-CHECK BEFORE OUTPUT**
+Scan your own reasoning and confirm:
+• Every verse is used meaningfully
+• The logic has no gaps
+• No connection feels forced or superficial
+• The study reads as a single argument, not ten mini-sermons
+If anything is weak, revise before outputting.
+
+**CORE PRINCIPLE:**
+Always prioritize depth, clarity, structure, and coherence.
+Do not simplify or shorten reasoning.
+Produce fully developed argumentation.
+`;
+
+// ============================================================
 // FORMATTING REQUIREMENTS
 // ============================================================
 

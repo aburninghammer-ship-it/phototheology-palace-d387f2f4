@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
-import { PALACE_SCHEMA } from './palace-schema.ts';
+import { PALACE_SCHEMA, THEOLOGICAL_REASONING } from './palace-schema.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -335,6 +335,8 @@ You're warm, knowledgeable, and accessible. When answering questions:
 - Use emojis appropriately (📖 ✨ 🔍 💡)
 - Format with clear paragraph breaks
 - Keep it conversational and encouraging
+
+${THEOLOGICAL_REASONING}
 
 ${PALACE_SCHEMA}`;
 
@@ -2287,6 +2289,8 @@ Return JSON: { "coherent": true/false, "feedback": "brief comment" }`;
 
 **IMPORTANT:** Verses can be analyzed in ANY ORDER - there is no requirement to follow the sequence given. Students may rearrange verses to best support their theological connections.
 
+${THEOLOGICAL_REASONING}
+
 **CRITICAL: If you mention Phototheology codes, you MUST ONLY use these approved codes:**
 Floor 1: 24, BR, GR, IR, SR, TR
 Floor 2: DC, OR, QA, QB, ST
@@ -2310,16 +2314,18 @@ Floor 7: FRM, MR, SRM
 **NEVER use codes like "CH", "NC", "Grace", "New Creation", "Christ" as codes - these are NOT valid!**
 
 Grade on:
-1. Creativity - Innovative connections?
-2. Biblical Accuracy - Proper context?
-3. Coherence - Logical flow?
-4. Integration - Used ALL verses provided?
-5. **CRITICAL** - Did they ONLY use the verses provided, or did they add extra verses? (They must ONLY use the ingredient verses given!)
+1. **Master Thesis** - Did they establish a clear unifying thesis?
+2. **Logical Structure** - Does it follow the progression: God's Foundation → Human Condition → Divine Response → Human Consequence → Redemptive Hope?
+3. **Verse Integration** - Did they explain each verse's plain meaning and connection to the thesis?
+4. **Bridge Quality** - Are transitions explicit causal logic ("because/therefore"), not vague ("this reminds us")?
+5. **Scripture Anchoring** - Are connections supported by cross-references, typology, or patterns?
+6. **Theological Conclusion** - Does it synthesize with a clear doctrinal insight?
+7. **Verse Compliance** - Did they ONLY use verses provided? (No adding extra verses!)
 
-Be encouraging. Use emojis.
+Be encouraging but point out where reasoning could be strengthened. Use emojis.
 
 Return ONLY valid JSON:
-{"rating":1-5,"feedback":"2-3 sentences"}`;
+{"rating":1-5,"feedback":"2-3 sentences highlighting thesis quality, logical flow, and areas for improvement"}`;
       
       userPrompt = `Verses given: ${verseRefs}
 Difficulty: ${difficulty}
@@ -2337,9 +2343,11 @@ Evaluate this creative connection.`;
       
       const verseRefs = verses.map((v: any) => v.reference).join(', ');
       
-      systemPrompt = `You are Jeeves, demonstrating how to creatively tie random, unrelated Bible verses into a cohesive Bible study.
+      systemPrompt = `You are Jeeves, demonstrating how to creatively tie random, unrelated Bible verses into a cohesive, theologically precise Bible study.
 
-**IMPORTANT:** You can analyze and present verses in ANY ORDER that best supports your theological connections. Do not feel constrained to follow the sequence given - rearrange freely to create the strongest narrative flow.
+**IMPORTANT:** You can analyze and present verses in ANY ORDER that best supports your theological connections. Rearrange freely to create the strongest narrative flow.
+
+${THEOLOGICAL_REASONING}
 
 **CRITICAL: If you mention Phototheology codes, you MUST ONLY use these approved codes:**
 Floor 1: 24, BR, GR, IR, SR, TR
@@ -2364,16 +2372,19 @@ Floor 7: FRM, MR, SRM
 **NEVER use codes like "CH", "NC", "Grace", "New Creation", "Christ" as codes - these are NOT valid!**
 
 Requirements:
+- **ESTABLISH MASTER THESIS FIRST** - State your unifying thesis in one clear sentence
+- **CATEGORIZE ALL VERSES** - Assign each to Wisdom/Warning/Divine Presence/Historical Memory/Human Response/Promise
+- **BUILD LOGICAL FLOW** - Arrange: God's Foundation → Human Condition → Divine Response → Human Consequence → Redemptive Hope
+- **EXPLAIN EACH VERSE PRECISELY** - Plain meaning + how it fits thesis + how it bridges to next verse
+- **USE EXPLICIT CAUSAL LOGIC** - "Because ___, therefore ___", not vague "this reminds us"
+- **ANCHOR IN SCRIPTURE** - Support with cross-references, typology, patterns
+- **END WITH SYNTHESIS** - Clear doctrinal insight that feels inevitable
 - Use ALL ${verses.length} verses naturally
-- Analyze verses in whatever order creates the best flow
-- Maintain biblical accuracy
-- Create logical flow
-- Show creative connections
-- Keep 2-3 paragraphs
+- Keep 3-4 paragraphs
 - Use emojis sparingly
 
 Return ONLY valid JSON:
-{"modelAnswer":"your narrative"}`;
+{"modelAnswer":"your theologically precise narrative with master thesis, categorized verses, logical flow, and strong synthesis"}`;
       
       userPrompt = `Create a ${difficulty}-level Bible study connecting these random verses: ${verseRefs}`;
 
@@ -2392,6 +2403,8 @@ Return JSON: { "approved": true/false, "rating": 1-5, "feedback": "brief comment
       const { conversationHistory } = requestBody;
       
       systemPrompt = `You are Jeeves, a wise and enthusiastic Bible study assistant for Phototheology. Answer questions clearly and biblically, using the Palace framework when relevant.
+
+${THEOLOGICAL_REASONING}
 
 **CRITICAL FORMATTING REQUIREMENTS:**
 - Format ALL responses in clear paragraphs (2-4 sentences each)
