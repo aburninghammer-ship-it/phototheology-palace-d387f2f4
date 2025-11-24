@@ -163,20 +163,41 @@ export default function MasteryDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="text-sm text-muted-foreground">
-                  <p className="mb-3">
+                <div className="text-sm">
+                  <p className="mb-4 text-foreground/90">
                     The mastery system has evolved! Instead of counting total rooms mastered, you now progress floor by floor through the Palace:
                   </p>
-                  <ul className="space-y-2 list-disc list-inside mb-4">
-                    <li><strong>Floor 1:</strong> Blue Master (Furnishing)</li>
-                    <li><strong>Floor 2:</strong> Red Master (Investigation)</li>
-                    <li><strong>Floor 3:</strong> Gold Master (Freestyle)</li>
-                    <li><strong>Floor 4:</strong> Purple Master (Next Level)</li>
-                    <li><strong>Floors 5-6:</strong> White Master (Vision & Three Heavens)</li>
-                    <li><strong>Floor 7:</strong> Black Candidate (Transformation)</li>
-                    <li><strong>Floor 8:</strong> Black Master (Reflexive Mastery)</li>
+                  <ul className="space-y-3 mb-4">
+                    <li className="flex items-center gap-3 p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                      <span className="text-2xl">🟦</span>
+                      <span><strong className="text-blue-500">Floor 1:</strong> <span className="text-foreground">Blue Master (Furnishing)</span></span>
+                    </li>
+                    <li className="flex items-center gap-3 p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                      <span className="text-2xl">🔴</span>
+                      <span><strong className="text-red-500">Floor 2:</strong> <span className="text-foreground">Red Master (Investigation)</span></span>
+                    </li>
+                    <li className="flex items-center gap-3 p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                      <span className="text-2xl">🟡</span>
+                      <span><strong className="text-yellow-600 dark:text-yellow-500">Floor 3:</strong> <span className="text-foreground">Gold Master (Freestyle)</span></span>
+                    </li>
+                    <li className="flex items-center gap-3 p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                      <span className="text-2xl">🟣</span>
+                      <span><strong className="text-purple-500">Floor 4:</strong> <span className="text-foreground">Purple Master (Next Level)</span></span>
+                    </li>
+                    <li className="flex items-center gap-3 p-2 rounded-lg bg-gray-500/10 border border-gray-500/20">
+                      <span className="text-2xl">⚪</span>
+                      <span><strong className="text-gray-700 dark:text-gray-300">Floors 5-6:</strong> <span className="text-foreground">White Master (Vision & Three Heavens)</span></span>
+                    </li>
+                    <li className="flex items-center gap-3 p-2 rounded-lg bg-gray-700/10 border border-gray-700/20">
+                      <span className="text-2xl">⚫</span>
+                      <span><strong className="text-gray-800 dark:text-gray-200">Floor 7:</strong> <span className="text-foreground">Black Candidate (Transformation)</span></span>
+                    </li>
+                    <li className="flex items-center gap-3 p-2 rounded-lg bg-black/10 dark:bg-white/10 border border-black/30 dark:border-white/30">
+                      <span className="text-2xl">⚫</span>
+                      <span><strong className="text-black dark:text-white">Floor 8:</strong> <span className="text-foreground">Black Master (Reflexive Mastery)</span></span>
+                    </li>
                   </ul>
-                  <p className="mb-4">
+                  <p className="text-foreground/90">
                     Each floor requires completing specific rooms to mastery, maintaining streaks, and passing comprehensive assessments before advancing to the next level.
                   </p>
                 </div>
