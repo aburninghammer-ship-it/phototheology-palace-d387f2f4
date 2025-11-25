@@ -32,6 +32,26 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
           return;
         }
 
+        // CRITICAL: Check if previous floor is completed (for floors 2-8)
+        if (floorNumber > 1) {
+          const { data: previousFloorProgress, error: floorError } = await supabase
+            .from("user_floor_progress")
+            .select("floor_completed_at, floor_number")
+            .eq("user_id", user.id)
+            .eq("floor_number", floorNumber - 1)
+            .maybeSingle();
+
+          if (floorError) throw floorError;
+
+          // If previous floor is not completed, lock this room
+          if (!previousFloorProgress?.floor_completed_at) {
+            setMissingPrerequisites([`Complete all rooms on Floor ${floorNumber - 1} first`]);
+            setIsUnlocked(false);
+            setLoading(false);
+            return;
+          }
+        }
+
         const floor = palaceFloors.find(f => f.number === floorNumber);
         const room = floor?.rooms.find(r => r.id === roomId);
 
