@@ -66,7 +66,7 @@ const TabsList = React.forwardRef<
         </Button>
       )}
       
-      <div ref={scrollContainerRef} className="overflow-x-auto scrollbar-hide">
+      <div ref={scrollContainerRef} className="overflow-x-auto">
         <TabsPrimitive.List
           ref={ref}
           className={cn(
