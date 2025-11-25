@@ -222,6 +222,104 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: Pri
     });
   };
 
+  const handleExportStudy = () => {
+    if (!annotation) return;
+    
+    let exportText = `# ${book} ${chapter}:${verse} - Phototheology Analysis\n\n`;
+    exportText += `## Verse Text\n"${verseText}"\n\n`;
+    
+    // Principles
+    exportText += `## Principles Applied\n\n`;
+    
+    if (annotation.principles.dimensions && annotation.principles.dimensions.length > 0) {
+      exportText += `**Dimensions:** ${annotation.principles.dimensions.join(", ")}\n`;
+    }
+    if (annotation.principles.cycles && annotation.principles.cycles.length > 0) {
+      exportText += `**Cycles:** ${annotation.principles.cycles.join(", ")}\n`;
+    }
+    if (annotation.principles.horizons && annotation.principles.horizons.length > 0) {
+      exportText += `**Horizons:** ${annotation.principles.horizons.join(", ")}\n`;
+    }
+    if (annotation.principles.timeZones && annotation.principles.timeZones.length > 0) {
+      exportText += `**Time Zones:** ${annotation.principles.timeZones.join(", ")}\n`;
+    }
+    if (annotation.principles.sanctuary && annotation.principles.sanctuary.length > 0) {
+      exportText += `**Sanctuary:** ${annotation.principles.sanctuary.join(", ")}\n`;
+    }
+    if (annotation.principles.feasts && annotation.principles.feasts.length > 0) {
+      exportText += `**Feasts:** ${annotation.principles.feasts.join(", ")}\n`;
+    }
+    if (annotation.principles.walls && annotation.principles.walls.length > 0) {
+      exportText += `**Walls:** ${annotation.principles.walls.join(", ")}\n`;
+    }
+    
+    // Rooms
+    if (annotation.roomsUsed && annotation.roomsUsed.length > 0) {
+      exportText += `\n**Palace Rooms:** ${annotation.roomsUsed.join(", ")}\n`;
+    }
+    if (annotation.floorsCovered && annotation.floorsCovered.length > 0) {
+      exportText += `**Floors Covered:** ${annotation.floorsCovered.join(", ")}\n`;
+    }
+    
+    // Commentary
+    if (annotation.commentary) {
+      exportText += `\n## Commentary\n${annotation.commentary}\n`;
+    }
+    
+    // Christ Center
+    if (annotation.christCenter) {
+      exportText += `\n## Christ-Centered Analysis\n${annotation.christCenter}\n`;
+    }
+    
+    // Room Analysis
+    if (annotation.roomAnalysis && Object.keys(annotation.roomAnalysis).length > 0) {
+      exportText += `\n## Room Insights\n`;
+      Object.entries(annotation.roomAnalysis).forEach(([room, insight]) => {
+        exportText += `\n**${room}**\n${insight}\n`;
+      });
+    }
+    
+    // Scripture Links
+    if (scriptureLinks.length > 0) {
+      exportText += `\n## Scripture Links\n`;
+      scriptureLinks.forEach((link) => {
+        exportText += `\n- **${link.verse}**: ${link.text}\n  *Connection:* ${link.connection}\n  *Principle:* ${link.principle}\n`;
+      });
+    }
+    
+    // Principle Results
+    if (principleResults.length > 0 && selectedPrinciple) {
+      exportText += `\n## ${selectedPrinciple} Analysis\n`;
+      principleResults.forEach((result) => {
+        exportText += `\n- **${result.verse}**: ${result.text}\n  *${result.connection}*\n`;
+      });
+    }
+    
+    // Cross References
+    if (annotation.crossReferences && annotation.crossReferences.length > 0) {
+      exportText += `\n## Cross References\n`;
+      annotation.crossReferences.forEach((ref) => {
+        exportText += `\n- ${ref.book} ${ref.chapter}:${ref.verse} (${ref.confidence}% confidence)\n  *${ref.reason}*\n`;
+      });
+    }
+    
+    // Create and download file
+    const blob = new Blob([exportText], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${book}_${chapter}_${verse}_analysis.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Study Exported",
+      description: "Analysis saved as Markdown file",
+    });
+  };
+
   if (loading || !annotation) {
     return (
       <Card className="sticky top-24">
@@ -588,6 +686,7 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose }: Pri
             Save as Gem
           </Button>
           <Button
+            onClick={handleExportStudy}
             variant="outline"
             size="sm"
             className="flex-1"
