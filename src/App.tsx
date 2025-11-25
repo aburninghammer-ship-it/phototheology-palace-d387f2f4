@@ -157,6 +157,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const PalaceExplorer = lazy(() => import("./pages/PalaceExplorer"));
 
 const queryClient = new QueryClient();
 
@@ -216,6 +217,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/palace" element={<ProtectedRoute><Palace /></ProtectedRoute>} />
+            <Route path="/palace/explorer" element={<ProtectedRoute><PalaceExplorer /></ProtectedRoute>} />
             <Route path="/palace/floor/:floorNumber" element={<ProtectedRoute><FloorDetail /></ProtectedRoute>} />
             <Route path="/palace/floor/:floorNumber/room/:roomId" element={<ProtectedRoute><RoomDetail /></ProtectedRoute>} />
             
