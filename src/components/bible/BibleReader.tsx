@@ -24,6 +24,7 @@ import { VerseImageAttachment } from "./VerseImageAttachment";
 import { ApologeticsPanel } from "./ApologeticsPanel";
 import { PTCodeSearch } from "./PTCodeSearch";
 import { ThematicTagging } from "./ThematicTagging";
+import { ThemeCrossReference } from "./ThemeCrossReference";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -425,6 +426,9 @@ export const BibleReader = () => {
                 chapter={chapter}
                 verse={selectedVerse}
                 verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+              />
+              <ThemeCrossReference
+                currentVerse={`${book} ${chapter}:${selectedVerse}`}
               />
             </>
           ) : (
