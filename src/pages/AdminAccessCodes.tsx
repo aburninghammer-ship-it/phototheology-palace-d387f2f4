@@ -156,7 +156,7 @@ export default function AdminAccessCodes() {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="email" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="w-full">
                 <TabsTrigger value="email">
                   <Mail className="h-4 w-4 mr-2" />
                   Email Invitation
