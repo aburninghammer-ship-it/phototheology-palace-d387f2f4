@@ -17,6 +17,16 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import demo5Dimensions from "@/assets/demo-5-dimensions.png";
+import demoTranslation from "@/assets/demo-translation.png";
+import demoNavigation from "@/assets/demo-navigation.png";
+import demoPTCodes from "@/assets/demo-pt-codes.png";
+import demoStudyButtons from "@/assets/demo-study-buttons.png";
+import demoStudyModes from "@/assets/demo-study-modes.png";
+import demoProgress from "@/assets/demo-progress.png";
+import demoMemory from "@/assets/demo-memory.png";
+import demoCommentary from "@/assets/demo-commentary.png";
+import demoApologetics from "@/assets/demo-apologetics.png";
+import demoTags from "@/assets/demo-tags.png";
 
 const demoSteps = [
   {
@@ -39,7 +49,7 @@ const demoSteps = [
       "Instant chapter reload"
     ],
     icon: Languages,
-    image: null,
+    image: demoTranslation,
   },
   {
     title: "Word Search",
@@ -50,7 +60,7 @@ const demoSteps = [
       "Jump directly to verses"
     ],
     icon: Search,
-    image: null,
+    image: demoNavigation,
   },
   {
     title: "PT Codes Search",
@@ -61,7 +71,7 @@ const demoSteps = [
       "Learn principle meanings"
     ],
     icon: Code,
-    image: null,
+    image: demoPTCodes,
   },
   {
     title: "Study Modes",
@@ -73,7 +83,7 @@ const demoSteps = [
       "Commentary - Insights"
     ],
     icon: Layers,
-    image: null,
+    image: demoStudyButtons,
   },
   {
     title: "Principle Modes",
@@ -84,7 +94,7 @@ const demoSteps = [
       "Select any PT principle"
     ],
     icon: Sparkles,
-    image: null,
+    image: demoStudyModes,
   },
   {
     title: "Commentary Panel",
@@ -95,7 +105,7 @@ const demoSteps = [
       "Read expert analysis"
     ],
     icon: MessageSquare,
-    image: null,
+    image: demoCommentary,
   },
   {
     title: "Dimension Filter",
