@@ -15,11 +15,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { GlobalSearch } from "./GlobalSearch";
 import { NavigationStyleToggle } from "./NavigationStyleToggle";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 
 export const SimplifiedNav = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { preferences } = useUserPreferences();
 
   const closeMobile = () => setMobileOpen(false);
 
@@ -103,65 +105,81 @@ export const SimplifiedNav = () => {
               <Link to="/dashboard"><Home className="h-4 w-4 mr-1" />Dashboard</Link>
             </Button>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <BookOpen className="h-4 w-4 mr-1" />Study
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                {studyLinks.map((link) => (
-                  <DropdownMenuItem key={link.to} asChild>
-                    <Link to={link.to}>{link.label}</Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {preferences.navigation_style === "full" ? (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <BookOpen className="h-4 w-4 mr-1" />Study
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    {studyLinks.map((link) => (
+                      <DropdownMenuItem key={link.to} asChild>
+                        <Link to={link.to}>{link.label}</Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Gamepad2 className="h-4 w-4 mr-1" />Practice
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                {practiceLinks.map((link) => (
-                  <DropdownMenuItem key={link.to} asChild>
-                    <Link to={link.to}>{link.label}</Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Gamepad2 className="h-4 w-4 mr-1" />Practice
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    {practiceLinks.map((link) => (
+                      <DropdownMenuItem key={link.to} asChild>
+                        <Link to={link.to}>{link.label}</Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <GraduationCap className="h-4 w-4 mr-1" />Learn
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                {learnLinks.map((link) => (
-                  <DropdownMenuItem key={link.to} asChild>
-                    <Link to={link.to}>{link.label}</Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <GraduationCap className="h-4 w-4 mr-1" />Learn
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    {learnLinks.map((link) => (
+                      <DropdownMenuItem key={link.to} asChild>
+                        <Link to={link.to}>{link.label}</Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Users className="h-4 w-4 mr-1" />Community
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Users className="h-4 w-4 mr-1" />Community
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    {communityLinks.map((link) => (
+                      <DropdownMenuItem key={link.to} asChild>
+                        <Link to={link.to}>{link.label}</Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/bible"><BookOpen className="h-4 w-4 mr-1" />Bible</Link>
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                {communityLinks.map((link) => (
-                  <DropdownMenuItem key={link.to} asChild>
-                    <Link to={link.to}>{link.label}</Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/palace"><GraduationCap className="h-4 w-4 mr-1" />Palace</Link>
+                </Button>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/games"><Gamepad2 className="h-4 w-4 mr-1" />Games</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
