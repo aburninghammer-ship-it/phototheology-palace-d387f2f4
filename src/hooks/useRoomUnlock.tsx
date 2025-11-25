@@ -33,6 +33,7 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
         }
 
         // CRITICAL: Check if previous floor is completed (for floors 2-8)
+        // Only enforce this if floor progress system is being used
         if (floorNumber > 1) {
           const { data: previousFloorProgress, error: floorError } = await supabase
             .from("user_floor_progress")
@@ -43,8 +44,17 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
 
           if (floorError) throw floorError;
 
-          // If previous floor is not completed, lock this room
-          if (!previousFloorProgress?.floor_completed_at) {
+          // Check if ANY floor progress exists for this user
+          const { data: anyFloorProgress } = await supabase
+            .from("user_floor_progress")
+            .select("id")
+            .eq("user_id", user.id)
+            .limit(1)
+            .maybeSingle();
+
+          // Only enforce floor completion if user has floor progress records
+          // This maintains backward compatibility for existing users
+          if (anyFloorProgress && !previousFloorProgress?.floor_completed_at) {
             setMissingPrerequisites([`Complete all rooms on Floor ${floorNumber - 1} first`]);
             setIsUnlocked(false);
             setLoading(false);
