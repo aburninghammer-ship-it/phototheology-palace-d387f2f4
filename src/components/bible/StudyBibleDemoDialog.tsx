@@ -16,6 +16,7 @@ import {
   Filter
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import demo5Dimensions from "@/assets/demo-5-dimensions.png";
 
 const demoSteps = [
   {
@@ -27,6 +28,7 @@ const demoSteps = [
       "Phototheology principle analysis"
     ],
     icon: BookOpen,
+    image: null,
   },
   {
     title: "Choose Your Translation",
@@ -37,6 +39,7 @@ const demoSteps = [
       "Instant chapter reload"
     ],
     icon: Languages,
+    image: null,
   },
   {
     title: "Word Search",
@@ -47,6 +50,7 @@ const demoSteps = [
       "Jump directly to verses"
     ],
     icon: Search,
+    image: null,
   },
   {
     title: "PT Codes Search",
@@ -57,6 +61,7 @@ const demoSteps = [
       "Learn principle meanings"
     ],
     icon: Code,
+    image: null,
   },
   {
     title: "Study Modes",
@@ -68,6 +73,7 @@ const demoSteps = [
       "Commentary - Insights"
     ],
     icon: Layers,
+    image: null,
   },
   {
     title: "Principle Modes",
@@ -78,6 +84,7 @@ const demoSteps = [
       "Select any PT principle"
     ],
     icon: Sparkles,
+    image: null,
   },
   {
     title: "Commentary Panel",
@@ -88,6 +95,7 @@ const demoSteps = [
       "Read expert analysis"
     ],
     icon: MessageSquare,
+    image: null,
   },
   {
     title: "Dimension Filter",
@@ -98,6 +106,7 @@ const demoSteps = [
       "Combine for deeper study"
     ],
     icon: Filter,
+    image: demo5Dimensions,
   },
 ];
 
@@ -182,15 +191,25 @@ export const StudyBibleDemoDialog = ({ open, onOpenChange }: StudyBibleDemoDialo
                   </div>
                 </div>
 
-                {/* Visual Placeholder */}
-                <div className="bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 rounded-lg p-8 mb-6 border-2 border-dashed border-primary/20">
-                  <div className="text-center">
-                    <Icon className="h-16 w-16 text-primary/30 mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">
-                      Try this feature in the Study Bible below
-                    </p>
+                {/* Screenshot or Visual */}
+                {currentStepData.image ? (
+                  <div className="rounded-lg overflow-hidden mb-6 border-2 border-primary/20">
+                    <img 
+                      src={currentStepData.image} 
+                      alt={currentStepData.title}
+                      className="w-full h-auto"
+                    />
                   </div>
-                </div>
+                ) : (
+                  <div className="bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 rounded-lg p-8 mb-6 border-2 border-dashed border-primary/20">
+                    <div className="text-center">
+                      <Icon className="h-16 w-16 text-primary/30 mx-auto mb-3" />
+                      <p className="text-sm text-muted-foreground">
+                        Try this feature in the Study Bible below
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Key Highlights */}
                 <div>
