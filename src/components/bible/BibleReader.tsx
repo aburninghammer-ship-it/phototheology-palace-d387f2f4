@@ -19,6 +19,7 @@ import { useBookmarks } from "@/hooks/useBookmarks";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { ImportPassageDialog } from "@/components/series-builder/ImportPassageDialog";
+import { useBibleState } from "@/hooks/useBibleState";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -29,14 +30,23 @@ export const BibleReader = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedVerse, setSelectedVerse] = useState<number | null>(null);
-  const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
-  const [principleMode, setPrincipleMode] = useState(false);
-  const [chainReferenceMode, setChainReferenceMode] = useState(false);
-  const [commentaryMode, setCommentaryMode] = useState(false);
-  const [jeevesMode, setJeevesMode] = useState(false);
-  const [strongsMode, setStrongsMode] = useState(false);
   const [highlightedVerses, setHighlightedVerses] = useState<number[]>([]);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  
+  const {
+    selectedVerses,
+    setSelectedVerses,
+    showStrongs: strongsMode,
+    setShowStrongs: setStrongsMode,
+    showPrinciples: principleMode,
+    setShowPrinciples: setPrincipleMode,
+    showChainRef: chainReferenceMode,
+    setShowChainRef: setChainReferenceMode,
+    showCommentary: commentaryMode,
+    setShowCommentary: setCommentaryMode,
+    showAI: jeevesMode,
+    setShowAI: setJeevesMode,
+  } = useBibleState(book, chapterParam);
   
   const { trackReading } = useReadingHistory();
   const { addBookmark, isBookmarked } = useBookmarks();
