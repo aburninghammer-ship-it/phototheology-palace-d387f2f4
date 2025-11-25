@@ -431,29 +431,62 @@ You're warm, personable, and genuinely excited about studying Scripture together
       // Card Deck Help Mode - provide guidance for applying a principle
       const textTypeLabel = textType === "story" ? "story" : "verse";
       
-      // Get application-based prompt based on room
-      const getApplicationPrompt = (roomTag: string, roomName: string) => {
-        // For Three Heavens and Cycles rooms, use application-based language
-        if (roomTag === "1H" || roomTag === "DoL¹/NE¹" || roomName.includes("First Heaven")) {
-          return `Apply something from the First Heaven (1H/DoL¹/NE¹) - the Babylonian destruction and restoration cycle - to this ${textTypeLabel}.`;
-        }
-        if (roomTag === "2H" || roomTag === "DoL²/NE²" || roomName.includes("Second Heaven")) {
-          return `Connect a theme, text, or story from the Second Heaven (2H/DoL²/NE²) - the 70 AD temple destruction and New-Covenant order - to this ${textTypeLabel}.`;
-        }
-        if (roomTag === "3H" || roomTag === "DoL³/NE³" || roomName.includes("Third Heaven")) {
-          return `Apply something from the Third Heaven (3H/DoL³/NE³) - the final cosmic judgment and new creation - to this ${textTypeLabel}.`;
-        }
+      // Special handling for Room 66 (R66)
+      if (roomId === "r66" || roomTag === "R66") {
+        systemPrompt = `You are Jeeves, a warm and encouraging study guide helping students trace themes through all 66 books of the Bible.
+
+**TASK:** For Room 66 (R66), the student must trace one theme through all 66 books with a crisp claim per book.
+
+**YOUR RESPONSE MUST:**
+1. **Identify 4-6 books of the Bible** that strongly connect to this ${textTypeLabel} through a common theme
+2. For each book, provide:
+   - The book name
+   - A specific verse or passage reference from that book
+   - A brief explanation of how it connects to the theme
+3. Suggest what overarching theme ties these books together
+4. Encourage the student to expand this to more books
+
+**FORMATTING:**
+- Use clear sections for each book
+- Use emojis (📖 ✨ 🔍 💡)
+- Keep tone warm and encouraging
+- Use bullet points for clarity
+
+${PALACE_SCHEMA}`;
+
+        userPrompt = `The student is working on Room 66 (R66) - tracing a theme through the Bible.
+
+${textTypeLabel === "verse" ? "Verse:" : "Story:"} ${verseText}
+
+${userAnswer ? `Their current work: ${userAnswer}` : "They haven't started yet."}
+
+List at least 4 books of the Bible that connect to this ${textTypeLabel}, with specific verse references and explanations of the connections. Help them see the thread that weaves through Scripture.`;
+
+      } else {
+        // Original help mode logic for other rooms
+        // Get application-based prompt based on room
+        const getApplicationPrompt = (roomTag: string, roomName: string) => {
+          // For Three Heavens and Cycles rooms, use application-based language
+          if (roomTag === "1H" || roomTag === "DoL¹/NE¹" || roomName.includes("First Heaven")) {
+            return `Apply something from the First Heaven (1H/DoL¹/NE¹) - the Babylonian destruction and restoration cycle - to this ${textTypeLabel}.`;
+          }
+          if (roomTag === "2H" || roomTag === "DoL²/NE²" || roomName.includes("Second Heaven")) {
+            return `Connect a theme, text, or story from the Second Heaven (2H/DoL²/NE²) - the 70 AD temple destruction and New-Covenant order - to this ${textTypeLabel}.`;
+          }
+          if (roomTag === "3H" || roomTag === "DoL³/NE³" || roomName.includes("Third Heaven")) {
+            return `Apply something from the Third Heaven (3H/DoL³/NE³) - the final cosmic judgment and new creation - to this ${textTypeLabel}.`;
+          }
+          
+          // For Cycle rooms, use application-based language
+          if (roomTag.startsWith("@")) {
+            return `Apply the ${roomName} pattern/cycle to this ${textTypeLabel}.`;
+          }
+          
+          // For other rooms, use the core principle
+          return `Apply ${roomTag} (${roomName}) to this ${textTypeLabel}.`;
+        };
         
-        // For Cycle rooms, use application-based language
-        if (roomTag.startsWith("@")) {
-          return `Apply the ${roomName} pattern/cycle to this ${textTypeLabel}.`;
-        }
-        
-        // For other rooms, use the core principle
-        return `Apply ${roomTag} (${roomName}) to this ${textTypeLabel}.`;
-      };
-      
-      systemPrompt = `You are Jeeves, a warm and encouraging study guide helping students apply Phototheology principles to biblical texts.
+        systemPrompt = `You are Jeeves, a warm and encouraging study guide helping students apply Phototheology principles to biblical texts.
 
 **TASK:** Provide helpful guidance for applying ${roomTag} (${roomName}) to the student's ${textTypeLabel}.
 
@@ -470,19 +503,53 @@ Application prompt: ${getApplicationPrompt(roomTag, roomName)}
 
 ${PALACE_SCHEMA}`;
 
-      userPrompt = `The student is working on applying ${roomTag} (${roomName}) to this ${textTypeLabel}:
+        userPrompt = `The student is working on applying ${roomTag} (${roomName}) to this ${textTypeLabel}:
 
 ${textTypeLabel === "verse" ? "Verse:" : "Story:"} ${verseText}
 
 ${userAnswer ? `Their current work: ${userAnswer}` : "They haven't started yet."}
 
 Provide guidance on how to APPLY ${roomTag} to this ${textTypeLabel}. Help them see connections, patterns, or applications. Give 2-3 specific suggestions or insights they can use.`;
+      }
 
     } else if (mode === "grade") {
       // Card Deck Grade Mode - evaluate student's application
       const textTypeLabel = textType === "story" ? "story" : "verse";
       
-      systemPrompt = `You are Jeeves, a warm and insightful teacher evaluating how well students APPLY Phototheology principles to biblical texts.
+      // Special handling for Room 66 (R66)
+      if (roomId === "r66" || roomTag === "R66") {
+        systemPrompt = `You are Jeeves, a warm and insightful teacher evaluating Room 66 (R66) applications.
+
+**TASK:** Evaluate how well the student traced a theme through multiple books of the Bible.
+
+**EVALUATION CRITERIA:**
+• Did they identify at least 4 books with specific connections?
+• Are the connections biblically sound and relevant?
+• Did they provide verse references for each book?
+• Is there a clear, traceable theme that unifies the books?
+• Could they expand this to more books?
+
+**FORMATTING:**
+- Start with warm encouragement and celebration of their work
+- Use emojis (✅ 💡 ⭐ 🎯 📖)
+- Affirm specific books/connections they made
+- Suggest 2-3 additional books they could add
+- End with an encouraging note about the unified theme
+
+${PALACE_SCHEMA}`;
+
+        userPrompt = `Evaluate this Room 66 (R66) application:
+
+${textTypeLabel === "verse" ? "Verse:" : "Story:"} ${verseText}
+
+Student's Application:
+${userAnswer}
+
+Provide warm, insightful feedback that affirms the books and connections they identified, and gently suggest 2-3 additional books where this theme appears.`;
+
+      } else {
+        // Original grade mode logic for other rooms
+        systemPrompt = `You are Jeeves, a warm and insightful teacher evaluating how well students APPLY Phototheology principles to biblical texts.
 
 **TASK:** Evaluate this student's application of ${roomTag} (${roomName}) to their ${textTypeLabel}.
 
@@ -501,7 +568,7 @@ Provide guidance on how to APPLY ${roomTag} to this ${textTypeLabel}. Help them 
 
 ${PALACE_SCHEMA}`;
 
-      userPrompt = `Evaluate this application of ${roomTag} (${roomName}):
+        userPrompt = `Evaluate this application of ${roomTag} (${roomName}):
 
 ${textTypeLabel === "verse" ? "Verse:" : "Story:"} ${verseText}
 
@@ -509,6 +576,7 @@ Student's Application:
 ${userAnswer}
 
 Provide warm, insightful feedback that affirms what they did well and gently guides them to deepen their application.`;
+      }
 
     } else if (mode === "strongs-lookup") {
       // Import biblesdk for Strong's lookup

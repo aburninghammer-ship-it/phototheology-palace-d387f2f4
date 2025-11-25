@@ -108,6 +108,14 @@ const CYCLE_CARDS = [
   { code: "3H", name: "Third Heaven", question: "Connect a theme or story from the Third Heaven (Final Judgment/New Creation) to this text", floor: 6 },
 ];
 
+// Room 66 Card
+const ROOM_66_CARD = { 
+  code: "R66", 
+  name: "Room 66", 
+  question: "Trace one theme through all 66 books with a crisp claim per book", 
+  floor: 4 
+};
+
 export default function CardDeck() {
   const { toast } = useToast();
   const [textType, setTextType] = useState<"verse" | "story">("verse");
@@ -232,6 +240,16 @@ export default function CardDeck() {
         floor: cycle.floor,
         floorColor: FLOOR_COLORS[(cycle.floor - 1) % FLOOR_COLORS.length],
       });
+    });
+    
+    // Add Room 66 card
+    cards.push({
+      id: ROOM_66_CARD.code.toLowerCase(),
+      code: ROOM_66_CARD.code,
+      name: ROOM_66_CARD.name,
+      question: ROOM_66_CARD.question,
+      floor: ROOM_66_CARD.floor,
+      floorColor: FLOOR_COLORS[(ROOM_66_CARD.floor - 1) % FLOOR_COLORS.length],
     });
     
     setAllCards(cards);
@@ -745,59 +763,61 @@ export default function CardDeck() {
                           flippedCards.has(card.id) ? "rotate-y-180" : ""
                         }`}
                       >
-                        {/* Front of card (Palace with Principle Code) */}
+                         {/* Front of card (Palace with Principle Code) */}
                         <div
-                          className="absolute inset-0 rounded-lg border-2 shadow-xl backface-hidden overflow-hidden glow-effect"
+                          className={`absolute inset-0 rounded-lg border-2 shadow-xl backface-hidden overflow-hidden glow-effect bg-gradient-to-br ${card.floorColor}`}
                           style={{
                             backgroundImage: `url(${palaceImage})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
+                            backgroundBlendMode: 'overlay',
                           }}
                         >
-                          <div className={`absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70`} />
+                          <div className={`absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60`} />
                           <div className="relative h-full flex flex-col items-center justify-center p-4 text-center">
-                            <div className="absolute top-2 left-0 right-0 text-xs text-amber-300/90 font-bold tracking-wider">
+                            <div className="absolute top-2 left-0 right-0 text-xs text-white/90 font-bold tracking-wider drop-shadow-lg">
                               FLOOR {card.floor}
                             </div>
-                            <div className="text-4xl font-bold mb-2 text-amber-100 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                            <div className="text-4xl font-bold mb-2 text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                               {card.code}
                             </div>
-                            <div className="text-xs font-semibold text-amber-200/90 drop-shadow-lg px-2">
+                            <div className="text-xs font-semibold text-white/95 drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)] px-2">
                               {card.name}
                             </div>
                             <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
-                              <div className="w-1 h-1 rounded-full bg-amber-400/60" />
-                              <div className="w-1 h-1 rounded-full bg-amber-400/60" />
-                              <div className="w-1 h-1 rounded-full bg-amber-400/60" />
+                              <div className="w-1 h-1 rounded-full bg-white/70 shadow-lg" />
+                              <div className="w-1 h-1 rounded-full bg-white/70 shadow-lg" />
+                              <div className="w-1 h-1 rounded-full bg-white/70 shadow-lg" />
                             </div>
                           </div>
                         </div>
 
                         {/* Back of card (Ornate Design with Question) */}
                         <div
-                          className="absolute inset-0 rounded-lg border-2 border-amber-500/50 shadow-xl backface-hidden rotate-y-180 overflow-hidden"
+                          className={`absolute inset-0 rounded-lg border-2 shadow-xl backface-hidden rotate-y-180 overflow-hidden bg-gradient-to-br ${card.floorColor}`}
                           style={{
                             backgroundImage: `url(${palaceImage})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
-                            filter: 'brightness(0.7) sepia(0.3) hue-rotate(10deg)',
+                            filter: 'brightness(0.6) sepia(0.2)',
+                            backgroundBlendMode: 'overlay',
                           }}
                         >
                           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/60" />
-                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(251,191,36,0.15)_0%,_transparent_60%)]" />
-                          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1)_0%,_transparent_60%)]" />
+                          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                           <div className="relative h-full flex flex-col items-center justify-center p-4 text-center">
-                            <div className="text-xs font-bold text-amber-400/80 mb-3 tracking-wider drop-shadow-lg">
+                            <div className="text-xs font-bold text-white/90 mb-3 tracking-wider drop-shadow-lg">
                               FLOOR {card.floor} • {card.code}
                             </div>
-                            <p className="text-xs leading-relaxed text-amber-50 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+                            <p className="text-xs leading-relaxed text-white font-medium drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
                               {card.question}
                             </p>
                             <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50 shadow-lg" />
-                              <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50 shadow-lg" />
-                              <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50 shadow-lg" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg" />
                             </div>
                           </div>
                         </div>
