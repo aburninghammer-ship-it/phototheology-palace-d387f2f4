@@ -213,7 +213,45 @@ const PTMultiplayerGame = () => {
             .eq('game_id', gameId)
             .order('joined_at');
           
-          if (updatedPlayers) setPlayers(updatedPlayers);
+          if (updatedPlayers) {
+            setPlayers(updatedPlayers);
+            
+            // For vs-Jeeves games, auto-add Jeeves if not present
+            const isVsJeeves = gameRes.data.game_mode === '1v1-jeeves' || gameRes.data.game_mode === 'team-vs-jeeves';
+            if (isVsJeeves) {
+              const jeevesExists = updatedPlayers.some(p => p.display_name.includes('Jeeves'));
+              if (!jeevesExists) {
+                // Add Jeeves as a player
+                const { data: jeevesPlayer } = await supabase
+                  .from('pt_multiplayer_players')
+                  .insert({
+                    game_id: gameId,
+                    user_id: 'jeeves-ai',
+                    display_name: '🤖 Jeeves AI',
+                  })
+                  .select()
+                  .single();
+                
+                if (jeevesPlayer) {
+                  // Refresh players again
+                  const { data: finalPlayers } = await supabase
+                    .from('pt_multiplayer_players')
+                    .select('*')
+                    .eq('game_id', gameId)
+                    .order('joined_at');
+                  
+                  if (finalPlayers && finalPlayers.length >= 2 && gameRes.data.status === 'waiting') {
+                    setPlayers(finalPlayers);
+                    // Auto-start the game
+                    await startGameAutomatically(gameId, finalPlayers);
+                  }
+                }
+              } else if (updatedPlayers.length >= 2 && gameRes.data.status === 'waiting') {
+                // Jeeves exists, auto-start if still waiting
+                await startGameAutomatically(gameId, updatedPlayers);
+              }
+            }
+          }
         }
       }
       
@@ -238,6 +276,33 @@ const PTMultiplayerGame = () => {
     }
 
     setLoading(false);
+  };
+
+  const startGameAutomatically = async (gId: string, playersList: Player[]) => {
+    try {
+      // Deal cards first
+      const { error: dealError } = await supabase.functions.invoke('deal-pt-cards', {
+        body: { gameId: gId }
+      });
+
+      if (dealError) {
+        console.error("Error auto-dealing cards:", dealError);
+        return;
+      }
+
+      // Activate the game
+      await supabase
+        .from('pt_multiplayer_games')
+        .update({ 
+          status: 'active',
+          current_turn_player_id: playersList[0]?.id ?? null,
+        })
+        .eq('id', gId);
+      
+      console.log("Auto-started vs-Jeeves game");
+    } catch (error) {
+      console.error("Error auto-starting game:", error);
+    }
   };
 
   const subscribeToUpdates = () => {
