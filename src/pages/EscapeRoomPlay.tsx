@@ -170,17 +170,25 @@ export default function EscapeRoomPlay() {
       toast.success(isCorrect ? `Perfect! +${pointsEarned} pts` : `Partial credit: +${pointsEarned} pts`);
 
       // Move to next puzzle or finish
+      console.log('Puzzle completed:', { currentPuzzleIndex, totalPuzzles: puzzles.length });
+      
       if (currentPuzzleIndex < puzzles.length - 1) {
         const nextPuzzleNumber = currentPuzzleIndex + 2; // +2 because index is 0-based
+        console.log('Moving to next puzzle:', nextPuzzleNumber);
         toast.info(`Moving to Puzzle ${nextPuzzleNumber}...`);
         
         // Update state immediately
-        setCurrentPuzzleIndex(prev => prev + 1);
+        setCurrentPuzzleIndex(prev => {
+          const newIndex = prev + 1;
+          console.log('New puzzle index:', newIndex);
+          return newIndex;
+        });
         setSubmittedVerses("");
         setRoomJustification("");
         setPrincipleUsed("");
         setShowHint(false);
       } else {
+        console.log('All puzzles complete, finishing attempt');
         finishAttempt(true);
       }
     } catch (error) {
