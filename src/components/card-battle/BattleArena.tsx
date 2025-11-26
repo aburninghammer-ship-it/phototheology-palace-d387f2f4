@@ -549,6 +549,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
           cardCode: randomCard,
           responseText: randomResponse,
           storyText: battle.story_text,
+          userDisplayName: jeevesPlayer.display_name,
         },
       });
 
