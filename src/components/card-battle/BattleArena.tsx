@@ -177,6 +177,36 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
   const [showJudgmentFeedback, setShowJudgmentFeedback] = useState(false);
   const [userDisplayName, setUserDisplayName] = useState<string>("You");
   const [isUserTurn, setIsUserTurn] = useState(true);
+  const [fullStoryText, setFullStoryText] = useState<string>(battle.story_text);
+
+  // Fetch full verse text if only a reference is provided
+  useEffect(() => {
+    const fetchVerseText = async () => {
+      const referencePattern = /^([1-3]?\s?[A-Za-z]+)\s+(\d+):(\d+)$/;
+      const match = battle.story_text.match(referencePattern);
+      
+      if (match) {
+        const [, book, chapter, verse] = match;
+        try {
+          const { data: bibleData, error: bibleError } = await supabase.functions.invoke('bible-api', {
+            body: { book: book.trim(), chapter: parseInt(chapter) }
+          });
+          
+          if (bibleData?.verses && !bibleError) {
+            const verseNum = parseInt(verse);
+            const verseData = bibleData.verses.find((v: any) => v.verse === verseNum);
+            if (verseData) {
+              setFullStoryText(verseData.text);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching verse text:', error);
+        }
+      }
+    };
+    
+    fetchVerseText();
+  }, [battle.story_text]);
 
   useEffect(() => {
     loadUserProfile();
@@ -603,11 +633,9 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
             <div className="flex items-center gap-2 mb-2">
               <Flame className="h-5 w-5 text-orange-400" />
               <h3 className="font-bold">The Story</h3>
-              {battle.story_reference && (
-                <Badge variant="outline" className="text-xs">{battle.story_reference}</Badge>
-              )}
+              <Badge variant="outline" className="text-xs">{battle.story_text}</Badge>
             </div>
-            <p className="text-sm text-purple-100">{battle.story_text}</p>
+            <p className="text-sm text-purple-100">{fullStoryText}</p>
           </CardContent>
         </Card>
       </div>
