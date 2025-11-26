@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Plus, Trash2, GripVertical, Save } from "lucide-react";
 import { toast } from "sonner";
-import { ScriptureInsertDialog } from "@/components/studies/ScriptureInsertDialog";
-import type { Verse } from "@/types/bible";
+import { MemoryVerseSearchDialog } from "@/components/memory/MemoryVerseSearchDialog";
 
 export default function MemoryListEditor() {
   const { listId } = useParams();
@@ -60,31 +59,20 @@ export default function MemoryListEditor() {
     }
   };
 
-  const handleInsertVerse = async (verseText: string) => {
-    // Parse verse reference from the text
-    const match = verseText.match(/^(.+?)\s+(\d+:\d+)\s+-\s+(.+)$/);
-    if (!match) {
-      toast.error("Invalid verse format");
-      return;
-    }
-
-    const [, book, reference, text] = match;
-    const verseReference = `${book} ${reference}`;
-
+  const handleInsertVerse = async (verse: { reference: string; text: string }) => {
     try {
       const { error } = await supabase
         .from("memory_verse_list_items")
         .insert({
           list_id: listId,
-          verse_reference: verseReference,
-          verse_text: text.trim(),
+          verse_reference: verse.reference,
+          verse_text: verse.text,
           order_index: verses.length,
         });
 
       if (error) throw error;
       toast.success("Verse added!");
       fetchVerses();
-      setShowVerseInsert(false);
     } catch (error) {
       console.error("Error adding verse:", error);
       toast.error("Failed to add verse");
@@ -239,7 +227,11 @@ export default function MemoryListEditor() {
         </div>
       </div>
 
-      <ScriptureInsertDialog onInsert={handleInsertVerse} />
+      <MemoryVerseSearchDialog
+        open={showVerseInsert}
+        onOpenChange={setShowVerseInsert}
+        onAddVerse={handleInsertVerse}
+      />
     </div>
   );
 }
