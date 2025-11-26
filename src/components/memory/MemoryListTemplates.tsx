@@ -152,20 +152,6 @@ export function MemoryListTemplates({ userId }: MemoryListTemplatesProps) {
 
       if (error) throw error;
 
-      // Add verses to the list
-      const verseItems = template.verses.map((verse, index) => ({
-        list_id: data.id,
-        verse_reference: verse,
-        order_index: index,
-        verse_text: "", // Will be populated when user adds
-      }));
-
-      const { error: itemsError } = await supabase
-        .from("memory_verse_list_items")
-        .insert(verseItems);
-
-      if (itemsError) throw itemsError;
-
       toast.success(`Created "${template.title}" list!`);
       navigate(`/memory/list/${data.id}`);
     } catch (error) {
