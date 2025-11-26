@@ -377,19 +377,28 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
   const handleJeevesPlay = async () => {
     console.log('🤖 Jeeves Play button clicked!');
     console.log('Players:', players);
-    console.log('Current turn player:', battle.current_turn_player);
-    
-    // Find whichever Jeeves player's turn it is
-    const jeevesPlayer = players.find(p => 
-      p.player_type === 'ai' && p.player_id === battle.current_turn_player
-    );
-    console.log('Found Jeeves player:', jeevesPlayer);
+
+    // Find an AI player (Jeeves) to play
+    const aiPlayers = players.filter(p => p.player_type === 'ai');
+    let jeevesPlayer: Player | undefined;
+
+    if (battle.game_mode === 'jeeves_vs_jeeves') {
+      // In Jeeves vs Jeeves, pick the Jeeves with cards left (prefer the one with more cards)
+      jeevesPlayer = aiPlayers
+        .filter(p => p.cards_in_hand.length > 0)
+        .sort((a, b) => b.cards_in_hand.length - a.cards_in_hand.length)[0];
+    } else {
+      // In other modes, just use the first AI player
+      jeevesPlayer = aiPlayers[0];
+    }
+
+    console.log('Selected Jeeves player:', jeevesPlayer);
     
     if (!jeevesPlayer) {
-      console.log('❌ Jeeves player not found or not their turn');
+      console.log('❌ Jeeves player not found');
       toast({
         title: "Error",
-        description: "It's not Jeeves' turn or Jeeves player not found",
+        description: "No Jeeves player available in this battle",
         variant: "destructive",
       });
       return;
@@ -434,7 +443,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
       const { data, error } = await supabase.functions.invoke('judge-card-battle', {
         body: {
           battleId: battle.id,
-          playerId: 'jeeves_1',
+          playerId: jeevesPlayer.player_id,
           cardCode: randomCard,
           responseText: randomResponse,
           storyText: battle.story_text,
