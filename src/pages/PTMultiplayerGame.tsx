@@ -313,6 +313,47 @@ const PTMultiplayerGame = () => {
       }
     }
 
+    // Auto-start Jeeves vs Jeeves games that are "stuck" with no current turn or moves
+    if (
+      gameData?.game_mode === "jeeves-vs-jeeves" &&
+      gameData.status === "active" &&
+      (!gameData.current_turn_player_id || (movesRes.data?.length ?? 0) === 0) &&
+      playersData.length > 0
+    ) {
+      try {
+        let startingPlayerId: string | null = null;
+        const alpha = playersData.find(p => p.display_name.includes("Alpha"));
+        startingPlayerId = alpha?.id ?? playersData[0].id;
+
+        const { error: fixError } = await supabase
+          .from('pt_multiplayer_games')
+          .update({
+            status: 'active',
+            current_turn_player_id: startingPlayerId,
+          })
+          .eq('id', gameData.id)
+          .is('current_turn_player_id', null);
+
+        if (!fixError && startingPlayerId) {
+          await supabase.functions.invoke('judge-pt-card-play', {
+            body: {
+              gameId: gameData.id,
+              playerId: startingPlayerId,
+              cardType: "principle",
+              cardData: null,
+              explanation: "",
+              studyTopic: gameData.study_topic,
+              isCombo: false,
+              comboCards: null,
+              autoPlayForPlayer: true,
+            },
+          });
+        }
+      } catch (e) {
+        console.error('Error auto-starting Jeeves vs Jeeves game', e);
+      }
+    }
+
     console.log('PTMulti fetchGameData', {
       game: gameData,
       players: playersData?.map(p => ({ id: p.id, display_name: p.display_name, user_id: p.user_id })),
