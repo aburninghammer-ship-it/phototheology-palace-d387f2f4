@@ -64,9 +64,15 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
       let finalStoryText = storyText;
       let finalReference = storyReference;
       
-      // Pattern to detect simple Bible references (e.g., "Rev 13:11", "John 3:16")
-      const simpleRefPattern = /^(\d?\s?[A-Za-z]+\.?\s?\d+:\d+)$/;
-      if (simpleRefPattern.test(storyText.trim())) {
+      // Pattern to detect Bible references (verse or chapter)
+      // Matches: "Rev 13:11", "John 3:16", "Genesis 22", "Rev. 13"
+      const versePattern = /^(\d?\s?[A-Za-z]+)\.?\s?(\d+):(\d+)$/;
+      const chapterPattern = /^(\d?\s?[A-Za-z]+)\.?\s?(\d+)$/;
+      
+      const verseMatch = storyText.trim().match(versePattern);
+      const chapterMatch = !verseMatch && storyText.trim().match(chapterPattern);
+      
+      if (verseMatch || chapterMatch) {
         try {
           // Map common book names to BibleSDK codes
           const bookMap: Record<string, string> = {
@@ -95,12 +101,11 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
             'Jude': 'JUD', 'Rev': 'REV', 'Revelation': 'REV'
           };
           
-          // Parse the reference
-          const match = storyText.trim().match(/^(\d?\s?[A-Za-z]+)\.?\s?(\d+):(\d+)$/);
-          if (match) {
-            const bookName = match[1].trim();
-            const chapter = parseInt(match[2]);
-            const verse = parseInt(match[3]);
+          if (verseMatch) {
+            // Single verse reference
+            const bookName = verseMatch[1].trim();
+            const chapter = parseInt(verseMatch[2]);
+            const verse = parseInt(verseMatch[3]);
             
             const bookCode = bookMap[bookName] || bookMap[bookName.replace('.', '')];
             if (bookCode) {
@@ -115,6 +120,17 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
                 });
               }
             }
+          } else if (chapterMatch) {
+            // Chapter reference - just display chapter number
+            const bookName = chapterMatch[1].trim();
+            const chapterNum = chapterMatch[2];
+            finalStoryText = `${bookName} Chapter ${chapterNum}`;
+            finalReference = storyText.trim();
+            
+            toast({
+              title: "Chapter Reference",
+              description: `Set to ${finalStoryText}`,
+            });
           }
         } catch (error) {
           console.error('Error fetching verse:', error);
@@ -204,7 +220,7 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
         description: "Let the duel begin!",
       });
 
-      onBattleStart(battle);
+      onBattleStart({ ...battle, shouldAutoStart: mode === 'jeeves_vs_jeeves', firstPlayer: whoGoesFirst });
 
     } catch (error: any) {
       console.error('Error creating battle:', error);
