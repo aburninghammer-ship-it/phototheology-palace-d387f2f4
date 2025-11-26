@@ -3483,6 +3483,7 @@ export type Database = {
       }
       pt_card_battles: {
         Row: {
+          battle_code: string | null
           created_at: string
           current_turn_player: string
           game_mode: string
@@ -3498,6 +3499,7 @@ export type Database = {
           winner: string | null
         }
         Insert: {
+          battle_code?: string | null
           created_at?: string
           current_turn_player: string
           game_mode: string
@@ -3513,6 +3515,7 @@ export type Database = {
           winner?: string | null
         }
         Update: {
+          battle_code?: string | null
           created_at?: string
           current_turn_player?: string
           game_mode?: string
