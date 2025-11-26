@@ -682,7 +682,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
 
           <div>
             <label className="text-sm font-medium text-white mb-2 block">
-              Your Response {selectedCard && <Badge className="ml-2 bg-amber-500">{selectedCard}</Badge>}
+              Your Turn Jeeves {selectedCard && <Badge className="ml-2 bg-amber-500">{selectedCard}</Badge>}
             </label>
             <Textarea
               value={response}
