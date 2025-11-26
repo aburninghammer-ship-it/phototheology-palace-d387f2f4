@@ -257,6 +257,88 @@ serve(async (req) => {
       { code: "TZ", name: "Time Zones" },
     ];
 
+    // Handle Find Verses action (for memory lists)
+    if (action === 'find_verses') {
+      const { query } = requestBody;
+      
+      if (!query) {
+        return new Response(
+          JSON.stringify({ error: 'Query is required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const prompt = `You are Jeeves, helping a user find Bible verses for their memory list.
+
+The user is asking: "${query}"
+
+Your task:
+1. Identify the key topics, themes, or subjects in their request
+2. Find 8-12 highly relevant Bible verses that match their request
+3. For each verse, provide:
+   - The exact verse reference (format: "Book Chapter:Verse")
+   - The full verse text (KJV)
+   - A brief explanation (1 sentence) of why this verse is relevant to their request
+
+CRITICAL RULES:
+- ONLY return real, accurate Bible verses
+- Double-check verse references are correct
+- Use KJV text
+- Focus on verses that are clear and memorable for memorization
+- If they mention specific books (like Daniel, Revelation), prioritize those books
+- If they mention specific topics (sanctuary, prophecy, beasts), find the most relevant verses
+
+Return as a JSON array with this exact format:
+[
+  {
+    "reference": "Daniel 7:3",
+    "text": "And four great beasts came up from the sea, diverse one from another.",
+    "explanation": "Introduces the four beasts representing kingdoms in Daniel's prophecy"
+  }
+]`;
+
+      try {
+        const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: 'You are Jeeves, a Bible study assistant specializing in finding verses that match specific topics and themes. You are extremely accurate with verse references and always verify they exist.' },
+              { role: 'user', content: prompt }
+            ],
+          }),
+        });
+
+        const data = await response.json();
+        let content = data.choices[0].message.content;
+        
+        // Clean control characters
+        content = content.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+        
+        // Extract JSON
+        const jsonMatch = content.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          const verses = JSON.parse(jsonMatch[0]);
+          return new Response(
+            JSON.stringify({ verses }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
+        throw new Error('Failed to parse verses from response');
+      } catch (error) {
+        console.error('Error finding verses:', error);
+        return new Response(
+          JSON.stringify({ error: 'Failed to find verses. Please try rephrasing your request.' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
     // Handle Scripture Chain action
     if (action === 'generate_scripture_chain') {
       const { verse: verseText, book, chapter, verseNumber } = requestBody;
