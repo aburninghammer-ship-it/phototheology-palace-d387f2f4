@@ -35,7 +35,8 @@ import { PWAInstallButton } from "@/components/PWAInstallButton";
 import { LiveAIDemoWidget } from "@/components/LiveAIDemoWidget";
 import { Download } from "lucide-react";
 import { Testimonials } from "@/components/Testimonials";
-import { MagicEyeHero } from "@/components/MagicEyeHero";
+import { ClearHero } from "@/components/ClearHero";
+import { MagicEyeEasterEgg } from "@/components/MagicEyeEasterEgg";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -92,8 +93,8 @@ const Index = () => {
         </div>
       )}
 
-      {/* Magic Eye Hero Section */}
-      <MagicEyeHero />
+      {/* Clear Hero Section */}
+      <ClearHero />
 
       {/* User Count Badge */}
       <div className="flex justify-center py-8 bg-gradient-to-b from-background to-muted/30">
@@ -246,7 +247,7 @@ const Index = () => {
       </section>
 
       {/* SECTION 5 — How It Works (Three Steps) */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
             How It Works
@@ -365,6 +366,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Magic Eye Easter Egg */}
+      <MagicEyeEasterEgg />
 
       {/* SECTION 7 — Social Proof */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-accent/5 to-primary/5">
