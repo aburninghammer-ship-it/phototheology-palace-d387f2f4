@@ -152,7 +152,7 @@ export function MemoryListTemplates({ userId }: MemoryListTemplatesProps) {
 
       if (error) throw error;
 
-      toast.success(`Created "${template.title}" list!`);
+      toast.success(`Created "${template.title}" list! You can now add verses.`);
       navigate(`/memory/list/${data.id}`);
     } catch (error) {
       console.error("Error creating template:", error);

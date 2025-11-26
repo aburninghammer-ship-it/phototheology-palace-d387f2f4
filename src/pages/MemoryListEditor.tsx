@@ -65,17 +65,49 @@ export default function MemoryListEditor() {
 
   const handleInsertVerse = async (verse: { reference: string; text: string }) => {
     try {
-      const { error } = await supabase
+      // First insert the verse
+      const { data: newVerse, error } = await supabase
         .from("memory_verse_list_items")
         .insert({
           list_id: listId,
           verse_reference: verse.reference,
           verse_text: verse.text,
           order_index: verses.length,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
-      toast.success("Verse added!");
+
+      toast.success("Verse added! Generating PT analysis...");
+      
+      // Generate PT analysis in the background
+      supabase.functions
+        .invoke("analyze-verse-pt", {
+          body: {
+            verse_reference: verse.reference,
+            verse_text: verse.text,
+          },
+        })
+        .then(({ data, error: analysisError }) => {
+          if (!analysisError && data) {
+            // Update the verse with PT analysis
+            supabase
+              .from("memory_verse_list_items")
+              .update({
+                pt_insights: data.pt_insights,
+                hebrew_greek: data.hebrew_greek || null,
+              })
+              .eq("id", newVerse.id)
+              .then(() => {
+                fetchVerses();
+              });
+          }
+        })
+        .catch((err) => {
+          console.error("Error generating PT analysis:", err);
+        });
+
       fetchVerses();
     } catch (error) {
       console.error("Error adding verse:", error);
@@ -155,7 +187,7 @@ export default function MemoryListEditor() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl overflow-y-auto">
         <Button
           variant="ghost"
           onClick={() => navigate("/memory")}
