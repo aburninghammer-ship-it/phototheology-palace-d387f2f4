@@ -124,6 +124,11 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
       // Shuffle and deal cards
       const shuffled = shuffleArray(ALL_PRINCIPLE_CARDS);
       
+      // Decide who starts based on mode
+      const initialCurrentTurnPlayer = mode === 'jeeves_vs_jeeves'
+        ? 'jeeves_1'
+        : `user_${user.id}`;
+      
       // Create battle
       const { data: battle, error: battleError } = await supabase
         .from('pt_card_battles')
@@ -132,7 +137,7 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
           status: 'waiting',
           story_text: finalStoryText,
           story_reference: finalReference || null,
-          current_turn_player: `user_${user.id}`,
+          current_turn_player: initialCurrentTurnPlayer,
           host_user_id: user.id,
         })
         .select()
