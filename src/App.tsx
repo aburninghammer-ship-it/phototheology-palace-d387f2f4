@@ -253,6 +253,9 @@ function App() {
             <Route path="/memory/list/:listId" element={<ProtectedRoute><MemoryListEditor /></ProtectedRoute>} />
             <Route path="/memory/play/:listId" element={<ProtectedRoute><MemoryGamePlay /></ProtectedRoute>} />
             <Route path="/memory/complete/:listId" element={<ProtectedRoute><MemoryGameComplete /></ProtectedRoute>} />
+            <Route path="/memory/game/:listId/first-letter" element={<ProtectedRoute><FirstLetterGame /></ProtectedRoute>} />
+            <Route path="/memory/palace-builder/:listId" element={<ProtectedRoute><MemoryPalaceBuilder /></ProtectedRoute>} />
+            <Route path="/memory/palace-practice/:listId" element={<ProtectedRoute><MemoryPalacePractice /></ProtectedRoute>} />
             <Route path="/daily-challenges" element={<ProtectedRoute><DailyChallenges /></ProtectedRoute>} />
             <Route path="/growth-journal" element={<ProtectedRoute><GrowthJournal /></ProtectedRoute>} />
             <Route path="/equations-challenge" element={<ProtectedRoute><EquationsChallenge /></ProtectedRoute>} />

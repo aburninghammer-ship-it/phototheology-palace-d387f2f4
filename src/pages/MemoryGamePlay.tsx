@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Brain, Gamepad2, Shuffle, Type, Sparkles } from "lucide-react";
+import { Gamepad2, Play, ArrowLeft, Sparkles, Type, Home, Brain, Shuffle } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
@@ -136,21 +136,31 @@ export default function MemoryGamePlay() {
           </Card>
 
           {/* Fill in the Blanks Game */}
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleStartGame("fill-blanks")}>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-purple-500/10 rounded-lg">
-                  <Type className="h-6 w-6 text-purple-500" />
+          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 hover:from-blue-500/15 hover:to-blue-500/10 transition-all cursor-pointer" onClick={() => handleStartGame("fill-blanks")}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="p-3 bg-blue-500/20 rounded-lg">
+                  <Gamepad2 className="h-6 w-6 text-blue-600" />
                 </div>
-                <div>
-                  <CardTitle>Fill the Blanks</CardTitle>
-                  <CardDescription>Complete the missing words</CardDescription>
-                </div>
+                <h3 className="font-semibold text-lg">Fill the Blanks</h3>
               </div>
-            </CardHeader>
-            <CardContent>
               <p className="text-sm text-muted-foreground">
-                Fill in the missing words to complete the verse
+                Complete missing words in each verse
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Memory Palace Game */}
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 hover:from-indigo-500/15 hover:to-indigo-500/10 transition-all cursor-pointer" onClick={() => handleStartGame("memory-palace")}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="p-3 bg-indigo-500/20 rounded-lg">
+                  <Home className="h-6 w-6 text-indigo-600" />
+                </div>
+                <h3 className="font-semibold text-lg">Memory Palace</h3>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Build & practice with location associations
               </p>
             </CardContent>
           </Card>

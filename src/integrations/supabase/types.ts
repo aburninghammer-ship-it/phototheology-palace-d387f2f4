@@ -2535,6 +2535,63 @@ export type Database = {
           },
         ]
       }
+      memory_palace_locations: {
+        Row: {
+          created_at: string
+          id: string
+          list_id: string
+          location_name: string
+          order_index: number
+          updated_at: string
+          user_id: string
+          verse_id: string
+          verse_reference: string
+          verse_text: string | null
+          visualization: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          list_id: string
+          location_name: string
+          order_index?: number
+          updated_at?: string
+          user_id: string
+          verse_id: string
+          verse_reference: string
+          verse_text?: string | null
+          visualization: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          list_id?: string
+          location_name?: string
+          order_index?: number
+          updated_at?: string
+          user_id?: string
+          verse_id?: string
+          verse_reference?: string
+          verse_text?: string | null
+          visualization?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_palace_locations_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "memory_verse_lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memory_palace_locations_verse_id_fkey"
+            columns: ["verse_id"]
+            isOneToOne: false
+            referencedRelation: "memory_verse_list_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       memory_verse_list_items: {
         Row: {
           created_at: string | null
