@@ -156,8 +156,8 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
       await loadPlayers();
       await loadMoves();
 
-      // If playing against Jeeves and move was approved, Jeeves plays next
-      if (battle.mode === 'vs_jeeves' && judgment.verdict === 'approved') {
+      // If playing against Jeeves, he plays next after any judgment
+      if (battle.mode === 'vs_jeeves') {
         setTimeout(() => handleJeevesPlay(), 2000);
       }
 
