@@ -241,7 +241,7 @@ const PTMultiplayerGame = () => {
       }
 
       // Auto-start game if it's still waiting
-      if (gameRes.data?.status === 'waiting' && gameRes.data.host_id === user.id && playersRes.data && playersRes.data.length > 0) {
+      if (gameRes.data?.status === 'waiting' && playersRes.data && playersRes.data.length > 0) {
         await autoStartGame(gameRes.data.id, playersRes.data);
         // Refresh game data after auto-start
         const { data: updatedGame } = await supabase
@@ -512,20 +512,6 @@ const PTMultiplayerGame = () => {
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
             
             <div className="relative z-10 p-8">
-              {game.status === 'waiting' && (
-                <div className="text-center py-12">
-                  <h2 className="text-3xl font-bold mb-4 text-white">Waiting for Players...</h2>
-                  <p className="text-purple-200 mb-6">
-                    {players.length} player{players.length !== 1 ? 's' : ''} joined
-                  </p>
-                  {isHost && (
-                    <Button onClick={startGame} size="lg" className="bg-purple-600 hover:bg-purple-700">
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      Start Game
-                    </Button>
-                  )}
-                </div>
-              )}
 
               {game.status === 'active' && (
                 <div>
