@@ -25,8 +25,8 @@ export default function MemoryPalacePractice() {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("memory_palace_locations" as any)
+    const { data, error } = await (supabase as any)
+      .from("memory_palace_locations")
       .select("*")
       .eq("user_id", user.id)
       .eq("list_id", listId)
