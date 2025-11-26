@@ -1,0 +1,98 @@
+import { useState } from 'react';
+import { Mic, MicOff, Phone, PhoneOff, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useVoiceChat } from '@/contexts/VoiceChatContext';
+import { WebRTCCall } from '@/components/WebRTCCall';
+import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
+
+interface VoiceChatWidgetProps {
+  roomType: 'palace' | 'bible' | 'deck' | 'games' | 'challenges' | 'battle' | 'study';
+  roomId: string;
+  className?: string;
+}
+
+export function VoiceChatWidget({ roomType, roomId, className }: VoiceChatWidgetProps) {
+  const { user } = useAuth();
+  const { isVoiceChatActive, currentRoom, isMuted, joinVoiceChat, leaveVoiceChat, toggleMute } = useVoiceChat();
+  const [showCallUI, setShowCallUI] = useState(false);
+  const fullRoomId = `${roomType}-${roomId}`;
+  const isInThisRoom = isVoiceChatActive && currentRoom === fullRoomId;
+
+  const handleJoin = () => {
+    joinVoiceChat(fullRoomId);
+    setShowCallUI(true);
+  };
+
+  const handleLeave = () => {
+    leaveVoiceChat();
+    setShowCallUI(false);
+  };
+
+  if (!user) return null;
+
+  return (
+    <>
+      <Card className={cn("p-4 bg-card/50 backdrop-blur-sm", className)}>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm font-medium">
+              {isInThisRoom ? 'Voice Chat Active' : 'Join Voice Chat'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {isInThisRoom && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMute}
+                className={cn(
+                  "h-9 w-9",
+                  isMuted && "text-destructive"
+                )}
+              >
+                {isMuted ? (
+                  <MicOff className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+
+            <Button
+              variant={isInThisRoom ? "destructive" : "default"}
+              size="sm"
+              onClick={isInThisRoom ? handleLeave : handleJoin}
+              className="gap-2"
+            >
+              {isInThisRoom ? (
+                <>
+                  <PhoneOff className="h-4 w-4" />
+                  Leave
+                </>
+              ) : (
+                <>
+                  <Phone className="h-4 w-4" />
+                  Join
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      {showCallUI && isInThisRoom && user && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <WebRTCCall
+            roomId={fullRoomId}
+            userId={user.id}
+            userName={user.email || 'User'}
+          />
+        </div>
+      )}
+    </>
+  );
+}

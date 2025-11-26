@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import { BookMarked, HelpCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { StudyBibleDemoDialog } from "@/components/bible/StudyBibleDemoDialog";
+import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
+import { useAuth } from "@/hooks/useAuth";
 
 const Bible = () => {
+  const { user } = useAuth();
   const [demoOpen, setDemoOpen] = useState(false);
 
   return (
@@ -47,6 +50,14 @@ const Bible = () => {
           </div>
 
           <StudyBibleDemoDialog open={demoOpen} onOpenChange={setDemoOpen} />
+
+          {user && (
+            <VoiceChatWidget
+              roomType="bible"
+              roomId="study"
+              className="mb-6"
+            />
+          )}
 
           {/* Navigation */}
           <div className="mb-6 sm:mb-8">

@@ -23,6 +23,8 @@ import ReactMarkdown from 'react-markdown';
 import jsPDF from 'jspdf';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PTCardBattle } from "@/components/card-battle/PTCardBattle";
+import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PrincipleCard {
   id: string;
@@ -152,6 +154,7 @@ const CYCLE_CARDS = [
 ];
 
 export default function CardDeck() {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [textType, setTextType] = useState<"verse" | "story">("verse");
   const [verseInput, setVerseInput] = useState("");
@@ -1130,6 +1133,14 @@ export default function CardDeck() {
               Study Scripture with Phototheology principles
             </p>
           </div>
+
+          {user && (
+            <VoiceChatWidget
+              roomType="deck"
+              roomId="study"
+              className="mb-6"
+            />
+          )}
 
           {/* Main Tabs */}
           <Tabs defaultValue="study" className="w-full">

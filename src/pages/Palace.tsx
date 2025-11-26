@@ -11,6 +11,7 @@ import { usePalaceProgress } from "@/hooks/usePalaceProgress";
 import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Footer } from "@/components/Footer";
+import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 
 const Palace = () => {
   const { user } = useAuth();
@@ -77,6 +78,14 @@ const Palace = () => {
                   </p>
                 </CardContent>
               </Card>
+            )}
+
+            {user && (
+              <VoiceChatWidget
+                roomType="palace"
+                roomId="main"
+                className="max-w-md mx-auto mb-6"
+              />
             )}
             
             <div className="flex gap-3 justify-center">
