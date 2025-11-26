@@ -145,6 +145,45 @@ serve(async (req) => {
       console.log('Force regeneration: deleted existing verse for', today);
     }
     
+    // Fetch recently used principles from the last 14 days to avoid repetition
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+    const { data: recentVerses } = await supabase
+      .from('daily_verses')
+      .select('principles_used')
+      .gte('date', fourteenDaysAgo.toISOString().split('T')[0])
+      .order('date', { ascending: false });
+    
+    // Flatten all recently used principle codes
+    const recentlyUsedCodes = new Set<string>();
+    if (recentVerses) {
+      for (const verse of recentVerses) {
+        if (Array.isArray(verse.principles_used)) {
+          verse.principles_used.forEach((code: string) => recentlyUsedCodes.add(code));
+        }
+      }
+    }
+    
+    console.log('Recently used principles (last 14 days):', Array.from(recentlyUsedCodes));
+    
+    // Helper function to select a principle with weighted randomization
+    // Principles not recently used get higher weight
+    function selectWeightedPrinciple(principles: typeof PALACE_PRINCIPLES): typeof PALACE_PRINCIPLES[0] {
+      if (principles.length === 0) return null as any;
+      
+      // Separate into recently used and fresh principles
+      const fresh = principles.filter(p => !recentlyUsedCodes.has(p.code));
+      const used = principles.filter(p => recentlyUsedCodes.has(p.code));
+      
+      // 80% chance to pick from fresh principles if available
+      if (fresh.length > 0 && Math.random() < 0.8) {
+        return fresh[Math.floor(Math.random() * fresh.length)];
+      }
+      
+      // Otherwise pick from all available (includes used ones)
+      return principles[Math.floor(Math.random() * principles.length)];
+    }
+    
     // Select exactly one principle from each of the first 7 floors
     const floorOneRooms = PALACE_PRINCIPLES.filter(p => p.category === "1st Floor");
     const floorTwoRooms = PALACE_PRINCIPLES.filter(p => p.category === "2nd Floor");
@@ -154,15 +193,15 @@ serve(async (req) => {
     const floorSixRooms = PALACE_PRINCIPLES.filter(p => p.category === "6th Floor");
     const floorSevenRooms = PALACE_PRINCIPLES.filter(p => p.category === "7th Floor");
     
-    // Pick exactly one principle from each floor (1-7)
+    // Pick exactly one principle from each floor (1-7) with weighted selection
     const selectedPrinciples = [
-      floorOneRooms[Math.floor(Math.random() * floorOneRooms.length)],
-      floorTwoRooms[Math.floor(Math.random() * floorTwoRooms.length)],
-      floorThreeRooms[Math.floor(Math.random() * floorThreeRooms.length)],
-      floorFourRooms[Math.floor(Math.random() * floorFourRooms.length)],
-      floorFiveRooms[Math.floor(Math.random() * floorFiveRooms.length)],
-      floorSixRooms[Math.floor(Math.random() * floorSixRooms.length)],
-      floorSevenRooms[Math.floor(Math.random() * floorSevenRooms.length)]
+      selectWeightedPrinciple(floorOneRooms),
+      selectWeightedPrinciple(floorTwoRooms),
+      selectWeightedPrinciple(floorThreeRooms),
+      selectWeightedPrinciple(floorFourRooms),
+      selectWeightedPrinciple(floorFiveRooms),
+      selectWeightedPrinciple(floorSixRooms),
+      selectWeightedPrinciple(floorSevenRooms)
     ].filter(Boolean); // Remove any undefined if a floor has no principles
     
     console.log('Selected diverse principles:', selectedPrinciples.map(p => `${p.code} (${p.category})`));
