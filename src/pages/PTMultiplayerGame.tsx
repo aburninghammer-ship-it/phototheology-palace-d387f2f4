@@ -363,18 +363,20 @@ const PTMultiplayerGame = () => {
       playersData.length > 0
     ) {
       try {
-        let startingPlayerId: string | null = null;
         const alpha = playersData.find((p) => p.display_name.includes("Alpha"));
-        startingPlayerId = alpha?.id ?? playersData[0].id;
+        const startingPlayerId = alpha?.id ?? playersData[0].id;
 
-        await supabase
+        const { error: autoStartError } = await supabase
           .from('pt_multiplayer_games')
           .update({
             status: 'active',
             current_turn_player_id: startingPlayerId,
           })
-          .eq('id', gameData.id)
-          .is('current_turn_player_id', null);
+          .eq('id', gameData.id);
+
+        if (autoStartError) {
+          console.error('Error auto-starting Jeeves vs Jeeves game', autoStartError);
+        }
       } catch (e) {
         console.error('Error auto-starting Jeeves vs Jeeves game', e);
       }
