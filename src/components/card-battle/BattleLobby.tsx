@@ -315,7 +315,14 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
       }
 
       // Get remaining cards
-      const usedCards = existingPlayers?.flatMap(p => p.cards_in_hand) || [];
+      const usedCards: string[] = [];
+      if (existingPlayers) {
+        existingPlayers.forEach(p => {
+          if (Array.isArray(p.cards_in_hand)) {
+            usedCards.push(...p.cards_in_hand as string[]);
+          }
+        });
+      }
       const availableCards = ALL_PRINCIPLE_CARDS.filter(c => !usedCards.includes(c));
       const shuffled = shuffleArray(availableCards);
 
