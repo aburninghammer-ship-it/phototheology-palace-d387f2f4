@@ -1120,8 +1120,8 @@ export default function CardDeck() {
                         className={`relative w-full h-full transition-transform duration-500 preserve-3d ${
                           flippedCards.has(card.id) ? "rotate-y-180" : ""
                         }`}
-                      >
-                         {/* Front of card (Palace with Principle Code) */}
+                       >
+                        {/* Front of card (Palace with Principle Code) */}
                         <div
                           className={`absolute inset-0 rounded-lg border-2 shadow-xl backface-hidden overflow-hidden glow-effect bg-gradient-to-br ${card.floorColor}`}
                           style={{
@@ -1161,10 +1161,10 @@ export default function CardDeck() {
                             backgroundBlendMode: 'overlay',
                           }}
                         >
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/60" />
-                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1)_0%,_transparent_60%)]" />
-                          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/60"></div>
+                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1)_0%,_transparent_60%)]"></div>
+                          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
                           <div className="relative h-full flex flex-col items-center justify-center p-4 text-center">
                             <div className="text-xs font-bold text-white/90 mb-3 tracking-wider drop-shadow-lg">
                               FLOOR {card.floor} • {card.code}
@@ -1173,9 +1173,9 @@ export default function CardDeck() {
                               {renderCardQuestion(card)}
                             </p>
                             <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg" />
-                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg" />
-                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg"></div>
+                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg"></div>
+                              <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-lg"></div>
                             </div>
                           </div>
                         </div>
@@ -1218,9 +1218,7 @@ export default function CardDeck() {
         </DialogContent>
       </Dialog>
 
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
+      <style>{`
         .perspective-1000 {
           perspective: 1000px;
         }
@@ -1236,9 +1234,7 @@ export default function CardDeck() {
         .glow-effect {
           box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 60px rgba(0, 0, 0, 0.4);
         }
-      `,
-        }}
-      />
+      `}</style>
     </div>
   );
 }
