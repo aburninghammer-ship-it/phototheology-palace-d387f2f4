@@ -174,6 +174,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
   const [showRejectionOptions, setShowRejectionOptions] = useState(false);
   const [isChallenging, setIsChallenging] = useState(false);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
+  const [showJudgmentFeedback, setShowJudgmentFeedback] = useState(false);
 
   useEffect(() => {
     loadPlayers();
@@ -280,6 +281,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
 
       const judgment = data.judgment;
       setLastJudgment(judgment);
+      setShowJudgmentFeedback(true);
       
       if (judgment.verdict === 'rejected') {
         setShowRejectionOptions(true);
@@ -291,11 +293,8 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
       } else {
         toast({
           title: '✅ Approved!',
-          description: judgment.feedback,
+          description: `${judgment.totalPoints} points awarded!`,
         });
-        setSelectedCard(null);
-        setResponse("");
-        setShowRejectionOptions(false);
         await loadPlayers();
         await loadMoves();
         
@@ -342,6 +341,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
         setSelectedCard(null);
         setResponse("");
         setShowRejectionOptions(false);
+        setShowJudgmentFeedback(false);
         await loadPlayers();
         await loadMoves();
         
@@ -370,11 +370,19 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
     setSelectedCard(null);
     setResponse("");
     setShowRejectionOptions(false);
+    setShowJudgmentFeedback(false);
     setLastJudgment(null);
     toast({
       title: "Pick Another Card",
       description: "Select a different principle card to try again.",
     });
+  };
+
+  const handleDismissFeedback = () => {
+    setShowJudgmentFeedback(false);
+    setSelectedCard(null);
+    setResponse("");
+    setShowRejectionOptions(false);
   };
 
   const handleJeevesPlay = async (jeevesId: string) => {
@@ -737,34 +745,68 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
       {/* Response Area */}
       <Card className="bg-white/10 backdrop-blur-xl border-white/20">
         <CardContent className="pt-6 space-y-4">
-          {/* Show rejection options if card was rejected */}
-          {showRejectionOptions && lastJudgment && (
-            <div className="p-4 bg-red-500/20 border-2 border-red-400/50 rounded-lg space-y-3">
+          {/* Show judgment feedback for both approved and rejected */}
+          {showJudgmentFeedback && lastJudgment && (
+            <div className={`p-4 border-2 rounded-lg space-y-3 ${
+              lastJudgment.verdict === 'approved' 
+                ? 'bg-green-500/20 border-green-400/50' 
+                : 'bg-red-500/20 border-red-400/50'
+            }`}>
               <div className="flex items-start gap-2">
-                <span className="text-2xl">❌</span>
+                <span className="text-2xl">{lastJudgment.verdict === 'approved' ? '✅' : '❌'}</span>
                 <div className="flex-1">
-                  <h4 className="font-bold text-red-200 mb-1">Jeeves Rejected Your Move</h4>
-                  <p className="text-sm text-red-100 italic mb-3">"{lastJudgment.feedback}"</p>
-                  <p className="text-sm text-white/80 mb-3">
-                    You can challenge Jeeves' judgment or pick a different card to try again.
-                  </p>
+                  <h4 className={`font-bold mb-1 ${
+                    lastJudgment.verdict === 'approved' ? 'text-green-200' : 'text-red-200'
+                  }`}>
+                    {lastJudgment.verdict === 'approved' 
+                      ? `Approved! ${lastJudgment.totalPoints} Points Awarded` 
+                      : 'Jeeves Rejected Your Move'
+                    }
+                  </h4>
+                  <div className="text-sm mb-3">
+                    <p className={`font-semibold mb-2 ${
+                      lastJudgment.verdict === 'approved' ? 'text-green-100' : 'text-red-100'
+                    }`}>
+                      ⚖️ Jeeves' Judgment:
+                    </p>
+                    <p className={`italic ${
+                      lastJudgment.verdict === 'approved' ? 'text-white/90' : 'text-red-100'
+                    }`}>
+                      "{lastJudgment.feedback}"
+                    </p>
+                  </div>
+                  
+                  {showRejectionOptions && (
+                    <p className="text-sm text-white/80 mb-3">
+                      You can challenge Jeeves' judgment or pick a different card to try again.
+                    </p>
+                  )}
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-3">
+              <div className={showRejectionOptions ? 'grid grid-cols-3 gap-3' : 'grid grid-cols-2 gap-3'}>
                 <Button
                   onClick={handleChallenge}
                   disabled={isChallenging}
                   className="bg-amber-600 hover:bg-amber-700 text-white font-bold"
                 >
-                  {isChallenging ? 'Challenging...' : '⚔️ Challenge Jeeves'}
+                  {isChallenging ? 'Challenging...' : '⚔️ Challenge Judgment'}
                 </Button>
+                {showRejectionOptions && (
+                  <Button
+                    onClick={handlePickAnotherCard}
+                    variant="outline"
+                    className="border-white/30 text-white hover:bg-white/10"
+                  >
+                    🔄 Pick Another Card
+                  </Button>
+                )}
                 <Button
-                  onClick={handlePickAnotherCard}
+                  onClick={handleDismissFeedback}
                   variant="outline"
                   className="border-white/30 text-white hover:bg-white/10"
                 >
-                  🔄 Pick Another Card
+                  Continue
                 </Button>
               </div>
             </div>
@@ -779,11 +821,11 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
               onChange={(e) => setResponse(e.target.value)}
               placeholder="How does your selected principle card amplify this story? Show depth, insight, and biblical grounding..."
               className="min-h-32 bg-white/10 border-white/20 text-white placeholder:text-white/50"
-              disabled={!selectedCard || showRejectionOptions}
+              disabled={!selectedCard || showJudgmentFeedback}
             />
           </div>
           
-          {!showRejectionOptions && !isJeevesVsJeeves && (
+          {!showJudgmentFeedback && !isJeevesVsJeeves && (
             <div className="grid grid-cols-2 gap-3">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
