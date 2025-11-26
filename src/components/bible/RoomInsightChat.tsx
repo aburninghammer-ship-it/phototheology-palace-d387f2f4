@@ -228,6 +228,7 @@ export const RoomInsightChat = ({
                   }}
                   className="min-h-[60px] resize-none"
                   disabled={loading}
+                  spellCheck={true}
                 />
                 <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                   <ImageIcon className="h-3 w-3" />

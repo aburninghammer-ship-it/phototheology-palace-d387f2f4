@@ -111,6 +111,7 @@ export const LiveAIDemoWidget = () => {
             onKeyPress={(e) => e.key === 'Enter' && handleAsk()}
             placeholder="Ask your Bible question..."
             disabled={isLoading}
+            spellCheck={true}
           />
           <Button 
             onClick={() => handleAsk()} 

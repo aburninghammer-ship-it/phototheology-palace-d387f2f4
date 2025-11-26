@@ -118,6 +118,7 @@ export const RoomMentorChat: React.FC<RoomMentorChatProps> = ({
             onKeyPress={handleKeyPress}
             placeholder="Defend your interpretation..."
             disabled={isStreaming}
+            spellCheck={true}
           />
           <Button onClick={handleSend} disabled={isStreaming || !input.trim()}>
             <Send className="h-4 w-4" />

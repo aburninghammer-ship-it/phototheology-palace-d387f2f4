@@ -1092,6 +1092,7 @@ export default function CardDeck() {
                     value={userAnswer}
                     onChange={(e) => setUserAnswer(e.target.value)}
                     className="min-h-[150px]"
+                    spellCheck={true}
                   />
                   
                   <div className="flex gap-2">
@@ -1136,7 +1137,7 @@ export default function CardDeck() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <ScrollArea className="h-[200px] rounded-md border p-4">
-                      <div className="prose prose-sm dark:prose-invert">
+                      <div className="prose prose-sm dark:prose-invert whitespace-pre-wrap">
                         {feedback}
                       </div>
                     </ScrollArea>
