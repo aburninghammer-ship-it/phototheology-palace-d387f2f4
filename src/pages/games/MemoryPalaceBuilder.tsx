@@ -38,8 +38,8 @@ export default function MemoryPalaceBuilder() {
     // Load existing palace data
     const { data: { user } } = await supabase.auth.getUser();
     if (user && data && data.length > 0) {
-      const { data: existingData } = await supabase
-        .from("memory_palace_locations" as any)
+      const { data: existingData } = await (supabase as any)
+        .from("memory_palace_locations")
         .select("*")
         .eq("user_id", user.id)
         .eq("list_id", listId);
@@ -51,7 +51,7 @@ export default function MemoryPalaceBuilder() {
         });
         setPalaceData(palaceMap);
         
-        const current = existingData.find((d: any) => d.verse_id === data[0].id) as any;
+        const current = existingData.find((d: any) => d.verse_id === data[0].id);
         if (current) {
           setLocation(current.location_name || "");
           setVisualization(current.visualization || "");
@@ -66,8 +66,8 @@ export default function MemoryPalaceBuilder() {
 
     const currentVerse = verses[currentIndex];
     
-    const { error } = await supabase
-      .from("memory_palace_locations" as any)
+    const { error } = await (supabase as any)
+      .from("memory_palace_locations")
       .upsert({
         user_id: user.id,
         list_id: listId,
