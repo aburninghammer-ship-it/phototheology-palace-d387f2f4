@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
-import { Bot, Users, Swords, Zap } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Bot, Users, Swords, Zap, BookOpen } from "lucide-react";
 import { GameMode } from "./PTCardBattle";
 
 interface Props {
@@ -43,13 +44,83 @@ const gameModes = [
 ];
 
 export function GameModeSelector({ onSelectMode }: Props) {
+  const [showInstructions, setShowInstructions] = useState(true);
+  
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="grid md:grid-cols-2 gap-6"
-    >
+    <div className="space-y-6">
+      {/* Game Instructions */}
+      <Card className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-xl border-amber-400/30">
+        <CardContent className="pt-6">
+          <button 
+            onClick={() => setShowInstructions(!showInstructions)}
+            className="flex items-center justify-between w-full text-left"
+          >
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-amber-400" />
+              <h3 className="font-bold text-white text-lg">How to Play</h3>
+            </div>
+            <span className="text-amber-400 text-xl">{showInstructions ? '▼' : '▶'}</span>
+          </button>
+          
+          {showInstructions && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              className="mt-4 space-y-3 text-white/90 text-sm"
+            >
+              <div className="space-y-2">
+                <p className="font-semibold text-amber-300">📊 Scoring System:</p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li><strong>Base Points:</strong> 1-3 points for quality of interpretation</li>
+                  <li><strong>Bonus +2:</strong> Cross-referencing other verses</li>
+                  <li><strong>Bonus +2:</strong> Identifying typology (Christ-centered)</li>
+                  <li><strong>Bonus +2:</strong> Practical application</li>
+                  <li><strong>Maximum:</strong> 5 points per turn</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <p className="font-semibold text-amber-300">🎮 Gameplay:</p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li><strong>Approved cards</strong> are removed from your hand + points earned</li>
+                  <li><strong>Rejected cards</strong> stay in your hand - pick another or challenge</li>
+                  <li><strong>Jeeves follows the same rules</strong> - his moves can also be rejected!</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <p className="font-semibold text-amber-300">🏆 Winning:</p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>First player to <strong>empty their hand wins</strong></li>
+                  <li>Game ends when final card is approved</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <p className="font-semibold text-amber-300">⚔️ Challenge System:</p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li><strong>Only available</strong> after Jeeves rejects your move</li>
+                  <li><strong>If upheld:</strong> You get 10 points + card removed</li>
+                  <li><strong>If denied:</strong> Card stays in hand, pick another</li>
+                </ul>
+              </div>
+
+              <div className="p-3 bg-purple-500/20 rounded-lg border border-purple-400/30 mt-4">
+                <p className="text-xs text-purple-200">
+                  💡 <strong>Strategy Tip:</strong> Use cards that naturally amplify the story's themes. Show depth through cross-references and typology!
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </CardContent>
+      </Card>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="grid md:grid-cols-2 gap-6"
+      >
       {gameModes.map((mode, index) => (
         <motion.div
           key={mode.id}
@@ -90,6 +161,7 @@ export function GameModeSelector({ onSelectMode }: Props) {
           </Card>
         </motion.div>
       ))}
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
