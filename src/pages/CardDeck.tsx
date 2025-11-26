@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { palaceFloors } from "@/data/palaceData";
-import { Sparkles, HelpCircle, Timer, RefreshCw, Send, BookOpen, Loader2, MessageCircle, Save, Gem, User, Bot } from "lucide-react";
+import { Sparkles, HelpCircle, Timer, RefreshCw, Send, BookOpen, Loader2, MessageCircle, Save, Gem, User, Bot, FileDown, FolderOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +19,7 @@ import { RealtimeChannel } from "@supabase/supabase-js";
 import { searchBible } from "@/services/bibleApi";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import ReactMarkdown from 'react-markdown';
+import jsPDF from 'jspdf';
 
 interface PrincipleCard {
   id: string;
@@ -627,6 +628,152 @@ export default function CardDeck() {
     }
   };
 
+  const exportStudyAsPDF = () => {
+    if (!verseText || conversationHistory.length === 0) {
+      toast({
+        title: "Nothing to export",
+        description: "Complete at least one card before exporting.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+      const margin = 20;
+      const maxWidth = pageWidth - 2 * margin;
+      let y = margin;
+
+      // Title
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text("Card Deck Study Session", margin, y);
+      y += 10;
+
+      // Verse/Story
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      const verseLines = doc.splitTextToSize(`Text: ${displayText}`, maxWidth);
+      doc.text(verseLines, margin, y);
+      y += verseLines.length * 7 + 10;
+
+      // Cards used
+      if (cardsUsed.length > 0) {
+        doc.setFont("helvetica", "bold");
+        doc.text(`Cards Used: ${cardsUsed.join(", ")}`, margin, y);
+        y += 10;
+      }
+
+      // Conversation history
+      doc.setFont("helvetica", "bold");
+      doc.text("Study Conversation:", margin, y);
+      y += 7;
+
+      conversationHistory.forEach((msg) => {
+        if (y > pageHeight - margin) {
+          doc.addPage();
+          y = margin;
+        }
+
+        doc.setFont("helvetica", "bold");
+        doc.text(msg.role === "user" ? "You:" : "Jeeves:", margin, y);
+        y += 7;
+
+        doc.setFont("helvetica", "normal");
+        const contentLines = doc.splitTextToSize(msg.content, maxWidth);
+        
+        contentLines.forEach((line: string) => {
+          if (y > pageHeight - margin) {
+            doc.addPage();
+            y = margin;
+          }
+          doc.text(line, margin, y);
+          y += 5;
+        });
+        
+        y += 5;
+      });
+
+      // Save the PDF
+      const filename = `card-deck-study-${new Date().toISOString().split('T')[0]}.pdf`;
+      doc.save(filename);
+
+      toast({
+        title: "PDF exported!",
+        description: `Your study has been saved as ${filename}`,
+      });
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+      toast({
+        title: "Export failed",
+        description: "Could not export your study as PDF.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const saveToMyStudies = async () => {
+    if (!verseText || conversationHistory.length === 0) {
+      toast({
+        title: "Nothing to save",
+        description: "Complete at least one card before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to save to My Studies.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Build study content
+      let studyContent = `## Verse/Story\n${displayText}\n\n`;
+      
+      if (cardsUsed.length > 0) {
+        studyContent += `**Cards Used:** ${cardsUsed.join(", ")}\n\n`;
+      }
+
+      studyContent += `## Study Conversation\n\n`;
+      conversationHistory.forEach((msg) => {
+        studyContent += `**${msg.role === "user" ? "You" : "Jeeves"}:** ${msg.content}\n\n`;
+      });
+
+      const { error } = await supabase.from('user_studies').insert({
+        user_id: user.id,
+        title: `Card Deck Study: ${displayText.split(':')[0] || 'Study Session'}`,
+        content: studyContent,
+        category: 'card_deck',
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Saved to My Studies!",
+        description: "Your card deck study is now in My Studies tab.",
+      });
+    } catch (error) {
+      console.error("Error saving to My Studies:", error);
+      toast({
+        title: "Save failed",
+        description: "Could not save to My Studies. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const createSession = () => {
     const newSessionId = Math.random().toString(36).substring(2, 10).toUpperCase();
     setSessionId(newSessionId);
@@ -1154,10 +1301,20 @@ export default function CardDeck() {
                   </Button>
                   
                   {conversationHistory.length > 0 && (
-                    <Button onClick={() => setSaveDialogOpen(true)} variant="outline" className="gap-2">
-                      <Save className="h-4 w-4" />
-                      Save Study
-                    </Button>
+                    <>
+                      <Button onClick={() => setSaveDialogOpen(true)} variant="outline" className="gap-2">
+                        <Save className="h-4 w-4" />
+                        Save
+                      </Button>
+                      <Button onClick={exportStudyAsPDF} variant="outline" className="gap-2">
+                        <FileDown className="h-4 w-4" />
+                        PDF
+                      </Button>
+                      <Button onClick={saveToMyStudies} disabled={isSaving} variant="outline" className="gap-2">
+                        <FolderOpen className="h-4 w-4" />
+                        My Studies
+                      </Button>
+                    </>
                   )}
                 </div>
               </CardContent>
