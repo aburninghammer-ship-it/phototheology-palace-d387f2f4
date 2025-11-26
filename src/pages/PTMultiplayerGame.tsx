@@ -384,6 +384,7 @@ const PTMultiplayerGame = () => {
  
     console.log('PTMulti fetchGameData', {
       game: gameData,
+      currentTurnPlayerId: gameData?.current_turn_player_id,
       players: playersData?.map(p => ({ id: p.id, display_name: p.display_name, user_id: p.user_id })),
       movesCount: movesRes.data?.length ?? 0,
     });
