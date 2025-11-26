@@ -55,18 +55,22 @@ const PTMultiplayerLobby = () => {
       // Set up initial players based on game mode
       if (gameMode === "jeeves-vs-jeeves") {
         // Two AI players only – user is a spectator
+        // Use fixed UUIDs for Jeeves players
+        const jeevesAlphaId = "00000000-0000-0000-0000-000000000001";
+        const jeevesBetaId = "00000000-0000-0000-0000-000000000002";
+        
         const { error: jeevesError } = await supabase
           .from('pt_multiplayer_players')
           .insert([
             {
               game_id: game.id,
-              user_id: 'jeeves-alpha',
+              user_id: jeevesAlphaId,
               display_name: 'Jeeves Alpha',
               cards_remaining: 7,
             },
             {
               game_id: game.id,
-              user_id: 'jeeves-beta',
+              user_id: jeevesBetaId,
               display_name: 'Jeeves Beta',
               cards_remaining: 7,
             },
@@ -88,11 +92,14 @@ const PTMultiplayerLobby = () => {
 
         // Add Jeeves opponent in Jeeves modes
         if (gameMode === "1v1-jeeves" || gameMode === "team-vs-jeeves") {
+          // Use fixed UUID for standard Jeeves
+          const jeevesId = "00000000-0000-0000-0000-000000000000";
+          
           const { error: jeevesError } = await supabase
             .from('pt_multiplayer_players')
             .insert({
               game_id: game.id,
-              user_id: 'jeeves',
+              user_id: jeevesId,
               display_name: 'Jeeves',
               cards_remaining: 7,
             });
