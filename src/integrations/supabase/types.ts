@@ -1892,6 +1892,48 @@ export type Database = {
         }
         Relationships: []
       }
+      gems: {
+        Row: {
+          connection_explanation: string
+          created_at: string | null
+          id: string
+          is_favorite: boolean | null
+          principle_codes: string[] | null
+          title: string
+          updated_at: string | null
+          user_id: string
+          verse1: string
+          verse2: string
+          verse3: string
+        }
+        Insert: {
+          connection_explanation: string
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          principle_codes?: string[] | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+          verse1: string
+          verse2: string
+          verse3: string
+        }
+        Update: {
+          connection_explanation?: string
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          principle_codes?: string[] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          verse1?: string
+          verse2?: string
+          verse3?: string
+        }
+        Relationships: []
+      }
       genesis_challenge_daily_progress: {
         Row: {
           completed_at: string | null
