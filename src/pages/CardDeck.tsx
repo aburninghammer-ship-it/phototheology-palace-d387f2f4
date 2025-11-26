@@ -824,37 +824,47 @@ export default function CardDeck() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 relative overflow-hidden">
+      {/* Animated background orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-green-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
       <Navigation />
       
-      <main className="container mx-auto px-4 pt-24 pb-12">
+      <main className="container mx-auto px-4 pt-24 pb-12 relative z-10">
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Header */}
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold bg-gradient-palace bg-clip-text text-transparent">
-              Phototheology Study Deck
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center space-y-4"
+          >
+            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-yellow-300 via-pink-300 to-blue-300 bg-clip-text text-transparent drop-shadow-2xl">
+              🎴 Phototheology Study Deck
             </h1>
-            <p className="text-muted-foreground">
-              Apply every Palace principle to your chosen verse or story
+            <p className="text-xl text-white/90 font-semibold drop-shadow-lg">
+              ✨ Apply every Palace principle to your chosen verse or story
             </p>
             
             {/* Multiplayer Mode Button */}
             <Button 
-              onClick={() => window.location.href = '/pt-multiplayer'} 
-              variant="outline"
+              onClick={() => window.location.href = '/pt-multiplayer-lobby'} 
               size="lg"
-              className="gap-2"
+              className="gap-2 bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 hover:from-orange-500 hover:via-red-600 hover:to-pink-600 text-white border-2 border-yellow-300 shadow-2xl font-bold animate-pulse"
             >
               <Users className="h-5 w-5" />
-              Multiplayer Mode: Jeeves the Judge
+              🎮 Multiplayer Mode: Jeeves the Judge
             </Button>
+          </motion.div>
             
             {/* Collaboration Controls */}
-            <Card className="border-2 border-primary/30">
+            <Card className="border-2 bg-gradient-to-br from-cyan-500/90 via-blue-500/90 to-indigo-600/90 backdrop-blur-xl border-white/30 shadow-2xl">
               <CardContent className="pt-6">
                 {!isInSession ? (
                   <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-                    <Button onClick={createSession} className="gradient-palace gap-2">
+                    <Button onClick={createSession} className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white shadow-lg font-bold gap-2">
                       <Users className="h-4 w-4" />
                       Start Collaboration Session
                     </Button>
@@ -913,10 +923,10 @@ export default function CardDeck() {
           </div>
 
           {/* Text Selection and Input Section */}
-          <Card className="border-2">
+          <Card className="border-2 bg-gradient-to-br from-pink-500/90 via-rose-500/90 to-red-600/90 backdrop-blur-xl border-white/30 shadow-2xl">
             <CardHeader>
-              <CardTitle>Choose Your Study Text</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-white text-2xl">📖 Choose Your Study Text</CardTitle>
+              <CardDescription className="text-white/80 font-medium">
                 Select verse or story, then enter the biblical text
               </CardDescription>
             </CardHeader>
@@ -925,15 +935,17 @@ export default function CardDeck() {
                 <Button
                   variant={textType === "verse" ? "default" : "outline"}
                   onClick={() => setTextType("verse")}
-                  className="flex-1"
+                  className={`flex-1 ${textType === "verse" ? "bg-gradient-to-r from-teal-400 to-cyan-500 hover:from-teal-500 hover:to-cyan-600 text-white shadow-lg" : "bg-white/20 text-white hover:bg-white/30"}`}
                 >
+                  <BookOpen className="w-4 h-4 mr-2" />
                   Verse
                 </Button>
                 <Button
                   variant={textType === "story" ? "default" : "outline"}
                   onClick={() => setTextType("story")}
-                  className="flex-1"
+                  className={`flex-1 ${textType === "story" ? "bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white shadow-lg" : "bg-white/20 text-white hover:bg-white/30"}`}
                 >
+                  <Sparkles className="w-4 h-4 mr-2" />
                   Story
                 </Button>
               </div>
@@ -949,20 +961,20 @@ export default function CardDeck() {
                 className="min-h-[100px]"
               />
               
-              <Button onClick={handleSetText} className="w-full">
-                Set {textType === "verse" ? "Verse" : "Story"}
+              <Button onClick={handleSetText} className="w-full bg-gradient-to-r from-green-400 to-teal-500 hover:from-green-500 hover:to-teal-600 text-white font-bold shadow-lg">
+                ✨ Set {textType === "verse" ? "Verse" : "Story"}
               </Button>
             </CardContent>
           </Card>
 
           {/* Display Selected Text */}
           {displayText && (
-            <Card className="border-2 border-primary/50 bg-primary/5">
+            <Card className="border-2 bg-gradient-to-br from-yellow-300/30 to-orange-300/30 border-yellow-400/50 shadow-xl backdrop-blur">
               <CardContent className="pt-6">
-                <div className="text-sm text-muted-foreground mb-2">
-                  {textType === "verse" ? "Selected Verse:" : "Selected Story:"}
+                <div className="text-sm text-white font-semibold mb-2">
+                  📖 {textType === "verse" ? "Selected Verse:" : "Selected Story:"}
                 </div>
-                <div className="text-lg font-medium whitespace-pre-wrap mb-4">
+                <div className="text-lg font-medium whitespace-pre-wrap mb-4 text-white">
                   {textType === "verse" && displayText.includes(":") ? renderVerseText(displayText) : displayText}
                 </div>
               </CardContent>
@@ -971,7 +983,7 @@ export default function CardDeck() {
 
           {/* Pick Card Section */}
           {displayText && (
-            <Card className="border-2">
+            <Card className="border-2 bg-gradient-to-br from-indigo-500/90 via-purple-500/90 to-pink-600/90 backdrop-blur-xl border-white/30 shadow-2xl">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -980,14 +992,14 @@ export default function CardDeck() {
                       checked={timerEnabled}
                       onCheckedChange={setTimerEnabled}
                     />
-                    <Label htmlFor="timer-mode" className="cursor-pointer">
-                      Enable Timer (2 min per card)
+                    <Label htmlFor="timer-mode" className="cursor-pointer text-white font-semibold">
+                      ⏱️ Enable Timer (2 min per card)
                     </Label>
                   </div>
                   
-                  <Button onClick={pickRandomCard} className="gradient-palace">
+                  <Button onClick={pickRandomCard} className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:from-yellow-500 hover:via-orange-600 hover:to-red-600 text-white font-bold shadow-lg">
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Jeeves, Pick a Card!
+                    🎲 Jeeves, Pick a Card!
                   </Button>
                 </div>
               </CardContent>
