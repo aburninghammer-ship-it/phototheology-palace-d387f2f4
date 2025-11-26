@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Sparkles, Scroll, Copy, Share2, Users, Send } from "lucide-react";
+import { Swords, ArrowLeft, Sparkles, Scroll, Copy, Share2, Users, Send } from "lucide-react";
 import { GameMode } from "./PTCardBattle";
 import { getVerses } from "biblesdk";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -55,15 +55,24 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
   const [invitingUsers, setInvitingUsers] = useState<Set<string>>(new Set());
   const [teamAName, setTeamAName] = useState("Team Alpha");
   const [teamBName, setTeamBName] = useState("Team Beta");
+  const [generatedCode, setGeneratedCode] = useState("");
 
   useEffect(() => {
     if (mode === 'user_vs_user' || mode === 'team_vs_team') {
       loadAvailableUsers();
     }
+    // Clear generated code when mode changes
+    setGeneratedCode("");
   }, [mode]);
 
   const generateBattleCode = () => {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    setGeneratedCode(code);
+    toast({
+      title: "Battle Code Generated!",
+      description: "Share this code with other players to join",
+    });
+    return code;
   };
 
   const loadAvailableUsers = async () => {
@@ -243,8 +252,10 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
         ? 'team_a'
         : `user_${user.id}`;
       
-      // Generate battle code for multiplayer modes
-      const newBattleCode = (mode === 'user_vs_user' || mode === 'team_vs_team') ? generateBattleCode() : null;
+      // Generate battle code for multiplayer modes - use generated code if available
+      const newBattleCode = (mode === 'user_vs_user' || mode === 'team_vs_team') 
+        ? (generatedCode || generateBattleCode()) 
+        : null;
       
       // Create battle
       const { data: battle, error: battleError } = await supabase
@@ -700,6 +711,53 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
                   <p className="text-xs text-orange-300">Opposing team</p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Generate Battle Code for multiplayer modes */}
+          {(mode === 'user_vs_user' || mode === 'team_vs_team') && (
+            <div className="space-y-3 p-4 bg-amber-500/20 rounded-lg border-2 border-amber-400/30">
+              <Label className="text-white font-bold">Battle Code</Label>
+              {!generatedCode ? (
+                <Button
+                  type="button"
+                  onClick={generateBattleCode}
+                  variant="outline"
+                  className="w-full border-amber-400/50 text-white hover:bg-amber-500/30"
+                >
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Generate Battle Code
+                </Button>
+              ) : (
+                <div className="space-y-2">
+                  <div className="relative p-4 bg-white/10 rounded-lg border-2 border-amber-400/50">
+                    <div className="text-center">
+                      <p className="text-xs text-amber-200 mb-1">Share this code:</p>
+                      <p className="text-3xl font-bold tracking-widest text-amber-300">{generatedCode}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="absolute top-2 right-2 text-white hover:bg-white/20"
+                      onClick={() => {
+                        navigator.clipboard.writeText(generatedCode);
+                        toast({
+                          title: "Copied!",
+                          description: "Battle code copied to clipboard",
+                        });
+                      }}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-amber-200 text-center">
+                    {mode === 'team_vs_team' 
+                      ? 'Share this code with your team members and opponents!'
+                      : 'Share this code with another Phototheologist to battle!'
+                    }
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
