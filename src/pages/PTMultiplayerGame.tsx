@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -153,21 +153,13 @@ const PTMultiplayerGame = () => {
   const [moves, setMoves] = useState<Move[]>([]);
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [myCards, setMyCards] = useState<Card[]>([]);
-  const [jeevesAlphaCards, setJeevesAlphaCards] = useState<Card[]>([]);
-  const [jeevesBetaCards, setJeevesBetaCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [isJeevesThinking, setIsJeevesThinking] = useState(false);
-  const jeevesTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   const [cardValue, setCardValue] = useState<string>("");
   const [explanation, setExplanation] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
 
-  const isVsJeevesMode =
-    game?.game_mode === "1v1-jeeves" ||
-    game?.game_mode === "team-vs-jeeves" ||
-    game?.game_mode === "jeeves-vs-jeeves";
+  const isVsJeevesMode = game?.game_mode === "1v1-jeeves" || game?.game_mode === "team-vs-jeeves";
 
   useEffect(() => {
     if (!gameId) return;
@@ -184,126 +176,50 @@ const PTMultiplayerGame = () => {
       supabase.from('pt_multiplayer_moves').select('*').eq('game_id', gameId).order('created_at', { ascending: false }).limit(20)
     ]);
 
-    let gameData = gameRes.data as Game | null;
-    let playersData = (playersRes.data as Player[]) || [];
-
-    // Ensure Jeeves Alpha & Beta always exist in Jeeves vs Jeeves mode,
-    // even for legacy games created before this logic.
-    if (gameData?.game_mode === "jeeves-vs-jeeves") {
-      const jeevesAlphaId = "00000000-0000-0000-0000-000000000001";
-      const jeevesBetaId = "00000000-0000-0000-0000-000000000002";
-
-      const hasAlpha = playersData.some((p) => p.user_id === jeevesAlphaId);
-      const hasBeta = playersData.some((p) => p.user_id === jeevesBetaId);
-
-      const inserts: any[] = [];
-
-      if (!hasAlpha) {
-        inserts.push({
-          game_id: gameId,
-          user_id: jeevesAlphaId,
-          display_name: 'Black Master Jeeves Alpha',
-          cards_remaining: 7,
-          score: 0,
-          team: null,
-          skip_next_turn: false,
-          consecutive_rejections: 0,
-        });
-      }
-
-      if (!hasBeta) {
-        inserts.push({
-          game_id: gameId,
-          user_id: jeevesBetaId,
-          display_name: 'Black Master Jeeves Beta',
-          cards_remaining: 7,
-          score: 0,
-          team: null,
-          skip_next_turn: false,
-          consecutive_rejections: 0,
-        });
-      }
-
-      if (inserts.length > 0) {
-        const { error: jeevesError } = await supabase
-          .from('pt_multiplayer_players')
-          .insert(inserts);
-
-        if (jeevesError) {
-          // Ignore duplicate key errors (players already exist) but still refresh list
-          if ((jeevesError as any).code === '23505') {
-            console.warn('Jeeves players already exist, ignoring duplicate insert:', jeevesError);
-          } else {
-            console.error('Error ensuring Jeeves players:', jeevesError);
-          }
-        }
-
-        // In all cases, refresh players to get current state from the database
-        const { data: refreshedPlayers } = await supabase
-          .from('pt_multiplayer_players')
-          .select('*')
-          .eq('game_id', gameId)
-          .order('joined_at');
-
-        if (refreshedPlayers) {
-          playersData = refreshedPlayers as Player[];
-        }
-      }
-    }
-
-    if (gameData) setGame(gameData);
-    setPlayers(playersData);
+    if (gameRes.data) setGame(gameRes.data);
+    if (playersRes.data) setPlayers(playersRes.data);
     if (movesRes.data) setMoves(movesRes.data);
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setCurrentUserId(user.id);
-    }
+    if (user && playersRes.data) {
+      let cp = playersRes.data.find(p => p.user_id === user.id);
+      
+      // Auto-join: If user is not in players list yet, add them
+      if (!cp && gameRes.data) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', user.id)
+          .single();
 
-    if (user && playersData.length > 0) {
-      let cp: Player | null = null;
-
-      // In Jeeves vs Jeeves mode, humans are spectators only – don't auto-join
-      if (gameData?.game_mode !== "jeeves-vs-jeeves") {
-        cp = playersData.find((p) => p.user_id === user.id) || null;
+        const displayName = profileData?.display_name || 'Player';
         
-        // Auto-join: If user is not in players list yet, add them
-        if (!cp && gameData) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('display_name')
-            .eq('id', user.id)
-            .single();
+        const { data: newPlayer } = await supabase
+          .from('pt_multiplayer_players')
+          .insert({
+            game_id: gameId,
+            user_id: user.id,
+            display_name: displayName,
+          })
+          .select()
+          .single();
 
-          const displayName = profileData?.display_name || 'Player';
-          
-          const { data: newPlayer } = await supabase
+        if (newPlayer) {
+          cp = newPlayer;
+          // Refresh players list
+          const { data: updatedPlayers } = await supabase
             .from('pt_multiplayer_players')
-            .insert({
-              game_id: gameId,
-              user_id: user.id,
-              display_name: displayName,
-            })
-            .select()
-            .single();
-
-          if (newPlayer) {
-            cp = newPlayer as Player;
-            // Refresh players list
-            const { data: updatedPlayers } = await supabase
-              .from('pt_multiplayer_players')
-              .select('*')
-              .eq('game_id', gameId)
-              .order('joined_at');
-            
-            if (updatedPlayers) setPlayers(updatedPlayers as Player[]);
-          }
+            .select('*')
+            .eq('game_id', gameId)
+            .order('joined_at');
+          
+          if (updatedPlayers) setPlayers(updatedPlayers);
         }
       }
       
-      setCurrentPlayer(cp);
+      setCurrentPlayer(cp || null);
 
-      // Fetch my cards when I'm an active player
+      // Fetch my cards
       if (cp) {
         const { data: cardsData } = await supabase
           .from('pt_multiplayer_deck')
@@ -318,170 +234,27 @@ const PTMultiplayerGame = () => {
             card_data: card.card_data as { value: string; name: string }
           })));
         }
-      } else {
-        setMyCards([]);
-      }
-
-      // In Jeeves vs Jeeves mode, fetch both Jeeves' cards for spectators
-      if (gameData?.game_mode === "jeeves-vs-jeeves") {
-        const alpha = playersData.find(p => p.display_name.includes('Alpha'));
-        const beta = playersData.find(p => p.display_name.includes('Beta'));
-
-        if (alpha) {
-          const { data: alphaCards } = await supabase
-            .from('pt_multiplayer_deck')
-            .select('*')
-            .eq('game_id', gameId)
-            .eq('drawn_by', alpha.id)
-            .eq('is_drawn', true);
-          
-          if (alphaCards) {
-            setJeevesAlphaCards(alphaCards.map(card => ({
-              ...card,
-              card_data: card.card_data as { value: string; name: string }
-            })));
-          }
-        }
-
-        if (beta) {
-          const { data: betaCards } = await supabase
-            .from('pt_multiplayer_deck')
-            .select('*')
-            .eq('game_id', gameId)
-            .eq('drawn_by', beta.id)
-            .eq('is_drawn', true);
-          
-          if (betaCards) {
-            setJeevesBetaCards(betaCards.map(card => ({
-              ...card,
-              card_data: card.card_data as { value: string; name: string }
-            })));
-          }
-        }
       }
     }
-
-    // Auto-start Jeeves vs Jeeves games that are "stuck" with no current turn or moves
-    if (
-      gameData?.game_mode === "jeeves-vs-jeeves" &&
-      gameData.status === "active" &&
-      (!gameData.current_turn_player_id || (movesRes.data?.length ?? 0) === 0) &&
-      playersData.length > 0
-    ) {
-      try {
-        const alpha = playersData.find((p) => p.display_name.includes("Alpha"));
-        const startingPlayerId = alpha?.id ?? playersData[0].id;
-
-        const { error: autoStartError } = await supabase
-          .from('pt_multiplayer_games')
-          .update({
-            status: 'active',
-            current_turn_player_id: startingPlayerId,
-          })
-          .eq('id', gameData.id);
-
-        if (autoStartError) {
-          console.error('Error auto-starting Jeeves vs Jeeves game', autoStartError);
-        }
-      } catch (e) {
-        console.error('Error auto-starting Jeeves vs Jeeves game', e);
-      }
-    }
- 
-    console.log('PTMulti fetchGameData', {
-      game: gameData,
-      currentTurnPlayerId: gameData?.current_turn_player_id,
-      players: playersData?.map(p => ({ id: p.id, display_name: p.display_name, user_id: p.user_id })),
-      movesCount: movesRes.data?.length ?? 0,
-    });
 
     setLoading(false);
   };
+
   const subscribeToUpdates = () => {
     const channel = supabase
       .channel(`pt-game-${gameId}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'pt_multiplayer_games', filter: `id=eq.${gameId}` },
-        () => fetchGameData()
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'pt_multiplayer_players', filter: `game_id=eq.${gameId}` },
-        () => fetchGameData()
-      )
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'pt_multiplayer_moves', filter: `game_id=eq.${gameId}` },
-        () => fetchGameData()
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pt_multiplayer_games', filter: `id=eq.${gameId}` }, 
+        () => fetchGameData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pt_multiplayer_players', filter: `game_id=eq.${gameId}` }, 
+        () => fetchGameData())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pt_multiplayer_moves', filter: `game_id=eq.${gameId}` }, 
+        () => fetchGameData())
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
   };
-
-  // Automatically trigger Jeeves moves when it's Jeeves' turn
-  useEffect(() => {
-    if (!game || loading || !isVsJeevesMode) return;
-    if (game.status !== "active" || !game.current_turn_player_id) return;
-
-    const nextPlayer = players.find((p) => p.id === game.current_turn_player_id);
-    if (!nextPlayer || !nextPlayer.display_name.includes("Jeeves")) return;
-
-    // Avoid overlapping timers
-    if (isJeevesThinking) return;
-
-    const delayMs = game.game_mode === "jeeves-vs-jeeves" ? 4000 : 1500;
-
-    if (jeevesTimeoutRef.current) {
-      clearTimeout(jeevesTimeoutRef.current);
-    }
-
-    jeevesTimeoutRef.current = setTimeout(async () => {
-      try {
-        setIsJeevesThinking(true);
-        const { error } = await supabase.functions.invoke("judge-pt-card-play", {
-          body: {
-            gameId: game.id,
-            playerId: nextPlayer.id,
-            cardType: "principle",
-            cardData: null,
-            explanation: "",
-            studyTopic: game.study_topic,
-            isCombo: false,
-            comboCards: null,
-            autoPlayForPlayer: true,
-          },
-        });
-
-        if (error) {
-          console.error("Error invoking Jeeves move:", error);
-          toast({
-            title: "Jeeves error",
-            description: "Jeeves had trouble playing his move.",
-            variant: "destructive",
-          });
-        }
-      } catch (err) {
-        console.error("Error in automatic Jeeves move:", err);
-        toast({
-          title: "Jeeves error",
-          description: "Automatic Jeeves move failed.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsJeevesThinking(false);
-      }
-    }, delayMs);
-
-    return () => {
-      if (jeevesTimeoutRef.current) {
-        clearTimeout(jeevesTimeoutRef.current);
-      }
-    };
-  }, [game, players, isVsJeevesMode, loading, toast, isJeevesThinking]);
 
   const handlePlayCard = async () => {
     if (!cardValue || !explanation || !currentPlayer || !game) {
@@ -529,9 +302,17 @@ const PTMultiplayerGame = () => {
       setCardValue("");
       setExplanation("");
 
-      // Turn advancement (including Jeeves' auto-plays) is handled entirely
-      // by the backend edge function `judge-pt-card-play` via realtime updates.
-
+      // Move to next player if approved or rejected
+      if (verdict === 'approved' || verdict === 'rejected') {
+        const currentIndex = players.findIndex(p => p.id === currentPlayer.id);
+        const nextIndex = (currentIndex + 1) % players.length;
+        const nextPlayer = players[nextIndex];
+        
+        await supabase
+          .from('pt_multiplayer_games')
+          .update({ current_turn_player_id: nextPlayer.id })
+          .eq('id', game.id);
+      }
 
     } catch (error: any) {
       console.error("Error submitting play:", error);
@@ -577,16 +358,7 @@ const PTMultiplayerGame = () => {
   };
 
   const startGame = async () => {
-    if (!game) return;
-
-    const userIsHost =
-      (currentPlayer && game.host_id === currentPlayer.user_id) ||
-      (!currentPlayer && currentUserId && game.host_id === currentUserId);
-
-    if (!userIsHost) {
-      toast({ title: "Only the host can start the game", variant: "destructive" });
-      return;
-    }
+    if (!game || !currentPlayer) return;
     
     try {
       // First, have Jeeves deal the cards
@@ -599,67 +371,29 @@ const PTMultiplayerGame = () => {
         throw new Error("Failed to deal cards");
       }
 
-      // Refresh players to ensure we have latest data after cards dealt
-      const { data: latestPlayers } = await supabase
-        .from('pt_multiplayer_players')
-        .select('*')
-        .eq('game_id', game.id)
-        .order('joined_at');
-
-      if (latestPlayers) {
-        setPlayers(latestPlayers);
-      }
-
-      // Determine who takes the first turn
-      let startingPlayerId: string | null = null;
-      const playersToUse = latestPlayers || players;
-      
-      if (playersToUse.length > 0) {
-        if (game.game_mode === "jeeves-vs-jeeves") {
-          const alpha = playersToUse.find(p => p.display_name.includes('Alpha'));
-          startingPlayerId = alpha?.id ?? playersToUse[0].id;
-          console.log('Starting Jeeves vs Jeeves - Alpha player:', alpha, 'Starting ID:', startingPlayerId);
-        } else {
-          startingPlayerId = playersToUse[0].id;
-        }
-      }
-
       // Then activate the game
       const { error } = await supabase
         .from('pt_multiplayer_games')
         .update({ 
           status: 'active',
-          current_turn_player_id: startingPlayerId,
+          current_turn_player_id: players[0]?.id ?? null,
         })
         .eq('id', game.id);
 
       if (error) throw error;
 
-      toast({ title: "🎴 Jeeves has dealt the cards! Game started!" });
+      // Optimistically update local state
+      setGame((prev) =>
+        prev
+          ? {
+              ...prev,
+              status: 'active',
+              current_turn_player_id: players[0]?.id ?? null,
+            }
+          : prev
+      );
       
-      // Refresh game data to ensure UI is in sync
-      await fetchGameData();
-
-      // In Jeeves vs Jeeves mode, immediately trigger the first Jeeves move
-      if (game.game_mode === "jeeves-vs-jeeves" && startingPlayerId) {
-        const { error: jeevesStartError } = await supabase.functions.invoke('judge-pt-card-play', {
-          body: {
-            gameId: game.id,
-            playerId: startingPlayerId,
-            cardType: "principle",
-            cardData: null,
-            explanation: "",
-            studyTopic: game.study_topic,
-            isCombo: false,
-            comboCards: null,
-            autoPlayForPlayer: true,
-          },
-        });
-
-        if (jeevesStartError) {
-          console.error("Error triggering initial Jeeves move:", jeevesStartError);
-        }
-      }
+      toast({ title: "🎴 Jeeves has dealt the cards! Game started!" });
     } catch (error: any) {
       console.error("Error starting game:", error);
       toast({ 
@@ -690,9 +424,7 @@ const PTMultiplayerGame = () => {
   }
 
   const isMyTurn = currentPlayer && game.current_turn_player_id === currentPlayer.id;
-  const isHost =
-    (currentPlayer && game.host_id === currentPlayer.user_id) ||
-    (!currentPlayer && currentUserId && game.host_id === currentUserId);
+  const isHost = currentPlayer && game.host_id === currentPlayer.user_id;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-6 px-4">
@@ -711,69 +443,39 @@ const PTMultiplayerGame = () => {
 
         {/* Game Table Layout */}
         <div className="relative">
-          {/* Opponent's Side (Top) - Show hands in Jeeves vs Jeeves */}
+          {/* Opponent's Side (Top) */}
           <div className="mb-8">
             <AnimatePresence>
-              {players.filter(p => p.id !== currentPlayer?.id).map((player, idx) => {
-                const isAlpha = player.display_name.includes('Alpha');
-                const isBeta = player.display_name.includes('Beta');
-                const playerCards = isAlpha ? jeevesAlphaCards : isBeta ? jeevesBetaCards : [];
-                
-                return (
-                  <motion.div
-                    key={player.id}
-                    initial={{ y: -50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="mb-4"
-                  >
-                    <div className={`flex items-center justify-center gap-3 p-4 rounded-xl ${
-                      game.current_turn_player_id === player.id 
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-500/50' 
-                        : 'bg-slate-800/80 backdrop-blur'
-                    }`}>
-                      <Avatar className="w-10 h-10 border-2 border-purple-400">
-                        <AvatarFallback className="bg-purple-600 text-white">{player.display_name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="font-semibold text-white flex items-center gap-2">
-                          {player.display_name}
-                          {player.display_name.includes('Jeeves') && <Bot className="w-4 h-4 text-purple-400" />}
-                        </p>
-                        <div className="flex gap-3 text-sm text-purple-200">
-                          <span>🃏 {player.cards_remaining}</span>
-                          <span>⭐ {player.score}pts</span>
-                        </div>
-                      </div>
-                      {player.skip_next_turn && (
-                        <Badge variant="destructive" className="text-xs">Skip Turn</Badge>
-                      )}
+              {players.filter(p => p.id !== currentPlayer?.id).map((player, idx) => (
+                <motion.div
+                  key={player.id}
+                  initial={{ y: -50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className={`flex items-center justify-center gap-3 p-4 rounded-xl mb-2 ${
+                    game.current_turn_player_id === player.id 
+                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-500/50' 
+                      : 'bg-slate-800/80 backdrop-blur'
+                  }`}
+                >
+                  <Avatar className="w-10 h-10 border-2 border-purple-400">
+                    <AvatarFallback className="bg-purple-600 text-white">{player.display_name[0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="font-semibold text-white flex items-center gap-2">
+                      {player.display_name}
+                      {player.display_name.includes('Jeeves') && <Bot className="w-4 h-4 text-purple-400" />}
+                    </p>
+                    <div className="flex gap-3 text-sm text-purple-200">
+                      <span>🃏 {player.cards_remaining}</span>
+                      <span>⭐ {player.score}pts</span>
                     </div>
-
-                    {/* Show Jeeves cards in Jeeves vs Jeeves mode */}
-                    {game.game_mode === "jeeves-vs-jeeves" && playerCards.length > 0 && (
-                      <div className="mt-2 px-2">
-                        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
-                          {playerCards.map((card) => (
-                            <motion.div
-                              key={card.id}
-                              initial={{ scale: 0.8, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              className="relative"
-                            >
-                              <Card className="bg-gradient-to-br from-purple-900 to-indigo-900 border-2 border-purple-600 p-2">
-                                <Badge variant="outline" className="bg-purple-700/50 text-white border-purple-400 text-xs w-full justify-center">
-                                  {card.card_data.value}
-                                </Badge>
-                              </Card>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </motion.div>
-                );
-              })}
+                  </div>
+                  {player.skip_next_turn && (
+                    <Badge variant="destructive" className="text-xs">Skip Turn</Badge>
+                  )}
+                </motion.div>
+              ))}
             </AnimatePresence>
           </div>
 
@@ -785,9 +487,7 @@ const PTMultiplayerGame = () => {
             <div className="relative z-10 p-8">
               {game.status === 'waiting' && (
                 <div className="text-center py-12">
-                  <h2 className="text-3xl font-bold mb-4 text-white">
-                    {game.game_mode === "jeeves-vs-jeeves" ? "Jeeves v Jeeves" : "Waiting for Players..."}
-                  </h2>
+                  <h2 className="text-3xl font-bold mb-4 text-white">Waiting for Players...</h2>
                   <p className="text-purple-200 mb-6">
                     {players.length} player{players.length !== 1 ? 's' : ''} joined
                   </p>
@@ -804,13 +504,12 @@ const PTMultiplayerGame = () => {
                 <div>
                   <div className="mb-6 text-center">
                     <h3 className="text-2xl font-bold text-white mb-2">
-                      {isMyTurn ? "🎯 Your Turn!" : `⏳ ${players.find(p => p.id === game.current_turn_player_id)?.display_name || 'Next player'}'s turn...`}
+                      {isMyTurn ? "🎯 Your Turn!" : `⏳ ${players.find(p => p.id === game.current_turn_player_id)?.display_name}'s turn...`}
                     </h3>
                   </div>
 
-                  {/* Jeeves Turn Button (for human vs Jeeves modes only) */}
-                  {isVsJeevesMode && game.game_mode !== "jeeves-vs-jeeves" &&
-                    players.find(p => p.id === game.current_turn_player_id)?.display_name.includes('Jeeves') && (
+                  {/* Jeeves Turn Button */}
+                  {isVsJeevesMode && players.find(p => p.id === game.current_turn_player_id)?.display_name.includes('Jeeves') && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
