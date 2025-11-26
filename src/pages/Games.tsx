@@ -9,6 +9,7 @@ import { Gamepad2, MapPin, UsersRound, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 
 const Games = () => {
   const { user, loading } = useAuth();
@@ -380,6 +381,14 @@ const Games = () => {
             </SelectContent>
           </Select>
         </div>
+
+        {user && (
+          <VoiceChatWidget
+            roomType="games"
+            roomId="lobby"
+            className="mb-6"
+          />
+        )}
 
         {/* View Mode Tabs */}
         <div className="grid grid-cols-3 gap-4 mb-8">

@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Send, Trophy, Flame, Sparkles, Save, HelpCircle } from "lucide-react";
 import palaceImage from "@/assets/palace-card-back.jpg";
 import { PlayerHand } from "./PlayerHand";
+import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   battle: any;
@@ -162,6 +164,7 @@ const PRINCIPLE_INFO: Record<string, { name: string; description: string }> = {
 };
 
 export function BattleArena({ battle, currentUserId, onBack }: Props) {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -663,6 +666,13 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
           </CardContent>
         </Card>
       </div>
+
+      {user && (
+        <VoiceChatWidget
+          roomType="battle"
+          roomId={battle.id}
+        />
+      )}
 
       {/* Player Hands Display */}
       <div className="grid md:grid-cols-2 gap-6">

@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Video, Users, Plus, Trash2 } from "lucide-react";
+import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 
 const LiveStudy = () => {
   const { user, loading } = useAuth();
@@ -160,6 +161,14 @@ const LiveStudy = () => {
               </Button>
             </CardContent>
           </Card>
+
+          {user && (
+            <VoiceChatWidget
+              roomType="study"
+              roomId="rooms"
+              className="mb-4"
+            />
+          )}
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {rooms.map((room) => (

@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Flame, BookOpen, ChefHat, Calculator } from "lucide-react";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
+import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 import { DimensionDrillChallenge } from "@/components/challenges/DimensionDrillChallenge";
 import { Connect6Challenge } from "@/components/challenges/Connect6Challenge";
 import { SanctuaryMapChallenge } from "@/components/challenges/SanctuaryMapChallenge";
@@ -186,6 +187,14 @@ const DailyChallenges = () => {
               <EnhancedSocialShare {...getShareContent()} />
             </div>
           </div>
+
+          {user && (
+            <VoiceChatWidget
+              roomType="challenges"
+              roomId="daily"
+              className="mb-6"
+            />
+          )}
 
           <Tabs defaultValue="daily" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3">
