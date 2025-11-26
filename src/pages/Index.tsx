@@ -34,7 +34,8 @@ import { SocialShareButton } from "@/components/SocialShareButton";
 import { PWAInstallButton } from "@/components/PWAInstallButton";
 import { LiveAIDemoWidget } from "@/components/LiveAIDemoWidget";
 import { Download } from "lucide-react";
-import { Testimonials } from "@/components/Testimonials";
+import { StreamlinedTestimonials } from "@/components/StreamlinedTestimonials";
+import { FinalCTA } from "@/components/FinalCTA";
 import { ClearHero } from "@/components/ClearHero";
 import { MagicEyeEasterEgg } from "@/components/MagicEyeEasterEgg";
 import { ExplainerVideo } from "@/components/ExplainerVideo";
@@ -419,58 +420,11 @@ const Index = () => {
         </div>
       </section>
 
-      {/* SECTION 9.5 — Testimonials */}
-      <Testimonials />
+      {/* Streamlined Testimonials */}
+      <StreamlinedTestimonials />
 
-      {/* SECTION 10 — Final CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Ready to Finally Understand the Bible?
-          </h2>
-          <p className="text-xl text-muted-foreground mb-4">
-            Open the Palace.
-          </p>
-          <p className="text-xl text-muted-foreground mb-4">
-            Connect the patterns.
-          </p>
-          <p className="text-xl text-muted-foreground mb-8">
-            See Scripture the way it was meant to be seen.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={() => navigate(user ? "/palace" : "/auth")}
-              className="text-xl px-10 py-7 shadow-xl gradient-palace"
-            >
-              Enter App
-              <ChevronRight className="ml-2 h-6 w-6" />
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => navigate("/interactive-demo")}
-              className="text-xl px-10 py-7"
-            >
-              <Play className="mr-2 h-6 w-6" />
-              Watch the Demo
-            </Button>
-          </div>
-          
-          <div className="mt-6">
-            <Button 
-              size="lg" 
-              variant="secondary"
-              onClick={() => navigate("/access-code")}
-              className="text-lg px-8 py-6"
-            >
-              <Shield className="mr-2 h-5 w-5" />
-              Redeem Code
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* Final CTA */}
+      <FinalCTA />
 
       <Footer />
     </div>
