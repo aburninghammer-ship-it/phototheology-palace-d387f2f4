@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Save, Loader2, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ScriptureLookup } from "@/components/sermon/ScriptureLookup";
+import { PTIntegrationPanel } from "@/components/sermon/PTIntegrationPanel";
 
 export default function SeriesLessonEditor() {
   const { seriesId, lessonNumber } = useParams();
@@ -171,6 +173,29 @@ export default function SeriesLessonEditor() {
               )}
             </Button>
           </div>
+
+          {/* Scripture & PT Tools */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Study Tools</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2">
+              <ScriptureLookup 
+                onInsert={(text) => {
+                  const current = lesson.key_passages || '';
+                  updateLesson('key_passages', current ? `${current}\n${text}` : text);
+                  toast.success('Scripture added to key passages');
+                }} 
+              />
+              <PTIntegrationPanel 
+                onInsert={(text) => {
+                  const current = lesson.palace_mapping_notes || '';
+                  updateLesson('palace_mapping_notes', current ? `${current}\n\n${text}` : text);
+                  toast.success('PT content added to mapping notes');
+                }} 
+              />
+            </CardContent>
+          </Card>
 
           {/* Basic Info */}
           <Card>
