@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { palaceFloors } from "@/data/palaceData";
-import { Sparkles, HelpCircle, Timer, RefreshCw, Send, BookOpen, Loader2, MessageCircle, Save, Gem, User, Bot, FileDown, FolderOpen } from "lucide-react";
+import { Sparkles, HelpCircle, Timer, RefreshCw, Send, BookOpen, Loader2, MessageCircle, Save, Gem, User, Bot, FileDown, FolderOpen, Flame } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +27,9 @@ import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 import { useAuth } from "@/hooks/useAuth";
 import { StudyDeckInstructions } from "@/components/study-deck/StudyDeckInstructions";
 import { StudyDeckExamples } from "@/components/study-deck/StudyDeckExamples";
+import { StudyDeckModeSelector, StudyMode } from "@/components/study-deck/StudyDeckModeSelector";
+import { CardDrawAnimation } from "@/components/study-deck/CardDrawAnimation";
+import { useMasteryStreak } from "@/hooks/useMasteryStreak";
 
 interface PrincipleCard {
   id: string;
@@ -198,6 +201,11 @@ export default function CardDeck() {
   const [pickMode, setPickMode] = useState<"jeeves" | "user">("jeeves");
   const [cardPickerOpen, setCardPickerOpen] = useState(false);
   const [cardsUsed, setCardsUsed] = useState<string[]>([]);
+  
+  // Study mode state
+  const [studyMode, setStudyMode] = useState<StudyMode | null>(null);
+  const [isDrawingCard, setIsDrawingCard] = useState(false);
+  const { streak, updateStreak } = useMasteryStreak();
 
   useEffect(() => {
     // Build all principle cards from palace data
@@ -518,7 +526,7 @@ export default function CardDeck() {
     broadcastTextSet();
   };
 
-  const pickRandomCard = () => {
+  const pickRandomCard = async () => {
     if (!verseText.trim()) {
       toast({
         title: "Set your text first",
@@ -534,6 +542,13 @@ export default function CardDeck() {
       return;
     }
     
+    // Trigger drawing animation
+    setIsDrawingCard(true);
+    setSelectedCard(null);
+    
+    // Delay to show animation
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    
     // Jeeves chooses randomly
     const randomCard = allCards[Math.floor(Math.random() * allCards.length)];
     setSelectedCard(randomCard);
@@ -542,6 +557,12 @@ export default function CardDeck() {
     setFeedback("");
     setTimeRemaining(120);
     setIsTimerActive(timerEnabled);
+    setIsDrawingCard(false);
+    
+    // Update streak for daily challenge mode
+    if (studyMode === 'daily_challenge' && user) {
+      updateStreak();
+    }
     
     // Broadcast card selection to all participants in session
     if (isInSession && channelRef.current) {
@@ -1163,6 +1184,52 @@ export default function CardDeck() {
             <StudyDeckInstructions />
             <StudyDeckExamples />
             
+            {/* Phase 2: Mode Selection (only show if no mode selected) */}
+            {!studyMode && !displayText && (
+              <StudyDeckModeSelector onSelectMode={(mode) => {
+                setStudyMode(mode);
+                toast({
+                  title: `${mode.replace('_', ' ')} mode selected`,
+                  description: "Now choose your passage to begin studying",
+                });
+              }} />
+            )}
+            
+            {/* Show current mode badge if selected */}
+            {studyMode && (
+              <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/10 to-background">
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Badge className="text-sm px-3 py-1">
+                        {studyMode.replace('_', ' ').toUpperCase()}
+                      </Badge>
+                      {studyMode === 'daily_challenge' && streak && (
+                        <Badge variant="outline" className="gap-2">
+                          <Flame className="h-4 w-4 text-orange-500" />
+                          {streak.current_streak} day streak
+                        </Badge>
+                      )}
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        setStudyMode(null);
+                        setDisplayText("");
+                        setVerseText("");
+                        setVerseInput("");
+                        setSelectedCard(null);
+                        setConversationHistory([]);
+                      }}
+                    >
+                      Change Mode
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
             {/* Multiplayer mode temporarily disabled */}
 
             {/* Collaboration Controls */}
@@ -1353,8 +1420,20 @@ export default function CardDeck() {
             </Card>
           )}
 
+          {/* Card Draw Animation */}
+          {(isDrawingCard || selectedCard) && !conversationHistory.length && (
+            <CardDrawAnimation 
+              card={selectedCard}
+              isDrawing={isDrawingCard}
+              onCardClick={() => selectedCard && toast({
+                title: selectedCard.name,
+                description: selectedCard.question
+              })}
+            />
+          )}
+
           {/* Selected Card Section */}
-          {selectedCard && (
+          {selectedCard && !isDrawingCard && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
