@@ -4,21 +4,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Plus, Users, Trophy, Book, Sparkles, Gamepad2 } from "lucide-react";
+import { Brain, Plus, Users, Trophy, Book, Sparkles, Gamepad2, Play, ArrowRight, Target } from "lucide-react";
 import { toast } from "sonner";
 import { CreateMemoryListDialog } from "@/components/memory/CreateMemoryListDialog";
-import { MemoryListCard } from "@/components/memory/MemoryListCard";
 import { MyMemoryLists } from "@/components/memory/MyMemoryLists";
 import { PublicMemoryLists } from "@/components/memory/PublicMemoryLists";
 import { CollaborativeMemoryLists } from "@/components/memory/CollaborativeMemoryLists";
 import { MemoryListTemplates } from "@/components/memory/MemoryListTemplates";
 import PTMasteryTracker from "@/components/memory/PTMasteryTracker";
 import PTModeToggle from "@/components/memory/PTModeToggle";
+import { MemoryHowItWorks } from "@/components/memory/MemoryHowItWorks";
+import { MemoryPracticeDrills } from "@/components/memory/MemoryPracticeDrills";
+import { MemoryNextSteps } from "@/components/memory/MemoryNextSteps";
+import { MemoryTemplateCategories } from "@/components/memory/MemoryTemplateCategories";
 
 export default function Memory() {
   const navigate = useNavigate();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("learn");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -57,115 +61,173 @@ export default function Memory() {
             </h1>
             <Sparkles className="h-8 w-8 text-palace-yellow animate-pulse" />
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Master Bible verses through interactive games with PT principles
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+            Master Bible verses through visual memory techniques and PT principles
           </p>
-        </div>
-
-        {/* PT Mastery & Mode Toggle */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
-            <PTMasteryTracker />
-          </div>
-          <div>
-            <PTModeToggle />
-          </div>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="relative overflow-hidden border-2 hover:shadow-purple transition-all duration-300 group">
-            <div className="absolute inset-0 bg-gradient-to-br from-palace-purple/20 to-palace-blue/10 opacity-50 group-hover:opacity-70 transition-opacity" />
-            <CardContent className="pt-6 relative">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-palace-purple to-palace-blue">
-                  <Book className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Verses Memorized</p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-palace-purple to-palace-blue bg-clip-text text-transparent">0</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
           
-          <Card className="relative overflow-hidden border-2 hover:shadow-pink transition-all duration-300 group">
-            <div className="absolute inset-0 bg-gradient-to-br from-palace-pink/20 to-palace-purple/10 opacity-50 group-hover:opacity-70 transition-opacity" />
-            <CardContent className="pt-6 relative">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-palace-pink to-palace-purple">
-                  <Trophy className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Current Streak</p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-palace-pink to-palace-purple bg-clip-text text-transparent">0 days</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="relative overflow-hidden border-2 hover:shadow-blue transition-all duration-300 group">
-            <div className="absolute inset-0 bg-gradient-to-br from-palace-blue/20 to-palace-teal/10 opacity-50 group-hover:opacity-70 transition-opacity" />
-            <CardContent className="pt-6 relative">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-palace-blue to-palace-teal">
-                  <Users className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Active Lists</p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-palace-blue to-palace-teal bg-clip-text text-transparent">0</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* START MEMORIZING CTA */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button 
+              size="lg" 
+              onClick={() => setActiveTab("templates")}
+              className="gap-2 bg-gradient-to-r from-palace-purple via-palace-pink to-palace-blue hover:opacity-90 shadow-lg text-lg px-8"
+            >
+              <Play className="h-5 w-5" />
+              Start Memorizing
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={() => navigate("/memory/games")}
+              className="gap-2"
+            >
+              <Gamepad2 className="h-5 w-5" />
+              Practice Games
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={() => setActiveTab("drills")}
+              className="gap-2"
+            >
+              <Target className="h-5 w-5" />
+              Practice Drills
+            </Button>
+          </div>
         </div>
 
-        {/* Main Content */}
-        <Tabs defaultValue="templates" className="space-y-6">
-          <div className="flex items-center justify-between">
-            <TabsList className="grid w-full max-w-2xl grid-cols-4 bg-muted/50 backdrop-blur">
-              <TabsTrigger value="templates" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-palace-purple data-[state=active]:to-palace-pink">
-                <Sparkles className="h-4 w-4 mr-2" />
-                Templates
-              </TabsTrigger>
-              <TabsTrigger value="my-lists">My Lists</TabsTrigger>
-              <TabsTrigger value="public">Discover</TabsTrigger>
-              <TabsTrigger value="collaborative">Team</TabsTrigger>
-            </TabsList>
+        {/* Main Content Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 bg-muted/50 backdrop-blur">
+            <TabsTrigger value="learn" className="gap-1">
+              <Sparkles className="h-4 w-4" />
+              <span className="hidden sm:inline">Learn</span>
+            </TabsTrigger>
+            <TabsTrigger value="drills" className="gap-1">
+              <Target className="h-4 w-4" />
+              <span className="hidden sm:inline">Drills</span>
+            </TabsTrigger>
+            <TabsTrigger value="templates" className="gap-1">
+              <Book className="h-4 w-4" />
+              <span className="hidden sm:inline">Templates</span>
+            </TabsTrigger>
+            <TabsTrigger value="my-lists" className="gap-1">
+              <Brain className="h-4 w-4" />
+              <span className="hidden sm:inline">My Lists</span>
+            </TabsTrigger>
+            <TabsTrigger value="community" className="gap-1">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Community</span>
+            </TabsTrigger>
+          </TabsList>
+
+          {/* LEARN TAB - How It Works + Next Steps */}
+          <TabsContent value="learn" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <MemoryHowItWorks />
+              <MemoryNextSteps />
+            </div>
             
-            <div className="flex gap-2">
-              <Button 
-                onClick={() => navigate("/memory/games")}
-                variant="outline"
-                className="gap-2"
-              >
-                <Gamepad2 className="h-4 w-4" />
-                Memory Games
-              </Button>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="relative overflow-hidden border-2 hover:shadow-purple transition-all duration-300 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-palace-purple/20 to-palace-blue/10 opacity-50 group-hover:opacity-70 transition-opacity" />
+                <CardContent className="pt-6 relative">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-palace-purple to-palace-blue">
+                      <Book className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Verses Memorized</p>
+                      <p className="text-3xl font-bold bg-gradient-to-r from-palace-purple to-palace-blue bg-clip-text text-transparent">0</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="relative overflow-hidden border-2 hover:shadow-pink transition-all duration-300 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-palace-pink/20 to-palace-purple/10 opacity-50 group-hover:opacity-70 transition-opacity" />
+                <CardContent className="pt-6 relative">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-palace-pink to-palace-purple">
+                      <Trophy className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Current Streak</p>
+                      <p className="text-3xl font-bold bg-gradient-to-r from-palace-pink to-palace-purple bg-clip-text text-transparent">0 days</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="relative overflow-hidden border-2 hover:shadow-blue transition-all duration-300 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-palace-blue/20 to-palace-teal/10 opacity-50 group-hover:opacity-70 transition-opacity" />
+                <CardContent className="pt-6 relative">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-palace-blue to-palace-teal">
+                      <Users className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Active Lists</p>
+                      <p className="text-3xl font-bold bg-gradient-to-r from-palace-blue to-palace-teal bg-clip-text text-transparent">0</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* DRILLS TAB - Practice Drills with Tiers */}
+          <TabsContent value="drills" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <MemoryPracticeDrills />
+              </div>
+              <div className="space-y-4">
+                <PTMasteryTracker />
+                <PTModeToggle />
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* TEMPLATES TAB - Memory Templates by Category */}
+          <TabsContent value="templates" className="space-y-6">
+            <MemoryTemplateCategories />
+            <MemoryListTemplates userId={userId} />
+          </TabsContent>
+
+          {/* MY LISTS TAB */}
+          <TabsContent value="my-lists" className="space-y-4">
+            <div className="flex justify-end">
               <Button 
                 onClick={() => setShowCreateDialog(true)}
                 className="gap-2 bg-gradient-to-r from-palace-purple via-palace-pink to-palace-blue hover:opacity-90 shadow-purple"
               >
                 <Plus className="h-4 w-4" />
-                Create Custom
+                Create Custom List
               </Button>
             </div>
-          </div>
-
-          <TabsContent value="templates" className="space-y-4">
-            <MemoryListTemplates userId={userId} />
-          </TabsContent>
-
-          <TabsContent value="my-lists" className="space-y-4">
             <MyMemoryLists userId={userId} />
           </TabsContent>
 
-          <TabsContent value="public" className="space-y-4">
-            <PublicMemoryLists userId={userId} />
-          </TabsContent>
-
-          <TabsContent value="collaborative" className="space-y-4">
-            <CollaborativeMemoryLists userId={userId} />
+          {/* COMMUNITY TAB */}
+          <TabsContent value="community" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  Discover Public Lists
+                </h3>
+                <PublicMemoryLists userId={userId} />
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Users className="w-5 h-5 text-primary" />
+                  Team Memorization
+                </h3>
+                <CollaborativeMemoryLists userId={userId} />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
