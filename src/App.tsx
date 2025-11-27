@@ -115,6 +115,8 @@ const Memory = lazy(() => import("./pages/Memory"));
 const MemoryListEditor = lazy(() => import("./pages/MemoryListEditor"));
 const MemoryGamePlay = lazy(() => import("./pages/MemoryGamePlay"));
 const MemoryGameComplete = lazy(() => import("./pages/MemoryGameComplete"));
+const MemoryGameSelect = lazy(() => import("./pages/MemoryGameSelect"));
+const MemoryGame = lazy(() => import("./pages/MemoryGame"));
 const FirstLetterGame = lazy(() => import("./pages/games/FirstLetterGame"));
 const MemoryPalaceBuilder = lazy(() => import("./pages/games/MemoryPalaceBuilder"));
 const MemoryPalacePractice = lazy(() => import("./pages/games/MemoryPalacePractice"));
@@ -250,6 +252,8 @@ function App() {
             <Route path="/memorization-verses" element={<ProtectedRoute><MemorizationVerses /></ProtectedRoute>} />
             <Route path="/verse-memory-hall" element={<ProtectedRoute><VerseMemoryHall /></ProtectedRoute>} />
             <Route path="/memory" element={<ProtectedRoute><Memory /></ProtectedRoute>} />
+            <Route path="/memory/games" element={<ProtectedRoute><MemoryGameSelect /></ProtectedRoute>} />
+            <Route path="/memory/game/:gameId" element={<ProtectedRoute><MemoryGame /></ProtectedRoute>} />
             <Route path="/memory/list/:listId" element={<ProtectedRoute><MemoryListEditor /></ProtectedRoute>} />
             <Route path="/memory/play/:listId" element={<ProtectedRoute><MemoryGamePlay /></ProtectedRoute>} />
             <Route path="/memory/complete/:listId" element={<ProtectedRoute><MemoryGameComplete /></ProtectedRoute>} />
