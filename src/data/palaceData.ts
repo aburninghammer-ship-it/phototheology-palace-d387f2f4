@@ -2,12 +2,17 @@ export interface Room {
   id: string;
   name: string;
   tag: string;
+  icon?: string; // Lucide icon name
   purpose: string;
+  action?: string; // What the user must do when they enter
+  output?: string; // What the user produces/leaves with
   coreQuestion: string;
   method: string;
   examples: string[];
   pitfalls: string[];
   deliverable: string;
+  estimatedTime?: "quick" | "standard" | "deep"; // 5min / 15min / 30+min
+  quickMode?: string[]; // Optional quick steps for fast learners
   prerequisites?: { floor: number; room: string }[];
 }
 
@@ -30,8 +35,18 @@ export const palaceFloors: Floor[] = [
         id: "sr",
         name: "Story Room",
         tag: "SR",
-        purpose: "The Story Room is the foundation of all biblical understanding—you cannot interpret what you cannot remember, and you cannot remember what you haven't structured. This room transforms abstract Bible events into memorable, sequential scenes that stick in your mind like movie clips. Instead of vague summaries ('David fought Goliath'), you'll crystallize each narrative into 3-7 punchy 'beats' that capture the precise action and sequence. This is where chronology becomes your non-negotiable foundation—before you can interpret Scripture, you must first know what actually happened and in what order. Think of it like this: a film director doesn't say 'some stuff happened'—they know shot 1, shot 2, shot 3. Similarly, you're training to see biblical narratives as distinct, sequential moments. By naming each beat with vivid nouns and verbs (Coat, Pit, Caravan, Prison, Palace), you're building a mental library of biblical narratives that you can instantly recall, teach, and cross-reference. Without this room, all other Palace work collapses—you can't identify types if you don't know the story; you can't answer questions if the chronology is fuzzy; you can't find Christ if you don't know the plot. The Story Room turns biblical narratives from blurry impressions into sharp, teachable sequences.",
+        icon: "Book",
+        purpose: "Transform biblical events into memorable, sequential scenes. Build your foundational library of stories you can instantly recall.",
+        action: "Break down a narrative into 3-7 memorable 'beats' (major plot movements) and arrange them chronologically.",
+        output: "A beat list with arrows (→) showing sequence, plus a one-line plot summary.",
         coreQuestion: "What exactly happened—and in what order?",
+        estimatedTime: "standard",
+        quickMode: [
+          "Read the passage completely",
+          "Identify 3-7 major moments",
+          "Name each with a punchy noun/verb (Coat, Pit, Palace)",
+          "Test: Can you teach this story using only these beats?"
+        ],
         method: "📋 STEP-BY-STEP METHODOLOGY:\n\n1️⃣ Read the narrative passage completely (a chapter, a story arc, or a complete episode)\n\n2️⃣ Identify 3-7 distinct 'beats' (major plot movements)—not too many (loses focus) or too few (loses detail)\n\n3️⃣ Name each beat with a punchy NOUN or VERB (not full sentences)\n   ✅ Good: 'Coat' → 'Pit' → 'Caravan' → 'Prison' → 'Palace'\n   ❌ Bad: 'Joseph receives a colorful coat from his father' (too wordy)\n\n4️⃣ Arrange beats chronologically using arrows (→) to show sequence\n\n5️⃣ Test your beat list: Can you teach this story to a child using only these beats?\n\n6️⃣ Write a one-line plot summary that captures the movement from first beat to last\n\n🎯 KEY PRINCIPLES:\n• 🎬 Beats are like film shots—each one freezes a distinct moment\n• 🏔️ Use CONCRETE nouns (Altar, River, Mountain) over abstractions (Crisis, Decision)\n• 👑 Chronology is king—if you mix up the order, you've failed the room\n• 🎯 The goal is MEMORABLE, not comprehensive\n• ⚠️ If you need more than 7 beats, you're probably covering too much ground",
         examples: [
           "Genesis 37 (Joseph): Dream → Coat → Pit → Caravan → Egypt → Potiphar (6 beats capture the descent arc)",
@@ -53,8 +68,18 @@ export const palaceFloors: Floor[] = [
         id: "ir",
         name: "Imagination Room",
         tag: "IR",
-        purpose: "The Imagination Room is where you learn to experience Scripture with your whole being, not just your intellect. God gave you an imagination as a sacred gift for encountering His Word—use it to step inside the biblical narrative with all five senses fully engaged. Feel the texture of the dusty road under Jesus' feet. Hear the crack of the whip against His back. Smell the myrrh and aloes at His burial. Taste the salt of Peter's tears. See the crimson spreading across Pilate's basin. This isn't escapism or emotionalism—it's the difference between knowing about the Red Sea crossing and feeling the cold spray on your face as walls of water tower above you. When imagination sanctifies your study, Scripture stops being a history book and becomes a living encounter. The stories burn into your emotional memory with such intensity that years later, you won't just teach the facts—you'll transport others into the experience because you've truly been there. This room trains you to ask: What does this passage feel like in my body, in my senses, in my gut? Because truth that touches only the mind will never transform the heart, but truth experienced with sanctified imagination becomes unforgettable and life-changing.",
-        coreQuestion: "Apply your imagination to the text. What do you see?",
+        icon: "Eye",
+        purpose: "Experience Scripture with all five senses. Step inside the story to create emotional memory that lasts.",
+        action: "Immerse yourself in a biblical scene using sight, sound, touch, smell, and taste.",
+        output: "A sensory paragraph describing your experience + one sentence of personal resonance.",
+        coreQuestion: "What do you see, hear, feel, smell, and taste in this passage?",
+        estimatedTime: "quick",
+        quickMode: [
+          "Choose a vivid biblical scene",
+          "Close your eyes and enter the moment",
+          "Engage all 5 senses (sight, sound, touch, smell, taste)",
+          "Write one paragraph capturing the experience"
+        ],
         method: "🎨 IMMERSIVE EXPERIENCE METHOD:\n\n👁️ STEP INTO THE SCENE - Use your imagination to fully enter the biblical moment\n\n👂 ENGAGE ALL FIVE SENSES:\n• 👀 What do you SEE?\n• 👂 What do you HEAR?\n• 🤲 What do you TOUCH?\n• 👃 What do you SMELL?\n• 👅 What do you TASTE?\n\n💭 Let the passage become a LIVED EXPERIENCE, not just information\n\n✍️ Capture in one sentence how this sensory encounter resonates with your own story",
         examples: [
           "Red Sea crossing: Wind whipping your face, the roar of water held back by invisible hands, salt spray on your lips, towering walls on both sides, the smell of fear and faith mingled in the crowd",
