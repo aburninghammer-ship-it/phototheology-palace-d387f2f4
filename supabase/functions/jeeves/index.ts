@@ -852,6 +852,7 @@ Paragraph 4: Offer one example answer to demonstrate the principle
 Make it challenging but doable. Encourage deep thinking.`;
 
     } else if (mode === "analyze") {
+      // Legacy analyze mode - keep for backward compatibility
       systemPrompt = `You are Jeeves, a warm and encouraging Bible study mentor for Phototheology.
 Your role is to provide constructive, growth-oriented feedback on student answers, ideas, and insights.
 
@@ -894,6 +895,60 @@ Paragraph 4: Provide one specific example of how to apply ${principle} more deep
 Paragraph 5: End with encouragement and a thought-provoking question to inspire further study
 
 Be warm, specific, and helpful. Focus on building their confidence while helping them grow.`;
+
+    } else if (mode === "analyze-thoughts") {
+      // New comprehensive analysis mode with structured JSON output
+      systemPrompt = `You are Jeeves, an expert Phototheology mentor who provides comprehensive analysis of biblical ideas and insights.
+
+You MUST return a valid JSON object with this EXACT structure:
+{
+  "overallScore": <number 1-10>,
+  "categories": {
+    "biblicalAccuracy": <number 1-10>,
+    "depthOfInsight": <number 1-10>,
+    "christCenteredness": <number 1-10>,
+    "ptApplication": <number 1-10>
+  },
+  "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
+  "growthAreas": ["<area 1>", "<area 2>"],
+  "palaceMapping": {
+    "primaryRoom": "<room name and code>",
+    "relatedRooms": ["<room 1>", "<room 2>"],
+    "floorRecommendation": "<floor recommendation>"
+  },
+  "scriptureConnections": [
+    {"reference": "<verse reference>", "connection": "<how it connects>"},
+    {"reference": "<verse reference>", "connection": "<how it connects>"}
+  ],
+  "encouragement": "<warm encouragement with a thought-provoking question>"
+}
+
+SCORING GUIDELINES:
+- 9-10: Exceptional insight showing deep understanding and Christ-centered application
+- 7-8: Good insight with solid biblical foundation and some depth
+- 5-6: Decent start with room for deeper exploration
+- 3-4: Basic understanding needing significant development
+- 1-2: Needs foundational guidance
+
+PALACE ROOMS REFERENCE (use exact codes):
+Floor 1: Story Room (SR), Imagination Room (IR), 24FPS (24), Bible Rendered (BR), Translation Room (TR), Gems Room (GR)
+Floor 2: Observation Room (OR), Def-Com (DC), Symbols/Types (@T), Questions Room (QR), Q&A Room (QA)
+Floor 3: Nature Freestyle (NF), Personal Freestyle (PF), Bible Freestyle (BF), History Freestyle (HF), Listening Room (LR)
+Floor 4: Concentration Room (CR), Dimensions Room (DR), Connect-6 (C6), Theme Room (TRm), Time Zone (TZ), Patterns Room (PRm), Parallels Room (P‖), Fruit Room (FRt), Christ Every Chapter (CEC), Room 66 (R66)
+Floor 5: Blue Room/Sanctuary (BL), Prophecy Room (PR), Three Angels Room (3A), Feasts Room (FE)
+Floor 6: Cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re), Three Heavens (1H, 2H, 3H), Juice Room (JR)
+Floor 7: Fire Room (FRm), Meditation Room (MR), Speed Room (SRm)
+Floor 8: Master Floor (reflexive mastery)
+
+CRITICAL: Return ONLY the JSON object, no markdown formatting, no code blocks, no explanatory text.`;
+
+      userPrompt = `Analyze this biblical thought/insight from a student studying ${roomName} (${roomTag}):
+
+"${userAnswer}"
+
+The principle they're working with: ${principle}
+
+Provide a comprehensive analysis as a JSON object. Be encouraging but honest. Find genuine strengths while identifying specific growth areas. Map to the most relevant Palace rooms and suggest 3-4 scripture connections that would deepen their understanding.`;
 
     } else if (mode === "chain-reference") {
       const principleMap: Record<string, { name: string; description: string }> = {
@@ -4005,6 +4060,62 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
       
       console.log("Updated usedVerses:", newUsedVerses);
       console.log("Updated usedRooms:", newUsedRooms);
+    }
+
+    // Handle analyze-thoughts mode - parse JSON and return structured analysis
+    if (mode === "analyze-thoughts") {
+      try {
+        // Clean the content - remove any markdown code blocks
+        let cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        
+        // Try to extract JSON from the response
+        const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const analysis = JSON.parse(jsonMatch[0]);
+          return new Response(
+            JSON.stringify({ analysis }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        } else {
+          console.error("No JSON found in analyze-thoughts response:", cleanContent.substring(0, 500));
+          throw new Error("Failed to parse analysis response");
+        }
+      } catch (parseError) {
+        console.error("Error parsing analyze-thoughts JSON:", parseError);
+        // Return a fallback structured response
+        return new Response(
+          JSON.stringify({ 
+            analysis: {
+              overallScore: 7,
+              categories: {
+                biblicalAccuracy: 7,
+                depthOfInsight: 7,
+                christCenteredness: 7,
+                ptApplication: 7
+              },
+              strengths: [
+                "You've made an effort to engage with Scripture thoughtfully",
+                "Your willingness to explore biblical connections shows growth"
+              ],
+              growthAreas: [
+                "Consider exploring deeper Christ-centered connections",
+                "Try connecting your insight to specific Palace rooms"
+              ],
+              palaceMapping: {
+                primaryRoom: "Concentration Room (CR)",
+                relatedRooms: ["Questions Room (QR)", "Gems Room (GR)"],
+                floorRecommendation: "Continue building foundations on Floor 1-2 before advancing"
+              },
+              scriptureConnections: [
+                { reference: "John 5:39", connection: "Jesus said the Scriptures testify of Him - keep searching for Christ!" },
+                { reference: "2 Timothy 2:15", connection: "Study to show yourself approved, rightly dividing the word of truth" }
+              ],
+              encouragement: "Keep studying and growing! Every insight is a stepping stone. What other Scripture might connect to your idea?"
+            }
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     return new Response(

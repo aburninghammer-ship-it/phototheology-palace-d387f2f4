@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
-import { Bot, Sparkles, BookOpen, Dumbbell, Loader2, HelpCircle, MessageSquareText } from "lucide-react";
+import { Bot, Sparkles, BookOpen, Dumbbell, Loader2, HelpCircle, Brain, Star, TrendingUp, Building2, BookMarked, CheckCircle2, Lightbulb } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
@@ -17,6 +17,28 @@ interface JeevesAssistantProps {
   floorNumber: number;
   roomId: string;
   onExerciseComplete?: (type: string) => void;
+}
+
+interface AnalysisResult {
+  overallScore: number;
+  categories: {
+    biblicalAccuracy: number;
+    depthOfInsight: number;
+    christCenteredness: number;
+    ptApplication: number;
+  };
+  strengths: string[];
+  growthAreas: string[];
+  palaceMapping: {
+    primaryRoom: string;
+    relatedRooms: string[];
+    floorRecommendation: string;
+  };
+  scriptureConnections: {
+    reference: string;
+    connection: string;
+  }[];
+  encouragement: string;
 }
 
 export const JeevesAssistant = ({ 
@@ -32,8 +54,8 @@ export const JeevesAssistant = ({
   const [exerciseContent, setExerciseContent] = useState<string | null>(null);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<string | null>(null);
-  const [userAnswer, setUserAnswer] = useState("");
-  const [analysisFeedback, setAnalysisFeedback] = useState<string | null>(null);
+  const [userThoughts, setUserThoughts] = useState("");
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const { toast } = useToast();
 
   const fetchJeevesResponse = async (mode: "example" | "exercise") => {
@@ -95,31 +117,51 @@ export const JeevesAssistant = ({
     }
   };
 
-  const analyzeAnswer = async () => {
-    if (!userAnswer.trim()) return;
+  const analyzeThoughts = async () => {
+    if (!userThoughts.trim()) return;
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
-          mode: "analyze",
+          mode: "analyze-thoughts",
           roomTag,
           roomName,
           principle,
-          userAnswer,
+          userAnswer: userThoughts,
         },
       });
       if (error) throw error;
-      setAnalysisFeedback(data.content);
+      setAnalysisResult(data.analysis);
       onExerciseComplete?.("analyze");
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to analyze your answer",
+        description: error.message || "Failed to analyze your thoughts",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return "text-green-600";
+    if (score >= 6) return "text-yellow-600";
+    return "text-orange-500";
+  };
+
+  const renderStars = (score: number) => {
+    const stars = [];
+    const fullStars = Math.floor(score / 2);
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          className={`h-4 w-4 ${i < fullStars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`}
+        />
+      );
+    }
+    return stars;
   };
 
   return (
@@ -153,7 +195,7 @@ export const JeevesAssistant = ({
               Practice
             </TabsTrigger>
             <TabsTrigger value="analyze" className="text-xs px-2">
-              <MessageSquareText className="h-4 w-4 mr-1" />
+              <Brain className="h-4 w-4 mr-1" />
               Analyze
             </TabsTrigger>
             <TabsTrigger value="qa" className="text-xs px-2">
@@ -240,47 +282,175 @@ export const JeevesAssistant = ({
             </TabsContent>
 
             <TabsContent value="analyze" className="mt-0 space-y-4">
-              <div className="p-4 bg-muted/30 rounded-lg border border-border">
+              <div className="p-4 bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-lg border border-violet-500/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <Brain className="h-5 w-5 text-violet-600" />
+                  <h3 className="font-semibold text-foreground">Analyze My Thoughts</h3>
+                </div>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Share your ideas, answers, or insights about <strong className="text-foreground">{principle}</strong> and 
-                  Jeeves will provide constructive feedback.
+                  Share your biblical ideas, concepts, or answers. Jeeves will rate your insight and provide detailed feedback with scripture connections.
                 </p>
                 <div className="space-y-3">
                   <Textarea
-                    value={userAnswer}
-                    onChange={(e) => setUserAnswer(e.target.value)}
-                    placeholder="Type your answer, idea, or concept here..."
+                    value={userThoughts}
+                    onChange={(e) => setUserThoughts(e.target.value)}
+                    placeholder="Share your biblical insight, connection, or concept here... For example: 'I think the bronze serpent in Numbers 21 is a type of Christ being lifted up on the cross...'"
                     className="bg-background min-h-[120px] resize-none"
                   />
                   <Button
-                    onClick={analyzeAnswer}
-                    disabled={loading || !userAnswer.trim()}
+                    onClick={analyzeThoughts}
+                    disabled={loading || !userThoughts.trim()}
                     className="w-full bg-gradient-to-r from-violet-500 to-purple-500 text-white hover:from-violet-600 hover:to-purple-600"
                   >
                     {loading ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Analyzing...
+                        Analyzing your thoughts...
                       </>
                     ) : (
                       <>
-                        <MessageSquareText className="h-4 w-4 mr-2" />
-                        Analyze My Answer
+                        <Brain className="h-4 w-4 mr-2" />
+                        Analyze My Thoughts
                       </>
                     )}
                   </Button>
                 </div>
               </div>
               
-              {analysisFeedback && (
-                <div className="p-4 bg-gradient-to-br from-violet-500/5 to-purple-500/5 rounded-xl border-2 border-violet-500/30 animate-fade-in">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Bot className="h-5 w-5 text-violet-600" />
-                    <span className="font-semibold text-foreground">Jeeves' Feedback:</span>
-                  </div>
-                  <div className="prose prose-sm max-w-none text-foreground">
-                    {formatJeevesResponse(analysisFeedback)}
-                  </div>
+              {analysisResult && (
+                <div className="space-y-3 animate-fade-in">
+                  {/* Overall Score Card */}
+                  <Card className="border-2 border-violet-500/30 bg-gradient-to-br from-violet-500/5 to-purple-500/5">
+                    <CardContent className="pt-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+                          <span className="font-semibold">Overall Score</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-2xl font-bold ${getScoreColor(analysisResult.overallScore)}`}>
+                            {analysisResult.overallScore}/10
+                          </span>
+                          <div className="flex">{renderStars(analysisResult.overallScore)}</div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex justify-between p-2 bg-background/50 rounded">
+                          <span className="text-muted-foreground">Biblical Accuracy</span>
+                          <span className={`font-semibold ${getScoreColor(analysisResult.categories.biblicalAccuracy)}`}>
+                            {analysisResult.categories.biblicalAccuracy}/10
+                          </span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-background/50 rounded">
+                          <span className="text-muted-foreground">Depth of Insight</span>
+                          <span className={`font-semibold ${getScoreColor(analysisResult.categories.depthOfInsight)}`}>
+                            {analysisResult.categories.depthOfInsight}/10
+                          </span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-background/50 rounded">
+                          <span className="text-muted-foreground">Christ-Centeredness</span>
+                          <span className={`font-semibold ${getScoreColor(analysisResult.categories.christCenteredness)}`}>
+                            {analysisResult.categories.christCenteredness}/10
+                          </span>
+                        </div>
+                        <div className="flex justify-between p-2 bg-background/50 rounded">
+                          <span className="text-muted-foreground">PT Application</span>
+                          <span className={`font-semibold ${getScoreColor(analysisResult.categories.ptApplication)}`}>
+                            {analysisResult.categories.ptApplication}/10
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Strengths Card */}
+                  <Card className="border border-green-500/30 bg-gradient-to-br from-green-500/5 to-emerald-500/5">
+                    <CardContent className="pt-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        <span className="font-semibold text-green-700">Strengths</span>
+                      </div>
+                      <ul className="space-y-2">
+                        {analysisResult.strengths.map((strength, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm">
+                            <span className="text-green-600 mt-0.5">•</span>
+                            <span>{strength}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  {/* Growth Areas Card */}
+                  <Card className="border border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
+                    <CardContent className="pt-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <TrendingUp className="h-5 w-5 text-amber-600" />
+                        <span className="font-semibold text-amber-700">Areas for Growth</span>
+                      </div>
+                      <ul className="space-y-2">
+                        {analysisResult.growthAreas.map((area, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm">
+                            <span className="text-amber-600 mt-0.5">•</span>
+                            <span>{area}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  {/* Palace Room Mapping Card */}
+                  <Card className="border border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5">
+                    <CardContent className="pt-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Building2 className="h-5 w-5 text-primary" />
+                        <span className="font-semibold">Palace Room Mapping</span>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="p-2 bg-background/50 rounded">
+                          <span className="text-muted-foreground">Primary Room: </span>
+                          <span className="font-medium text-primary">{analysisResult.palaceMapping.primaryRoom}</span>
+                        </div>
+                        <div className="p-2 bg-background/50 rounded">
+                          <span className="text-muted-foreground">Related Rooms: </span>
+                          <span className="font-medium">{analysisResult.palaceMapping.relatedRooms.join(", ")}</span>
+                        </div>
+                        <div className="p-2 bg-background/50 rounded">
+                          <span className="text-muted-foreground">Floor Recommendation: </span>
+                          <span className="font-medium">{analysisResult.palaceMapping.floorRecommendation}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Scripture Connections Card */}
+                  <Card className="border border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-cyan-500/5">
+                    <CardContent className="pt-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <BookMarked className="h-5 w-5 text-blue-600" />
+                        <span className="font-semibold text-blue-700">Scripture Connections</span>
+                      </div>
+                      <div className="space-y-2">
+                        {analysisResult.scriptureConnections.map((scripture, idx) => (
+                          <div key={idx} className="p-2 bg-background/50 rounded text-sm">
+                            <span className="font-semibold text-blue-600">{scripture.reference}</span>
+                            <span className="text-muted-foreground"> — {scripture.connection}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Encouragement Card */}
+                  <Card className="border border-pink-500/30 bg-gradient-to-br from-pink-500/5 to-rose-500/5">
+                    <CardContent className="pt-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Lightbulb className="h-5 w-5 text-pink-600" />
+                        <span className="font-semibold text-pink-700">Encouragement</span>
+                      </div>
+                      <p className="text-sm italic">{analysisResult.encouragement}</p>
+                    </CardContent>
+                  </Card>
                 </div>
               )}
             </TabsContent>
