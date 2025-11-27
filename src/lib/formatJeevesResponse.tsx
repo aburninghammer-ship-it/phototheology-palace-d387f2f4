@@ -202,8 +202,8 @@ const formatInlineText = (text: string): React.ReactNode => {
   let keyCounter = 0;
 
   while (remaining.length > 0) {
-    // Handle PT room codes (e.g., SR, DR, 1D, @Ab, ∞)
-    const roomCodeMatch = remaining.match(/^([A-Z]{1,3}R?m?|∞|@[A-Z][a-z]+|\d+D)(\s*\([^)]+\))?/);
+    // Handle PT room codes (e.g., SR, DR, 1D, @Ab, ∞) - only match complete codes not followed by lowercase letters
+    const roomCodeMatch = remaining.match(/^(SR|IR|24F|BR|TR|GR|OR|DC|ST|QR|QA|NF|PF|BF|HF|LR|CR|DR|C6|TRm|TZ|PRm|FRt|BL|PR|3A|JR|FRm|MR|SRm|∞|@Ad|@No|@Ab|@Mo|@Cy|@CyC|@Sp|@Re|1H|2H|3H|[1-5]D)(?![a-z])(\s*\([^)]+\))?/);
     if (roomCodeMatch) {
       const code = roomCodeMatch[1];
       const description = roomCodeMatch[2] || '';
