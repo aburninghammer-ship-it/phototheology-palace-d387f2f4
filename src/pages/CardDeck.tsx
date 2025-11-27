@@ -29,6 +29,8 @@ import { StudyDeckInstructions } from "@/components/study-deck/StudyDeckInstruct
 import { StudyDeckExamples } from "@/components/study-deck/StudyDeckExamples";
 import { StudyDeckModeSelector, StudyMode } from "@/components/study-deck/StudyDeckModeSelector";
 import { CardDrawAnimation } from "@/components/study-deck/CardDrawAnimation";
+import { CardCategoryFilters } from "@/components/study-deck/CardCategoryFilters";
+import { JeevesCommentaryDialog } from "@/components/study-deck/JeevesCommentaryDialog";
 import { useMasteryStreak } from "@/hooks/useMasteryStreak";
 
 interface PrincipleCard {
@@ -206,6 +208,11 @@ export default function CardDeck() {
   const [studyMode, setStudyMode] = useState<StudyMode | null>(null);
   const [isDrawingCard, setIsDrawingCard] = useState(false);
   const { streak, updateStreak } = useMasteryStreak();
+  
+  // Filter and commentary state
+  const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
+  const [commentaryCard, setCommentaryCard] = useState<PrincipleCard | null>(null);
+  const [commentaryOpen, setCommentaryOpen] = useState(false);
 
   useEffect(() => {
     // Build all principle cards from palace data
@@ -1614,26 +1621,51 @@ export default function CardDeck() {
           )}
 
           {/* Card Deck Display */}
-          <Card>
-            <CardHeader>
-              <CardTitle>All Palace Principle Cards</CardTitle>
-              <CardDescription>
-                Click to flip and read • Shift+Click to select a card • Or let Jeeves pick one for you
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                <AnimatePresence>
-                  {allCards.map((card) => (
-                    <motion.div
-                      key={card.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      whileHover={{ scale: 1.05 }}
-                      className="relative h-32 cursor-pointer perspective-1000"
-                      onClick={(e) => flipCard(card.id, e)}
-                      title="Click to flip • Shift+Click to select card"
-                    >
+          <div className="space-y-6">
+            {/* Phase 3: Filters */}
+            <CardCategoryFilters 
+              selectedFloor={selectedFloor}
+              onFloorSelect={setSelectedFloor}
+              cardCounts={allCards.reduce((acc, card) => {
+                acc[card.floor] = (acc[card.floor] || 0) + 1;
+                return acc;
+              }, {} as Record<number, number>)}
+            />
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>All Palace Principle Cards</CardTitle>
+                <CardDescription>
+                  Click to flip • Shift+Click to select • Ctrl+Click for Jeeves commentary
+                  {selectedFloor && (
+                    <Badge variant="outline" className="ml-2">
+                      Showing Floor {selectedFloor}
+                    </Badge>
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  <AnimatePresence>
+                    {allCards
+                      .filter(card => selectedFloor === null || card.floor === selectedFloor)
+                      .map((card) => (
+                      <motion.div
+                        key={card.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        whileHover={{ scale: 1.05 }}
+                        className="relative h-32 cursor-pointer perspective-1000"
+                        onClick={(e) => {
+                          if (e.ctrlKey || e.metaKey) {
+                            setCommentaryCard(card);
+                            setCommentaryOpen(true);
+                          } else {
+                            flipCard(card.id, e);
+                          }
+                        }}
+                        title="Click to flip • Shift+Click to select • Ctrl+Click for commentary"
+                      >
                       <div
                         className={`relative w-full h-full transition-transform duration-500 preserve-3d ${
                           flippedCards.has(card.id) ? "rotate-y-180" : ""
@@ -1704,7 +1736,17 @@ export default function CardDeck() {
               </div>
             </CardContent>
           </Card>
+          </div>
+          
+          {/* Jeeves Commentary Dialog */}
+          <JeevesCommentaryDialog 
+            card={commentaryCard}
+            open={commentaryOpen}
+            onOpenChange={setCommentaryOpen}
+          />
+          
           {/* End Study Deck Tab */}
+          </div>
           </TabsContent>
 
           {/* Card Battle Tab */}
