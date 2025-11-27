@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Plus, Users, Trophy, Book, Sparkles } from "lucide-react";
+import { Brain, Plus, Users, Trophy, Book, Sparkles, Gamepad2 } from "lucide-react";
 import { toast } from "sonner";
 import { CreateMemoryListDialog } from "@/components/memory/CreateMemoryListDialog";
 import { MemoryListCard } from "@/components/memory/MemoryListCard";
@@ -133,13 +133,23 @@ export default function Memory() {
               <TabsTrigger value="collaborative">Team</TabsTrigger>
             </TabsList>
             
-            <Button 
-              onClick={() => setShowCreateDialog(true)}
-              className="gap-2 bg-gradient-to-r from-palace-purple via-palace-pink to-palace-blue hover:opacity-90 shadow-purple"
-            >
-              <Plus className="h-4 w-4" />
-              Create Custom
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => navigate("/memory/games")}
+                variant="outline"
+                className="gap-2"
+              >
+                <Gamepad2 className="h-4 w-4" />
+                Memory Games
+              </Button>
+              <Button 
+                onClick={() => setShowCreateDialog(true)}
+                className="gap-2 bg-gradient-to-r from-palace-purple via-palace-pink to-palace-blue hover:opacity-90 shadow-purple"
+              >
+                <Plus className="h-4 w-4" />
+                Create Custom
+              </Button>
+            </div>
           </div>
 
           <TabsContent value="templates" className="space-y-4">

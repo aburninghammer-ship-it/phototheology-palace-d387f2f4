@@ -10,6 +10,7 @@ import { ArrowLeft, Plus, Trash2, Save, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { MemoryVerseSearchDialog } from "@/components/memory/MemoryVerseSearchDialog";
 import { VerseWithPTAnalysis } from "@/components/memory/VerseWithPTAnalysis";
+import { JeevesVerseSuggestions } from "@/components/memory/JeevesVerseSuggestions";
 
 export default function MemoryListEditor() {
   const { listId } = useParams();
@@ -232,6 +233,9 @@ export default function MemoryListEditor() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Jeeves Suggestions */}
+          <JeevesVerseSuggestions onAddVerse={handleInsertVerse} />
 
           {/* Verses List */}
           <Card>
