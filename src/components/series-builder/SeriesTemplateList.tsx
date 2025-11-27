@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BookOpen } from "lucide-react";
-import { seriesTemplates } from "@/data/seriesTemplates";
+import { ArrowLeft, BookOpen, Loader2 } from "lucide-react";
+import { seriesTemplates, SeriesTemplate } from "@/data/seriesTemplates";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface SeriesTemplateListProps {
   onSelect: (template: any) => void;
@@ -11,6 +16,70 @@ interface SeriesTemplateListProps {
 }
 
 export const SeriesTemplateList = ({ onSelect, onBack }: SeriesTemplateListProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [creating, setCreating] = useState<string | null>(null);
+
+  const createSeriesFromTemplate = async (template: SeriesTemplate) => {
+    if (!user) {
+      toast.error('Please sign in to create a series');
+      return;
+    }
+
+    setCreating(template.id);
+    try {
+      // Create the series
+      const { data: seriesData, error: seriesError } = await supabase
+        .from('bible_study_series')
+        .insert({
+          user_id: user.id,
+          title: template.title,
+          description: template.description,
+          audience_type: template.audienceType,
+          context: template.context,
+          primary_goal: template.primaryGoal,
+          theme_subject: template.themeSubject,
+          lesson_count: template.lessonCount,
+          status: 'draft'
+        })
+        .select()
+        .single();
+
+      if (seriesError) throw seriesError;
+
+      // Create all lessons
+      const lessonInserts = template.lessons.map(lesson => ({
+        series_id: seriesData.id,
+        lesson_number: lesson.lessonNumber,
+        title: lesson.title,
+        big_idea: lesson.bigIdea,
+        main_floors: lesson.mainFloors,
+        key_rooms: lesson.keyRooms,
+        key_passages: lesson.keyPassages,
+        core_points: lesson.corePoints,
+        palace_mapping_notes: lesson.palaceMappingNotes,
+        christ_emphasis: lesson.christEmphasis,
+        discussion_questions: lesson.discussionQuestions,
+        palace_activity: lesson.palaceActivity,
+        take_home_challenge: lesson.takeHomeChallenge
+      }));
+
+      const { error: lessonsError } = await supabase
+        .from('bible_study_lessons')
+        .insert(lessonInserts);
+
+      if (lessonsError) throw lessonsError;
+
+      toast.success('Series created from template!');
+      navigate(`/series/${seriesData.id}`);
+    } catch (error: any) {
+      console.error('Error creating series from template:', error);
+      toast.error('Failed to create series');
+    } finally {
+      setCreating(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -76,9 +145,17 @@ export const SeriesTemplateList = ({ onSelect, onBack }: SeriesTemplateListProps
 
                   <Button 
                     className="w-full" 
-                    onClick={() => onSelect(template)}
+                    onClick={() => createSeriesFromTemplate(template)}
+                    disabled={creating === template.id}
                   >
-                    Use This Template
+                    {creating === template.id ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      'Use This Template'
+                    )}
                   </Button>
                 </CardContent>
               </Card>

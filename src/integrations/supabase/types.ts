@@ -194,9 +194,11 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          is_public: boolean | null
           is_template: boolean | null
           lesson_count: number
           primary_goal: string
+          share_token: string | null
           status: string | null
           theme_subject: string
           title: string
@@ -209,9 +211,11 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_public?: boolean | null
           is_template?: boolean | null
           lesson_count: number
           primary_goal: string
+          share_token?: string | null
           status?: string | null
           theme_subject: string
           title: string
@@ -224,9 +228,11 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          is_public?: boolean | null
           is_template?: boolean | null
           lesson_count?: number
           primary_goal?: string
+          share_token?: string | null
           status?: string | null
           theme_subject?: string
           title?: string
@@ -234,6 +240,86 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      bible_study_series_enrollments: {
+        Row: {
+          enrolled_at: string
+          id: string
+          is_active: boolean
+          last_accessed_at: string | null
+          series_id: string
+          user_id: string
+        }
+        Insert: {
+          enrolled_at?: string
+          id?: string
+          is_active?: boolean
+          last_accessed_at?: string | null
+          series_id: string
+          user_id: string
+        }
+        Update: {
+          enrolled_at?: string
+          id?: string
+          is_active?: boolean
+          last_accessed_at?: string | null
+          series_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_study_series_enrollments_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "bible_study_series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bible_study_series_progress: {
+        Row: {
+          completed_at: string
+          created_at: string
+          id: string
+          lesson_id: string
+          notes: string | null
+          series_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          lesson_id: string
+          notes?: string | null
+          series_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          notes?: string | null
+          series_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_study_series_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "bible_study_lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bible_study_series_progress_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "bible_study_series"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bible_verses_tokenized: {
         Row: {
