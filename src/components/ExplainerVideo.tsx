@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import videoPoster from "@/assets/video-poster.png";
 
 export const ExplainerVideo = () => {
   return (
@@ -9,7 +10,7 @@ export const ExplainerVideo = () => {
             <video
               controls
               className="w-full aspect-video"
-              poster="/placeholder.svg"
+              poster={videoPoster}
             >
               <source src="/videos/explainer.mp4" type="video/mp4" />
               Your browser does not support the video tag.
