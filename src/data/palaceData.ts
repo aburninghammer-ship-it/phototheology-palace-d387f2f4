@@ -92,8 +92,18 @@ export const palaceFloors: Floor[] = [
         id: "24fps",
         name: "24FPS Room",
         tag: "24",
-        purpose: "The 24FPS Room is your biblical GPS system—it makes every chapter of the Bible instantly findable through a single, unforgettable image. Just like a movie plays at 24 frames per second, you're creating a 'frame' (mental image) for every chapter of Scripture. The goal isn't artistic beauty or theological depth—it's INSTANT RETRIEVAL. When someone says 'Genesis 22,' you should immediately see a knife hovering over an altar. When you hear 'Psalm 23,' a shepherd's staff casting a long shadow should flash in your mind. This room solves the universal problem of biblical amnesia: you've read it, but where was it? By indexing each chapter with a quirky, sticky visual icon, you build a mental filing cabinet that lets you navigate 1,189 chapters with confidence. The image can be silly, even irreverent—what matters is that it WORKS. A birthday cake with 'Earth' written on it for Genesis 1 (creation's 'birthday') is more effective than a vague 'light and darkness.' This is memory engineering, not artistry. Once you've built your 24FPS index, you'll never again stare blankly when someone references a chapter—you'll see the image, recall the content, and engage immediately.",
+        icon: "Film",
+        purpose: "Create a visual GPS for the Bible—one memorable image per chapter for instant retrieval. Not theological depth, but instant recall.",
+        action: "For each chapter, identify the MOST MEMORABLE element and convert it into a single, quirky visual image.",
+        output: "A chapter-to-image index (e.g., 'Gen 1 = Birthday Cake Earth, Gen 3 = Snake+Apple+Clock').",
         coreQuestion: "What image will make this chapter unforgettably findable?",
+        estimatedTime: "quick",
+        quickMode: [
+          "Read the chapter",
+          "Identify the single most memorable element",
+          "Convert to a concrete visual (prefer quirky over dignified)",
+          "Test: Does it trigger instant recall?"
+        ],
         method: "🎬 STEP-BY-STEP METHODOLOGY:\n\n1️⃣ Read the chapter you want to index\n\n2️⃣ Identify the MOST MEMORABLE element (event, object, phrase, turning point)\n\n3️⃣ Convert that element into a SINGLE VISUAL IMAGE—preferably something concrete and striking\n\n4️⃣ Test the image: Does it instantly trigger the chapter content?\n\n5️⃣ Make it QUIRKY if needed—weird images stick better than dignified ones\n\n6️⃣ Record: Chapter Number → Image Description\n\n7️⃣ Repeat for every chapter in the book you're studying\n\n🔑 KEY PRINCIPLES:\n• 🎯 Prioritize MEMORABLE over accurate\n• 🔪 Use concrete objects over abstract concepts (Knife > Faith)\n• 🤪 Quirky beats theological (Snake+Apple+Clock for Gen 3 is better than 'Disobedience')\n• 🖼️ The image should be VISUAL—you should be able to draw it (even badly)\n• 1️⃣ One image per chapter—don't try to capture everything\n• ⚡ The image is a TRIGGER, not a summary\n\n💡 PRO TIP: Go through an entire book in one sitting to build momentum. Your 24FPS index becomes more valuable the more chapters you complete.",
         examples: [
           "📸 VIEW COMPLETE GENESIS 1-24 VISUAL GALLERY: A full set of 24 illustrated frames is available in the Visual Gallery section below, showing one memorable image for each of the first 24 chapters of Genesis",
@@ -119,8 +129,18 @@ export const palaceFloors: Floor[] = [
         id: "br",
         name: "Bible Rendered",
         tag: "BR",
-        purpose: "The Bible Rendered Room gives you the ultimate macro-view—compressing all 1,189 chapters of Scripture into approximately 51 ultra-high-level frames (one symbolic glyph per 24-chapter block). If 24FPS lets you navigate individual chapters, Bible Rendered lets you see the ENTIRE biblical landscape at a glance, like viewing Earth from orbit. Each block gets a single symbolic glyph that captures the essence of that 24-chapter arc: '/' for Genesis 1-24 (divisions emerge—light/dark, waters/land, man/woman); '↑→' for Acts 1-24 (gospel goes UP to heaven, then OUT to nations). This isn't verse-by-verse study—it's aerial reconnaissance. You're training your mind to hold the WHOLE counsel of God in view, so you can see how individual passages fit into the grand narrative. Bible Rendered keeps you from getting lost in the trees by showing you the forest's shape. When you have all 51 frames memorized, you possess a mental map of redemptive history that lets you orient any passage within the larger story. This is particularly powerful for apologetics and teaching: you can sketch the entire Bible arc on a napkin using your glyphs, then zoom into specific sections as needed.",
+        icon: "Layers",
+        purpose: "See the entire Bible at a glance—compress all 1,189 chapters into ~51 symbolic glyphs (one per 24-chapter block).",
+        action: "Read a 24-chapter block, identify its central movement, and assign ONE simple symbolic glyph.",
+        output: "A 51-frame legend mapping each 24-chapter block to its glyph with brief explanation.",
         coreQuestion: "What single symbol captures this 24-chapter block's essence?",
+        estimatedTime: "deep",
+        quickMode: [
+          "Divide Bible into 24-chapter blocks",
+          "Read/review entire block for central theme",
+          "Choose simple glyph: /, ×, ↑, →, or word",
+          "Build your 51-frame legend"
+        ],
         method: "🗺️ STEP-BY-STEP METHODOLOGY:\n\n1️⃣ Divide the Bible into 24-chapter blocks (approximately 51 blocks total)\n\n2️⃣ Read/review the entire 24-chapter block to identify its CENTRAL MOVEMENT or THEME\n\n3️⃣ Choose a SIMPLE SYMBOLIC GLYPH that captures that essence:\n   • Use symbols: /, ×, +, ↑, →, ○, △, 👑 crown, 💧 tear, ⚔️ sword, etc.\n   • Use single words: SEED, EXILE, KING, LAMB\n   • Use letter-combos: @Mo, 1H, 3H\n\n4️⃣ Assign ONE glyph per block—resist the urge to add more\n\n5️⃣ Write a 1-2 sentence explanation of WHY this glyph fits\n\n6️⃣ Build your complete 51-frame legend\n\n7️⃣ Memorize the sequence so you can mentally 'fly over' the Bible\n\n🎯 KEY PRINCIPLES:\n• ⚡ Simplicity is power—complex glyphs defeat the purpose\n• 📦 The glyph is a COMPRESSION tool, not a comprehensive summary\n• 🎨 Different people may choose different glyphs—what matters is that YOURS works for YOU\n• 🔒 Once you've chosen a glyph, stick with it—consistency builds memory\n• ✅ Test yourself: Can you recite all 51 glyphs in order?",
         examples: [
           "Genesis 1-24 = '/' (divisions emerge: light/dark, land/sea, male/female, nation/nation)",
@@ -142,8 +162,18 @@ export const palaceFloors: Floor[] = [
         id: "tr",
         name: "Translation Room",
         tag: "TR",
-        purpose: "The Translation Room is where words become pictures—where abstract biblical concepts get converted into concrete, memorable visual representations. Human brains are wired to remember images 6x better than words, yet most Bible study stays trapped in abstract language: 'God's Word is a lamp'—but what does that LOOK like? Translation Room forces you to answer that question by converting verses into icons, passages into 3-panel comics, and entire books into murals. This isn't just artistic fun—it's cognitive science applied to Scripture. When you visualize Psalm 119:105 as a glowing scroll casting light on a dark trail, you've created a mental image that will last decades. When you draw John 15's vine with branch-sockets showing broken branches and fruitful ones, you've turned theology into something you can SEE. This room is essential for teachers and preachers: your listeners will forget your three-point outline, but they'll never forget the striking visual you showed them. Translation Room trains you to think visually about every passage, asking: If this truth were a painting, a diagram, or a symbol, what would it be?",
+        icon: "Image",
+        purpose: "Convert words into pictures. Turn abstract concepts into concrete visual representations that stick in memory 6x better.",
+        action: "Translate verses into icons, passages into 3-panel comics, or books into murals using concrete imagery.",
+        output: "Sketches or detailed descriptions of visual translations, labeled with verse references.",
         coreQuestion: "Translate this text into a visual storyline.",
+        estimatedTime: "standard",
+        quickMode: [
+          "Identify the central visual element in the text",
+          "Choose level: Verse→Icon, Passage→Comic, or Book→Mural",
+          "Sketch or describe using concrete objects",
+          "Test: Does it capture the essence memorably?"
+        ],
         method: "🎨 STEP-BY-STEP METHODOLOGY (Three Levels):\n\n📖 LEVEL 1: VERSE → ICON (Single verse becomes one memorable image)\n1️⃣ Read the verse slowly, looking for the central visual element\n2️⃣ Identify the MAIN OBJECT or ACTION the verse describes\n3️⃣ Sketch (or describe) that element as a simple icon\n4️⃣ Add ONE detail that captures the verse's uniqueness\n5️⃣ Test: Does the icon trigger the verse in your memory?\n\n📚 LEVEL 2: PERICOPE → 3-PANEL COMIC (Passage becomes sequential visual story)\n1️⃣ Break the passage into 3 movements (beginning, middle, end)\n2️⃣ Choose the KEY IMAGE for each movement\n3️⃣ Arrange the 3 images in comic-strip panels\n4️⃣ Use arrows or simple text to show progression\n5️⃣ The comic should tell the story without words if possible\n\n🖼️ LEVEL 3: BOOK → MURAL (Entire book becomes one panoramic visual)\n1️⃣ Identify the book's CENTRAL THEME or MOVEMENT\n2️⃣ Choose a single visual metaphor that spans the whole book\n3️⃣ Sketch the metaphor as a mural with clear progression left-to-right\n4️⃣ Include key moments/chapters as visual 'stations' along the mural\n5️⃣ The mural should capture the book's arc at a glance\n\n🎯 KEY PRINCIPLES:\n• 🏔️ Concrete beats abstract (Lamp > Truth, Vine > Relationship)\n• ✂️ Simplicity beats complexity (Don't try to illustrate every detail)\n• 📖 Respect biblical metaphors—translate WHAT'S THERE, don't invent new imagery\n• 🎨 Bad art is fine—memorability matters more than beauty",
         examples: [
           "Psalm 119:105 (Verse→Icon): A glowing scroll unrolled on a dark path, casting golden light 5 feet ahead—showing 'lamp to my feet, light to my path'",
@@ -165,8 +195,18 @@ export const palaceFloors: Floor[] = [
         id: "gr",
         name: "Gems Room",
         tag: "GR",
-        purpose: "The Gems Room is where you mine Scripture for rare and beautiful truths by placing 2-4 seemingly unrelated texts side by side until they suddenly illuminate each other with breathtaking clarity. Like a master jeweler combining different stones to create something more valuable than the sum of its parts, you'll discover profound connections that most readers never see. These aren't random parallels or surface similarities—they're high-leverage insights that emerge only when you dare to ask, 'What happens when I read this verse through the lens of that one?' The result is a gem: a single, crystallized truth so powerful it will preach, teach, and defend the faith for years to come.",
+        icon: "Gem",
+        purpose: "Mine Scripture for rare truths by combining 2-4 unrelated texts until they illuminate each other with stunning clarity.",
+        action: "Place 2-4 verses from different contexts side by side and identify the profound truth that emerges.",
+        output: "Gem card with combined texts, the rare truth discovered, and practical use-case.",
         coreQuestion: "What beautiful truth emerges when I combine these seemingly unrelated texts?",
+        estimatedTime: "standard",
+        quickMode: [
+          "Select 2-4 verses from different books",
+          "Place them side by side",
+          "Ask: What insight emerges from their combination?",
+          "Crystallize into one powerful truth"
+        ],
         method: "💎 GEM-MINING METHOD:\n\n1️⃣ Take 2-4 verses from different books/contexts\n\n2️⃣ Place them side by side\n\n3️⃣ Identify the rare truth that emerges from their combination\n\n4️⃣ Ask: \"What beautiful insight appears when these texts illuminate each other?\"\n\n✨ The result should be a crystallized truth that:\n• 📖 Is anchored in multiple clear texts\n• 💡 Reveals something profound most readers miss\n• 🎯 Has practical application for preaching/teaching",
         examples: [
           "Ex 12 (Passover at twilight) + Jn 19:14 (crucifixion at 6th hour) → Jesus died at exact moment Passover lambs were slain",
@@ -187,8 +227,18 @@ export const palaceFloors: Floor[] = [
         id: "or",
         name: "Observation Room",
         tag: "OR",
-        purpose: "The Observation Room is where you become a biblical detective, training your eye to see what's actually on the page before rushing to interpretation. Most Bible readers commit the cardinal sin of reading INTO the text before reading OUT of it—they bring their assumptions, their theology, their sermon outline, and miss what's staring them in the face. This room forces you to SLOW DOWN and gather raw data without commentary. You're cataloging grammatical patterns, repetitions, contrasts, settings, verbs, time markers—anything observable. Why? Because interpretation built on sloppy observation is a house built on sand. By making 20-50 bullet-point observations (yes, that many), you create a massive dataset that reveals patterns you'd never see in casual reading. You'll notice that Luke 15's father 'saw...ran...kissed' (three rapid verbs showing urgency), or that Genesis 1 repeats 'And God said' ten times (oral formula pattern), or that John's Gospel uses 'believe' 98 times but 'repent' zero times. These observations become the raw material for solid interpretation. The Observation Room keeps you honest—it won't let you skip over details that don't fit your theology. If you can't list 20+ observations, you haven't looked hard enough.",
+        icon: "Search",
+        purpose: "Become a biblical detective. Gather raw data before interpretation—see what's actually on the page.",
+        action: "Make 20-50 bullet-point observations about grammar, repetition, contrasts, verbs, and structure.",
+        output: "Observation sheet with 20-50 numbered bullet points listing only what you directly see.",
         coreQuestion: "As a detective, observe as much as you can about the text. Aim for at least 8 observations.",
+        estimatedTime: "standard",
+        quickMode: [
+          "Read passage 2-3 times without writing",
+          "List observations using categories: grammar, repetition, contrasts, setting, verbs",
+          "Write ONLY what you see—no interpretation yet",
+          "Aim for 20+ observations minimum"
+        ],
         method: "🔍 STEP-BY-STEP METHODOLOGY:\n\n1️⃣ Read the passage 2-3 times WITHOUT writing anything—just look\n\n2️⃣ Begin listing observations in bullet form (goal: 20-50 observations minimum)\n\n3️⃣ Use these observation categories:\n   • 📝 GRAMMAR: verb tenses, pronouns, conjunctions ('but,' 'therefore')\n   • 🔁 REPETITION: words, phrases, or patterns that appear multiple times\n   • ⚖️ CONTRASTS: opposites, conflicts, before/after comparisons\n   • 📍 SETTING: time, place, cultural details, who's present\n   • ⚡ VERBS: actions, especially unusual or forceful ones\n   • 🏗️ STRUCTURE: chiasms, parallel lines, turning points\n   • ❓ OMISSIONS: what's surprisingly NOT mentioned\n   • ⭐ EMPHASIS: words in unusual positions, lengthy descriptions\n\n4️⃣ Write ONLY what you see—no 'what it means' allowed yet\n\n5️⃣ Number your observations (helps you hit 20+ quota)\n\n6️⃣ When you think you're done, read once more and find 5 more observations\n\n🎯 KEY PRINCIPLES:\n• 🚫 If you interpret before observing, you'll miss crucial data\n• ✅ Obvious observations count—don't skip them because they seem trivial\n• 📊 Quantity reveals quality—the 23rd observation often unlocks the passage\n• ❓ Ask: 'What's on the page?' not 'What does it mean?'\n• 💪 Observation is a skill—you get better with practice",
         examples: [
           "Luke 15:20 observations: 1) Father SAW son while 'still a long way off' (watching), 2) Father RAN (unusual for elderly Middle Eastern patriarch), 3) Father KISSED son BEFORE son finishes confession, 4) No mention of anger or lecture, 5) Verbs are rapid-fire (saw-ran-threw-kissed), suggesting urgency, 6) Son's prepared speech gets interrupted",
@@ -207,8 +257,18 @@ export const palaceFloors: Floor[] = [
         id: "dc",
         name: "Def-Com Room",
         tag: "DC",
-        purpose: "The Def-Com Room stands for Definition-Commentary—the twin pillars of responsible Bible study. This is where you nail down what words ACTUALLY meant in the original language and cultural context, then consult the wisdom of faithful interpreters who've gone before you. Too many Bible students either ignore word meanings entirely (reading English as if it were Greek/Hebrew) or treat commentaries like infallible authorities that can't be questioned. Def-Com trains you to do both tasks properly: define 3-5 key terms using lexicons and study tools (What did ἀγαπάω vs. φιλέω mean to a first-century Greek speaker?), then engage 2-3 trusted commentaries to see how scholars have understood the passage—without letting them overrule Scripture itself. Cultural notes are crucial here: when Jesus offers 'eye-salve' to Laodicea, you need to know that city was FAMOUS for Phrygian eye medicine—suddenly the rebuke has teeth. The goal is informed interpretation: you're standing on the shoulders of giants (commentators) while keeping your feet planted in the text itself. Def-Com keeps you from reinventing the wheel or falling into interpretive novelty while also preventing you from slavishly accepting commentary without verification.",
+        icon: "BookOpen",
+        purpose: "Define key terms in original language and consult trusted commentaries. Stand on giants' shoulders while keeping feet in the text.",
+        action: "Define 3-5 key terms using lexicons, note 1-2 cultural details, then excerpt 2-3 trusted commentaries.",
+        output: "Wordlist with definitions + cultural notes + commentary excerpts with sources + synthesis paragraph.",
         coreQuestion: "What definitions do you find relevant to the text? [Access Greek/Hebrew & Commentary tools]",
+        estimatedTime: "standard",
+        quickMode: [
+          "Identify 3-5 crucial words with theological weight",
+          "Look up in Strong's/lexicon for original meaning",
+          "Note 1-2 cultural details from Bible dictionary",
+          "Excerpt 2-3 commentaries and synthesize"
+        ],
         method: "📚 STEP-BY-STEP METHODOLOGY:\n\n📖 PART 1: DEFINITIONS (3-5 key terms)\n1️⃣ Identify 3-5 crucial words in your passage that carry theological or cultural weight\n2️⃣ Look up each word in:\n   • Strong's Concordance (with Greek/Hebrew numbers)\n   • Lexicon (Thayer's, BDAG, BDB)\n   • Bible dictionary for cultural background\n3️⃣ Record: Original word + transliteration + Strong's number + definition + usage note\n4️⃣ Note any significant translation differences (e.g., 'love' in English covers both agapē and phileō)\n\n🌍 PART 2: CULTURAL NOTES (1-2 details)\n1️⃣ Research the historical/cultural setting of your passage\n2️⃣ Identify 1-2 details that would be obvious to original hearers but obscure to modern readers\n3️⃣ Note the source of your cultural information\n\n💭 PART 3: COMMENTARY (2-3 excerpts)\n1️⃣ Consult 2-3 trusted commentaries (Matthew Henry, Calvin, Spurgeon, Keil & Delitzsch, modern scholars)\n2️⃣ Choose excerpts that illuminate the text—not just repeat it\n3️⃣ LABEL each excerpt with author and source\n4️⃣ Write a brief synthesis: Where do commentators agree? Where do they differ? What insights strike you?\n\n🎯 KEY PRINCIPLES:\n• 🔤 Original language > English translation when meanings diverge\n• 📖 Commentaries inform but don't replace Scripture as final authority\n• 🌍 Cultural background illuminates but doesn't determine meaning\n• 🤝 Compare multiple commentaries—single sources can be biased\n• ✂️ Brevity in excerpts—long quotes mean you're not synthesizing",
         examples: [
           "John 21:15-17 DEFINITIONS: 1) ἀγαπάω (agapaō, G25) = divine, selfless, sacrificial love; 2) φιλέω (phileō, G5368) = affectionate friendship love, brotherly love. PATTERN: Jesus asks Peter 'Do you agapē me?' twice, Peter responds 'I phileō you' both times; third time Jesus switches to 'Do you phileō me?' matching Peter's weaker term. COMMENTARY: Spurgeon notes this may show Jesus meeting Peter where he is; Carson argues both terms overlapped in Koine Greek and the triple question mirrors Peter's triple denial.",
@@ -228,8 +288,18 @@ export const palaceFloors: Floor[] = [
         id: "st",
         name: "Symbols/Types Room",
         tag: "ST",
-        purpose: "The Symbols/Types Room is where you build God's own symbol dictionary by tracking how He uses specific images throughout Scripture—and how they all point to Christ. Unlike secular symbols that can mean anything (a heart can mean love, courage, or just the organ), biblical symbols have CONSISTENT meaning because God is their Author. When you see 'lamb' in Scripture, it carries the same sacrificial freight from Genesis 22 (ram caught in thicket) to Exodus 12 (Passover) to Isaiah 53 (led to slaughter) to John 1:29 (Behold the Lamb) to Revelation 5 (Lamb who was slain). This room trains you to trace each symbol through the canon, noting its SCOPE (where it appears), its SIGN (what it represents), and its Christ-LOCUS (how Jesus fulfills it). You're not free-associating ('water makes me think of beaches')—you're letting Scripture interpret Scripture. When you've built symbol cards for Lamb, Rock, Light, Water, Bread, Temple, Vine, Door, Shepherd, and others, you possess a theology-packed vocabulary that unlocks hundreds of passages. The Symbols/Types Room keeps you from eisegesis (reading in) by anchoring your interpretation in God's own repeated imagery. Every symbol card you create becomes a reusable interpretive tool.",
+        icon: "Shapes",
+        purpose: "Build God's symbol dictionary. Track consistent imagery (Lamb, Rock, Light) through Scripture and see how it points to Christ.",
+        action: "Trace a symbol's SCOPE (5-10 texts), define its SIGN (meaning), and show Christ-LOCUS (fulfillment).",
+        output: "Reusable symbol cards showing: Symbol → Scope → Sign → Christ-locus.",
         coreQuestion: "What is this symbol's consistent biblical meaning and how does it find fulfillment in Christ?",
+        estimatedTime: "standard",
+        quickMode: [
+          "Choose a symbol (Lamb, Rock, Water, etc.)",
+          "Track 5-10 key texts where it appears",
+          "Define what it consistently represents",
+          "Show how Christ fulfills it"
+        ],
         method: "🔍 STEP-BY-STEP METHODOLOGY (Building a Symbol Card):\n\n1️⃣ IDENTIFY the symbol (Lamb, Rock, Light, Water, Bread, etc.)\n\n2️⃣ SCOPE: Track the symbol through Scripture—where does it appear?\n   • 📚 List 5-10 key texts where the symbol shows up\n   • 🔄 Note if usage is consistent or if there are variations\n\n3️⃣ SIGN: What does the symbol consistently represent?\n   • 🎯 Sacrifice? Provision? Judgment? Presence?\n   • ✍️ Write a 1-sentence definition\n\n4️⃣ CHRIST-LOCUS: How does Jesus fulfill this symbol?\n   • ✝️ Find NT passages where Christ is explicitly connected to the symbol\n   • 📝 Write 1-2 sentences on fulfillment\n\n5️⃣ Build your card:\n   Symbol → Scope (texts) → Sign (meaning) → Christ-locus (fulfillment)\n\n6️⃣ Store the card for reuse—you'll reference it in future study\n\n🔑 COMMON BIBLICAL SYMBOLS TO MAP:\n• 🐑 LAMB: Sacrifice, substitution, innocence\n• 🗿 ROCK: Stability, refuge, foundation, judgment\n• 💡 LIGHT: Truth, revelation, presence, holiness\n• 💧 WATER: Life, cleansing, Spirit, Word\n• 🍞 BREAD: Provision, sustenance, Word\n• ⛪ TEMPLE: God's dwelling, holiness, access\n• 🍇 VINE: Life source, fruitfulness, covenant relationship\n• 🚪 DOOR: Access, salvation, exclusive entry\n• 🐑 SHEPHERD: Care, guidance, protection, ownership\n\n🎯 KEY PRINCIPLES:\n• 📖 Let Scripture define symbols—not your imagination\n• 🔄 Symbols are CONSISTENT across the canon (God is the Author)\n• 📚 Multiple texts create biblical vocabulary—single texts create speculation\n• ✝️ Christ is the ultimate reality behind every type and symbol\n• 🏗️ Build your library over time—each card is permanent infrastructure",
         examples: [
           "LAMB Symbol Card:\n→ SCOPE: Gen 22:8 (God will provide), Ex 12:3-13 (Passover), Isa 53:7 (led to slaughter), John 1:29 (Behold the Lamb), 1 Cor 5:7 (Christ our Passover), 1 Pet 1:19 (without blemish), Rev 5:6-12 (Lamb on throne)\n→ SIGN: Substitutionary sacrifice—innocent dies in place of guilty\n→ CHRIST-LOCUS: Jesus is the Lamb of God who takes away sin (John 1:29); slain from foundation of world (Rev 13:8); Passover fulfilled at crucifixion (1 Cor 5:7)",
@@ -250,8 +320,18 @@ export const palaceFloors: Floor[] = [
         id: "qr",
         name: "Questions Room",
         tag: "QR",
-        purpose: "The Questions Room is where you become a relentless interrogator of Scripture—because the quality of your understanding is directly proportional to the quality of your questions. Most Bible readers barely scratch the surface with weak questions like 'What does this mean to me?' This room demands three types of precision questioning that unlock exponentially deeper insight. First, INTRA-textual questions probe WITHIN the passage itself: Why does the author use 'therefore' here? Why is this genealogy placed NOW? Why does Jesus say 'woman' instead of 'mother'? Second, INTER-textual questions connect ACROSS Scripture: How does this passage relate to its Old Testament quotation? What other texts describe this same event differently? Third, PT-framework questions leverage Phototheology's infrastructure: Which cycle is this? What sanctuary element is in view? What room methodology best fits this text? By training yourself to generate 25 questions in each category (75 total when fully trained), you're creating a diagnostic tool that exposes hidden meaning. The Questions Room doesn't give answers—it mines the text for the right questions, which then become your roadmap for the Q&A Chains Room.",
+        icon: "HelpCircle",
+        purpose: "Generate precision questions. Quality of understanding equals quality of questions. Train yourself to interrogate the text relentlessly.",
+        action: "Generate questions in 3 categories: INTRA-textual (within passage), INTER-textual (across Scripture), PT-framework (cycles/rooms).",
+        output: "Three lists of questions (5+ per category) that expose hidden meaning and create study roadmap.",
         coreQuestion: "What must be asked inside the text, across texts, and in PT-framework?",
+        estimatedTime: "standard",
+        quickMode: [
+          "Ask INTRA-textual: Why this word? Why here? Why now?",
+          "Ask INTER-textual: What other texts connect? How do they compare?",
+          "Ask PT-framework: Which cycle? Which room fits? What sanctuary element?",
+          "Record 5+ questions per category"
+        ],
         method: "STEP-BY-STEP METHODOLOGY (Three Question Types):\n\nLEVEL 1: INTRA-TEXTUAL QUESTIONS (Within the passage—Target: 25 questions)\n1. Read the passage carefully 2-3 times\n2. Ask about STRUCTURE: Why is this arranged this way? Why does this come before that?\n3. Ask about WORD CHOICE: Why this verb instead of another? Why repeat this word?\n4. Ask about GRAMMAR: What does 'therefore' point back to? Why past tense here, present tense there?\n5. Ask about OMISSIONS: What's surprisingly NOT mentioned? What's implied but unstated?\n6. Ask about CHARACTERS: Why does this person act this way? What motivates them?\n7. Ask about SETTING: Why this location? Why this time of day/year?\n\nLEVEL 2: INTER-TEXTUAL QUESTIONS (Across Scripture—Target: 25 questions)\n1. Ask about QUOTATIONS: Where is the OT text being quoted from? How is it used in original context?\n2. Ask about PARALLELS: What other passages describe this same event? How do they differ?\n3. Ask about ALLUSIONS: What earlier biblical story is being echoed here?\n4. Ask about TYPOLOGY: What OT type is being fulfilled? How does it escalate?\n5. Ask about THEMES: Where else does this theme appear in Scripture? How does it develop?\n6. Ask about CONTRAST: What opposite example exists elsewhere in the Bible?\n\nLEVEL 3: PT-FRAMEWORK QUESTIONS (Phototheology lens—Target: 25 questions)\n1. Ask about CYCLES: Which of the 8 cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re) does this fit?\n2. Ask about SANCTUARY: Does this text map to any sanctuary article or service?\n3. Ask about CHRIST: Where is Jesus here explicitly or typologically?\n4. Ask about DIMENSIONS: How does this read literally, Christologically, personally, ecclesially, eschatologically?\n5. Ask about TIME ZONES: Is this Earth-Past, Earth-Now, Earth-Future, Heaven-Past, Heaven-Now, or Heaven-Future?\n6. Ask about GENRES: What hermeneutic does this genre demand?\n7. Ask about ROOMS: Which Palace room would best unlock this text?\n\nKEY PRINCIPLES:\n• Quantity drives quality—don't stop at 5 questions; push to 25+ per category\n• Write questions in your own words—this forces engagement\n• Good questions expose what you DON'T know, not what you do\n• Some questions won't have immediate answers—that's the point\n• Questions should be SPECIFIC, not vague ('Why Jesus wept?' > 'What is this about?')",
         examples: [
           "John 11:35 ('Jesus wept') INTRA-textual: 1) Why does John use shortest verb form? 2) Why record this emotion at all? 3) Why weep if He knows resurrection coming? 4) Does the Greek tense indicate ongoing or punctiliar weeping? 5) What physical gesture accompanies weeping?",
@@ -273,8 +353,18 @@ export const palaceFloors: Floor[] = [
         id: "qa",
         name: "Q&A Chains Room",
         tag: "QA",
-        purpose: "The Q&A Chains Room is where you let Scripture interpret Scripture by systematically answering the questions you generated in the Questions Room. This is the payoff—but you must resist the temptation to insert your opinions or commentary. Instead, you become a curator, finding 2-4 biblical cross-references that DIRECTLY address each question, then synthesizing what those texts say. The genius of Q&A Chains is that it keeps you tethered to the text: when you ask 'Why did the father run?' you don't speculate—you go to Psalm 103:13 ('As a father has compassion'), Isaiah 49:15 ('Can a mother forget?'), and Luke 15:20 itself (compassion moved him), then synthesize: 'The father ran because divine compassion cannot wait for the wanderer to finish the journey home—it sprints to close the gap.' This room builds interpretive authority because your conclusions aren't based on clever ideas but on chains of biblical evidence. It's also a powerful apologetic tool: when someone challenges your reading, you can show them the chain. Q&A Chains forces intellectual honesty—if you can't find 2-4 texts to support an answer, maybe the question needs refining or your answer is speculation.",
+        icon: "Link",
+        purpose: "Let Scripture interpret Scripture. Answer Questions Room inquiries by finding 2-4 biblical cross-references, then synthesizing.",
+        action: "Select 5-10 questions from QR, find 2-4 Scripture references per question, then synthesize the collective teaching.",
+        output: "Answer chains: Question → 2-4 References (with quotes) → Synthesis (1-3 sentences).",
         coreQuestion: "Where does the Bible itself supply the answer?",
+        estimatedTime: "deep",
+        quickMode: [
+          "Import strongest questions from Questions Room",
+          "For each question, find 2-4 clear biblical references",
+          "Quote or summarize each reference",
+          "Synthesize: What do these texts collectively teach?"
+        ],
         method: "STEP-BY-STEP METHODOLOGY:\n\n1. IMPORT your questions from Questions Room (QR)\n2. SELECT 5-10 of your strongest/most important questions to answer (you won't answer all 75)\n3. For EACH selected question:\n   a) SEARCH Scripture for 2-4 cross-references that directly speak to the question\n      • Use concordances, cross-reference Bibles, memory, or study tools\n      • Prioritize texts that are CLEAR and ON-POINT\n   b) LIST the references with brief quotes or summaries\n   c) SYNTHESIZE: Write 1-3 sentences showing what these texts collectively teach\n4. FORMAT each answer chain:\n   Question → Ref 1 (quote/summary) → Ref 2 (quote/summary) → Ref 3 (quote/summary) → Synthesis\n5. VERIFY: Does my synthesis flow logically from the cited texts? Or am I adding my opinion?\n\nKEY PRINCIPLES:\n• Scripture interprets Scripture—this is a Reformation principle\n• Quality of references matters: Clear texts > obscure texts; Didactic texts > narrative inferences\n• Synthesis must be GROUNDED in the cited texts—no importing outside ideas\n• If you can't find 2-4 strong texts, either refine the question or admit 'Scripture is less explicit here'\n• Use NT to clarify OT, but don't flatten OT into NT\n• Context matters—don't rip verses from their surrounding argument",
         examples: [
           "QUESTION: Why did the father run to the prodigal son? (Luke 15:20)\nREF 1: Psalm 103:13 → 'As a father has compassion on his children, so the LORD has compassion on those who fear him.'\nREF 2: Isaiah 49:15 → 'Can a mother forget her nursing child? Yet even if she forgets, I will not forget you.'\nREF 3: Ezekiel 33:11 → 'I take no pleasure in the death of the wicked, but rather that they turn from their ways and live.'\nREF 4: Luke 15:20b → 'Filled with compassion, he ran...'\nSYNTHESIS: The father ran because divine compassion cannot passively wait—it actively pursues the repentant. God's covenant love moves toward the sinner before full repentance is articulated, demonstrating that restoration is His eager desire, not His reluctant concession.",
@@ -304,8 +394,18 @@ export const palaceFloors: Floor[] = [
         id: "nf",
         name: "Nature Freestyle",
         tag: "NF",
-        purpose: "The Nature Freestyle Room trains you to see God's invisible attributes displayed in the visible creation (Romans 1:20), turning every tree, storm, river, and sparrow into a living sermon. Jesus Himself was the master of this method—He taught about faith from mustard seeds, persistence from widow's importunity, and judgment from fig trees. This room rewires your brain to walk through creation with gospel eyes, constantly asking: 'What does THIS reveal about Scripture?' The genius of NF is that it makes theology CONCRETE and MEMORABLE. When you link oak trees to Psalm 1 (deep roots in God's Word), you'll never walk past an oak again without remembering that lesson. You're essentially creating visual memory triggers scattered throughout the natural world. Every sunset becomes a prompt to recall God's faithfulness (Lamentations 3:22-23); every storm a reminder of Christ calming chaos (Mark 4:39). This room is indispensable for teachers and parents—nature lessons stick because they're experiential, not academic. You're training to do what the Psalmist did: 'The heavens declare the glory of God' (Psalm 19:1). NF makes you bilingual: fluent in both natural revelation and special revelation, constantly translating between them.",
+        icon: "Leaf",
+        purpose: "See God's invisible attributes in visible creation. Transform trees, storms, animals into living sermons—just like Jesus did.",
+        action: "Observe a natural object closely, identify 1-2 key characteristics, find the biblical parallel, link to specific verse.",
+        output: "Natural Object → Verse → One-sentence lesson. Record for reusable teaching.",
         coreQuestion: "What does this natural object or phenomenon teach about God's Word?",
+        estimatedTime: "quick",
+        quickMode: [
+          "Choose natural object (tree, river, bird, storm)",
+          "Note 1-2 distinctive characteristics",
+          "Ask: What biblical truth parallels this?",
+          "Link to specific verse and distill one lesson"
+        ],
         method: "STEP-BY-STEP METHODOLOGY:\n\n1. OBSERVE a natural object or phenomenon closely\n   • Trees, mountains, rivers, animals, weather, seasons, plants, rocks, stars, etc.\n   • Notice specific details: roots, growth patterns, behaviors, cycles\n2. IDENTIFY 1-2 notable characteristics or functions\n   • What does this thing DO? How does it work? What makes it unique?\n3. ASK: What biblical truth parallels this natural characteristic?\n   • Does Scripture use this object metaphorically?\n   • Does this function mirror a spiritual principle?\n4. LINK to a specific verse or passage\n   • Find the text that explicitly or implicitly connects\n   • Verify the connection is biblically sound, not forced\n5. DISTILL to one punchy lesson (1 sentence)\n   • Make it memorable and transferable\n6. RECORD: Natural Object → Verse → Lesson\n7. APPLY: When will you USE this insight? (Teaching, personal encouragement, evangelism)\n\nKEY PRINCIPLES:\n• Jesus constantly used nature to teach (birds, lilies, seeds, sheep, vines)\n• Don't INVENT meanings—find what SCRIPTURE says about that object\n• The best NF lessons are simple enough for a child to grasp\n• Nature lessons should illuminate Scripture, not replace it\n• Build a library of NF lessons—they're reusable teaching tools\n• Physical observation trains spiritual observation",
         examples: [
           "Oak tree's deep root system → Psalm 1:3 / Jeremiah 17:8 → Lesson: 'Visible strength (trunk/branches) depends on invisible depth (roots); biblical stability requires hidden communion with God'",
@@ -328,8 +428,18 @@ export const palaceFloors: Floor[] = [
         id: "pf",
         name: "Personal Freestyle",
         tag: "PF",
-        purpose: "The Personal Freestyle Room turns your biography into theology by training you to see God's authorship in your own story. Every job loss, betrayal, unexpected blessing, or season of waiting is a text God is writing—and this room teaches you to read it through the lens of Scripture. PF is NOT journaling for therapy (though it may be therapeutic); it's the discipline of placing your experiences alongside biblical narratives to discern patterns, warnings, and encouragements. When you lose a job, PF immediately asks: 'Where in Scripture do I see displacement leading to divine positioning?' (Joseph's prison→palace; David's exile→throne; Jesus' rejection→resurrection). The power of PF is twofold: First, it sanctifies your memory—instead of rehearsing grievances or boasting in victories, you're reinterpreting your past as part of God's covenant storyline. Second, it creates authentic testimony—when you can say 'I know God is faithful because I've seen Him write Psalm 23 in my medical crisis,' you're speaking from verified experience, not borrowed theology. PF trains you to preach from your scars and your joys, turning personal history into portable sermons. This is how Paul wrote: 'We were under great pressure, far beyond our ability to endure, so that we despaired of life itself... but this happened that we might not rely on ourselves but on God' (2 Cor 1:8-9). He interpreted his suffering through Scripture's lens.",
+        icon: "User",
+        purpose: "Turn your biography into theology. See God's authorship in your story by placing your experiences alongside biblical narratives.",
+        action: "Identify a significant life event, find a biblical parallel, and extract the spiritual lesson.",
+        output: "Event (brief) → Parallel Biblical Text → Lesson Learned → Potential testimony use.",
         coreQuestion: "Where is God writing biblical lessons in the events of my life?",
+        estimatedTime: "standard",
+        quickMode: [
+          "Select significant life event (crisis, provision, etc.)",
+          "Find biblical character/story with similar experience",
+          "Connect: What did God do in THAT story?",
+          "Extract lesson for your story"
+        ],
         method: "STEP-BY-STEP METHODOLOGY:\n\n1. IDENTIFY a significant life event (recent or past)\n   • Crisis, loss, provision, betrayal, success, failure, transition, waiting, breakthrough\n2. DESCRIBE the event briefly (2-3 sentences max)\n   • Stick to facts—what happened, when, who was involved\n3. SEARCH for a biblical parallel\n   • Ask: 'Who in Scripture experienced something similar?'\n   • Look for structural parallels, not just topical similarity\n   • Examples: Betrayal → Joseph/David; Barrenness → Hannah/Sarah; Exile → Daniel; Persecution → Early church\n4. CONNECT the pattern\n   • How does the biblical narrative illuminate your experience?\n   • What did God do in THAT story? What might He be doing in YOURS?\n5. EXTRACT the lesson (1-2 sentences)\n   • What is God teaching you through this parallel?\n   • What response is He calling for?\n6. RECORD: Event → Parallel Text → Lesson\n7. STORE for testimony—your PF entries become your testimony bank\n\nKEY PRINCIPLES:\n• Your story is not the main story—Scripture is; your life illustrates what God has already revealed\n• PF is NOT navel-gazing—it's seeing your life as part of the larger redemptive narrative\n• Avoid MORALISM: Don't turn every event into 'I should have been better'; look for GRACE patterns\n• Balance suffering and joy—PF works for breakthroughs, not just breakdowns\n• Humility is key: Your experience confirms Scripture; it doesn't add to Scripture\n• PF entries often become your most powerful teaching material",
         examples: [
           "EVENT: Lost job unexpectedly; spent 6 months unemployed and praying. → PARALLEL: Joseph in prison (Gen 39-40)—unjustly sidelined, waiting on God's timing. → LESSON: What felt like derailment was actually divine positioning; God's delays are not denials, and faithfulness in the 'prison' prepares you for the 'palace.'",
@@ -351,8 +461,18 @@ export const palaceFloors: Floor[] = [
         id: "bf",
         name: "Bible Freestyle",
         tag: "BF",
-        purpose: "The Bible Freestyle Room trains your brain to instantly identify a verse's 'genetic relatives'—the verses that share its theological DNA through common words, themes, or structures. Think of it as building a mental concordance on steroids: when you hear Romans 8:28, your mind should immediately flash to Genesis 50:20, Jeremiah 29:11, and Philippians 1:6 (all about God working through chaos for good). This skill transforms you into a human cross-reference system, essential for preaching, teaching, and apologetics. BF is called 'Verse Genetics' because you're mapping family trees: some verses are BROTHERS (nearly identical twins, like 'love your neighbor' in Lev 19:18 and Matt 22:39), others are COUSINS (same theme, different angle, like John 3:16 and 1 John 4:10—both on God's love, but John 3:16 emphasizes giving the Son, 1 John 4:10 emphasizes atoning sacrifice). The more BF reps you do, the faster your recall becomes—eventually, it's reflexive. This room makes you dangerous in Bible discussions because you're never stranded on a single verse; you can always call in reinforcements. It's also a fact-checking mechanism: if you can't find ANY relatives for your interpretation, you might be misreading the verse.",
+        icon: "Network",
+        purpose: "Build a mental concordance. Train instant recall of a verse's 'genetic relatives'—verses sharing theological DNA.",
+        action: "Select a verse, identify core concept, find 3-5 'relatives' (Brothers=near identical, Cousins=shared theme different angle).",
+        output: "Original Verse → 3-5 Relatives (labeled Brother/Cousin) with connection notes.",
         coreQuestion: "What verses are this verse's theological 'relatives' (brothers/cousins)?",
+        estimatedTime: "quick",
+        quickMode: [
+          "Choose a verse",
+          "Identify its core theological concept",
+          "Find 3-5 relatives using concordance or memory",
+          "Classify: Brother (nearly identical) or Cousin (shared theme)"
+        ],
         method: "STEP-BY-STEP METHODOLOGY:\n\n1. SELECT a verse (any verse—start with familiar ones, then expand)\n2. IDENTIFY the verse's CORE CONCEPT\n   • What is the main idea? Faith? Love? Judgment? Provision? Suffering?\n   • Ignore peripheral details—focus on the theological heart\n3. SEARCH your mental/physical concordance for 3-5 'relatives'\n   • BROTHERS: Verses that say nearly the same thing (parallel passages, quotations, restatements)\n   • COUSINS: Verses that share the theme but approach from different angles\n   • Use these search methods:\n     a) Word search (concordance for key terms)\n     b) Theme search (other passages teaching this doctrine)\n     c) Parallel passages (Gospel parallels, OT quotes in NT)\n     d) Memory recall (train your brain to make connections)\n4. CLASSIFY each relative: Brother or Cousin?\n5. VERIFY the link—does the relative actually share theological DNA, or are you forcing it?\n6. RECORD: Original Verse → Relative 1 (Brother/Cousin) → Relative 2 → Relative 3 → Relative 4 → Relative 5\n7. PRACTICE SPEED: Time yourself—can you name 3 relatives in 30 seconds?\n\nKEY PRINCIPLES:\n• Shared WORDS alone don't make relatives—there must be shared MEANING\n• Relatives confirm and clarify—they give you a stereo view of truth\n• Brothers are closer than cousins—prioritize near-parallel texts first\n• NT often quotes or fulfills OT—those are always close relatives\n• The more BF reps you do, the faster your mind builds these links automatically\n• BF is cumulative—each verse you map makes the next easier",
         examples: [
           "John 3:16 (God's love in giving Son) RELATIVES:\n→ Romans 5:8 (BROTHER: 'God demonstrates his love in that while we were still sinners, Christ died for us')\n→ 1 John 4:9-10 (BROTHER: 'This is love: not that we loved God, but that he loved us and sent his Son as an atoning sacrifice')\n→ Ephesians 2:4-5 (COUSIN: 'But because of his great love for us, God... made us alive with Christ')\n→ Titus 3:4-5 (COUSIN: 'When the kindness and love of God appeared, he saved us, not by works...')\n→ Romans 8:32 (COUSIN: 'He who did not spare his own Son... how will he not also graciously give us all things?')",
@@ -372,8 +492,18 @@ export const palaceFloors: Floor[] = [
         id: "hf",
         name: "History/Social Freestyle",
         tag: "HF",
-        purpose: "The History/Social Freestyle Room equips you to ransack secular history, sociology, politics, and current events for gospel illustrations and biblical warnings. While Nature Freestyle mines CREATION for lessons and Personal Freestyle mines YOUR STORY, History Freestyle mines CIVILIZATION—the rise and fall of empires, cultural movements, technological shifts, and social phenomena. The goal is to become bilingual: fluent in both 'secular' history and sacred Scripture, constantly translating between them. When you study the fall of Rome, you're simultaneously studying Babylon's fall (Revelation 18) and learning that pride precedes collapse (Proverbs 16:18). When you observe the modern refugee crisis, you're seeing Ruth's story and God's care for the displaced. History Freestyle makes you a relevant preacher and teacher because you can speak to contemporary issues through a biblical lens without being merely political or cultural. It also protects you from chronological snobbery—the arrogance of thinking modern problems are unprecedented. HF trains you to say, 'This is not new; Ecclesiastes 1:9 was right—there's nothing new under the sun. Here's how Scripture addresses it.'",
+        icon: "Globe",
+        purpose: "Mine secular history, culture, and current events for gospel illustrations. Let Scripture interpret civilization—not vice versa.",
+        action: "Identify a historical event or social trend, find the biblical parallel/principle, extract spiritual lesson.",
+        output: "Secular Event/Trend → Biblical Parallel → Lesson → Use-case for teaching.",
         coreQuestion: "How does this secular historical event, social trend, or current phenomenon illuminate the Bible passage I'm studying?",
+        estimatedTime: "standard",
+        quickMode: [
+          "Choose historical event or current trend",
+          "Understand it on its own terms first",
+          "Find biblical pattern/warning/principle",
+          "Extract timeless spiritual lesson"
+        ],
         method: "STEP-BY-STEP METHODOLOGY:\n\n1. IDENTIFY a secular historical event, social movement, or current trend\n   • Examples: Fall of Roman Empire, Industrial Revolution, Cold War, social media rise, refugee crises, totalitarian regimes, economic collapses, civil rights movements\n2. OBSERVE the key dynamics: What happened? What were the causes and effects?\n   • Don't import Scripture yet—understand the secular event on its own terms first\n3. ASK: 'Where in Scripture do I see a similar pattern, warning, or principle?'\n   • Look for structural parallels, not just surface similarities\n   • Search biblical history (Israel's kings, empires in Daniel/Revelation) AND biblical principles (Proverbs, Prophets, Epistles)\n4. CONNECT the event to a specific biblical text or principle\n   • Be precise—don't just say 'it's about sin'; show WHICH biblical truth it illustrates\n5. EXTRACT the spiritual lesson (1-2 sentences)\n   • What does this secular event teach us about God, humanity, or the gospel?\n6. RECORD: Secular Event → Biblical Parallel/Principle → Lesson\n7. GUARD AGAINST: Don't let culture interpret Scripture; let Scripture interpret culture\n\nKEY PRINCIPLES:\n• Scripture is the lens, not culture—history illustrates the Bible, not vice versa\n• Avoid partisanship: HF should illuminate gospel truth, not push political agendas\n• Use SECULAR history, not biblical history (that's already Scripture)\n• Current events are fair game—but interpret them biblically, not sensationally\n• The best HF lessons show timeless patterns: what happened in Rome echoes in America because human nature is constant\n• HF makes apologetics powerful: 'You see this happening today? The Bible predicted this 2,000 years ago'",
         examples: [
           "FALL OF ROME (476 AD) → Revelation 13-18 (Babylon's fall) + Proverbs 16:18 ('Pride before destruction') → LESSON: Empires that worship power and wealth inevitably collapse under the weight of their own corruption; no human kingdom is permanent because only God's kingdom is eternal.",
@@ -396,8 +526,18 @@ export const palaceFloors: Floor[] = [
         id: "lr",
         name: "Listening Room",
         tag: "LR",
-        purpose: "The Listening Room transforms passive hearing into active Scripture-linking—training you to catch theological echoes in sermons, conversations, podcasts, songs, and even secular speeches. Most people listen and forget; LR practitioners listen and CAPTURE. When someone quotes '1 Peter 4:8' loosely as 'love covers a multitude of sins,' you don't just nod—you note the verse, verify the accuracy, and extract an action step ('forgive my neighbor for yesterday's offense'). The Listening Room is your spiritual dragnet, constantly trawling for truth-fragments that float by in daily discourse. It's also a humility discipline: you're training to learn from ANYONE—not just famous preachers but coworkers, children, strangers. God can use a half-remembered hymn lyric, a pastor's throwaway comment, or a friend's offhand remark to deliver a timely word. LR makes you attentive and obedient: you don't just hear the Word; you DO it (James 1:22-25). Over time, your LR captures become a personalized devotional—a record of how God has spoken to you through others. This room also sharpens discernment: if you can't find the verse someone quoted, you learn to fact-check and protect against false teaching.",
+        icon: "Ear",
+        purpose: "Transform passive hearing into active Scripture-linking. Catch theological echoes in sermons, conversations, and catch truth-fragments.",
+        action: "Listen attentively to sermon/conversation, note verse/principle quoted, verify accuracy, extract action step.",
+        output: "Quote/Point → Verified Verse → Lesson → Action Step (what I'll do about it).",
         coreQuestion: "What verse or biblical principle does this quote, sermon point, or conversation echo—and what should I do about it?",
+        estimatedTime: "quick",
+        quickMode: [
+          "Listen attentively (sermon, conversation, song)",
+          "Note any Scripture reference or principle mentioned",
+          "Verify the verse and context",
+          "Extract one action step"
+        ],
         method: "STEP-BY-STEP METHODOLOGY:\n\n1. LISTEN actively during sermons, conversations, podcasts, music, etc.\n   • Don't multitask—pay attention to what's being said\n2. CATCH the biblical reference, principle, or echo\n   • Someone quotes a verse (even loosely): Capture it\n   • Someone states a principle: Ask 'What Scripture says that?'\n   • Song lyric echoes theology: Trace it back to its biblical root\n3. RECORD immediately (don't trust memory)\n   • Format: Quote/Paraphrase → Verse/Principle → Source (who said it, when)\n4. VERIFY the reference\n   • If they cited a verse, check if they quoted it accurately\n   • If they stated a principle, find the biblical text that supports it\n5. EXTRACT an action step\n   • How does this apply TODAY?\n   • What specific obedience is God calling for?\n6. STORE: Quote → Verse → Action → Date\n7. REVIEW weekly: What did God say to me through others this week?\n\nKEY PRINCIPLES:\n• You're listening FOR God, not just TO people\n• Even secular sources can accidentally quote biblical truth—capture it\n• Accuracy matters—misquoted verses can distort meaning; verify what you hear\n• Action without reflection is noise; reflection without action is disobedience\n• LR captures are personal—God may highlight something for YOU that others miss\n• Humility: God speaks through unlikely people; stay teachable\n• This room prevents 'hearer amnesia' (James 1:23-24—looking in the mirror and forgetting)",
         examples: [
           "QUOTE (in sermon): 'Love covers a multitude of sins' → VERSE: 1 Peter 4:8 (verified: accurate) → ACTION: Forgive neighbor for yesterday's sharp comment; let it go instead of rehearsing it → DATE: 3/15",
