@@ -8,7 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDevotionalProfile } from "@/hooks/useDevotionalProfiles";
-import { useDevotionalPlan } from "@/hooks/useDevotionals";
+import { useDevotionalPlan, useDevotionals } from "@/hooks/useDevotionals";
+import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -38,11 +41,66 @@ const STRUGGLE_LABELS: Record<string, { label: string; emoji: string }> = {
 export default function DevotionalProfileDetail() {
   const { profileId } = useParams<{ profileId: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { profile, notes, history, insights, profileLoading, addNote } = useDevotionalProfile(profileId || "");
   const { plan, days, completedDayIds } = useDevotionalPlan(profile?.active_plan_id || "");
+  const { createPlan, generateDevotional, isGenerating } = useDevotionals();
 
   const [newNote, setNewNote] = useState("");
   const [noteType, setNoteType] = useState("observation");
+
+  const handleGeneratePlan = async () => {
+    if (!profile) return;
+    
+    try {
+      // Build theme from struggles
+      const theme = profile.struggles?.length > 0 
+        ? `Addressing ${profile.struggles.map(s => STRUGGLE_LABELS[s]?.label || s).join(", ")} for ${profile.name}`
+        : `Spiritual growth and encouragement for ${profile.name}`;
+      
+      // Create the plan first
+      const newPlan = await createPlan.mutateAsync({
+        title: `Devotional Plan for ${profile.name}`,
+        description: `A personalized devotional addressing ${profile.name}'s spiritual journey`,
+        theme,
+        format: "room-driven",
+        duration: 7,
+        studyStyle: profile.preferred_tone || "gentle",
+      });
+
+      // Generate content
+      await generateDevotional.mutateAsync({
+        planId: newPlan.id,
+        theme,
+        format: "room-driven",
+        duration: 7,
+        studyStyle: profile.preferred_tone || "gentle",
+        profileName: profile.name,
+      });
+
+      // Update the profile with the active plan
+      await supabase
+        .from("devotional_profiles")
+        .update({ active_plan_id: newPlan.id })
+        .eq("id", profile.id);
+
+      // Refetch profile data
+      queryClient.invalidateQueries({ queryKey: ["devotional-profile", profileId] });
+      
+      toast({
+        title: "Devotional Plan Created!",
+        description: `A 7-day plan has been generated for ${profile.name}.`,
+      });
+    } catch (error) {
+      console.error("Error generating plan:", error);
+      toast({
+        title: "Generation Failed",
+        description: "Could not generate the devotional plan. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleAddNote = async () => {
     if (!newNote.trim()) return;
@@ -194,9 +252,13 @@ export default function DevotionalProfileDetail() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Generate a devotional plan tailored for {profile.name}.
                   </p>
-                  <Button className="bg-gradient-to-r from-rose-500 to-pink-500">
+                  <Button 
+                    className="bg-gradient-to-r from-rose-500 to-pink-500"
+                    onClick={handleGeneratePlan}
+                    disabled={isGenerating || createPlan.isPending}
+                  >
                     <Plus className="h-4 w-4 mr-2" />
-                    Generate Devotional Plan
+                    {isGenerating || createPlan.isPending ? "Generating..." : "Generate Devotional Plan"}
                   </Button>
                 </CardContent>
               </Card>
