@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap } from "lucide-react";
+import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
@@ -346,9 +346,9 @@ export const Navigation = () => {
                   
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap flex items-center gap-1">
-                        <Sparkles className="h-3.5 w-3.5" />
-                        GPTs
+                      <button className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-violet-500/10 to-purple-500/10 border border-violet-500/20 hover:from-violet-500/20 hover:to-purple-500/20">
+                        <Sparkles className="h-3.5 w-3.5 text-violet-500" />
+                        <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent font-semibold">GPTs</span>
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-56 bg-card border-border z-50">
@@ -372,9 +372,9 @@ export const Navigation = () => {
                   
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap flex items-center gap-1">
-                        <Building2 className="h-3.5 w-3.5" />
-                        Blueprints
+                      <button className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border border-blue-500/20 hover:from-blue-500/20 hover:to-indigo-500/20">
+                        <Building2 className="h-3.5 w-3.5 text-blue-500" />
+                        <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-semibold">Blueprints</span>
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-56 bg-card border-border z-50">
@@ -397,15 +397,16 @@ export const Navigation = () => {
                   </DropdownMenu>
                   <Link 
                     to="/courses" 
-                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/20 hover:from-emerald-500/20 hover:to-green-500/20"
                   >
-                    Courses
+                    <BookOpen className="h-3.5 w-3.5 text-emerald-500" />
+                    <span className="bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent font-semibold">Courses</span>
                   </Link>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap flex items-center gap-1">
-                        <Zap className="h-3.5 w-3.5" />
-                        Challenges
+                      <button className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/20 hover:from-orange-500/20 hover:to-red-500/20">
+                        <Zap className="h-3.5 w-3.5 text-orange-500" />
+                        <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent font-semibold">Challenges</span>
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-56 bg-card border-border z-50">
@@ -419,47 +420,52 @@ export const Navigation = () => {
                   </DropdownMenu>
                   <Link 
                     to="/achievements" 
-                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20 hover:from-amber-500/20 hover:to-yellow-500/20"
                   >
-                    Achievements
+                    <Trophy className="h-3.5 w-3.5 text-amber-500" />
+                    <span className="bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent font-semibold">Achievements</span>
                   </Link>
                   <Link 
                     to="/mastery" 
-                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap flex items-center gap-1"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-rose-500/10 to-pink-500/10 border border-rose-500/20 hover:from-rose-500/20 hover:to-pink-500/20"
                   >
-                    <Crown className="h-3.5 w-3.5" />
-                    Mastery
+                    <Crown className="h-3.5 w-3.5 text-rose-500" />
+                    <span className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent font-semibold">Mastery</span>
                   </Link>
                   <Link 
                     to="/bible-study-series" 
-                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/20 hover:from-sky-500/20 hover:to-blue-500/20"
                   >
-                    Series
+                    <BookOpen className="h-3.5 w-3.5 text-sky-500" />
+                    <span className="bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent font-semibold">Series</span>
                   </Link>
                   <Link 
                     to="/sermon-builder" 
-                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-purple-500/10 to-fuchsia-500/10 border border-purple-500/20 hover:from-purple-500/20 hover:to-fuchsia-500/20"
                   >
-                    Sermon Builder
+                    <MessageSquare className="h-3.5 w-3.5 text-purple-500" />
+                    <span className="bg-gradient-to-r from-purple-600 to-fuchsia-600 bg-clip-text text-transparent font-semibold">Sermon Builder</span>
                   </Link>
                   <Link 
                     to="/pricing" 
-                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-lime-500/10 to-green-500/10 border border-lime-500/20 hover:from-lime-500/20 hover:to-green-500/20"
                   >
-                    Pricing
+                    <CreditCard className="h-3.5 w-3.5 text-lime-500" />
+                    <span className="bg-gradient-to-r from-lime-600 to-green-600 bg-clip-text text-transparent font-semibold">Pricing</span>
                   </Link>
                   <Link 
                     to="/community" 
-                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border border-teal-500/20 hover:from-teal-500/20 hover:to-cyan-500/20"
                   >
-                    Community
+                    <Users className="h-3.5 w-3.5 text-teal-500" />
+                    <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-semibold">Community</span>
                   </Link>
                   <Link 
                     to="/guilds" 
-                    className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap flex items-center gap-1"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border border-indigo-500/20 hover:from-indigo-500/20 hover:to-violet-500/20"
                   >
-                    <Shield className="h-3.5 w-3.5" />
-                    Guilds
+                    <Shield className="h-3.5 w-3.5 text-indigo-500" />
+                    <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent font-semibold">Guilds</span>
                   </Link>
                   
                   <DropdownMenu>

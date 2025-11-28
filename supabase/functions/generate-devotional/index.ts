@@ -164,11 +164,14 @@ Generate all ${duration} days as a JSON array. Each day should progressively bui
     }
 
     const data = await response.json();
+    console.log("AI response received, parsing content...");
     const content = data.choices?.[0]?.message?.content;
 
     if (!content) {
       throw new Error("No content generated");
     }
+    
+    console.log("Content length:", content.length);
 
     // Parse the JSON from the response
     let days;
@@ -221,6 +224,7 @@ Generate all ${duration} days as a JSON array. Each day should progressively bui
       }
       
       days = JSON.parse(result.trim());
+      console.log("Successfully parsed", days.length, "days");
     } catch (parseError) {
       console.error("JSON parse error:", parseError);
       console.log("Raw content (first 2000 chars):", content.substring(0, 2000));
@@ -231,6 +235,7 @@ Generate all ${duration} days as a JSON array. Each day should progressively bui
       throw new Error("Invalid devotional format received");
     }
 
+    console.log("Inserting days into database...");
     // Insert all days into the database
     const daysToInsert = days.map((day: any) => ({
       plan_id: planId,
