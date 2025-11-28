@@ -57,7 +57,7 @@ export default function DevotionalView() {
     return (
       <div className="min-h-screen bg-background">
         <div className={`relative bg-gradient-to-r ${gradient} py-6 px-4`}>
-          <div className="absolute inset-0 bg-black/10" />
+          <div className="absolute inset-0 bg-black/10 pointer-events-none" />
           <div className="relative max-w-4xl mx-auto">
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="icon" onClick={() => navigate("/devotionals")} className="text-white hover:bg-white/20">
@@ -155,7 +155,7 @@ export default function DevotionalView() {
     <div className="min-h-screen bg-background">
       {/* Colorful Header */}
       <div className={`relative bg-gradient-to-r ${gradient} py-6 px-4`}>
-        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute inset-0 bg-black/10 pointer-events-none" />
         <div className="relative max-w-4xl mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
