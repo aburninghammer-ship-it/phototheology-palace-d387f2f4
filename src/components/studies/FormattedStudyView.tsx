@@ -1,25 +1,27 @@
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { Card } from "@/components/ui/card";
+import DOMPurify from "dompurify";
 
 interface FormattedStudyViewProps {
   content: string;
 }
 
 export const FormattedStudyView = ({ content }: FormattedStudyViewProps) => {
-  // Clean content to remove any circular capital letter artifacts
-  const cleanContent = (text: string) => {
-    // Remove any HTML-like tags that might create circular letters
-    return text
-      .replace(/<span[^>]*class="[^"]*capital-letter[^"]*"[^>]*>([A-Z])<\/span>/gi, '$1')
-      .replace(/\[([A-Z])\]/g, '$1') // Remove [A] style brackets
-      .replace(/\{([A-Z])\}/g, '$1') // Remove {A} style braces
-      .trim();
+  // Check if content is HTML (from TipTap editor) or markdown/plain text
+  const isHtmlContent = (text: string) => {
+    return /<[a-z][\s\S]*>/i.test(text);
   };
 
-  const cleanedContent = cleanContent(content);
-  
+  // Sanitize HTML content
+  const sanitizeHtml = (html: string) => {
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'a', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre', 'span', 'div'],
+      ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'style'],
+    });
+  };
+
   // Split content by Jeeves Research sections
-  const sections = cleanedContent.split(/(?=### Jeeves Research:)/);
+  const sections = content.split(/(?=### Jeeves Research:)/);
   
   return (
     <div className="space-y-6">
@@ -63,7 +65,23 @@ export const FormattedStudyView = ({ content }: FormattedStudyViewProps) => {
           );
         }
         
-        // Regular content (non-Jeeves) - use formatJeevesResponse for consistency
+        // Regular content - check if it's HTML or markdown
+        if (isHtmlContent(section)) {
+          // Render HTML content properly
+          return (
+            <Card key={index} className="p-6 shadow-sm">
+              <div 
+                className="formatted-content prose prose-sm dark:prose-invert max-w-none
+                  prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground
+                  prose-em:text-foreground/90 prose-li:text-foreground prose-a:text-primary
+                  [&>p]:mb-4 [&>p]:leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(section) }}
+              />
+            </Card>
+          );
+        }
+        
+        // Markdown/plain text content - use formatJeevesResponse
         return (
           <Card key={index} className="p-6 shadow-sm">
             <div className="formatted-content space-y-4">
