@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Loader2, Share2, Wand2 } from "lucide-react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Loader2, Share2, Wand2, ExternalLink } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,9 +26,18 @@ export default function DevotionalView() {
   const { plan, days, completedDayIds, completeDay, planLoading, isCompleting } = useDevotionalPlan(planId || "");
   const { generateDevotional, isGenerating } = useDevotionals();
 
+  const { toast } = useToast();
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [journalEntry, setJournalEntry] = useState("");
   const [rating, setRating] = useState(0);
+
+  const handleCrossReferenceClick = (ref: string) => {
+    navigator.clipboard.writeText(ref);
+    toast({
+      title: "Reference Copied",
+      description: `"${ref}" copied to clipboard`,
+    });
+  };
 
   const handleGenerate = () => {
     if (!plan) return;
@@ -258,14 +268,14 @@ export default function DevotionalView() {
           </Card>
 
           <Tabs defaultValue="devotion" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950">
-              <TabsTrigger value="devotion" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800">
+            <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950 relative z-10">
+              <TabsTrigger value="devotion" className="cursor-pointer data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 transition-all">
                 💡 Devotion
               </TabsTrigger>
-              <TabsTrigger value="practice" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800">
+              <TabsTrigger value="practice" className="cursor-pointer data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 transition-all">
                 🎯 Practice
               </TabsTrigger>
-              <TabsTrigger value="journal" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800">
+              <TabsTrigger value="journal" className="cursor-pointer data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 transition-all">
                 📝 Journal
               </TabsTrigger>
             </TabsList>
@@ -329,9 +339,14 @@ export default function DevotionalView() {
                   <h4 className="text-sm font-medium mb-2 text-muted-foreground">📖 Cross References</h4>
                   <div className="flex flex-wrap gap-2">
                     {currentDay.cross_references.map((ref, idx) => (
-                      <Badge key={idx} className="bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 text-blue-700 dark:text-blue-300 border-0">
+                      <button
+                        key={idx}
+                        onClick={() => handleCrossReferenceClick(ref)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 text-blue-700 dark:text-blue-300 hover:from-blue-200 hover:to-cyan-200 dark:hover:from-blue-800 dark:hover:to-cyan-800 transition-all cursor-pointer active:scale-95"
+                      >
                         {ref}
-                      </Badge>
+                        <ExternalLink className="h-3 w-3 opacity-60" />
+                      </button>
                     ))}
                   </div>
                 </div>
