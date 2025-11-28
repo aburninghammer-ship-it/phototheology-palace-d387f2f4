@@ -16,15 +16,27 @@ interface CreateProfileWizardProps {
   onProfileCreated?: (profileId: string) => void;
 }
 
+// Categories for different devotional types
+const DEVOTIONAL_CATEGORIES = [
+  { value: "individual", label: "Individual", emoji: "🙏", description: "Personal ministry to one person" },
+  { value: "classroom", label: "Classroom", emoji: "🏫", description: "For teachers - students at school" },
+  { value: "family", label: "Family", emoji: "👨‍👩‍👧‍👦", description: "For parents - family devotions" },
+  { value: "spousal", label: "Spousal", emoji: "💑", description: "For married couples" },
+  { value: "dating", label: "Dating", emoji: "💕", description: "For dating couples" },
+];
+
 const RELATIONSHIPS = [
-  { value: "child", label: "Child", emoji: "👶" },
-  { value: "spouse", label: "Spouse", emoji: "💑" },
-  { value: "friend", label: "Friend", emoji: "🤝" },
-  { value: "student", label: "Student", emoji: "📚" },
-  { value: "team_member", label: "Team Member", emoji: "👥" },
-  { value: "mentee", label: "Mentee", emoji: "🌱" },
-  { value: "parent", label: "Parent", emoji: "👨‍👩‍👧" },
-  { value: "sibling", label: "Sibling", emoji: "👫" },
+  { value: "child", label: "Child", emoji: "👶", categories: ["individual", "family"] },
+  { value: "spouse", label: "Spouse", emoji: "💑", categories: ["individual", "spousal"] },
+  { value: "friend", label: "Friend", emoji: "🤝", categories: ["individual"] },
+  { value: "student", label: "Student", emoji: "📚", categories: ["individual", "classroom"] },
+  { value: "team_member", label: "Team Member", emoji: "👥", categories: ["individual"] },
+  { value: "mentee", label: "Mentee", emoji: "🌱", categories: ["individual"] },
+  { value: "parent", label: "Parent", emoji: "👨‍👩‍👧", categories: ["individual"] },
+  { value: "sibling", label: "Sibling", emoji: "👫", categories: ["individual", "family"] },
+  { value: "dating_partner", label: "Dating Partner", emoji: "💕", categories: ["dating"] },
+  { value: "class", label: "Entire Class", emoji: "🏫", categories: ["classroom"] },
+  { value: "family_group", label: "Family Group", emoji: "🏠", categories: ["family"] },
 ];
 
 const AGE_GROUPS = [
@@ -33,6 +45,40 @@ const AGE_GROUPS = [
   { value: "young_adult", label: "Young Adult (18-30)" },
   { value: "adult", label: "Adult (31-60)" },
   { value: "senior", label: "Senior (60+)" },
+];
+
+const GRADE_LEVELS = [
+  { value: "prek", label: "Pre-K (Ages 3-4)" },
+  { value: "kindergarten", label: "Kindergarten (Age 5)" },
+  { value: "elementary_lower", label: "Elementary 1-2 (Ages 6-7)" },
+  { value: "elementary_upper", label: "Elementary 3-5 (Ages 8-10)" },
+  { value: "middle_school", label: "Middle School 6-8 (Ages 11-13)" },
+  { value: "high_school", label: "High School 9-12 (Ages 14-18)" },
+  { value: "college", label: "College/University" },
+];
+
+const FAMILY_DYNAMICS = [
+  { value: "young_children", label: "Young Children (0-5)", emoji: "👶" },
+  { value: "school_age", label: "School Age (6-12)", emoji: "🎒" },
+  { value: "teens", label: "Teenagers (13-17)", emoji: "🎮" },
+  { value: "mixed_ages", label: "Mixed Ages", emoji: "👨‍👩‍👧‍👦" },
+  { value: "adult_children", label: "Adult Children", emoji: "🏠" },
+];
+
+const MARRIAGE_STAGES = [
+  { value: "newlywed", label: "Newlywed (0-2 years)", emoji: "💒" },
+  { value: "building", label: "Building (3-10 years)", emoji: "🏗️" },
+  { value: "established", label: "Established (10-25 years)", emoji: "🏠" },
+  { value: "mature", label: "Mature (25+ years)", emoji: "🌳" },
+  { value: "empty_nest", label: "Empty Nest", emoji: "🕊️" },
+];
+
+const DATING_STAGES = [
+  { value: "new_relationship", label: "New Relationship", emoji: "🌱" },
+  { value: "serious_dating", label: "Serious Dating", emoji: "💝" },
+  { value: "courtship", label: "Courtship", emoji: "💍" },
+  { value: "engaged", label: "Engaged", emoji: "💎" },
+  { value: "long_distance", label: "Long Distance", emoji: "✈️" },
 ];
 
 const STRUGGLES = [
@@ -85,6 +131,7 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
   const { createPlan, generateDevotional, isGenerating } = useDevotionals();
 
   const [formData, setFormData] = useState({
+    category: "individual",
     name: "",
     relationship: "",
     age_group: "",
@@ -94,6 +141,12 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
     spiritual_goals: [] as string[],
     preferred_tone: "comforting",
     preferred_themes: [] as string[],
+    // Category-specific fields
+    grade_level: "",
+    family_dynamic: "",
+    marriage_stage: "",
+    dating_stage: "",
+    class_size: "",
     // Devotional plan settings
     theme: "",
     duration: 7,
@@ -118,11 +171,21 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
     }));
   };
 
+  const getRelationshipForCategory = () => {
+    switch (formData.category) {
+      case "classroom": return "class";
+      case "family": return "family_group";
+      case "spousal": return "spouse";
+      case "dating": return "dating_partner";
+      default: return formData.relationship;
+    }
+  };
+
   const handleCreate = async () => {
     const profile = await createProfile.mutateAsync({
       name: formData.name,
-      relationship: formData.relationship,
-      age_group: formData.age_group || undefined,
+      relationship: getRelationshipForCategory(),
+      age_group: formData.age_group || formData.grade_level || formData.family_dynamic || undefined,
       avatar_emoji: formData.avatar_emoji,
       struggles: formData.struggles,
       current_situation: formData.current_situation || undefined,
@@ -165,7 +228,13 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
   const canProceed = () => {
     switch (step) {
       case 1:
-        return formData.name.trim() && formData.relationship;
+        if (!formData.name.trim()) return false;
+        if (formData.category === "individual" && !formData.relationship) return false;
+        if (formData.category === "classroom" && !formData.grade_level) return false;
+        if (formData.category === "family" && !formData.family_dynamic) return false;
+        if (formData.category === "spousal" && !formData.marriage_stage) return false;
+        if (formData.category === "dating" && !formData.dating_stage) return false;
+        return true;
       case 2:
         return formData.struggles.length > 0 || formData.current_situation.trim();
       case 3:
@@ -207,21 +276,43 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
         </CardHeader>
 
         <CardContent className="p-6">
-          {/* Step 1: Basic Info */}
+          {/* Step 1: Category & Basic Info */}
           {step === 1 && (
             <div className="space-y-6">
               <div className="text-center mb-6">
-                <h3 className="text-lg font-semibold">Who are you creating this for?</h3>
+                <h3 className="text-lg font-semibold">What type of devotional is this?</h3>
                 <p className="text-sm text-muted-foreground">
-                  This person will receive personalized devotionals tailored to their needs.
+                  Choose a category to tailor the devotional experience.
                 </p>
               </div>
 
               <div className="space-y-4">
+                {/* Category Selection */}
                 <div>
-                  <Label>Their Name</Label>
+                  <Label>Devotional Category</Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                    {DEVOTIONAL_CATEGORIES.map((cat) => (
+                      <Button
+                        key={cat.value}
+                        variant={formData.category === cat.value ? "default" : "outline"}
+                        className={cn(
+                          "flex-col h-auto py-3 justify-center",
+                          formData.category === cat.value && "ring-2 ring-primary"
+                        )}
+                        onClick={() => setFormData({ ...formData, category: cat.value, relationship: "" })}
+                      >
+                        <span className="text-2xl mb-1">{cat.emoji}</span>
+                        <span className="font-medium">{cat.label}</span>
+                        <span className="text-xs text-muted-foreground">{cat.description}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>{formData.category === "classroom" ? "Class/Group Name" : formData.category === "family" ? "Family Name" : "Their Name"}</Label>
                   <Input
-                    placeholder="Enter their name"
+                    placeholder={formData.category === "classroom" ? "e.g., 5th Grade Class" : formData.category === "family" ? "e.g., The Johnson Family" : "Enter their name"}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
@@ -244,40 +335,120 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
                   </div>
                 </div>
 
-                <div>
-                  <Label>Relationship</Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
-                    {RELATIONSHIPS.map((rel) => (
-                      <Button
-                        key={rel.value}
-                        variant={formData.relationship === rel.value ? "default" : "outline"}
-                        className="justify-start"
-                        onClick={() => setFormData({ ...formData, relationship: rel.value })}
-                      >
-                        <span className="mr-2">{rel.emoji}</span>
-                        {rel.label}
-                      </Button>
-                    ))}
+                {/* Category-specific fields */}
+                {formData.category === "classroom" && (
+                  <div>
+                    <Label>Grade Level</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {GRADE_LEVELS.map((grade) => (
+                        <Button
+                          key={grade.value}
+                          variant={formData.grade_level === grade.value ? "default" : "outline"}
+                          className="justify-start text-sm"
+                          onClick={() => setFormData({ ...formData, grade_level: grade.value })}
+                        >
+                          {grade.label}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div>
-                  <Label>Age Group (Optional)</Label>
-                  <RadioGroup
-                    value={formData.age_group}
-                    onValueChange={(v) => setFormData({ ...formData, age_group: v })}
-                    className="flex flex-wrap gap-4 mt-2"
-                  >
-                    {AGE_GROUPS.map((age) => (
-                      <div key={age.value} className="flex items-center space-x-2">
-                        <RadioGroupItem value={age.value} id={age.value} />
-                        <Label htmlFor={age.value} className="cursor-pointer">
-                          {age.label}
-                        </Label>
+                {formData.category === "family" && (
+                  <div>
+                    <Label>Family Dynamic</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {FAMILY_DYNAMICS.map((fam) => (
+                        <Button
+                          key={fam.value}
+                          variant={formData.family_dynamic === fam.value ? "default" : "outline"}
+                          className="justify-start"
+                          onClick={() => setFormData({ ...formData, family_dynamic: fam.value })}
+                        >
+                          <span className="mr-2">{fam.emoji}</span>
+                          {fam.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {formData.category === "spousal" && (
+                  <div>
+                    <Label>Marriage Stage</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {MARRIAGE_STAGES.map((stage) => (
+                        <Button
+                          key={stage.value}
+                          variant={formData.marriage_stage === stage.value ? "default" : "outline"}
+                          className="justify-start"
+                          onClick={() => setFormData({ ...formData, marriage_stage: stage.value })}
+                        >
+                          <span className="mr-2">{stage.emoji}</span>
+                          {stage.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {formData.category === "dating" && (
+                  <div>
+                    <Label>Dating Stage</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {DATING_STAGES.map((stage) => (
+                        <Button
+                          key={stage.value}
+                          variant={formData.dating_stage === stage.value ? "default" : "outline"}
+                          className="justify-start"
+                          onClick={() => setFormData({ ...formData, dating_stage: stage.value })}
+                        >
+                          <span className="mr-2">{stage.emoji}</span>
+                          {stage.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {formData.category === "individual" && (
+                  <>
+                    <div>
+                      <Label>Relationship</Label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
+                        {RELATIONSHIPS.filter(rel => rel.categories.includes("individual")).map((rel) => (
+                          <Button
+                            key={rel.value}
+                            variant={formData.relationship === rel.value ? "default" : "outline"}
+                            className="justify-start"
+                            onClick={() => setFormData({ ...formData, relationship: rel.value })}
+                          >
+                            <span className="mr-2">{rel.emoji}</span>
+                            {rel.label}
+                          </Button>
+                        ))}
                       </div>
-                    ))}
-                  </RadioGroup>
-                </div>
+                    </div>
+
+                    <div>
+                      <Label>Age Group (Optional)</Label>
+                      <RadioGroup
+                        value={formData.age_group}
+                        onValueChange={(v) => setFormData({ ...formData, age_group: v })}
+                        className="flex flex-wrap gap-4 mt-2"
+                      >
+                        {AGE_GROUPS.map((age) => (
+                          <div key={age.value} className="flex items-center space-x-2">
+                            <RadioGroupItem value={age.value} id={age.value} />
+                            <Label htmlFor={age.value} className="cursor-pointer">
+                              {age.label}
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           )}
