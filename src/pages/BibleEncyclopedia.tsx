@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
+import { trackJeevesInteraction } from "@/hooks/useAnalyticsTracking";
 import {
   Book,
   Search,
@@ -86,6 +87,14 @@ const BibleEncyclopedia = () => {
       });
 
       if (error) throw error;
+
+      // Track the interaction
+      trackJeevesInteraction(
+        searchQuery,
+        `encyclopedia-${searchCategory}`,
+        data.content?.substring(0, 200),
+        "Bible Encyclopedia"
+      );
 
       setSearchResults(data.content || "No results found.");
       

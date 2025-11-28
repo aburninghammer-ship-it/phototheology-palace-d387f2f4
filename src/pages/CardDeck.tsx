@@ -28,6 +28,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { StudyDeckInstructions } from "@/components/study-deck/StudyDeckInstructions";
 import { StudyDeckExamples } from "@/components/study-deck/StudyDeckExamples";
 import { StudyDeckModeSelector, StudyMode } from "@/components/study-deck/StudyDeckModeSelector";
+import { trackJeevesInteraction } from "@/hooks/useAnalyticsTracking";
 import { CardDrawAnimation } from "@/components/study-deck/CardDrawAnimation";
 import { CardCategoryFilters } from "@/components/study-deck/CardCategoryFilters";
 import { JeevesCommentaryDialog } from "@/components/study-deck/JeevesCommentaryDialog";
@@ -1056,6 +1057,15 @@ export default function CardDeck() {
       });
 
       if (error) throw error;
+      
+      // Track the interaction
+      trackJeevesInteraction(
+        `Help request: ${selectedCard?.name}`,
+        "card-deck-help",
+        data.content?.substring(0, 200),
+        "Card Deck"
+      );
+      
       setFeedback(data.content || "Sorry, I couldn't generate help right now.");
     } catch (error: any) {
       const rawMessage = error?.message as string | undefined;
@@ -1107,6 +1117,15 @@ export default function CardDeck() {
       });
 
       if (error) throw error;
+      
+      // Track the interaction
+      trackJeevesInteraction(
+        `Grade submission: ${selectedCard?.name}`,
+        "card-deck-grade",
+        data.content?.substring(0, 200),
+        "Card Deck"
+      );
+      
       setFeedback(data.content || "Answer submitted!");
       setConversationHistory(prev => [
         ...prev,
