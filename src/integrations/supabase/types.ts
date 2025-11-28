@@ -50,6 +50,24 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       announcement_dismissals: {
         Row: {
           announcement_id: string
@@ -2490,6 +2508,36 @@ export type Database = {
         }
         Relationships: []
       }
+      jeeves_interactions: {
+        Row: {
+          created_at: string
+          feature_used: string
+          id: string
+          page_context: string | null
+          question: string
+          response_preview: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          feature_used: string
+          id?: string
+          page_context?: string | null
+          question: string
+          response_preview?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          feature_used?: string
+          id?: string
+          page_context?: string | null
+          question?: string
+          response_preview?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       learning_predictions: {
         Row: {
           actual_outcome: string | null
@@ -3240,6 +3288,36 @@ export type Database = {
           title?: string
           type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      page_views: {
+        Row: {
+          created_at: string
+          id: string
+          page_path: string
+          page_title: string | null
+          referrer: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page_path: string
+          page_title?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page_path?: string
+          page_title?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
