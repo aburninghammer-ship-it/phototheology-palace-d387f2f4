@@ -244,11 +244,6 @@ export default function DevotionalView() {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent">
               {currentDay.title}
             </h2>
-            {currentDay.sanctuary_station && (
-              <p className="text-sm px-4 py-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-950 dark:to-orange-950 text-amber-800 dark:text-amber-200 inline-block">
-                🕯️ {currentDay.sanctuary_station}
-              </p>
-            )}
           </div>
 
           {/* Scripture Card - Vibrant */}
