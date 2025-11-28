@@ -1,14 +1,23 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Clock, Loader2 } from "lucide-react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Loader2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useDevotionalPlan, DevotionalDay } from "@/hooks/useDevotionals";
+import { useDevotionalPlan } from "@/hooks/useDevotionals";
+import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
 import { cn } from "@/lib/utils";
+
+const formatGradients: Record<string, string> = {
+  standard: "from-blue-500 via-cyan-500 to-teal-500",
+  "24fps": "from-purple-500 via-pink-500 to-rose-500",
+  blueprint: "from-amber-500 via-orange-500 to-red-500",
+  "room-driven": "from-emerald-500 via-teal-500 to-cyan-500",
+  "verse-genetics": "from-rose-500 via-pink-500 to-purple-500",
+};
 
 export default function DevotionalView() {
   const { planId } = useParams<{ planId: string }>();
@@ -21,14 +30,18 @@ export default function DevotionalView() {
 
   if (planLoading || !plan) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-purple-500 mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading your devotional...</p>
+        </div>
       </div>
     );
   }
 
   const currentDay = days?.[selectedDayIndex];
   const isCompleted = currentDay ? completedDayIds.has(currentDay.id) : false;
+  const gradient = formatGradients[plan.format] || formatGradients.standard;
 
   const handleComplete = () => {
     if (!currentDay) return;
@@ -46,42 +59,58 @@ export default function DevotionalView() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/devotionals")}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="font-semibold truncate max-w-[200px] md:max-w-none">{plan.title}</h1>
-              <p className="text-xs text-muted-foreground">Day {selectedDayIndex + 1} of {plan.duration}</p>
+      {/* Colorful Header */}
+      <div className={`relative bg-gradient-to-r ${gradient} py-6 px-4`}>
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="relative max-w-4xl mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="icon" onClick={() => navigate("/devotionals")} className="text-white hover:bg-white/20">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="font-bold text-white text-lg truncate max-w-[200px] md:max-w-none">{plan.title}</h1>
+                <p className="text-white/80 text-sm">Day {selectedDayIndex + 1} of {plan.duration}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {plan && currentDay && (
+                <ShareDevotionalDialog 
+                  plan={plan} 
+                  day={currentDay}
+                  trigger={
+                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                      <Share2 className="h-5 w-5" />
+                    </Button>
+                  }
+                />
+              )}
+              <Button variant="ghost" size="icon" onClick={goToPrevDay} disabled={selectedDayIndex === 0} className="text-white hover:bg-white/20 disabled:opacity-30">
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={goToNextDay} disabled={selectedDayIndex === (days?.length || 1) - 1} className="text-white hover:bg-white/20 disabled:opacity-30">
+                <ChevronRight className="h-5 w-5" />
+              </Button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={goToPrevDay} disabled={selectedDayIndex === 0}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="icon" onClick={goToNextDay} disabled={selectedDayIndex === (days?.length || 1) - 1}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
         </div>
+      </div>
 
-        {/* Day Progress */}
-        <div className="max-w-4xl mx-auto px-4 pb-3">
+      {/* Day Progress - Colorful Pills */}
+      <div className="bg-background/95 backdrop-blur border-b sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-4 py-3">
           <ScrollArea className="w-full">
-            <div className="flex gap-1 pb-2">
+            <div className="flex gap-2 pb-2">
               {days?.map((day, idx) => (
                 <button
                   key={day.id}
                   onClick={() => setSelectedDayIndex(idx)}
                   className={cn(
-                    "w-8 h-8 rounded-full text-xs font-medium flex-shrink-0 transition-all",
+                    "w-10 h-10 rounded-full text-xs font-bold flex-shrink-0 transition-all shadow-md",
                     idx === selectedDayIndex
-                      ? "bg-primary text-primary-foreground"
+                      ? `bg-gradient-to-br ${gradient} text-white scale-110`
                       : completedDayIds.has(day.id)
-                      ? "bg-emerald-500 text-white"
+                      ? "bg-gradient-to-br from-emerald-400 to-teal-400 text-white"
                       : "bg-muted hover:bg-muted/80"
                   )}
                 >
@@ -97,60 +126,78 @@ export default function DevotionalView() {
       {currentDay && (
         <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
           {/* Day Header */}
-          <div className="text-center space-y-2">
-            <Badge variant="outline" className="mb-2">
-              {currentDay.room_assignment && `${currentDay.room_assignment} • `}Floor {currentDay.floor_number}
-            </Badge>
-            <h2 className="text-2xl font-bold">{currentDay.title}</h2>
+          <div className="text-center space-y-3">
+            <div className="flex justify-center gap-2 flex-wrap">
+              {currentDay.room_assignment && (
+                <Badge className={`bg-gradient-to-r ${gradient} text-white border-0`}>
+                  {currentDay.room_assignment}
+                </Badge>
+              )}
+              <Badge variant="outline" className="border-purple-300 text-purple-700 dark:border-purple-700 dark:text-purple-300">
+                Floor {currentDay.floor_number}
+              </Badge>
+            </div>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent">
+              {currentDay.title}
+            </h2>
             {currentDay.sanctuary_station && (
-              <p className="text-sm text-amber-600 dark:text-amber-400">
+              <p className="text-sm px-4 py-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-950 dark:to-orange-950 text-amber-800 dark:text-amber-200 inline-block">
                 🕯️ {currentDay.sanctuary_station}
               </p>
             )}
           </div>
 
-          {/* Scripture */}
-          <Card className="bg-primary/5 border-primary/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
+          {/* Scripture Card - Vibrant */}
+          <Card className="overflow-hidden border-0 shadow-xl">
+            <div className={`h-2 bg-gradient-to-r ${gradient}`} />
+            <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pb-2">
+              <CardTitle className="text-base flex items-center gap-2 text-indigo-700 dark:text-indigo-300">
+                <BookOpen className="h-5 w-5" />
                 {currentDay.scripture_reference}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-lg italic leading-relaxed">{currentDay.scripture_text}</p>
+            <CardContent className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pt-0">
+              <p className="text-xl italic leading-relaxed text-indigo-900 dark:text-indigo-100 font-serif">
+                "{currentDay.scripture_text}"
+              </p>
             </CardContent>
           </Card>
 
           <Tabs defaultValue="devotion" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="devotion">Devotion</TabsTrigger>
-              <TabsTrigger value="practice">Practice</TabsTrigger>
-              <TabsTrigger value="journal">Journal</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950">
+              <TabsTrigger value="devotion" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800">
+                💡 Devotion
+              </TabsTrigger>
+              <TabsTrigger value="practice" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800">
+                🎯 Practice
+              </TabsTrigger>
+              <TabsTrigger value="journal" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800">
+                📝 Journal
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="devotion" className="space-y-4 mt-4">
               {/* Visual Imagery */}
               {currentDay.visual_imagery && (
-                <Card>
+                <Card className="border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 overflow-hidden">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2 text-purple-600 dark:text-purple-400">
-                      <Sparkles className="h-4 w-4" />
+                    <CardTitle className="text-sm flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                      <Sparkles className="h-5 w-5 text-amber-500" />
                       Mental Picture
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">{currentDay.visual_imagery}</p>
+                    <p className="text-purple-900 dark:text-purple-100 leading-relaxed">{currentDay.visual_imagery}</p>
                   </CardContent>
                 </Card>
               )}
 
               {/* Memory Hook */}
               {currentDay.memory_hook && (
-                <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
+                <Card className="border-0 bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 text-white shadow-lg">
                   <CardContent className="py-4">
-                    <p className="font-medium text-amber-800 dark:text-amber-200">
-                      🔗 Memory Hook: {currentDay.memory_hook}
+                    <p className="font-bold text-lg">
+                      🔗 {currentDay.memory_hook}
                     </p>
                   </CardContent>
                 </Card>
@@ -158,36 +205,39 @@ export default function DevotionalView() {
 
               {/* Application */}
               {currentDay.application && (
-                <Card>
+                <Card className="border-emerald-200 dark:border-emerald-800 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Today's Application</CardTitle>
+                    <CardTitle className="text-sm text-emerald-700 dark:text-emerald-300">📌 Today's Application</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p>{currentDay.application}</p>
+                    <p className="text-emerald-900 dark:text-emerald-100">{currentDay.application}</p>
                   </CardContent>
                 </Card>
               )}
 
-              {/* Christ Connection */}
-              <Card className="bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2 text-rose-700 dark:text-rose-300">
-                    <Heart className="h-4 w-4" />
+              {/* Christ Connection - Always Prominent */}
+              <Card className="border-0 bg-gradient-to-br from-rose-500 via-pink-500 to-purple-500 text-white shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                <CardHeader className="pb-2 relative">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Heart className="h-6 w-6 fill-white" />
                     Christ Connection
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-rose-900 dark:text-rose-100">{currentDay.christ_connection}</p>
+                <CardContent className="relative">
+                  <p className="text-lg leading-relaxed font-medium">{currentDay.christ_connection}</p>
                 </CardContent>
               </Card>
 
               {/* Cross References */}
               {currentDay.cross_references && currentDay.cross_references.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium mb-2">Cross References</h4>
+                  <h4 className="text-sm font-medium mb-2 text-muted-foreground">📖 Cross References</h4>
                   <div className="flex flex-wrap gap-2">
                     {currentDay.cross_references.map((ref, idx) => (
-                      <Badge key={idx} variant="secondary">{ref}</Badge>
+                      <Badge key={idx} className="bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 text-blue-700 dark:text-blue-300 border-0">
+                        {ref}
+                      </Badge>
                     ))}
                   </div>
                 </div>
@@ -197,26 +247,26 @@ export default function DevotionalView() {
             <TabsContent value="practice" className="space-y-4 mt-4">
               {/* Prayer */}
               {currentDay.prayer && (
-                <Card>
+                <Card className="border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Prayer</CardTitle>
+                    <CardTitle className="text-sm text-indigo-700 dark:text-indigo-300">🙏 Prayer</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="italic">{currentDay.prayer}</p>
+                    <p className="italic text-indigo-900 dark:text-indigo-100">{currentDay.prayer}</p>
                   </CardContent>
                 </Card>
               )}
 
               {/* Challenge */}
               {currentDay.challenge && (
-                <Card className="border-emerald-200 dark:border-emerald-800">
+                <Card className="border-0 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-emerald-700 dark:text-emerald-300">
-                      Today's Challenge
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      ⚡ Today's Challenge
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p>{currentDay.challenge}</p>
+                    <p className="font-medium">{currentDay.challenge}</p>
                   </CardContent>
                 </Card>
               )}
@@ -225,20 +275,20 @@ export default function DevotionalView() {
             <TabsContent value="journal" className="space-y-4 mt-4">
               {/* Journal Prompt */}
               {currentDay.journal_prompt && (
-                <Card>
+                <Card className="border-pink-200 dark:border-pink-800 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/30">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
+                    <CardTitle className="text-sm flex items-center gap-2 text-pink-700 dark:text-pink-300">
                       <MessageSquare className="h-4 w-4" />
                       Reflection Question
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="mb-4">{currentDay.journal_prompt}</p>
+                    <p className="mb-4 text-pink-900 dark:text-pink-100 font-medium">{currentDay.journal_prompt}</p>
                     <Textarea
                       placeholder="Write your reflection..."
                       value={journalEntry}
                       onChange={(e) => setJournalEntry(e.target.value)}
-                      className="min-h-[120px]"
+                      className="min-h-[120px] border-pink-200 dark:border-pink-800 focus:ring-pink-500"
                       disabled={isCompleted}
                     />
                   </CardContent>
@@ -247,9 +297,9 @@ export default function DevotionalView() {
 
               {/* Rating */}
               {!isCompleted && (
-                <Card>
+                <Card className="border-amber-200 dark:border-amber-800 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Rate Today's Devotion</CardTitle>
+                    <CardTitle className="text-sm text-amber-700 dark:text-amber-300">⭐ Rate Today's Devotion</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex gap-2">
@@ -258,11 +308,13 @@ export default function DevotionalView() {
                           key={star}
                           onClick={() => setRating(star)}
                           className={cn(
-                            "p-2 rounded transition-colors",
-                            star <= rating ? "text-amber-500" : "text-muted-foreground hover:text-amber-400"
+                            "p-2 rounded-lg transition-all",
+                            star <= rating 
+                              ? "text-amber-500 bg-amber-100 dark:bg-amber-900 scale-110" 
+                              : "text-gray-300 hover:text-amber-400"
                           )}
                         >
-                          <Star className={cn("h-6 w-6", star <= rating && "fill-current")} />
+                          <Star className={cn("h-8 w-8", star <= rating && "fill-current")} />
                         </button>
                       ))}
                     </div>
@@ -274,24 +326,29 @@ export default function DevotionalView() {
 
           {/* Complete Button */}
           {!isCompleted ? (
-            <Button className="w-full" size="lg" onClick={handleComplete} disabled={isCompleting}>
+            <Button 
+              className={`w-full bg-gradient-to-r ${gradient} hover:opacity-90 text-white border-0 shadow-xl`}
+              size="lg" 
+              onClick={handleComplete} 
+              disabled={isCompleting}
+            >
               {isCompleting ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                   Saving...
                 </>
               ) : (
                 <>
-                  <Check className="h-4 w-4 mr-2" />
+                  <Check className="h-5 w-5 mr-2" />
                   Complete Day {selectedDayIndex + 1}
                 </>
               )}
             </Button>
           ) : (
             <div className="text-center py-4">
-              <Badge className="bg-emerald-500">
-                <Check className="h-3 w-3 mr-1" />
-                Completed
+              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 text-lg py-2 px-4">
+                <Check className="h-4 w-4 mr-2" />
+                Day Completed! 🎉
               </Badge>
             </div>
           )}
