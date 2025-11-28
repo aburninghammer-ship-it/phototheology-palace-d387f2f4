@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus } from "lucide-react";
+import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus, GraduationCap, Home, HeartHandshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -193,59 +193,164 @@ export default function Devotionals() {
           </section>
         )}
 
-        {/* Devotional Profiles Section */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500">
-                <Users className="h-5 w-5 text-white" />
+        {/* Categorized Devotional Profiles */}
+        {(() => {
+          const classroomProfiles = profiles?.filter(p => p.relationship === "class") || [];
+          const familyProfiles = profiles?.filter(p => p.relationship === "family_group") || [];
+          const spousalProfiles = profiles?.filter(p => p.relationship === "spouse") || [];
+          const datingProfiles = profiles?.filter(p => p.relationship === "dating_partner") || [];
+          const individualProfiles = profiles?.filter(p => 
+            !["class", "family_group", "spouse", "dating_partner"].includes(p.relationship)
+          ) || [];
+
+          const categories = [
+            { 
+              key: "classroom", 
+              label: "Classroom Devotions", 
+              profiles: classroomProfiles,
+              icon: GraduationCap,
+              gradient: "from-blue-500 to-cyan-500",
+              bgGradient: "from-blue-50/50 to-cyan-50/50 dark:from-blue-950/20 dark:to-cyan-950/20",
+              borderColor: "border-blue-200 dark:border-blue-800",
+              btnBorder: "border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300",
+              description: "Devotionals for your students and classes"
+            },
+            { 
+              key: "family", 
+              label: "Family Devotions", 
+              profiles: familyProfiles,
+              icon: Home,
+              gradient: "from-green-500 to-emerald-500",
+              bgGradient: "from-green-50/50 to-emerald-50/50 dark:from-green-950/20 dark:to-emerald-950/20",
+              borderColor: "border-green-200 dark:border-green-800",
+              btnBorder: "border-green-300 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-300",
+              description: "Family worship and devotional time"
+            },
+            { 
+              key: "spousal", 
+              label: "Spousal Devotions", 
+              profiles: spousalProfiles,
+              icon: HeartHandshake,
+              gradient: "from-rose-500 to-pink-500",
+              bgGradient: "from-rose-50/50 to-pink-50/50 dark:from-rose-950/20 dark:to-pink-950/20",
+              borderColor: "border-rose-200 dark:border-rose-800",
+              btnBorder: "border-rose-300 text-rose-700 hover:bg-rose-50 dark:border-rose-700 dark:text-rose-300",
+              description: "Grow together spiritually as a couple"
+            },
+            { 
+              key: "dating", 
+              label: "Dating Devotions", 
+              profiles: datingProfiles,
+              icon: Heart,
+              gradient: "from-purple-500 to-violet-500",
+              bgGradient: "from-purple-50/50 to-violet-50/50 dark:from-purple-950/20 dark:to-violet-950/20",
+              borderColor: "border-purple-200 dark:border-purple-800",
+              btnBorder: "border-purple-300 text-purple-700 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-300",
+              description: "Build your relationship on Christ"
+            },
+            { 
+              key: "individual", 
+              label: "Individual Profiles", 
+              profiles: individualProfiles,
+              icon: Users,
+              gradient: "from-amber-500 to-orange-500",
+              bgGradient: "from-amber-50/50 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/20",
+              borderColor: "border-amber-200 dark:border-amber-800",
+              btnBorder: "border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-300",
+              description: "Personal ministry to loved ones"
+            },
+          ];
+
+          return (
+            <div className="space-y-8">
+              {/* Quick Create Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {categories.slice(0, 4).map((cat) => (
+                  <Card 
+                    key={cat.key}
+                    className={`cursor-pointer hover:shadow-lg transition-all border-2 ${cat.borderColor} bg-gradient-to-br ${cat.bgGradient}`}
+                    onClick={() => setShowProfileWizard(true)}
+                  >
+                    <CardContent className="p-4 text-center">
+                      <div className={`mx-auto w-12 h-12 rounded-full bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-2 shadow-md`}>
+                        <cat.icon className="h-6 w-6 text-white" />
+                      </div>
+                      <h4 className="font-semibold text-sm">{cat.label}</h4>
+                      <p className="text-xs text-muted-foreground mt-1">{cat.profiles.length} active</p>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-              <span className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-                Devotional Profiles
-              </span>
-            </h2>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowProfileWizard(true)}
-              className="border-rose-300 text-rose-700 hover:bg-rose-50 dark:border-rose-700 dark:text-rose-300"
-            >
-              <UserPlus className="h-4 w-4 mr-2" />
-              New Profile
-            </Button>
-          </div>
-          
-          {profiles && profiles.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {profiles.map((profile) => (
-                <DevotionalProfileCard
-                  key={profile.id}
-                  profile={profile}
-                  onSelect={() => navigate(`/devotionals/profile/${profile.id}`)}
-                  onDelete={() => setDeleteProfileId(profile.id)}
-                />
-              ))}
-            </div>
-          ) : (
-            <Card className="border-2 border-dashed border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50/50 to-pink-50/50 dark:from-rose-950/20 dark:to-pink-950/20">
-              <CardContent className="py-10 text-center">
-                <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mb-4 shadow-lg">
-                  <Users className="h-8 w-8 text-white" />
+
+              {/* All Profiles Section */}
+              <section>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold flex items-center gap-2">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500">
+                      <Users className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                      All Devotional Profiles
+                    </span>
+                  </h2>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowProfileWizard(true)}
+                    className="border-rose-300 text-rose-700 hover:bg-rose-50 dark:border-rose-700 dark:text-rose-300"
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    New Profile
+                  </Button>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">No Profiles Yet</h3>
-                <p className="text-muted-foreground text-sm mb-4 max-w-md mx-auto">
-                  Create devotional profiles for your loved ones and minister to them with personalized, Christ-centered devotionals.
-                </p>
-                <Button 
-                  onClick={() => setShowProfileWizard(true)}
-                  className="bg-gradient-to-r from-rose-500 to-pink-500"
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Create First Profile
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </section>
+                
+                {profiles && profiles.length > 0 ? (
+                  <div className="space-y-6">
+                    {categories.map((cat) => cat.profiles.length > 0 && (
+                      <div key={cat.key}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className={`p-1.5 rounded-md bg-gradient-to-br ${cat.gradient}`}>
+                            <cat.icon className="h-4 w-4 text-white" />
+                          </div>
+                          <h3 className="font-semibold text-lg">{cat.label}</h3>
+                          <Badge variant="secondary" className="ml-2">{cat.profiles.length}</Badge>
+                        </div>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {cat.profiles.map((profile) => (
+                            <DevotionalProfileCard
+                              key={profile.id}
+                              profile={profile}
+                              onSelect={() => navigate(`/devotionals/profile/${profile.id}`)}
+                              onDelete={() => setDeleteProfileId(profile.id)}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Card className="border-2 border-dashed border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50/50 to-pink-50/50 dark:from-rose-950/20 dark:to-pink-950/20">
+                    <CardContent className="py-10 text-center">
+                      <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mb-4 shadow-lg">
+                        <Users className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2">No Profiles Yet</h3>
+                      <p className="text-muted-foreground text-sm mb-4 max-w-md mx-auto">
+                        Create devotional profiles for classroom, family, spouse, dating partner, or loved ones.
+                      </p>
+                      <Button 
+                        onClick={() => setShowProfileWizard(true)}
+                        className="bg-gradient-to-r from-rose-500 to-pink-500"
+                      >
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Create First Profile
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+              </section>
+            </div>
+          );
+        })()}
 
         {/* Draft/Generating */}
         {draftPlans.length > 0 && (
