@@ -9,6 +9,7 @@ import { Sparkles, Send, Loader2, ChevronDown, ChevronUp, Search, Save } from "l
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
+import { trackJeevesInteraction } from "@/hooks/useAnalyticsTracking";
 
 interface Message {
   role: "user" | "assistant";
@@ -63,9 +64,18 @@ export const JeevesStudyAssistant = ({ studyContext, studyId, onContentUpdate }:
 
       if (error) throw error;
 
+      // Track the interaction
+      const responseContent = data.content || "";
+      trackJeevesInteraction(
+        userMessage,
+        researchMode ? "research" : "study-qa",
+        responseContent.substring(0, 200),
+        "Study Editor"
+      );
+
       setMessages(prev => [
         ...prev,
-        { role: "assistant", content: data.content || "I'm here to help with your study!" }
+        { role: "assistant", content: responseContent || "I'm here to help with your study!" }
       ]);
     } catch (error) {
       console.error("Error asking Jeeves:", error);

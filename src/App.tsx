@@ -20,6 +20,7 @@ import { ThemeProvider } from "next-themes";
 import { UserPreferencesProvider } from "@/hooks/useUserPreferences";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { VoiceChatInviteNotification } from "@/components/voice/VoiceChatInviteNotification";
+import { PageTracker } from "@/components/PageTracker";
 
 // Critical pages - load immediately
 import Index from "./pages/Index";
@@ -169,6 +170,7 @@ const FloorDetailPage = lazy(() => import("./pages/FloorDetail"));
 const PalaceAI = lazy(() => import("./pages/PalaceAI"));
 const Guilds = lazy(() => import("./pages/Guilds"));
 const GuildDetail = lazy(() => import("./pages/GuildDetail"));
+const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -200,6 +202,7 @@ function App() {
           </AnimatePresence>
           {!showSplash && (
             <BrowserRouter>
+              <PageTracker />
               <LiveNotificationsProvider>
                 <AchievementProvider>
                   <DirectMessagesProvider>
@@ -369,6 +372,7 @@ function App() {
             <Route path="/admin/subscriptions" element={<ProtectedRoute><AdminSubscriptions /></ProtectedRoute>} />
             <Route path="/admin/strongs-import" element={<ProtectedRoute><AdminStrongsImport /></ProtectedRoute>} />
             <Route path="/admin/bible-import" element={<ProtectedRoute><AdminBibleImport /></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
             <Route path="/certificates" element={<ProtectedRoute><Certificates /></ProtectedRoute>} />
             <Route path="/study-partners" element={<ProtectedRoute><StudyPartners /></ProtectedRoute>} />
             <Route path="/streaks" element={<ProtectedRoute><Streaks /></ProtectedRoute>} />
