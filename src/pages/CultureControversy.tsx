@@ -28,6 +28,7 @@ const CultureControversy = () => {
     "Social Justice",
     "Transgender Issues",
     "Political Polarization",
+    "MAGA",
   ];
 
   const analyzeTopic = async (topicText: string) => {
