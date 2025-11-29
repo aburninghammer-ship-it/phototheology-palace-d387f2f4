@@ -115,17 +115,28 @@ const BibleEncyclopedia = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-subtle">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-palace-purple/5 relative overflow-hidden">
       <Navigation />
       
-      <div className="pt-24 pb-16 px-4">
+      {/* Animated background glow effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-indigo-500/20 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-blue-500/20 rounded-full blur-[100px] animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-palace-purple/10 rounded-full blur-[80px] animate-pulse delay-500" />
+      </div>
+      
+      <div className="pt-24 pb-16 px-4 relative z-10">
         <div className="container mx-auto max-w-7xl space-y-6">
           {/* Header */}
-          <Card className="bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 border-primary/30">
+          <Card variant="glass" className="border-indigo-500/30">
             <CardHeader>
               <CardTitle className="text-3xl flex items-center gap-2">
-                <Book className="h-8 w-8 text-primary" />
-                Bible Encyclopedia
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center">
+                  <Book className="h-6 w-6 text-white" />
+                </div>
+                <span className="bg-gradient-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">
+                  Bible Encyclopedia
+                </span>
               </CardTitle>
               <CardDescription className="text-lg">
                 AI-powered biblical reference integrating Phototheology principles through Jeeves
@@ -138,7 +149,7 @@ const BibleEncyclopedia = () => {
             <Button
               variant="outline"
               onClick={handleRandomEntry}
-              className="gap-2"
+              className="gap-2 border-white/20 hover:bg-white/10"
             >
               <Shuffle className="h-4 w-4" />
               Random Entry
@@ -154,14 +165,15 @@ const BibleEncyclopedia = () => {
               return (
                 <Card
                   key={category.id}
+                  variant="glass"
                   className={`cursor-pointer transition-all hover:shadow-lg hover:scale-105 ${
-                    isActive ? "ring-2 ring-primary shadow-lg" : ""
+                    isActive ? "ring-2 ring-indigo-500 shadow-lg shadow-indigo-500/20" : ""
                   }`}
                   onClick={() => setSearchCategory(category.id)}
                 >
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <Icon className={`h-5 w-5 ${isActive ? "text-primary" : ""}`} />
+                      <Icon className={`h-5 w-5 ${isActive ? "text-indigo-500" : ""}`} />
                       {category.name}
                     </CardTitle>
                     <CardDescription className="text-xs mt-1">
@@ -180,10 +192,10 @@ const BibleEncyclopedia = () => {
           </div>
 
           {/* Search Interface */}
-          <Card>
+          <Card variant="glass">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Search className="h-5 w-5" />
+                <Search className="h-5 w-5 text-indigo-500" />
                 Search {categories.find(c => c.id === searchCategory)?.name}
               </CardTitle>
               <CardDescription>
@@ -202,11 +214,12 @@ const BibleEncyclopedia = () => {
                     }
                   }}
                   disabled={isSearching}
+                  className="bg-background/50 border-white/20"
                 />
                 <Button
                   onClick={handleSearch}
                   disabled={!searchQuery.trim() || isSearching}
-                  className="gradient-palace text-white"
+                  className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white"
                 >
                   {isSearching ? (
                     <>
@@ -224,14 +237,14 @@ const BibleEncyclopedia = () => {
 
               {/* Quick Examples */}
               {!searchResults && (
-                <div className="pt-4 border-t">
+                <div className="pt-4 border-t border-white/10">
                   <div className="text-sm font-semibold mb-2 text-muted-foreground">Quick Examples:</div>
                   <div className="flex gap-2 flex-wrap">
                     {categories.find(c => c.id === searchCategory)?.preview.split(",").map((example, index) => (
                       <Badge 
                         key={index}
                         variant="outline" 
-                        className="cursor-pointer hover:bg-primary/10" 
+                        className="cursor-pointer hover:bg-indigo-500/20 border-white/20" 
                         onClick={() => setSearchQuery(example.trim())}
                       >
                         {example.trim()}
@@ -243,10 +256,10 @@ const BibleEncyclopedia = () => {
 
               {/* Results */}
               {searchResults && (
-                <div className="pt-6 border-t">
+                <div className="pt-6 border-t border-white/10">
                   {/* Map/Chart Image Display */}
                   {mapImageUrl && (searchCategory === "maps" || searchCategory === "charts") && (
-                    <div className="mb-6 rounded-lg overflow-hidden border-2 border-primary/20 shadow-lg">
+                    <div className="mb-6 rounded-lg overflow-hidden border-2 border-indigo-500/20 shadow-lg">
                       <img 
                         src={mapImageUrl} 
                         alt={searchCategory === "maps" ? `Biblical map of ${searchQuery}` : `Prophetic chart for ${searchQuery}`}
