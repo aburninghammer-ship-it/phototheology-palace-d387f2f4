@@ -34,8 +34,8 @@ const AMBIENT_TRACKS = [
     name: "Devotion",
     description: "Sweeping emotional strings for reflection",
     category: "devotion",
-    // Epic emotional cinematic - Interstellar style
-    url: "https://cdn.pixabay.com/audio/2022/08/02/audio_884fe92c21.mp3",
+    // Verified working - Internet Archive cinematic ambient
+    url: "https://ia800905.us.archive.org/19/items/FREE_background_music_dridge/Kevin_MacLeod_-_Lasting_Hope.mp3",
     bpm: 65,
   },
   {
@@ -43,8 +43,8 @@ const AMBIENT_TRACKS = [
     name: "Deep Study",
     description: "Majestic orchestral for focused learning",
     category: "study",
-    // Cinematic epic documentary
-    url: "https://cdn.pixabay.com/audio/2023/07/30/audio_e85b5e56c0.mp3",
+    // Verified working - Kevin MacLeod cinematic
+    url: "https://ia800905.us.archive.org/19/items/FREE_background_music_dridge/Kevin_MacLeod_-_Decisions.mp3",
     bpm: 70,
   },
   {
@@ -52,8 +52,8 @@ const AMBIENT_TRACKS = [
     name: "Sanctuary",
     description: "Reverent cinematic soundscape",
     category: "sanctuary",
-    // Epic ambient orchestra
-    url: "https://cdn.pixabay.com/audio/2023/09/04/audio_7715f84c31.mp3",
+    // Verified working - Epic cinematic
+    url: "https://ia800905.us.archive.org/19/items/FREE_background_music_dridge/Kevin_MacLeod_-_Ascending.mp3",
     bpm: 60,
   },
   {
@@ -61,8 +61,8 @@ const AMBIENT_TRACKS = [
     name: "Memorization",
     description: "Gentle cinematic waves for memory",
     category: "memory",
-    // Soft epic strings - Time style
-    url: "https://cdn.pixabay.com/audio/2022/10/25/audio_552508db73.mp3",
+    // Verified working - Soft ambient
+    url: "https://ia800905.us.archive.org/19/items/FREE_background_music_dridge/Kevin_MacLeod_-_Meditation_Impromptu.mp3",
     bpm: 62,
   },
   {
@@ -70,8 +70,8 @@ const AMBIENT_TRACKS = [
     name: "Prophecy",
     description: "Grand orchestral for prophetic study",
     category: "prophecy",
-    // Epic dramatic cinematic - Inception style
-    url: "https://cdn.pixabay.com/audio/2023/05/16/audio_14a0a0b4a2.mp3",
+    // Verified working - Epic dramatic
+    url: "https://ia800905.us.archive.org/19/items/FREE_background_music_dridge/Kevin_MacLeod_-_Impact_Prelude.mp3",
     bpm: 55,
   },
 ];
