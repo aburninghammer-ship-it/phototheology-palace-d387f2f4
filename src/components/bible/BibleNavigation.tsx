@@ -43,8 +43,14 @@ export const BibleNavigation = () => {
   };
 
   return (
-    <Card className="p-4 sm:p-6 gradient-dreamy border-2 border-primary/20 shadow-elegant">
-      <div className="space-y-4">
+    <Card className="relative p-4 sm:p-6 bg-card/90 backdrop-blur-xl border-2 border-white/20 shadow-elegant overflow-hidden">
+      {/* Animated background orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+      
+      <div className="relative z-10 space-y-4">
         <div className="flex items-center gap-2 mb-2">
           <BookOpen className="h-5 w-5 text-primary" />
           <h3 className="font-serif text-base sm:text-lg font-semibold">Navigate Bible</h3>
@@ -53,10 +59,10 @@ export const BibleNavigation = () => {
         {/* Quick Navigation */}
         <div className="space-y-3">
           <Select value={selectedBook} onValueChange={setSelectedBook}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-background/80 backdrop-blur-sm border-white/20 hover:border-primary/40 transition-colors">
               <SelectValue placeholder="Select book" />
             </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
+            <SelectContent className="max-h-[300px] bg-card/95 backdrop-blur-xl border-white/20">
               {BIBLE_BOOKS.map((book) => (
                 <SelectItem key={book} value={book}>
                   {book}
@@ -72,7 +78,7 @@ export const BibleNavigation = () => {
               value={chapter}
               onChange={(e) => setChapter(e.target.value)}
               min="1"
-              className="touch-manipulation"
+              className="bg-background/80 backdrop-blur-sm border-white/20 hover:border-primary/40 focus:border-primary transition-colors touch-manipulation"
             />
             <Input
               type="number"
@@ -80,33 +86,33 @@ export const BibleNavigation = () => {
               value={verse}
               onChange={(e) => setVerse(e.target.value)}
               min="1"
-              className="touch-manipulation"
+              className="bg-background/80 backdrop-blur-sm border-white/20 hover:border-primary/40 focus:border-primary transition-colors touch-manipulation"
             />
           </div>
         </div>
         
         <Button 
           onClick={handleNavigate}
-          className="w-full gradient-palace text-white shadow-purple hover:shadow-glow"
+          className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-purple hover:shadow-glow hover:scale-[1.02] transition-all duration-300"
         >
           Go to Chapter
         </Button>
         
         {/* Search */}
-        <div className="pt-3 border-t border-border/50 space-y-3">
+        <div className="pt-3 border-t border-white/10 space-y-3">
           <Tabs value={searchMode} onValueChange={(value) => setSearchMode(value as "reference" | "word")}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="reference">Reference</TabsTrigger>
-              <TabsTrigger value="word">Word Search</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-background/60 backdrop-blur-sm border border-white/10">
+              <TabsTrigger value="reference" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">Reference</TabsTrigger>
+              <TabsTrigger value="word" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">Word Search</TabsTrigger>
             </TabsList>
           </Tabs>
           
           {searchMode === "word" && (
             <Select value={searchScope} onValueChange={(value) => setSearchScope(value as "all" | "ot" | "nt")}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-background/80 backdrop-blur-sm border-white/20 hover:border-primary/40 transition-colors">
                 <SelectValue placeholder="Search scope" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-card/95 backdrop-blur-xl border-white/20">
                 <SelectItem value="all">All Bible (66 books)</SelectItem>
                 <SelectItem value="ot">Old Testament (39 books)</SelectItem>
                 <SelectItem value="nt">New Testament (27 books)</SelectItem>
@@ -119,9 +125,9 @@ export const BibleNavigation = () => {
               placeholder={searchMode === "reference" ? "e.g., John 3:16" : "e.g., love one another"}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="touch-manipulation"
+              className="bg-background/80 backdrop-blur-sm border-white/20 hover:border-primary/40 focus:border-primary transition-colors touch-manipulation"
             />
-            <Button type="submit" size="icon" variant="outline" className="touch-manipulation flex-shrink-0">
+            <Button type="submit" size="icon" variant="outline" className="bg-background/80 backdrop-blur-sm border-white/20 hover:border-primary hover:bg-primary/20 transition-all touch-manipulation flex-shrink-0">
               <Search className="h-4 w-4" />
             </Button>
           </form>
