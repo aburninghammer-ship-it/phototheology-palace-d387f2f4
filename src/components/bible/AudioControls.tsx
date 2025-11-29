@@ -44,6 +44,16 @@ export const AudioControls = ({ verses, onVerseHighlight, className }: AudioCont
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
+  const isPlayingRef = useRef(false);
+  const currentIndexRef = useRef(0);
+  const versesRef = useRef(verses);
+  const playbackRateRef = useRef(playbackRate);
+  const selectedVoiceRef = useRef(selectedVoice);
+
+  // Keep refs in sync
+  versesRef.current = verses;
+  playbackRateRef.current = playbackRate;
+  selectedVoiceRef.current = selectedVoice;
 
   const playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
@@ -58,10 +68,10 @@ export const AudioControls = ({ verses, onVerseHighlight, className }: AudioCont
     }
   }, []);
 
-  const generateTTS = useCallback(async (text: string) => {
+  const generateTTS = useCallback(async (text: string, voice: VoiceId) => {
     try {
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
-        body: { text, voice: selectedVoice },
+        body: { text, voice },
       });
 
       if (error) throw error;
@@ -81,25 +91,30 @@ export const AudioControls = ({ verses, onVerseHighlight, className }: AudioCont
       console.error("Error generating TTS:", e);
       return null;
     }
-  }, [selectedVoice]);
+  }, []);
 
-  const playVerse = useCallback(async (verseIndex: number) => {
-    if (verseIndex < 0 || verseIndex >= verses.length) {
+  const playVerseAtIndex = useCallback(async (verseIndex: number) => {
+    const currentVerses = versesRef.current;
+    
+    if (verseIndex < 0 || verseIndex >= currentVerses.length) {
       setIsPlaying(false);
+      isPlayingRef.current = false;
       return;
     }
 
-    const verse = verses[verseIndex];
+    currentIndexRef.current = verseIndex;
+    const verse = currentVerses[verseIndex];
     setCurrentVerse(verse.verse);
     onVerseHighlight?.(verse.verse);
     
     setIsLoading(true);
-    const url = await generateTTS(verse.text);
+    const url = await generateTTS(verse.text, selectedVoiceRef.current);
     setIsLoading(false);
 
     if (!url) {
       toast.error("Failed to generate audio");
       setIsPlaying(false);
+      isPlayingRef.current = false;
       return;
     }
 
@@ -107,44 +122,51 @@ export const AudioControls = ({ verses, onVerseHighlight, className }: AudioCont
     audioUrlRef.current = url;
 
     const audio = new Audio(url);
-    audio.playbackRate = playbackRate;
+    audio.playbackRate = playbackRateRef.current;
     audioRef.current = audio;
 
     audio.onended = () => {
-      // Play next verse
-      const nextIndex = verseIndex + 1;
-      if (nextIndex < verses.length) {
-        playVerse(nextIndex);
+      // Check if still playing before proceeding to next verse
+      if (!isPlayingRef.current) return;
+      
+      const nextIndex = currentIndexRef.current + 1;
+      if (nextIndex < versesRef.current.length) {
+        playVerseAtIndex(nextIndex);
       } else {
         setIsPlaying(false);
-        toast.success("Finished reading");
+        isPlayingRef.current = false;
+        toast.success("Finished reading chapter");
       }
     };
 
     audio.onerror = () => {
       toast.error("Audio playback failed");
       setIsPlaying(false);
+      isPlayingRef.current = false;
     };
 
     audio.play();
-  }, [verses, generateTTS, cleanupAudio, playbackRate, onVerseHighlight]);
+  }, [generateTTS, cleanupAudio, onVerseHighlight]);
 
   const play = useCallback((startVerseIndex?: number) => {
     const index = startVerseIndex ?? verses.findIndex(v => v.verse === currentVerse);
     setIsPlaying(true);
-    playVerse(index >= 0 ? index : 0);
-  }, [currentVerse, verses, playVerse]);
+    isPlayingRef.current = true;
+    playVerseAtIndex(index >= 0 ? index : 0);
+  }, [currentVerse, verses, playVerseAtIndex]);
 
   const pause = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
     }
     setIsPlaying(false);
+    isPlayingRef.current = false;
   }, []);
 
   const stop = useCallback(() => {
     cleanupAudio();
     setIsPlaying(false);
+    isPlayingRef.current = false;
     setCurrentVerse(1);
     onVerseHighlight?.(1);
   }, [cleanupAudio, onVerseHighlight]);
@@ -154,26 +176,26 @@ export const AudioControls = ({ verses, onVerseHighlight, className }: AudioCont
     if (currentIndex < verses.length - 1) {
       cleanupAudio();
       if (isPlaying) {
-        playVerse(currentIndex + 1);
+        playVerseAtIndex(currentIndex + 1);
       } else {
         setCurrentVerse(verses[currentIndex + 1].verse);
         onVerseHighlight?.(verses[currentIndex + 1].verse);
       }
     }
-  }, [verses, currentVerse, isPlaying, cleanupAudio, playVerse, onVerseHighlight]);
+  }, [verses, currentVerse, isPlaying, cleanupAudio, playVerseAtIndex, onVerseHighlight]);
 
   const previousVerse = useCallback(() => {
     const currentIndex = verses.findIndex(v => v.verse === currentVerse);
     if (currentIndex > 0) {
       cleanupAudio();
       if (isPlaying) {
-        playVerse(currentIndex - 1);
+        playVerseAtIndex(currentIndex - 1);
       } else {
         setCurrentVerse(verses[currentIndex - 1].verse);
         onVerseHighlight?.(verses[currentIndex - 1].verse);
       }
     }
-  }, [verses, currentVerse, isPlaying, cleanupAudio, playVerse, onVerseHighlight]);
+  }, [verses, currentVerse, isPlaying, cleanupAudio, playVerseAtIndex, onVerseHighlight]);
 
   const changePlaybackRate = useCallback((rate: number) => {
     setPlaybackRate(rate);
