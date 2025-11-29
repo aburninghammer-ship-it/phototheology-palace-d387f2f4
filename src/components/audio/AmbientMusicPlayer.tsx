@@ -207,7 +207,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 4,
     mood: "redemptive, majestic, grace",
-    url: "https://www.bensound.com/bensound-music/bensound-ofeliasdream.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-hope.mp3",
     bpm: 58,
   },
   {
@@ -217,7 +217,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 3,
     mood: "awe, majesty, worship",
-    url: "https://www.bensound.com/bensound-music/bensound-instinct.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-moose.mp3",
     bpm: 62,
   },
   {
@@ -227,7 +227,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 4,
     mood: "devotion, vision, celtic",
-    url: "https://www.bensound.com/bensound-music/bensound-acousticbreeze.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-winter.mp3",
     bpm: 55,
   },
   {
@@ -237,7 +237,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 7,
     mood: "peace, surrender, triumph",
-    url: "https://www.bensound.com/bensound-music/bensound-sweet.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-solitude.mp3",
     bpm: 55,
   },
   {
@@ -247,7 +247,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 1,
     mood: "faithfulness, morning, hope",
-    url: "https://www.bensound.com/bensound-music/bensound-clearday.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-newdawn.mp3",
     bpm: 60,
   },
   {
@@ -257,7 +257,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 3,
     mood: "holy, reverent, transcendent",
-    url: "https://www.bensound.com/bensound-music/bensound-elevate.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-nightfall.mp3",
     bpm: 58,
   },
   {
@@ -267,7 +267,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 5,
     mood: "strength, fortress, victory",
-    url: "https://www.bensound.com/bensound-music/bensound-documentary.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-perception.mp3",
     bpm: 65,
   },
   {
@@ -277,7 +277,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 6,
     mood: "friendship, comfort, intimate",
-    url: "https://www.bensound.com/bensound-music/bensound-littleidea.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-friendship.mp3",
     bpm: 55,
   },
   {
@@ -287,7 +287,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 7,
     mood: "ascending, longing, nearness",
-    url: "https://www.bensound.com/bensound-music/bensound-goinghigher.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-reaching.mp3",
     bpm: 60,
   },
   {
@@ -297,7 +297,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 4,
     mood: "gratitude, fountain, flowing",
-    url: "https://www.bensound.com/bensound-music/bensound-relaxing.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-summer.mp3",
     bpm: 58,
   },
 ];
