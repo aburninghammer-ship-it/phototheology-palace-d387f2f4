@@ -253,11 +253,11 @@ const AMBIENT_TRACKS = [
   {
     id: "hymn-holy-holy-holy",
     name: "Throne Room",
-    description: "Reverent orchestral majesty with celestial atmosphere",
+    description: "Majestic orchestral atmosphere with heavenly ambience",
     category: "hymn-cinematic",
     floor: 3,
     mood: "holy, reverent, transcendent",
-    url: "https://www.bensound.com/bensound-music/bensound-memories.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-dreams.mp3",
     bpm: 58,
   },
   {
