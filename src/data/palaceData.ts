@@ -228,29 +228,31 @@ export const palaceFloors: Floor[] = [
         name: "Observation Room",
         tag: "OR",
         icon: "Search",
-        purpose: "Become a biblical detective. Gather raw data before interpretation—see what's actually on the page.",
-        action: "Make 20-50 bullet-point observations about grammar, repetition, contrasts, verbs, and structure.",
-        output: "Observation sheet with 20-50 numbered bullet points listing only what you directly see.",
-        coreQuestion: "As a detective, observe as much as you can about the text. Aim for at least 8 observations.",
+        purpose: "Become a biblical detective. Gather raw data before interpretation—see what's actually on the page. Start with WHAT IS HAPPENING: count people, objects, actions, and details.",
+        action: "Make 20-50 bullet-point observations: first list factual details (numbers, who/what/where/when), then grammar, repetition, contrasts, verbs, and structure.",
+        output: "Observation sheet with 20-50 numbered bullet points: factual details first, then deeper observations.",
+        coreQuestion: "As a detective, observe as much as you can about the text. Start with WHAT IS HAPPENING (numbers, people, actions, objects), then notice patterns and details. Aim for at least 8 observations.",
         estimatedTime: "standard",
         quickMode: [
           "Read passage 2-3 times without writing",
-          "List observations using categories: grammar, repetition, contrasts, setting, verbs",
+          "First: List WHAT IS HAPPENING (how many people, what objects, what actions, where, when)",
+          "Then: List observations using categories: grammar, repetition, contrasts, setting, verbs",
           "Write ONLY what you see—no interpretation yet",
           "Aim for 20+ observations minimum"
         ],
-        method: "🔍 STEP-BY-STEP METHODOLOGY:\n\n1️⃣ Read the passage 2-3 times WITHOUT writing anything—just look\n\n2️⃣ Begin listing observations in bullet form (goal: 20-50 observations minimum)\n\n3️⃣ Use these observation categories:\n   • 📝 GRAMMAR: verb tenses, pronouns, conjunctions ('but,' 'therefore')\n   • 🔁 REPETITION: words, phrases, or patterns that appear multiple times\n   • ⚖️ CONTRASTS: opposites, conflicts, before/after comparisons\n   • 📍 SETTING: time, place, cultural details, who's present\n   • ⚡ VERBS: actions, especially unusual or forceful ones\n   • 🏗️ STRUCTURE: chiasms, parallel lines, turning points\n   • ❓ OMISSIONS: what's surprisingly NOT mentioned\n   • ⭐ EMPHASIS: words in unusual positions, lengthy descriptions\n\n4️⃣ Write ONLY what you see—no 'what it means' allowed yet\n\n5️⃣ Number your observations (helps you hit 20+ quota)\n\n6️⃣ When you think you're done, read once more and find 5 more observations\n\n🎯 KEY PRINCIPLES:\n• 🚫 If you interpret before observing, you'll miss crucial data\n• ✅ Obvious observations count—don't skip them because they seem trivial\n• 📊 Quantity reveals quality—the 23rd observation often unlocks the passage\n• ❓ Ask: 'What's on the page?' not 'What does it mean?'\n• 💪 Observation is a skill—you get better with practice",
+        method: "🔍 STEP-BY-STEP METHODOLOGY:\n\n1️⃣ Read the passage 2-3 times WITHOUT writing anything—just look\n\n2️⃣ BEGIN WITH 'WHAT IS HAPPENING' (Factual Details):\n   • 🔢 NUMBERS: How many people? Objects? Days? Times mentioned?\n   • 👥 WHO: List every person/group mentioned\n   • 📦 WHAT: List every object, item, or thing mentioned\n   • 📍 WHERE: Location details\n   • ⏰ WHEN: Time references\n   • ⚡ ACTIONS: What does each person DO? (list each verb)\n   • 📊 SEQUENCE: In what order do things happen?\n\n3️⃣ THEN add deeper observation categories:\n   • 📝 GRAMMAR: verb tenses, pronouns, conjunctions ('but,' 'therefore')\n   • 🔁 REPETITION: words, phrases, or patterns that appear multiple times\n   • ⚖️ CONTRASTS: opposites, conflicts, before/after comparisons\n   • 🏗️ STRUCTURE: chiasms, parallel lines, turning points\n   • ❓ OMISSIONS: what's surprisingly NOT mentioned\n   • ⭐ EMPHASIS: words in unusual positions, lengthy descriptions\n\n4️⃣ Write ONLY what you see—no 'what it means' allowed yet\n\n5️⃣ Number your observations (helps you hit 20+ quota)\n\n6️⃣ When you think you're done, read once more and find 5 more observations\n\n🎯 KEY PRINCIPLES:\n• 🔢 Start with counting and listing—'10 virgins, 5 foolish, 5 wise' IS an observation\n• 🚫 If you interpret before observing, you'll miss crucial data\n• ✅ Obvious observations count—don't skip them because they seem trivial\n• 📊 Quantity reveals quality—the 23rd observation often unlocks the passage\n• ❓ Ask: 'What's on the page?' not 'What does it mean?'\n• 💪 Observation is a skill—you get better with practice",
         examples: [
-          "Luke 15:20 observations: 1) Father SAW son while 'still a long way off' (watching), 2) Father RAN (unusual for elderly Middle Eastern patriarch), 3) Father KISSED son BEFORE son finishes confession, 4) No mention of anger or lecture, 5) Verbs are rapid-fire (saw-ran-threw-kissed), suggesting urgency, 6) Son's prepared speech gets interrupted",
-          "Genesis 1 observations: 1) 'And God said' appears 10 times, 2) 'Let there be' formula repeated, 3) Each day ends with 'evening and morning,' 4) Day 7 is different—no 'evening and morning,' 5) Only humans get 'image and likeness' language, 6) Repetition of 'good' (7x), 7) Command to 'be fruitful' appears with fish, birds, and humans but not land animals"
+          "Matthew 25:1-4 observations: WHAT IS HAPPENING: 1) 10 virgins total, 2) 5 foolish + 5 wise = 50/50 split, 3) All 10 have lamps, 4) 1 bridegroom, 5) Foolish: lamps only, 0 extra oil, 6) Wise: lamps + oil in jars (2 things). DEEPER: 7) Difference is preparation not appearance, 8) 'Went out' = active movement, 9) Setting: nighttime (need lamps), 10) Event: wedding procession",
+          "Luke 15:20 observations: WHAT IS HAPPENING: 1) 1 father, 1 son = 2 people, 2) 5 actions by father: saw, filled, ran, threw arms, kissed, 3) 0 actions by son (passive). DEEPER: 4) Father 'ran' = unusual for patriarch, 5) Physical embrace BEFORE words spoken, 6) Sequence: seeing → emotion → running → embracing → kissing"
         ],
         pitfalls: [
+          "Skipping factual details—always start with 'what is happening': numbers, people, objects, actions",
           "Slipping into interpretation ('this means God is gracious') instead of observation ('father ran before son confessed')",
           "Stopping too early—fewer than 20 observations means you're not done",
-          "Only observing 'theological' details—notice everything (grammar, setting, etc.)",
+          "Only observing 'theological' details—notice everything (grammar, setting, numbers, etc.)",
           "Skipping 'obvious' observations—they're often the foundation for insight"
         ],
-        deliverable: "Observation sheet with 20-50 numbered bullet points listing only what you directly see in the text",
+        deliverable: "Observation sheet with 20-50 numbered bullet points: start with WHAT IS HAPPENING (numbers, people, actions), then add deeper observations",
         prerequisites: [{ floor: 1, room: "sr" }]
       },
       {

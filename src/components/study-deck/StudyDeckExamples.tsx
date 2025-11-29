@@ -12,9 +12,9 @@ export const StudyDeckExamples = () => {
       floor: "Floor 2",
       passage: "Genesis 1:1-3",
       passageText: "In the beginning God created the heaven and the earth... And God said, Let there be light: and there was light.",
-      question: "What do you observe in this passage? List specific details without interpretation yet.",
-      answer: "• God is the subject — He initiates creation\n• Heaven and earth are created (not eternal)\n• The earth was formless, empty, and dark\n• The Spirit of God was hovering (active presence)\n• God speaks — creation happens by His word\n• Light appears before the sun (Day 4)\n• Light and darkness are separated",
-      feedback: "Excellent observation work! You noticed key details: God's initiative, creation by word, pre-solar light, and the Spirit's presence. These observations set the foundation for deeper study in other rooms.",
+      question: "What do you observe in this passage? List specific details (numbers, actions, who/what/where) without interpretation yet.",
+      answer: "WHAT IS HAPPENING (Factual Details):\n• 1 actor: God — the only subject doing anything\n• 2 things created: heaven + earth\n• 3 verses covering the opening scene\n• Sequence: beginning → creation → speaking → light\n\nDETAILED OBSERVATIONS:\n• 'In the beginning' — time reference, a starting point\n• 'God created' — verb is active, God as agent\n• Earth described: formless, empty, dark (3 conditions)\n• Spirit of God: 'hovering' — present, active, not idle\n• 'God said' — creation by spoken word\n• Light appears before sun exists (Day 4)\n• Light and darkness are separated — distinction made",
+      feedback: "Excellent observation work! You counted the actors, listed factual details, and noticed the sequence of events. Starting with 'what is happening' (numbers, actions, facts) before interpretation is exactly right. These observations set the foundation for deeper study in other rooms.",
       color: "from-blue-500 to-cyan-500"
     },
     {
