@@ -146,6 +146,42 @@ export const observationRoomDrills: DrillQuestion[] = [
     correctAnswer: 1,
     explanation: "The Observation Room recommends 20-50 bullet observations to thoroughly examine a passage before interpretation."
   },
+  {
+    id: "or-3",
+    question: "What should you observe FIRST in the Observation Room?",
+    options: [
+      "Theological meanings",
+      "What is happening: numbers, people, objects, actions",
+      "How it applies to your life",
+      "What commentaries say",
+    ],
+    correctAnswer: 1,
+    explanation: "Start with 'WHAT IS HAPPENING' - count people, objects, actions. '10 virgins, 5 foolish, 5 wise' IS an observation."
+  },
+  {
+    id: "or-4",
+    question: "In Matthew 25:1-4 (Ten Virgins), which is a proper observation?",
+    options: [
+      "The foolish virgins represent unprepared Christians",
+      "10 virgins total: 5 foolish + 5 wise = exact 50/50 split",
+      "This teaches us to always be ready",
+      "Oil symbolizes the Holy Spirit",
+    ],
+    correctAnswer: 1,
+    explanation: "Counting details (10 virgins, 5+5 split) is pure observation. The others are interpretations."
+  },
+  {
+    id: "or-5",
+    question: "Which observation category tracks 'how many people, objects, actions'?",
+    options: [
+      "Grammar observations",
+      "What is happening (factual details)",
+      "Theological observations",
+      "Application observations",
+    ],
+    correctAnswer: 1,
+    explanation: "'What is happening' captures factual details: numbers, who/what/where/when, and actions - the foundation of observation."
+  },
 ];
 
 // Helper function to get drills by room ID

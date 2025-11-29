@@ -14,48 +14,80 @@ const passages = [
     reference: "Luke 15:20",
     text: "But while he was still a long way off, his father saw him and was filled with compassion for him; he ran to his son, threw his arms around him and kissed him.",
     keyObservations: [
-      "Father was watching ('saw him')",
-      "Son was 'still a long way off' - father had been looking",
-      "Father 'ran' - culturally undignified for a patriarch",
-      "'Filled with compassion' - emotion precedes son's confession",
-      "'Threw his arms around him' - physical embrace before words",
-      "Father initiates everything - son hasn't spoken yet"
+      // What is happening (factual details)
+      "1 father, 1 son - two people in this scene",
+      "Son is traveling toward home (implied direction)",
+      "Father is positioned at/near home (able to see distance)",
+      "Distance: 'a long way off' - significant physical distance",
+      "5 actions by father: saw, was filled, ran, threw arms, kissed",
+      "0 actions by son in this verse - completely passive",
+      // Detailed observations
+      "Father 'saw him' - implies watching, waiting",
+      "Father 'ran' - culturally undignified for elderly patriarch",
+      "'Filled with compassion' - emotion precedes confession",
+      "Physical embrace happens BEFORE any words spoken",
+      "Sequence: seeing → emotion → running → embracing → kissing",
+      "Father initiates every action - son hasn't spoken yet"
     ]
   },
   {
-    reference: "John 11:35",
-    text: "Jesus wept.",
+    reference: "Matthew 25:1-4",
+    text: "Then the kingdom of heaven will be like ten virgins who took their lamps and went out to meet the bridegroom. Five of them were foolish and five were wise. The foolish ones took their lamps but did not take any oil with them. The wise, however, took oil in jars along with their lamps.",
     keyObservations: [
-      "Shortest verse in the Bible",
-      "Jesus shows emotion - fully human",
-      "He weeps even knowing resurrection is coming",
-      "Present tense in Greek - ongoing weeping",
-      "Shows compassion for mourners",
-      "Reveals God's heart for human suffering"
+      // What is happening (factual details)
+      "10 virgins total - specific number",
+      "5 foolish + 5 wise = exact 50/50 split",
+      "All 10 have lamps (no difference there)",
+      "All 10 go out to meet bridegroom (same action)",
+      "1 bridegroom they're all waiting for",
+      "Foolish: lamps only, 0 extra oil",
+      "Wise: lamps + oil in jars (2 things)",
+      // Detailed observations
+      "Difference is in PREPARATION, not appearance",
+      "'Took their lamps' - both groups did this identically",
+      "'Went out' - active movement, leaving somewhere",
+      "'Jars' - separate containers beyond the lamp itself",
+      "Setting: nighttime (need lamps)",
+      "Event type: wedding procession (bridegroom mentioned)"
     ]
   },
   {
     reference: "Genesis 3:21",
     text: "The LORD God made garments of skin for Adam and his wife and clothed them.",
     keyObservations: [
-      "God Himself makes the garments",
-      "'Skins' - an animal had to die",
-      "First sacrifice in Scripture",
-      "God covers shame, not humans",
-      "Replaces inadequate fig leaves",
-      "Foreshadows Christ's covering"
+      // What is happening (factual details)
+      "2 people receiving garments: Adam and his wife",
+      "1 actor: 'The LORD God' - He does the work",
+      "2 actions by God: made + clothed",
+      "Material: 'skin' (plural 'garments' from skin)",
+      "0 actions by Adam and Eve - they receive passively",
+      // Detailed observations
+      "God MAKES the garments - not found, but crafted",
+      "'Skins' implies an animal died - first blood shed",
+      "God does the clothing - humans don't clothe themselves",
+      "This replaces their fig leaf attempt (v.7)",
+      "Full covering: 'garments' not patches",
+      "Order: God acts, humans receive"
     ]
   },
   {
     reference: "Daniel 3:25",
     text: "He said, 'Look! I see four men walking around in the fire, unbound and unharmed, and the fourth looks like a son of the gods.'",
     keyObservations: [
-      "King sees four men, not three",
-      "They are 'walking around' - active, not cowering",
-      "'Unbound' - ropes burned off but not their bodies",
-      "'Unharmed' - miracle of protection",
-      "Fourth figure described as 'like a son of the gods'",
-      "Unbeliever recognizes divine presence"
+      // What is happening (factual details)
+      "4 men visible - but only 3 were thrown in",
+      "1 extra person appeared (4 minus 3 = 1 mysterious figure)",
+      "Position: IN the fire, not above or beside it",
+      "Activity: 'walking around' - moving freely",
+      "Physical state: 'unbound' - ropes gone",
+      "Physical state: 'unharmed' - no damage",
+      // Detailed observations
+      "Speaker: 'He said' - the king is observing",
+      "'Look!' - exclamation of surprise/astonishment",
+      "Fourth figure distinguished: 'looks like a son of the gods'",
+      "King (unbeliever) recognizes something divine",
+      "Contrast: bound when thrown in → unbound inside",
+      "Fire destroys ropes but not bodies or clothing"
     ]
   }
 ];
@@ -195,11 +227,11 @@ export default function ObservationGame() {
                   <Textarea
                     value={observations}
                     onChange={(e) => setObservations(e.target.value)}
-                    placeholder="Example:&#10;- 'While he was still a long way off' - father had been watching&#10;- Father 'ran' - culturally undignified&#10;- 'Filled with compassion' - emotion before son's speech"
+                    placeholder="WHAT IS HAPPENING (start here):&#10;- 1 father, 1 son = 2 people in this scene&#10;- 5 actions by father: saw, filled, ran, threw arms, kissed&#10;- 0 actions by son (completely passive)&#10;&#10;DETAILED OBSERVATIONS:&#10;- Father 'ran' - culturally undignified for patriarch&#10;- Physical embrace happens BEFORE any words spoken"
                     className="min-h-[200px] font-mono text-sm"
                   />
                   <p className="text-xs text-muted-foreground mt-2">
-                    Remember: Observe details, don't interpret yet! Notice words, repetitions, order, and actions.
+                    Start with WHAT IS HAPPENING: count people, objects, actions (e.g., "10 virgins, 5 foolish, 5 wise"). Then add deeper observations.
                   </p>
                 </div>
 
@@ -243,7 +275,7 @@ export default function ObservationGame() {
           <CardContent className="pt-6">
             <h4 className="font-semibold mb-2">💡 Observation Room Tip:</h4>
             <p className="text-sm text-muted-foreground">
-              Like a detective at a crime scene, log details before theorizing. Notice: word choices, repetitions, sequence of events, who speaks first, emotional words, cultural details, and what's NOT said.
+              Like a detective at a crime scene, log details before theorizing. Start with WHAT IS HAPPENING: count people (10 virgins), objects (lamps, jars), actions (ran, kissed). Then notice: word choices, repetitions, sequences, who acts/speaks, and what's NOT said.
             </p>
           </CardContent>
         </Card>
