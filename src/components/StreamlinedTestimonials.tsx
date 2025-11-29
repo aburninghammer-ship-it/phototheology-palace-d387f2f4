@@ -35,11 +35,6 @@ const testimonials = [
     role: "Pastor",
   },
   {
-    quote: "Phototheology is a new systematic way for me to approach the Word. It gives me confidence to study with just the Holy Spirit, the Word, and me.",
-    author: "Rick",
-    role: "Bible Student",
-  },
-  {
     quote: "While in class the Holy Spirit showed me the image of Christ even before Pastor Ivor explained it! I thank The Lord for Phototheology.",
     author: "Mitchell",
     role: "Student",
