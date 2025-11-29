@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, ChevronRight, Target, Sparkles } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { X, ChevronRight, ChevronLeft, Target, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface OnboardingGuideProps {
   roomId: string;
@@ -10,12 +10,17 @@ interface OnboardingGuideProps {
   onComplete: () => void;
 }
 
+const STEP_GRADIENTS = [
+  "from-violet-500 via-purple-500 to-fuchsia-500",
+  "from-emerald-500 via-green-500 to-teal-500",
+  "from-amber-500 via-orange-500 to-red-500",
+];
+
 export const OnboardingGuide = ({ roomId, roomName, onComplete }: OnboardingGuideProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Check if user has completed onboarding guide
     const hasSeenGuide = localStorage.getItem(`onboarding_guide_${roomId}`);
     if (hasSeenGuide) {
       setIsVisible(false);
@@ -36,19 +41,32 @@ export const OnboardingGuide = ({ roomId, roomName, onComplete }: OnboardingGuid
     }
   };
 
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   const steps = [
     {
       title: "Welcome to the Story Room! 🎬",
       description: "You're about to learn the foundation of biblical memory - breaking stories into memorable 'beats'.",
       icon: Sparkles,
+      gradient: STEP_GRADIENTS[0],
       content: (
         <div className="space-y-3 text-sm">
-          <p>Think of Bible stories like movies. Each major event is a "beat" - a single, memorable frame.</p>
-          <div className="bg-muted p-3 rounded">
-            <p className="font-semibold mb-1">Example: Joseph's story</p>
-            <p className="text-xs">Dream → Coat → Pit → Caravan → Prison → Palace</p>
-          </div>
-          <p>That's 6 beats that tell the whole arc. Simple. Memorable. Powerful.</p>
+          <p className="text-muted-foreground">Think of Bible stories like movies. Each major event is a "beat" - a single, memorable frame.</p>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`bg-gradient-to-r ${STEP_GRADIENTS[0]} p-[2px] rounded-xl`}
+          >
+            <div className="bg-card rounded-xl p-4">
+              <p className="font-semibold mb-1">Example: Joseph's story</p>
+              <p className="text-xs text-muted-foreground">Dream → Coat → Pit → Caravan → Prison → Palace</p>
+            </div>
+          </motion.div>
+          <p className="text-muted-foreground">That's 6 beats that tell the whole arc. Simple. Memorable. Powerful.</p>
         </div>
       )
     },
@@ -56,31 +74,26 @@ export const OnboardingGuide = ({ roomId, roomName, onComplete }: OnboardingGuid
       title: "Your Turn: Pick a Story",
       description: "Choose one of these classic stories to practice with.",
       icon: Target,
+      gradient: STEP_GRADIENTS[1],
       content: (
         <div className="space-y-3">
-          <div className="grid gap-2">
-            <div 
-              className="p-3 border rounded hover:bg-accent cursor-pointer transition"
+          {[
+            { title: "Genesis 37 - Joseph", desc: "From favored son to Egyptian slave" },
+            { title: "1 Samuel 17 - David & Goliath", desc: "Shepherd boy defeats giant warrior" },
+            { title: "Daniel 6 - Lions' Den", desc: "Prayer, plot, and divine protection" },
+          ].map((story, i) => (
+            <motion.div
+              key={story.title}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="p-4 rounded-xl bg-gradient-to-r from-muted/50 to-muted/30 border border-white/10 hover:border-white/30 cursor-pointer transition-all hover:scale-[1.02]"
               onClick={handleNext}
             >
-              <p className="font-semibold">Genesis 37 - Joseph</p>
-              <p className="text-xs text-muted-foreground">From favored son to Egyptian slave</p>
-            </div>
-            <div 
-              className="p-3 border rounded hover:bg-accent cursor-pointer transition"
-              onClick={handleNext}
-            >
-              <p className="font-semibold">1 Samuel 17 - David & Goliath</p>
-              <p className="text-xs text-muted-foreground">Shepherd boy defeats giant warrior</p>
-            </div>
-            <div 
-              className="p-3 border rounded hover:bg-accent cursor-pointer transition"
-              onClick={handleNext}
-            >
-              <p className="font-semibold">Daniel 6 - Lions' Den</p>
-              <p className="text-xs text-muted-foreground">Prayer, plot, and divine protection</p>
-            </div>
-          </div>
+              <p className="font-semibold">{story.title}</p>
+              <p className="text-xs text-muted-foreground">{story.desc}</p>
+            </motion.div>
+          ))}
         </div>
       )
     },
@@ -88,17 +101,33 @@ export const OnboardingGuide = ({ roomId, roomName, onComplete }: OnboardingGuid
       title: "Create Your Beats",
       description: "Use the practice area below to write 3-7 punchy beats.",
       icon: Target,
+      gradient: STEP_GRADIENTS[2],
       content: (
         <div className="space-y-3 text-sm">
-          <div className="bg-primary/5 border-l-4 border-primary p-3 rounded">
-            <p className="font-semibold mb-1">✅ Good Beats:</p>
-            <p className="text-xs">Coat, Pit, Caravan (concrete nouns)</p>
-          </div>
-          <div className="bg-destructive/5 border-l-4 border-destructive p-3 rounded">
-            <p className="font-semibold mb-1">❌ Avoid:</p>
-            <p className="text-xs">"Joseph receives a colorful coat from his father" (too wordy)</p>
-          </div>
-          <p>Keep it punchy. Use vivid nouns and verbs. Think: What would I draw?</p>
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="relative overflow-hidden rounded-xl"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-green-500/10" />
+            <div className="relative p-4 border-l-4 border-emerald-500">
+              <p className="font-semibold mb-1">✅ Good Beats:</p>
+              <p className="text-xs text-muted-foreground">Coat, Pit, Caravan (concrete nouns)</p>
+            </div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="relative overflow-hidden rounded-xl"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-orange-500/10" />
+            <div className="relative p-4 border-l-4 border-red-500">
+              <p className="font-semibold mb-1">❌ Avoid:</p>
+              <p className="text-xs text-muted-foreground">"Joseph receives a colorful coat from his father" (too wordy)</p>
+            </div>
+          </motion.div>
+          <p className="text-muted-foreground">Keep it punchy. Use vivid nouns and verbs. Think: What would I draw?</p>
         </div>
       )
     }
@@ -108,65 +137,134 @@ export const OnboardingGuide = ({ roomId, roomName, onComplete }: OnboardingGuid
 
   const currentStepData = steps[currentStep];
   const StepIcon = currentStepData.icon;
-  const progress = ((currentStep + 1) / steps.length) * 100;
+  const stepGradient = currentStepData.gradient;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="max-w-2xl w-full animate-in fade-in slide-in-from-bottom-4">
-        <CardHeader className="relative">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4"
-            onClick={handleClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <StepIcon className="h-6 w-6 text-primary" />
-            </div>
-            <div className="flex-1">
-              <CardTitle className="text-xl">{currentStepData.title}</CardTitle>
-              <p className="text-sm text-muted-foreground">{currentStepData.description}</p>
-            </div>
-          </div>
-          
-          <Progress value={progress} className="h-1" />
-        </CardHeader>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+      {/* Animated background orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          key={`orb-${currentStep}`}
+          animate={{ 
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br ${stepGradient} blur-3xl`}
+        />
+        <motion.div
+          animate={{ 
+            scale: [1, 0.8, 1],
+            opacity: [0.15, 0.3, 0.15],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full bg-gradient-to-br ${stepGradient} blur-3xl`}
+        />
+      </div>
 
-        <CardContent className="space-y-6">
-          <div>{currentStepData.content}</div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, y: 40, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -40, scale: 0.9 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="w-full max-w-2xl relative"
+        >
+          <Card className="border-2 border-white/20 shadow-[0_0_80px_-20px] shadow-current bg-card/90 backdrop-blur-xl overflow-hidden">
+            {/* Gradient top border */}
+            <div className={`h-1.5 bg-gradient-to-r ${stepGradient}`} />
+            
+            <CardContent className="p-8 relative">
+              {/* Corner glow */}
+              <div className={`absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br ${stepGradient} opacity-20 rounded-full blur-3xl`} />
+              
+              {/* Header */}
+              <div className="flex items-start justify-between mb-6 relative z-10">
+                <div className="flex items-center gap-4">
+                  <motion.div 
+                    initial={{ rotate: -180, scale: 0 }}
+                    animate={{ rotate: 0, scale: 1 }}
+                    transition={{ type: "spring", bounce: 0.5 }}
+                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stepGradient} flex items-center justify-center shadow-lg`}
+                  >
+                    <StepIcon className="h-7 w-7 text-white" />
+                  </motion.div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Step {currentStep + 1} of {steps.length}
+                    </p>
+                    <h2 className="text-2xl font-bold">{currentStepData.title}</h2>
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" onClick={handleClose} className="hover:bg-destructive/10">
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
 
-          <div className="flex justify-between items-center">
-            <div className="flex gap-1">
-              {steps.map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-2 rounded-full transition-all ${
-                    index === currentStep
-                      ? "w-8 bg-primary"
-                      : index < currentStep
-                      ? "w-2 bg-primary/50"
-                      : "w-2 bg-muted"
-                  }`}
+              {/* Progress bar */}
+              <div className="h-2 bg-muted/50 rounded-full mb-6 overflow-hidden backdrop-blur-sm">
+                <motion.div 
+                  className={`h-full bg-gradient-to-r ${stepGradient} rounded-full`}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
                 />
-              ))}
-            </div>
+              </div>
 
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={handleClose}>
-                Skip Guide
-              </Button>
-              <Button onClick={handleNext}>
-                {currentStep === steps.length - 1 ? "Start Practicing" : "Next"}
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+              {/* Step dots */}
+              <div className="flex justify-center gap-3 mb-6">
+                {steps.map((s, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={() => setCurrentStep(index)}
+                    whileHover={{ scale: 1.3 }}
+                    whileTap={{ scale: 0.9 }}
+                    className={`h-3 rounded-full transition-all duration-300 ${
+                      index === currentStep
+                        ? `w-10 bg-gradient-to-r ${stepGradient} shadow-lg`
+                        : index < currentStep
+                        ? `w-3 bg-gradient-to-r ${s.gradient} opacity-60`
+                        : "w-3 bg-muted"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Content */}
+              <div className="space-y-4 relative z-10">
+                <p className="text-muted-foreground">{currentStepData.description}</p>
+                {currentStepData.content}
+              </div>
+
+              {/* Navigation */}
+              <div className="flex justify-between mt-8 pt-6 border-t border-border relative z-10">
+                <Button
+                  variant="ghost"
+                  onClick={handleBack}
+                  disabled={currentStep === 0}
+                  className="gap-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Back
+                </Button>
+                <div className="flex gap-3">
+                  <Button variant="outline" onClick={handleClose}>
+                    Skip Guide
+                  </Button>
+                  <Button 
+                    onClick={handleNext}
+                    className={`bg-gradient-to-r ${stepGradient} hover:opacity-90 text-white border-0 gap-2 shadow-lg`}
+                  >
+                    {currentStep === steps.length - 1 ? "Start Practicing" : "Next"}
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };

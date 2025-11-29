@@ -1,16 +1,73 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, BookOpen, Lightbulb } from "lucide-react";
+import { motion } from "framer-motion";
+
+const STEP_DATA = [
+  {
+    step: 1,
+    title: "Draw a Card",
+    emoji: "🎯",
+    icon: Sparkles,
+    gradient: "from-violet-500 via-purple-500 to-fuchsia-500",
+    description: "Let Jeeves pick a random principle card for you, or choose your own from the deck below. Each card represents a Phototheology lens to apply to Scripture.",
+  },
+  {
+    step: 2,
+    title: "Apply to Passage",
+    emoji: "📖",
+    icon: BookOpen,
+    gradient: "from-blue-500 via-cyan-500 to-teal-500",
+    description: "Enter a verse or story, then use the card's principle to interpret, observe, or connect. Answer the card's guiding question with biblical insight.",
+  },
+  {
+    step: 3,
+    title: "Get Feedback",
+    emoji: "💎",
+    icon: Lightbulb,
+    gradient: "from-amber-500 via-orange-500 to-red-500",
+    description: "Submit your answer and receive Jeeves' feedback. Save discoveries as gems, export as PDF, or continue the conversation to deepen understanding.",
+  },
+];
 
 export const StudyDeckInstructions = () => {
   return (
-    <Card className="border-2 border-primary/40 bg-gradient-to-br from-background via-primary/5 to-background relative overflow-hidden">
-      {/* Animated background glow */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/20 to-primary/10 animate-pulse-glow opacity-30" />
+    <Card className="relative overflow-hidden border-2 border-white/20 bg-card/90 backdrop-blur-xl shadow-[0_0_60px_-20px] shadow-primary/20">
+      {/* Gradient top border */}
+      <div className="h-1.5 bg-gradient-to-r from-violet-500 via-amber-500 to-emerald-500" />
       
-      <CardHeader className="relative">
+      {/* Animated background orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.2, 0.1],
+            x: [0, 30, 0],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 blur-3xl"
+        />
+        <motion.div
+          animate={{ 
+            scale: [1, 0.8, 1],
+            opacity: [0.1, 0.15, 0.1],
+            x: [0, -30, 0],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 blur-3xl"
+        />
+      </div>
+      
+      <CardHeader className="relative z-10">
         <div className="flex items-center gap-3 mb-2">
-          <div className="text-4xl">🎴</div>
+          <motion.div 
+            initial={{ rotate: -180, scale: 0 }}
+            animate={{ rotate: 0, scale: 1 }}
+            transition={{ type: "spring", bounce: 0.5 }}
+            className="text-4xl"
+          >
+            🎴
+          </motion.div>
           <CardTitle className="text-2xl">How to Use the Study Deck</CardTitle>
         </div>
         <p className="text-muted-foreground">
@@ -18,71 +75,58 @@ export const StudyDeckInstructions = () => {
         </p>
       </CardHeader>
       
-      <CardContent className="relative">
+      <CardContent className="relative z-10">
         <div className="grid md:grid-cols-3 gap-6">
-          {/* Step 1 */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Badge variant="default" className="text-lg px-3 py-1">
-                Step 1
-              </Badge>
-              <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-            </div>
-            <h3 className="font-bold text-xl flex items-center gap-2">
-              <span className="text-2xl">🎯</span>
-              Draw a Card
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Let <strong>Jeeves pick</strong> a random principle card for you, or <strong>choose your own</strong> from the deck below. Each card represents a Phototheology lens to apply to Scripture.
-            </p>
-          </div>
-
-          {/* Step 2 */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Badge variant="default" className="text-lg px-3 py-1">
-                Step 2
-              </Badge>
-              <BookOpen className="h-5 w-5 text-primary animate-pulse" />
-            </div>
-            <h3 className="font-bold text-xl flex items-center gap-2">
-              <span className="text-2xl">📖</span>
-              Apply to Passage
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Enter a <strong>verse or story</strong>, then use the card's principle to interpret, observe, or connect. Answer the card's guiding question with biblical insight.
-            </p>
-          </div>
-
-          {/* Step 3 */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Badge variant="default" className="text-lg px-3 py-1">
-                Step 3
-              </Badge>
-              <Lightbulb className="h-5 w-5 text-primary animate-pulse" />
-            </div>
-            <h3 className="font-bold text-xl flex items-center gap-2">
-              <span className="text-2xl">💎</span>
-              Get Feedback
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Submit your answer and receive <strong>Jeeves' feedback</strong>. Save discoveries as gems, export as PDF, or continue the conversation to deepen understanding.
-            </p>
-          </div>
+          {STEP_DATA.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.15 }}
+                className="space-y-3"
+              >
+                <div className="flex items-center gap-2">
+                  <Badge 
+                    className={`text-lg px-3 py-1 bg-gradient-to-r ${item.gradient} text-white border-0 shadow-lg`}
+                  >
+                    Step {item.step}
+                  </Badge>
+                  <Icon className="h-5 w-5 text-primary animate-pulse" />
+                </div>
+                <h3 className="font-bold text-xl flex items-center gap-2">
+                  <span className="text-2xl">{item.emoji}</span>
+                  {item.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {item.description}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
 
-        {/* Quick tip */}
-        <div className="mt-6 p-4 bg-primary/10 border border-primary/30 rounded-lg">
-          <p className="text-sm flex items-start gap-2">
-            <span className="text-xl">💡</span>
-            <span>
-              <strong>Pro Tip:</strong> Start with easier principles (Floor 1-2) like <Badge variant="outline" className="mx-1">SR</Badge> Story Room 
-              or <Badge variant="outline" className="mx-1">OR</Badge> Observation, then advance to deeper ones like 
-              <Badge variant="outline" className="mx-1">DR-2D</Badge> Christological or <Badge variant="outline" className="mx-1">@CyC</Badge> Cyrus-Christ Cycle.
-            </span>
-          </p>
-        </div>
+        {/* Quick tip with glass effect */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-6 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 p-[2px] rounded-xl"
+        >
+          <div className="bg-card/80 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <p className="text-sm flex items-start gap-2">
+              <span className="text-xl">💡</span>
+              <span>
+                <strong>Pro Tip:</strong> Start with easier principles (Floor 1-2) like{" "}
+                <Badge variant="outline" className="mx-1 border-white/20">SR</Badge> Story Room 
+                or <Badge variant="outline" className="mx-1 border-white/20">OR</Badge> Observation, then advance to deeper ones like{" "}
+                <Badge variant="outline" className="mx-1 border-white/20">DR-2D</Badge> Christological or{" "}
+                <Badge variant="outline" className="mx-1 border-white/20">@CyC</Badge> Cyrus-Christ Cycle.
+              </span>
+            </p>
+          </div>
+        </motion.div>
       </CardContent>
     </Card>
   );

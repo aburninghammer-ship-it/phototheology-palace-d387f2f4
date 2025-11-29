@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -13,7 +12,8 @@ import {
   Code,
   Layers,
   Sparkles,
-  Filter
+  Filter,
+  X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import demo5Dimensions from "@/assets/demo-5-dimensions.png";
@@ -22,11 +22,18 @@ import demoNavigation from "@/assets/demo-navigation.png";
 import demoPTCodes from "@/assets/demo-pt-codes.png";
 import demoStudyButtons from "@/assets/demo-study-buttons.png";
 import demoStudyModes from "@/assets/demo-study-modes.png";
-import demoProgress from "@/assets/demo-progress.png";
-import demoMemory from "@/assets/demo-memory.png";
 import demoCommentary from "@/assets/demo-commentary.png";
-import demoApologetics from "@/assets/demo-apologetics.png";
-import demoTags from "@/assets/demo-tags.png";
+
+const STEP_GRADIENTS = [
+  "from-violet-500 via-purple-500 to-fuchsia-500",
+  "from-blue-500 via-cyan-500 to-teal-500",
+  "from-emerald-500 via-green-500 to-teal-500",
+  "from-amber-500 via-orange-500 to-red-500",
+  "from-fuchsia-500 via-pink-500 to-rose-500",
+  "from-indigo-500 via-purple-500 to-violet-500",
+  "from-teal-500 via-cyan-500 to-blue-500",
+  "from-rose-500 via-red-500 to-orange-500",
+];
 
 const demoSteps = [
   {
@@ -39,6 +46,7 @@ const demoSteps = [
     ],
     icon: BookOpen,
     image: null,
+    gradient: STEP_GRADIENTS[0],
   },
   {
     title: "Choose Your Translation",
@@ -50,6 +58,7 @@ const demoSteps = [
     ],
     icon: Languages,
     image: demoTranslation,
+    gradient: STEP_GRADIENTS[1],
   },
   {
     title: "Word Search",
@@ -61,6 +70,7 @@ const demoSteps = [
     ],
     icon: Search,
     image: demoNavigation,
+    gradient: STEP_GRADIENTS[2],
   },
   {
     title: "PT Codes Search",
@@ -72,6 +82,7 @@ const demoSteps = [
     ],
     icon: Code,
     image: demoPTCodes,
+    gradient: STEP_GRADIENTS[3],
   },
   {
     title: "Study Modes",
@@ -84,6 +95,7 @@ const demoSteps = [
     ],
     icon: Layers,
     image: demoStudyButtons,
+    gradient: STEP_GRADIENTS[4],
   },
   {
     title: "Principle Modes",
@@ -95,6 +107,7 @@ const demoSteps = [
     ],
     icon: Sparkles,
     image: demoStudyModes,
+    gradient: STEP_GRADIENTS[5],
   },
   {
     title: "Commentary Panel",
@@ -106,6 +119,7 @@ const demoSteps = [
     ],
     icon: MessageSquare,
     image: demoCommentary,
+    gradient: STEP_GRADIENTS[6],
   },
   {
     title: "Dimension Filter",
@@ -117,6 +131,7 @@ const demoSteps = [
     ],
     icon: Filter,
     image: demo5Dimensions,
+    gradient: STEP_GRADIENTS[7],
   },
 ];
 
@@ -133,6 +148,7 @@ export const StudyBibleDemoDialog = ({ open, onOpenChange }: StudyBibleDemoDialo
       setCurrentStep(currentStep + 1);
     } else {
       onOpenChange(false);
+      setCurrentStep(0);
     }
   };
 
@@ -144,56 +160,102 @@ export const StudyBibleDemoDialog = ({ open, onOpenChange }: StudyBibleDemoDialo
 
   const currentStepData = demoSteps[currentStep];
   const Icon = currentStepData.icon;
+  const stepGradient = currentStepData.gradient;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-            Study Bible Tutorial
-          </DialogTitle>
-        </DialogHeader>
+    <Dialog open={open} onOpenChange={(isOpen) => { onOpenChange(isOpen); if (!isOpen) setCurrentStep(0); }}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card/95 backdrop-blur-xl border-2 border-white/20 shadow-[0_0_80px_-20px] shadow-primary/30 p-0">
+        {/* Gradient top border */}
+        <div className={`h-1.5 bg-gradient-to-r ${stepGradient}`} />
+        
+        {/* Animated background orb */}
+        <motion.div
+          key={`orb-${currentStep}`}
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.2, 0.1],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute -top-20 -right-20 w-64 h-64 rounded-full bg-gradient-to-br ${stepGradient} blur-3xl pointer-events-none`}
+        />
 
-        <div className="space-y-6">
-          {/* Progress Bar */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted-foreground">
-                Step {currentStep + 1} of {demoSteps.length}
-              </span>
-              <span className="text-sm font-medium">
-                {Math.round(((currentStep + 1) / demoSteps.length) * 100)}% Complete
-              </span>
+        <div className="p-6 relative z-10">
+          <DialogHeader className="mb-4">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+                Study Bible Tutorial
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onOpenChange(false)}
+                className="h-8 w-8 p-0 hover:bg-destructive/10"
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </div>
-            <div className="h-2 bg-secondary rounded-full overflow-hidden">
+          </DialogHeader>
+
+          <div className="space-y-6">
+            {/* Progress Bar */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-muted-foreground">
+                  Step {currentStep + 1} of {demoSteps.length}
+                </span>
+                <Badge variant="outline" className="border-white/20">
+                  {Math.round(((currentStep + 1) / demoSteps.length) * 100)}%
+                </Badge>
+              </div>
+              <div className="h-2 bg-muted/50 rounded-full overflow-hidden backdrop-blur-sm">
+                <motion.div
+                  className={`h-full bg-gradient-to-r ${stepGradient} rounded-full`}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${((currentStep + 1) / demoSteps.length) * 100}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+              </div>
+            </div>
+
+            {/* Step dots */}
+            <div className="flex justify-center gap-2">
+              {demoSteps.map((s, index) => (
+                <motion.button
+                  key={index}
+                  onClick={() => setCurrentStep(index)}
+                  whileHover={{ scale: 1.3 }}
+                  whileTap={{ scale: 0.9 }}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentStep
+                      ? `w-8 bg-gradient-to-r ${stepGradient} shadow-lg`
+                      : index < currentStep
+                      ? `w-2.5 bg-gradient-to-r ${s.gradient} opacity-60`
+                      : "w-2.5 bg-muted"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Main Content */}
+            <AnimatePresence mode="wait">
               <motion.div
-                className="h-full bg-gradient-to-r from-primary to-accent"
-                initial={{ width: 0 }}
-                animate={{ width: `${((currentStep + 1) / demoSteps.length) * 100}%` }}
+                key={currentStep}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-              />
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="p-6">
+              >
                 {/* Step Header */}
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <Icon className="h-8 w-8 text-primary" />
-                  </div>
+                  <motion.div 
+                    initial={{ rotate: -180, scale: 0 }}
+                    animate={{ rotate: 0, scale: 1 }}
+                    transition={{ type: "spring", bounce: 0.5 }}
+                    className={`p-3 rounded-xl bg-gradient-to-br ${stepGradient} shadow-lg`}
+                  >
+                    <Icon className="h-7 w-7 text-white" />
+                  </motion.div>
                   <div className="flex-1">
-                    <Badge className="mb-2" variant="outline">
-                      Step {currentStep + 1}
-                    </Badge>
                     <h2 className="text-xl font-bold mb-2">{currentStepData.title}</h2>
                     <p className="text-muted-foreground">
                       {currentStepData.description}
@@ -203,28 +265,41 @@ export const StudyBibleDemoDialog = ({ open, onOpenChange }: StudyBibleDemoDialo
 
                 {/* Screenshot or Visual */}
                 {currentStepData.image ? (
-                  <div className="rounded-lg overflow-hidden mb-6 border-2 border-primary/20">
-                    <img 
-                      src={currentStepData.image} 
-                      alt={currentStepData.title}
-                      className="w-full h-auto"
-                    />
-                  </div>
-                ) : (
-                  <div className="bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 rounded-lg p-8 mb-6 border-2 border-dashed border-primary/20">
-                    <div className="text-center">
-                      <Icon className="h-16 w-16 text-primary/30 mx-auto mb-3" />
-                      <p className="text-sm text-muted-foreground">
-                        Try this feature in the Study Bible below
-                      </p>
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className={`bg-gradient-to-r ${stepGradient} p-[2px] rounded-xl mb-6`}
+                  >
+                    <div className="bg-card rounded-xl overflow-hidden">
+                      <img 
+                        src={currentStepData.image} 
+                        alt={currentStepData.title}
+                        className="w-full h-auto"
+                      />
                     </div>
-                  </div>
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className={`bg-gradient-to-r ${stepGradient} p-[2px] rounded-xl mb-6`}
+                  >
+                    <div className="bg-card rounded-xl p-8">
+                      <div className="text-center">
+                        <Icon className="h-16 w-16 text-primary/30 mx-auto mb-3" />
+                        <p className="text-sm text-muted-foreground">
+                          Try this feature in the Study Bible below
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
                 )}
 
                 {/* Key Highlights */}
                 <div>
                   <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-accent" />
+                    <Sparkles className="h-4 w-4 text-primary" />
                     Key Features
                   </h3>
                   <ul className="space-y-2">
@@ -234,54 +309,37 @@ export const StudyBibleDemoDialog = ({ open, onOpenChange }: StudyBibleDemoDialo
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-start gap-2"
+                        className="flex items-start gap-3"
                       >
-                        <ChevronRight className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{highlight}</span>
+                        <span className={`h-2 w-2 rounded-full bg-gradient-to-r ${stepGradient} mt-2 flex-shrink-0`} />
+                        <span className="text-sm text-muted-foreground">{highlight}</span>
                       </motion.li>
                     ))}
                   </ul>
                 </div>
-              </Card>
-            </motion.div>
-          </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
 
-          {/* Navigation */}
-          <div className="flex items-center justify-between">
-            <Button
-              variant="outline"
-              onClick={prevStep}
-              disabled={currentStep === 0}
-              className="gap-2"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Previous
-            </Button>
+            {/* Navigation */}
+            <div className="flex items-center justify-between pt-4 border-t border-border">
+              <Button
+                variant="ghost"
+                onClick={prevStep}
+                disabled={currentStep === 0}
+                className="gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
 
-            <div className="flex gap-2">
-              {demoSteps.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentStep(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    index === currentStep
-                      ? "w-8 bg-primary"
-                      : index < currentStep
-                      ? "w-2 bg-primary/50"
-                      : "w-2 bg-secondary"
-                  }`}
-                  aria-label={`Go to step ${index + 1}`}
-                />
-              ))}
+              <Button
+                onClick={nextStep}
+                className={`gap-2 bg-gradient-to-r ${stepGradient} hover:opacity-90 text-white border-0`}
+              >
+                {currentStep === demoSteps.length - 1 ? "Done" : "Next"}
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
-
-            <Button
-              onClick={nextStep}
-              className="gap-2"
-            >
-              {currentStep === demoSteps.length - 1 ? "Done" : "Next"}
-              <ChevronRight className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       </DialogContent>
