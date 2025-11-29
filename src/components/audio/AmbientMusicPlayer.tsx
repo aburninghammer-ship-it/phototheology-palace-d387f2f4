@@ -121,12 +121,12 @@ const AMBIENT_TRACKS = [
   // Additional Cinematic/Orchestral Tracks - Last of the Mohicans style
   {
     id: "november-reflection",
-    name: "November Reflection",
-    description: "Melancholic piano with sweeping orchestral strings",
+    name: "Autumn Reflection",
+    description: "Sweeping orchestral strings with contemplative depth",
     category: "cinematic",
     floor: 7,
     mood: "reflective, solemn, autumnal",
-    url: "https://www.bensound.com/bensound-music/bensound-november.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-slowmotion.mp3",
     bpm: 58,
   },
   {
