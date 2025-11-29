@@ -59,8 +59,8 @@ export const Testimonials = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="bg-background/50 backdrop-blur">
-              <CardContent className="pt-6">
+            <Card key={index} variant="glass">
+              <CardContent className="pt-6 relative z-10">
                 <Quote className="h-8 w-8 text-primary mb-4 opacity-50" />
                 <p className="text-sm mb-4 italic">"{testimonial.quote}"</p>
                 <div className="text-xs text-muted-foreground">

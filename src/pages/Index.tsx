@@ -121,26 +121,34 @@ const Index = () => {
           </p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 bg-card rounded-lg">
-              <Building2 className="h-12 w-12 mx-auto mb-4 text-primary" />
-              <h3 className="font-bold mb-2">Floors</h3>
-              <p className="text-sm text-muted-foreground">The major themes</p>
-            </div>
-            <div className="p-6 bg-card rounded-lg">
-              <BookOpen className="h-12 w-12 mx-auto mb-4 text-accent" />
-              <h3 className="font-bold mb-2">Rooms</h3>
-              <p className="text-sm text-muted-foreground">The stories</p>
-            </div>
-            <div className="p-6 bg-card rounded-lg">
-              <TrendingUp className="h-12 w-12 mx-auto mb-4 text-primary" />
-              <h3 className="font-bold mb-2">Paths</h3>
-              <p className="text-sm text-muted-foreground">The connections</p>
-            </div>
-            <div className="p-6 bg-card rounded-lg">
-              <Sparkles className="h-12 w-12 mx-auto mb-4 text-accent" />
-              <h3 className="font-bold mb-2">Jeeves (AI)</h3>
-              <p className="text-sm text-muted-foreground">Your personal guide</p>
-            </div>
+            <Card variant="glass" showBubbles={false}>
+              <CardContent className="p-6 relative z-10 text-center">
+                <Building2 className="h-12 w-12 mx-auto mb-4 text-primary" />
+                <h3 className="font-bold mb-2">Floors</h3>
+                <p className="text-sm text-muted-foreground">The major themes</p>
+              </CardContent>
+            </Card>
+            <Card variant="glass" showBubbles={false}>
+              <CardContent className="p-6 relative z-10 text-center">
+                <BookOpen className="h-12 w-12 mx-auto mb-4 text-accent" />
+                <h3 className="font-bold mb-2">Rooms</h3>
+                <p className="text-sm text-muted-foreground">The stories</p>
+              </CardContent>
+            </Card>
+            <Card variant="glass" showBubbles={false}>
+              <CardContent className="p-6 relative z-10 text-center">
+                <TrendingUp className="h-12 w-12 mx-auto mb-4 text-primary" />
+                <h3 className="font-bold mb-2">Paths</h3>
+                <p className="text-sm text-muted-foreground">The connections</p>
+              </CardContent>
+            </Card>
+            <Card variant="glass" showBubbles={false}>
+              <CardContent className="p-6 relative z-10 text-center">
+                <Sparkles className="h-12 w-12 mx-auto mb-4 text-accent" />
+                <h3 className="font-bold mb-2">Jeeves (AI)</h3>
+                <p className="text-sm text-muted-foreground">Your personal guide</p>
+              </CardContent>
+            </Card>
           </div>
 
           <p className="text-xl font-semibold mt-8">
@@ -161,14 +169,14 @@ const Index = () => {
           </p>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card>
-              <CardHeader>
+            <Card variant="glass">
+              <CardHeader className="relative z-10">
                 <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
                   <span className="text-3xl font-bold text-primary">1</span>
                 </div>
                 <CardTitle className="text-2xl">Build Your Palace</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <p className="text-muted-foreground mb-4">
                   Start on Floor 1 with simple memory rooms. Walk through stories using vivid images and clear patterns.
                 </p>
@@ -176,14 +184,14 @@ const Index = () => {
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader>
+            <Card variant="glass">
+              <CardHeader className="relative z-10">
                 <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mb-4">
                   <span className="text-3xl font-bold text-accent">2</span>
                 </div>
                 <CardTitle className="text-2xl">Connect the Bible</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <p className="text-muted-foreground mb-4">
                   As you progress through the floors, you'll build connections: prophecy, typology, Christ-centered threads, and big-picture patterns.
                 </p>
@@ -191,14 +199,14 @@ const Index = () => {
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader>
+            <Card variant="glass">
+              <CardHeader className="relative z-10">
                 <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
                   <span className="text-3xl font-bold text-primary">3</span>
                 </div>
                 <CardTitle className="text-2xl">Practice with AI</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <p className="text-muted-foreground mb-4">
                   Jeeves guides you with drills, maps out verses, tests mastery, and helps you build your own Bible studies.
                 </p>
@@ -286,15 +294,15 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {/* Free Tier */}
-            <Card className="border-2 border-border">
-              <CardHeader>
+            <Card variant="glass">
+              <CardHeader className="relative z-10">
                 <div className="text-center">
                   <Badge className="mb-2">Forever Free</Badge>
                   <h3 className="text-3xl font-bold mb-2">$0</h3>
                   <p className="text-muted-foreground">Get started now</p>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <ul className="space-y-3 mb-6 text-left">
                   <li className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-primary flex-shrink-0" />
@@ -329,15 +337,15 @@ const Index = () => {
             </Card>
 
             {/* Premium Tier */}
-            <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
-              <CardHeader>
+            <Card variant="glass">
+              <CardHeader className="relative z-10">
                 <div className="text-center">
                   <Badge className="mb-2 gradient-palace text-white border-0">Most Popular</Badge>
                   <h3 className="text-3xl font-bold mb-2">$15/mo</h3>
                   <p className="text-muted-foreground">Full Palace access</p>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <ul className="space-y-3 mb-6 text-left">
                   <li className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-primary flex-shrink-0" />
