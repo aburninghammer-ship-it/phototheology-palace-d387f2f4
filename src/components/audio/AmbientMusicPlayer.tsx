@@ -277,7 +277,7 @@ const AMBIENT_TRACKS = [
     category: "hymn-cinematic",
     floor: 6,
     mood: "friendship, comfort, intimate",
-    url: "https://www.bensound.com/bensound-music/bensound-friendship.mp3",
+    url: "https://www.bensound.com/bensound-music/bensound-acousticbreeze.mp3",
     bpm: 55,
   },
   {
