@@ -289,7 +289,11 @@ export function AmbientMusicPlayer({
   };
 
   const toggleMute = () => {
-    setIsMuted(!isMuted);
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    if (audioRef.current) {
+      audioRef.current.volume = newMuted ? 0 : volume;
+    }
   };
 
   const nextTrack = () => {
