@@ -3,6 +3,7 @@ import { Sparkles, Eye, Search, Zap, BookOpen, Telescope, Globe, Flame, Crown, L
 import { useAuth } from "@/hooks/useAuth";
 import { palaceFloors } from "@/data/palaceData";
 import { useRoomUnlock } from "@/hooks/useRoomUnlock";
+import { motion } from "framer-motion";
 
 // Floor-specific icons and theming
 const FLOOR_THEMES = [
@@ -78,13 +79,14 @@ export const VisualPalace = () => {
       {/* Palace Structure */}
       <div className="relative flex flex-col-reverse gap-6">
         {palaceFloors.map((floor, floorIndex) => {
-          const theme = FLOOR_THEMES[floor.number - 1]; // Use floor.number to get correct theme
+          const theme = FLOOR_THEMES[floor.number - 1];
           return (
             <FloorSection 
               key={floor.number} 
               floor={floor} 
               theme={theme}
               user={user}
+              index={floorIndex}
             />
           );
         })}
@@ -97,18 +99,27 @@ interface FloorSectionProps {
   floor: any;
   theme: typeof FLOOR_THEMES[0];
   user: any;
+  index: number;
 }
 
-const FloorSection = ({ floor, theme, user }: FloorSectionProps) => {
+const FloorSection = ({ floor, theme, user, index }: FloorSectionProps) => {
   const Icon = theme.icon;
   
   return (
-    <div className="relative group rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-shadow duration-300">
-      {/* Floor Header - Simplified */}
+    <motion.div 
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1, duration: 0.5 }}
+      className="relative group rounded-2xl overflow-hidden border-2 border-white/20 shadow-[0_0_40px_-15px] shadow-current bg-card/50 backdrop-blur-sm hover:shadow-[0_0_60px_-10px] transition-all duration-500"
+    >
+      {/* Floor Header with glass effect */}
       <div className={`relative bg-gradient-to-r ${theme.gradient} p-6`}>
-        <div className="flex items-center justify-between">
+        {/* Animated shine */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[200%]" style={{ transition: 'transform 0.7s ease-in-out, opacity 0.3s' }} />
+        
+        <div className="flex items-center justify-between relative z-10">
           <div className="flex items-center gap-4">
-            {/* Floor number */}
+            {/* Floor number with glass effect */}
             <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 shadow-lg">
               <span className="font-cinzel text-2xl font-bold text-white">
                 {floor.number}
@@ -129,7 +140,7 @@ const FloorSection = ({ floor, theme, user }: FloorSectionProps) => {
             </div>
           </div>
           
-          {/* Room count */}
+          {/* Room count badge */}
           <div className="px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm border border-white/30">
             <span className="text-white text-sm font-semibold">
               {floor.rooms.length} rooms
@@ -138,21 +149,22 @@ const FloorSection = ({ floor, theme, user }: FloorSectionProps) => {
         </div>
       </div>
 
-      {/* Rooms Grid - Simplified */}
-      <div className="bg-gradient-to-b from-muted/20 to-background p-8">
+      {/* Rooms Grid with glass background */}
+      <div className="bg-gradient-to-b from-background/80 to-background p-8 backdrop-blur-sm">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {floor.rooms.map((room: any) => (
+          {floor.rooms.map((room: any, roomIndex: number) => (
             <RoomDoor
               key={room.id}
               room={room}
               floorNumber={floor.number}
               theme={theme}
               user={user}
+              index={roomIndex}
             />
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -161,31 +173,43 @@ interface RoomDoorProps {
   floorNumber: number;
   theme: typeof FLOOR_THEMES[0];
   user: any;
+  index: number;
 }
 
-const RoomDoor = ({ room, floorNumber, theme, user }: RoomDoorProps) => {
+const RoomDoor = ({ room, floorNumber, theme, user, index }: RoomDoorProps) => {
   const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
   
   return (
     <Link
       to={`/palace/floor/${floorNumber}/room/${room.id}`}
-      className="group relative"
+      className="group/door relative"
     >
-      <div className="flex flex-col gap-2">
-        {/* Door Card - Clean Design */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: index * 0.05 }}
+        className="flex flex-col gap-2"
+      >
+        {/* Door Card - Glass Design */}
         <div 
           className={`
             relative aspect-[3/4] rounded-xl overflow-hidden
             transition-all duration-300 cursor-pointer
-            bg-gradient-to-br ${theme.gradient} hover:scale-105 shadow-lg hover:shadow-2xl
+            bg-card/80 backdrop-blur-sm border-2 border-white/20
+            hover:scale-105 hover:border-white/40 
+            shadow-lg hover:shadow-[0_0_30px_-10px] hover:shadow-current
+            group-hover/door:bg-card/90
           `}
         >
-          {/* Simple border frame */}
-          <div className="absolute inset-4 border border-white/30 rounded-lg" />
+          {/* Gradient overlay on hover */}
+          <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient} opacity-0 group-hover/door:opacity-20 transition-opacity duration-300`} />
           
-          {/* Room tag at top */}
+          {/* Glass frame border */}
+          <div className="absolute inset-3 border border-white/20 rounded-lg group-hover/door:border-white/40 transition-colors" />
+          
+          {/* Room tag at top with gradient */}
           <div className="absolute top-0 left-0 right-0 p-3 flex justify-center">
-            <div className="px-3 py-1 rounded-lg bg-black/40 backdrop-blur-sm border border-white/20">
+            <div className={`px-3 py-1 rounded-lg bg-gradient-to-r ${theme.gradient} shadow-lg`}>
               <span className="font-cinzel text-xs font-bold text-white tracking-wider">
                 {room.tag}
               </span>
@@ -195,33 +219,33 @@ const RoomDoor = ({ room, floorNumber, theme, user }: RoomDoorProps) => {
           {/* Center room name */}
           <div className="absolute inset-0 flex items-center justify-center p-4">
             <div className="text-center">
-              <div className="font-cinzel text-sm font-bold text-white drop-shadow-lg leading-tight">
+              <div className="font-cinzel text-sm font-bold text-foreground drop-shadow-lg leading-tight group-hover/door:text-primary transition-colors">
                 {room.name}
               </div>
             </div>
           </div>
 
-          {/* Lock/Unlock indicator */}
+          {/* Lock/Unlock indicator with glass effect */}
           <div className="absolute bottom-3 right-3">
             {loading ? (
-              <div className="w-6 h-6 rounded-full bg-gray-500/30 backdrop-blur-sm border border-gray-400/50 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse" />
+              <div className="w-7 h-7 rounded-full bg-muted/50 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+                <div className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse" />
               </div>
             ) : isUnlocked ? (
-              <div className="w-6 h-6 rounded-full bg-green-500/30 backdrop-blur-sm border border-green-400/50 flex items-center justify-center">
-                <CheckCircle className="w-4 h-4 text-green-400" />
+              <div className="w-7 h-7 rounded-full bg-emerald-500/30 backdrop-blur-sm border border-emerald-400/50 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
               </div>
             ) : (
-              <div className="w-6 h-6 rounded-full bg-red-500/30 backdrop-blur-sm border border-red-400/50 flex items-center justify-center">
-                <Lock className="w-4 h-4 text-red-400" />
+              <div className="w-7 h-7 rounded-full bg-amber-500/30 backdrop-blur-sm border border-amber-400/50 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                <Lock className="w-4 h-4 text-amber-400" />
               </div>
             )}
           </div>
 
-          {/* Subtle shine on hover */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+          {/* Shine effect on hover */}
+          <div className="absolute inset-0 opacity-0 group-hover/door:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 };
