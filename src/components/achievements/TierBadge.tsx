@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
 import { getTierFromPoints, tierColors, tierLabels, AchievementTier } from "@/utils/achievementHelpers";
-import { Gem, Medal, Award, Crown, Star } from "lucide-react";
+import { Medal, Award, Crown, Star } from "lucide-react";
 
 interface TierBadgeProps {
-  points: number;
+  points?: number;
+  tier?: AchievementTier;
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   className?: string;
@@ -13,12 +14,12 @@ const tierIcons: Record<AchievementTier, React.ComponentType<{ className?: strin
   bronze: Medal,
   silver: Medal,
   gold: Award,
-  platinum: Crown,
-  diamond: Gem,
+  black: Crown,
 };
 
-export function TierBadge({ points, size = 'sm', showLabel = false, className }: TierBadgeProps) {
-  const tier = getTierFromPoints(points);
+export function TierBadge({ points = 0, tier: tierProp, size = 'sm', showLabel = false, className }: TierBadgeProps) {
+  // Use provided tier or calculate from points
+  const tier = tierProp || getTierFromPoints(points);
   const style = tierColors[tier];
   const Icon = tierIcons[tier];
 
@@ -38,9 +39,11 @@ export function TierBadge({ points, size = 'sm', showLabel = false, className }:
     <div className={cn("inline-flex items-center gap-1", className)}>
       <div
         className={cn(
-          "rounded-full flex items-center justify-center bg-gradient-to-br",
+          "rounded-full flex items-center justify-center bg-gradient-to-br shadow-lg",
           style.gradient,
-          sizeClasses[size]
+          style.glow,
+          sizeClasses[size],
+          tier === 'black' && 'ring-1 ring-purple-400/50'
         )}
       >
         <Icon className={cn("text-white", iconSizes[size])} />

@@ -25,6 +25,7 @@ export type Database = {
           points: number | null
           requirement_count: number | null
           requirement_type: string | null
+          tier: string | null
         }
         Insert: {
           category?: string | null
@@ -36,6 +37,7 @@ export type Database = {
           points?: number | null
           requirement_count?: number | null
           requirement_type?: string | null
+          tier?: string | null
         }
         Update: {
           category?: string | null
@@ -47,6 +49,7 @@ export type Database = {
           points?: number | null
           requirement_count?: number | null
           requirement_type?: string | null
+          tier?: string | null
         }
         Relationships: []
       }
