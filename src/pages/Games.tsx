@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Gamepad2, MapPin, UsersRound, Search, Trophy, Users } from "lucide-react";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
+import { gamesSteps } from "@/config/howItWorksSteps";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -354,6 +356,15 @@ const Games = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header with How to Use */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Games</h1>
+            <p className="text-muted-foreground">Learn through play with Phototheology games</p>
+          </div>
+          <HowItWorksDialog title="How to Use Games" steps={gamesSteps} />
+        </div>
+        
         {/* Search and Filter Header */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">

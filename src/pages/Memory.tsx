@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Brain, Plus, Users, Trophy, Book, Sparkles, Gamepad2, Play, ArrowRight, Target } from "lucide-react";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
+import { memoryPalaceSteps } from "@/config/howItWorksSteps";
 import { toast } from "sonner";
 import { CreateMemoryListDialog } from "@/components/memory/CreateMemoryListDialog";
 import { MyMemoryLists } from "@/components/memory/MyMemoryLists";
@@ -61,9 +63,13 @@ export default function Memory() {
             </h1>
             <Sparkles className="h-8 w-8 text-palace-yellow animate-pulse" />
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4">
             Master Bible verses through visual memory techniques and PT principles
           </p>
+          
+          <div className="flex justify-center mb-4">
+            <HowItWorksDialog title="How to Use Memory Palace" steps={memoryPalaceSteps} />
+          </div>
           
           {/* START MEMORIZING CTA */}
           <div className="flex flex-wrap items-center justify-center gap-3">

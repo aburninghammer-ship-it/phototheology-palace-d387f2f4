@@ -5,6 +5,8 @@ import { PalaceBreadcrumbs } from "@/components/palace/PalaceBreadcrumbs";
 import { PalaceTour } from "@/components/onboarding/PalaceTour";
 import { palaceFloors } from "@/data/palaceData";
 import { Building2, Award, TrendingUp, BookOpen, Target, LayoutGrid, List } from "lucide-react";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
+import { palaceSteps } from "@/config/howItWorksSteps";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -84,9 +86,13 @@ const Palace = () => {
               The Eight-Floor Palace
             </h1>
             
-            <p className="text-xl text-foreground max-w-2xl mx-auto mb-6">
+            <p className="text-xl text-foreground max-w-2xl mx-auto mb-4">
               Master Bible typology through our revolutionary <strong>8-floor, 38-room memory system</strong>. See Christ everywhere in Scripture.
             </p>
+            
+            <div className="flex justify-center mb-6">
+              <HowItWorksDialog title="How to Use the Palace" steps={palaceSteps} />
+            </div>
 
             {user && !loading && (
               <Card className="max-w-md mx-auto mb-6">

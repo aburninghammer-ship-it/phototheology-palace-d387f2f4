@@ -6,6 +6,8 @@ import { GlassBubbles } from "@/components/ui/glass-bubbles";
 import { useReadingPlans } from "@/hooks/useReadingPlans";
 import { useNavigate } from "react-router-dom";
 import { Book, Building2, BookOpen, Plus, Play } from "lucide-react";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
+import { readingPlansSteps } from "@/config/howItWorksSteps";
 import { useAuth } from "@/hooks/useAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
@@ -94,6 +96,9 @@ export default function ReadingPlans() {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
             Journey through Scripture using the 8-Floor Palace method
           </p>
+          <div className="flex justify-center mb-4">
+            <HowItWorksDialog title="How to Use Reading Plans" steps={readingPlansSteps} />
+          </div>
           <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Layers className="h-4 w-4 text-primary" />

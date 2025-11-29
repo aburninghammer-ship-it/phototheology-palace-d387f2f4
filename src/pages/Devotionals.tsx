@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus, GraduationCap, Home, HeartHandshake } from "lucide-react";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
+import { devotionalsSteps } from "@/config/howItWorksSteps";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigation } from "@/components/Navigation";
@@ -98,6 +100,7 @@ export default function Devotionals() {
               <h1 className="text-4xl font-bold text-white drop-shadow-lg">Phototheology Devotionals</h1>
               <p className="text-white/80 text-lg">AI-powered, Palace-structured daily encounters with God</p>
             </div>
+            <HowItWorksDialog title="How to Use Devotionals" steps={devotionalsSteps} />
           </div>
 
           <div className="grid md:grid-cols-3 gap-4 mt-8">
