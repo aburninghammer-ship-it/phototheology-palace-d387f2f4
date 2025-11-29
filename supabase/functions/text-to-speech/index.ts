@@ -12,44 +12,55 @@ serve(async (req) => {
   }
 
   try {
-    const { text, voice = "nova" } = await req.json();
+    const { text, voice = "alloy" } = await req.json();
 
     if (!text) {
       throw new Error("Text is required");
     }
 
-    // Truncate text if too long (OpenAI TTS has a limit)
+    // Truncate text if too long (OpenAI TTS has a 4096 character limit)
     const truncatedText = text.substring(0, 4096);
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!OPENAI_API_KEY) {
+      throw new Error("OPENAI_API_KEY is not configured");
     }
 
-    // Use Lovable AI gateway for text generation, then synthesize
-    // For now, we'll return a placeholder response
-    // In production, integrate with a TTS service like OpenAI or ElevenLabs
-    
-    // Simulate TTS by returning success
-    // In a real implementation, you would call OpenAI's TTS API:
-    // const response = await fetch('https://api.openai.com/v1/audio/speech', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': `Bearer ${OPENAI_API_KEY}`,
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     model: 'tts-1',
-    //     input: truncatedText,
-    //     voice: voice,
-    //     response_format: 'mp3',
-    //   }),
-    // });
+    console.log(`Generating TTS for ${truncatedText.length} characters with voice: ${voice}`);
+
+    // Call OpenAI's TTS API
+    const response = await fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'tts-1',
+        input: truncatedText,
+        voice: voice,
+        response_format: 'mp3',
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("OpenAI TTS error:", response.status, errorText);
+      throw new Error(`OpenAI TTS API error: ${response.status}`);
+    }
+
+    // Convert audio buffer to base64
+    const arrayBuffer = await response.arrayBuffer();
+    const base64Audio = btoa(
+      String.fromCharCode(...new Uint8Array(arrayBuffer))
+    );
+
+    console.log("TTS audio generated successfully");
 
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: "TTS endpoint ready. Configure OPENAI_API_KEY for full audio generation.",
+        audioContent: base64Audio,
         textLength: truncatedText.length,
         voice: voice
       }),
