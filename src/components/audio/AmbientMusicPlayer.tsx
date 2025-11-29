@@ -59,7 +59,7 @@ const AMBIENT_TRACKS = [
     name: "Memorization",
     description: "Gentle cinematic waves for memory",
     category: "memory",
-    url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kai_Engel/Satin/Kai_Engel_-_01_-_Contention.mp3",
+    url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Algorithms.mp3",
     bpm: 62,
   },
   {
@@ -67,7 +67,7 @@ const AMBIENT_TRACKS = [
     name: "Prophecy",
     description: "Grand orchestral for prophetic study",
     category: "prophecy",
-    url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kai_Engel/Satin/Kai_Engel_-_09_-_Anxiety.mp3",
+    url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Drifting.mp3",
     bpm: 55,
   },
 ];
