@@ -2,6 +2,7 @@ import { Navigation } from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GlassBubbles } from "@/components/ui/glass-bubbles";
 import { useReadingPlans } from "@/hooks/useReadingPlans";
 import { useNavigate } from "react-router-dom";
 import { Book, Building2, BookOpen, Plus, Play } from "lucide-react";
@@ -111,8 +112,9 @@ export default function ReadingPlans() {
 
         {/* Active Plan Banner with Progress */}
         {userProgress && activePlan && (
-          <Card className="mb-8 p-6 border-primary bg-primary/5">
-            <div className="flex items-center justify-between mb-4">
+          <Card variant="glass" className="mb-8 p-6">
+            <GlassBubbles />
+            <div className="flex items-center justify-between mb-4 relative z-10">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-foreground mb-1">
                   Current Plan: {activePlan.name}
@@ -242,24 +244,28 @@ export default function ReadingPlans() {
                 ))}
               </div>
             ) : (
-              <Card className="p-12 text-center">
-                <Plus className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">No Custom Plans Yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Create your own reading plan with your choice of books and pace
-                </p>
-                <Button onClick={() => setShowCustomBuilder(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Plan
-                </Button>
+              <Card variant="glass" className="p-12 text-center">
+                <GlassBubbles />
+                <div className="relative z-10">
+                  <Plus className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">No Custom Plans Yet</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Create your own reading plan with your choice of books and pace
+                  </p>
+                  <Button onClick={() => setShowCustomBuilder(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Your First Plan
+                  </Button>
+                </div>
               </Card>
             )}
           </TabsContent>
         </Tabs>
 
         {plans.length === 0 && (
-          <Card className="p-12 text-center">
-            <p className="text-muted-foreground">No reading plans available yet</p>
+          <Card variant="glass" className="p-12 text-center">
+            <GlassBubbles />
+            <p className="text-muted-foreground relative z-10">No reading plans available yet</p>
           </Card>
         )}
       </div>

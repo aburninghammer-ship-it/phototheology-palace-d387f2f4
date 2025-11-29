@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { GlassBubbles } from "@/components/ui/glass-bubbles";
 import { Book, Calendar, Clock, Play, LogIn, Building2, Layers, Target, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -60,17 +61,18 @@ export function PlanProgressCard({
   const hasStarted = userProgress && userProgress.current_day > 1;
   
   return (
-    <Card className="p-6 hover:shadow-lg transition-all hover:scale-[1.02] border-2 relative">
+    <Card variant="glass" className="p-6 relative">
+      <GlassBubbles />
       {/* Progress indicator badge */}
       {hasStarted && (
-        <div className="absolute -top-2 -right-2">
+        <div className="absolute -top-2 -right-2 z-20">
           <Badge className="bg-primary text-primary-foreground">
             {progressPercent}% complete
           </Badge>
         </div>
       )}
       
-      <div className="mb-4">
+      <div className="mb-4 relative z-10">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Book className="h-8 w-8 text-primary" />
@@ -90,7 +92,7 @@ export function PlanProgressCard({
 
       {/* Progress bar for plans user has started */}
       {hasStarted && (
-        <div className="mb-4">
+        <div className="mb-4 relative z-10">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
             <span>Day {userProgress.current_day} of {plan.duration_days}</span>
             <span>{progressPercent}%</span>
@@ -99,7 +101,7 @@ export function PlanProgressCard({
         </div>
       )}
 
-      <div className="space-y-3 mb-6">
+      <div className="space-y-3 mb-6 relative z-10">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center text-muted-foreground">
             <Calendar className="h-4 w-4 mr-2 text-primary" />
@@ -121,24 +123,26 @@ export function PlanProgressCard({
         </div>
       </div>
 
-      {isAuthenticated ? (
-        <Button 
-          className="w-full" 
-          onClick={() => onStartPlan(plan.id)}
-        >
-          {hasStarted ? "Continue" : hasActivePlan ? "Switch to This Plan" : "Start Plan"}
-          <Play className="ml-2 h-4 w-4" />
-        </Button>
-      ) : (
-        <Button 
-          className="w-full" 
-          variant="outline"
-          onClick={() => navigate('/auth')}
-        >
-          <LogIn className="mr-2 h-4 w-4" />
-          Sign in to Start
-        </Button>
-      )}
+      <div className="relative z-10">
+        {isAuthenticated ? (
+          <Button 
+            className="w-full" 
+            onClick={() => onStartPlan(plan.id)}
+          >
+            {hasStarted ? "Continue" : hasActivePlan ? "Switch to This Plan" : "Start Plan"}
+            <Play className="ml-2 h-4 w-4" />
+          </Button>
+        ) : (
+          <Button 
+            className="w-full" 
+            variant="outline"
+            onClick={() => navigate('/auth')}
+          >
+            <LogIn className="mr-2 h-4 w-4" />
+            Sign in to Start
+          </Button>
+        )}
+      </div>
     </Card>
   );
 }

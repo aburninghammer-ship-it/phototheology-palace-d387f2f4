@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { GlassBubbles } from "@/components/ui/glass-bubbles";
 import { Sparkles, Book, ArrowRight, TrendingUp } from "lucide-react";
 
 interface Plan {
@@ -72,13 +73,14 @@ export function RecommendedPlans({ plans, userActivity, onSelectPlan }: Recommen
   };
 
   return (
-    <Card className="p-6 mb-8 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-      <div className="flex items-center gap-2 mb-4">
+    <Card variant="glass" className="p-6 mb-8">
+      <GlassBubbles />
+      <div className="flex items-center gap-2 mb-4 relative z-10">
         <Sparkles className="h-5 w-5 text-primary" />
         <h3 className="text-lg font-bold text-foreground">Recommended for You</h3>
       </div>
       
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-3 gap-4 relative z-10">
         {recommendedPlans.map((plan, index) => (
           <Card 
             key={plan.id} 
