@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Trophy, MessageSquare, Sparkles, Target, Share2, Copy, MessagesSquare } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EmojiPicker } from "@/components/EmojiPicker";
-import { WebRTCCall } from "@/components/WebRTCCall";
+import { SimpleVoiceRoom } from "@/components/voice";
 import { ChatInput } from "@/components/ChatInput";
 
 interface Move {
@@ -899,7 +899,7 @@ const ChainChess = () => {
           <div className="grid md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
               {!isVsJeeves && gameId && (
-                <WebRTCCall
+                <SimpleVoiceRoom
                   roomId={gameId}
                   userId={user!.id}
                   userName={userDisplayName || "User"}
