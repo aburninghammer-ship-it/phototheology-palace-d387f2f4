@@ -53,11 +53,11 @@ export const tierOrder: AchievementTier[] = ['bronze', 'silver', 'gold', 'black'
 export const requirementRoutes: Record<string, { path: string; label: string }> = {
   // Memory
   rooms_completed: { path: '/palace', label: 'Go to Palace' },
-  '24fps_chapters': { path: '/24fps', label: 'Start 24FPS' },
+  '24fps_chapters': { path: '/bible-rendered-room', label: 'Start 24FPS' },
   
   // Mastery
   floors_completed: { path: '/palace', label: 'Explore Floors' },
-  assessments_passed: { path: '/palace', label: 'Take Assessment' },
+  assessments_passed: { path: '/mastery', label: 'Take Assessment' },
   
   // Streaks
   study_streak: { path: '/reading-plans', label: 'Continue Streak' },
@@ -69,16 +69,16 @@ export const requirementRoutes: Record<string, { path: string; label: string }> 
   chain_chess_wins: { path: '/chain-chess', label: 'Play Chess' },
   
   // Scripture
-  verses_memorized: { path: '/memory-lists', label: 'Memorize Verses' },
-  chapters_read: { path: '/bible-reader', label: 'Read Bible' },
-  books_completed: { path: '/bible-reader', label: 'Continue Reading' },
-  testaments_completed: { path: '/bible-reader', label: 'Keep Reading' },
+  verses_memorized: { path: '/memory', label: 'Memorize Verses' },
+  chapters_read: { path: '/bible', label: 'Read Bible' },
+  books_completed: { path: '/bible', label: 'Continue Reading' },
+  testaments_completed: { path: '/bible', label: 'Keep Reading' },
   
   // Devotionals
-  devotional_days: { path: '/devotional-plans', label: 'Start Devotional' },
-  devotional_plans_completed: { path: '/devotional-plans', label: 'View Plans' },
-  devotionals_shared: { path: '/devotional-profiles', label: 'Share Devotional' },
-  ministry_devotionals: { path: '/devotional-profiles', label: 'Help Others' },
+  devotional_days: { path: '/devotionals', label: 'Start Devotional' },
+  devotional_plans_completed: { path: '/devotionals', label: 'View Plans' },
+  devotionals_shared: { path: '/devotionals', label: 'Share Devotional' },
+  ministry_devotionals: { path: '/devotionals', label: 'Help Others' },
   
   // Community
   posts_created: { path: '/community', label: 'Create Post' },
@@ -106,20 +106,20 @@ export const requirementRoutes: Record<string, { path: string; label: string }> 
   
   // PT Coding
   codes_learned: { path: '/palace', label: 'Learn Codes' },
-  dimensions_applied: { path: '/deck-study', label: 'Apply Dimensions' },
-  connect6_completed: { path: '/deck-study', label: 'Chain Study' },
-  sanctuary_maps: { path: '/sanctuary-study', label: 'Map Sanctuary' },
+  dimensions_applied: { path: '/card-deck', label: 'Apply Dimensions' },
+  connect6_completed: { path: '/card-deck', label: 'Chain Study' },
+  sanctuary_maps: { path: '/games/blue-room', label: 'Map Sanctuary' },
   
   // Prophecy
   prophecy_studies: { path: '/daniel-course', label: 'Study Daniel' },
   prophecy_2300: { path: '/daniel-course', label: 'Learn 2300' },
-  seven_churches: { path: '/revelation-study', label: 'Seven Churches' },
-  beast_symbols: { path: '/revelation-study', label: 'Decode Beasts' },
-  revelation_complete: { path: '/revelation-study', label: 'Study Revelation' },
+  seven_churches: { path: '/revelation-course', label: 'Seven Churches' },
+  beast_symbols: { path: '/revelation-course', label: 'Decode Beasts' },
+  revelation_complete: { path: '/revelation-course', label: 'Study Revelation' },
   prophecy_track: { path: '/courses', label: 'Prophecy Track' },
   
   // Ministry
-  prayers_offered: { path: '/prayer-requests', label: 'Pray for Others' },
+  prayers_offered: { path: '/community', label: 'Pray for Others' },
   ministry_challenges: { path: '/spiritual-training', label: 'Ministry Challenge' },
   groups_planted: { path: '/study-partners', label: 'Plant Group' },
   studies_led: { path: '/bible-study-series', label: 'Lead Studies' },
