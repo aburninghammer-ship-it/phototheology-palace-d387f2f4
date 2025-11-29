@@ -32,6 +32,7 @@ export function SimpleVoiceRoom({ roomId, userId, userName, roomName, className 
   const peerConnectionsRef = useRef<Map<string, RTCPeerConnection>>(new Map());
   const audioElementsRef = useRef<Map<string, HTMLAudioElement>>(new Map());
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const pendingIceCandidatesRef = useRef<Map<string, RTCIceCandidateInit[]>>(new Map());
 
   const iceConfig: RTCConfiguration = {
     iceServers: [
@@ -41,41 +42,68 @@ export function SimpleVoiceRoom({ roomId, userId, userName, roomName, className 
   };
 
   const cleanup = useCallback(() => {
-    // Stop local stream
+    console.log("[Voice] Cleaning up...");
     localStreamRef.current?.getTracks().forEach(track => track.stop());
     localStreamRef.current = null;
 
-    // Close all peer connections
     peerConnectionsRef.current.forEach(pc => pc.close());
     peerConnectionsRef.current.clear();
+    pendingIceCandidatesRef.current.clear();
 
-    // Remove audio elements
     audioElementsRef.current.forEach(audio => {
       audio.pause();
       audio.srcObject = null;
     });
     audioElementsRef.current.clear();
 
-    // Unsubscribe from channel
     if (channelRef.current) {
       channelRef.current.unsubscribe();
       channelRef.current = null;
     }
   }, []);
 
+  const processPendingIceCandidates = useCallback(async (remoteUserId: string) => {
+    const pc = peerConnectionsRef.current.get(remoteUserId);
+    const pending = pendingIceCandidatesRef.current.get(remoteUserId);
+    
+    if (pc && pc.remoteDescription && pending && pending.length > 0) {
+      console.log(`[Voice] Processing ${pending.length} pending ICE candidates for ${remoteUserId}`);
+      for (const candidate of pending) {
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(candidate));
+        } catch (e) {
+          console.warn("[Voice] Failed to add pending ICE candidate:", e);
+        }
+      }
+      pendingIceCandidatesRef.current.set(remoteUserId, []);
+    }
+  }, []);
+
   const createPeerConnection = useCallback((remoteUserId: string): RTCPeerConnection => {
-    console.log(`Creating peer connection for: ${remoteUserId}`);
+    console.log(`[Voice] Creating peer connection for: ${remoteUserId}`);
+    
+    // Close existing connection if any
+    const existingPc = peerConnectionsRef.current.get(remoteUserId);
+    if (existingPc) {
+      console.log(`[Voice] Closing existing connection for: ${remoteUserId}`);
+      existingPc.close();
+      peerConnectionsRef.current.delete(remoteUserId);
+    }
     
     const pc = new RTCPeerConnection(iceConfig);
+    peerConnectionsRef.current.set(remoteUserId, pc);
 
     // Add local tracks
-    localStreamRef.current?.getTracks().forEach(track => {
-      pc.addTrack(track, localStreamRef.current!);
-    });
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach(track => {
+        console.log(`[Voice] Adding track: ${track.kind}`);
+        pc.addTrack(track, localStreamRef.current!);
+      });
+    }
 
-    // Handle ICE candidates
     pc.onicecandidate = (event) => {
       if (event.candidate && channelRef.current) {
+        console.log(`[Voice] Sending ICE candidate to ${remoteUserId}`);
         channelRef.current.send({
           type: "broadcast",
           event: "ice",
@@ -88,9 +116,8 @@ export function SimpleVoiceRoom({ roomId, userId, userName, roomName, className 
       }
     };
 
-    // Handle remote audio
     pc.ontrack = (event) => {
-      console.log(`Received audio track from: ${remoteUserId}`);
+      console.log(`[Voice] Received track from: ${remoteUserId}`, event.track.kind);
       const [stream] = event.streams;
       
       let audio = audioElementsRef.current.get(remoteUserId);
@@ -100,13 +127,19 @@ export function SimpleVoiceRoom({ roomId, userId, userName, roomName, className 
         audioElementsRef.current.set(remoteUserId, audio);
       }
       audio.srcObject = stream;
-      audio.play().catch(e => console.log("Audio play:", e));
+      audio.play().catch(e => console.log("[Voice] Audio play error:", e));
+    };
+
+    pc.oniceconnectionstatechange = () => {
+      console.log(`[Voice] ICE state with ${remoteUserId}: ${pc.iceConnectionState}`);
     };
 
     pc.onconnectionstatechange = () => {
-      console.log(`Connection state with ${remoteUserId}: ${pc.connectionState}`);
+      console.log(`[Voice] Connection state with ${remoteUserId}: ${pc.connectionState}`);
       if (pc.connectionState === "connected") {
-        toast.success(`Connected to ${remoteUserId.slice(0, 8)}...`);
+        toast.success(`Connected to voice`);
+      } else if (pc.connectionState === "failed") {
+        toast.error(`Voice connection failed`);
       }
     };
 
@@ -114,63 +147,89 @@ export function SimpleVoiceRoom({ roomId, userId, userName, roomName, className 
   }, [userId, iceConfig]);
 
   const sendOffer = useCallback(async (remoteUserId: string) => {
+    console.log(`[Voice] Sending offer to: ${remoteUserId}`);
     const pc = createPeerConnection(remoteUserId);
-    peerConnectionsRef.current.set(remoteUserId, pc);
 
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
+    try {
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
 
-    channelRef.current?.send({
-      type: "broadcast",
-      event: "offer",
-      payload: {
-        sdp: offer.sdp,
-        type: offer.type,
-        from: userId,
-        to: remoteUserId,
-      },
-    });
+      channelRef.current?.send({
+        type: "broadcast",
+        event: "offer",
+        payload: {
+          sdp: offer.sdp,
+          type: offer.type,
+          from: userId,
+          to: remoteUserId,
+        },
+      });
+    } catch (e) {
+      console.error("[Voice] Error creating offer:", e);
+    }
   }, [createPeerConnection, userId]);
 
   const handleOffer = useCallback(async (payload: any) => {
     if (payload.to !== userId) return;
-    console.log(`Received offer from: ${payload.from}`);
+    console.log(`[Voice] Received offer from: ${payload.from}`);
 
     const pc = createPeerConnection(payload.from);
-    peerConnectionsRef.current.set(payload.from, pc);
 
-    await pc.setRemoteDescription({ type: payload.type, sdp: payload.sdp });
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
+    try {
+      await pc.setRemoteDescription({ type: payload.type, sdp: payload.sdp });
+      await processPendingIceCandidates(payload.from);
+      
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
 
-    channelRef.current?.send({
-      type: "broadcast",
-      event: "answer",
-      payload: {
-        sdp: answer.sdp,
-        type: answer.type,
-        from: userId,
-        to: payload.from,
-      },
-    });
-  }, [createPeerConnection, userId]);
+      channelRef.current?.send({
+        type: "broadcast",
+        event: "answer",
+        payload: {
+          sdp: answer.sdp,
+          type: answer.type,
+          from: userId,
+          to: payload.from,
+        },
+      });
+    } catch (e) {
+      console.error("[Voice] Error handling offer:", e);
+    }
+  }, [createPeerConnection, userId, processPendingIceCandidates]);
 
   const handleAnswer = useCallback(async (payload: any) => {
     if (payload.to !== userId) return;
-    console.log(`Received answer from: ${payload.from}`);
+    console.log(`[Voice] Received answer from: ${payload.from}`);
 
     const pc = peerConnectionsRef.current.get(payload.from);
     if (pc && !pc.currentRemoteDescription) {
-      await pc.setRemoteDescription({ type: payload.type, sdp: payload.sdp });
+      try {
+        await pc.setRemoteDescription({ type: payload.type, sdp: payload.sdp });
+        await processPendingIceCandidates(payload.from);
+      } catch (e) {
+        console.error("[Voice] Error setting remote description:", e);
+      }
     }
-  }, [userId]);
+  }, [userId, processPendingIceCandidates]);
 
   const handleIce = useCallback(async (payload: any) => {
     if (payload.to !== userId) return;
 
     const pc = peerConnectionsRef.current.get(payload.from);
-    if (pc && pc.remoteDescription) {
-      await pc.addIceCandidate(new RTCIceCandidate(payload.candidate));
+    if (pc) {
+      if (pc.remoteDescription) {
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(payload.candidate));
+        } catch (e) {
+          console.warn("[Voice] Error adding ICE candidate:", e);
+        }
+      } else {
+        // Queue the candidate for later
+        console.log(`[Voice] Queueing ICE candidate from ${payload.from}`);
+        const pending = pendingIceCandidatesRef.current.get(payload.from) || [];
+        pending.push(payload.candidate);
+        pendingIceCandidatesRef.current.set(payload.from, pending);
+      }
     }
   }, [userId]);
 
@@ -212,23 +271,26 @@ export function SimpleVoiceRoom({ roomId, userId, userName, roomName, className 
         setParticipants(users);
       });
 
-      channel.on("presence", { event: "join" }, async ({ key, newPresences }) => {
+      channel.on("presence", { event: "join" }, async ({ key }) => {
         if (key !== userId) {
-          console.log(`User joined: ${key}`);
-          // Lower ID initiates connection
-          if (userId < key) {
-            await sendOffer(key);
-          }
+          console.log(`[Voice] User joined: ${key}`);
+          // Delay slightly and lower ID initiates
+          setTimeout(() => {
+            if (userId < key) {
+              sendOffer(key);
+            }
+          }, 500);
         }
       });
 
       channel.on("presence", { event: "leave" }, ({ key }) => {
-        console.log(`User left: ${key}`);
+        console.log(`[Voice] User left: ${key}`);
         const pc = peerConnectionsRef.current.get(key);
         if (pc) {
           pc.close();
           peerConnectionsRef.current.delete(key);
         }
+        pendingIceCandidatesRef.current.delete(key);
         const audio = audioElementsRef.current.get(key);
         if (audio) {
           audio.pause();
@@ -248,6 +310,17 @@ export function SimpleVoiceRoom({ roomId, userId, userName, roomName, className 
           setIsInRoom(true);
           setIsConnecting(false);
           toast.success("Joined voice room");
+          
+          // Connect to existing participants after a delay
+          setTimeout(() => {
+            const state = channel.presenceState();
+            Object.keys(state).forEach(key => {
+              if (key !== userId && userId < key) {
+                console.log(`[Voice] Connecting to existing user: ${key}`);
+                sendOffer(key);
+              }
+            });
+          }, 1000);
         }
       });
     } catch (error) {
