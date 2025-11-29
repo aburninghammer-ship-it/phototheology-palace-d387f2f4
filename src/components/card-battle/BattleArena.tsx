@@ -624,7 +624,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
         animate={{ opacity: 1, scale: 1 }}
         className="text-center"
       >
-        <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white p-12">
+        <Card variant="glass" className="text-white p-12">
           <motion.div
             animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ duration: 1, repeat: Infinity }}
@@ -655,7 +655,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
           Back
         </Button>
         
-        <Card className="flex-1 mx-4 bg-white/10 backdrop-blur-xl border-white/20 text-white">
+        <Card variant="glass" className="flex-1 mx-4 text-white">
           <CardContent className="pt-6">
             <div className="flex items-center gap-2 mb-2">
               <Flame className="h-5 w-5 text-orange-400" />
@@ -713,7 +713,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
 
       {/* Move History */}
       {moves.length > 0 && (
-        <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+        <Card variant="glass">
           <CardContent className="pt-6">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-amber-400" />
@@ -799,7 +799,7 @@ export function BattleArena({ battle, currentUserId, onBack }: Props) {
       )}
 
       {/* Response Area */}
-      <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+      <Card variant="glass">
         <CardContent className="pt-6 space-y-4">
           {/* Show judgment feedback for both approved and rejected */}
           {showJudgmentFeedback && lastJudgment && (

@@ -491,7 +491,7 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
         exit={{ opacity: 0, scale: 0.9 }}
         className="space-y-6"
       >
-        <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
+        <Card variant="glass" className="text-white">
           <CardContent className="pt-6 space-y-6">
             <div className="text-center space-y-4">
               <motion.div
@@ -544,7 +544,7 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
 
         {/* Invite Users Directly */}
         {availableUsers.length > 0 && (
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
+          <Card variant="glass" className="text-white">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-purple-400" />
@@ -620,7 +620,7 @@ export function BattleLobby({ mode, onBattleStart, onBack }: Props) {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
     >
-      <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
+      <Card variant="glass" className="text-white">
         <CardHeader>
           <div className="flex items-center justify-between">
             <Button

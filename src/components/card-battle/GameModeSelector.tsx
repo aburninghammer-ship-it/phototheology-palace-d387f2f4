@@ -57,7 +57,7 @@ export function GameModeSelector({ onSelectMode }: Props) {
   return (
     <div className="space-y-6">
       {/* Game Instructions */}
-      <Card className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-xl border-amber-400/30">
+      <Card variant="glass" className="border-amber-400/30">
         <CardContent className="pt-6">
           <button 
             onClick={() => setShowInstructions(!showInstructions)}
