@@ -105,7 +105,7 @@ const AMBIENT_TRACKS = [
     category: "floor-7",
     floor: 7,
     mood: "solemn, calm, ancient",
-    url: "https://cdn.pixabay.com/audio/2022/02/22/audio_d1718ab41b.mp3",
+    url: "https://cdn.pixabay.com/audio/2022/10/25/audio_946bc3eb7f.mp3",
     bpm: 60,
   },
   // Special: Blue Room - Typology
