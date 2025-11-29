@@ -108,12 +108,13 @@ export const StreamlinedTestimonials = () => {
           {getVisibleTestimonials().map((index, position) => (
             <Card 
               key={`${index}-${position}`} 
+              variant="glass"
               className={cn(
-                "border-2 transition-all duration-500 ease-in-out",
+                "transition-all duration-500 ease-in-out",
                 "animate-fade-in"
               )}
             >
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 relative z-10">
                 <Quote className="h-8 w-8 text-primary mb-4" />
                 <p className="text-muted-foreground italic mb-6">
                   "{testimonials[index].quote}"
