@@ -15,6 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Upload, Play, Video, Trash2 } from "lucide-react";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
+import { videoTrainingSteps } from "@/config/howItWorksSteps";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { SocialShareButton } from "@/components/SocialShareButton";
 import defaultVideoThumbnail from "@/assets/video-training-thumbnail.png";
@@ -244,7 +246,9 @@ const VideoTraining = () => {
           </p>
         </div>
         
-        {isVideoAdmin && (
+        <div className="flex gap-2">
+          <HowItWorksDialog title="How to Use Video Training" steps={videoTrainingSteps} />
+          {isVideoAdmin && (
           <Dialog>
             <DialogTrigger asChild>
               <Button>
@@ -327,7 +331,8 @@ const VideoTraining = () => {
               </div>
             </DialogContent>
           </Dialog>
-        )}
+          )}
+        </div>
       </div>
 
       <Tabs value={activeCategory} onValueChange={setActiveCategory}>

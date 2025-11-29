@@ -15,6 +15,8 @@ import {
   PlayCircle,
   Star
 } from "lucide-react";
+import { HowItWorksDialog } from "@/components/HowItWorksDialog";
+import { myStudiesSteps } from "@/config/howItWorksSteps";
 import { StudyPreviewCard } from "@/components/studies/StudyPreviewCard";
 import { StudySortFilter, SortOption } from "@/components/studies/StudySortFilter";
 import { StudyStats } from "@/components/studies/StudyStats";
@@ -329,6 +331,7 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
             </p>
           </div>
           <div className="flex gap-2">
+            <HowItWorksDialog title="How to Use My Studies" steps={myStudiesSteps} />
             <StudyTemplates onSelect={handleTemplateSelect} />
             <Button 
               onClick={() => createNewStudy()} 
