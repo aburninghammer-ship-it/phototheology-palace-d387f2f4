@@ -4484,6 +4484,7 @@ export type Database = {
           has_lifetime_access: boolean
           has_seen_community_guidelines: boolean | null
           id: string
+          is_kid_mode: boolean | null
           is_recurring: boolean | null
           is_student: boolean | null
           last_seen: string | null
@@ -4535,6 +4536,7 @@ export type Database = {
           has_lifetime_access?: boolean
           has_seen_community_guidelines?: boolean | null
           id: string
+          is_kid_mode?: boolean | null
           is_recurring?: boolean | null
           is_student?: boolean | null
           last_seen?: string | null
@@ -4586,6 +4588,7 @@ export type Database = {
           has_lifetime_access?: boolean
           has_seen_community_guidelines?: boolean | null
           id?: string
+          is_kid_mode?: boolean | null
           is_recurring?: boolean | null
           is_student?: boolean | null
           last_seen?: string | null

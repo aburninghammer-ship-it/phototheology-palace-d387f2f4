@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Video, Users, Send, ArrowLeft, Share2, Copy } from "lucide-react";
-import { WebRTCCall } from "@/components/WebRTCCall";
+import { SimpleVoiceRoom } from "@/components/voice";
 
 interface ChatMessage {
   id: string;
@@ -344,7 +344,7 @@ const LiveStudyRoom = () => {
 
           <div className="grid md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
-              <WebRTCCall
+              <SimpleVoiceRoom
                 roomId={roomId!}
                 userId={user!.id}
                 userName={userDisplayName || "User"}
