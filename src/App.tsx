@@ -48,6 +48,9 @@ const PalaceCardGame = lazy(() => import("./pages/PalaceCardGame"));
 const KidsGames = lazy(() => import("./pages/KidsGames"));
 const LiveStudy = lazy(() => import("./pages/LiveStudy"));
 const LiveStudyRoom = lazy(() => import("./pages/LiveStudyRoom"));
+const StudyGroups = lazy(() => import("./pages/StudyGroups"));
+const ContentLibrary = lazy(() => import("./pages/ContentLibrary"));
+const UserAnalytics = lazy(() => import("./pages/UserAnalytics"));
 const KidsGamePlay = lazy(() => import("./pages/KidsGamePlay"));
 const GamePlay = lazy(() => import("./pages/GamePlay"));
 const PalaceQuiz = lazy(() => import("./pages/PalaceQuiz"));
@@ -390,6 +393,9 @@ function App() {
             <Route path="/admin/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
             <Route path="/certificates" element={<ProtectedRoute><Certificates /></ProtectedRoute>} />
             <Route path="/study-partners" element={<ProtectedRoute><StudyPartners /></ProtectedRoute>} />
+            <Route path="/study-groups" element={<ProtectedRoute><StudyGroups /></ProtectedRoute>} />
+            <Route path="/content-library" element={<ProtectedRoute><ContentLibrary /></ProtectedRoute>} />
+            <Route path="/my-progress" element={<ProtectedRoute><UserAnalytics /></ProtectedRoute>} />
             <Route path="/streaks" element={<ProtectedRoute><Streaks /></ProtectedRoute>} />
             <Route path="/church-admin" element={<ProtectedRoute><ChurchAdmin /></ProtectedRoute>} />
             <Route path="/join-church" element={<ProtectedRoute><JoinChurch /></ProtectedRoute>} />
