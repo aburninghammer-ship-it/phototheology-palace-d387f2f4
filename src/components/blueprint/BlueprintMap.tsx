@@ -36,23 +36,28 @@ export const BlueprintMap = ({ items, completedItems, onItemClick }: BlueprintMa
   };
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto aspect-[4/3] bg-gradient-to-t from-amber-950/20 via-amber-900/10 to-sky-950/30 rounded-2xl border-2 border-primary/20 shadow-2xl overflow-hidden">
+    <div className="relative w-full max-w-5xl mx-auto aspect-[4/3] glass-card rounded-2xl overflow-hidden">
+      {/* Animated background orbs */}
+      <div className="glass-card-bubbles">
+        <span /><span /><span /><span /><span /><span /><span /><span />
+      </div>
+      
       {/* Background texture */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:20px_20px] opacity-30" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:24px_24px] opacity-50" />
       
       {/* Outer Court - Large rectangle at bottom */}
-      <div className="absolute left-[10%] right-[10%] bottom-[3%] h-[40%] border-2 border-amber-700/40 bg-gradient-to-t from-amber-900/20 to-transparent rounded-lg">
-        <div className="absolute -top-3 left-4 bg-background px-2 py-0.5 text-xs font-semibold text-amber-700">Outer Court</div>
+      <div className="absolute left-[10%] right-[10%] bottom-[3%] h-[40%] border-2 border-amber-600/50 bg-gradient-to-t from-amber-900/30 to-amber-800/10 rounded-xl backdrop-blur-sm shadow-lg shadow-amber-900/20">
+        <div className="absolute -top-3 left-4 bg-amber-700/80 backdrop-blur-sm px-3 py-1 text-xs font-bold text-amber-100 rounded-md shadow-lg">Outer Court</div>
       </div>
       
       {/* Holy Place - Medium rectangle in middle */}
-      <div className="absolute left-[15%] right-[15%] top-[32%] h-[30%] border-2 border-amber-600/50 bg-gradient-to-t from-amber-800/30 to-amber-700/20 rounded-lg shadow-inner">
-        <div className="absolute -top-3 left-4 bg-background px-2 py-0.5 text-xs font-semibold text-amber-600">Holy Place</div>
+      <div className="absolute left-[15%] right-[15%] top-[32%] h-[30%] border-2 border-amber-500/60 bg-gradient-to-t from-amber-700/40 to-amber-600/20 rounded-xl backdrop-blur-sm shadow-lg shadow-amber-800/30">
+        <div className="absolute -top-3 left-4 bg-amber-600/80 backdrop-blur-sm px-3 py-1 text-xs font-bold text-amber-100 rounded-md shadow-lg">Holy Place</div>
       </div>
       
       {/* Most Holy Place - Small rectangle at top */}
-      <div className="absolute left-[30%] right-[30%] top-[6%] h-[18%] border-2 border-yellow-500/60 bg-gradient-to-t from-yellow-600/40 to-yellow-500/30 rounded-lg shadow-lg">
-        <div className="absolute -top-3 left-4 bg-background px-2 py-0.5 text-xs font-semibold text-yellow-600">Most Holy Place</div>
+      <div className="absolute left-[30%] right-[30%] top-[6%] h-[18%] border-2 border-yellow-400/70 bg-gradient-to-t from-yellow-600/50 to-yellow-500/30 rounded-xl backdrop-blur-sm shadow-xl shadow-yellow-600/30">
+        <div className="absolute -top-3 left-4 bg-yellow-500/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-yellow-950 rounded-md shadow-lg">Most Holy Place</div>
       </div>
 
       {/* Connection arrows - Following sanctuary path */}
@@ -87,28 +92,35 @@ export const BlueprintMap = ({ items, completedItems, onItemClick }: BlueprintMa
             )}
             style={position}
           >
-            {/* Item circle */}
+            {/* Item circle with glass effect */}
             <div className={cn(
               "relative flex items-center justify-center",
               "w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28",
-              "rounded-full border-4 transition-all",
-              "shadow-lg group-hover:shadow-2xl",
+              "rounded-full border-2 transition-all",
+              "backdrop-blur-md",
+              "shadow-xl group-hover:shadow-2xl",
               isCompleted 
-                ? "bg-primary border-primary text-primary-foreground"
-                : "bg-card border-primary/50 text-foreground hover:bg-primary/10"
+                ? "bg-primary/80 border-primary text-primary-foreground shadow-primary/30"
+                : "bg-background/60 border-primary/60 text-foreground hover:bg-primary/20 hover:border-primary shadow-primary/20"
             )}>
+              {/* Glow effect */}
+              <div className={cn(
+                "absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity",
+                "bg-gradient-to-r from-primary/20 to-primary/10 blur-md -z-10"
+              )} />
+              
               {/* Item number */}
-              <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-md">
+              <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-lg ring-2 ring-background">
                 {item.id}
               </div>
               
               {/* Completed checkmark */}
               {isCompleted && (
-                <CheckCircle2 className="absolute -bottom-2 -right-2 w-6 h-6 text-green-500 bg-background rounded-full" />
+                <CheckCircle2 className="absolute -bottom-2 -right-2 w-6 h-6 text-green-400 bg-background rounded-full shadow-lg" />
               )}
 
               {/* Emoji or icon representation */}
-              <span className="text-3xl sm:text-4xl">
+              <span className="text-3xl sm:text-4xl drop-shadow-lg">
                 {item.id === 1 && "🔥"}
                 {item.id === 2 && "💧"}
                 {item.id === 3 && "🍞"}
@@ -118,32 +130,32 @@ export const BlueprintMap = ({ items, completedItems, onItemClick }: BlueprintMa
               </span>
             </div>
 
-            {/* Tooltip label */}
+            {/* Tooltip label with glass effect */}
             <div className={cn(
               "absolute top-full mt-2 left-1/2 -translate-x-1/2",
-              "px-3 py-1.5 rounded-lg whitespace-nowrap",
-              "bg-card border border-border shadow-lg",
+              "px-4 py-2 rounded-xl whitespace-nowrap",
+              "bg-background/80 backdrop-blur-md border border-primary/30 shadow-xl",
               "opacity-0 group-hover:opacity-100 group-focus:opacity-100",
-              "transition-opacity duration-200 pointer-events-none",
+              "transition-all duration-200 pointer-events-none",
               "text-xs sm:text-sm font-medium text-center",
               "max-w-[150px] sm:max-w-none"
             )}>
-              <div className="font-semibold">{item.step}</div>
+              <div className="font-bold text-primary">{item.step}</div>
               <div className="text-muted-foreground text-xs truncate">{item.name}</div>
             </div>
           </button>
         );
       })}
 
-      {/* Legend */}
-      <div className="absolute bottom-4 left-4 bg-card/90 backdrop-blur-sm border border-border rounded-lg px-3 py-2 text-xs">
-        <div className="font-semibold mb-1">The Sanctuary Pattern</div>
+      {/* Legend with glass effect */}
+      <div className="absolute bottom-4 left-4 bg-background/70 backdrop-blur-md border border-primary/20 rounded-xl px-4 py-3 text-xs shadow-lg">
+        <div className="font-bold mb-1 text-foreground">The Sanctuary Pattern</div>
         <div className="text-muted-foreground">Click each item to explore</div>
       </div>
 
-      {/* Progress indicator */}
-      <div className="absolute bottom-4 right-4 bg-card/90 backdrop-blur-sm border border-border rounded-lg px-3 py-2 text-xs">
-        <div className="font-semibold">Progress</div>
+      {/* Progress indicator with glass effect */}
+      <div className="absolute bottom-4 right-4 bg-background/70 backdrop-blur-md border border-primary/20 rounded-xl px-4 py-3 text-xs shadow-lg">
+        <div className="font-bold text-foreground">Progress</div>
         <div className="text-muted-foreground">
           {completedItems.length} / {items.length} completed
         </div>

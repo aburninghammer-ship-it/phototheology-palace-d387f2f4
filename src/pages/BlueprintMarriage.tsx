@@ -88,22 +88,26 @@ export default function BlueprintMarriage() {
               </div>
               
               {/* Sanctuary Explanation */}
-              <div className="max-w-4xl mx-auto bg-muted/30 p-8 rounded-lg border-2 border-primary/30">
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <div className="whitespace-pre-line text-base leading-relaxed">
-                    {MARRIAGE_BLUEPRINT_INTRO.sanctuaryExplanation}
+              <Card variant="glass" className="max-w-4xl mx-auto">
+                <CardContent className="pt-6">
+                  <div className="prose prose-sm max-w-none dark:prose-invert">
+                    <div className="whitespace-pre-line text-base leading-relaxed">
+                      {MARRIAGE_BLUEPRINT_INTRO.sanctuaryExplanation}
+                    </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              <div className="max-w-3xl mx-auto bg-primary/5 p-6 rounded-lg border border-primary/20">
-                <p className="text-base leading-relaxed whitespace-pre-line">
-                  {MARRIAGE_BLUEPRINT_INTRO.description}
-                </p>
-                <p className="mt-4 text-lg font-semibold italic text-primary">
-                  "{MARRIAGE_BLUEPRINT_INTRO.quote}"
-                </p>
-              </div>
+              <Card variant="glass" className="max-w-3xl mx-auto border-primary/30">
+                <CardContent className="pt-6">
+                  <p className="text-base leading-relaxed whitespace-pre-line">
+                    {MARRIAGE_BLUEPRINT_INTRO.description}
+                  </p>
+                  <p className="mt-4 text-lg font-semibold italic text-primary">
+                    "{MARRIAGE_BLUEPRINT_INTRO.quote}"
+                  </p>
+                </CardContent>
+              </Card>
             </section>
 
             <BlueprintMap
@@ -117,7 +121,7 @@ export default function BlueprintMarriage() {
             />
           </>
         ) : (
-          <Card>
+          <Card variant="glass">
             <CardHeader>
               <Button 
                 variant="ghost" 
