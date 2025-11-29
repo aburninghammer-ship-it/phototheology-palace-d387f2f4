@@ -2,6 +2,7 @@ import { Navigation } from "@/components/Navigation";
 import { VisualPalace } from "@/components/VisualPalace";
 import { ProgressivePalace } from "@/components/palace/ProgressivePalace";
 import { PalaceBreadcrumbs } from "@/components/palace/PalaceBreadcrumbs";
+import { PalaceTour } from "@/components/onboarding/PalaceTour";
 import { palaceFloors } from "@/data/palaceData";
 import { Building2, Award, TrendingUp, BookOpen, Target, LayoutGrid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,17 +11,33 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { usePalaceProgress } from "@/hooks/usePalaceProgress";
-import { Link, useSearchParams } from "react-router-dom";
+import { usePalaceTour } from "@/hooks/usePalaceTour";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Footer } from "@/components/Footer";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
+import { toast } from "sonner";
 
 const Palace = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { completedRooms, totalRooms, progressPercentage, loading } = usePalaceProgress();
+  const { showTour, loading: tourLoading, completeTour, skipTour } = usePalaceTour();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<"explore" | "progress">("explore");
   const [viewMode, setViewMode] = useState<"visual" | "list">("list"); // Default to progressive list for new users
+
+  const handleTourComplete = () => {
+    completeTour();
+    toast.success("🏛️ Palace Explorer badge earned!", {
+      description: "Now explore the Story Room to begin your journey.",
+    });
+    navigate("/palace/floor/1/room/sr");
+  };
+
+  const handleTourSkip = () => {
+    skipTour();
+  };
 
   useEffect(() => {
     const roomParam = searchParams.get('room');
@@ -45,6 +62,11 @@ const Palace = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Navigation />
+      
+      {/* Palace Tour for first-time visitors */}
+      {showTour && !tourLoading && (
+        <PalaceTour onComplete={handleTourComplete} onSkip={handleTourSkip} />
+      )}
       
       <div className="pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-6xl">
