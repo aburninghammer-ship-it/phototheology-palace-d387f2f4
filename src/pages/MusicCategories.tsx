@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useAudioDucking } from "@/hooks/useAudioDucking";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -162,6 +163,12 @@ export default function MusicCategories() {
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const [volume, setVolume] = useState(0.3);
   const [isMuted, setIsMuted] = useState(false);
+  const [duckMultiplier, setDuckMultiplier] = useState(1);
+
+  // Listen for audio ducking events (when TTS is playing)
+  useAudioDucking(useCallback((ducked: boolean, duckRatio: number) => {
+    setDuckMultiplier(ducked ? duckRatio : 1);
+  }, []));
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -176,11 +183,13 @@ export default function MusicCategories() {
     };
   }, []);
 
+  // Apply volume with ducking
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume;
+      const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
+      audioRef.current.volume = effectiveVolume;
     }
-  }, [volume, isMuted]);
+  }, [volume, isMuted, duckMultiplier]);
 
   const playTrack = async (trackId: string, url: string) => {
     if (!audioRef.current) return;
