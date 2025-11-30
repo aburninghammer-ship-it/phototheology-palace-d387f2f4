@@ -6976,6 +6976,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_reading_presets: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          items: Json
+          name: string
+          room_tags: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          items?: Json
+          name: string
+          room_tags?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          items?: Json
+          name?: string
+          room_tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_reading_progress: {
         Row: {
           created_at: string | null

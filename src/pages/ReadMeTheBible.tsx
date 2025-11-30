@@ -24,7 +24,7 @@ import { SavedSequencesList } from "@/components/reading-sequence/SavedSequences
 import { PresetSequences } from "@/components/reading-sequence/PresetSequences";
 import { useReadingSequences } from "@/hooks/useReadingSequences";
 import { useAuth } from "@/hooks/useAuth";
-import { ReadingSequenceBlock, ROOM_TAG_OPTIONS, SavedReadingSequence } from "@/types/readingSequence";
+import { ReadingSequenceBlock, ROOM_TAG_OPTIONS, SavedReadingSequence, SequenceItem } from "@/types/readingSequence";
 import { VoiceId } from "@/hooks/useTextToSpeech";
 import { toast } from "sonner";
 
@@ -137,9 +137,20 @@ export default function ReadMeTheBible() {
     toast.info("Sequence duplicated - make changes and save");
   };
 
-  const handlePresetSelect = (presetSequences: ReadingSequenceBlock[]) => {
-    setSequences(presetSequences);
-    toast.success("Preset loaded! Customize it below.");
+  const handleAddToSequence = (sequenceNumber: number, items: SequenceItem[]) => {
+    setSequences(prev => prev.map(seq => {
+      if (seq.sequenceNumber === sequenceNumber) {
+        return {
+          ...seq,
+          items: [...seq.items, ...items.map((item, idx) => ({
+            ...item,
+            order: seq.items.length + idx
+          }))]
+        };
+      }
+      return seq;
+    }));
+    toast.success(`Added ${items.length} chapters to Sequence ${sequenceNumber}`);
   };
 
   const totalChapters = sequences.reduce((acc, s) => acc + (s.enabled ? s.items.length : 0), 0);
@@ -215,7 +226,10 @@ export default function ReadMeTheBible() {
           <TabsContent value="create" className="space-y-6">
             {/* Presets */}
             <div className="glass-card p-4 rounded-xl">
-              <PresetSequences onSelect={handlePresetSelect} />
+              <PresetSequences 
+                onAddToSequence={handleAddToSequence} 
+                currentSequences={sequences}
+              />
             </div>
 
             {/* Sequence Info */}
