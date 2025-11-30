@@ -295,27 +295,29 @@ export default function ReadMeTheBible() {
             </div>
 
             {/* Actions */}
-            <div className="glass-card p-4 rounded-xl flex flex-wrap gap-3 justify-end">
+            <div className="glass-card p-4 rounded-xl flex flex-wrap gap-3 justify-between items-center">
               <Button
-                variant="outline"
+                size="lg"
                 onClick={() => handlePlay()}
                 disabled={totalChapters === 0}
-                className="backdrop-blur-sm"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg shadow-green-500/30 gap-2"
               >
-                <Play className="h-4 w-4 mr-2" />
-                Preview
+                <Headphones className="h-5 w-5" />
+                Start Audio Reader
               </Button>
-              {user ? (
-                <Button onClick={handleSave} disabled={isSaving || !sequenceName.trim()} className="bg-gradient-palace hover:opacity-90 shadow-lg shadow-primary/20">
-                  <Save className="h-4 w-4 mr-2" />
-                  {isSaving ? "Saving..." : editingId ? "Update Sequence" : "Save Sequence"}
-                </Button>
-              ) : (
-                <Button disabled>
-                  <Save className="h-4 w-4 mr-2" />
-                  Sign in to Save
-                </Button>
-              )}
+              <div className="flex gap-3">
+                {user ? (
+                  <Button onClick={handleSave} disabled={isSaving || !sequenceName.trim()} className="bg-gradient-palace hover:opacity-90 shadow-lg shadow-primary/20">
+                    <Save className="h-4 w-4 mr-2" />
+                    {isSaving ? "Saving..." : editingId ? "Update Sequence" : "Save Sequence"}
+                  </Button>
+                ) : (
+                  <Button disabled>
+                    <Save className="h-4 w-4 mr-2" />
+                    Sign in to Save
+                  </Button>
+                )}
+              </div>
             </div>
           </TabsContent>
 
