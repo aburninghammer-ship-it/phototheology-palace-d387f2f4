@@ -314,6 +314,16 @@ const AMBIENT_TRACKS = [
     url: "https://cdn1.suno.ai/a362b171-5a6f-4264-8946-ae76b09a6aa7.mp3",
     bpm: 60,
   },
+  {
+    id: "echoes-of-eternity",
+    name: "Echoes of Eternity",
+    description: "Cinematic orchestral Christian instrumental with eternal themes",
+    category: "hymn-cinematic",
+    floor: 7,
+    mood: "cinematic, orchestral, eternal, worship",
+    url: "https://cdn1.suno.ai/87b87bf9-3f8f-4e49-ab69-1834e0db7119.mp3",
+    bpm: 60,
+  },
 ];
 
 // Room to track mapping based on Phototheology floors
