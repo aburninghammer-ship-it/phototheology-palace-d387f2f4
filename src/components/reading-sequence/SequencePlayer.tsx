@@ -106,47 +106,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     console.log("SequencePlayer mounted, refs reset. Active sequences:", activeSequences.length, "Total items:", totalItems);
   }, []);
 
-  // Initialize background music audio
-  useEffect(() => {
-    // Create music audio element - using a reliable royalty-free ambient track
-    const musicAudio = new Audio("https://cdn.pixabay.com/download/audio/2022/02/22/audio_d1718ab41b.mp3");
-    musicAudio.loop = true;
-    musicAudio.crossOrigin = "anonymous";
-    const vol = musicVolume / 100; // Convert 0-30 to 0-0.30
-    musicAudio.volume = vol;
-    musicAudioRef.current = musicAudio;
-    
-    console.log("[SequencePlayer] Music audio initialized, volume:", vol);
-    
-    // Add event listeners for debugging
-    musicAudio.addEventListener('canplay', () => console.log("[SequencePlayer] Music can play"));
-    musicAudio.addEventListener('error', (e) => console.error("[SequencePlayer] Music error:", e));
-    musicAudio.addEventListener('playing', () => console.log("[SequencePlayer] Music started playing"));
-    
-    return () => {
-      if (musicAudioRef.current) {
-        musicAudioRef.current.pause();
-        musicAudioRef.current = null;
-      }
-    };
-  }, []);
-
-  // Update music volume when slider changes
+  // Update music volume directly on ref
   useEffect(() => {
     if (musicAudioRef.current) {
-      const vol = musicVolume / 100; // 0-30 -> 0-0.30
-      musicAudioRef.current.volume = vol;
-      console.log("[SequencePlayer] Music volume updated to:", vol, "from slider value:", musicVolume);
+      musicAudioRef.current.volume = musicVolume / 100;
     }
   }, [musicVolume]);
 
-  // Start music when playback state changes
+  // Start/pause music based on playback
   useEffect(() => {
     if (musicAudioRef.current && isPlaying && !isPaused && musicVolume > 0) {
-      console.log("[SequencePlayer] Attempting to play music...");
-      musicAudioRef.current.play()
-        .then(() => console.log("[SequencePlayer] Music playing successfully"))
-        .catch(e => console.log("[SequencePlayer] Music autoplay blocked:", e.message));
+      musicAudioRef.current.play().catch(() => {});
     }
   }, [isPlaying, isPaused, musicVolume]);
 
@@ -1034,7 +1004,15 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     : 0;
 
   return (
-    <Card className="overflow-hidden glass-card border-white/10 bg-card/50 backdrop-blur-xl">
+    <>
+      {/* Hidden background music audio element */}
+      <audio
+        ref={musicAudioRef}
+        src="https://cdn.pixabay.com/download/audio/2022/02/22/audio_d1718ab41b.mp3"
+        loop
+        preload="auto"
+      />
+      <Card className="overflow-hidden glass-card border-white/10 bg-card/50 backdrop-blur-xl">
       <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
@@ -1257,5 +1235,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         </div>
       </CardContent>
     </Card>
+    </>
   );
 };
