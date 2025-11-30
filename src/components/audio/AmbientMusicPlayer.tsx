@@ -839,19 +839,24 @@ export function AmbientMusicPlayer({
                 )}
               </Button>
               
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={cycleLoopMode}
-                className={cn("h-8 w-8", loopMode !== "none" && "text-primary")}
-                title={loopMode === "none" ? "Loop off" : loopMode === "one" ? "Loop one" : "Loop all"}
-              >
-                {loopMode === "one" ? (
-                  <Repeat1 className="h-4 w-4" />
-                ) : (
-                  <Repeat className="h-4 w-4" />
-                )}
-              </Button>
+              <div className="flex flex-col items-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={cycleLoopMode}
+                  className={cn("h-8 w-8", loopMode !== "none" && "text-primary")}
+                  title={loopMode === "none" ? "No repeat" : loopMode === "one" ? "Repeat current song" : "Repeat playlist"}
+                >
+                  {loopMode === "one" ? (
+                    <Repeat1 className="h-4 w-4" />
+                  ) : (
+                    <Repeat className="h-4 w-4" />
+                  )}
+                </Button>
+                <span className="text-[10px] text-muted-foreground">
+                  {loopMode === "none" ? "Off" : loopMode === "one" ? "Song" : "All"}
+                </span>
+              </div>
               
               <Button
                 variant="ghost"
@@ -932,7 +937,7 @@ export function AmbientMusicPlayer({
             size="icon"
             onClick={cycleLoopMode}
             className={cn("h-8 w-8 shrink-0", loopMode !== "none" && "text-primary")}
-            title={loopMode === "none" ? "Loop off" : loopMode === "one" ? "Loop one" : "Loop all"}
+            title={loopMode === "none" ? "No repeat" : loopMode === "one" ? "Repeat current song" : "Repeat playlist"}
           >
             {loopMode === "one" ? (
               <Repeat1 className="h-4 w-4" />
