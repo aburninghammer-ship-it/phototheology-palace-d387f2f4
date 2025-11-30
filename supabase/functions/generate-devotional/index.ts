@@ -314,28 +314,71 @@ ${formatInstructions}${personalizationNote}${cadeSection}
 
 VARIETY & FRESHNESS - CRITICAL:
 - DO NOT use the same format/structure for every day
-- Vary the palace principle emphasis each day (Imagination Room one day, Observation the next, Patterns another, etc.)
+- Rotate through ALL palace principles across all 8 floors
 - Some days use vivid imagery, other days detective-style questions, others historical parallels
 - Mix up the presentation style to keep it fresh and engaging
 
 CONTENT GUIDELINES (adapt based on the day's approach):
 - scripture_text: Include the FULL passage (3-8 verses minimum)
-- visual_imagery: OPTIONAL - use when passage naturally lends itself to mental pictures. Not every day needs this.
-- memory_hook: OPTIONAL - a key insight, quotable truth, or memorable phrase. Vary the label/approach.
+- visual_imagery: OPTIONAL - use when passage naturally lends itself to mental pictures
+- memory_hook: OPTIONAL - a key insight, quotable truth, or memorable phrase
 - application: 4-6 sentences with SPECIFIC, practical steps
 - prayer: Heartfelt, 5-8 sentences - vary style (praise, lament, petition)
 - challenge: 2-3 DOABLE actions
 - journal_prompt: 2-4 reflection questions
 - christ_connection: 4-6 sentences showing how this reveals Christ with theological depth
 
-PALACE APPROACH VARIETY (rotate through these, don't repeat same approach daily):
-- Imagination Room: Paint vivid mental picture, immerse in the scene
-- Observation Room: Detective-style, notice specific details in the text
-- Questions Room: Lead with thought-provoking questions about the passage
-- Patterns Room: Show how this connects to recurring biblical patterns
-- Symbols/Types Room: Unpack the symbolic meaning and typology
-- Sanctuary approach: Connect to the sanctuary furniture/services
-- Freestyle approach: Connect the passage to everyday life, nature, or current events
+PALACE APPROACH VARIETY - Rotate through ALL of these across the devotional:
+
+FLOOR 1 - FURNISHING (Memory & Visualization):
+- Story Room (SR): Retell the biblical narrative with vivid detail
+- Imagination Room (IR): Paint a mental picture, immerse the reader in the scene with sensory details
+- 24FPS (24F): Create a memorable symbolic frame/image for the passage
+- Bible Rendered (BR): Summarize the chapter/passage in one striking image
+- Translation Room (TR): Turn abstract truths into concrete visual pictures
+- Gems Room (GR): Extract and highlight a precious insight or discovery
+
+FLOOR 2 - INVESTIGATION (Detective Work):
+- Observation Room (OR): Notice specific details - words, repetition, structure
+- Def-Com Room (DC): Explore word definitions, Greek/Hebrew meanings, cultural context
+- Symbols/Types Room (ST): Identify symbols, types, and shadows pointing to Christ
+- Questions Room (QR): Lead with probing questions about the text
+- Q&A Room (QA): Let Scripture answer Scripture - chain verses together
+
+FLOOR 3 - FREESTYLE (Daily Connections):
+- Nature Freestyle (NF): Connect the passage to something in nature
+- Personal Freestyle (PF): Apply to personal life experiences
+- Bible Freestyle (BF): Show verse genetics - how this verse relates to others
+- History Freestyle (HF): Connect to historical events or church history
+- Listening Room (LR): Reflect on what God is saying through this passage
+
+FLOOR 4 - NEXT LEVEL (Christ-Centered Depth):
+- Concentration Room (CR): Focus intensely on how Christ is revealed
+- Dimensions Room (DR): Explore literal, Christ, personal, church, and eternal dimensions
+- Connect 6 (C6): Identify the genre and interpret accordingly
+- Theme Room (TRm): Connect to major biblical themes (Sanctuary, Great Controversy, Gospel)
+- Time Zone Room (TZ): Place in past, present, or future context
+- Patterns Room (PRm): Show recurring biblical patterns
+- Parallels Room (P||): Draw parallels with other biblical events
+- Fruit Room (FRt): Test interpretation against spiritual fruit
+
+FLOOR 5 - VISION (Prophecy & Sanctuary):
+- Blue Room/Sanctuary (BL): Connect to sanctuary furniture and services
+- Prophecy Room (PR): Link to prophetic timelines and fulfillment
+- Three Angels Room (3A): Connect to the three angels' messages
+
+FLOOR 6 - THREE HEAVENS (Cycles & Context):
+- Place the passage within biblical cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re)
+- Connect to the three heavens framework (1H, 2H, 3H)
+- Juice Room (JR): Extract maximum meaning by applying multiple principles
+
+FLOOR 7 - SPIRITUAL/EMOTIONAL (Heart Engagement):
+- Fire Room (FRm): Engage the emotions - conviction, comfort, awe
+- Meditation Room (MR): Slow, contemplative reflection
+- Speed Room (SRm): Quick, practical application
+
+FLOOR 8 - MASTER (Reflexive Integration):
+- Seamlessly blend multiple principles without being formulaic
 
 OUTPUT FORMAT - Return a JSON array of \${duration} days:
 {
