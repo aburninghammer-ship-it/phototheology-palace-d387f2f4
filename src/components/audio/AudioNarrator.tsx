@@ -18,13 +18,15 @@ import {
   SkipBack,
   Loader2,
   Headphones,
-  Mic
+  Mic,
+  Smartphone
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ELEVENLABS_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AudioNarratorProps {
   text: string;
@@ -53,6 +55,7 @@ export const AudioNarrator = ({
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>(initialVoice);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     return () => {
@@ -295,28 +298,35 @@ export const AudioNarrator = ({
             </div>
           </div>
 
-          {/* Volume */}
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleMute}
-              className="h-8 w-8"
-            >
-              {isMuted || volume === 0 ? (
-                <VolumeX className="h-4 w-4" />
-              ) : (
-                <Volume2 className="h-4 w-4" />
-              )}
-            </Button>
-            <Slider
-              value={[isMuted ? 0 : volume]}
-              max={100}
-              step={1}
-              onValueChange={handleVolumeChange}
-              className="w-20"
-            />
-          </div>
+          {/* Volume - hidden on mobile since programmatic volume doesn't work */}
+          {!isMobile ? (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMute}
+                className="h-8 w-8"
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="h-4 w-4" />
+                ) : (
+                  <Volume2 className="h-4 w-4" />
+                )}
+              </Button>
+              <Slider
+                value={[isMuted ? 0 : volume]}
+                max={100}
+                step={1}
+                onValueChange={handleVolumeChange}
+                className="w-20"
+              />
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Smartphone className="h-3 w-3" />
+              <span>System vol</span>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

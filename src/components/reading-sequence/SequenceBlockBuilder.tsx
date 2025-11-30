@@ -559,7 +559,7 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
               
               {/* Commentary Options - shown when enabled */}
               {block.includeJeevesCommentary && (
-                <div className="grid grid-cols-2 gap-4 p-3 bg-muted/30 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3 bg-muted/30 rounded-lg">
                   <div>
                     <Label className="text-xs text-muted-foreground flex items-center gap-1">
                       <Mic className="h-3 w-3" /> Commentary Voice
