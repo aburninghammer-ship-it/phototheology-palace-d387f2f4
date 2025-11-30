@@ -1000,6 +1000,7 @@ export type Database = {
           id: string
           parent_comment_id: string | null
           post_id: string | null
+          updated_at: string | null
           user_id: string
         }
         Insert: {
@@ -1008,6 +1009,7 @@ export type Database = {
           id?: string
           parent_comment_id?: string | null
           post_id?: string | null
+          updated_at?: string | null
           user_id: string
         }
         Update: {
@@ -1016,6 +1018,7 @@ export type Database = {
           id?: string
           parent_comment_id?: string | null
           post_id?: string | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: [
