@@ -200,7 +200,7 @@ export default function ReadMeTheBible() {
             <div>
               <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Read Me the Bible</h1>
               <p className="text-muted-foreground">
-                Create custom audio reading sequences with ElevenLabs voices
+                Create custom audio reading sequences
               </p>
             </div>
           </div>
