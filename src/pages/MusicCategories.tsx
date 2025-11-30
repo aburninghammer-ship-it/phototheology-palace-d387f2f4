@@ -69,11 +69,11 @@ const MUSIC_FLOORS = [
     borderColor: "border-purple-500/30",
     tracks: [
       {
-        id: "sanctuary-stillness",
-        name: "Sanctuary Stillness",
-        description: "Sacred strings with soft harp and gentle brass",
-        bpm: 58,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Meditation%20Impromptu.mp3",
+        id: "sanctuary-resolve",
+        name: "Sanctuary Resolve",
+        description: "Sobering orchestral strings with weight and purpose",
+        bpm: 62,
+        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Private%20Reflection.mp3",
       },
       {
         id: "blue-room-ambient",
