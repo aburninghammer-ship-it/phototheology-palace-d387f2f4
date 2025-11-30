@@ -882,7 +882,7 @@ export function AmbientMusicPlayer({
                     max={1}
                     step={0.01}
                     onValueChange={handleVolumeChange}
-                    className="flex-1"
+                    className="w-24"
                   />
                 </>
               ) : (
