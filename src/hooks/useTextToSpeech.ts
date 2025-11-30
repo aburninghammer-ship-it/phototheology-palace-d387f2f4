@@ -35,12 +35,21 @@ interface UseTextToSpeechOptions {
   onError?: (error: string) => void;
 }
 
+interface SpeakOptions {
+  voice?: VoiceId;
+  book?: string;
+  chapter?: number;
+  verse?: number;
+  useCache?: boolean;
+}
+
 export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
   const { defaultVoice = 'daniel', onStart, onEnd, onError } = options;
   
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>(defaultVoice);
+  const [wasCached, setWasCached] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const stop = useCallback(() => {
@@ -52,23 +61,33 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
     }
   }, [onEnd]);
 
-  const speak = useCallback(async (text: string, voice?: VoiceId) => {
+  const speak = useCallback(async (text: string, speakOptions?: SpeakOptions | VoiceId) => {
     if (!text.trim()) {
       toast.error('No text to speak');
       return;
     }
 
+    // Handle legacy call signature (voice as second param)
+    const opts: SpeakOptions = typeof speakOptions === 'string' 
+      ? { voice: speakOptions } 
+      : speakOptions || {};
+
     // Stop any currently playing audio
     stop();
 
     setIsLoading(true);
+    setWasCached(false);
     onStart?.();
 
     try {
       const { data, error } = await supabase.functions.invoke('text-to-speech', {
         body: { 
           text: text.trim(),
-          voice: voice || selectedVoice 
+          voice: opts.voice || selectedVoice,
+          book: opts.book,
+          chapter: opts.chapter,
+          verse: opts.verse,
+          useCache: opts.useCache !== false // default to true
         }
       });
 
@@ -76,16 +95,25 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
         throw new Error(error.message || 'Failed to generate speech');
       }
 
-      if (!data?.audioContent) {
+      let audioUrl: string;
+
+      // Check if we got a cached URL or need to decode base64
+      if (data?.audioUrl) {
+        // Cached audio - use URL directly
+        audioUrl = data.audioUrl;
+        setWasCached(data.cached === true);
+        console.log(`[TTS] Using ${data.cached ? 'cached' : 'newly cached'} audio`);
+      } else if (data?.audioContent) {
+        // Base64 audio - create blob URL
+        const audioBlob = new Blob(
+          [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
+          { type: 'audio/mpeg' }
+        );
+        audioUrl = URL.createObjectURL(audioBlob);
+        setWasCached(false);
+      } else {
         throw new Error('No audio content received');
       }
-
-      // Create audio from base64
-      const audioBlob = new Blob(
-        [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
-        { type: 'audio/mpeg' }
-      );
-      const audioUrl = URL.createObjectURL(audioBlob);
 
       // Create and play audio
       if (!audioRef.current) {
@@ -95,12 +123,17 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
       audioRef.current.src = audioUrl;
       audioRef.current.onended = () => {
         setIsPlaying(false);
-        URL.revokeObjectURL(audioUrl);
+        // Only revoke if it's a blob URL (not a storage URL)
+        if (audioUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(audioUrl);
+        }
         onEnd?.();
       };
       audioRef.current.onerror = () => {
         setIsPlaying(false);
-        URL.revokeObjectURL(audioUrl);
+        if (audioUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(audioUrl);
+        }
         onError?.('Audio playback failed');
       };
 
@@ -125,5 +158,6 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
     selectedVoice,
     setSelectedVoice,
     voices: ELEVENLABS_VOICES,
+    wasCached, // New: indicates if last audio was from cache
   };
 }

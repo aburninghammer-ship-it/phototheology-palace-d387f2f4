@@ -166,6 +166,42 @@ export type Database = {
         }
         Relationships: []
       }
+      bible_audio_cache: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string
+          duration_ms: number | null
+          file_size_bytes: number | null
+          id: string
+          storage_path: string
+          verse: number
+          voice_id: string
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string
+          duration_ms?: number | null
+          file_size_bytes?: number | null
+          id?: string
+          storage_path: string
+          verse: number
+          voice_id?: string
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string
+          duration_ms?: number | null
+          file_size_bytes?: number | null
+          id?: string
+          storage_path?: string
+          verse?: number
+          voice_id?: string
+        }
+        Relationships: []
+      }
       bible_images: {
         Row: {
           created_at: string

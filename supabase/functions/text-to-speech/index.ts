@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,10 +30,105 @@ const VOICES: Record<string, string> = {
   bill: 'pqHfZKP75CvOlQylNhV4',
 };
 
-const MAX_CHARS = 9500; // Stay under ElevenLabs 10,000 limit
+const MAX_CHARS = 9500;
+const DEFAULT_BIBLE_VOICE = 'daniel';
 
-// Helper function to delay execution
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Normalize book names for storage paths
+function normalizeBookName(book: string): string {
+  return book.toLowerCase().replace(/\s+/g, '-');
+}
+
+// Generate storage path for verse audio
+function getStoragePath(book: string, chapter: number, verse: number, voiceId: string): string {
+  return `${voiceId}/${normalizeBookName(book)}/${chapter}/${verse}.mp3`;
+}
+
+// Check if audio exists in cache
+async function checkCache(
+  supabase: any,
+  book: string,
+  chapter: number,
+  verse: number,
+  voiceId: string
+): Promise<{ found: boolean; url?: string }> {
+  try {
+    const { data, error } = await supabase
+      .from('bible_audio_cache')
+      .select('storage_path')
+      .eq('book', book)
+      .eq('chapter', chapter)
+      .eq('verse', verse)
+      .eq('voice_id', voiceId)
+      .single();
+
+    if (error || !data) {
+      return { found: false };
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('bible-audio')
+      .getPublicUrl(data.storage_path);
+
+    return { found: true, url: urlData.publicUrl };
+  } catch {
+    return { found: false };
+  }
+}
+
+// Store audio in cache
+async function storeInCache(
+  supabase: any,
+  book: string,
+  chapter: number,
+  verse: number,
+  voiceId: string,
+  audioBuffer: ArrayBuffer
+): Promise<string | null> {
+  try {
+    const storagePath = getStoragePath(book, chapter, verse, voiceId);
+    
+    const { error: uploadError } = await supabase.storage
+      .from('bible-audio')
+      .upload(storagePath, audioBuffer, {
+        contentType: 'audio/mpeg',
+        upsert: true
+      });
+
+    if (uploadError) {
+      console.error('[Cache] Storage upload error:', uploadError);
+      return null;
+    }
+
+    const { error: dbError } = await supabase
+      .from('bible_audio_cache')
+      .upsert({
+        book,
+        chapter,
+        verse,
+        voice_id: voiceId,
+        storage_path: storagePath,
+        file_size_bytes: audioBuffer.byteLength,
+      }, {
+        onConflict: 'book,chapter,verse,voice_id'
+      });
+
+    if (dbError) {
+      console.error('[Cache] DB error:', dbError);
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('bible-audio')
+      .getPublicUrl(storagePath);
+
+    console.log(`[Cache] Stored: ${storagePath}`);
+    return urlData.publicUrl;
+  } catch (err) {
+    console.error('[Cache] Store error:', err);
+    return null;
+  }
+}
 
 // Split text into chunks at sentence boundaries
 function splitTextIntoChunks(text: string, maxChars: number): string[] {
@@ -49,10 +145,7 @@ function splitTextIntoChunks(text: string, maxChars: number): string[] {
       break;
     }
 
-    // Find a good break point (sentence end) within the limit
     let breakPoint = maxChars;
-    
-    // Look for sentence endings (.!?) followed by space or end
     const searchText = remaining.substring(0, maxChars);
     const sentenceEndings = ['. ', '! ', '? ', '.\n', '!\n', '?\n'];
     let lastSentenceEnd = -1;
@@ -60,25 +153,21 @@ function splitTextIntoChunks(text: string, maxChars: number): string[] {
     for (const ending of sentenceEndings) {
       const idx = searchText.lastIndexOf(ending);
       if (idx > lastSentenceEnd) {
-        lastSentenceEnd = idx + 1; // Include the punctuation
+        lastSentenceEnd = idx + 1;
       }
     }
 
-    // If we found a sentence break, use it; otherwise try paragraph break
     if (lastSentenceEnd > maxChars * 0.5) {
       breakPoint = lastSentenceEnd;
     } else {
-      // Try paragraph break
       const paragraphBreak = searchText.lastIndexOf('\n\n');
       if (paragraphBreak > maxChars * 0.3) {
         breakPoint = paragraphBreak + 1;
       } else {
-        // Fall back to any newline
         const newlineBreak = searchText.lastIndexOf('\n');
         if (newlineBreak > maxChars * 0.3) {
           breakPoint = newlineBreak + 1;
         }
-        // Otherwise just cut at maxChars
       }
     }
 
@@ -89,7 +178,7 @@ function splitTextIntoChunks(text: string, maxChars: number): string[] {
   return chunks.filter(chunk => chunk.length > 0);
 }
 
-// Call ElevenLabs API with retry logic for rate limiting
+// Call ElevenLabs API with retry logic
 async function callElevenLabsWithRetry(
   text: string,
   voiceId: string,
@@ -100,7 +189,6 @@ async function callElevenLabsWithRetry(
   
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     if (attempt > 0) {
-      // Exponential backoff: 2s, 4s, 8s
       const waitTime = Math.pow(2, attempt) * 1000;
       console.log(`Rate limited. Waiting ${waitTime}ms before retry ${attempt + 1}/${maxRetries}`);
       await delay(waitTime);
@@ -117,12 +205,10 @@ async function callElevenLabsWithRetry(
         },
         body: JSON.stringify({
           text,
-          model_id: 'eleven_multilingual_v2',
+          model_id: 'eleven_turbo_v2',
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
-            style: 0.0,
-            use_speaker_boost: true,
           },
         }),
       }
@@ -132,24 +218,22 @@ async function callElevenLabsWithRetry(
       return response;
     }
 
-    // Check if it's a rate limit error (429)
     if (response.status === 429) {
       const errorText = await response.text();
-      console.error(`ElevenLabs API error: ${response.status}`, errorText);
+      console.error(`ElevenLabs rate limit: ${response.status}`, errorText);
       lastError = new Error(`Rate limited: ${response.status}`);
-      continue; // Retry
+      continue;
     }
 
-    // For other errors, don't retry
     const errorText = await response.text();
     console.error(`ElevenLabs API error: ${response.status}`, errorText);
-    throw new Error(`ElevenLabs API error: ${response.status}`);
+    throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
   }
 
   throw lastError || new Error('Max retries exceeded');
 }
 
-// Convert array buffer to base64 in chunks to avoid stack overflow
+// Convert array buffer to base64
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
   let base64 = '';
@@ -162,13 +246,12 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const { text, voice = "daniel" } = await req.json();
+    const { text, voice = DEFAULT_BIBLE_VOICE, book, chapter, verse, useCache = true } = await req.json();
 
     if (!text) {
       throw new Error("Text is required");
@@ -179,33 +262,57 @@ serve(async (req) => {
       throw new Error("ELEVENLABS_API_KEY is not configured");
     }
 
-    // Get voice ID from name or use directly if it's already an ID
-    const voiceId = VOICES[voice.toLowerCase()] || voice;
+    // Initialize Supabase client for caching
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log(`Generating TTS for ${text.length} characters with voice: ${voice} (${voiceId})`);
+    const voiceName = voice.toLowerCase();
+    const voiceId = VOICES[voiceName] || VOICES[DEFAULT_BIBLE_VOICE];
 
-    // Split text into chunks if needed
+    // Check cache if verse info provided
+    if (useCache && book && chapter !== undefined && verse !== undefined) {
+      console.log(`[TTS] Checking cache: ${book} ${chapter}:${verse} (${voiceName})`);
+      
+      const cacheResult = await checkCache(supabase, book, chapter, verse, voiceName);
+      
+      if (cacheResult.found && cacheResult.url) {
+        console.log(`[TTS] CACHE HIT - ${book} ${chapter}:${verse}`);
+        return new Response(
+          JSON.stringify({ 
+            audioUrl: cacheResult.url,
+            cached: true,
+            contentType: 'audio/mpeg'
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      console.log(`[TTS] CACHE MISS - generating audio`);
+    }
+
+    console.log(`[TTS] Generating for ${text.length} chars with voice: ${voiceName}`);
+
+    // Split text and generate
     const chunks = splitTextIntoChunks(text, MAX_CHARS);
-    console.log(`Split into ${chunks.length} chunks`);
+    console.log(`[TTS] Split into ${chunks.length} chunks`);
 
-    // Generate TTS for each chunk and collect audio buffers
     const audioBuffers: ArrayBuffer[] = [];
     
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
-      console.log(`Processing chunk ${i + 1}/${chunks.length} (${chunk.length} chars)`);
+      console.log(`[TTS] Processing chunk ${i + 1}/${chunks.length} (${chunk.length} chars)`);
       
       const response = await callElevenLabsWithRetry(chunk, voiceId, ELEVENLABS_API_KEY);
       const buffer = await response.arrayBuffer();
       audioBuffers.push(buffer);
       
-      // Small delay between chunks to avoid rate limiting
       if (i < chunks.length - 1) {
         await delay(100);
       }
     }
 
-    // Concatenate all audio buffers
+    // Combine audio buffers
     const totalLength = audioBuffers.reduce((sum, buf) => sum + buf.byteLength, 0);
     const combined = new Uint8Array(totalLength);
     let offset = 0;
@@ -214,10 +321,27 @@ serve(async (req) => {
       offset += buffer.byteLength;
     }
 
-    // Convert to base64
-    const base64Audio = arrayBufferToBase64(combined.buffer);
+    console.log(`[TTS] Generated ${totalLength} bytes`);
 
-    console.log(`TTS audio generated successfully, total size: ${totalLength} bytes from ${chunks.length} chunks`);
+    // Store in cache if verse info provided
+    if (useCache && book && chapter !== undefined && verse !== undefined) {
+      const cachedUrl = await storeInCache(supabase, book, chapter, verse, voiceName, combined.buffer);
+      
+      if (cachedUrl) {
+        return new Response(
+          JSON.stringify({ 
+            audioUrl: cachedUrl,
+            cached: false,
+            justCached: true,
+            contentType: 'audio/mpeg'
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Return base64 if not caching
+    const base64Audio = arrayBufferToBase64(combined.buffer);
 
     return new Response(
       JSON.stringify({ 
@@ -225,15 +349,13 @@ serve(async (req) => {
         audioContent: base64Audio,
         contentType: 'audio/mpeg',
         textLength: text.length,
-        voice: voice,
+        voice: voiceName,
         chunks: chunks.length
       }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("text-to-speech error:", error);
+    console.error("[TTS Error]:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
       {
