@@ -122,32 +122,37 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
 
   // Play a specific verse by index - using a stable ref to avoid stale closures
   const playVerseAtIndex = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
+    console.log("[PlayVerse] Called with:", { verseIdx, versesCount: content?.verses?.length, voice });
+    
     if (isGeneratingRef.current) {
-      console.log("Already generating TTS, skipping verse:", verseIdx + 1);
+      console.log("[PlayVerse] Already generating TTS, skipping verse:", verseIdx + 1);
       return;
     }
-    if (!content || verseIdx >= content.verses.length) {
-      console.log("Invalid verse index or content");
+    if (!content || !content.verses || verseIdx >= content.verses.length) {
+      console.log("[PlayVerse] Invalid verse index or content:", { hasContent: !!content, verseIdx });
       return;
     }
 
     isGeneratingRef.current = true;
     const verse = content.verses[verseIdx];
 
-    console.log("=== Starting TTS for verse:", verseIdx + 1, "of", content.verses.length);
+    console.log("[PlayVerse] Starting TTS for verse:", verseIdx + 1, "of", content.verses.length, "text:", verse.text.substring(0, 50));
 
     setIsLoading(true);
     setCurrentVerseIdx(verseIdx);
     
     const url = await generateTTS(verse.text, voice);
     
+    console.log("[PlayVerse] TTS result:", url ? "URL generated" : "FAILED");
+    
     isGeneratingRef.current = false;
     setIsLoading(false);
 
     if (!url) {
-      console.error("Failed to generate TTS URL");
+      console.error("[PlayVerse] Failed to generate TTS URL");
       toast.error("Failed to generate audio");
       continuePlayingRef.current = false;
+      setIsPlaying(false);
       return;
     }
 
@@ -158,33 +163,42 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     setAudioUrl(url);
 
     // Create and configure audio element
+    console.log("[PlayVerse] Creating Audio element with volume:", isMuted ? 0 : volume / 100);
     const audio = new Audio(url);
     audio.volume = isMuted ? 0 : volume / 100;
     
     // Store reference before setting handlers
     audioRef.current = audio;
 
+    audio.onloadstart = () => {
+      console.log("[Audio] Load started for verse:", verseIdx + 1);
+    };
+    
+    audio.oncanplaythrough = () => {
+      console.log("[Audio] Can play through for verse:", verseIdx + 1);
+    };
+
     audio.onplay = () => {
-      console.log(">>> Audio playing verse:", verseIdx + 1);
+      console.log("[Audio] >>> Playing verse:", verseIdx + 1);
       notifyTTSStarted();
     };
     
     audio.onended = () => {
-      console.log("<<< Audio ended verse:", verseIdx + 1, "| continue:", continuePlayingRef.current);
+      console.log("[Audio] <<< Ended verse:", verseIdx + 1, "| continue:", continuePlayingRef.current);
       notifyTTSStopped();
       
       // Clear the audio ref immediately
       audioRef.current = null;
       
       if (!continuePlayingRef.current) {
-        console.log("Not continuing - flag is false");
+        console.log("[Audio] Not continuing - flag is false");
         return;
       }
       
       const nextVerseIdx = verseIdx + 1;
       
       if (nextVerseIdx < content.verses.length) {
-        console.log("Scheduling next verse:", nextVerseIdx + 1);
+        console.log("[Audio] Scheduling next verse:", nextVerseIdx + 1);
         // Use setTimeout to ensure clean state transition
         setTimeout(() => {
           if (continuePlayingRef.current) {
@@ -193,18 +207,18 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         }, 100);
       } else {
         // Move to next chapter
-        console.log("Chapter complete, checking for next...");
+        console.log("[Audio] Chapter complete, checking for next...");
         shouldPlayNextRef.current = true;
         setCurrentItemIdx((prev) => {
           const nextIdx = prev + 1;
           if (nextIdx >= totalItems) {
-            console.log("All chapters complete!");
+            console.log("[Audio] All chapters complete!");
             setIsPlaying(false);
             continuePlayingRef.current = false;
             toast.success("Reading sequence complete!");
             return prev;
           }
-          console.log("Moving to chapter:", nextIdx + 1);
+          console.log("[Audio] Moving to chapter:", nextIdx + 1);
           setCurrentVerseIdx(0);
           setChapterContent(null);
           return nextIdx;
@@ -213,23 +227,33 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     };
 
     audio.onerror = (e) => {
-      console.error("Audio error:", e);
+      const error = audio.error;
+      console.error("[Audio] Error:", {
+        code: error?.code,
+        message: error?.message,
+        verseIdx: verseIdx + 1
+      });
       notifyTTSStopped();
       audioRef.current = null;
       isGeneratingRef.current = false;
       continuePlayingRef.current = false;
+      setIsPlaying(false);
     };
 
     // Start playback
     try {
+      console.log("[Audio] Calling play()...");
       await audio.play();
-      console.log("Audio play() called successfully");
+      console.log("[Audio] play() succeeded for verse:", verseIdx + 1);
       setIsPlaying(true);
       setIsPaused(false);
     } catch (e) {
-      console.error("Failed to play audio:", e);
+      console.error("[Audio] play() failed:", e);
       audioRef.current = null;
       isGeneratingRef.current = false;
+      continuePlayingRef.current = false;
+      setIsPlaying(false);
+      toast.error("Failed to play audio - try clicking play manually");
     }
   }, [volume, isMuted, totalItems, generateTTS]);
 
@@ -322,12 +346,20 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     
     // Wait for content to be ready, then start
     const checkAndStart = () => {
-      if (chapterContent && !isLoading && !isGeneratingRef.current && !audioRef.current) {
-        console.log("Auto-starting playback, verses:", chapterContent.verses.length);
+      console.log("[AutoStart] Checking:", {
+        hasContent: !!chapterContent,
+        versesCount: chapterContent?.verses?.length,
+        isLoading,
+        isGenerating: isGeneratingRef.current,
+        hasAudio: !!audioRef.current
+      });
+      
+      if (chapterContent && chapterContent.verses && chapterContent.verses.length > 0 && !isLoading && !isGeneratingRef.current && !audioRef.current) {
+        console.log("[AutoStart] Starting playback with", chapterContent.verses.length, "verses");
         setHasStarted(true);
         const voice = currentSequence?.voice || "daniel";
         continuePlayingRef.current = true;
-        setIsPlaying(true);
+        // Don't set isPlaying here - let playVerseAtIndex do it after audio actually starts
         playVerseAtIndex(0, chapterContent, voice);
         return true;
       }
@@ -342,10 +374,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       if (checkAndStart()) {
         clearInterval(interval);
       }
-    }, 200);
+    }, 300);
     
-    // Clean up after 5 seconds
-    const timeout = setTimeout(() => clearInterval(interval), 5000);
+    // Clean up after 10 seconds
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+      console.log("[AutoStart] Timeout - content never became ready");
+    }, 10000);
     
     return () => {
       clearInterval(interval);
