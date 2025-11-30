@@ -65,6 +65,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const prefetchingRef = useRef<Set<string>>(new Set()); // Track verses being prefetched
   const playingCommentaryRef = useRef(false); // Track if we're in commentary playback
   const chapterCache = useRef<Map<string, { verse: number; text: string }[]>>(new Map()); // Cache for prefetched chapters
+  const commentaryCache = useRef<Map<string, { text: string; audioUrl?: string }>>(new Map()); // Cache for pre-generated commentary
+  const prefetchingCommentaryRef = useRef<Set<string>>(new Set()); // Track commentary being prefetched
   
   const isMobile = useIsMobile();
   const activeSequences = sequences.filter((s) => s.enabled && s.items.length > 0);
@@ -89,6 +91,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     playingCommentaryRef.current = false;
     ttsCache.current.clear();
     prefetchingRef.current.clear();
+    commentaryCache.current.clear();
+    prefetchingCommentaryRef.current.clear();
     console.log("SequencePlayer mounted, refs reset. Active sequences:", activeSequences.length, "Total items:", totalItems);
   }, []);
 
@@ -309,6 +313,74 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   }, [generateTTS]);
 
+  // Prefetch verse commentary (text + TTS) while verse is playing
+  const prefetchVerseCommentary = useCallback(async (
+    book: string, 
+    chapter: number, 
+    verse: number, 
+    verseText: string, 
+    commentaryVoice: string,
+    depth: string = "surface"
+  ) => {
+    const cacheKey = `verse-${book}-${chapter}-${verse}-${commentaryVoice}`;
+    
+    // Skip if already cached or being prefetched
+    if (commentaryCache.current.has(cacheKey) || prefetchingCommentaryRef.current.has(cacheKey)) {
+      return;
+    }
+    
+    prefetchingCommentaryRef.current.add(cacheKey);
+    console.log("[Prefetch Commentary] Starting for", book, chapter + ":" + verse);
+    
+    try {
+      // Generate commentary text
+      const commentary = await generateVerseCommentary(book, chapter, verse, verseText, depth);
+      
+      if (commentary) {
+        // Generate TTS for commentary
+        const audioUrl = await generateTTS(commentary, commentaryVoice);
+        commentaryCache.current.set(cacheKey, { text: commentary, audioUrl: audioUrl || undefined });
+        console.log("[Prefetch Commentary] Cached for", book, chapter + ":" + verse);
+      }
+    } catch (e) {
+      console.error("[Prefetch Commentary] Error:", e);
+    } finally {
+      prefetchingCommentaryRef.current.delete(cacheKey);
+    }
+  }, [generateVerseCommentary, generateTTS]);
+
+  // Prefetch chapter commentary while chapter is playing
+  const prefetchChapterCommentary = useCallback(async (
+    book: string, 
+    chapter: number, 
+    chapterText: string,
+    commentaryVoice: string,
+    depth: string = "surface"
+  ) => {
+    const cacheKey = `chapter-${book}-${chapter}-${commentaryVoice}`;
+    
+    if (commentaryCache.current.has(cacheKey) || prefetchingCommentaryRef.current.has(cacheKey)) {
+      return;
+    }
+    
+    prefetchingCommentaryRef.current.add(cacheKey);
+    console.log("[Prefetch Chapter Commentary] Starting for", book, chapter);
+    
+    try {
+      const commentary = await generateCommentary(book, chapter, chapterText, depth);
+      
+      if (commentary) {
+        const audioUrl = await generateTTS(commentary, commentaryVoice);
+        commentaryCache.current.set(cacheKey, { text: commentary, audioUrl: audioUrl || undefined });
+        console.log("[Prefetch Chapter Commentary] Cached for", book, chapter);
+      }
+    } catch (e) {
+      console.error("[Prefetch Chapter Commentary] Error:", e);
+    } finally {
+      prefetchingCommentaryRef.current.delete(cacheKey);
+    }
+  }, [generateCommentary, generateTTS]);
+
   // Play a specific verse by index - using a stable ref to avoid stale closures
   const playVerseAtIndex = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
     console.log("[PlayVerse] Called with:", { verseIdx, versesCount: content?.verses?.length, voice });
@@ -369,6 +441,29 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     // Prefetch next chapter when we're past halfway through current chapter
     if (verseIdx > content.verses.length / 2) {
       prefetchNextChapter(currentItemIdx);
+    }
+    
+    // Find current sequence for commentary settings
+    const currentSeq = activeSequences.find((seq, idx) => {
+      const itemsBefore = activeSequences.slice(0, idx).reduce((acc, s) => acc + s.items.length, 0);
+      return currentItemIdx >= itemsBefore && currentItemIdx < itemsBefore + seq.items.length;
+    });
+    
+    const includeCommentary = currentSeq?.includeJeevesCommentary || false;
+    const commentaryMode = currentSeq?.commentaryMode || "chapter";
+    const commentaryVoice = currentSeq?.commentaryVoice || "daniel";
+    const commentaryDepth = currentSeq?.commentaryDepth || "surface";
+    
+    // Prefetch commentary while verse plays
+    if (includeCommentary) {
+      if (commentaryMode === "verse") {
+        // Prefetch verse commentary for current verse
+        prefetchVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryVoice, commentaryDepth);
+      } else if (commentaryMode === "chapter" && verseIdx >= content.verses.length - 3) {
+        // Prefetch chapter commentary when near end of chapter
+        const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
+        prefetchChapterCommentary(content.book, content.chapter, chapterText, commentaryVoice, commentaryDepth);
+      }
     }
 
     // Stop any existing audio BEFORE setting up new one
@@ -437,39 +532,75 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       // Handle verse-by-verse commentary mode
       if (includeCommentary && commentaryMode === "verse" && content && continuePlayingRef.current) {
         const currentVerse = content.verses[verseIdx];
-        console.log("[Verse Commentary] Generating for verse", verseIdx + 1, "with voice:", commentaryVoice);
+        const cacheKey = `verse-${content.book}-${content.chapter}-${currentVerse.verse}-${commentaryVoice}`;
+        const cached = commentaryCache.current.get(cacheKey);
+        
+        const proceedAfterCommentary = () => {
+          if (isLastVerse) {
+            console.log("[Audio] Chapter complete, moving to next");
+            moveToNextChapter();
+          } else if (continuePlayingRef.current) {
+            playVerseAtIndex(nextVerseIdx, content, voice);
+          }
+        };
+        
+        if (cached?.audioUrl) {
+          // Use cached commentary with pre-generated audio - instant playback!
+          console.log("[Verse Commentary] Using cached audio for verse", verseIdx + 1);
+          setCommentaryText(cached.text);
+          setIsPlayingCommentary(true);
+          playingCommentaryRef.current = true;
+          
+          const audio = new Audio(cached.audioUrl);
+          audio.volume = isMuted ? 0 : volume / 100;
+          audioRef.current = audio;
+          
+          audio.onended = () => {
+            audioRef.current = null;
+            setIsPlayingCommentary(false);
+            playingCommentaryRef.current = false;
+            setCommentaryText(null);
+            proceedAfterCommentary();
+          };
+          
+          audio.onerror = () => {
+            audioRef.current = null;
+            setIsPlayingCommentary(false);
+            playingCommentaryRef.current = false;
+            setCommentaryText(null);
+            proceedAfterCommentary();
+          };
+          
+          audio.play().catch(() => {
+            setIsPlayingCommentary(false);
+            playingCommentaryRef.current = false;
+            setCommentaryText(null);
+            proceedAfterCommentary();
+          });
+          return;
+        } else if (cached?.text) {
+          // Have text but no audio - generate TTS only
+          console.log("[Verse Commentary] Using cached text, generating audio");
+          playCommentary(cached.text, commentaryVoice, proceedAfterCommentary);
+          return;
+        }
+        
+        // Fallback: generate everything (shouldn't happen often with prefetching)
+        console.log("[Verse Commentary] No cache, generating for verse", verseIdx + 1);
         setIsLoading(true);
         
         generateVerseCommentary(content.book, content.chapter, currentVerse.verse, currentVerse.text, commentaryDepth)
           .then(commentary => {
-            console.log("[Verse Commentary] Result:", commentary ? `${commentary.length} chars` : "null");
             if (commentary && continuePlayingRef.current) {
-              playCommentary(commentary, commentaryVoice, () => {
-                console.log("[Verse Commentary] Playback complete");
-                if (isLastVerse) {
-                  console.log("[Audio] Chapter complete, moving to next");
-                  moveToNextChapter();
-                } else if (continuePlayingRef.current) {
-                  playVerseAtIndex(nextVerseIdx, content, voice);
-                }
-              });
+              playCommentary(commentary, commentaryVoice, proceedAfterCommentary);
             } else {
               setIsLoading(false);
-              if (isLastVerse) {
-                moveToNextChapter();
-              } else if (continuePlayingRef.current) {
-                playVerseAtIndex(nextVerseIdx, content, voice);
-              }
+              proceedAfterCommentary();
             }
           })
-          .catch((err) => {
-            console.error("[Verse Commentary] Error:", err);
+          .catch(() => {
             setIsLoading(false);
-            if (isLastVerse) {
-              moveToNextChapter();
-            } else if (continuePlayingRef.current) {
-              playVerseAtIndex(nextVerseIdx, content, voice);
-            }
+            proceedAfterCommentary();
           });
         return;
       }
@@ -485,30 +616,66 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         console.log("[Audio] Chapter complete, checking for chapter commentary...");
         
         if (includeCommentary && commentaryMode === "chapter" && content && continuePlayingRef.current) {
-          console.log("[Chapter Commentary] Generating", commentaryDepth, "commentary with voice:", commentaryVoice);
-          setIsLoading(true);
-          const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
+          const cacheKey = `chapter-${content.book}-${content.chapter}-${commentaryVoice}`;
+          const cached = commentaryCache.current.get(cacheKey);
           
-          generateCommentary(content.book, content.chapter, chapterText, commentaryDepth)
-            .then(commentary => {
-              console.log("[Chapter Commentary] Result:", commentary ? `${commentary.length} chars` : "null");
-              if (commentary && continuePlayingRef.current) {
-                console.log("[Chapter Commentary] Starting playback...");
-                playCommentary(commentary, commentaryVoice, () => {
-                  console.log("[Chapter Commentary] Playback complete, moving to next chapter");
-                  moveToNextChapter();
-                });
-              } else {
-                console.log("[Chapter Commentary] No commentary or stopped, moving on");
-                setIsLoading(false);
-                moveToNextChapter();
-              }
-            })
-            .catch((err) => {
-              console.error("[Chapter Commentary] Error:", err);
-              setIsLoading(false);
+          if (cached?.audioUrl) {
+            // Use cached chapter commentary with pre-generated audio - instant playback!
+            console.log("[Chapter Commentary] Using cached audio");
+            setCommentaryText(cached.text);
+            setIsPlayingCommentary(true);
+            playingCommentaryRef.current = true;
+            
+            const audio = new Audio(cached.audioUrl);
+            audio.volume = isMuted ? 0 : volume / 100;
+            audioRef.current = audio;
+            
+            audio.onended = () => {
+              audioRef.current = null;
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
+              moveToNextChapter();
+            };
+            
+            audio.onerror = () => {
+              audioRef.current = null;
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
+              moveToNextChapter();
+            };
+            
+            audio.play().catch(() => {
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
               moveToNextChapter();
             });
+          } else if (cached?.text) {
+            // Have text but no audio
+            console.log("[Chapter Commentary] Using cached text, generating audio");
+            playCommentary(cached.text, commentaryVoice, moveToNextChapter);
+          } else {
+            // Fallback: generate everything
+            console.log("[Chapter Commentary] No cache, generating", commentaryDepth);
+            setIsLoading(true);
+            const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
+            
+            generateCommentary(content.book, content.chapter, chapterText, commentaryDepth)
+              .then(commentary => {
+                if (commentary && continuePlayingRef.current) {
+                  playCommentary(commentary, commentaryVoice, moveToNextChapter);
+                } else {
+                  setIsLoading(false);
+                  moveToNextChapter();
+                }
+              })
+              .catch(() => {
+                setIsLoading(false);
+                moveToNextChapter();
+              });
+          }
         } else {
           // No commentary - move to next chapter immediately
           console.log("[Audio] No commentary, moving to next chapter immediately");
