@@ -89,8 +89,8 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a 
-                  href="mailto:support@phototheology.com" 
+              <a 
+                  href="mailto:support@phototheology.app" 
                   className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
                 >
                   <Mail className="h-3 w-3" />
