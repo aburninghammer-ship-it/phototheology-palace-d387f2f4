@@ -76,17 +76,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     console.log("SequencePlayer mounted, refs reset. Active sequences:", activeSequences.length, "Total items:", totalItems);
   }, []);
 
-  // Fetch chapter content with deduplication
+  // Fetch chapter content
   const fetchChapter = useCallback(async (book: string, chapter: number) => {
     const cacheKey = `${book}-${chapter}`;
-    
-    // Prevent duplicate fetches
-    if (isFetchingChapterRef.current || lastFetchedRef.current === cacheKey) {
-      console.log("Skipping duplicate fetch for:", cacheKey);
-      return null;
-    }
-    
-    isFetchingChapterRef.current = true;
     
     try {
       console.log("Fetching chapter:", cacheKey);
@@ -95,13 +87,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       });
 
       if (error) throw error;
-      lastFetchedRef.current = cacheKey;
       return data.verses as { verse: number; text: string }[];
     } catch (e) {
       console.error("Error fetching chapter:", e);
       return null;
-    } finally {
-      isFetchingChapterRef.current = false;
     }
   }, []);
 
@@ -242,7 +231,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       audioRef.current = null;
       isGeneratingRef.current = false;
     }
-  }, [audioUrl, volume, isMuted, totalItems, generateTTS]);
+  }, [volume, isMuted, totalItems, generateTTS]);
 
   // Play current verse (wrapper for playVerseAtIndex)
   const playCurrentVerse = useCallback(() => {
@@ -260,7 +249,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
     
     const cacheKey = `${currentItem.book}-${currentItem.chapter}`;
-    console.log("Chapter load effect triggered for:", cacheKey);
     
     // Skip if already fetching
     if (isFetchingChapterRef.current) {
@@ -273,18 +261,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       console.log("Already have content for:", cacheKey);
       return;
     }
+    
+    // Skip if we already fetched this
+    if (lastFetchedRef.current === cacheKey) {
+      console.log("Already fetched:", cacheKey);
+      return;
+    }
 
     const loadChapter = async () => {
       console.log("Starting chapter load for:", cacheKey);
+      isFetchingChapterRef.current = true;
       setIsLoading(true);
-      
-      // Reset lastFetchedRef to allow this fetch
-      if (lastFetchedRef.current !== cacheKey) {
-        lastFetchedRef.current = null;
-      }
       
       const verses = await fetchChapter(currentItem.book, currentItem.chapter);
       console.log("Fetch result:", verses ? `${verses.length} verses` : "null");
+      
+      isFetchingChapterRef.current = false;
       
       if (verses) {
         // Filter verses if start/end specified
@@ -296,6 +288,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
               v.verse <= (currentItem.endVerse || verses.length)
           );
         }
+        lastFetchedRef.current = cacheKey;
         setChapterContent({
           book: currentItem.book,
           chapter: currentItem.chapter,
@@ -310,7 +303,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     };
 
     loadChapter();
-  }, [currentItem?.book, currentItem?.chapter, currentItem?.startVerse, currentItem?.endVerse, fetchChapter, chapterContent]);
+  }, [currentItem?.book, currentItem?.chapter, currentItem?.startVerse, currentItem?.endVerse, fetchChapter]);
 
   // Auto-play when new chapter content loads (for chapter transitions)
   useEffect(() => {
@@ -325,13 +318,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
 
   // Auto-start on mount (only once)
   useEffect(() => {
-    if (autoPlay && chapterContent && !hasStarted && !isLoading) {
-      console.log("Auto-starting playback on mount");
+    if (autoPlay && chapterContent && !hasStarted && !isLoading && !isGeneratingRef.current) {
+      console.log("Auto-starting playback on mount, verses:", chapterContent.verses.length);
       setHasStarted(true);
-      const voice = currentSequence?.voice || "daniel";
-      continuePlayingRef.current = true;
-      setIsPlaying(true);
-      playVerseAtIndex(0, chapterContent, voice);
+      // Use timeout to ensure state is settled
+      setTimeout(() => {
+        const voice = currentSequence?.voice || "daniel";
+        continuePlayingRef.current = true;
+        setIsPlaying(true);
+        playVerseAtIndex(0, chapterContent, voice);
+      }, 100);
     }
   }, [autoPlay, chapterContent, hasStarted, isLoading, currentSequence, playVerseAtIndex]);
 
