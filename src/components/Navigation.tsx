@@ -345,10 +345,10 @@ export const Navigation = () => {
                   </Link>
                   <Link 
                     to="/spiritual-training" 
-                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-slate-500/10 to-zinc-500/10 border border-slate-500/20 hover:from-slate-500/20 hover:to-zinc-500/20"
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-red-500/10 to-rose-500/10 border border-red-500/20 hover:from-red-500/20 hover:to-rose-500/20"
                   >
-                    <Sword className="h-3.5 w-3.5 text-slate-500" />
-                    <span className="bg-gradient-to-r from-slate-600 to-zinc-600 bg-clip-text text-transparent font-semibold">Christian Art of War Dojo</span>
+                    <Sword className="h-3.5 w-3.5 text-red-500" />
+                    <span className="bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent font-semibold">Christian Art of War Dojo</span>
                   </Link>
                   
                   <DropdownMenu>
