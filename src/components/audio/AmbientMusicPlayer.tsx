@@ -537,8 +537,12 @@ export function AmbientMusicPlayer({
   // Update volume
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume * duckMultiplier;
+      const newVolume = isMuted ? 0 : volume * duckMultiplier;
+      audioRef.current.volume = newVolume;
       localStorage.setItem("pt-ambient-volume", volume.toString());
+      console.log('[AmbientMusic] Volume set to:', newVolume, 'audioRef exists:', !!audioRef.current);
+    } else {
+      console.log('[AmbientMusic] Volume change ignored - no audio element');
     }
   }, [volume, isMuted, duckMultiplier]);
 
@@ -645,6 +649,7 @@ export function AmbientMusicPlayer({
   };
 
   const handleVolumeChange = (value: number[]) => {
+    console.log('[AmbientMusic] handleVolumeChange called:', value[0]);
     setVolume(value[0]);
     if (value[0] > 0 && isMuted) {
       setIsMuted(false);
