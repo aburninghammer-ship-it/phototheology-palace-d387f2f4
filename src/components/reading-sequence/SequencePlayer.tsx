@@ -127,6 +127,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   }, []);
 
+  // Ref to hold play function for recursive calls
+  const playVerseRef = useRef<((verseIdx: number, content: ChapterContent, voice: string) => Promise<void>) | null>(null);
+
   // Play a specific verse by index
   const playVerseAtIndex = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
     if (isGeneratingRef.current) {
@@ -165,9 +168,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       // Move to next verse
       if (nextVerseIdx < content.verses.length) {
         setCurrentVerseIdx(nextVerseIdx);
-        // Directly play next verse
+        // Use ref to call latest version of play function
         setTimeout(() => {
-          playVerseAtIndex(nextVerseIdx, content, voice);
+          playVerseRef.current?.(nextVerseIdx, content, voice);
         }, 100);
       } else {
         // Move to next chapter/item
@@ -188,6 +191,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     setIsPlaying(true);
     setIsPaused(false);
   }, [audioUrl, volume, isMuted, currentItemIdx, totalItems, generateTTS]);
+
+  // Keep ref updated with latest function
+  useEffect(() => {
+    playVerseRef.current = playVerseAtIndex;
+  }, [playVerseAtIndex]);
 
   // Play current verse (wrapper for playVerseAtIndex)
   const playCurrentVerse = useCallback(() => {
