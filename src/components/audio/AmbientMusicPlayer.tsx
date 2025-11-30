@@ -702,7 +702,7 @@ export function AmbientMusicPlayer({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80" align="end">
+        <PopoverContent className="w-80" align="end" side="top" sideOffset={8} collisionPadding={16}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="font-medium text-sm">Study Music</h4>
