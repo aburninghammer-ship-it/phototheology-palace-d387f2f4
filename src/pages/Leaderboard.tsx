@@ -501,11 +501,11 @@ const Leaderboard = () => {
                             </div>
                           </div>
 
-                          <div className="text-right">
+                          <div className="text-right pr-14">
                             {sortBy === 'points' && (
                               <>
                                 <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                                  {leader.points}
+                                  {leader.points?.toLocaleString() || 0}
                                 </p>
                                 <p className="text-xs text-muted-foreground">points</p>
                               </>
@@ -513,7 +513,7 @@ const Leaderboard = () => {
                             {sortBy === 'challenges' && (
                               <>
                                 <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                                  {leader.challengeCount || 0}
+                                  {(leader.challengeCount || 0).toLocaleString()}
                                 </p>
                                 <p className="text-xs text-muted-foreground">challenges</p>
                               </>
@@ -529,7 +529,7 @@ const Leaderboard = () => {
                             {sortBy === 'rooms' && (
                               <>
                                 <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                                  {leader.roomsCount || 0}
+                                  {(leader.roomsCount || 0).toLocaleString()}
                                 </p>
                                 <p className="text-xs text-muted-foreground">rooms</p>
                               </>
