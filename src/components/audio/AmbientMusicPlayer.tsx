@@ -19,7 +19,8 @@ import {
   Trash2,
   Heart,
   Loader2,
-  ChevronDown
+  ChevronDown,
+  Smartphone
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -40,6 +41,7 @@ import { useUserMusic, UserTrack } from "@/hooks/useUserMusic";
 import { useAuth } from "@/hooks/useAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAudioDucking } from "@/hooks/useAudioDucking";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Phototheology Sacred Orchestral Music
 // Rich orchestral, movie soundtrack style (The Chosen, Zimmer, Tyler)
@@ -402,6 +404,7 @@ export function AmbientMusicPlayer({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { user } = useAuth();
   const { userTracks, uploading, uploadMusic, deleteMusic, toggleFavorite } = useUserMusic();
+  const isMobile = useIsMobile();
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(() => {
@@ -946,29 +949,35 @@ export function AmbientMusicPlayer({
             )}
           </Button>
 
-          {/* Volume */}
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleMute}
-              className="h-8 w-8"
-            >
-              {isMuted ? (
-                <VolumeX className="h-4 w-4" />
-              ) : (
-                <Volume2 className="h-4 w-4" />
-              )}
-            </Button>
-            <Slider
-              value={[isMuted ? 0 : volume]}
-              min={0}
-              max={1}
-              step={0.01}
-              onValueChange={handleVolumeChange}
-              className="w-20"
-            />
-          </div>
+          {/* Volume - hidden on mobile */}
+          {!isMobile ? (
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMute}
+                className="h-8 w-8"
+              >
+                {isMuted ? (
+                  <VolumeX className="h-4 w-4" />
+                ) : (
+                  <Volume2 className="h-4 w-4" />
+                )}
+              </Button>
+              <Slider
+                value={[isMuted ? 0 : volume]}
+                min={0}
+                max={1}
+                step={0.01}
+                onValueChange={handleVolumeChange}
+                className="w-20"
+              />
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+              <Smartphone className="h-3 w-3" />
+            </div>
+          )}
 
           {/* Settings */}
           <Popover>

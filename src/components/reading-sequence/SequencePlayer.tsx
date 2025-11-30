@@ -15,11 +15,13 @@ import {
   Loader2,
   BookOpen,
   ListMusic,
+  Smartphone,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ReadingSequenceBlock, SequenceItem } from "@/types/readingSequence";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SequencePlayerProps {
   sequences: ReadingSequenceBlock[];
@@ -59,6 +61,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const prefetchingRef = useRef<Set<string>>(new Set()); // Track verses being prefetched
   const playingCommentaryRef = useRef(false); // Track if we're in commentary playback
   
+  const isMobile = useIsMobile();
   const activeSequences = sequences.filter((s) => s.enabled && s.items.length > 0);
 
   // Flatten all items across sequences for navigation
@@ -836,23 +839,30 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           </Button>
         </div>
 
-        {/* Volume */}
-        <div className="flex items-center gap-3 px-4">
-          <Button variant="ghost" size="icon" onClick={toggleMute}>
-            {isMuted || volume === 0 ? (
-              <VolumeX className="h-4 w-4" />
-            ) : (
-              <Volume2 className="h-4 w-4" />
-            )}
-          </Button>
-          <Slider
-            value={[isMuted ? 0 : volume]}
-            max={100}
-            step={1}
-            onValueChange={handleVolumeChange}
-            className="flex-1"
-          />
-        </div>
+        {/* Volume - hidden on mobile since programmatic volume doesn't work */}
+        {!isMobile ? (
+          <div className="flex items-center gap-3 px-4">
+            <Button variant="ghost" size="icon" onClick={toggleMute}>
+              {isMuted || volume === 0 ? (
+                <VolumeX className="h-4 w-4" />
+              ) : (
+                <Volume2 className="h-4 w-4" />
+              )}
+            </Button>
+            <Slider
+              value={[isMuted ? 0 : volume]}
+              max={100}
+              step={1}
+              onValueChange={handleVolumeChange}
+              className="flex-1"
+            />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-2 px-4 py-2 text-sm text-muted-foreground">
+            <Smartphone className="h-4 w-4" />
+            <span>Use device volume buttons</span>
+          </div>
+        )}
 
         {/* Sequence Overview */}
         <div className="pt-4 border-t">
