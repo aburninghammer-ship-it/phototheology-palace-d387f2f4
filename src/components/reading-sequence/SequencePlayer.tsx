@@ -492,6 +492,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   };
 
+  // Auto-scroll to current verse
+  useEffect(() => {
+    if (chapterContent && currentVerseIdx >= 0) {
+      const verseNum = chapterContent.verses[currentVerseIdx]?.verse;
+      if (verseNum) {
+        const el = document.getElementById(`verse-${verseNum}`);
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [currentVerseIdx, chapterContent]);
+
   // Cleanup on unmount only - not on audioUrl change (that was causing the race condition)
   useEffect(() => {
     return () => {
@@ -552,15 +563,27 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           )}
         </div>
 
-        {/* Current Verse Text */}
-        {chapterContent && chapterContent.verses[currentVerseIdx] && (
-          <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
-            <p className="text-lg leading-relaxed">
-              <span className="text-primary font-bold mr-2">
-                {chapterContent.verses[currentVerseIdx].verse}
-              </span>
-              {chapterContent.verses[currentVerseIdx].text}
-            </p>
+        {/* All Verses Display - scrollable with current verse highlighted */}
+        {chapterContent && chapterContent.verses.length > 0 && (
+          <div className="max-h-[400px] overflow-y-auto rounded-lg border border-border/50 bg-muted/20">
+            <div className="p-4 space-y-3">
+              {chapterContent.verses.map((verse, idx) => (
+                <p
+                  key={verse.verse}
+                  id={`verse-${verse.verse}`}
+                  className={`text-base leading-relaxed transition-all duration-300 rounded-md p-2 ${
+                    idx === currentVerseIdx
+                      ? "bg-primary/20 border-l-4 border-primary scale-[1.01]"
+                      : "opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <span className={`font-bold mr-2 ${idx === currentVerseIdx ? "text-primary" : "text-muted-foreground"}`}>
+                    {verse.verse}
+                  </span>
+                  {verse.text}
+                </p>
+              ))}
+            </div>
           </div>
         )}
 
