@@ -230,8 +230,8 @@ function App() {
                         <DailyVerseNotification />
                         <InstallPrompt />
                         <ExitIntentPopup />
-                        {/* Floating Ambient Music Player */}
-                        <div className="fixed bottom-20 right-4 z-40">
+                        {/* Floating Ambient Music Player - higher on mobile to avoid nav */}
+                        <div className="fixed bottom-24 sm:bottom-20 right-4 z-40">
                           <AmbientMusicPlayer minimal />
                         </div>
                         <div className="flex flex-1 w-full">
