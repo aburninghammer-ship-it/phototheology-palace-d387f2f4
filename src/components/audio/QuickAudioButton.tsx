@@ -45,7 +45,8 @@ export function QuickAudioButton({
       if (error) throw error;
 
       if (data?.audioContent) {
-        const audioUrl = `data:audio/mp3;base64,${data.audioContent}`;
+        // Use mpeg MIME type to match what ElevenLabs returns
+        const audioUrl = `data:audio/mpeg;base64,${data.audioContent}`;
         const newAudio = new Audio(audioUrl);
         
         newAudio.onended = () => {
@@ -54,7 +55,8 @@ export function QuickAudioButton({
           notifyTTSStopped();
         };
 
-        newAudio.onerror = () => {
+        newAudio.onerror = (e) => {
+          console.error("Audio playback error:", e);
           setIsPlaying(false);
           setAudio(null);
           notifyTTSStopped();
@@ -62,9 +64,17 @@ export function QuickAudioButton({
         };
 
         setAudio(newAudio);
-        newAudio.play();
-        setIsPlaying(true);
-        notifyTTSStarted();
+        try {
+          await newAudio.play();
+          setIsPlaying(true);
+          notifyTTSStarted();
+        } catch (playErr) {
+          console.error("Play failed:", playErr);
+          // Try fallback to browser TTS
+          throw playErr;
+        }
+      } else {
+        throw new Error("No audio content returned");
       }
     } catch (err) {
       console.error("TTS error:", err);
