@@ -191,7 +191,7 @@ const DrillDrill = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background">
       <Navigation />
       <main className="container mx-auto px-4 py-8 pt-24">
         <div className="max-w-6xl mx-auto space-y-6">
@@ -271,7 +271,7 @@ const DrillDrill = () => {
               {!session ? (
                 <>
                   {/* Verse Input */}
-                  <Card className="backdrop-blur-sm bg-card/80 border-primary/10">
+                  <Card variant="glass">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <BookOpen className="h-5 w-5 text-primary" />
@@ -312,7 +312,7 @@ const DrillDrill = () => {
                   </Card>
 
                   {/* Mode Selection */}
-                  <Card className="backdrop-blur-sm bg-card/80 border-primary/10">
+                  <Card variant="glass">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
@@ -386,7 +386,7 @@ const DrillDrill = () => {
                   </Card>
 
                   {/* What You'll Cover */}
-                  <Card className="backdrop-blur-sm bg-card/80 border-primary/10">
+                  <Card variant="glass">
                     <CardHeader>
                       <CardTitle>What the Drill Covers</CardTitle>
                       <CardDescription>
@@ -417,7 +417,7 @@ const DrillDrill = () => {
                 /* Active Drill Session */
                 <div className="space-y-6">
                   {/* Session Header */}
-                  <Card className="backdrop-blur-sm bg-card/80 border-primary/10">
+                  <Card variant="glass">
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex-1">
@@ -443,7 +443,7 @@ const DrillDrill = () => {
 
                   {/* Drill Content */}
                   {mode === "auto" && loading ? (
-                    <Card>
+                    <Card variant="glass">
                       <CardContent className="py-12 text-center">
                         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
                         <p className="text-lg font-medium">Jeeves is gathering fragments...</p>
