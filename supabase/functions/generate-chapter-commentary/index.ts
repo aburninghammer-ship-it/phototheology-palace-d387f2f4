@@ -168,7 +168,8 @@ Commentary style for INTERMEDIATE level:
 
 Commentary style for SCHOLARLY/DEPTH level:
 - Provide comprehensive verse-by-verse commentary
-- Cover EVERY significant verse or passage in the chapter
+- Start explicitly with verses 1-3 and then move sequentially through the chapter (verse 1, verse 2, verse 3, etc.)
+- Do NOT skip or ignore any verse; every verse in the chapter must be addressed either individually or in clearly labeled grouped sections (e.g., "verses 1-3", "verses 4-5")
 - Apply the full Phototheology framework across multiple floors
 - Include Greek/Hebrew word studies (Definition and Comparison Room)
 - Provide extensive cross-references (Bible Freestyle / Verse Genetics)
@@ -181,7 +182,7 @@ Commentary style for SCHOLARLY/DEPTH level:
 - Include scholarly insights while maintaining accessibility
 - This should be thorough enough for serious Bible students
 - Length: As long as needed to cover the chapter thoroughly (800-1500+ words)`;
-  }
+   }
 };
 
 const getMaxTokens = (depth: CommentaryDepth): number => {
@@ -250,7 +251,9 @@ serve(async (req) => {
 
 ${chapterText ? `Here's the chapter content:\n${chapterText}\n\n` : ""}
 
-Please provide a comprehensive, scholarly verse-by-verse commentary applying the full Phototheology Palace framework. Cover every significant verse, provide cross-references, include word studies where illuminating, connect to sanctuary typology and covenant cycles where applicable, and show Christ throughout. Make it thorough enough for serious Bible students while keeping it accessible for spoken delivery.`
+Please provide a comprehensive, scholarly verse-by-verse commentary applying the full Phototheology Palace framework.
+CRITICAL: Start at verse 1 and move sequentially through the chapter (1, 2, 3, 4, ...). Do NOT skip any verses, especially verses 1-3. If you group verses, clearly label the group (for example, "verses 1-3" or "verses 4-5") and ensure every verse in the chapter is covered.
+Cover every verse with at least one clear sentence of commentary. Make it thorough enough for serious Bible students while keeping it accessible for spoken delivery.`
       : `The reader just finished ${book} chapter ${chapter}. 
 
 ${chapterText ? `Here's the chapter content:\n${chapterText}\n\n` : ""}
