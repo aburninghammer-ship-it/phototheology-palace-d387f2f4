@@ -596,6 +596,79 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   }, [generateCommentary, generateTTS]);
 
+  // Play commentary only (skip verse reading)
+  const playCommentaryOnlyChapter = useCallback(async (content: ChapterContent, sequence: ReadingSequenceBlock) => {
+    if (!content || !sequence.includeJeevesCommentary) return;
+    
+    console.log("[Commentary Only] Starting commentary-only playback");
+    setIsLoading(true);
+    setIsPlaying(true);
+    setIsPaused(false);
+    notifyTTSStarted();
+    
+    const commentaryMode = sequence.commentaryMode || "chapter";
+    const commentaryVoice = sequence.commentaryVoice || "daniel";
+    const commentaryDepth = sequence.commentaryDepth || "surface";
+    
+    if (commentaryMode === "chapter") {
+      // Play chapter commentary
+      const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
+      const commentary = await generateCommentary(content.book, content.chapter, chapterText, commentaryDepth);
+      
+      setIsLoading(false);
+      
+      if (commentary && continuePlayingRef.current) {
+        playCommentary(commentary, commentaryVoice, () => {
+          // Move to next chapter after commentary
+          if (continuePlayingRef.current) {
+            moveToNextChapter();
+          }
+        });
+      } else {
+        // No commentary available, move to next
+        moveToNextChapter();
+      }
+    } else {
+      // Play verse-by-verse commentary
+      setIsLoading(false);
+      playCommentaryOnlyVerse(0, content, sequence);
+    }
+  }, [generateCommentary, playCommentary, moveToNextChapter]);
+  
+  // Play commentary for a single verse (commentary-only mode)
+  const playCommentaryOnlyVerse = useCallback(async (verseIdx: number, content: ChapterContent, sequence: ReadingSequenceBlock) => {
+    if (verseIdx >= content.verses.length) {
+      // All verses done, move to next chapter
+      if (continuePlayingRef.current) {
+        moveToNextChapter();
+      }
+      return;
+    }
+    
+    const verse = content.verses[verseIdx];
+    const commentaryVoice = sequence.commentaryVoice || "daniel";
+    const commentaryDepth = sequence.commentaryDepth || "surface";
+    
+    console.log("[Commentary Only] Playing verse", verseIdx + 1, "commentary");
+    setCurrentVerseIdx(verseIdx);
+    
+    const commentary = await generateVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryDepth);
+    
+    if (commentary && continuePlayingRef.current) {
+      playCommentary(commentary, commentaryVoice, () => {
+        // Move to next verse commentary
+        if (continuePlayingRef.current) {
+          playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+        }
+      });
+    } else {
+      // No commentary, skip to next verse
+      if (continuePlayingRef.current) {
+        playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+      }
+    }
+  }, [generateVerseCommentary, playCommentary, moveToNextChapter]);
+
   // Play a specific verse by index - using a stable ref to avoid stale closures
   const playVerseAtIndex = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
     console.log("[PlayVerse] Called with:", { verseIdx, versesCount: content?.verses?.length, voice, offlineMode });
@@ -1070,7 +1143,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       shouldPlayNextRef.current = false;
       const voice = currentSequence?.voice || "daniel";
       continuePlayingRef.current = true;
-      playVerseAtIndex(0, chapterContent, voice);
+      
+      // Check for commentary-only mode
+      if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
+        console.log("[Commentary Only] Skipping verse reading, playing commentary only");
+        playCommentaryOnlyChapter(chapterContent, currentSequence);
+      } else {
+        playVerseAtIndex(0, chapterContent, voice);
+      }
     }
   }, [chapterContent, isLoading, currentSequence, playVerseAtIndex]);
 
@@ -1093,8 +1173,15 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         setHasStarted(true);
         const voice = currentSequence?.voice || "daniel";
         continuePlayingRef.current = true;
-        // Don't set isPlaying here - let playVerseAtIndex do it after audio actually starts
-        playVerseAtIndex(0, chapterContent, voice);
+        
+        // Check for commentary-only mode
+        if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
+          console.log("[Commentary Only] Auto-starting with commentary only");
+          playCommentaryOnlyChapter(chapterContent, currentSequence);
+        } else {
+          // Don't set isPlaying here - let playVerseAtIndex do it after audio actually starts
+          playVerseAtIndex(0, chapterContent, voice);
+        }
         return true;
       }
       return false;
@@ -1158,7 +1245,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       continuePlayingRef.current = true;
       setIsPlaying(true);
       setIsPaused(false);
-      playVerseAtIndex(currentVerseIdx, chapterContent, voice);
+      
+      // Check for commentary-only mode
+      if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
+        console.log("[Commentary Only] Starting with commentary only");
+        playCommentaryOnlyChapter(chapterContent, currentSequence);
+      } else {
+        playVerseAtIndex(currentVerseIdx, chapterContent, voice);
+      }
     }
   };
 

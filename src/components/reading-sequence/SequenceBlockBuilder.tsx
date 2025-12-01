@@ -576,9 +576,25 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
                 />
               </div>
               
-              {/* Commentary Options - shown when enabled */}
+                  {/* Commentary Options - shown when enabled */}
               {block.includeJeevesCommentary && (
                 <div className="space-y-3 p-3 bg-muted/30 rounded-lg">
+                  {/* Commentary Only Toggle */}
+                  <div className="flex items-center justify-between p-2 bg-background/50 rounded-md border border-primary/20">
+                    <Label className="text-sm flex items-center gap-2 cursor-pointer" htmlFor="commentary-only">
+                      <span className="text-primary">📖</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium">Commentary Only</span>
+                        <span className="text-xs text-muted-foreground">Skip verse reading, play only commentary</span>
+                      </div>
+                    </Label>
+                    <Switch
+                      id="commentary-only"
+                      checked={block.commentaryOnly || false}
+                      onCheckedChange={(checked) => onChange({ ...block, commentaryOnly: checked })}
+                    />
+                  </div>
+                  
                   {/* Commentary Mode Selection */}
                   <div>
                     <Label className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
