@@ -62,6 +62,7 @@ const PrinciplePuzzle = lazy(() => import("./pages/PrinciplePuzzle"));
 const PTKidsGames = lazy(() => import("./pages/PTKidsGames"));
 const PTKidsGamePlay = lazy(() => import("./pages/PTKidsGamePlay"));
 const Community = lazy(() => import("./pages/Community"));
+const CommunityOptimized = lazy(() => import("./pages/CommunityOptimized"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Achievements = lazy(() => import("./pages/Achievements"));
 const Feedback = lazy(() => import("./pages/Feedback"));
@@ -346,6 +347,7 @@ function App() {
             <Route path="/live-study" element={<ProtectedRoute><LiveStudy /></ProtectedRoute>} />
             <Route path="/live-study/:roomId" element={<ProtectedRoute><LiveStudyRoom /></ProtectedRoute>} />
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+            <Route path="/community-optimized" element={<ProtectedRoute><CommunityOptimized /></ProtectedRoute>} />
             <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
             <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
             <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
