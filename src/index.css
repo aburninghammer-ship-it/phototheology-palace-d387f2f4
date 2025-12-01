@@ -582,7 +582,7 @@ All colors MUST be HSL.
   }
 
   /* Fix for containers that should be able to exceed parent */
-  .max-w-\\[.*\\], [class*="max-w-"], .w-screen, .min-w-full {
+  [class*="max-w-"], .w-screen, .min-w-full {
     max-width: revert;
   }
 

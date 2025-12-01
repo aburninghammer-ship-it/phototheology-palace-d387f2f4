@@ -26,11 +26,13 @@ import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { ExitIntentPopup } from "@/components/conversion/ExitIntentPopup";
 import { AmbientMusicPlayer } from "@/components/audio/AmbientMusicPlayer";
 
-// Critical pages - load immediately
+// Critical pages - load immediately (landing + auth only)
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Pricing from "./pages/Pricing";
-import InteractiveDemo from "./pages/InteractiveDemo";
+
+// Lazy load pricing and demo
+const Pricing = lazy(() => import("./pages/Pricing"));
+const InteractiveDemo = lazy(() => import("./pages/InteractiveDemo"));
 
 // Lazy load all other pages
 const Palace = lazy(() => import("./pages/Palace"));
@@ -119,7 +121,7 @@ const Referrals = lazy(() => import("./pages/Referrals"));
 const StudentVerification = lazy(() => import("./pages/StudentVerification"));
 const DeleteAccount = lazy(() => import("./pages/DeleteAccount"));
 const AccessCode = lazy(() => import("./pages/AccessCode"));
-import AdminAccessCodes from "./pages/AdminAccessCodes";
+const AdminAccessCodes = lazy(() => import("./pages/AdminAccessCodes"));
 const AdminSubscriptions = lazy(() => import("./pages/AdminSubscriptions"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const BibleRenderedRoom = lazy(() => import("./pages/BibleRenderedRoom"));

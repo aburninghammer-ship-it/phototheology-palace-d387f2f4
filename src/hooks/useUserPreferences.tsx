@@ -8,6 +8,8 @@ interface UserPreferences {
   reading_mode: "default" | "focus" | "study";
   theme_preference: "light" | "dark" | "system";
   navigation_style: "simplified" | "full";
+  preferred_reading_experience: "audio" | "read-along" | "auto";
+  read_along_speed: number; // Words per minute
 }
 
 const defaultPreferences: UserPreferences = {
@@ -16,6 +18,8 @@ const defaultPreferences: UserPreferences = {
   reading_mode: "default",
   theme_preference: "system",
   navigation_style: "full",
+  preferred_reading_experience: "audio",
+  read_along_speed: 200,
 };
 
 interface UserPreferencesContextValue {
@@ -68,6 +72,8 @@ export const UserPreferencesProvider = ({
             reading_mode: (data.reading_mode as any) ?? defaultPreferences.reading_mode,
             theme_preference: (data.theme_preference as any) ?? defaultPreferences.theme_preference,
             navigation_style: (data.navigation_style as any) || "full",
+            preferred_reading_experience: (data.preferred_reading_experience as any) ?? defaultPreferences.preferred_reading_experience,
+            read_along_speed: data.read_along_speed ?? defaultPreferences.read_along_speed,
           });
         } else {
           // Create default preferences in the backend and use local defaults
@@ -103,6 +109,8 @@ export const UserPreferencesProvider = ({
             reading_mode: next.reading_mode,
             theme_preference: next.theme_preference,
             navigation_style: next.navigation_style,
+            preferred_reading_experience: next.preferred_reading_experience,
+            read_along_speed: next.read_along_speed,
             updated_at: new Date().toISOString(),
           },
           {
