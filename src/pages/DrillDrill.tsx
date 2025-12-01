@@ -199,12 +199,15 @@ const DrillDrill = () => {
             <div className="flex items-center justify-center gap-2">
               <Target className="h-8 w-8 text-primary" />
               <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                The "Drill" Drill
+                Gather the Fragments
               </h1>
             </div>
+            <p className="text-sm italic text-primary/80 mb-2">
+              "Gather up the fragments that remain, that nothing be lost." — John 6:12
+            </p>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              A full-Palace, full-principle deep drill on one single verse. Jeeves walks you through every room, 
-              extracting dimensions, patterns, sanctuary connections, typology, and Christ-centered truth.
+              Extract every insight from a single verse. Jeeves walks you through the entire Palace—dimensions, 
+              patterns, sanctuary connections, typology—so that nothing of value is lost.
             </p>
           </div>
 
@@ -319,12 +322,12 @@ const DrillDrill = () => {
                         {loading ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Starting Drill...
+                            Gathering Fragments...
                           </>
                         ) : (
                           <>
                             <Target className="mr-2 h-4 w-4" />
-                            Begin the Drill
+                            Gather the Fragments
                           </>
                         )}
                       </Button>
@@ -390,8 +393,8 @@ const DrillDrill = () => {
                     <Card>
                       <CardContent className="py-12 text-center">
                         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-                        <p className="text-lg font-medium">Jeeves is analyzing your verse...</p>
-                        <p className="text-muted-foreground">Running through all {allRooms.length} rooms</p>
+                        <p className="text-lg font-medium">Jeeves is gathering fragments...</p>
+                        <p className="text-muted-foreground">Searching all {allRooms.length} rooms so nothing is lost</p>
                       </CardContent>
                     </Card>
                   ) : session.mode === "auto" && session.completedAt ? (
