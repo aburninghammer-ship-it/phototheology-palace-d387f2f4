@@ -89,6 +89,16 @@ const AMBIENT_TRACKS: Array<{
     url: "https://cdn1.suno.ai/617f1da9-1bfb-4a93-8485-08f432623d2e.mp3",
     bpm: 68,
   },
+  {
+    id: "heavens-embrace",
+    name: "Heaven's Embrace",
+    description: "Cinematic meditative christian music - instrumental",
+    category: "floor-3",
+    floor: 3,
+    mood: "cinematic, meditative, reverent",
+    url: "https://cdn1.suno.ai/30c1ab00-5069-4b44-a4b9-9c7bab500a30.mp3",
+    bpm: 62,
+  },
 ];
 
 // Room to track mapping based on Phototheology floors
