@@ -5,6 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 // Sample daily verses with PT insights
 const DAILY_VERSES = [
   {
+    reference: "Ephesians 3:20-21",
+    text: "Now unto him that is able to do exceeding abundantly above all that we ask or think...",
+    insight: "CR: Christ is the channel through whom God's limitless power flows to us"
+  },
+  {
     reference: "John 3:16",
     text: "For God so loved the world, that he gave his only begotten Son...",
     insight: "CR: Christ is the center - God's love flows through sacrifice"
