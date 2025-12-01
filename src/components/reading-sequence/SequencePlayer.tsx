@@ -613,28 +613,41 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     const commentaryVoice = sequence.commentaryVoice || "daniel";
     const commentaryDepth = sequence.commentaryDepth || "surface";
     
-    if (commentaryMode === "chapter") {
-      // Play chapter commentary
-      const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
-      const commentary = await generateCommentary(content.book, content.chapter, chapterText, commentaryDepth);
-      
-      setIsLoading(false);
-      
-      if (commentary && continuePlayingRef.current) {
-        playCommentary(commentary, commentaryVoice, () => {
-          // Move to next chapter after commentary
+    try {
+      if (commentaryMode === "chapter") {
+        // Play chapter commentary
+        const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
+        const commentary = await generateCommentary(content.book, content.chapter, chapterText, commentaryDepth);
+        
+        setIsLoading(false);
+        
+        if (commentary && continuePlayingRef.current) {
+          playCommentary(commentary, commentaryVoice, () => {
+            // Move to next chapter after commentary
+            if (continuePlayingRef.current) {
+              moveToNextChapter();
+            } else {
+              setIsPlaying(false);
+            }
+          });
+        } else {
+          // No commentary available or stopped, clean up and move to next
           if (continuePlayingRef.current) {
             moveToNextChapter();
+          } else {
+            setIsPlaying(false);
           }
-        });
+        }
       } else {
-        // No commentary available, move to next
-        moveToNextChapter();
+        // Play verse-by-verse commentary
+        setIsLoading(false);
+        playCommentaryOnlyVerse(0, content, sequence);
       }
-    } else {
-      // Play verse-by-verse commentary
+    } catch (error) {
+      console.error("[Commentary Only] Error generating commentary:", error);
       setIsLoading(false);
-      playCommentaryOnlyVerse(0, content, sequence);
+      setIsPlaying(false);
+      toast.error("Failed to generate commentary");
     }
   }, [generateCommentary, playCommentary, moveToNextChapter]);
   
@@ -644,6 +657,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       // All verses done, move to next chapter
       if (continuePlayingRef.current) {
         moveToNextChapter();
+      } else {
+        setIsPlaying(false);
       }
       return;
     }
@@ -655,19 +670,33 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     console.log("[Commentary Only] Playing verse", verseIdx + 1, "commentary");
     setCurrentVerseIdx(verseIdx);
     
-    const commentary = await generateVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryDepth);
-    
-    if (commentary && continuePlayingRef.current) {
-      playCommentary(commentary, commentaryVoice, () => {
-        // Move to next verse commentary
+    try {
+      const commentary = await generateVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryDepth);
+      
+      if (commentary && continuePlayingRef.current) {
+        playCommentary(commentary, commentaryVoice, () => {
+          // Move to next verse commentary
+          if (continuePlayingRef.current) {
+            playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+          } else {
+            setIsPlaying(false);
+          }
+        });
+      } else {
+        // No commentary or stopped, skip to next verse or stop
         if (continuePlayingRef.current) {
           playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+        } else {
+          setIsPlaying(false);
         }
-      });
-    } else {
-      // No commentary, skip to next verse
+      }
+    } catch (error) {
+      console.error("[Commentary Only] Error generating verse commentary:", error);
+      // Try to continue with next verse
       if (continuePlayingRef.current) {
         playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+      } else {
+        setIsPlaying(false);
       }
     }
   }, [generateVerseCommentary, playCommentary, moveToNextChapter]);
@@ -1152,6 +1181,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         console.log("[Commentary Only] Skipping verse reading, playing commentary only");
         playCommentaryOnlyChapter(chapterContent, currentSequence);
       } else {
+        // Notify music ducking for regular Bible reading
+        notifyTTSStarted();
         playVerseAtIndex(0, chapterContent, voice);
       }
     }
@@ -1182,6 +1213,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           console.log("[Commentary Only] Auto-starting with commentary only");
           playCommentaryOnlyChapter(chapterContent, currentSequence);
         } else {
+          // Notify music ducking for regular Bible reading
+          notifyTTSStarted();
           // Don't set isPlaying here - let playVerseAtIndex do it after audio actually starts
           playVerseAtIndex(0, chapterContent, voice);
         }
@@ -1260,6 +1293,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         console.log("[Commentary Only] Starting with commentary only");
         playCommentaryOnlyChapter(chapterContent, currentSequence);
       } else {
+        // Notify music ducking for regular Bible reading
+        notifyTTSStarted();
         playVerseAtIndex(currentVerseIdx, chapterContent, voice);
       }
     }
