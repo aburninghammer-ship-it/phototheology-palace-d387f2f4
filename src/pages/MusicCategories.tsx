@@ -37,15 +37,7 @@ const MUSIC_FLOORS = [
     mood: "Warm strings, gentle narrative",
     color: "from-amber-500/20 to-orange-500/20",
     borderColor: "border-amber-500/30",
-    tracks: [
-      {
-        id: "story-warmth",
-        name: "Story Warmth",
-        description: "Warm strings and gentle cello for narrative immersion",
-        bpm: 60,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Touching%20Moment.mp3",
-      }
-    ]
+    tracks: []
   },
   {
     floor: 2,
