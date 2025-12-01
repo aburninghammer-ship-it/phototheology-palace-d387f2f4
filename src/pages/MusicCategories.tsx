@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAudioDucking } from "@/hooks/useAudioDucking";
-import { useUserMusic } from "@/hooks/useUserMusic";
-import { useAuth } from "@/hooks/useAuth";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,10 +18,6 @@ import {
   Eye,
   Wind,
   Lightbulb,
-  Heart,
-  Trash2,
-  Upload,
-  Loader2
 } from "lucide-react";
 
 // Floor-based music categories - Rich orchestral, movie soundtrack style
@@ -37,15 +31,7 @@ const MUSIC_FLOORS = [
     mood: "Warm strings, gentle narrative",
     color: "from-amber-500/20 to-orange-500/20",
     borderColor: "border-amber-500/30",
-    tracks: [
-      {
-        id: "story-warmth",
-        name: "Story Warmth",
-        description: "Warm strings and gentle cello for narrative immersion",
-        bpm: 60,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Touching%20Moment.mp3",
-      }
-    ]
+    tracks: []
   },
   {
     floor: 2,
@@ -57,11 +43,25 @@ const MUSIC_FLOORS = [
     borderColor: "border-blue-500/30",
     tracks: [
       {
-        id: "patterns-kingdom",
-        name: "Patterns of the Kingdom",
-        description: "Measured orchestral strings with thoughtful progression",
-        bpm: 65,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Eternal%20Hope.mp3",
+        id: "whispers-of-eternity-study",
+        name: "Whispers of Eternity",
+        description: "Orchestral with lush strings, epic meditative - perfect for deep study",
+        url: "https://cdn1.suno.ai/37b77ba0-4272-4220-a392-16645e9aa9b2.mp3",
+        bpm: 60
+      },
+      {
+        id: "fire-study",
+        name: "Fire",
+        description: "Choir harmonies, uplifting crescendo, ethereal synths",
+        url: "https://cdn1.suno.ai/37b77ba0-4272-4220-a392-16645e9aa9b2.mp3",
+        bpm: 60
+      },
+      {
+        id: "whispers-inner-mind",
+        name: "Whispers of the Inner Mind",
+        description: "Ambient instrumental meditation - peaceful and meditative",
+        url: "https://cdn1.suno.ai/E8qISnskB0iJ5bnz.mp3",
+        bpm: 55
       }
     ]
   },
@@ -73,22 +73,7 @@ const MUSIC_FLOORS = [
     mood: "Reverent strings, harp",
     color: "from-purple-500/20 to-violet-500/20",
     borderColor: "border-purple-500/30",
-    tracks: [
-      {
-        id: "sanctuary-stillness",
-        name: "Sanctuary Stillness",
-        description: "Sacred strings with soft harp and gentle brass",
-        bpm: 58,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Meditation%20Impromptu.mp3",
-      },
-      {
-        id: "blue-room-ambient",
-        name: "Blue Room - Typology",
-        description: "Reverent orchestral ambience with deep strings",
-        bpm: 55,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Peaceful%20Desolation.mp3",
-      }
-    ]
+    tracks: []
   },
   {
     floor: 4,
@@ -98,36 +83,7 @@ const MUSIC_FLOORS = [
     mood: "Bright, hopeful orchestra",
     color: "from-yellow-500/20 to-amber-500/20",
     borderColor: "border-yellow-500/30",
-    tracks: [
-      {
-        id: "christ-the-center",
-        name: "Christ the Center",
-        description: "Hopeful strings with radiant orchestral swells",
-        bpm: 65,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Amazing%20Grace.mp3",
-      },
-      {
-        id: "eternal-grace",
-        name: "Eternal Grace",
-        description: "Cinematic orchestral christian music - sweeping and reverent",
-        bpm: 68,
-        url: "https://cdn1.suno.ai/cfda5aef-dc1c-4ac8-876f-ce80ea0eb791.mp3",
-      },
-      {
-        id: "eternal-grace-ii",
-        name: "Eternal Grace II",
-        description: "Instrumental orchestral - cinematic and reverent",
-        bpm: 65,
-        url: "https://cdn1.suno.ai/5a7d94e9-13f6-4dae-9c16-b3dd559849b3.mp3",
-      },
-      {
-        id: "echoes-of-eternity",
-        name: "Echoes of Eternity",
-        description: "Instrumental cinematic orchestral christian music",
-        bpm: 62,
-        url: "https://cdn1.suno.ai/87b87bf9-3f8f-4e49-ab69-1834e0db7119.mp3",
-      }
-    ]
+    tracks: []
   },
   {
     floor: 5,
@@ -137,15 +93,7 @@ const MUSIC_FLOORS = [
     mood: "Cinematic tension, deep strings",
     color: "from-red-500/20 to-rose-500/20",
     borderColor: "border-red-500/30",
-    tracks: [
-      {
-        id: "prophecy-watch",
-        name: "Prophecy Watch",
-        description: "Cinematic strings with reverent tension",
-        bpm: 60,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dark%20Times.mp3",
-      }
-    ]
+    tracks: []
   },
   {
     floor: 6,
@@ -155,15 +103,7 @@ const MUSIC_FLOORS = [
     mood: "Flowing strings, woodwinds",
     color: "from-green-500/20 to-emerald-500/20",
     borderColor: "border-green-500/30",
-    tracks: [
-      {
-        id: "wisdom-quiet",
-        name: "Wisdom in Quiet Places",
-        description: "Flowing strings with gentle woodwinds",
-        bpm: 58,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Meditation%20Aquatic.mp3",
-      }
-    ]
+    tracks: []
   },
   {
     floor: 7,
@@ -173,15 +113,7 @@ const MUSIC_FLOORS = [
     mood: "Solemn cello, ancient feel",
     color: "from-indigo-500/20 to-purple-500/20",
     borderColor: "border-indigo-500/30",
-    tracks: [
-      {
-        id: "chamber-light",
-        name: "Chamber of Light",
-        description: "Deep cello with ancient orchestral textures",
-        bpm: 60,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Perspectives.mp3",
-      }
-    ]
+    tracks: []
   }
 ];
 
@@ -191,9 +123,6 @@ export default function MusicCategories() {
   const [volume, setVolume] = useState(0.08);
   const [isMuted, setIsMuted] = useState(false);
   const [duckMultiplier, setDuckMultiplier] = useState(1);
-
-  const { user } = useAuth();
-  const { userTracks, isLoading: loadingTracks, uploading, uploadMusic, deleteMusic, toggleFavorite } = useUserMusic();
 
   // Listen for audio ducking events (when TTS is playing)
   useAudioDucking(useCallback((ducked: boolean, duckRatio: number) => {
@@ -347,101 +276,6 @@ export default function MusicCategories() {
           })}
         </div>
 
-        {/* My Music Section */}
-        {user && (
-          <Card variant="glass" className="border border-primary/30">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Upload className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">My Music</CardTitle>
-                    <p className="text-sm text-muted-foreground">Your uploaded tracks</p>
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.accept = 'audio/*';
-                    input.onchange = async (e) => {
-                      const file = (e.target as HTMLInputElement).files?.[0];
-                      if (file) {
-                        await uploadMusic(file, file.name.replace(/\.[^/.]+$/, ""));
-                      }
-                    };
-                    input.click();
-                  }}
-                  disabled={uploading}
-                >
-                  {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
-                  Upload
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {loadingTracks ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              ) : userTracks.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Music className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p>No uploaded tracks yet</p>
-                  <p className="text-sm">Upload your own music for Bible study</p>
-                </div>
-              ) : (
-                userTracks.map((track) => (
-                  <div 
-                    key={track.id}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-background/50 hover:bg-background/70 transition-colors"
-                  >
-                    <Button
-                      variant={playingTrackId === track.id ? "default" : "outline"}
-                      size="icon"
-                      className="h-10 w-10 rounded-full shrink-0"
-                      onClick={() => playTrack(track.id, track.file_url)}
-                    >
-                      {playingTrackId === track.id ? (
-                        <Pause className="h-4 w-4" />
-                      ) : (
-                        <Play className="h-4 w-4 ml-0.5" />
-                      )}
-                    </Button>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{track.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {track.mood || "Custom track"}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => toggleFavorite(track)}
-                      >
-                        <Heart className={`h-4 w-4 ${track.is_favorite ? "fill-red-500 text-red-500" : ""}`} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => deleteMusic(track)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </CardContent>
-          </Card>
-        )}
 
         {/* Guidelines Info */}
         <Card variant="glass" className="max-w-2xl mx-auto">

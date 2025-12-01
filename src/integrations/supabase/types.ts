@@ -1980,6 +1980,45 @@ export type Database = {
         }
         Relationships: []
       }
+      drill_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          drill_data: Json | null
+          id: string
+          mode: string
+          name: string | null
+          updated_at: string
+          user_id: string
+          verse_reference: string
+          verse_text: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          drill_data?: Json | null
+          id?: string
+          mode: string
+          name?: string | null
+          updated_at?: string
+          user_id: string
+          verse_reference: string
+          verse_text?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          drill_data?: Json | null
+          id?: string
+          mode?: string
+          name?: string | null
+          updated_at?: string
+          user_id?: string
+          verse_reference?: string
+          verse_text?: string | null
+        }
+        Relationships: []
+      }
       email_campaigns: {
         Row: {
           created_at: string | null
@@ -5684,6 +5723,9 @@ export type Database = {
         Row: {
           book: string
           chapter: number
+          commentary_depth: string | null
+          commentary_mode: string | null
+          commentary_voice: string | null
           created_at: string
           end_verse: number | null
           id: string
@@ -5698,6 +5740,9 @@ export type Database = {
         Insert: {
           book: string
           chapter: number
+          commentary_depth?: string | null
+          commentary_mode?: string | null
+          commentary_voice?: string | null
           created_at?: string
           end_verse?: number | null
           id?: string
@@ -5712,6 +5757,9 @@ export type Database = {
         Update: {
           book?: string
           chapter?: number
+          commentary_depth?: string | null
+          commentary_mode?: string | null
+          commentary_voice?: string | null
           created_at?: string
           end_verse?: number | null
           id?: string

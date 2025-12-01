@@ -134,7 +134,10 @@ FORMATTING FOR SPOKEN DELIVERY:
 - Avoid bullet points or lists in output
 - Don't use asterisks, markdown, or special formatting
 - Write as if speaking aloud to someone
-- NEVER use abbreviations like @Ad, @Mo, CR, BL, PRm, ST, DR—always speak full names`;
+- NEVER use abbreviations like @Ad, @Mo, CR, BL, PRm, ST, DR—always speak full names
+- CRITICAL: ALWAYS complete your thoughts fully. Never end mid-sentence or mid-thought
+- Every paragraph and the overall commentary MUST end with a complete sentence
+- If approaching a length limit, wrap up gracefully with a closing thought rather than cutting off`;
 
   switch (depth) {
     case "surface":
@@ -165,20 +168,37 @@ Commentary style for INTERMEDIATE level:
 
 Commentary style for SCHOLARLY/DEPTH level:
 - Provide comprehensive verse-by-verse commentary
-- Cover EVERY significant verse or passage in the chapter
-- Apply the full Phototheology framework across multiple floors
-- Include Greek/Hebrew word studies (Definition and Comparison Room)
-- Provide extensive cross-references (Bible Freestyle / Verse Genetics)
-- Discuss historical, cultural, and theological context in detail
-- Connect to the 8 covenant cycles where applicable
-- Place in Three Heavens framework when relevant
-- Reference sanctuary typology (Blue Room) and prophetic timelines
-- Show all five Dimensions where applicable
-- Identify patterns, types, and parallels
-- Include scholarly insights while maintaining accessibility
+- Start explicitly with verses 1-3 and then move sequentially through the chapter (verse 1, verse 2, verse 3, etc.)
+- Do NOT skip or ignore any verse; every verse in the chapter must be addressed either individually or in clearly labeled grouped sections (e.g., "verses 1-3", "verses 4-5")
+
+CRITICAL - APPLY THE COMPLETE PHOTOTHEOLOGY PALACE:
+You MUST engage with ALL 8 floors throughout the commentary. Don't just mention them—actively use them:
+
+**Floor 1 (Furnishing):** Create vivid mental images (Translation Room), highlight striking insights (Gems Room), help readers remember the narrative flow (Story Room)
+
+**Floor 2 (Investigation):** Make detailed observations, provide Hebrew/Greek word studies (Definition and Comparison Room), identify symbols and types pointing to Christ, ask probing questions
+
+**Floor 3 (Freestyle):** Connect to nature illustrations, personal life applications, show verse genetics (biblical cross-references), draw from historical parallels
+
+**Floor 4 (Next Level - MANDATORY):**
+- Concentration Room: Show Christ EXPLICITLY in every passage
+- Dimensions Room: Apply all five dimensions (Literal, Christ, Me, Church, Heaven)
+- Theme Room: Connect to Sanctuary Wall, Life of Christ Wall, Great Controversy Wall, Time Prophecy Wall, Gospel Floor, Heaven Ceiling
+- Patterns Room: Identify recurring biblical motifs (40 days, 3 days, 7s, 12s, deliverer stories)
+- Parallels Room: Show mirrored actions across Scripture (e.g., Babel/Pentecost)
+- Fruit Room: Ensure interpretation produces Christlike character
+
+**Floor 5 (Vision):** Connect to sanctuary typology (Blue Room - altar, laver, lampstand, showbread, incense, ark, veil, gate), place in prophetic timelines (Prophecy Room), relate to Three Angels' Messages when relevant, connect to biblical feasts (Feasts Room)
+
+**Floor 6 (Cycles & Heavens):** Place chapter in one of the 8 covenant cycles (Adamic, Noahic, Abrahamic, Mosaic, Cyrusic, Cyrus-Christ, Spirit, Remnant) and identify which Day-of-the-LORD horizon (1H: Babylon→Restoration, 2H: 70AD→New Covenant, 3H: Final→New Creation)
+
+**Floor 7 (Spiritual/Emotional):** Engage the heart—show the emotional weight and spiritual fire of the passage, not just intellectual analysis
+
+Don't just list these—weave them naturally into your verse-by-verse exposition. A thorough depth commentary should touch on principles from ALL 8 floors, showing the full richness of the Phototheology method.
+
 - This should be thorough enough for serious Bible students
-- Length: As long as needed to cover the chapter thoroughly (800-1500+ words)`;
-  }
+- Length: As long as needed to cover the chapter thoroughly (1000-2000+ words)`;
+   }
 };
 
 const getMaxTokens = (depth: CommentaryDepth): number => {
@@ -247,7 +267,9 @@ serve(async (req) => {
 
 ${chapterText ? `Here's the chapter content:\n${chapterText}\n\n` : ""}
 
-Please provide a comprehensive, scholarly verse-by-verse commentary applying the full Phototheology Palace framework. Cover every significant verse, provide cross-references, include word studies where illuminating, connect to sanctuary typology and covenant cycles where applicable, and show Christ throughout. Make it thorough enough for serious Bible students while keeping it accessible for spoken delivery.`
+Please provide a comprehensive, scholarly verse-by-verse commentary applying the full Phototheology Palace framework.
+CRITICAL: Start at verse 1 and move sequentially through the chapter (1, 2, 3, 4, ...). Do NOT skip any verses, especially verses 1-3. If you group verses, clearly label the group (for example, "verses 1-3" or "verses 4-5") and ensure every verse in the chapter is covered.
+Cover every verse with at least one clear sentence of commentary. Make it thorough enough for serious Bible students while keeping it accessible for spoken delivery.`
       : `The reader just finished ${book} chapter ${chapter}. 
 
 ${chapterText ? `Here's the chapter content:\n${chapterText}\n\n` : ""}
@@ -280,11 +302,34 @@ Please provide a ${depth === "intermediate" ? "thorough" : "brief"}, Christ-cent
     }
 
     const data = await response.json();
-    const commentary = data.choices?.[0]?.message?.content;
+    let commentary = data.choices?.[0]?.message?.content;
 
     if (!commentary) {
       throw new Error("No commentary generated");
     }
+
+    // Clean commentary for TTS - remove symbols that sound awkward when read aloud
+    commentary = commentary
+      .replace(/\*\*/g, '')           // Bold markers
+      .replace(/\*/g, '')             // Italics/asterisks
+      .replace(/__/g, '')             // Underline
+      .replace(/_([^_]+)_/g, '$1')    // Underscore emphasis
+      .replace(/#+\s*/g, '')          // Headers
+      .replace(/`/g, '')              // Code ticks
+      .replace(/\([^)]*\)/g, '')      // Remove (parentheses)
+      .replace(/\[[^\]]*\]/g, '')     // Remove [brackets]
+      .replace(/—/g, ', ')            // Em dash to comma
+      .replace(/–/g, ', ')            // En dash to comma
+      .replace(/\.\.\./g, '.')        // Ellipsis
+      .replace(/…/g, '.')             // Unicode ellipsis
+      .replace(/"/g, '').replace(/"/g, '') // Curly quotes
+      .replace(/'/g, "'").replace(/'/g, "'") // Normalize apostrophes
+      .replace(/\s+/g, ' ')           // Multiple spaces
+      .replace(/\s+\./g, '.')
+      .replace(/\s+,/g, ',')
+      .replace(/,\s*,/g, ',')
+      .replace(/\.\s*\./g, '.')
+      .trim();
 
     console.log(`${depth} commentary generated successfully for ${book} ${chapter} (${commentary.length} chars)`);
 

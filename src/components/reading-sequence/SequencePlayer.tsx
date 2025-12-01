@@ -19,6 +19,7 @@ import {
   Smartphone,
   Download,
   WifiOff,
+  RotateCcw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -30,6 +31,12 @@ import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { DownloadSequenceDialog } from "./DownloadSequenceDialog";
 import { OfflineModeToggle } from "./OfflineModeToggle";
 import { isOnline, getCachedMusicTrack } from "@/services/offlineAudioCache";
+import { 
+  getCachedChapterCommentary, 
+  cacheChapterCommentary,
+  getCachedVerseCommentary,
+  cacheVerseCommentary 
+} from "@/services/offlineCommentaryCache";
 
 interface SequencePlayerProps {
   sequences: ReadingSequenceBlock[];
@@ -52,7 +59,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const [currentVerseIdx, setCurrentVerseIdx] = useState(0);
   const [volume, setVolume] = useState(100);
   const [isMuted, setIsMuted] = useState(false);
-  const [musicVolume, setMusicVolume] = useState(() => Math.min(getGlobalMusicVolume(), 15));
+  const [musicVolume, setMusicVolume] = useState(() => Math.min(getGlobalMusicVolume(), 30));
   const [chapterContent, setChapterContent] = useState<ChapterContent | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
@@ -74,6 +81,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const chapterCache = useRef<Map<string, { verse: number; text: string }[]>>(new Map()); // Cache for prefetched chapters
   const commentaryCache = useRef<Map<string, { text: string; audioUrl?: string }>>(new Map()); // Cache for pre-generated commentary
   const prefetchingCommentaryRef = useRef<Set<string>>(new Set()); // Track commentary being prefetched
+  const browserUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null); // For pause/resume with browser TTS
+  const retryCountRef = useRef(0); // Track retry attempts for resilience
+  const pausedVerseRef = useRef<{ verseIdx: number; content: ChapterContent; voice: string } | null>(null); // Track paused position
   
   const isMobile = useIsMobile();
   const activeSequences = sequences.filter((s) => s.enabled && s.items.length > 0);
@@ -113,15 +123,19 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   // Callback ref for music audio - ensures volume is set when element mounts
   const setMusicAudioRef = useCallback((node: HTMLAudioElement | null) => {
     if (node) {
-      node.volume = musicVolume / 100;
       musicAudioRef.current = node;
+      // Apply current volume immediately
+      node.volume = musicVolume / 100;
+      console.log('[SequencePlayer] Music audio ref set, volume:', musicVolume / 100);
     }
-  }, []);
+  }, [musicVolume]);
 
-  // Update music volume directly on ref
+  // Update music volume directly on ref - critical for mobile
   useEffect(() => {
     if (musicAudioRef.current) {
-      musicAudioRef.current.volume = musicVolume / 100;
+      const vol = musicVolume / 100;
+      musicAudioRef.current.volume = vol;
+      console.log('[SequencePlayer] Music volume effect applied:', vol);
     }
   }, [musicVolume]);
 
@@ -132,9 +146,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   }, [isPlaying, isPaused, musicVolume]);
 
-  // Generate chapter commentary using Jeeves
+  // Generate chapter commentary using Jeeves (with offline cache)
   const generateCommentary = useCallback(async (book: string, chapter: number, chapterText?: string, depth: string = "surface") => {
     try {
+      // Check offline cache first
+      const cached = getCachedChapterCommentary(book, chapter, depth);
+      if (cached) {
+        console.log("[Commentary] Using cached chapter commentary for", book, chapter);
+        return cached;
+      }
+
+      // If offline and no cache, return null
+      if (!isOnline()) {
+        console.log("[Commentary] Offline and no cache for", book, chapter);
+        return null;
+      }
+
       console.log("[Commentary] Generating", depth, "chapter commentary for", book, chapter);
       const { data, error } = await supabase.functions.invoke("generate-chapter-commentary", {
         body: { book, chapter, chapterText, depth },
@@ -144,17 +171,38 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         console.error("[Commentary] Edge function error:", error);
         throw error;
       }
-      console.log("[Commentary] Generated chapter commentary length:", data?.commentary?.length || 0);
-      return data?.commentary as string | null;
+      
+      const commentary = data?.commentary as string | null;
+      
+      // Cache the commentary for offline use
+      if (commentary) {
+        cacheChapterCommentary(book, chapter, depth, commentary);
+      }
+      
+      console.log("[Commentary] Generated chapter commentary length:", commentary?.length || 0);
+      return commentary;
     } catch (e) {
       console.error("[Commentary] Error generating chapter commentary:", e);
       return null;
     }
   }, []);
 
-  // Generate verse commentary using Jeeves
+  // Generate verse commentary using Jeeves (with offline cache)
   const generateVerseCommentary = useCallback(async (book: string, chapter: number, verse: number, verseText: string, depth: string = "surface") => {
     try {
+      // Check offline cache first
+      const cached = getCachedVerseCommentary(book, chapter, verse, depth);
+      if (cached) {
+        console.log("[Verse Commentary] Using cached commentary for", book, chapter + ":" + verse);
+        return cached;
+      }
+
+      // If offline and no cache, return null
+      if (!isOnline()) {
+        console.log("[Verse Commentary] Offline and no cache for", book, chapter + ":" + verse);
+        return null;
+      }
+
       console.log("[Verse Commentary] Generating", depth, "commentary for", book, chapter + ":" + verse);
       const { data, error } = await supabase.functions.invoke("generate-verse-commentary", {
         body: { book, chapter, verse, verseText, depth },
@@ -164,8 +212,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         console.error("[Verse Commentary] Edge function error:", error);
         throw error;
       }
-      console.log("[Verse Commentary] Generated length:", data?.commentary?.length || 0);
-      return data?.commentary as string | null;
+      
+      const commentary = data?.commentary as string | null;
+      
+      // Cache the commentary for offline use
+      if (commentary) {
+        cacheVerseCommentary(book, chapter, verse, depth, commentary);
+      }
+      
+      console.log("[Verse Commentary] Generated length:", commentary?.length || 0);
+      return commentary;
     } catch (e) {
       console.error("[Verse Commentary] Error:", e);
       return null;
@@ -194,6 +250,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       return nextIdx;
     });
   }, [totalItems]);
+
 
   // Fetch chapter content (with caching)
   const fetchChapter = useCallback(async (book: string, chapter: number) => {
@@ -269,7 +326,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   }, [offlineMode]);
 
-  // Browser speech synthesis for offline mode
+  // Browser speech synthesis for offline mode - with pause/resume support
   const speakWithBrowserTTS = useCallback((text: string, onEnd: () => void): void => {
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
@@ -287,9 +344,20 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       utterance.voice = englishVoice;
     }
     
-    utterance.onend = onEnd;
-    utterance.onerror = () => onEnd();
+    utterance.onend = () => {
+      browserUtteranceRef.current = null;
+      onEnd();
+    };
+    utterance.onerror = (e) => {
+      console.error("[BrowserTTS] Error:", e);
+      browserUtteranceRef.current = null;
+      // Don't call onEnd on error if it was just interrupted for pause
+      if (e.error !== 'interrupted') {
+        onEnd();
+      }
+    };
     
+    browserUtteranceRef.current = utterance;
     speechSynthesis.speak(utterance);
   }, []);
 
@@ -322,6 +390,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
 
     const audio = new Audio(url);
     audio.volume = isMuted ? 0 : volume / 100;
+    // Apply playback speed from current sequence
+    const playbackSpeed = currentSequence?.playbackSpeed || 1;
+    audio.playbackRate = playbackSpeed;
     audioRef.current = audio;
     setAudioUrl(url);
 
@@ -354,6 +425,89 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       onComplete();
     }
   }, [generateTTS, isMuted, volume]);
+
+  // Handle chapter completion with commentary check (for browser TTS and fallback paths)
+  const handleChapterCompleteWithCommentary = useCallback((content: ChapterContent) => {
+    // Find current sequence to check commentary settings
+    const currentSeq = activeSequences.find((seq, idx) => {
+      const itemsBefore = activeSequences.slice(0, idx).reduce((acc, s) => acc + s.items.length, 0);
+      return currentItemIdx >= itemsBefore && currentItemIdx < itemsBefore + seq.items.length;
+    });
+    
+    const includeCommentary = currentSeq?.includeJeevesCommentary || false;
+    const commentaryMode = currentSeq?.commentaryMode || "chapter";
+    const commentaryVoice = currentSeq?.commentaryVoice || "daniel";
+    const commentaryDepth = currentSeq?.commentaryDepth || "surface";
+    
+    console.log("[ChapterComplete] Commentary settings:", { includeCommentary, commentaryMode });
+    
+    if (includeCommentary && commentaryMode === "chapter" && content && continuePlayingRef.current) {
+      const cacheKey = `chapter-${content.book}-${content.chapter}-${commentaryVoice}`;
+      const cached = commentaryCache.current.get(cacheKey);
+      
+      if (cached?.audioUrl) {
+        console.log("[ChapterComplete] Using cached chapter commentary audio");
+        setCommentaryText(cached.text);
+        setIsPlayingCommentary(true);
+        playingCommentaryRef.current = true;
+        
+        const audio = new Audio(cached.audioUrl);
+        audio.volume = isMuted ? 0 : volume / 100;
+        // Apply playback speed from sequence
+        const playbackSpeed = currentSeq?.playbackSpeed || 1;
+        audio.playbackRate = playbackSpeed;
+        audioRef.current = audio;
+        
+        audio.onended = () => {
+          audioRef.current = null;
+          setIsPlayingCommentary(false);
+          playingCommentaryRef.current = false;
+          setCommentaryText(null);
+          moveToNextChapter();
+        };
+        
+        audio.onerror = () => {
+          audioRef.current = null;
+          setIsPlayingCommentary(false);
+          playingCommentaryRef.current = false;
+          setCommentaryText(null);
+          moveToNextChapter();
+        };
+        
+        audio.play().catch(() => {
+          setIsPlayingCommentary(false);
+          playingCommentaryRef.current = false;
+          setCommentaryText(null);
+          moveToNextChapter();
+        });
+      } else if (cached?.text) {
+        console.log("[ChapterComplete] Using cached chapter commentary text");
+        playCommentary(cached.text, commentaryVoice, moveToNextChapter);
+      } else {
+        // Generate commentary
+        console.log("[ChapterComplete] Generating chapter commentary");
+        setIsLoading(true);
+        const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
+        
+        generateCommentary(content.book, content.chapter, chapterText, commentaryDepth)
+          .then(commentary => {
+            if (commentary && continuePlayingRef.current) {
+              playCommentary(commentary, commentaryVoice, moveToNextChapter);
+            } else {
+              setIsLoading(false);
+              moveToNextChapter();
+            }
+          })
+          .catch(() => {
+            setIsLoading(false);
+            moveToNextChapter();
+          });
+      }
+    } else {
+      console.log("[ChapterComplete] No commentary, moving to next chapter");
+      moveToNextChapter();
+    }
+  }, [activeSequences, currentItemIdx, isMuted, volume, generateCommentary, playCommentary, moveToNextChapter]);
 
   // Prefetch TTS for upcoming verses
   const prefetchVerse = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
@@ -448,6 +602,111 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   }, [generateCommentary, generateTTS]);
 
+  // Play commentary only (skip verse reading)
+  const playCommentaryOnlyChapter = useCallback(async (content: ChapterContent, sequence: ReadingSequenceBlock) => {
+    if (!content || !sequence.includeJeevesCommentary) return;
+    
+    console.log("[Commentary Only] Starting commentary-only playback");
+    setIsLoading(true);
+    setIsPlaying(true);
+    setIsPaused(false);
+    // Don't duck music in commentary-only mode - let it play alongside
+    if (!sequence.commentaryOnly) {
+      notifyTTSStarted();
+    }
+    
+    const commentaryMode = sequence.commentaryMode || "chapter";
+    const commentaryVoice = sequence.commentaryVoice || "daniel";
+    const commentaryDepth = sequence.commentaryDepth || "surface";
+    
+    try {
+      if (commentaryMode === "chapter") {
+        // Play chapter commentary
+        const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
+        const commentary = await generateCommentary(content.book, content.chapter, chapterText, commentaryDepth);
+        
+        setIsLoading(false);
+        
+        if (commentary && continuePlayingRef.current) {
+          playCommentary(commentary, commentaryVoice, () => {
+            // Move to next chapter after commentary
+            if (continuePlayingRef.current) {
+              moveToNextChapter();
+            } else {
+              setIsPlaying(false);
+            }
+          });
+        } else {
+          // No commentary available or stopped, clean up and move to next
+          if (continuePlayingRef.current) {
+            moveToNextChapter();
+          } else {
+            setIsPlaying(false);
+          }
+        }
+      } else {
+        // Play verse-by-verse commentary
+        setIsLoading(false);
+        playCommentaryOnlyVerse(0, content, sequence);
+      }
+    } catch (error) {
+      console.error("[Commentary Only] Error generating commentary:", error);
+      setIsLoading(false);
+      setIsPlaying(false);
+      toast.error("Failed to generate commentary");
+    }
+  }, [generateCommentary, playCommentary, moveToNextChapter]);
+  
+  // Play commentary for a single verse (commentary-only mode)
+  const playCommentaryOnlyVerse = useCallback(async (verseIdx: number, content: ChapterContent, sequence: ReadingSequenceBlock) => {
+    if (verseIdx >= content.verses.length) {
+      // All verses done, move to next chapter
+      if (continuePlayingRef.current) {
+        moveToNextChapter();
+      } else {
+        setIsPlaying(false);
+      }
+      return;
+    }
+    
+    const verse = content.verses[verseIdx];
+    const commentaryVoice = sequence.commentaryVoice || "daniel";
+    const commentaryDepth = sequence.commentaryDepth || "surface";
+    
+    console.log("[Commentary Only] Playing verse", verseIdx + 1, "commentary");
+    setCurrentVerseIdx(verseIdx);
+    
+    try {
+      const commentary = await generateVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryDepth);
+      
+      if (commentary && continuePlayingRef.current) {
+        playCommentary(commentary, commentaryVoice, () => {
+          // Move to next verse commentary
+          if (continuePlayingRef.current) {
+            playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+          } else {
+            setIsPlaying(false);
+          }
+        });
+      } else {
+        // No commentary or stopped, skip to next verse or stop
+        if (continuePlayingRef.current) {
+          playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+        } else {
+          setIsPlaying(false);
+        }
+      }
+    } catch (error) {
+      console.error("[Commentary Only] Error generating verse commentary:", error);
+      // Try to continue with next verse
+      if (continuePlayingRef.current) {
+        playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+      } else {
+        setIsPlaying(false);
+      }
+    }
+  }, [generateVerseCommentary, playCommentary, moveToNextChapter]);
+
   // Play a specific verse by index - using a stable ref to avoid stale closures
   const playVerseAtIndex = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
     console.log("[PlayVerse] Called with:", { verseIdx, versesCount: content?.verses?.length, voice, offlineMode });
@@ -502,7 +761,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           }, 300);
         } else if (verseIdx >= content.verses.length - 1) {
           notifyTTSStopped();
-          moveToNextChapter();
+          handleChapterCompleteWithCommentary(content);
         }
       });
       return;
@@ -517,7 +776,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
           setTimeout(() => playVerseAtIndex(verseIdx + 1, content, voice), 300);
         } else if (verseIdx >= content.verses.length - 1) {
-          moveToNextChapter();
+          handleChapterCompleteWithCommentary(content);
         }
       });
       return;
@@ -576,6 +835,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     console.log("[PlayVerse] Creating Audio element with volume:", isMuted ? 0 : volume / 100);
     const audio = new Audio(url);
     audio.volume = isMuted ? 0 : volume / 100;
+    
+    // Apply playback speed from sequence settings
+    const playbackSpeed = currentSeq?.playbackSpeed || 1;
+    audio.playbackRate = playbackSpeed;
+    console.log("[PlayVerse] Setting playback rate to:", playbackSpeed);
     
     // Store reference BEFORE any async operations
     audioRef.current = audio;
@@ -646,6 +910,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           
           const audio = new Audio(cached.audioUrl);
           audio.volume = isMuted ? 0 : volume / 100;
+          // Apply playback speed from sequence
+          const playbackSpeed = currentSeq?.playbackSpeed || 1;
+          audio.playbackRate = playbackSpeed;
           audioRef.current = audio;
           
           audio.onended = () => {
@@ -721,6 +988,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
             
             const audio = new Audio(cached.audioUrl);
             audio.volume = isMuted ? 0 : volume / 100;
+            // Apply playback speed from sequence
+            const playbackSpeed = currentSeq?.playbackSpeed || 1;
+            audio.playbackRate = playbackSpeed;
             audioRef.current = audio;
             
             audio.onended = () => {
@@ -784,11 +1054,32 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         message: error?.message,
         verseIdx: verseIdx + 1
       });
-      // Don't call notifyTTSStopped here - keep music ducked during errors
       audioRef.current = null;
       isGeneratingRef.current = false;
-      continuePlayingRef.current = false;
-      setIsPlaying(false);
+      
+      // Retry logic - try up to 2 times, then fall back to browser TTS
+      if (retryCountRef.current < 2 && continuePlayingRef.current) {
+        retryCountRef.current++;
+        console.log(`[Audio] Retrying verse ${verseIdx + 1} (attempt ${retryCountRef.current})`);
+        setTimeout(() => {
+          if (continuePlayingRef.current) {
+            playVerseAtIndex(verseIdx, content, voice);
+          }
+        }, 500);
+      } else if (continuePlayingRef.current) {
+        // Fall back to browser TTS after retries exhausted
+        console.log("[Audio] Falling back to browser TTS after errors");
+        retryCountRef.current = 0;
+        speakWithBrowserTTS(verse.text, () => {
+          if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
+            setTimeout(() => playVerseAtIndex(verseIdx + 1, content, voice), 300);
+          } else if (verseIdx >= content.verses.length - 1) {
+            handleChapterCompleteWithCommentary(content);
+          }
+        });
+      } else {
+        setIsPlaying(false);
+      }
     };
 
     // Start playback
@@ -796,17 +1087,31 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       console.log("[Audio] Calling play()...");
       await audio.play();
       console.log("[Audio] play() succeeded for verse:", verseIdx + 1);
+      retryCountRef.current = 0; // Reset retry count on success
       setIsPlaying(true);
       setIsPaused(false);
+      // Store current position for potential resume
+      pausedVerseRef.current = { verseIdx, content, voice };
     } catch (e) {
       console.error("[Audio] play() failed:", e);
       audioRef.current = null;
       isGeneratingRef.current = false;
-      continuePlayingRef.current = false;
-      setIsPlaying(false);
-      toast.error("Failed to play audio - try clicking play manually");
+      
+      // Try browser TTS fallback instead of giving up
+      if (continuePlayingRef.current) {
+        console.log("[Audio] play() failed, falling back to browser TTS");
+        speakWithBrowserTTS(verse.text, () => {
+          if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
+            setTimeout(() => playVerseAtIndex(verseIdx + 1, content, voice), 300);
+          } else if (verseIdx >= content.verses.length - 1) {
+            handleChapterCompleteWithCommentary(content);
+          }
+        });
+      } else {
+        setIsPlaying(false);
+      }
     }
-  }, [volume, isMuted, totalItems, generateTTS, prefetchVerse, activeSequences, currentItemIdx, generateCommentary, playCommentary, moveToNextChapter, prefetchNextChapter, offlineMode, speakWithBrowserTTS]);
+  }, [volume, isMuted, totalItems, generateTTS, prefetchVerse, activeSequences, currentItemIdx, generateCommentary, playCommentary, moveToNextChapter, handleChapterCompleteWithCommentary, prefetchNextChapter, offlineMode, speakWithBrowserTTS]);
 
   // Play current verse (wrapper for playVerseAtIndex)
   const playCurrentVerse = useCallback(() => {
@@ -887,7 +1192,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       shouldPlayNextRef.current = false;
       const voice = currentSequence?.voice || "daniel";
       continuePlayingRef.current = true;
-      playVerseAtIndex(0, chapterContent, voice);
+      
+      // Check for commentary-only mode
+      if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
+        console.log("[Commentary Only] Skipping verse reading, playing commentary only");
+        playCommentaryOnlyChapter(chapterContent, currentSequence);
+      } else {
+        // Notify music ducking for regular Bible reading
+        notifyTTSStarted();
+        playVerseAtIndex(0, chapterContent, voice);
+      }
     }
   }, [chapterContent, isLoading, currentSequence, playVerseAtIndex]);
 
@@ -910,8 +1224,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         setHasStarted(true);
         const voice = currentSequence?.voice || "daniel";
         continuePlayingRef.current = true;
-        // Don't set isPlaying here - let playVerseAtIndex do it after audio actually starts
-        playVerseAtIndex(0, chapterContent, voice);
+        
+        // Check for commentary-only mode
+        if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
+          console.log("[Commentary Only] Auto-starting with commentary only");
+          playCommentaryOnlyChapter(chapterContent, currentSequence);
+        } else {
+          // Notify music ducking for regular Bible reading
+          notifyTTSStarted();
+          // Don't set isPlaying here - let playVerseAtIndex do it after audio actually starts
+          playVerseAtIndex(0, chapterContent, voice);
+        }
         return true;
       }
       return false;
@@ -940,40 +1263,105 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   }, [autoPlay, hasStarted, chapterContent, isLoading, currentSequence, playVerseAtIndex]);
 
   const handlePlay = () => {
-    console.log("handlePlay called - isPaused:", isPaused, "hasAudio:", !!audioRef.current);
+    console.log("handlePlay called - isPaused:", isPaused, "hasAudio:", !!audioRef.current, "speechPaused:", speechSynthesis.paused);
+    
+    // Resume paused HTML Audio
     if (isPaused && audioRef.current) {
-      // Resume paused audio
       continuePlayingRef.current = true;
-      audioRef.current.play();
+      audioRef.current.play().catch((e) => {
+        console.error("[Resume] Audio play failed:", e);
+        // If resume fails, restart from current verse
+        if (pausedVerseRef.current) {
+          playVerseAtIndex(pausedVerseRef.current.verseIdx, pausedVerseRef.current.content, pausedVerseRef.current.voice);
+        }
+      });
       setIsPaused(false);
       setIsPlaying(true);
-      notifyTTSStarted(); // Duck music when resuming
-    } else if (chapterContent) {
-      // Start fresh playback
-      console.log("Starting fresh playback from verse:", currentVerseIdx + 1);
+      // Don't duck music in commentary-only mode
+      if (!currentSequence?.commentaryOnly) {
+        notifyTTSStarted();
+      }
+      return;
+    }
+    
+    // Resume paused browser speech synthesis
+    if (isPaused && speechSynthesis.paused) {
+      continuePlayingRef.current = true;
+      speechSynthesis.resume();
+      setIsPaused(false);
+      setIsPlaying(true);
+      // Don't duck music in commentary-only mode
+      if (!currentSequence?.commentaryOnly) {
+        notifyTTSStarted();
+      }
+      return;
+    }
+    
+    // Start fresh playback (or resume from stored position)
+    if (chapterContent) {
+      console.log("Starting playback from verse:", currentVerseIdx + 1);
       const voice = currentSequence?.voice || "daniel";
       continuePlayingRef.current = true;
       setIsPlaying(true);
-      playVerseAtIndex(currentVerseIdx, chapterContent, voice);
+      setIsPaused(false);
+      
+      // Check for commentary-only mode
+      if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
+        console.log("[Commentary Only] Starting with commentary only");
+        playCommentaryOnlyChapter(chapterContent, currentSequence);
+      } else {
+        // Notify music ducking for regular Bible reading
+        notifyTTSStarted();
+        playVerseAtIndex(currentVerseIdx, chapterContent, voice);
+      }
     }
   };
 
   const handlePause = () => {
+    continuePlayingRef.current = false;
+    
+    // Handle HTML Audio element pause
     if (audioRef.current) {
-      continuePlayingRef.current = false;
       audioRef.current.pause();
       setIsPaused(true);
-      notifyTTSStopped(); // Restore music when paused
+      // Don't stop music ducking in commentary-only mode (music should keep playing)
+      if (!currentSequence?.commentaryOnly) {
+        notifyTTSStopped();
+      }
+    }
+    
+    // Handle browser speech synthesis pause
+    if (speechSynthesis.speaking) {
+      speechSynthesis.pause();
+      setIsPaused(true);
+      // Don't stop music ducking in commentary-only mode (music should keep playing)
+      if (!currentSequence?.commentaryOnly) {
+        notifyTTSStopped();
+      }
+    }
+    
+    // Store current position for resume
+    if (chapterContent) {
+      const voice = currentSequence?.voice || "daniel";
+      pausedVerseRef.current = { verseIdx: currentVerseIdx, content: chapterContent, voice };
     }
   };
 
   const handleStop = () => {
     continuePlayingRef.current = false;
     pendingVerseRef.current = null;
+    pausedVerseRef.current = null;
+    
+    // Stop HTML Audio
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
+    
+    // Stop browser speech synthesis
+    speechSynthesis.cancel();
+    browserUtteranceRef.current = null;
+    
     setIsPlaying(false);
     setIsPaused(false);
     setCurrentItemIdx(0);
@@ -981,7 +1369,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     setChapterContent(null);
     lastFetchedRef.current = null;
     shouldPlayNextRef.current = false;
-    notifyTTSStopped(); // Restore music when stopped
+    retryCountRef.current = 0;
+    // Always stop music ducking when stopping playback
+    notifyTTSStopped();
   };
 
   const handleSkipNext = () => {
@@ -990,7 +1380,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       audioRef.current.pause();
       audioRef.current = null;
     }
-    // Don't call notifyTTSStopped - keep music ducked while navigating
+    speechSynthesis.cancel();
+    browserUtteranceRef.current = null;
+    
     if (currentItemIdx < totalItems - 1) {
       shouldPlayNextRef.current = isPlaying && continuePlayingRef.current;
       setCurrentItemIdx((prev) => prev + 1);
@@ -1006,7 +1398,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       audioRef.current.pause();
       audioRef.current = null;
     }
-    // Don't call notifyTTSStopped - keep music ducked while navigating
+    speechSynthesis.cancel();
+    browserUtteranceRef.current = null;
+    
     if (currentItemIdx > 0) {
       shouldPlayNextRef.current = isPlaying && continuePlayingRef.current;
       setCurrentItemIdx((prev) => prev - 1);
@@ -1052,7 +1446,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         audioRef.current.pause();
         audioRef.current = null;
       }
-      notifyTTSStopped(); // Restore music on unmount
+      // Cancel browser speech synthesis on unmount
+      speechSynthesis.cancel();
+      browserUtteranceRef.current = null;
+      notifyTTSStopped();
     };
   }, []);
 
@@ -1073,11 +1470,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     : 0;
 
   // Music URL - use cached version when offline
-  const [musicUrl, setMusicUrl] = useState("https://cdn.pixabay.com/download/audio/2022/02/22/audio_d1718ab41b.mp3");
+  // Using peaceful ambient track without bells/chimes
+  const [musicUrl, setMusicUrl] = useState("https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e5e3b4b5a.mp3");
   
   useEffect(() => {
     const loadMusicUrl = async () => {
-      const defaultUrl = "https://cdn.pixabay.com/download/audio/2022/02/22/audio_d1718ab41b.mp3";
+      const defaultUrl = "https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e5e3b4b5a.mp3";
       if (offlineMode || !isOnline()) {
         const cached = await getCachedMusicTrack(defaultUrl);
         if (cached) {
@@ -1217,8 +1615,28 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
             size="icon"
             onClick={handleSkipPrev}
             disabled={isLoading}
+            title="Previous verse"
           >
             <SkipBack className="h-5 w-5" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              // Rewind 10 seconds in current audio
+              if (audioRef.current && audioRef.current.currentTime > 0) {
+                audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 10);
+                console.log('[SequencePlayer] Rewound 10 seconds');
+              } else if (window.speechSynthesis?.speaking) {
+                // For browser TTS, skip to previous verse instead
+                handleSkipPrev();
+              }
+            }}
+            disabled={isLoading || (!isPlaying && !isPaused)}
+            title="Rewind 10 seconds"
+          >
+            <RotateCcw className="h-4 w-4" />
           </Button>
 
           {isPlaying && !isPaused ? (
@@ -1291,22 +1709,38 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
             </div>
           )}
           
-          {/* Music Volume Slider - Always visible */}
-          <div className="flex items-center gap-3">
-            <ListMusic className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground w-12">Music</span>
+          {/* Music Volume Slider - Always visible, touch-optimized for mobile */}
+          <div className="flex items-center gap-3 touch-none">
+            <ListMusic className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-xs text-muted-foreground w-12 flex-shrink-0">Music</span>
             <Slider
               value={[musicVolume]}
+              min={0}
               max={30}
               step={1}
               onValueChange={(v) => {
-                console.log("[SequencePlayer] Music slider changed to:", v[0]);
-                setMusicVolume(v[0]);
-                setGlobalMusicVolume(v[0]);
+                const newVolume = v[0];
+                console.log("[SequencePlayer] Music slider changed to:", newVolume);
+                setMusicVolume(newVolume);
+                setGlobalMusicVolume(newVolume);
+                // Direct apply for mobile responsiveness
+                if (musicAudioRef.current) {
+                  musicAudioRef.current.volume = newVolume / 100;
+                }
               }}
-              className="flex-1"
+              onValueCommit={(v) => {
+                // Ensure final value is committed on touch release
+                const newVolume = v[0];
+                console.log("[SequencePlayer] Music slider committed:", newVolume);
+                setMusicVolume(newVolume);
+                setGlobalMusicVolume(newVolume);
+                if (musicAudioRef.current) {
+                  musicAudioRef.current.volume = newVolume / 100;
+                }
+              }}
+              className="flex-1 min-w-[100px]"
             />
-            <span className="text-xs text-muted-foreground w-8">{musicVolume}%</span>
+            <span className="text-xs text-muted-foreground w-8 flex-shrink-0">{musicVolume}%</span>
           </div>
           
           {isMobile && (

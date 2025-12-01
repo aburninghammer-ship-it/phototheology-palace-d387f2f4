@@ -20,6 +20,7 @@ export interface ReadingSequenceBlock {
   playbackSpeed: number;
   playOrder: "listed" | "reverse" | "shuffle";
   includeJeevesCommentary: boolean;
+  commentaryOnly?: boolean; // Skip verse reading, play only commentary
   commentaryVoice?: VoiceId;
   commentaryDepth?: CommentaryDepth;
   commentaryMode?: CommentaryMode;

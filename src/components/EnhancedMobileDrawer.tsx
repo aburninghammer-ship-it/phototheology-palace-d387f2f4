@@ -60,6 +60,7 @@ const categoryConfig = {
     links: [
       { to: "/games", label: "Palace Games", icon: "🎮" },
       { to: "/kids-games", label: "Kids Games", icon: "👶" },
+      { to: "/drill-drill", label: "Gather Fragments", icon: "🎯" },
       { to: "/training-drills", label: "Training Drills", icon: "⚡" },
       { to: "/daily-challenges", label: "Daily Challenges", icon: "📅" },
       { to: "/genesis-challenge", label: "Genesis High Rise", icon: "🏢" },

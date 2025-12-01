@@ -49,93 +49,74 @@ import { subscribeToMusicVolume } from "@/hooks/useMusicVolumeControl";
 // Phototheology Sacred Orchestral Music
 // Rich orchestral, movie soundtrack style (The Chosen, Zimmer, Tyler)
 // BPM 55-70, no lyrics, no synthesizers, pure orchestra
-const AMBIENT_TRACKS = [
-  // Floor 1 - Story Floor: warm strings, gentle narrative
+const AMBIENT_TRACKS: Array<{
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  floor: number;
+  mood: string;
+  url: string;
+  bpm: number;
+}> = [
   {
-    id: "story-warmth",
-    name: "Story Warmth",
-    description: "Gentle meditative piano for peaceful narrative immersion",
-    category: "floor-1",
-    floor: 1,
-    mood: "warm, meditative, peaceful",
-    url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3",
-    bpm: 55,
-  },
-  // Floor 2 - Pattern Floor: structured strings, reflective
-  {
-    id: "patterns-kingdom",
-    name: "Patterns of the Kingdom",
-    description: "Measured orchestral strings with thoughtful progression",
-    category: "floor-2",
-    floor: 2,
-    mood: "structured, reflective",
-    url: "https://cdn.pixabay.com/download/audio/2022/02/22/audio_d1718ab41b.mp3",
-    bpm: 65,
-  },
-  // Floor 3 - Sanctuary Floor: reverent strings, harp
-  {
-    id: "sanctuary-stillness",
-    name: "Sanctuary Stillness",
-    description: "Sacred strings with soft harp and gentle brass",
-    category: "floor-3",
-    floor: 3,
-    mood: "holy, reverent, awe",
-    url: "https://cdn.pixabay.com/download/audio/2021/11/25/audio_cb5c4e5fb9.mp3",
-    bpm: 58,
-  },
-  // Floor 4 - Christ Floor: bright, hopeful orchestra
-  {
-    id: "christ-the-center",
-    name: "Christ the Center",
-    description: "Hopeful strings with radiant orchestral swells",
+    id: "eternal-echoes",
+    name: "Eternal Echoes",
+    description: "Cinematic orchestral christian music - instrumental",
     category: "floor-4",
     floor: 4,
-    mood: "bright, hopeful, radiant",
-    url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3",
+    mood: "cinematic, orchestral, reverent",
+    url: "https://cdn1.suno.ai/ea711d82-cd6a-4ebd-a960-b73cb72c39f0.mp3",
     bpm: 65,
   },
-  // Floor 5 - Prophecy Floor: cinematic tension, deep strings
   {
-    id: "prophecy-watch",
-    name: "Prophecy Watch",
-    description: "Cinematic strings with reverent tension",
-    category: "floor-5",
-    floor: 5,
-    mood: "cinematic, tense, respectful",
-    url: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_942b7219e0.mp3",
-    bpm: 60,
-  },
-  // Floor 6 - Freestyle Floor: natural, flowing strings
-  {
-    id: "wisdom-quiet",
-    name: "Wisdom in Quiet Places",
-    description: "Flowing strings with gentle woodwinds",
-    category: "floor-6",
-    floor: 6,
-    mood: "open, natural, free",
-    url: "https://cdn.pixabay.com/download/audio/2022/08/02/audio_884fe92c21.mp3",
-    bpm: 58,
-  },
-  // Floor 7 - Wisdom Floor: solemn cello, ancient feel
-  {
-    id: "chamber-light",
-    name: "Chamber of Light",
-    description: "Deep cello with ancient orchestral textures",
+    id: "amazing-grace-epic",
+    name: "Amazing Grace (Epic Meditative Remix)",
+    description: "Cinematic christian music - epic meditative instrumental",
     category: "floor-7",
     floor: 7,
-    mood: "solemn, calm, ancient",
-    url: "https://cdn.pixabay.com/download/audio/2022/10/25/audio_946bc3eb5a.mp3",
+    mood: "cinematic, epic, meditative",
+    url: "https://cdn1.suno.ai/a362b171-5a6f-4264-8946-ae76b09a6aa7.mp3",
+    bpm: 70,
+  },
+  {
+    id: "when-he-cometh",
+    name: "When He Cometh Reimagined",
+    description: "Orchestral choral ambient - instrumental",
+    category: "floor-7",
+    floor: 7,
+    mood: "orchestral, choral, ambient",
+    url: "https://cdn1.suno.ai/617f1da9-1bfb-4a93-8485-08f432623d2e.mp3",
+    bpm: 68,
+  },
+  {
+    id: "whispers-of-eternity",
+    name: "Whispers of Eternity",
+    description: "Orchestral with lush strings, epic meditative",
+    category: "floor-3",
+    floor: 3,
+    mood: "orchestral, epic, meditative",
+    url: "https://cdn1.suno.ai/37b77ba0-4272-4220-a392-16645e9aa9b2.mp3",
     bpm: 60,
   },
-  // Special: Blue Room - Typology
   {
-    id: "blue-room-ambient",
-    name: "Blue Room - Typology",
-    description: "Reverent orchestral ambience with deep strings",
-    category: "blue-room",
-    floor: 3,
-    mood: "reverent, typological",
-    url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3",
+    id: "fire",
+    name: "Fire",
+    description: "Choir harmonies, uplifting crescendo, ethereal",
+    category: "floor-2",
+    floor: 2,
+    mood: "uplifting, choral, ethereal",
+    url: "https://cdn1.suno.ai/37b77ba0-4272-4220-a392-16645e9aa9b2.mp3",
+    bpm: 60,
+  },
+  {
+    id: "whispers-inner-mind",
+    name: "Whispers of the Inner Mind",
+    description: "Ambient instrumental meditation - peaceful and meditative",
+    category: "floor-2",
+    floor: 2,
+    mood: "ambient, peaceful, meditative",
+    url: "https://cdn1.suno.ai/E8qISnskB0iJ5bnz.mp3",
     bpm: 55,
   },
 ];
@@ -143,19 +124,19 @@ const AMBIENT_TRACKS = [
 // Room to track mapping based on Phototheology floors
 const ROOM_TRACK_MAP: Record<string, string> = {
   // Floor 1 - Story Floor (Furnishing): warm, welcoming, narrative
-  "story-room": "story-warmth",
-  "imagination-room": "story-warmth",
-  "24fps-room": "patterns-kingdom", // cinematic storytelling
-  "bible-rendered": "story-warmth",
-  "translation-room": "story-warmth",
-  "gems-room": "story-warmth",
+  "story-room": "sanctuary-stillness",
+  "imagination-room": "sanctuary-stillness",
+  "24fps-room": "chamber-light", // cinematic storytelling
+  "bible-rendered": "sanctuary-stillness",
+  "translation-room": "sanctuary-stillness",
+  "gems-room": "sanctuary-stillness",
   
   // Floor 2 - Pattern Floor (Investigation): structured, rhythmic
-  "observation-room": "patterns-kingdom",
-  "def-com-room": "patterns-kingdom",
+  "observation-room": "chamber-light",
+  "def-com-room": "chamber-light",
   "symbols-types": "blue-room-ambient", // typology connection
-  "questions-room": "patterns-kingdom",
-  "qa-chains": "patterns-kingdom",
+  "questions-room": "chamber-light",
+  "qa-chains": "chamber-light",
   
   // Floor 3 - Sanctuary Floor: holy, reverent
   "blue-room": "blue-room-ambient",
@@ -164,11 +145,11 @@ const ROOM_TRACK_MAP: Record<string, string> = {
   // Floor 4 - Christ Floor (Next Level): bright, hopeful
   "concentration-room": "christ-the-center",
   "dimensions-room": "christ-the-center",
-  "connect-6": "patterns-kingdom",
+  "connect-6": "chamber-light",
   "theme-room": "christ-the-center",
   "time-zone": "prophecy-watch",
-  "patterns-room": "patterns-kingdom",
-  "parallels-room": "patterns-kingdom",
+  "patterns-room": "chamber-light",
+  "parallels-room": "chamber-light",
   "fruit-room": "christ-the-center",
   
   // Floor 5 - Prophecy Floor (Vision): cinematic, atmospheric
@@ -202,6 +183,9 @@ export function AmbientMusicPlayer({
   minimal = false 
 }: AmbientMusicPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { user } = useAuth();
   const { userTracks, uploading, uploadMusic, deleteMusic, toggleFavorite } = useUserMusic();
@@ -239,6 +223,7 @@ export function AmbientMusicPlayer({
     return saved === "true";
   });
   const [duckMultiplier, setDuckMultiplier] = useState(1);
+  const effectiveVolumeRef = useRef(0.08); // Ref to track current effective volume for callbacks
   // Selected tracks for playlist
   const [selectedTracks, setSelectedTracks] = useState<Set<string>>(() => {
     const saved = localStorage.getItem("pt-ambient-selected-tracks");
@@ -254,17 +239,30 @@ export function AmbientMusicPlayer({
   const [showPlaylist, setShowPlaylist] = useState(false);
 
   // Audio ducking - reduce volume when TTS is playing
-  // Works on both desktop and mobile to ensure voice reader is dominant (70/30 ratio)
+  // Works on both desktop and mobile to ensure voice reader is dominant
   const handleDuckChange = useCallback((ducked: boolean, duckRatio: number) => {
+    console.log(`[AmbientMusic] Duck event: ducked=${ducked}, ratio=${duckRatio}`);
     setDuckMultiplier(duckRatio);
-    if (audioRef.current) {
-      const effectiveVolume = isMuted ? 0 : volume * duckRatio;
-      audioRef.current.volume = effectiveVolume;
-      console.log(`[AmbientMusic] ${ducked ? 'Ducking' : 'Restoring'} volume to ${effectiveVolume}`);
-    }
-  }, [volume, isMuted]);
+  }, []);
 
   useAudioDucking(handleDuckChange);
+
+  // Single effect to manage volume - uses GainNode for iOS compatibility
+  useEffect(() => {
+    const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
+    effectiveVolumeRef.current = effectiveVolume;
+    
+    // Use GainNode if available (iOS compatible)
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+      console.log(`[AmbientMusic] GainNode volume: ${effectiveVolume}`);
+    }
+    // Fallback to audio.volume for non-Web Audio path
+    if (audioRef.current) {
+      audioRef.current.volume = effectiveVolume;
+    }
+    console.log(`[AmbientMusic] Volume updated: base=${volume}, duck=${duckMultiplier}, effective=${effectiveVolume}`);
+  }, [volume, isMuted, duckMultiplier]);
 
   // Combine preset and user tracks - memoized to prevent unnecessary re-renders
   const allTracks = useMemo(() => [
@@ -298,13 +296,12 @@ export function AmbientMusicPlayer({
     }
   }, [roomId]);
 
-  // Initialize audio element
+  // Initialize audio element with Web Audio API for iOS volume control
   useEffect(() => {
     if (!audioRef.current) {
       audioRef.current = new Audio();
+      audioRef.current.crossOrigin = "anonymous";
       audioRef.current.loop = loopMode === "one";
-      // Set initial volume
-      audioRef.current.volume = isMuted ? 0 : Math.min(volume, 0.30);
       
       // Handle track ended for "all" loop mode
       audioRef.current.onended = () => {
@@ -318,26 +315,56 @@ export function AmbientMusicPlayer({
           setIsPlaying(false);
         }
       };
-      
-      // Re-apply volume after audio can play (browsers reset volume on load)
-      audioRef.current.oncanplay = () => {
-        if (audioRef.current) {
-          const targetVol = isMuted ? 0 : volume * duckMultiplier;
-          audioRef.current.volume = targetVol;
-          console.log('[AmbientMusic] oncanplay - volume set to:', targetVol);
-        }
-      };
     }
     
     return () => {
+      if (sourceNodeRef.current) {
+        sourceNodeRef.current.disconnect();
+        sourceNodeRef.current = null;
+      }
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
+        gainNodeRef.current = null;
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.onended = null;
-        audioRef.current.oncanplay = null;
         audioRef.current = null;
       }
     };
   }, [loopMode]);
+
+  // Setup Web Audio API context and gain node (for iOS volume control)
+  const setupWebAudio = useCallback(async () => {
+    if (!audioRef.current || audioContextRef.current) return;
+    
+    try {
+      // Create audio context
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      // Resume context (required for iOS)
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
+      
+      // Create gain node for volume control
+      gainNodeRef.current = audioContextRef.current.createGain();
+      gainNodeRef.current.gain.value = effectiveVolumeRef.current;
+      
+      // Connect audio element to gain node
+      sourceNodeRef.current = audioContextRef.current.createMediaElementSource(audioRef.current);
+      sourceNodeRef.current.connect(gainNodeRef.current);
+      gainNodeRef.current.connect(audioContextRef.current.destination);
+      
+      console.log('[AmbientMusic] Web Audio API setup complete, gain:', gainNodeRef.current.gain.value);
+    } catch (error) {
+      console.error('[AmbientMusic] Web Audio API setup failed:', error);
+    }
+  }, []);
 
   // Update audio source when track changes - only reset src if URL actually changed
   useEffect(() => {
@@ -353,20 +380,23 @@ export function AmbientMusicPlayer({
         }
       }
       
+      // Update Media Session metadata when track changes
+      if ('mediaSession' in navigator && isPlaying) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: currentTrack.name,
+          artist: 'Phototheology Palace',
+          album: 'Sacred Ambient Music',
+        });
+      }
+      
       localStorage.setItem("pt-ambient-track", currentTrackId);
     }
-  }, [currentTrackId, currentTrack]);
+  }, [currentTrackId, currentTrack, isPlaying]);
 
-  // Update volume
+  // Save volume to localStorage when it changes
   useEffect(() => {
-    if (audioRef.current) {
-      const newVolume = isMuted ? 0 : volume * duckMultiplier;
-      audioRef.current.volume = newVolume;
-      // Save as percentage
-      localStorage.setItem("pt-music-volume-pct", Math.round(volume * 100).toString());
-      console.log('[AmbientMusic] Volume set to:', newVolume, '(base:', volume, 'duck:', duckMultiplier, ')');
-    }
-  }, [volume, isMuted, duckMultiplier]);
+    localStorage.setItem("pt-music-volume-pct", Math.round(volume * 100).toString());
+  }, [volume]);
 
   // Save enabled state
   useEffect(() => {
@@ -430,16 +460,57 @@ export function AmbientMusicPlayer({
       setIsPlaying(false);
     } else {
       try {
+        // Setup Web Audio API on first play (requires user gesture on iOS)
+        if (!audioContextRef.current) {
+          await setupWebAudio();
+        } else if (audioContextRef.current.state === 'suspended') {
+          await audioContextRef.current.resume();
+        }
+        
         // Ensure source is set
         if (!audioRef.current.src || audioRef.current.src === "") {
           audioRef.current.src = currentTrack.url;
         }
-        audioRef.current.volume = isMuted ? 0 : volume * duckMultiplier;
+        
+        // Set volume via GainNode if available
+        const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
+        if (gainNodeRef.current) {
+          gainNodeRef.current.gain.value = effectiveVolume;
+        }
+        audioRef.current.volume = effectiveVolume;
         
         console.log("Attempting to play:", currentTrack.url);
         await audioRef.current.play();
         console.log("Audio playing successfully");
         setIsPlaying(true);
+        
+        // Setup Media Session for lock screen controls and background playback
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: currentTrack.name,
+            artist: 'Phototheology Palace',
+            album: 'Sacred Ambient Music',
+          });
+          
+          navigator.mediaSession.setActionHandler('play', () => {
+            audioRef.current?.play();
+            setIsPlaying(true);
+          });
+          navigator.mediaSession.setActionHandler('pause', () => {
+            audioRef.current?.pause();
+            setIsPlaying(false);
+          });
+          navigator.mediaSession.setActionHandler('nexttrack', () => {
+            nextTrack();
+          });
+          navigator.mediaSession.setActionHandler('previoustrack', () => {
+            // Go to previous track
+            const playableTracks = allTracks.filter(t => selectedTracks.has(t.id));
+            const currentIndex = playableTracks.findIndex(t => t.id === currentTrackId);
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : playableTracks.length - 1;
+            setCurrentTrackId(playableTracks[prevIndex].id);
+          });
+        }
         setIsEnabled(true);
       } catch (error) {
         console.error("Audio playback failed:", error);
@@ -457,8 +528,12 @@ export function AmbientMusicPlayer({
   const toggleMute = () => {
     const newMuted = !isMuted;
     setIsMuted(newMuted);
+    const effectiveVolume = newMuted ? 0 : volume * duckMultiplier;
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+    }
     if (audioRef.current) {
-      audioRef.current.volume = newMuted ? 0 : volume * duckMultiplier;
+      audioRef.current.volume = effectiveVolume;
     }
   };
 
@@ -511,6 +586,43 @@ export function AmbientMusicPlayer({
     if (value[0] > 0 && isMuted) {
       setIsMuted(false);
     }
+  };
+
+  // Direct volume preset function - uses GainNode for iOS compatibility
+  const setVolumePreset = (preset: 'off' | 'low' | 'med' | 'high') => {
+    const presetValues = {
+      off: 0,
+      low: 0.05,
+      med: 0.15,
+      high: 0.30
+    };
+    const newVolume = presetValues[preset];
+    const effectiveVolume = newVolume * duckMultiplier;
+    console.log('[AmbientMusic] setVolumePreset:', preset, newVolume, 'effective:', effectiveVolume);
+    
+    // Apply via GainNode (iOS compatible)
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+      console.log('[AmbientMusic] GainNode set to:', effectiveVolume);
+    }
+    
+    // Also set on audio element as fallback
+    if (audioRef.current) {
+      audioRef.current.volume = effectiveVolume;
+    }
+    
+    // Update state
+    setVolume(newVolume);
+    setIsMuted(newVolume === 0);
+    localStorage.setItem("pt-music-volume-pct", Math.round(newVolume * 100).toString());
+  };
+
+  // Get current preset level
+  const getCurrentPreset = (): 'off' | 'low' | 'med' | 'high' => {
+    if (isMuted || volume === 0) return 'off';
+    if (volume <= 0.08) return 'low';
+    if (volume <= 0.20) return 'med';
+    return 'high';
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -602,7 +714,11 @@ export function AmbientMusicPlayer({
             </div>
 
             {showUpload && uploadFile && (
-              <div className="space-y-2 p-2 border rounded-md bg-muted/50">
+              <div className="space-y-2 p-3 border rounded-md bg-primary/10">
+                <div className="flex items-center gap-2 pb-1">
+                  <Upload className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium">Upload Your Music</span>
+                </div>
                 <Label className="text-xs">Track Name</Label>
                 <Input 
                   value={uploadName} 
@@ -610,10 +726,13 @@ export function AmbientMusicPlayer({
                   placeholder="Enter track name"
                   className="h-8 text-sm"
                 />
+                <p className="text-xs text-muted-foreground">
+                  💡 This will add "{uploadName}" to your custom music collection
+                </p>
                 <div className="flex gap-2">
                   <Button size="sm" onClick={handleUpload} disabled={uploading} className="flex-1">
-                    {uploading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
-                    Upload
+                    {uploading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />}
+                    Upload Now
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => { setShowUpload(false); setUploadFile(null); }}>
                     Cancel
@@ -774,27 +893,41 @@ export function AmbientMusicPlayer({
                 </span>
               </div>
               
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleMute}
-                className="h-8 w-8"
-              >
-                {isMuted ? (
-                  <VolumeX className="h-4 w-4" />
-                ) : (
-                  <Volume2 className="h-4 w-4" />
-                )}
-              </Button>
-              
-              <Slider
-                value={[isMuted ? 0 : volume]}
-                min={0}
-                max={1}
-                step={0.01}
-                onValueChange={handleVolumeChange}
-                className="w-20"
-              />
+              {/* Volume Preset Buttons - More reliable on mobile */}
+              <div className="flex items-center gap-1 border rounded-lg p-1 bg-muted/30">
+                <Button
+                  variant={getCurrentPreset() === 'off' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setVolumePreset('off')}
+                  className="h-7 px-2 text-xs"
+                >
+                  <VolumeX className="h-3 w-3" />
+                </Button>
+                <Button
+                  variant={getCurrentPreset() === 'low' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setVolumePreset('low')}
+                  className="h-7 px-2 text-xs"
+                >
+                  5%
+                </Button>
+                <Button
+                  variant={getCurrentPreset() === 'med' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setVolumePreset('med')}
+                  className="h-7 px-2 text-xs"
+                >
+                  15%
+                </Button>
+                <Button
+                  variant={getCurrentPreset() === 'high' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setVolumePreset('high')}
+                  className="h-7 px-2 text-xs"
+                >
+                  30%
+                </Button>
+              </div>
             </div>
           </div>
         </PopoverContent>
@@ -873,21 +1006,22 @@ export function AmbientMusicPlayer({
             )}
           </Button>
 
-          {/* Volume - hidden on mobile */}
-          {!isMobile ? (
-            <div className="flex items-center gap-2 shrink-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleMute}
-                className="h-8 w-8"
-              >
-                {isMuted ? (
-                  <VolumeX className="h-4 w-4" />
-                ) : (
-                  <Volume2 className="h-4 w-4" />
-                )}
-              </Button>
+          {/* Volume Control - always shown */}
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMute}
+              className="h-8 w-8"
+            >
+              {isMuted ? (
+                <VolumeX className="h-4 w-4" />
+              ) : (
+                <Volume2 className="h-4 w-4" />
+              )}
+            </Button>
+            {/* Show inline slider on desktop, mobile gets it in popover */}
+            {!isMobile && (
               <Slider
                 value={[isMuted ? 0 : volume]}
                 min={0}
@@ -896,12 +1030,8 @@ export function AmbientMusicPlayer({
                 onValueChange={handleVolumeChange}
                 className="w-20"
               />
-            </div>
-          ) : (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-              <Smartphone className="h-3 w-3" />
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Settings */}
           <Popover>
@@ -947,6 +1077,7 @@ export function AmbientMusicPlayer({
                   </SelectContent>
                 </Select>
                 
+
                 {/* Playlist Selection */}
                 <div className="border rounded-md p-2 bg-muted/30">
                   <Button 
@@ -957,8 +1088,8 @@ export function AmbientMusicPlayer({
                   >
                     <span className="flex items-center gap-2">
                       <ListMusic className="h-4 w-4 text-primary" />
-                      <span className="font-medium">Playlist</span>
-                      <span className="text-muted-foreground">({selectedTracks.size} songs)</span>
+                      <span className="font-medium">Preset Tracks</span>
+                      <span className="text-muted-foreground">({selectedTracks.size} selected)</span>
                     </span>
                     <ChevronDown className={cn("h-3 w-3 transition-transform", showPlaylist && "rotate-180")} />
                   </Button>
@@ -966,7 +1097,7 @@ export function AmbientMusicPlayer({
                   {showPlaylist && (
                     <div className="space-y-1 max-h-40 overflow-y-auto border-t pt-2">
                       <div className="flex items-center justify-between px-1 pb-1">
-                        <span className="text-xs text-muted-foreground">Select songs:</span>
+                        <span className="text-xs text-muted-foreground">Select preset tracks:</span>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -1035,6 +1166,54 @@ export function AmbientMusicPlayer({
                       <span className="text-xs">
                         {loopMode === "none" ? "Off" : loopMode === "one" ? "Song" : "All"}
                       </span>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Mobile Volume Control - Preset Buttons */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium flex items-center gap-2">
+                      <Volume2 className="h-4 w-4" />
+                      Volume
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {Math.round(volume * 100)}%
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant={getCurrentPreset() === 'off' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setVolumePreset('off')}
+                      className="h-8 flex-1 text-xs"
+                    >
+                      <VolumeX className="h-3 w-3 mr-1" />
+                      Off
+                    </Button>
+                    <Button
+                      variant={getCurrentPreset() === 'low' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setVolumePreset('low')}
+                      className="h-8 flex-1 text-xs"
+                    >
+                      5%
+                    </Button>
+                    <Button
+                      variant={getCurrentPreset() === 'med' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setVolumePreset('med')}
+                      className="h-8 flex-1 text-xs"
+                    >
+                      15%
+                    </Button>
+                    <Button
+                      variant={getCurrentPreset() === 'high' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setVolumePreset('high')}
+                      className="h-8 flex-1 text-xs"
+                    >
+                      30%
                     </Button>
                   </div>
                 </div>
