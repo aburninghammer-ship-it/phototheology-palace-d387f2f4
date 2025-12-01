@@ -69,12 +69,31 @@ export function validateTheologicalContent(content: string): ValidationResult {
       if (pattern.test(content)) {
         errors.push(
           'CRITICAL VIOLATION: The little horn of Daniel 8 must NEVER be identified as Antiochus Epiphanes. ' +
-          'The little horn of Daniel 8 represents papal Rome, not Antiochus. ' +
-          'While Antiochus may be a type, he does NOT fulfill the Daniel 8 prophecy. ' +
-          'The 2,300 days point to 1844 and the judgment hour, not the Maccabean period.'
+          'The prophetic pattern shows escalation: Babylon (great) → Medo-Persia (greater) → Greece (very great) → Next power (exceeding great). ' +
+          'Antiochus was a minor Seleucid king who paid tribute to Rome and died in obscurity. He never "waxed exceeding great." ' +
+          'The little horn is Rome (Pagan → Papal), which crucified Christ, replaced His priesthood, attacked the sanctuary, and extends to the time of the end. ' +
+          'Jesus placed Daniel\'s abomination AFTER AD 70, not in 165 BC (Matt 24:15). The 2,300 days point to 1844, not the Maccabean period.'
         );
         break;
       }
+    }
+  }
+
+  // Rule 2b: "Out of one of them" must be properly explained as the Greco-Roman world
+  if (lowerContent.includes('daniel 8') && 
+      (lowerContent.includes('out of one') || lowerContent.includes('little horn'))) {
+    const hasWindsExplanation = lowerContent.includes('four winds') || 
+                                 lowerContent.includes('compass') ||
+                                 lowerContent.includes('western wind');
+    const hasGrecoRoman = lowerContent.includes('greco-roman') || 
+                         lowerContent.includes('greco roman');
+    
+    if (!hasWindsExplanation && !hasGrecoRoman && content.length > 200) {
+      warnings.push(
+        'WARNING: When discussing "out of one of them" in Daniel 8:9, clarify that the Hebrew grammar refers to the four WINDS, not the four horns. ' +
+        'The little horn arises from the western wind—the Greco-Roman world—where Greek culture merged with rising Roman power. ' +
+        'This grammatically and historically defeats the Antiochus interpretation.'
+      );
     }
   }
 
@@ -91,10 +110,31 @@ export function validateTheologicalContent(content: string): ValidationResult {
       if (pattern.test(content)) {
         errors.push(
           'CRITICAL VIOLATION: The "prince that shall come" (Daniel 9:26) is Satan, not Titus. ' +
-          'Titus was merely the human instrument. Satan is the "prince of this world" (John 14:30) who continues as the cosmic adversary into the end time (Daniel 11:40).'
+          'Daniel 9 reveals TWO princes: (1) Messiah the Prince (v.25)—pure, divine, cut off for sins not His own; ' +
+          '(2) The prince that shall come (v.26)—destroys Jerusalem, opposes the covenant, continues to the end. ' +
+          'Titus was merely the human instrument. Satan is the "prince of this world" (John 14:30), the cosmic adversary who: ' +
+          'led Rome\'s destruction, continues into the end time (Daniel 11:40), and is the miracle-worker of Revelation 16:13-14. ' +
+          'This prince is the counterfeit Christ, the demonic ruler behind Rome, not a Roman general.'
         );
         break;
       }
+    }
+  }
+
+  // Rule 3b: Ensure Daniel 8-9-11 integration is maintained
+  if ((lowerContent.includes('daniel 8') || lowerContent.includes('daniel 9') || lowerContent.includes('daniel 11')) &&
+      (lowerContent.includes('little horn') || lowerContent.includes('prince') || lowerContent.includes('king of the north'))) {
+    const hasIntegration = (lowerContent.includes('rome') || lowerContent.includes('papal')) &&
+                          (lowerContent.includes('pagan') || lowerContent.includes('papacy'));
+    
+    if (!hasIntegration && content.length > 250) {
+      warnings.push(
+        'WARNING: Daniel 8, 9, and 11 present a unified prophetic system: ' +
+        'Daniel 8 little horn = Rome (Pagan → Papal); Daniel 9:26-27 = Satan as prince behind Rome; ' +
+        'Daniel 11:40 = Satan impersonating Christ. All point to the same power rising from the Greco-Roman world: ' +
+        'Pagan Rome (crucified Christ) → Papal Rome (replaced priesthood, attacked sanctuary, changed law) → ' +
+        'leads to the final deception (Dan 11:40, Rev 13, Rev 16:13-14).'
+      );
     }
   }
 
@@ -293,9 +333,21 @@ export function getTheologicalRules(): Array<{ id: string; rule: string; rationa
       id: 'little-horn-never-antiochus',
       rule: 'The little horn of Daniel 8 is NEVER Antiochus Epiphanes',
       rationale:
-        'The little horn of Daniel 8 represents Papal Rome, fulfilling prophecy through the 2,300-day/year timeline ' +
-        'pointing to 1844. While Antiochus Epiphanes may be a type of the desolating power, he does NOT fulfill ' +
-        'the specific details of Daniel 8. This distinction is fundamental to Adventist prophetic interpretation.',
+        'The prophetic pattern demands escalation: Babylon (great) → Medo-Persia (greater) → Greece (very great) → Next power (exceeding great). ' +
+        'Antiochus Epiphanes was a minor Seleucid king who paid tribute to Rome, lost most campaigns, and died in obscurity—he never "waxed exceeding great." ' +
+        'The little horn represents Rome (Pagan → Papal): crucified Christ, replaced His priesthood, attacked the sanctuary ministry, cast truth to the ground, ' +
+        'and extends to "the time of the end" (Dan 8:17,19). Jesus placed Daniel\'s abomination AFTER AD 70 (Matt 24:15), not 165 BC. ' +
+        'The 2,300 days point to 1844 and the judgment hour. Grammar also defeats Antiochus: "out of one of them" refers to the four WINDS (Greco-Roman world), not the four horns.',
+    },
+    {
+      id: 'out-of-one-of-them-winds',
+      rule: '"Out of one of them" in Daniel 8:9 refers to the four winds (Greco-Roman world), not the four Greek horns',
+      rationale:
+        'Daniel 8:8 describes two divisions: four notable horns AND those horns extending toward the four winds of heaven. ' +
+        'When verse 9 says "out of one of them," the nearest grammatical antecedent is the four WINDS, not the four horns. ' +
+        'This means the little horn arises from one of the compass directions (the west)—the Greco-Roman world where Greek culture merged with rising Roman Republic. ' +
+        'Rome is literally "Greco-Roman": Greek language widely spoken, Greek philosophy adopted, Hellenized architecture/education/law. ' +
+        'The little horn rises from the western wind (Greco-Roman zone), not from within a Greek dynasty. This grammatically defeats the Antiochus interpretation.',
     },
     {
       id: 'daniel-2-extends-forward',
@@ -322,8 +374,23 @@ export function getTheologicalRules(): Array<{ id: string; rule: string; rationa
       id: 'prince-that-shall-come-satan',
       rule: 'The "prince that shall come" in Daniel 9:26 is Satan, not Titus',
       rationale:
-        'Titus was merely the human instrument. Satan is the "prince of this world" (John 14:30) who led Rome\'s destruction ' +
-        'and continues as the cosmic adversary into the end time (Daniel 11:40).',
+        'Daniel 9 reveals TWO princes: (1) Messiah the Prince (v.25)—pure, divine, anointed, cut off for sins not His own, confirms the covenant; ' +
+        '(2) The prince that shall come (v.26)—destroys Jerusalem, opposes the covenant, makes desolation, continues through history, appears eschatologically. ' +
+        'Titus did NOT continue into the end time, did NOT appear after Messiah\'s ministry as a supernatural ruler, is NOT the enemy of Christ in Daniel. ' +
+        'Jesus identified the real prince: "The prince of this world cometh" (John 14:30). Paul confirmed: "the god of this world" (2 Cor 4:4). ' +
+        'This prince opposes Messiah, leads destruction, brings desolation, is behind earthly armies, is the final adversary in Daniel 11:40, ' +
+        'is the miracle-worker of Revelation 16:13-14—Satan himself impersonating Christ. Titus was merely the human instrument; Satan was the prince behind Rome.',
+    },
+    {
+      id: 'daniel-8-9-11-integration',
+      rule: 'Daniel 8, 9, and 11 form a unified prophetic system pointing to Rome (Pagan → Papal) led by Satan',
+      rationale:
+        'All three chapters converge on the same power: Daniel 7 little horn = Papal Rome; Daniel 8 little horn = Rome (attacks sanctuary, extends to end time); ' +
+        'Daniel 9:26-27 = Satan as prince behind Rome; Daniel 11:40 = Satan impersonating Christ. ' +
+        'The sequence is consistent: Pagan Rome (crucified Christ, destroyed Jerusalem) → Papal Rome (replaced priesthood, attacked sanctuary ministry, changed times and law, ' +
+        'persecuted saints 1260 years) → Miracle-working deception (Rev 13, Rev 16:13-14 frogs, Dan 11:40 counterfeit second coming). ' +
+        'All arise from the Greco-Roman world (western wind of divided Greece). This unified interpretation connects the little horn, the prince, and the king of the north ' +
+        'into one coherent prophetic narrative leading to the final crisis.',
     },
     {
       id: 'three-frogs-not-plagues',
