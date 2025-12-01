@@ -47,15 +47,7 @@ const MUSIC_FLOORS = [
     mood: "Structured strings, reflective",
     color: "from-blue-500/20 to-cyan-500/20",
     borderColor: "border-blue-500/30",
-    tracks: [
-      {
-        id: "patterns-kingdom",
-        name: "Patterns of the Kingdom",
-        description: "Measured orchestral strings with thoughtful progression",
-        bpm: 65,
-        url: "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Eternal%20Hope.mp3",
-      }
-    ]
+    tracks: []
   },
   {
     floor: 3,
