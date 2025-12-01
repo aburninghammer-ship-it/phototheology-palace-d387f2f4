@@ -89,12 +89,19 @@ serve(async (req) => {
   }
 
   try {
-    const { mode, verse, verseText, room, rooms, userAnswer, action } = await req.json();
+    const { mode, verse, verseText, room, rooms, userAnswer, action, difficulty, previousResponses, expound } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY not configured");
     }
+
+    // Difficulty level adjustments
+    const difficultyInstructions = {
+      beginner: "Use simple language, define all terms, give step-by-step guidance. Be encouraging and patient.",
+      intermediate: "Balance explanation with application. Assume basic Bible knowledge. Provide clear examples.",
+      pro: "Advanced analysis with scholarly depth. Expect familiarity with PT terminology. Challenge them to go deeper."
+    };
 
     let systemPrompt = `You are Jeeves, the wise and engaging AI butler of the Phototheology Palace. You guide users through deep Bible study using the Phototheology method.
 
@@ -104,25 +111,45 @@ ${PALACE_STRUCTURE}
 
 ${THEOLOGICAL_GUARDRAILS}
 
+DIFFICULTY LEVEL: ${difficulty || 'intermediate'}
+${difficultyInstructions[difficulty as keyof typeof difficultyInstructions] || difficultyInstructions.intermediate}
+
 STYLE:
 - Warm, scholarly, but accessible
 - Frame insights as "fragments" being gathered
 - Provide specific, actionable insights
 - Always connect back to Christ
 - Use Scripture references to support points
+- Build on previous insights to create a unified study
+
+CRITICAL: Create a UNIFIED STUDY where each principle naturally flows from and builds upon the previous ones. Reference and connect to earlier discoveries.
 `;
 
     let userPrompt = "";
 
     if (mode === "auto" && rooms) {
       // Auto-drill: analyze verse through all rooms
-      systemPrompt += `\n\nYou are running an AUTO-DRILL. Analyze the verse through EVERY room provided. For each room, give a focused 2-4 sentence response that applies that room's specific methodology to the verse. Be concise but substantive.`;
+      systemPrompt += `\n\nYou are running an AUTO-DRILL. Analyze the verse through EVERY room provided. Use ONLY ONE principle per room. Each response should build upon and reference previous discoveries, creating a complete and unified study. For each room, give a focused 2-4 sentence response that applies that room's specific methodology to the verse.
+
+SPECIAL INSTRUCTION FOR QUESTIONS ROOM (QR):
+When you reach the Questions Room (QR), generate EXACTLY 15 questions:
+- 5 INTRATEXTUAL questions (about details within this verse/passage)
+- 5 INTERTEXTUAL questions (connecting to other Scripture passages)
+- 5 PALACE questions (applying Phototheology principles from other rooms)
+
+Label each question clearly with its type.`;
       
       userPrompt = `Run a complete Drill Drill on: "${verse}"
 ${verseText ? `\nVerse text: "${verseText}"` : ""}
 
 Analyze through these rooms and return a JSON response:
 ${JSON.stringify(rooms.map((r: any) => ({ id: r.id, tag: r.tag, name: r.name, question: r.coreQuestion })), null, 2)}
+
+CRITICAL INSTRUCTIONS:
+1. Use ONLY ONE principle per room - select the most impactful one
+2. Each response must reference and build upon previous room discoveries
+3. Create a unified, cohesive study where insights flow naturally
+4. For Questions Room (QR): Generate exactly 15 questions (5 intra, 5 inter, 5 palace)
 
 Return JSON format:
 {
@@ -134,26 +161,41 @@ Return JSON format:
 }`;
     } else if (mode === "guided" && action === "teach") {
       // Guided mode: Jeeves teaches the principle
-      systemPrompt += `\n\nYou are in GUIDED mode. The user wants to learn. Teach them how to apply the ${room.name} (${room.tag}) to this verse. Show them the methodology in action with specific examples from the verse.`;
+      const contextFromPrevious = previousResponses?.length > 0 
+        ? `\n\nPREVIOUS DISCOVERIES IN THIS STUDY:\n${previousResponses.map((r: any) => `${r.roomTag}: ${r.jeevesResponse}`).join('\n\n')}\n\nBuild upon these insights as you teach.`
+        : '';
+      
+      systemPrompt += `\n\nYou are in GUIDED mode. The user wants to learn. Teach them how to apply the ${room.name} (${room.tag}) to this verse. Show them the methodology in action with specific examples from the verse.${contextFromPrevious}
+
+SPECIAL INSTRUCTION FOR QUESTIONS ROOM (QR):
+If this is the Questions Room, generate EXACTLY 15 questions:
+- 5 INTRATEXTUAL (about this verse/passage)
+- 5 INTERTEXTUAL (connecting to other Scripture)
+- 5 PALACE (applying PT principles)
+Label each clearly.`;
       
       userPrompt = `Teach me how to apply the ${room.name} (${room.tag}) from Floor ${room.floorNumber} to:
 
 Verse: "${verse}"
 ${verseText ? `Text: "${verseText}"` : ""}
 
-Core Question: ${room.coreQuestion}
+Core Question: ${room.coreQuestion}${contextFromPrevious}
 
-Walk me through the methodology step by step, applying it to this specific verse. Be thorough but engaging.`;
+Walk me through the methodology step by step, applying it to this specific verse. Use ONLY ONE principle from this room. Reference and build upon previous discoveries to create a unified study. Be thorough but engaging.`;
     } else if (mode === "self" && action === "grade") {
       // Self-drill mode: grade the user's answer
-      systemPrompt += `\n\nYou are in SELF-DRILL mode. Grade the user's answer for the ${room.name} (${room.tag}). Be encouraging but honest. If they missed something, teach it gently. Highlight what they did well.`;
+      const contextFromPrevious = previousResponses?.length > 0 
+        ? `\n\nPREVIOUS DISCOVERIES:\n${previousResponses.map((r: any) => `${r.roomTag}: ${r.jeevesResponse}`).join('\n\n')}`
+        : '';
+      
+      systemPrompt += `\n\nYou are in SELF-DRILL mode. Grade the user's answer for the ${room.name} (${room.tag}). Be encouraging but honest. If they missed something, teach it gently. Highlight what they did well.${contextFromPrevious}`;
       
       userPrompt = `Grade my application of the ${room.name} (${room.tag}) to:
 
 Verse: "${verse}"
 ${verseText ? `Text: "${verseText}"` : ""}
 
-Room's Core Question: ${room.coreQuestion}
+Room's Core Question: ${room.coreQuestion}${contextFromPrevious}
 
 MY ANSWER:
 ${userAnswer}
@@ -161,7 +203,25 @@ ${userAnswer}
 Evaluate my answer:
 1. What did I do well?
 2. What did I miss or could improve?
-3. Show me a model response for comparison.`;
+3. Show me a model response that builds on previous discoveries for comparison.`;
+    } else if (action === "expound" && room) {
+      // Expound mode: elaborate on previous response
+      systemPrompt += `\n\nYou are in EXPOUND mode. The user wants you to elaborate and go deeper on your previous response for the ${room.name} (${room.tag}).`;
+      
+      userPrompt = `Expound and elaborate on this previous response for ${room.name} (${room.tag}):
+
+Verse: "${verse}"
+${verseText ? `Text: "${verseText}"` : ""}
+
+PREVIOUS RESPONSE:
+${room.previousResponse}
+
+Please:
+1. Go deeper into the principle
+2. Add more examples and connections
+3. Show additional applications
+4. Reveal nuances that weren't covered before
+5. Connect to broader biblical themes`;
     }
 
     console.log("Drill-drill request:", { mode, verse, roomCount: rooms?.length || 1 });

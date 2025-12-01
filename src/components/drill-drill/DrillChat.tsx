@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bot, Send, Loader2, Check, ChevronRight, Save, SkipForward } from "lucide-react";
+import { Bot, Send, Loader2, Check, ChevronRight, Save, SkipForward, BookOpen, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { DrillSession, DrillResponse } from "@/pages/DrillDrill";
@@ -24,6 +24,7 @@ export const DrillChat = ({ session, setSession, allRooms, onSave }: DrillChatPr
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [expounding, setExpounding] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [drillName, setDrillName] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -44,11 +45,18 @@ export const DrillChat = ({ session, setSession, allRooms, onSave }: DrillChatPr
 
     setLoading(true);
     try {
+      // Get all completed responses before current index for context
+      const previousResponses = session.responses
+        .slice(0, currentIndex)
+        .filter(r => r.completed && r.jeevesResponse);
+
       const { data, error } = await supabase.functions.invoke("drill-drill", {
         body: {
           mode: session.mode,
           verse: session.verse,
           verseText: session.verseText,
+          difficulty: session.difficulty,
+          previousResponses,
           room: {
             id: currentRoom.roomId,
             tag: currentRoom.roomTag,
@@ -106,6 +114,57 @@ export const DrillChat = ({ session, setSession, allRooms, onSave }: DrillChatPr
 
   const jumpToRoom = (index: number) => {
     setCurrentIndex(index);
+  };
+
+  const handleExpound = async () => {
+    setExpounding(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("drill-drill", {
+        body: {
+          action: "expound",
+          verse: session.verse,
+          verseText: session.verseText,
+          difficulty: session.difficulty,
+          room: {
+            id: currentRoom.roomId,
+            tag: currentRoom.roomTag,
+            name: currentRoom.roomName,
+            floorNumber: currentRoom.floorNumber,
+            previousResponse: currentRoom.jeevesResponse
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      const updatedResponses = [...session.responses];
+      updatedResponses[currentIndex] = {
+        ...currentRoom,
+        jeevesResponse: data.response,
+        expounded: true
+      };
+
+      setSession(prev => prev ? { ...prev, responses: updatedResponses } : null);
+      toast.success("Response expounded!");
+    } catch (error) {
+      console.error("Expound error:", error);
+      toast.error("Failed to expound");
+    } finally {
+      setExpounding(false);
+    }
+  };
+
+  const refreshRoom = async () => {
+    const updatedResponses = [...session.responses];
+    updatedResponses[currentIndex] = {
+      ...currentRoom,
+      jeevesResponse: undefined,
+      userAnswer: undefined,
+      completed: false,
+      expounded: false
+    };
+    setSession(prev => prev ? { ...prev, responses: updatedResponses } : null);
+    toast.info("Room reset. Try a different approach!");
   };
 
   const handleSave = () => {
@@ -210,9 +269,42 @@ export const DrillChat = ({ session, setSession, allRooms, onSave }: DrillChatPr
 
           {/* Previous Response (if completed) */}
           {currentRoom.completed && currentRoom.jeevesResponse && (
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-              <div className="prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown>{currentRoom.jeevesResponse}</ReactMarkdown>
+            <div className="space-y-3">
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  <ReactMarkdown>{currentRoom.jeevesResponse}</ReactMarkdown>
+                </div>
+              </div>
+              
+              {/* Expound & Refresh Buttons */}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExpound}
+                  disabled={expounding}
+                  className="flex-1"
+                >
+                  {expounding ? (
+                    <>
+                      <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                      Expounding...
+                    </>
+                  ) : (
+                    <>
+                      <BookOpen className="mr-2 h-3 w-3" />
+                      Expound {currentRoom.expounded ? "More" : ""}
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={refreshRoom}
+                  title="Try different principle"
+                >
+                  <RefreshCw className="h-3 w-3" />
+                </Button>
               </div>
             </div>
           )}
