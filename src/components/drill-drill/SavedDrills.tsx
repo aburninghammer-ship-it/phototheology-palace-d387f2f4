@@ -74,6 +74,7 @@ export const SavedDrills = () => {
       verse: drill.verse_reference,
       verseText: drill.verse_text,
       mode: drill.mode as any,
+      difficulty: (drill.drill_data?.difficulty || "intermediate") as any,
       responses: drill.drill_data?.responses || [],
       mindMap: drill.drill_data?.mindMap,
       createdAt: new Date(drill.created_at),

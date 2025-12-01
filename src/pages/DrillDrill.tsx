@@ -18,6 +18,7 @@ import { DrillChat } from "@/components/drill-drill/DrillChat";
 import { SavedDrills } from "@/components/drill-drill/SavedDrills";
 
 export type DrillMode = "guided" | "self" | "auto";
+export type DifficultyLevel = "beginner" | "intermediate" | "pro";
 
 export interface DrillResponse {
   roomId: string;
@@ -28,6 +29,7 @@ export interface DrillResponse {
   userAnswer?: string;
   jeevesResponse?: string;
   completed: boolean;
+  expounded?: boolean;
 }
 
 export interface DrillSession {
@@ -35,6 +37,7 @@ export interface DrillSession {
   verse: string;
   verseText?: string;
   mode: DrillMode;
+  difficulty: DifficultyLevel;
   responses: DrillResponse[];
   mindMap?: any;
   createdAt: Date;
@@ -47,6 +50,7 @@ const DrillDrill = () => {
   const [verse, setVerse] = useState("");
   const [verseText, setVerseText] = useState("");
   const [mode, setMode] = useState<DrillMode | null>(null);
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>("intermediate");
   const [session, setSession] = useState<DrillSession | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("drill");
@@ -96,6 +100,7 @@ const DrillDrill = () => {
         verse,
         verseText: text,
         mode: mode!,
+        difficulty,
         responses,
         createdAt: new Date()
       };
@@ -122,6 +127,7 @@ const DrillDrill = () => {
           mode: "auto",
           verse: session.verse,
           verseText: session.verseText,
+          difficulty: session.difficulty,
           rooms: allRooms.map(r => ({ id: r.id, tag: r.tag, name: r.name, coreQuestion: r.coreQuestion }))
         }
       });
@@ -168,6 +174,7 @@ const DrillDrill = () => {
         verse_text: session.verseText,
         mode: session.mode,
         drill_data: {
+          difficulty: session.difficulty,
           responses: session.responses,
           mindMap: session.mindMap
         },
@@ -186,6 +193,7 @@ const DrillDrill = () => {
   const resetDrill = () => {
     setSession(null);
     setMode(null);
+    setDifficulty("intermediate");
     setVerse("");
     setVerseText("");
   };
@@ -316,11 +324,51 @@ const DrillDrill = () => {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
-                        Choose Your Mode
+                        Choose Your Mode & Difficulty
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-4 md:grid-cols-3">
+                    <CardContent className="space-y-6">
+                      {/* Difficulty Selection */}
+                      <div className="space-y-3">
+                        <label className="text-sm font-medium">Difficulty Level</label>
+                        <div className="grid gap-3 md:grid-cols-3">
+                          <Button
+                            variant={difficulty === "beginner" ? "default" : "outline"}
+                            className="h-auto p-3 flex flex-col items-start gap-1"
+                            onClick={() => setDifficulty("beginner")}
+                          >
+                            <span className="font-semibold">Beginner</span>
+                            <p className="text-xs text-left opacity-80">
+                              Simple explanations, step-by-step guidance
+                            </p>
+                          </Button>
+                          <Button
+                            variant={difficulty === "intermediate" ? "default" : "outline"}
+                            className="h-auto p-3 flex flex-col items-start gap-1"
+                            onClick={() => setDifficulty("intermediate")}
+                          >
+                            <span className="font-semibold">Intermediate</span>
+                            <p className="text-xs text-left opacity-80">
+                              Balanced teaching with practical examples
+                            </p>
+                          </Button>
+                          <Button
+                            variant={difficulty === "pro" ? "default" : "outline"}
+                            className="h-auto p-3 flex flex-col items-start gap-1"
+                            onClick={() => setDifficulty("pro")}
+                          >
+                            <span className="font-semibold">Pro</span>
+                            <p className="text-xs text-left opacity-80">
+                              Advanced analysis, scholarly depth
+                            </p>
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Mode Selection */}
+                      <div className="space-y-3">
+                        <label className="text-sm font-medium">Study Mode</label>
+                        <div className="grid gap-4 md:grid-cols-3">
                         <Button
                           variant={mode === "guided" ? "default" : "outline"}
                           className="h-auto p-4 flex flex-col items-start gap-2"
@@ -362,10 +410,11 @@ const DrillDrill = () => {
                             Jeeves runs every room automatically. Quick comprehensive analysis.
                           </p>
                         </Button>
+                        </div>
                       </div>
 
                       <Button
-                        className="w-full mt-6"
+                        className="w-full"
                         size="lg"
                         disabled={!verse.trim() || !mode || loading}
                         onClick={startDrill}
