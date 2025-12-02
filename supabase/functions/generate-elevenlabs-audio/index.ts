@@ -120,19 +120,27 @@ serve(async (req) => {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('ElevenLabs API error:', response.status, errorText);
-        
-        // Handle quota exceeded specifically
-        if (response.status === 401) {
-          try {
-            const errorData = JSON.parse(errorText);
-            if (errorData.detail?.status === 'quota_exceeded') {
-              throw new Error('ELEVENLABS_QUOTA_EXCEEDED');
-            }
-          } catch (e) {
-            // If parsing fails, continue with generic error
-          }
+
+        // Try to parse ElevenLabs error details so we can propagate specific codes
+        let parsed: any = null;
+        try {
+          parsed = JSON.parse(errorText);
+        } catch {
+          // ignore JSON parsing errors
         }
-        
+
+        // Handle quota exceeded specifically so the client can react gracefully
+        if (
+          response.status === 401 &&
+          parsed &&
+          typeof parsed === 'object' &&
+          (parsed as any).detail &&
+          (parsed as any).detail.status === 'quota_exceeded'
+        ) {
+          throw new Error('ELEVENLABS_QUOTA_EXCEEDED');
+        }
+
+        // Fallback: surface generic status for debugging
         throw new Error(`ElevenLabs API error: ${response.status}`);
       }
 
