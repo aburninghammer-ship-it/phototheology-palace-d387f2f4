@@ -38,12 +38,26 @@ export const useElevenLabsAudio = () => {
         body: { text: commentary, book, chapter, verse }
       });
 
+      const QUOTA_MARKER = 'ELEVENLABS_QUOTA_EXCEEDED';
+
       if (error) {
-        // Check if it's a quota error
-        if (error.message?.includes('ELEVENLABS_QUOTA_EXCEEDED')) {
+        console.error('Error from generate-elevenlabs-audio function:', error, data);
+
+        const message = (error as any)?.message ?? '';
+        const dataError =
+          data && typeof (data as any).error === 'string'
+            ? (data as any).error
+            : '';
+
+        // Check if it's a quota error (can come from either error.message or data.error)
+        if (
+          (typeof message === 'string' && message.includes(QUOTA_MARKER)) ||
+          (typeof dataError === 'string' && dataError.includes(QUOTA_MARKER))
+        ) {
           console.error('ElevenLabs quota exceeded');
-          throw new Error('ELEVENLABS_QUOTA_EXCEEDED');
+          throw new Error(QUOTA_MARKER);
         }
+
         throw error;
       }
 
