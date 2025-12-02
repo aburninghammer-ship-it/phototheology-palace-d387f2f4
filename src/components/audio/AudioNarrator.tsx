@@ -53,6 +53,7 @@ export const AudioNarrator = ({
   const [duration, setDuration] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>(initialVoice);
+  const [speed, setSpeed] = useState(1.0); // 0.5 = slower/deeper, 1.5 = faster/higher
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isMobile = useIsMobile();
@@ -70,10 +71,25 @@ export const AudioNarrator = ({
     };
   }, [audioUrl]);
 
-  // Reset audio when voice changes
+  // Reset audio when voice or speed changes
   const handleVoiceChange = (voice: VoiceId) => {
     setSelectedVoice(voice);
     // Clear existing audio so it regenerates with new voice
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setIsPlaying(false);
+    setProgress(0);
+  };
+
+  const handleSpeedChange = (newSpeed: number) => {
+    setSpeed(newSpeed);
+    // Clear existing audio so it regenerates with new speed
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
       setAudioUrl(null);
@@ -96,7 +112,7 @@ export const AudioNarrator = ({
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
-        body: { text, voice: selectedVoice }
+        body: { text, voice: selectedVoice, speed }
       });
 
       if (error) throw error;
@@ -213,7 +229,7 @@ export const AudioNarrator = ({
     <Card className={cn("overflow-hidden", className)}>
       <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
       <CardContent className="p-4 space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           {title && (
             <div className="flex items-center gap-2 text-sm font-medium">
               <Headphones className="h-4 w-4 text-primary" />
@@ -222,23 +238,44 @@ export const AudioNarrator = ({
           )}
           
           {showVoiceSelector && (
-            <div className="flex items-center gap-2">
-              <Mic className="h-4 w-4 text-muted-foreground" />
-              <Select value={selectedVoice} onValueChange={(v) => handleVoiceChange(v as VoiceId)}>
-                <SelectTrigger className="w-[140px] h-8 text-xs">
-                  <SelectValue placeholder="Select voice" />
-                </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  {OPENAI_VOICES.map((voice) => (
-                    <SelectItem key={voice.id} value={voice.id} className="text-xs">
-                      <div className="flex flex-col">
-                        <span className="font-medium">{voice.name}</span>
-                        <span className="text-muted-foreground text-[10px]">{voice.description}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Voice Selector */}
+              <div className="flex items-center gap-2">
+                <Mic className="h-4 w-4 text-muted-foreground" />
+                <Select value={selectedVoice} onValueChange={(v) => handleVoiceChange(v as VoiceId)}>
+                  <SelectTrigger className="w-[140px] h-8 text-xs">
+                    <SelectValue placeholder="Select voice" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {OPENAI_VOICES.map((voice) => (
+                      <SelectItem key={voice.id} value={voice.id} className="text-xs">
+                        <div className="flex flex-col">
+                          <span className="font-medium">{voice.name}</span>
+                          <span className="text-muted-foreground text-[10px]">{voice.description}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Speed Selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Speed:</span>
+                <Select value={speed.toString()} onValueChange={(v) => handleSpeedChange(parseFloat(v))}>
+                  <SelectTrigger className="w-[90px] h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0.5" className="text-xs">0.5x (Deep)</SelectItem>
+                    <SelectItem value="0.75" className="text-xs">0.75x</SelectItem>
+                    <SelectItem value="1.0" className="text-xs">1.0x (Normal)</SelectItem>
+                    <SelectItem value="1.25" className="text-xs">1.25x</SelectItem>
+                    <SelectItem value="1.5" className="text-xs">1.5x (Fast)</SelectItem>
+                    <SelectItem value="2.0" className="text-xs">2.0x (Very Fast)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           )}
         </div>
