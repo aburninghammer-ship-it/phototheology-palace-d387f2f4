@@ -403,7 +403,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   }, [offlineMode]);
 
   // Browser speech synthesis for offline mode - with pause/resume support and chunking
-  const speakWithBrowserTTS = useCallback((text: string, onEnd: () => void): void => {
+  const speakWithBrowserTTS = useCallback((text: string, playbackSpeed: number, onEnd: () => void): void => {
     speechSynthesis.cancel();
     
     // Split long texts into chunks to prevent timeout
@@ -422,7 +422,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
     if (currentChunk) chunks.push(currentChunk.trim());
 
-    console.log(`[SequencePlayer] Split into ${chunks.length} chunks`);
+    console.log(`[SequencePlayer] Split into ${chunks.length} chunks, playback speed:`, playbackSpeed);
 
     let currentChunkIndex = 0;
 
@@ -434,7 +434,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       }
 
       const utterance = new SpeechSynthesisUtterance(chunks[currentChunkIndex]);
-      utterance.rate = 1;
+      utterance.rate = playbackSpeed;
       utterance.pitch = 1;
       
       const voices = speechSynthesis.getVoices();
@@ -862,6 +862,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     
     setCurrentVerseIdx(verseIdx);
     
+    // Find current sequence for settings (needed early for offline mode)
+    const currentSeq = activeSequences.find((seq, idx) => {
+      const itemsBefore = activeSequences.slice(0, idx).reduce((acc, s) => acc + s.items.length, 0);
+      return currentItemIdx >= itemsBefore && currentItemIdx < itemsBefore + seq.items.length;
+    });
+    const playbackSpeed = currentSeq?.playbackSpeed || 1;
+    
     // Check cache first (only for online mode)
     let url = !offlineMode ? ttsCache.current.get(cacheKey) : null;
     
@@ -888,7 +895,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       console.log("[PlayVerse] Using browser speech synthesis (offline mode)");
       notifyTTSStarted();
       
-      speakWithBrowserTTS(verse.text, () => {
+      speakWithBrowserTTS(verse.text, playbackSpeed, () => {
         // On speech end, continue to next verse or chapter
         if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
           setTimeout(() => {
@@ -909,7 +916,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     if (!url) {
       console.error("[PlayVerse] Failed to generate TTS URL - falling back to browser TTS");
       // Fallback to browser TTS even if online mode failed
-      speakWithBrowserTTS(verse.text, () => {
+      speakWithBrowserTTS(verse.text, playbackSpeed, () => {
         if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
           setTimeout(() => playVerseAtIndex(verseIdx + 1, content, voice), 300);
         } else if (verseIdx >= content.verses.length - 1) {
@@ -932,12 +939,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       prefetchNextChapter(currentItemIdx);
     }
     
-    // Find current sequence for commentary settings
-    const currentSeq = activeSequences.find((seq, idx) => {
-      const itemsBefore = activeSequences.slice(0, idx).reduce((acc, s) => acc + s.items.length, 0);
-      return currentItemIdx >= itemsBefore && currentItemIdx < itemsBefore + seq.items.length;
-    });
-    
+    // Use already-found currentSeq for commentary settings
     const includeCommentary = currentSeq?.includeJeevesCommentary || false;
     const commentaryMode = currentSeq?.commentaryMode || "chapter";
     const commentaryVoice = currentSeq?.commentaryVoice || "daniel";
@@ -973,8 +975,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     const audio = new Audio(url);
     audio.volume = isMuted ? 0 : volume / 100;
     
-    // Apply playback speed from sequence settings
-    const playbackSpeed = currentSeq?.playbackSpeed || 1;
+    // Apply playback speed from sequence settings (already found above)
     audio.playbackRate = playbackSpeed;
     console.log("[PlayVerse] Setting playback rate to:", playbackSpeed);
     
@@ -1231,7 +1232,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         // Fall back to browser TTS after retries exhausted
         console.log("[Audio] Falling back to browser TTS after errors");
         retryCountRef.current = 0;
-        speakWithBrowserTTS(verse.text, () => {
+        speakWithBrowserTTS(verse.text, playbackSpeed, () => {
           if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
             setTimeout(() => playVerseAtIndex(verseIdx + 1, content, voice), 300);
           } else if (verseIdx >= content.verses.length - 1) {
@@ -1261,7 +1262,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       // Try browser TTS fallback instead of giving up
       if (continuePlayingRef.current) {
         console.log("[Audio] play() failed, falling back to browser TTS");
-        speakWithBrowserTTS(verse.text, () => {
+        speakWithBrowserTTS(verse.text, playbackSpeed, () => {
           if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
             setTimeout(() => playVerseAtIndex(verseIdx + 1, content, voice), 300);
           } else if (verseIdx >= content.verses.length - 1) {
