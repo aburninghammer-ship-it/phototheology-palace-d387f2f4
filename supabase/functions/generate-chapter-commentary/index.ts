@@ -193,7 +193,7 @@ Commentary style for INTERMEDIATE level:
 - Discuss historical or cultural context (Definition and Comparison Room)
 - Connect themes to broader biblical narrative (Patterns Room)
 - Show Christ in the chapter explicitly (Concentration Room)
-- Apply Dimensions (Literal, Christ, Me, Church, Heaven)
+- Apply Dimensions: ALWAYS use literal dimension plus ONE other dimension (choose from: Christ, Me [how it relates to you individually], Church, or Heaven)
 - End with reflection questions for meditation`;
 
     case "depth":
@@ -215,7 +215,7 @@ You MUST engage with ALL 8 floors throughout the commentary. Don't just mention 
 
 **Floor 4 (Next Level - MANDATORY):**
 - Concentration Room: Show Christ EXPLICITLY in every passage
-- Dimensions Room: Apply all five dimensions (Literal, Christ, Me, Church, Heaven)
+- Dimensions Room: ALWAYS use literal dimension plus ONE other dimension (choose from: Christ, Me [phrased as "how it relates to you individually"], Church, or Heaven) - do NOT use all five dimensions
 - Theme Room: Connect to Sanctuary Wall, Life of Christ Wall, Great Controversy Wall, Time Prophecy Wall, Gospel Floor, Heaven Ceiling
 - Patterns Room: Identify recurring biblical motifs (40 days, 3 days, 7s, 12s, deliverer stories)
 - Parallels Room: Show mirrored actions across Scripture (e.g., Babel/Pentecost)
