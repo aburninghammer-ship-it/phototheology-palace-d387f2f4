@@ -36,11 +36,12 @@ export const SampleAudioLibrary = ({ onPlaySample }: SampleAudioLibraryProps) =>
       voice: "daniel" as VoiceId,
       playbackSpeed: 1,
       playOrder: "listed",
-      includeJeevesCommentary: mode === "commentary-only",
+      includeJeevesCommentary: mode !== "verse-by-verse" && mode !== "chapter",
       commentaryOnly: mode === "commentary-only",
       commentaryVoice: "daniel" as VoiceId,
       commentaryDepth: "surface" as const,
       commentaryMode: mode === "verse-by-verse" ? "verse" as const : "chapter" as const,
+      backgroundMusic: withMusic,
     }];
   };
 
@@ -79,7 +80,7 @@ export const SampleAudioLibrary = ({ onPlaySample }: SampleAudioLibraryProps) =>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {/* Verse by Verse */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase">Verse by Verse</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase">Verse by Verse + Commentary</p>
                     <div className="flex gap-2">
                       <Button
                         size="sm"
@@ -104,7 +105,7 @@ export const SampleAudioLibrary = ({ onPlaySample }: SampleAudioLibraryProps) =>
 
                   {/* Chapter Mode */}
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase">Chapter Mode</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase">Chapter + Commentary</p>
                     <div className="flex gap-2">
                       <Button
                         size="sm"
