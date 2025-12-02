@@ -16,16 +16,36 @@ import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
 import { SubscriptionRenewal } from "@/components/SubscriptionRenewal";
 import { AnnouncementManager } from "@/components/admin/AnnouncementManager";
+import { useFreeTier } from "@/hooks/useFreeTier";
+import { Crown, Zap, User as UserIcon } from "lucide-react";
 
 
 export default function Profile() {
   const { user } = useAuth();
+  const { tier } = useFreeTier();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [isOwner, setIsOwner] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getTierDisplay = () => {
+    switch (tier) {
+      case "premium":
+        return { label: "Premium", icon: Crown, color: "text-yellow-600", bg: "bg-yellow-500/20 border-yellow-500/30" };
+      case "essential":
+        return { label: "Essential", icon: Zap, color: "text-blue-600", bg: "bg-blue-500/20 border-blue-500/30" };
+      case "student":
+        return { label: "Student", icon: Crown, color: "text-purple-600", bg: "bg-purple-500/20 border-purple-500/30" };
+      case "trial":
+        return { label: "Trial", icon: Zap, color: "text-green-600", bg: "bg-green-500/20 border-green-500/30" };
+      default:
+        return { label: "Free", icon: UserIcon, color: "text-muted-foreground", bg: "bg-muted/50 border-muted" };
+    }
+  };
+
+  const tierDisplay = getTierDisplay();
 
   useEffect(() => {
     loadProfile();
@@ -211,8 +231,14 @@ export default function Profile() {
                   />
                 </div>
                 <div className="flex-1">
-                  <CardTitle className="text-2xl">{profile?.display_name || "User"}</CardTitle>
-                  <CardDescription className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CardTitle className="text-2xl">{profile?.display_name || "User"}</CardTitle>
+                    <Badge variant="secondary" className={`${tierDisplay.bg} ${tierDisplay.color} border`}>
+                      <tierDisplay.icon className="h-3 w-3 mr-1" />
+                      {tierDisplay.label}
+                    </Badge>
+                  </div>
+                  <CardDescription className="flex items-center gap-2">
                     <Mail className="h-4 w-4" />
                     {user?.email}
                   </CardDescription>
