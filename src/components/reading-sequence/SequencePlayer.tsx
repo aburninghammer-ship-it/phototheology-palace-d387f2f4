@@ -27,9 +27,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ReadingSequenceBlock, SequenceItem } from "@/types/readingSequence";
-import { notifyTTSStarted, notifyTTSStopped, useAudioDucking, getDuckedVolume } from "@/hooks/useAudioDucking";
+import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { getGlobalMusicVolume, setGlobalMusicPlayback } from "@/hooks/useMusicVolumeControl";
 import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 import {
   Select,
@@ -75,13 +74,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const [currentVerseIdx, setCurrentVerseIdx] = useState(0);
   const [volume, setVolume] = useState(70);
   const [isMuted, setIsMuted] = useState(false);
-  const [musicVolume, setMusicVolume] = useState(() => {
-    const stored = getGlobalMusicVolume();
-    const initial = typeof stored === "number" && !Number.isNaN(stored as any) ? (stored as number) : 90;
-    const clamped = Math.max(0, Math.min(initial, 100));
-    console.log('[SequencePlayer] Initial music volume:', clamped);
-    return clamped;
-  });
   const [chapterContent, setChapterContent] = useState<ChapterContent | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
@@ -95,7 +87,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const musicAudioRef = useRef<HTMLAudioElement | null>(null); // Background music audio
   const isGeneratingRef = useRef(false); // Prevent concurrent TTS requests
   const isFetchingChapterRef = useRef(false); // Prevent concurrent chapter fetches
   const lastFetchedRef = useRef<string | null>(null); // Track last fetched chapter
@@ -166,7 +157,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const totalItems = allItems.length;
   const isActive = isPlaying && !isPaused;
 
-  // Reset refs on mount to ensure fresh start and stop global ambient music
+  // Reset refs on mount to ensure fresh start
   useEffect(() => {
     isFetchingChapterRef.current = false;
     lastFetchedRef.current = null;
@@ -180,67 +171,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     commentaryCache.current.clear();
     prefetchingCommentaryRef.current.clear();
     
-    // Stop global ambient music player when SequencePlayer mounts
-    console.log('[SequencePlayer] Stopping global ambient music');
-    setGlobalMusicPlayback(false);
-    
     console.log("SequencePlayer mounted, refs reset. Active sequences:", activeSequences.length, "Total items:", totalItems);
-    
-    // Resume global music when unmounting
-    return () => {
-      console.log('[SequencePlayer] Unmounting, allowing global ambient music to resume');
-      setGlobalMusicPlayback(true);
-    };
   }, []);
 
-  // Subscribe to audio ducking - music lowers when TTS plays
-  useAudioDucking((ducked, duckRatio) => {
-    if (musicAudioRef.current) {
-      const baseVolume = musicVolume / 100;
-      const finalVolume = getDuckedVolume(baseVolume);
-      musicAudioRef.current.volume = finalVolume;
-      console.log('[SequencePlayer] Audio ducking:', ducked ? 'active' : 'inactive', 'volume:', finalVolume);
-    }
-  });
-
-  // Callback ref for music audio - ensures volume is set when element mounts
-  const setMusicAudioRef = useCallback((node: HTMLAudioElement | null) => {
-    if (node) {
-      musicAudioRef.current = node;
-      // Apply current volume with ducking
-      const baseVolume = musicVolume / 100;
-      const finalVolume = getDuckedVolume(baseVolume);
-      node.volume = finalVolume;
-      console.log('[SequencePlayer] Music audio ref set, volume:', finalVolume);
-    }
-  }, [musicVolume]);
-
-  // Update music volume when user changes it - apply ducking
-  useEffect(() => {
-    if (musicAudioRef.current) {
-      const baseVolume = musicVolume / 100;
-      const finalVolume = getDuckedVolume(baseVolume);
-      musicAudioRef.current.volume = finalVolume;
-      console.log('[SequencePlayer] Music volume updated:', finalVolume);
-    }
-  }, [musicVolume]);
-
-  // Start/pause music based on playback - always play at ducked volume
-  useEffect(() => {
-    if (!musicAudioRef.current) return;
-
-    if (isPlaying && !isPaused && musicVolume > 0) {
-      const baseVolume = musicVolume / 100;
-      const finalVolume = getDuckedVolume(baseVolume);
-      musicAudioRef.current.volume = finalVolume;
-      console.log("[Music] Starting background music, volume:", finalVolume);
-      musicAudioRef.current.play().catch((err) => {
-        console.error("[Music] Failed to start:", err);
-      });
-    } else {
-      musicAudioRef.current.pause();
-    }
-  }, [isPlaying, isPaused, musicVolume]);
 
   // Generate chapter commentary using Jeeves (with offline cache)
   const generateCommentary = useCallback(async (book: string, chapter: number, chapterText?: string, depth: string = "surface") => {
@@ -1697,14 +1630,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   };
 
-  const handleMusicVolumeChange = (value: number[]) => {
-    const newVolume = value[0];
-    setMusicVolume(newVolume);
-    if (musicAudioRef.current) {
-      musicAudioRef.current.volume = newVolume / 100;
-    }
-  };
-
   // Handle voice change - clear cache and regenerate current audio
   // Handle on-demand verse commentary request
   const handleVerseCommentaryRequest = useCallback(async (verseNum: number, verseText: string) => {
@@ -1848,109 +1773,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     ? ((currentVerseIdx + 1) / chapterContent.verses.length) * 100
     : 0;
 
-  // Background music playlist - tracks from AmbientMusicPlayer
-  const AMBIENT_TRACKS = [
-    {
-      id: "eternal-echoes",
-      name: "Eternal Echoes",
-      url: "https://cdn1.suno.ai/ea711d82-cd6a-4ebd-a960-b73cb72c39f0.mp3",
-    },
-    {
-      id: "amazing-grace-epic",
-      name: "Amazing Grace (Epic Meditative Remix)",
-      url: "https://cdn1.suno.ai/a362b171-5a6f-4264-8946-ae76b09a6aa7.mp3",
-    },
-    {
-      id: "when-he-cometh",
-      name: "When He Cometh Reimagined",
-      url: "https://cdn1.suno.ai/617f1da9-1bfb-4a93-8485-08f432623d2e.mp3",
-    },
-    {
-      id: "flight",
-      name: "Flight",
-      url: "https://cdn1.suno.ai/qWAdsQQdcbYPv9kC.mp3",
-    },
-    {
-      id: "whispers-inner-mind",
-      name: "Whispers of the Inner Mind",
-      url: "https://cdn1.suno.ai/E8qISnskB0iJ5bnz.mp3",
-    },
-  ];
-
-  // Selected tracks for playlist (use all by default, stored in localStorage)
-  const [selectedTracks] = useState<Set<string>>(() => {
-    const saved = localStorage.getItem("pt-ambient-selected-tracks");
-    if (saved) {
-      try {
-        return new Set(JSON.parse(saved));
-      } catch {
-        return new Set(AMBIENT_TRACKS.map(t => t.id));
-      }
-    }
-    return new Set(AMBIENT_TRACKS.map(t => t.id)); // All tracks selected by default
-  });
-
-  const [currentTrackId, setCurrentTrackId] = useState<string>(() => {
-    const playableTracks = AMBIENT_TRACKS.filter(t => selectedTracks.has(t.id));
-    return playableTracks.length > 0 ? playableTracks[0].id : AMBIENT_TRACKS[0].id;
-  });
-
-  const currentTrack = AMBIENT_TRACKS.find(t => t.id === currentTrackId) || AMBIENT_TRACKS[0];
-  const [musicUrl, setMusicUrl] = useState(currentTrack.url);
-
-  // Move to next track in playlist
-  const nextMusicTrack = useCallback(() => {
-    const playableTracks = AMBIENT_TRACKS.filter(t => selectedTracks.has(t.id));
-    if (playableTracks.length === 0) return;
-    
-    const currentIndex = playableTracks.findIndex(t => t.id === currentTrackId);
-    const nextIndex = (currentIndex + 1) % playableTracks.length;
-    const nextTrack = playableTracks[nextIndex];
-    
-    console.log("[Music] Moving to next track:", nextTrack.name);
-    setCurrentTrackId(nextTrack.id);
-    setMusicUrl(nextTrack.url);
-  }, [currentTrackId, selectedTracks, AMBIENT_TRACKS]);
-
-  // Load music URL for offline mode
-  useEffect(() => {
-    const loadMusicUrl = async () => {
-      if (offlineMode || !isOnline()) {
-        const cached = await getCachedMusicTrack(currentTrack.url);
-        if (cached) {
-          console.log("[Music] Using cached music track:", currentTrack.name);
-          setMusicUrl(cached);
-        }
-      } else {
-        setMusicUrl(currentTrack.url);
-      }
-    };
-    loadMusicUrl();
-  }, [offlineMode, currentTrack]);
-
   return (
-    <>
-      {/* Hidden background music audio element */}
-      <audio
-        ref={setMusicAudioRef}
-        src={musicUrl}
-        preload="auto"
-        onLoadedData={(e) => {
-          const audio = e.currentTarget;
-          audio.volume = musicVolume / 100;
-        }}
-        onEnded={() => {
-          console.log("[Music] Track ended, playing next");
-          nextMusicTrack();
-          // Auto-play next track after brief delay
-          setTimeout(() => {
-            if (musicAudioRef.current && isPlaying && !isPaused) {
-              musicAudioRef.current.play().catch(console.error);
-            }
-          }, 100);
-        }}
-      />
-      <Card className="overflow-hidden glass-card border-white/10 bg-card/50 backdrop-blur-xl">
+    <Card className="overflow-hidden glass-card border-white/10 bg-card/50 backdrop-blur-xl">
       <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
@@ -2182,37 +2006,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
               <span className="text-xs text-muted-foreground w-8">{isMuted ? 0 : volume}%</span>
             </div>
           )}
-
-          {/* Music volume slider - ALWAYS SHOWN on all devices */}
-          <div className="flex items-center gap-3">
-            <Volume2 className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground w-16">Music</span>
-            <Slider
-              value={[musicVolume]}
-              max={100}
-              step={1}
-              onValueChange={handleMusicVolumeChange}
-              className="flex-1"
-            />
-            <span className="text-xs text-muted-foreground w-8">{musicVolume}%</span>
-          </div>
           
           {isMobile && (
-            <div className="flex flex-col gap-1 py-1 text-xs text-muted-foreground items-center">
-              <div className="flex items-center gap-2">
-                <Smartphone className="h-3 w-3" />
-                <span>Use device volume for reader</span>
-              </div>
-              <div className="flex items-center gap-2 w-full max-w-xs">
-                <span className="w-12 text-right">Music</span>
-                <Slider
-                  value={[musicVolume]}
-                  max={100}
-                  step={1}
-                  onValueChange={handleMusicVolumeChange}
-                  className="flex-1"
-                />
-              </div>
+            <div className="flex items-center gap-2 py-1 text-xs text-muted-foreground">
+              <Smartphone className="h-3 w-3" />
+              <span>Use device volume for reader and music controls (top right) for background music</span>
             </div>
           )}
         </div>
@@ -2235,6 +2033,5 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         </div>
       </CardContent>
     </Card>
-    </>
   );
 };
