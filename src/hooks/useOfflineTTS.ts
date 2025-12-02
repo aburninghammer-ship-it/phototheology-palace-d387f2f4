@@ -24,6 +24,30 @@ export const useOfflineTTS = (verses: Verse[], options?: UseOfflineTTSOptions) =
   
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const isPlayingRef = useRef(false);
+  const keepAliveIntervalRef = useRef<number | null>(null);
+
+  // Keep speech synthesis alive on mobile browsers
+  useEffect(() => {
+    const keepAlive = () => {
+      if (isPlayingRef.current && speechSynthesis.speaking) {
+        if (speechSynthesis.paused) {
+          console.log('[OfflineTTS] Resuming suspended speech');
+          speechSynthesis.resume();
+        }
+      }
+    };
+
+    if (isPlaying) {
+      keepAliveIntervalRef.current = window.setInterval(keepAlive, 5000);
+    }
+
+    return () => {
+      if (keepAliveIntervalRef.current) {
+        clearInterval(keepAliveIntervalRef.current);
+        keepAliveIntervalRef.current = null;
+      }
+    };
+  }, [isPlaying]);
 
   // Load available voices
   useEffect(() => {
@@ -57,6 +81,9 @@ export const useOfflineTTS = (verses: Verse[], options?: UseOfflineTTSOptions) =
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (keepAliveIntervalRef.current) {
+        clearInterval(keepAliveIntervalRef.current);
+      }
       speechSynthesis.cancel();
     };
   }, []);

@@ -84,9 +84,33 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const browserUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null); // For pause/resume with browser TTS
   const retryCountRef = useRef(0); // Track retry attempts for resilience
   const pausedVerseRef = useRef<{ verseIdx: number; content: ChapterContent; voice: string } | null>(null); // Track paused position
+  const keepAliveIntervalRef = useRef<number | null>(null); // Keep speech alive on mobile
   
   const isMobile = useIsMobile();
   const activeSequences = sequences.filter((s) => s.enabled && s.items.length > 0);
+
+  // Keep speech synthesis alive on mobile browsers
+  useEffect(() => {
+    const keepAlive = () => {
+      if (isPlaying && !isPaused && speechSynthesis.speaking) {
+        if (speechSynthesis.paused) {
+          console.log('[SequencePlayer] Resuming suspended speech');
+          speechSynthesis.resume();
+        }
+      }
+    };
+
+    if (isPlaying && !isPaused) {
+      keepAliveIntervalRef.current = window.setInterval(keepAlive, 5000);
+    }
+
+    return () => {
+      if (keepAliveIntervalRef.current) {
+        clearInterval(keepAliveIntervalRef.current);
+        keepAliveIntervalRef.current = null;
+      }
+    };
+  }, [isPlaying, isPaused]);
 
   // Flatten all items across sequences for navigation
   const allItems = activeSequences.flatMap((seq, seqIdx) =>
@@ -326,39 +350,74 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   }, [offlineMode]);
 
-  // Browser speech synthesis for offline mode - with pause/resume support
+  // Browser speech synthesis for offline mode - with pause/resume support and chunking
   const speakWithBrowserTTS = useCallback((text: string, onEnd: () => void): void => {
     speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1;
-    utterance.pitch = 1;
     
-    // Try to use a good English voice
-    const voices = speechSynthesis.getVoices();
-    const englishVoice = voices.find(v => 
-      v.lang.startsWith('en') && 
-      (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Daniel'))
-    ) || voices.find(v => v.lang.startsWith('en'));
-    
-    if (englishVoice) {
-      utterance.voice = englishVoice;
-    }
-    
-    utterance.onend = () => {
-      browserUtteranceRef.current = null;
-      onEnd();
-    };
-    utterance.onerror = (e) => {
-      console.error("[BrowserTTS] Error:", e);
-      browserUtteranceRef.current = null;
-      // Don't call onEnd on error if it was just interrupted for pause
-      if (e.error !== 'interrupted') {
-        onEnd();
+    // Split long texts into chunks to prevent timeout
+    const MAX_CHUNK_LENGTH = 200;
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    const chunks: string[] = [];
+    let currentChunk = '';
+
+    for (const sentence of sentences) {
+      if ((currentChunk + sentence).length > MAX_CHUNK_LENGTH && currentChunk) {
+        chunks.push(currentChunk.trim());
+        currentChunk = sentence;
+      } else {
+        currentChunk += sentence;
       }
+    }
+    if (currentChunk) chunks.push(currentChunk.trim());
+
+    console.log(`[SequencePlayer] Split into ${chunks.length} chunks`);
+
+    let currentChunkIndex = 0;
+
+    const speakChunk = () => {
+      if (currentChunkIndex >= chunks.length) {
+        browserUtteranceRef.current = null;
+        onEnd();
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(chunks[currentChunkIndex]);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      
+      const voices = speechSynthesis.getVoices();
+      const englishVoice = voices.find(v => 
+        v.lang.startsWith('en') && 
+        (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Daniel'))
+      ) || voices.find(v => v.lang.startsWith('en'));
+      
+      if (englishVoice) {
+        utterance.voice = englishVoice;
+      }
+      
+      utterance.onend = () => {
+        currentChunkIndex++;
+        setTimeout(speakChunk, 100);
+      };
+      
+      utterance.onerror = (e) => {
+        console.error("[BrowserTTS] Error on chunk:", currentChunkIndex, e);
+        if (e.error !== 'interrupted') {
+          currentChunkIndex++;
+          if (currentChunkIndex < chunks.length) {
+            setTimeout(speakChunk, 500);
+          } else {
+            browserUtteranceRef.current = null;
+            onEnd();
+          }
+        }
+      };
+      
+      browserUtteranceRef.current = utterance;
+      speechSynthesis.speak(utterance);
     };
-    
-    browserUtteranceRef.current = utterance;
-    speechSynthesis.speak(utterance);
+
+    speakChunk();
   }, []);
 
   // Play commentary audio
@@ -1441,6 +1500,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   // Cleanup on unmount only - not on audioUrl change (that was causing the race condition)
   useEffect(() => {
     return () => {
+      if (keepAliveIntervalRef.current) {
+        clearInterval(keepAliveIntervalRef.current);
+      }
       continuePlayingRef.current = false;
       if (audioRef.current) {
         audioRef.current.pause();
