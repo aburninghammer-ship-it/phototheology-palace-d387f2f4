@@ -476,14 +476,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
 
   // Play commentary audio
   const playCommentary = useCallback(async (text: string, voice: string, onComplete: () => void) => {
-    console.log("[Commentary] Playing commentary...");
+    console.log("[Commentary] Playing commentary, length:", text.length);
     setIsPlayingCommentary(true);
     setCommentaryText(text);
     playingCommentaryRef.current = true;
     setIsLoading(true);
 
-    // Add timeout to TTS generation
-    const timeoutMs = 30000; // 30 seconds for longer commentary
+    // Add timeout to TTS generation - longer for commentary
+    const timeoutMs = 60000; // 60 seconds for long chapter commentary
     const timeoutPromise = new Promise<string | null>((_, reject) => 
       setTimeout(() => reject(new Error('TTS generation timeout')), timeoutMs)
     );
@@ -496,13 +496,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         timeoutPromise
       ]);
     } catch (error) {
-      console.error("[Commentary] TTS generation failed or timed out:", error);
+      console.error("[Commentary] TTS generation failed or timed out, falling back to browser TTS:", error);
       setIsLoading(false);
-      setIsPlayingCommentary(false);
-      playingCommentaryRef.current = false;
-      setCommentaryText(null);
-      toast.error("Commentary audio unavailable, continuing", { duration: 2000 });
-      onComplete();
+      
+      // Fallback to browser TTS for commentary
+      const playbackSpeed = currentSequence?.playbackSpeed || 1;
+      speakWithBrowserTTS(text, playbackSpeed, () => {
+        setIsPlayingCommentary(false);
+        playingCommentaryRef.current = false;
+        setCommentaryText(null);
+        onComplete();
+      });
       return;
     }
     
