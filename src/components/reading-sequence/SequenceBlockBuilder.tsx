@@ -567,7 +567,6 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
             <div className="flex items-center justify-between pt-2 border-t">
               <Label className="text-sm flex items-center gap-2">
                 🎵 Background Music
-                <span className="text-xs text-muted-foreground">(peaceful ambient music)</span>
               </Label>
               <Switch
                 checked={block.backgroundMusic || false}
