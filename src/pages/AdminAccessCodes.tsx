@@ -24,6 +24,7 @@ export default function AdminAccessCodes() {
   const [inviteMaxUses, setInviteMaxUses] = useState<string>("");
   const [inviteAccessDuration, setInviteAccessDuration] = useState<string>("3");
   const [inviteIsLifetime, setInviteIsLifetime] = useState(false);
+  const [skipEmail, setSkipEmail] = useState(false);
   
   const [generatedCode, setGeneratedCode] = useState<{
     code: string;
@@ -76,7 +77,7 @@ export default function AdminAccessCodes() {
   };
 
   const handleSendInvitation = async () => {
-    if (!recipientEmail.trim()) {
+    if (!recipientEmail.trim() && !skipEmail) {
       toast({
         title: "Error",
         description: "Please enter recipient email",
@@ -90,6 +91,37 @@ export default function AdminAccessCodes() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Not authenticated");
 
+      // If skipping email, just generate code like the Link tab
+      if (skipEmail) {
+        const response = await supabase.functions.invoke('generate-access-code', {
+          body: { 
+            maxUses: inviteMaxUses ? parseInt(inviteMaxUses) : null,
+            accessDurationMonths: inviteIsLifetime ? null : (inviteAccessDuration ? parseInt(inviteAccessDuration) : null),
+            isLifetime: inviteIsLifetime
+          }
+        });
+
+        if (response.error) throw response.error;
+        if (!response.data.success) throw new Error(response.data.error);
+
+        setGeneratedCode({
+          code: response.data.code,
+          link: `${window.location.origin}/access?code=${response.data.code}`,
+          expiresAt: response.data.expiresAt,
+          isLifetime: inviteIsLifetime,
+          duration: !inviteIsLifetime && inviteAccessDuration ? parseInt(inviteAccessDuration) : undefined,
+          emailSent: false
+        });
+
+        toast({
+          title: "Success!",
+          description: `Access code generated (email not sent)`,
+        });
+
+        return;
+      }
+
+      // Otherwise send email invitation
       const response = await supabase.functions.invoke('send-invitation', {
         body: { 
           recipientEmail: recipientEmail.trim(),
@@ -176,7 +208,7 @@ export default function AdminAccessCodes() {
                     placeholder="user@example.com"
                     value={recipientEmail}
                     onChange={(e) => setRecipientEmail(e.target.value)}
-                    disabled={sendingInvite}
+                    disabled={sendingInvite || skipEmail}
                   />
                 </div>
 
@@ -188,11 +220,26 @@ export default function AdminAccessCodes() {
                     placeholder="John Doe"
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
-                    disabled={sendingInvite}
+                    disabled={sendingInvite || skipEmail}
                   />
                   <p className="text-sm text-muted-foreground">
                     Personalizes the email greeting
                   </p>
+                </div>
+
+                <div className="flex items-center space-x-2 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <Checkbox
+                    id="skipEmail"
+                    checked={skipEmail}
+                    onCheckedChange={(checked) => setSkipEmail(checked as boolean)}
+                    disabled={sendingInvite}
+                  />
+                  <Label
+                    htmlFor="skipEmail"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Skip email (generate code for manual sharing)
+                  </Label>
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -242,12 +289,21 @@ export default function AdminAccessCodes() {
 
                 <Button
                   onClick={handleSendInvitation}
-                  disabled={sendingInvite || !recipientEmail.trim()}
+                  disabled={sendingInvite || (!skipEmail && !recipientEmail.trim())}
                   className="w-full"
                 >
                   {sendingInvite && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  <Mail className="mr-2 h-4 w-4" />
-                  Send Email Invitation
+                  {skipEmail ? (
+                    <>
+                      <LinkIcon className="mr-2 h-4 w-4" />
+                      Generate Code (No Email)
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="mr-2 h-4 w-4" />
+                      Send Email Invitation
+                    </>
+                  )}
                 </Button>
               </TabsContent>
 
@@ -354,6 +410,15 @@ export default function AdminAccessCodes() {
                     <p className="text-sm text-green-700 dark:text-green-400 font-medium flex items-center gap-2">
                       <Mail className="h-4 w-4" />
                       ✓ Email invitation sent successfully!
+                    </p>
+                  </div>
+                )}
+
+                {generatedCode.emailSent === false && (
+                  <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                    <p className="text-sm text-amber-700 dark:text-amber-400 font-medium flex items-center gap-2">
+                      <LinkIcon className="h-4 w-4" />
+                      Code generated! Share this link manually with your recipient.
                     </p>
                   </div>
                 )}
