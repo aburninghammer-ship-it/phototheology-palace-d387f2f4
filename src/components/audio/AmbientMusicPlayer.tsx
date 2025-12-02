@@ -90,16 +90,6 @@ const AMBIENT_TRACKS: Array<{
     bpm: 68,
   },
   {
-    id: "whispers-of-eternity",
-    name: "Whispers of Eternity",
-    description: "Orchestral with lush strings, epic meditative",
-    category: "floor-3",
-    floor: 3,
-    mood: "orchestral, epic, meditative",
-    url: "https://cdn1.suno.ai/37b77ba0-4272-4220-a392-16645e9aa9b2.mp3",
-    bpm: 60,
-  },
-  {
     id: "flight",
     name: "Flight",
     description: "Soaring orchestral, uplifting, ethereal",
