@@ -1790,7 +1790,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         <Progress value={progressPercent} className="h-2" />
 
         {/* Controls */}
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-2 relative z-10">
           <Button
             variant="ghost"
             size="icon"
@@ -1823,7 +1823,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           {isPlaying && !isPaused ? (
             <Button
               size="lg"
-              className="h-14 w-14 rounded-full gradient-palace shadow-lg"
+              className="h-14 w-14 rounded-full gradient-palace shadow-lg relative z-20 pointer-events-auto"
               onClick={handlePause}
               disabled={isLoading}
             >
@@ -1836,7 +1836,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           ) : (
             <Button
               size="lg"
-              className="h-14 w-14 rounded-full gradient-palace shadow-lg"
+              className="h-14 w-14 rounded-full gradient-palace shadow-lg relative z-20 pointer-events-auto"
               onClick={handlePlay}
               disabled={isLoading}
             >
