@@ -577,39 +577,43 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
         setCommentaryText(null);
         onComplete();
       } else {
-        // Use ElevenLabs Daniel voice
+        // Use ElevenLabs Daniel voice - with robust fallback
+        let audioUrl: string | null = null;
+        
         try {
-          const audioUrl = await getCommentaryAudio(text, book, chapter, verse);
-          
-          setIsLoading(false);
-
-          if (!audioUrl) {
-            console.log("[Commentary] No audio URL, falling back to OpenAI");
-            // Fallback to OpenAI instead of browser TTS for better quality
-            await openaiSpeak(text, {
-              voice: 'shimmer',
-              book,
-              chapter,
-              verse,
-              useCache: true
-            });
-            setIsPlayingCommentary(false);
-            playingCommentaryRef.current = false;
-            setCommentaryText(null);
-            onComplete();
-            return;
-          }
+          audioUrl = await getCommentaryAudio(text, book, chapter, verse);
         } catch (error) {
-          console.error("[Commentary] ElevenLabs failed:", error);
-          setIsLoading(false);
+          // Log the error details for debugging
+          console.error("[Commentary] ElevenLabs error:", error);
           
-          // Check if it's a quota error
-          if (error instanceof Error && error.message === 'ELEVENLABS_QUOTA_EXCEEDED') {
-            toast.error("ElevenLabs quota exceeded. Using OpenAI voice instead.", { duration: 4000 });
+          // Check if it's a quota error - surface user-friendly message
+          const isQuotaError = error instanceof Error && error.message === 'ELEVENLABS_QUOTA_EXCEEDED';
+          if (isQuotaError) {
+            toast.info("Using alternative voice service", { duration: 3000 });
           }
           
-          // Fallback to OpenAI
-          console.log("[Commentary] Falling back to OpenAI");
+          // Always fallback to OpenAI on ANY ElevenLabs error
+          console.log("[Commentary] Falling back to OpenAI TTS");
+          setIsLoading(false);
+          await openaiSpeak(text, {
+            voice: 'shimmer',
+            book,
+            chapter,
+            verse,
+            useCache: true
+          });
+          setIsPlayingCommentary(false);
+          playingCommentaryRef.current = false;
+          setCommentaryText(null);
+          onComplete();
+          return;
+        }
+        
+        setIsLoading(false);
+
+        // If no audio URL returned, fallback to OpenAI
+        if (!audioUrl) {
+          console.log("[Commentary] No audio URL returned, falling back to OpenAI");
           await openaiSpeak(text, {
             voice: 'shimmer',
             book,
