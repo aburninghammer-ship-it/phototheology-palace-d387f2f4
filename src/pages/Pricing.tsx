@@ -4,7 +4,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Sparkles, Star, Crown, Zap, GraduationCap, Building2, ArrowRight, CreditCard } from "lucide-react";
+import { Check, Sparkles, Star, Crown, Zap, GraduationCap, Building2, ArrowRight, CreditCard, Gift } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -288,6 +288,21 @@ export default function Pricing() {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Access Code Link */}
+        <div className="text-center mb-8">
+          <p className="text-sm text-muted-foreground mb-2">Have a special access code?</p>
+          <Button 
+            asChild
+            variant="outline"
+            className="gap-2"
+          >
+            <Link to="/access">
+              <Gift className="h-4 w-4" />
+              Redeem Access Code
+            </Link>
+          </Button>
+        </div>
 
         {/* Church Plans CTA */}
         <Card className="mb-12 border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 max-w-4xl mx-auto">
