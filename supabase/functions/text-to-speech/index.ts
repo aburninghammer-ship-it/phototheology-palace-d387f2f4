@@ -160,6 +160,7 @@ function splitTextIntoChunks(text: string, maxChars: number): string[] {
 async function callOpenAIWithRetry(
   text: string,
   voice: string,
+  speed: number,
   apiKey: string,
   maxRetries = 3
 ): Promise<Response> {
@@ -184,6 +185,7 @@ async function callOpenAIWithRetry(
           model: 'tts-1',
           input: text,
           voice: voice,
+          speed: Math.max(0.25, Math.min(4.0, speed)), // Clamp between 0.25 and 4.0
           response_format: 'mp3',
         }),
       }
@@ -226,7 +228,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, voice = DEFAULT_BIBLE_VOICE, book, chapter, verse, useCache = true } = await req.json();
+    const { text, voice = DEFAULT_BIBLE_VOICE, speed = 1.0, book, chapter, verse, useCache = true } = await req.json();
 
     if (!text) {
       throw new Error("Text is required");
@@ -278,7 +280,7 @@ serve(async (req) => {
       const chunk = chunks[i];
       console.log(`[TTS] Processing chunk ${i + 1}/${chunks.length} (${chunk.length} chars)`);
       
-      const response = await callOpenAIWithRetry(chunk, selectedVoice, OPENAI_API_KEY);
+      const response = await callOpenAIWithRetry(chunk, selectedVoice, speed, OPENAI_API_KEY);
       const buffer = await response.arrayBuffer();
       audioBuffers.push(buffer);
       

@@ -27,6 +27,7 @@ interface SpeakOptions {
   chapter?: number;
   verse?: number;
   useCache?: boolean;
+  speed?: number; // 0.25 to 4.0, default 1.0
 }
 
 export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
@@ -35,6 +36,7 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>(defaultVoice);
+  const [speed, setSpeed] = useState(1.0); // 1.0 = normal, 0.5 = slower/deeper, 1.5 = faster/higher
   const [wasCached, setWasCached] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -70,6 +72,7 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
         body: { 
           text: text.trim(),
           voice: opts.voice || selectedVoice,
+          speed: opts.speed || speed,
           book: opts.book,
           chapter: opts.chapter,
           verse: opts.verse,
@@ -143,6 +146,8 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
     isPlaying,
     selectedVoice,
     setSelectedVoice,
+    speed,
+    setSpeed,
     voices: OPENAI_VOICES,
     wasCached, // New: indicates if last audio was from cache
   };
