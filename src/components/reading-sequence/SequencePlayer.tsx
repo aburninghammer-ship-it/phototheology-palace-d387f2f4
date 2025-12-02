@@ -779,6 +779,57 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   }, [generateCommentary, generateTTS]);
 
+  // Play commentary for a single verse (commentary-only mode)
+  // NOTE: This must be defined BEFORE playCommentaryOnlyChapter to avoid temporal dead zone
+  const playCommentaryOnlyVerse = useCallback(async (verseIdx: number, content: ChapterContent, sequence: ReadingSequenceBlock) => {
+    if (verseIdx >= content.verses.length) {
+      // All verses done, move to next chapter
+      if (continuePlayingRef.current) {
+        moveToNextChapter();
+      } else {
+        setIsPlaying(false);
+      }
+      return;
+    }
+    
+    const verse = content.verses[verseIdx];
+    const commentaryVoice = sequence.commentaryVoice || "daniel";
+    const commentaryDepth = sequence.commentaryDepth || "surface";
+    
+    console.log("[Commentary Only] Playing verse", verseIdx + 1, "commentary");
+    setCurrentVerseIdx(verseIdx);
+    
+    try {
+      const commentary = await generateVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryDepth);
+      
+      if (commentary && continuePlayingRef.current) {
+        playCommentary(commentary, commentaryVoice, () => {
+          // Move to next verse commentary
+          if (continuePlayingRef.current) {
+            playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+          } else {
+            setIsPlaying(false);
+          }
+        });
+      } else {
+        // No commentary or stopped, skip to next verse or stop
+        if (continuePlayingRef.current) {
+          playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+        } else {
+          setIsPlaying(false);
+        }
+      }
+    } catch (error) {
+      console.error("[Commentary Only] Error generating verse commentary:", error);
+      // Try to continue with next verse
+      if (continuePlayingRef.current) {
+        playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
+      } else {
+        setIsPlaying(false);
+      }
+    }
+  }, [generateVerseCommentary, playCommentary, moveToNextChapter]);
+
   // Play commentary only (skip verse reading)
   const playCommentaryOnlyChapter = useCallback(async (content: ChapterContent, sequence: ReadingSequenceBlock) => {
     if (!content || !sequence.includeJeevesCommentary) return;
@@ -832,57 +883,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
       setIsPlaying(false);
       toast.error("Failed to generate commentary");
     }
-  }, [generateCommentary, playCommentary, moveToNextChapter]);
-  
-  // Play commentary for a single verse (commentary-only mode)
-  const playCommentaryOnlyVerse = useCallback(async (verseIdx: number, content: ChapterContent, sequence: ReadingSequenceBlock) => {
-    if (verseIdx >= content.verses.length) {
-      // All verses done, move to next chapter
-      if (continuePlayingRef.current) {
-        moveToNextChapter();
-      } else {
-        setIsPlaying(false);
-      }
-      return;
-    }
-    
-    const verse = content.verses[verseIdx];
-    const commentaryVoice = sequence.commentaryVoice || "daniel";
-    const commentaryDepth = sequence.commentaryDepth || "surface";
-    
-    console.log("[Commentary Only] Playing verse", verseIdx + 1, "commentary");
-    setCurrentVerseIdx(verseIdx);
-    
-    try {
-      const commentary = await generateVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryDepth);
-      
-      if (commentary && continuePlayingRef.current) {
-        playCommentary(commentary, commentaryVoice, () => {
-          // Move to next verse commentary
-          if (continuePlayingRef.current) {
-            playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
-          } else {
-            setIsPlaying(false);
-          }
-        });
-      } else {
-        // No commentary or stopped, skip to next verse or stop
-        if (continuePlayingRef.current) {
-          playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
-        } else {
-          setIsPlaying(false);
-        }
-      }
-    } catch (error) {
-      console.error("[Commentary Only] Error generating verse commentary:", error);
-      // Try to continue with next verse
-      if (continuePlayingRef.current) {
-        playCommentaryOnlyVerse(verseIdx + 1, content, sequence);
-      } else {
-        setIsPlaying(false);
-      }
-    }
-  }, [generateVerseCommentary, playCommentary, moveToNextChapter]);
+  }, [generateCommentary, playCommentary, moveToNextChapter, playCommentaryOnlyVerse]);
 
   // Play a specific verse by index - using a stable ref to avoid stale closures
   const playVerseAtIndex = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
