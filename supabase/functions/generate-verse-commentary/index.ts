@@ -156,8 +156,8 @@ CRITICAL FOR SPOKEN DELIVERY:
     depth: `
 ### COMMENTARY STYLE: Scholarly Depth
 - Provide comprehensive verse analysis (4-7 sentences)
-- **CRITICAL: MAXIMIZE DIVERSITY** - Use a RICH MIX of PT principles from across all floors
-- MUST weave together connections from AT LEAST 4-5 different categories:
+- **CRITICAL: SELECT 4-6 MOST RELEVANT PRINCIPLES** - Choose quality over quantity
+- MUST focus on THE MOST SIGNIFICANT connections from 4-6 categories (MAXIMUM 6):
   * Sanctuary typology (Blue Room): Connect to specific furniture/services
   * Feast Calendar (Feasts Room): Show feast-day fulfillment or foreshadowing
   * Prophecy Room: Link to Daniel/Revelation timelines, historicist interpretation
@@ -168,9 +168,9 @@ CRITICAL FOR SPOKEN DELIVERY:
   * Three Heavens: Specify DoL¹/NE¹ (Babylon-Restoration), DoL²/NE² (70 AD-New Covenant), or DoL³/NE³ (Final Judgment)
   * Parables: If narrative verse, connect to parable themes
   * Verse Genetics (Bible Freestyle): Show how this verse has "siblings" and "cousins" across Scripture
-- Include Hebrew/Greek word analysis (Definition and Comparison Room)
-- Use Dimensions Room: Literal dimension plus ONE most relevant (Christ, Me, Church, or Heaven)
-- Provide meaningful cross-references that show the verse's "family tree"
+  * Hebrew/Greek Analysis (Definition and Comparison Room): Word meanings when significant
+  * Dimensions Room: Show Literal plus ONE dimension (Christ, Me, Church, or Heaven)
+- Be selective: Choose the connections that add the MOST insight, not all available options
 - End with spiritual application that passes the Fruit Room test`,
   };
 
