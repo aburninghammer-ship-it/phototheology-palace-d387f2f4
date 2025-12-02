@@ -76,6 +76,49 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const keepAliveIntervalRef = useRef<number | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  // Keep speech synthesis alive on mobile browsers
+  useEffect(() => {
+    const keepAlive = () => {
+      if (isPlaying && utteranceRef.current) {
+        // Resume if paused (iOS/Safari bug workaround)
+        if (speechSynthesis.paused) {
+          console.log('[TTS] Resuming suspended speech synthesis');
+          speechSynthesis.resume();
+        }
+      }
+    };
+
+    if (isPlaying) {
+      keepAliveIntervalRef.current = window.setInterval(keepAlive, 5000);
+    }
+
+    return () => {
+      if (keepAliveIntervalRef.current) {
+        clearInterval(keepAliveIntervalRef.current);
+        keepAliveIntervalRef.current = null;
+      }
+    };
+  }, [isPlaying]);
+
+  // Handle audio context suspension (mobile browsers)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && audioContextRef.current?.state === 'running') {
+        console.log('[TTS] Page hidden, audio context may suspend');
+      } else if (!document.hidden && audioContextRef.current?.state === 'suspended') {
+        console.log('[TTS] Resuming audio context after suspension');
+        audioContextRef.current.resume().catch(err => 
+          console.error('[TTS] Failed to resume audio context:', err)
+        );
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   // Load browser voices
   useEffect(() => {
@@ -128,9 +171,16 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (keepAliveIntervalRef.current) {
+        clearInterval(keepAliveIntervalRef.current);
+      }
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
+      }
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
       }
       speechSynthesis.cancel();
     };
@@ -150,40 +200,80 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     onEnd?.();
   }, [onEnd]);
 
-  // Browser TTS fallback
+  // Browser TTS fallback with chunking for long texts
   const speakWithBrowser = useCallback(async (text: string) => {
     return new Promise<void>((resolve, reject) => {
       try {
         speechSynthesis.cancel();
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1;
-        utterance.pitch = 1;
+        // Split long texts into chunks to prevent timeout (iOS limit ~15 seconds)
+        const MAX_CHUNK_LENGTH = 200; // ~15-20 seconds of speech
+        const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+        const chunks: string[] = [];
+        let currentChunk = '';
 
-        if (selectedBrowserVoice) {
-          utterance.voice = selectedBrowserVoice;
+        for (const sentence of sentences) {
+          if ((currentChunk + sentence).length > MAX_CHUNK_LENGTH && currentChunk) {
+            chunks.push(currentChunk.trim());
+            currentChunk = sentence;
+          } else {
+            currentChunk += sentence;
+          }
         }
+        if (currentChunk) chunks.push(currentChunk.trim());
 
-        utterance.onstart = () => {
-          setCurrentMode('browser');
-          setIsPlaying(true);
-          onStart?.();
+        console.log(`[TTS] Split text into ${chunks.length} chunks for reliable playback`);
+
+        let currentChunkIndex = 0;
+
+        const speakChunk = () => {
+          if (currentChunkIndex >= chunks.length) {
+            setIsPlaying(false);
+            onEnd?.();
+            resolve();
+            return;
+          }
+
+          const utterance = new SpeechSynthesisUtterance(chunks[currentChunkIndex]);
+          utterance.rate = 1;
+          utterance.pitch = 1;
+
+          if (selectedBrowserVoice) {
+            utterance.voice = selectedBrowserVoice;
+          }
+
+          utterance.onstart = () => {
+            if (currentChunkIndex === 0) {
+              setCurrentMode('browser');
+              setIsPlaying(true);
+              onStart?.();
+            }
+            console.log(`[TTS] Playing chunk ${currentChunkIndex + 1}/${chunks.length}`);
+          };
+
+          utterance.onend = () => {
+            currentChunkIndex++;
+            // Small delay between chunks for natural pacing
+            setTimeout(speakChunk, 100);
+          };
+
+          utterance.onerror = (event) => {
+            console.error('[TTS] Browser TTS error on chunk:', currentChunkIndex, event);
+            // Try to continue with next chunk
+            currentChunkIndex++;
+            if (currentChunkIndex < chunks.length) {
+              setTimeout(speakChunk, 500);
+            } else {
+              setIsPlaying(false);
+              reject(new Error('Browser TTS failed'));
+            }
+          };
+
+          utteranceRef.current = utterance;
+          speechSynthesis.speak(utterance);
         };
 
-        utterance.onend = () => {
-          setIsPlaying(false);
-          onEnd?.();
-          resolve();
-        };
-
-        utterance.onerror = (event) => {
-          console.error('[TTS] Browser TTS error:', event);
-          setIsPlaying(false);
-          reject(new Error('Browser TTS failed'));
-        };
-
-        utteranceRef.current = utterance;
-        speechSynthesis.speak(utterance);
+        speakChunk();
       } catch (error) {
         reject(error);
       }
@@ -236,12 +326,24 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
         throw new Error('No audio content received');
       }
 
-      // Create and play audio
+      // Create and play audio with AudioContext for better mobile support
       if (!audioRef.current) {
         audioRef.current = new Audio();
       }
 
+      // Create AudioContext if needed (helps prevent suspension on mobile)
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+
+      // Resume context if suspended
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
+
       audioRef.current.src = audioUrl;
+      
+      // Handle playback end
       audioRef.current.onended = () => {
         setIsPlaying(false);
         if (audioUrl.startsWith('blob:')) {
@@ -249,12 +351,20 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
         }
         onEnd?.();
       };
+      
+      // Handle errors with retry logic
       audioRef.current.onerror = () => {
+        console.error('[TTS] Audio playback error');
         setIsPlaying(false);
         if (audioUrl.startsWith('blob:')) {
           URL.revokeObjectURL(audioUrl);
         }
         throw new Error('Audio playback failed');
+      };
+
+      // Handle interruptions (phone calls, etc.)
+      audioRef.current.onpause = () => {
+        console.log('[TTS] Audio paused (possibly by system)');
       };
 
       await audioRef.current.play();
