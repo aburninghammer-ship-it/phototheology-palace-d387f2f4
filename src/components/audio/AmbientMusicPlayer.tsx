@@ -254,22 +254,40 @@ export function AmbientMusicPlayer({
     console.log(`[AmbientMusic] Volume updated: base=${volume}, duck=${duckMultiplier}, effective=${effectiveVolume}`);
   }, [volume, isMuted, duckMultiplier]);
 
+  // Track failed URLs to avoid retrying them
+  const failedUrlsRef = useRef<Set<string>>(new Set());
+  const retryCountRef = useRef<number>(0);
+  const maxRetries = 3;
+
+  // Helper to check if URL is likely a valid audio file
+  const isValidAudioUrl = useCallback((url: string): boolean => {
+    if (!url) return false;
+    // Reject page URLs (not direct audio files)
+    if (url.includes('suno.com/s/') && !url.includes('.mp3')) return false;
+    // Accept common audio file extensions or CDN patterns
+    const isAudioFile = /\.(mp3|wav|ogg|m4a|aac|webm)(\?|$)/i.test(url);
+    const isCdnUrl = url.includes('cdn1.suno.ai') || url.includes('supabase.co/storage');
+    return isAudioFile || isCdnUrl;
+  }, []);
+
   // Combine preset and user tracks - memoized to prevent unnecessary re-renders
   const allTracks = useMemo(() => [
     ...AMBIENT_TRACKS.map(t => ({ ...t, isUser: false })),
-    ...userTracks.map(t => ({ 
-      id: `user-${t.id}`, 
-      name: t.name, 
-      description: t.mood || "Your uploaded track",
-      url: t.file_url,
-      category: "custom",
-      floor: 0,
-      mood: t.mood || "custom",
-      bpm: 60,
-      isUser: true,
-      userTrackData: t
-    }))
-  ], [userTracks]);
+    ...userTracks
+      .filter(t => isValidAudioUrl(t.file_url)) // Filter out invalid URLs
+      .map(t => ({ 
+        id: `user-${t.id}`, 
+        name: t.name, 
+        description: t.mood || "Your uploaded track",
+        url: t.file_url,
+        category: "custom",
+        floor: 0,
+        mood: t.mood || "custom",
+        bpm: 60,
+        isUser: true,
+        userTrackData: t
+      }))
+  ], [userTracks, isValidAudioUrl]);
 
   const currentTrack = useMemo(() => 
     allTracks.find(t => t.id === currentTrackId) || allTracks[0],
@@ -450,6 +468,13 @@ export function AmbientMusicPlayer({
       setIsPlaying(false);
     } else {
       try {
+        // Check if current track URL is valid and not previously failed
+        if (!isValidAudioUrl(currentTrack.url) || failedUrlsRef.current.has(currentTrack.url)) {
+          console.log("[Music] Skipping invalid/failed URL:", currentTrack.url);
+          findNextWorkingTrack();
+          return;
+        }
+
         // Setup Web Audio API on first play (requires user gesture on iOS)
         if (!audioContextRef.current) {
           await setupWebAudio();
@@ -458,8 +483,20 @@ export function AmbientMusicPlayer({
         }
         
         // Ensure source is set
-        if (!audioRef.current.src || audioRef.current.src === "") {
+        if (!audioRef.current.src || audioRef.current.src === "" || !audioRef.current.src.includes(currentTrack.url.split('?')[0])) {
           audioRef.current.src = currentTrack.url;
+          await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => reject(new Error('Load timeout')), 10000);
+            audioRef.current!.oncanplaythrough = () => {
+              clearTimeout(timeout);
+              resolve();
+            };
+            audioRef.current!.onerror = () => {
+              clearTimeout(timeout);
+              reject(new Error('Failed to load audio'));
+            };
+            audioRef.current!.load();
+          });
         }
         
         // Set volume via GainNode if available
@@ -473,6 +510,7 @@ export function AmbientMusicPlayer({
         await audioRef.current.play();
         console.log("Audio playing successfully");
         setIsPlaying(true);
+        retryCountRef.current = 0; // Reset retry count on success
         
         // Setup Media Session for lock screen controls and background playback
         if ('mediaSession' in navigator) {
@@ -504,16 +542,39 @@ export function AmbientMusicPlayer({
         setIsEnabled(true);
       } catch (error) {
         console.error("Audio playback failed:", error);
-        // Try loading a different track if this one fails
-        const currentIndex = allTracks.findIndex(t => t.id === currentTrackId);
-        const nextIndex = (currentIndex + 1) % allTracks.length;
-        if (nextIndex !== currentIndex) {
-          console.log("Trying next track...");
-          setCurrentTrackId(allTracks[nextIndex].id);
-        }
+        // Mark this URL as failed
+        failedUrlsRef.current.add(currentTrack.url);
+        findNextWorkingTrack();
       }
     }
   };
+
+  // Find the next track that hasn't failed
+  const findNextWorkingTrack = useCallback(() => {
+    retryCountRef.current++;
+    if (retryCountRef.current > maxRetries) {
+      console.error("[Music] Max retries reached, stopping auto-retry");
+      retryCountRef.current = 0;
+      return;
+    }
+    
+    const playableTracks = allTracks.filter(t => 
+      selectedTracks.has(t.id) && 
+      !failedUrlsRef.current.has(t.url) &&
+      isValidAudioUrl(t.url)
+    );
+    
+    if (playableTracks.length === 0) {
+      console.error("[Music] No valid tracks available");
+      retryCountRef.current = 0;
+      return;
+    }
+    
+    const currentIndex = playableTracks.findIndex(t => t.id === currentTrackId);
+    const nextIndex = (currentIndex + 1) % playableTracks.length;
+    console.log("[Music] Trying next working track:", playableTracks[nextIndex].name);
+    setCurrentTrackId(playableTracks[nextIndex].id);
+  }, [allTracks, selectedTracks, currentTrackId, isValidAudioUrl]);
 
   const toggleMute = () => {
     const newMuted = !isMuted;
