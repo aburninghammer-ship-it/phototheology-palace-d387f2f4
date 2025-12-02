@@ -60,6 +60,16 @@ serve(async (req) => {
 
     const { recipientEmail, recipientName, maxUses, isLifetime, accessDurationMonths }: InvitationRequest = await req.json();
 
+    // Support multiple comma/semicolon-separated recipient emails
+    const recipientEmails = recipientEmail
+      .split(/[,;]+/)
+      .map((email) => email.trim())
+      .filter((email) => email.length > 0);
+
+    if (recipientEmails.length === 0) {
+      throw new Error('No valid recipient email addresses provided');
+    }
+
     // Generate access code
     const code = 'PT-' + Math.random().toString(36).substring(2, 10).toUpperCase();
     const expiresAt = new Date();
@@ -144,16 +154,29 @@ serve(async (req) => {
       </html>
     `;
 
-    const emailResponse = await resend.emails.send({
+    const { data: emailData, error: resendError } = await resend.emails.send({
       from: "Phototheology <onboarding@resend.dev>",
-      to: [recipientEmail],
+      to: recipientEmails,
       subject: isLifetime 
         ? "🎉 You've Been Invited to Phototheology - Lifetime Access!" 
         : `🎉 You've Been Invited to Phototheology - ${accessDurationMonths} Months Free!`,
       html: emailHtml,
     });
 
-    console.log(`Invitation sent to ${recipientEmail}, code: ${code}, expires: ${expiresAt}`, emailResponse);
+    if (resendError) {
+      console.error('Resend email error:', resendError);
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: resendError.message || 'Email service rejected the invitation. Please check your email configuration.',
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`Invitation sent to ${recipientEmails.join(', ')}, code: ${code}, expires: ${expiresAt.toISOString()}`,
+      emailData
+    );
 
     return new Response(
       JSON.stringify({ 
