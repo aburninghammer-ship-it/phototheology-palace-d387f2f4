@@ -21,6 +21,7 @@ import {
   WifiOff,
   RotateCcw,
   RefreshCw,
+  Mic,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -28,6 +29,14 @@ import { ReadingSequenceBlock, SequenceItem } from "@/types/readingSequence";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getGlobalMusicVolume } from "@/hooks/useMusicVolumeControl";
+import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { DownloadSequenceDialog } from "./DownloadSequenceDialog";
 import { OfflineModeToggle } from "./OfflineModeToggle";
@@ -73,6 +82,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const [isPlayingCommentary, setIsPlayingCommentary] = useState(false);
   const [offlineMode, setOfflineMode] = useState(!isOnline());
   const [commentaryText, setCommentaryText] = useState<string | null>(null);
+  const [currentVoice, setCurrentVoice] = useState<VoiceId>(() => {
+    return (currentSequence?.voice as VoiceId) || 'onyx';
+  });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const musicAudioRef = useRef<HTMLAudioElement | null>(null); // Background music audio
@@ -121,7 +133,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
 
   // Flatten all items across sequences for navigation
   const allItems = activeSequences.flatMap((seq, seqIdx) =>
-    seq.items.map((item) => ({ ...item, seqIdx, voice: seq.voice }))
+    seq.items.map((item) => ({ ...item, seqIdx, voice: currentVoice }))
   );
 
   const currentItem = allItems[currentItemIdx] || null;
@@ -1596,6 +1608,48 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     }
   };
 
+  // Handle voice change - clear cache and regenerate current audio
+  const handleVoiceChange = useCallback((newVoice: VoiceId) => {
+    console.log("[Voice] Changing voice from", currentVoice, "to", newVoice);
+    setCurrentVoice(newVoice);
+    
+    // Clear TTS cache to force regeneration with new voice
+    ttsCache.current.clear();
+    prefetchingRef.current.clear();
+    commentaryCache.current.clear();
+    prefetchingCommentaryRef.current.clear();
+    
+    // If currently playing, regenerate current verse/commentary
+    if (isPlaying && !isPaused && chapterContent && currentItem) {
+      const wasPlayingCommentary = isPlayingCommentary;
+      
+      // Stop current audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      if (browserUtteranceRef.current) {
+        speechSynthesis.cancel();
+        browserUtteranceRef.current = null;
+      }
+      
+      // Regenerate and continue from current position
+      if (wasPlayingCommentary && commentaryText) {
+        console.log("[Voice] Re-generating commentary with new voice");
+        playCommentary(commentaryText, newVoice, () => {
+          if (continuePlayingRef.current) {
+            playVerseAtIndex(currentVerseIdx + 1, chapterContent, newVoice);
+          }
+        });
+      } else {
+        console.log("[Voice] Re-generating verse with new voice");
+        playVerseAtIndex(currentVerseIdx, chapterContent, newVoice);
+      }
+    }
+    
+    toast.success(`Voice changed to ${OPENAI_VOICES.find(v => v.id === newVoice)?.name}`);
+  }, [currentVoice, isPlaying, isPaused, chapterContent, currentItem, isPlayingCommentary, commentaryText, currentVerseIdx]);
+
   const toggleMute = () => {
     setIsMuted(!isMuted);
     if (audioRef.current) {
@@ -1843,6 +1897,29 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           >
             <Square className="h-5 w-5" />
           </Button>
+        </div>
+
+        {/* Voice Selector */}
+        <div className="px-4 pb-2">
+          <div className="flex items-center gap-3">
+            <Mic className="h-4 w-4 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground w-12">Voice</span>
+            <Select value={currentVoice} onValueChange={handleVoiceChange}>
+              <SelectTrigger className="flex-1 h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {OPENAI_VOICES.map((voice) => (
+                  <SelectItem key={voice.id} value={voice.id} className="text-xs">
+                    <div className="flex flex-col">
+                      <span className="font-medium">{voice.name}</span>
+                      <span className="text-muted-foreground text-[10px]">{voice.description}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Volume Controls */}
