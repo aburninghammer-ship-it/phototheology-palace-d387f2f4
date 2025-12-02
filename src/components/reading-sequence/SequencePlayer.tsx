@@ -59,7 +59,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const [currentVerseIdx, setCurrentVerseIdx] = useState(0);
   const [volume, setVolume] = useState(100);
   const [isMuted, setIsMuted] = useState(false);
-  const [musicVolume, setMusicVolume] = useState(() => Math.min(getGlobalMusicVolume(), 30));
+  const [musicVolume, setMusicVolume] = useState(() => {
+    // Check if any sequence has background music enabled
+    const hasMusicEnabled = sequences.some(s => s.backgroundMusic);
+    return hasMusicEnabled ? Math.min(getGlobalMusicVolume(), 25) : 0;
+  });
   const [chapterContent, setChapterContent] = useState<ChapterContent | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
@@ -135,11 +139,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
     commentaryCache.current.clear();
     prefetchingCommentaryRef.current.clear();
     
-    // Set music volume to reasonable default on mount
-    const defaultMusic = Math.min(getGlobalMusicVolume(), 15);
+    // Set music volume based on whether music is enabled in sequences
+    const hasMusicEnabled = sequences.some(s => s.backgroundMusic);
+    const defaultMusic = hasMusicEnabled ? Math.min(getGlobalMusicVolume(), 25) : 0;
     setMusicVolume(defaultMusic);
     setGlobalMusicVolume(defaultMusic);
-    console.log("[SequencePlayer] Music volume initialized to:", defaultMusic);
+    console.log("[SequencePlayer] Music volume initialized to:", defaultMusic, "enabled:", hasMusicEnabled);
     
     console.log("SequencePlayer mounted, refs reset. Active sequences:", activeSequences.length, "Total items:", totalItems);
   }, []);
@@ -165,10 +170,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
 
   // Start/pause music based on playback
   useEffect(() => {
-    if (musicAudioRef.current && isPlaying && !isPaused && musicVolume > 0) {
-      musicAudioRef.current.play().catch(() => {});
+    const hasMusicEnabled = sequences.some(s => s.backgroundMusic);
+    if (musicAudioRef.current && isPlaying && !isPaused && musicVolume > 0 && hasMusicEnabled) {
+      console.log("[Music] Starting background music, volume:", musicVolume);
+      musicAudioRef.current.play().catch((err) => {
+        console.error("[Music] Failed to start:", err);
+      });
+    } else if (musicAudioRef.current && (!isPlaying || isPaused || !hasMusicEnabled)) {
+      musicAudioRef.current.pause();
     }
-  }, [isPlaying, isPaused, musicVolume]);
+  }, [isPlaying, isPaused, musicVolume, sequences]);
 
   // Generate chapter commentary using Jeeves (with offline cache)
   const generateCommentary = useCallback(async (book: string, chapter: number, chapterText?: string, depth: string = "surface") => {

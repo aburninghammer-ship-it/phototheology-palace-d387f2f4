@@ -40,6 +40,7 @@ const createEmptyBlock = (sequenceNumber: number): ReadingSequenceBlock => ({
   playbackSpeed: 1,
   playOrder: "listed",
   includeJeevesCommentary: false,
+  backgroundMusic: false,
 });
 
 export default function ReadMeTheBible() {

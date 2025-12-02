@@ -24,6 +24,7 @@ export interface ReadingSequenceBlock {
   commentaryVoice?: VoiceId;
   commentaryDepth?: CommentaryDepth;
   commentaryMode?: CommentaryMode;
+  backgroundMusic?: boolean; // Enable background music
 }
 
 export interface SavedReadingSequence {
