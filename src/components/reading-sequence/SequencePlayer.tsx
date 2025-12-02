@@ -62,7 +62,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   const [musicVolume, setMusicVolume] = useState(() => {
     // Check if any sequence has background music enabled
     const hasMusicEnabled = sequences.some(s => s.backgroundMusic);
-    return hasMusicEnabled ? Math.min(getGlobalMusicVolume(), 25) : 0;
+    const defaultVolume = hasMusicEnabled ? Math.max(Math.min(getGlobalMusicVolume(), 25), 15) : 0;
+    console.log('[SequencePlayer] Initial music volume:', defaultVolume, 'hasMusicEnabled:', hasMusicEnabled);
+    return defaultVolume;
   });
   const [chapterContent, setChapterContent] = useState<ChapterContent | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -145,13 +147,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
   // Update music volume when sequences change (e.g., when switching to samples)
   useEffect(() => {
     const hasMusicEnabled = sequences.some(s => s.backgroundMusic);
-    const newMusicVolume = hasMusicEnabled ? Math.min(getGlobalMusicVolume(), 25) : 0;
+    const newMusicVolume = hasMusicEnabled ? Math.max(Math.min(getGlobalMusicVolume(), 25), 15) : 0;
     console.log("[SequencePlayer] Sequences changed, updating music volume:", newMusicVolume, "enabled:", hasMusicEnabled);
     setMusicVolume(newMusicVolume);
     if (newMusicVolume > 0) {
       setGlobalMusicVolume(newMusicVolume);
     }
-  }, [sequences]);
+    
+    // If music is enabled and we're playing, start the music
+    if (hasMusicEnabled && newMusicVolume > 0 && isPlaying && !isPaused && musicAudioRef.current) {
+      console.log("[Music] Auto-starting music after sequence change");
+      musicAudioRef.current.volume = newMusicVolume / 100;
+      musicAudioRef.current.play().catch(err => {
+        console.error("[Music] Auto-start failed:", err);
+      });
+    }
+  }, [sequences, isPlaying, isPaused]);
 
   // Callback ref for music audio - ensures volume is set when element mounts
   const setMusicAudioRef = useCallback((node: HTMLAudioElement | null) => {
@@ -1795,14 +1806,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
           {isPlaying && !isPaused ? (
             <Button
               size="lg"
-              className="h-14 w-14 rounded-full"
+              className="h-14 w-14 rounded-full gradient-palace"
               onClick={handlePause}
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <Loader2 className="h-6 w-6 animate-spin text-white" />
               ) : (
-                <Pause className="h-6 w-6" />
+                <Pause className="h-6 w-6 text-white fill-white" />
               )}
             </Button>
           ) : (
@@ -1813,9 +1824,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <Loader2 className="h-6 w-6 animate-spin text-white" />
               ) : (
-                <Play className="h-6 w-6 ml-1" />
+                <Play className="h-6 w-6 ml-1 text-white fill-white" />
               )}
             </Button>
           )}
