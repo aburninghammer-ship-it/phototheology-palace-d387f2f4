@@ -509,7 +509,12 @@ export function AmbientMusicPlayer({
             const playableTracks = allTracks.filter(t => selectedTracks.has(t.id));
             const currentIndex = playableTracks.findIndex(t => t.id === currentTrackId);
             const prevIndex = currentIndex > 0 ? currentIndex - 1 : playableTracks.length - 1;
-            setCurrentTrackId(playableTracks[prevIndex].id);
+            const prevTrack = playableTracks[prevIndex];
+            if (prevTrack && audioRef.current) {
+              audioRef.current.src = prevTrack.url;
+              audioRef.current.play().catch(console.error);
+              setCurrentTrackId(prevTrack.id);
+            }
           });
         }
         setIsEnabled(true);
@@ -558,24 +563,38 @@ export function AmbientMusicPlayer({
     }
   };
 
-  const nextTrack = () => {
+  const nextTrack = useCallback(() => {
     // Filter to only selected tracks
     const playableTracks = allTracks.filter(t => selectedTracks.has(t.id));
     if (playableTracks.length === 0) return;
     
+    let nextTrackToPlay;
     if (shuffleMode) {
       // Random track (different from current)
       const otherTracks = playableTracks.filter(t => t.id !== currentTrackId);
       if (otherTracks.length > 0) {
         const randomIndex = Math.floor(Math.random() * otherTracks.length);
-        setCurrentTrackId(otherTracks[randomIndex].id);
+        nextTrackToPlay = otherTracks[randomIndex];
+      } else {
+        nextTrackToPlay = playableTracks[0];
       }
     } else {
       const currentIndex = playableTracks.findIndex(t => t.id === currentTrackId);
       const nextIndex = (currentIndex + 1) % playableTracks.length;
-      setCurrentTrackId(playableTracks[nextIndex].id);
+      nextTrackToPlay = playableTracks[nextIndex];
     }
-  };
+    
+    if (nextTrackToPlay && audioRef.current) {
+      console.log('[AmbientMusic] Skipping to track:', nextTrackToPlay.name);
+      // Directly set src and play to avoid state timing issues
+      audioRef.current.src = nextTrackToPlay.url;
+      const wasPlaying = isPlaying;
+      if (wasPlaying) {
+        audioRef.current.play().catch(console.error);
+      }
+      setCurrentTrackId(nextTrackToPlay.id);
+    }
+  }, [allTracks, selectedTracks, currentTrackId, shuffleMode, isPlaying]);
 
   const toggleShuffle = () => {
     setShuffleMode(prev => {
