@@ -6,6 +6,25 @@ import {
   warriorPathMonth2 
 } from "./pathCurriculumMonth2";
 
+// Activity interface for month curriculum files
+export interface MonthActivity {
+  id: string;
+  title: string;
+  type: string;
+  duration: number;
+  description: string;
+  icon: string;
+  instructions: string;
+}
+
+// Week content interface for month curriculum files
+export interface WeekContent {
+  week: number;
+  title: string;
+  focus: string;
+  activities: MonthActivity[];
+}
+
 export interface WeekActivity {
   id: string;
   title: string;
