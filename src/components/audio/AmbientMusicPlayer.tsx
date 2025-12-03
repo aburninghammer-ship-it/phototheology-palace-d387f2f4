@@ -315,11 +315,10 @@ export function AmbientMusicPlayer({
     }
   }, [roomId]);
 
-  // Initialize audio element - simple HTML5 audio for independence
+  // Initialize audio element once - simple HTML5 audio for independence
   useEffect(() => {
     if (!audioRef.current) {
       audioRef.current = new Audio();
-      audioRef.current.loop = loopMode === "one";
       
       // Handle track ended - use ref for latest state to avoid stale closures
       audioRef.current.onended = () => {
@@ -331,27 +330,28 @@ export function AmbientMusicPlayer({
           const playableTracks = state.allTracks.filter(t => state.selectedTracks.has(t.id));
           if (playableTracks.length === 0) return;
           
-          let nextIndex: number;
+          let nextTrackToPlay;
           if (state.shuffleMode) {
             const otherTracks = playableTracks.filter(t => t.id !== state.currentTrackId);
             if (otherTracks.length > 0) {
               const randomIndex = Math.floor(Math.random() * otherTracks.length);
-              nextIndex = playableTracks.findIndex(t => t.id === otherTracks[randomIndex].id);
+              nextTrackToPlay = otherTracks[randomIndex];
             } else {
-              nextIndex = 0;
+              nextTrackToPlay = playableTracks[0];
             }
           } else {
             const currentIndex = playableTracks.findIndex(t => t.id === state.currentTrackId);
-            nextIndex = (currentIndex + 1) % playableTracks.length;
+            const nextIndex = (currentIndex + 1) % playableTracks.length;
+            nextTrackToPlay = playableTracks[nextIndex];
           }
           
-          console.log('[AmbientMusic] Auto-playing next track:', playableTracks[nextIndex]?.name);
-          setCurrentTrackId(playableTracks[nextIndex].id);
-          
-          // Auto-play next track
-          setTimeout(() => {
-            audioRef.current?.play().catch(console.error);
-          }, 100);
+          if (nextTrackToPlay && audioRef.current) {
+            console.log('[AmbientMusic] Auto-playing next track:', nextTrackToPlay.name);
+            // Directly set src and play - don't rely on React state update timing
+            audioRef.current.src = nextTrackToPlay.url;
+            audioRef.current.play().catch(console.error);
+            setCurrentTrackId(nextTrackToPlay.id);
+          }
         } else if (state.loopMode === "none") {
           setIsPlaying(false);
         }
@@ -359,6 +359,7 @@ export function AmbientMusicPlayer({
       };
     }
     
+    // Cleanup only on unmount
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -366,7 +367,7 @@ export function AmbientMusicPlayer({
         audioRef.current = null;
       }
     };
-  }, [loopMode]);
+  }, []); // Empty deps - only run once on mount
 
   // Update audio source when track changes - only reset src if URL actually changed
   useEffect(() => {
