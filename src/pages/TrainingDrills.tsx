@@ -10,11 +10,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { palaceFloors } from "@/data/palaceData";
-import { Dumbbell, CheckCircle2, Loader2 } from "lucide-react";
+import { Dumbbell, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
 
 const TrainingDrills = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [selectedFloor, setSelectedFloor] = useState<string>("floor-1");
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [drills, setDrills] = useState<any[]>([]);
   const [completions, setCompletions] = useState<Set<string>>(new Set());
@@ -47,13 +48,22 @@ const TrainingDrills = () => {
   };
 
   const fetchDrills = async (roomTag: string) => {
+    setDrills([]);
+    
     let { data, error } = await supabase
       .from('training_drills')
       .select('*')
       .eq('room_tag', roomTag)
       .order('drill_number');
 
-    if (error || !data || data.length === 0) {
+    if (error) {
+      console.error('Error fetching drills:', error);
+      // Generate drills if table doesn't exist or error
+      await generateDrillsForRoom(roomTag);
+      return;
+    }
+    
+    if (!data || data.length === 0) {
       // Generate drills if none exist
       await generateDrillsForRoom(roomTag);
       return;
@@ -69,7 +79,10 @@ const TrainingDrills = () => {
       .flatMap(f => f.rooms)
       .find(r => r.tag === roomTag);
 
-    if (!room) return;
+    if (!room) {
+      setGenerating(false);
+      return;
+    }
 
     try {
       // Call Jeeves to generate 10 drills
@@ -86,7 +99,7 @@ const TrainingDrills = () => {
       if (error) throw error;
 
       // Insert drills into database
-      if (data.drills && Array.isArray(data.drills)) {
+      if (data?.drills && Array.isArray(data.drills)) {
         const { error: insertError } = await supabase
           .from('training_drills')
           .insert(
@@ -100,12 +113,36 @@ const TrainingDrills = () => {
           );
 
         if (!insertError) {
-          await fetchDrills(roomTag);
+          // Re-fetch drills after insert
+          const { data: newDrills } = await supabase
+            .from('training_drills')
+            .select('*')
+            .eq('room_tag', roomTag)
+            .order('drill_number');
+          
+          if (newDrills) {
+            setDrills(newDrills);
+          }
+          
           toast({
             title: "Drills Generated!",
             description: `10 training drills created for ${room.name}`,
           });
+        } else {
+          console.error('Error inserting drills:', insertError);
+          toast({
+            title: "Error",
+            description: "Failed to save generated drills",
+            variant: "destructive",
+          });
         }
+      } else {
+        console.error('Invalid drill data:', data);
+        toast({
+          title: "Error",
+          description: "Failed to generate drills - invalid response",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Error generating drills:', error);
@@ -162,6 +199,16 @@ const TrainingDrills = () => {
     }
 
     setLoading(false);
+  };
+
+  const handleBackToRooms = () => {
+    setSelectedRoom(null);
+    setDrills([]);
+    setActiveDrill(null);
+  };
+
+  const getRoomByTag = (tag: string) => {
+    return palaceFloors.flatMap(f => f.rooms).find(r => r.tag === tag);
   };
 
   if (!user) return null;
@@ -232,8 +279,71 @@ const TrainingDrills = () => {
                 </div>
               </CardContent>
             </Card>
+          ) : selectedRoom ? (
+            // Show drills for selected room
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" onClick={handleBackToRooms}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Rooms
+                </Button>
+                <div>
+                  <h2 className="text-2xl font-bold">{getRoomByTag(selectedRoom)?.name} Drills</h2>
+                  <p className="text-muted-foreground">Complete these drills to master this room</p>
+                </div>
+              </div>
+
+              {generating ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
+                    <p className="text-lg font-medium">Generating training drills...</p>
+                    <p className="text-muted-foreground">This may take a moment</p>
+                  </CardContent>
+                </Card>
+              ) : drills.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <p className="text-muted-foreground">No drills available yet.</p>
+                    <Button 
+                      onClick={() => generateDrillsForRoom(selectedRoom)} 
+                      className="mt-4"
+                    >
+                      Generate Drills
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-4">
+                  {drills.map((drill) => {
+                    const isCompleted = completions.has(drill.id);
+                    return (
+                      <Card key={drill.id} className={isCompleted ? "border-green-500" : ""}>
+                        <CardHeader>
+                          <CardTitle className="text-base flex items-center justify-between">
+                            <span>{drill.title}</span>
+                            {isCompleted && <CheckCircle2 className="h-5 w-5 text-green-500" />}
+                          </CardTitle>
+                          <CardDescription className="text-sm">{drill.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Button
+                            onClick={() => startDrill(drill)}
+                            className="w-full"
+                            variant={isCompleted ? "outline" : "default"}
+                          >
+                            {isCompleted ? "Practice Again" : "Start Drill"}
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           ) : (
-            <Tabs value={selectedRoom || ""} onValueChange={setSelectedRoom}>
+            // Show floor tabs and room selection
+            <Tabs value={selectedFloor} onValueChange={setSelectedFloor}>
               <ScrollArea className="w-full">
                 <TabsList className="inline-flex w-full md:w-auto">
                   {palaceFloors.map((floor) => (
@@ -279,45 +389,6 @@ const TrainingDrills = () => {
                   </div>
                 </TabsContent>
               ))}
-
-              {selectedRoom && selectedRoom !== `floor-${palaceFloors[0].number}` && (
-                <div className="mt-8 space-y-4">
-                  {generating ? (
-                    <Card>
-                      <CardContent className="py-12 text-center">
-                        <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
-                        <p>Generating training drills...</p>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {drills.map((drill) => {
-                        const isCompleted = completions.has(drill.id);
-                        return (
-                          <Card key={drill.id} className={isCompleted ? "border-green-500" : ""}>
-                            <CardHeader>
-                              <CardTitle className="text-base flex items-center justify-between">
-                                <span>{drill.title}</span>
-                                {isCompleted && <CheckCircle2 className="h-5 w-5 text-green-500" />}
-                              </CardTitle>
-                              <CardDescription className="text-sm">{drill.description}</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              <Button
-                                onClick={() => startDrill(drill)}
-                                className="w-full"
-                                variant={isCompleted ? "outline" : "default"}
-                              >
-                                {isCompleted ? "Practice Again" : "Start Drill"}
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
             </Tabs>
           )}
         </div>
