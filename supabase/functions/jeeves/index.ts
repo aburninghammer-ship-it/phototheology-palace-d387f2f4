@@ -1834,22 +1834,39 @@ Keep it warm and conversational. Help your friend see the treasure in the origin
     
     } else if (mode === "generate-drills") {
       // Properties already destructured from requestBody
+      // Generate a random seed for variation
+      const randomSeed = Math.floor(Math.random() * 10000);
+      const bibleBooks = ["Genesis", "Exodus", "Psalms", "Isaiah", "Daniel", "Matthew", "Mark", "Luke", "John", "Romans", "Hebrews", "Revelation"];
+      const randomBook = bibleBooks[Math.floor(Math.random() * bibleBooks.length)];
       
       systemPrompt = `You are Jeeves, a master trainer creating dynamic practice drills for palace room mastery.
-Generate 10 unique, progressive training drills that help users master this specific room's methodology.`;
+Generate 10 unique, progressive training drills that help users master this specific room's methodology.
+
+CRITICAL RULE: Every drill that references a Bible verse MUST include the FULL TEXT of that verse in the prompt.
+Never say "Read John 10:9" alone. Always say:
+"Read John 10:9: 'I am the door: by me if any man enter in, he shall be saved, and shall go in and out, and find pasture.' (KJV)"
+
+This is essential because users need the verse text right in front of them to complete the drill.`;
 
       userPrompt = `Create 10 training drills for the ${roomName} (${roomTag}) room.
+Use random seed ${randomSeed} to ensure unique drill generation each time.
+Start with a verse from ${randomBook} for variation.
 
 Room Purpose: ${roomPurpose}
 Room Method: ${roomMethod}
 
 For each drill, provide:
 1. A clear, actionable title (5-8 words)
-2. A brief description (1-2 sentences explaining what skill this drill builds)
-3. A specific prompt/challenge (2-3 sentences giving the user a concrete task)
+2. A brief description (1-2 sentences explaining what skill this drill builds)  
+3. A specific prompt/challenge that MUST include the FULL TEXT of any Bible verse quoted (use KJV)
+
+CRITICAL: When referencing any Bible verse in the prompt, you MUST include:
+- The verse reference (e.g., "John 3:16")
+- The COMPLETE verse text in quotes
+- Example format: "Read Genesis 1:1: 'In the beginning God created the heaven and the earth.' Now identify..."
 
 Make drills progressively harder (1-3 beginner, 4-7 intermediate, 8-10 advanced).
-Vary the approach - use different verses, different angles, different challenges.
+Use a VARIETY of Bible books and passages - do NOT repeat verses from previous generations.
 Make them practical and immediately applicable.
 
 Return JSON format:
@@ -1858,7 +1875,7 @@ Return JSON format:
     {
       "title": "Drill title",
       "description": "What this builds",
-      "prompt": "Specific task for the user"
+      "prompt": "Read [Verse Reference]: '[Full verse text KJV]' Then [specific task]..."
     }
   ]
 }`;
