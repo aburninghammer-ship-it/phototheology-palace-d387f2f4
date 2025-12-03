@@ -19,6 +19,7 @@ interface PracticeDrillProps {
   questions: DrillQuestion[];
   curriculumActivityId?: string;
   onCurriculumComplete?: (activityId: string, xpEarned: number) => void;
+  pathActivityId?: string; // For auto-tracking path progress on completion
 }
 
 export const PracticeDrill = ({
@@ -29,6 +30,7 @@ export const PracticeDrill = ({
   questions,
   curriculumActivityId,
   onCurriculumComplete,
+  pathActivityId,
 }: PracticeDrillProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -112,7 +114,7 @@ export const PracticeDrill = ({
       answers: finalAnswers,
     };
 
-    await saveDrillResult(drillType, result, { questionCount: questions.length });
+    await saveDrillResult(drillType, result, { questionCount: questions.length }, pathActivityId);
     
     // Mark curriculum activity as complete if provided
     if (curriculumActivityId && onCurriculumComplete) {
