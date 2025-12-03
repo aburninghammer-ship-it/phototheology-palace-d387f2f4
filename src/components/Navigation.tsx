@@ -12,6 +12,7 @@ import { PWAInstallButton } from "@/components/PWAInstallButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NavigationStyleToggle } from "@/components/NavigationStyleToggle";
+import { ReturnToPathBanner } from "@/components/path/ReturnToPathBanner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -544,6 +545,9 @@ export const Navigation = () => {
           )}
         </div>
       </nav>
+      
+      {/* Return to Path Banner - appears when user has active path */}
+      {user && <ReturnToPathBanner />}
       
       {/* Spacer div - increased for tabs row */}
       <div className={user ? "h-32" : "h-16"} />
