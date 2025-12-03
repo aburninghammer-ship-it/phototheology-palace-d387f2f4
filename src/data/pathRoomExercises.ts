@@ -1480,6 +1480,591 @@ export const pathRoomExercises: Record<string, Record<PathType, PathRoomExercise
         icon: "🏆"
       }
     ]
+  },
+
+  // Floor 5 - Blue Room (Sanctuary)
+  bl: {
+    visual: [
+      {
+        id: "bl-v-1",
+        title: "Sanctuary Visualization",
+        description: "Create a mental map of the sanctuary",
+        instructions: [
+          "Picture the courtyard, Holy Place, Most Holy Place",
+          "Visualize each piece of furniture",
+          "Imagine the priest's path through the sanctuary",
+          "Connect each station to Christ's work"
+        ],
+        duration: "20 min",
+        type: "practice",
+        icon: "⛪"
+      },
+      {
+        id: "bl-v-2",
+        title: "Furniture Study",
+        description: "Deep dive into one sanctuary element",
+        instructions: [
+          "Choose one piece: altar, laver, lampstand, table, incense, ark",
+          "Create a detailed visual representation",
+          "List all symbolic meanings",
+          "Connect to Christ's ministry"
+        ],
+        duration: "15 min",
+        type: "drill",
+        icon: "🕯️"
+      },
+      {
+        id: "bl-v-3",
+        title: "Color & Material Mapping",
+        description: "Visualize sanctuary colors and materials",
+        instructions: [
+          "List: gold, silver, bronze, blue, purple, scarlet, white",
+          "Create a color-coded sanctuary diagram",
+          "Note where each color appears",
+          "What does each color symbolize?"
+        ],
+        duration: "15 min",
+        type: "practice",
+        icon: "🎨"
+      },
+      {
+        id: "bl-v-4",
+        title: "Day of Atonement Walk-Through",
+        description: "Visualize the high priest's Day of Atonement service",
+        instructions: [
+          "Picture each step of Leviticus 16",
+          "See the blood being applied",
+          "Follow the high priest into the Most Holy Place",
+          "Connect each action to Christ's work"
+        ],
+        duration: "20 min",
+        type: "practice",
+        icon: "🩸"
+      },
+      {
+        id: "bl-v-5",
+        title: "Heavenly Sanctuary Vision",
+        description: "Visualize the heavenly sanctuary from Revelation",
+        instructions: [
+          "Read Revelation 4-5, 8:1-5, 11:19",
+          "Create a mental image of heaven's sanctuary",
+          "Note similarities and differences to earthly pattern",
+          "Picture Christ ministering there now"
+        ],
+        duration: "15 min",
+        type: "reflection",
+        icon: "☁️"
+      }
+    ],
+    analytical: [
+      {
+        id: "bl-a-1",
+        title: "Sanctuary Structure Analysis",
+        description: "Map the sanctuary systematically",
+        instructions: [
+          "Create a floor plan with measurements",
+          "List furniture in each section",
+          "Note directional flow (east to west)",
+          "Analyze the progression pattern"
+        ],
+        duration: "20 min",
+        type: "drill",
+        icon: "📐"
+      },
+      {
+        id: "bl-a-2",
+        title: "Type-Antitype Connections",
+        description: "Connect sanctuary to Christ systematically",
+        instructions: [
+          "Create a two-column chart: Earthly | Heavenly",
+          "Match each sanctuary element to NT fulfillment",
+          "Cite Scripture for each connection",
+          "Note any patterns in the connections"
+        ],
+        duration: "20 min",
+        type: "drill",
+        icon: "🔗"
+      },
+      {
+        id: "bl-a-3",
+        title: "Service Schedule Analysis",
+        description: "Study the sanctuary calendar",
+        instructions: [
+          "List daily, weekly, monthly, yearly services",
+          "Note what happened at each",
+          "Identify prophetic patterns",
+          "Connect to redemption timeline"
+        ],
+        duration: "15 min",
+        type: "practice",
+        icon: "📅"
+      },
+      {
+        id: "bl-a-4",
+        title: "Cross-Reference Chain",
+        description: "Build sanctuary references from Genesis to Revelation",
+        instructions: [
+          "Find sanctuary references in each major section",
+          "Create a chain from Eden to New Jerusalem",
+          "Note how the concept develops",
+          "Identify the climax point"
+        ],
+        duration: "25 min",
+        type: "drill",
+        icon: "⛓️"
+      },
+      {
+        id: "bl-a-5",
+        title: "Hebrews Sanctuary Study",
+        description: "Analyze Hebrews' sanctuary theology",
+        instructions: [
+          "Read Hebrews 8-10",
+          "List every sanctuary reference",
+          "Note the author's argument structure",
+          "Summarize the better covenant logic"
+        ],
+        duration: "25 min",
+        type: "practice",
+        icon: "📖"
+      }
+    ],
+    devotional: [
+      {
+        id: "bl-d-1",
+        title: "Sanctuary Prayer Walk",
+        description: "Pray through the sanctuary",
+        instructions: [
+          "Start at the altar: confess sins",
+          "Laver: ask for cleansing",
+          "Lampstand: ask for illumination",
+          "Incense altar: intercede for others",
+          "Ark: worship in God's presence"
+        ],
+        duration: "20 min",
+        type: "reflection",
+        icon: "🙏"
+      },
+      {
+        id: "bl-d-2",
+        title: "High Priest Meditation",
+        description: "Meditate on Christ as High Priest",
+        instructions: [
+          "Read Hebrews 4:14-16",
+          "Picture Jesus in the heavenly sanctuary",
+          "What is He doing for you right now?",
+          "Come boldly to the throne of grace"
+        ],
+        duration: "15 min",
+        type: "reflection",
+        icon: "👑"
+      },
+      {
+        id: "bl-d-3",
+        title: "Atonement Gratitude",
+        description: "Thank God for the atonement",
+        instructions: [
+          "List what the sanctuary teaches about forgiveness",
+          "Thank God for each aspect of salvation",
+          "Journal how atonement changes your life",
+          "End with worship"
+        ],
+        duration: "15 min",
+        type: "reflection",
+        icon: "💖"
+      },
+      {
+        id: "bl-d-4",
+        title: "Living Sanctuary Reflection",
+        description: "You are God's temple",
+        instructions: [
+          "Read 1 Corinthians 6:19-20",
+          "How does your body reflect sanctuary principles?",
+          "What needs cleansing in your life?",
+          "Invite God's presence to dwell fully"
+        ],
+        duration: "15 min",
+        type: "reflection",
+        icon: "🏠"
+      },
+      {
+        id: "bl-d-5",
+        title: "Heavenly Intercession",
+        description: "Join Christ in intercession",
+        instructions: [
+          "Picture Jesus interceding in heaven",
+          "Bring specific people to Him",
+          "Pray with confidence in His mediation",
+          "Trust the incense of His righteousness"
+        ],
+        duration: "20 min",
+        type: "reflection",
+        icon: "🌟"
+      }
+    ],
+    warrior: [
+      {
+        id: "bl-w-1",
+        title: "Sanctuary Speed Quiz",
+        description: "Test sanctuary knowledge quickly",
+        instructions: [
+          "Set 5-minute timer",
+          "Answer: furniture in each section, colors, services",
+          "Check accuracy",
+          "Target: 90%+ correct"
+        ],
+        duration: "8 min",
+        type: "challenge",
+        icon: "⚡"
+      },
+      {
+        id: "bl-w-2",
+        title: "Furniture-to-Christ Race",
+        description: "Quick connections",
+        instructions: [
+          "Partner names furniture piece",
+          "You state Christ connection in 10 seconds",
+          "Must include Scripture reference",
+          "Score: correct with reference = 2, without = 1"
+        ],
+        duration: "10 min",
+        type: "challenge",
+        icon: "🏃"
+      },
+      {
+        id: "bl-w-3",
+        title: "Leviticus Navigation",
+        description: "Find sanctuary verses fast",
+        instructions: [
+          "Given a topic, find the Leviticus reference",
+          "Must locate in under 30 seconds",
+          "10 topics in a row",
+          "Target: 8/10 found"
+        ],
+        duration: "10 min",
+        type: "drill",
+        icon: "🎯"
+      },
+      {
+        id: "bl-w-4",
+        title: "Sanctuary Teaching Sprint",
+        description: "Explain sanctuary in 3 minutes",
+        instructions: [
+          "Record yourself explaining the sanctuary",
+          "Must cover: courtyard, Holy Place, Most Holy",
+          "Must mention Christ connection",
+          "Time limit: 3 minutes exactly"
+        ],
+        duration: "8 min",
+        type: "challenge",
+        icon: "🎙️"
+      },
+      {
+        id: "bl-w-5",
+        title: "Hebrews Speed Study",
+        description: "Extract sanctuary truths quickly",
+        instructions: [
+          "Read Hebrews 9 in 5 minutes",
+          "List 10 sanctuary-related facts",
+          "Each must be textually accurate",
+          "Score your list for precision"
+        ],
+        duration: "10 min",
+        type: "challenge",
+        icon: "📖"
+      }
+    ]
+  },
+
+  // Floor 2 - Questions Room
+  qr: {
+    visual: [
+      {
+        id: "qr-v-1",
+        title: "Question Mind Map",
+        description: "Visualize questions as a growing tree",
+        instructions: [
+          "Put the text in the center",
+          "Branch out with Who, What, When, Where, Why, How",
+          "Add sub-questions on smaller branches",
+          "Color-code by question type"
+        ],
+        duration: "15 min",
+        type: "practice",
+        icon: "🌳"
+      },
+      {
+        id: "qr-v-2",
+        title: "Question Gallery",
+        description: "Turn questions into visual prompts",
+        instructions: [
+          "Write 10 questions about the passage",
+          "Create a simple icon for each",
+          "Arrange as a gallery wall",
+          "Use visuals to recall questions later"
+        ],
+        duration: "15 min",
+        type: "drill",
+        icon: "🖼️"
+      },
+      {
+        id: "qr-v-3",
+        title: "Interrogation Scene",
+        description: "Picture yourself questioning the text",
+        instructions: [
+          "Imagine the text as a witness in a courtroom",
+          "You are the attorney asking questions",
+          "Visualize each question extracting new truth",
+          "Write what you 'discover'"
+        ],
+        duration: "15 min",
+        type: "practice",
+        icon: "⚖️"
+      },
+      {
+        id: "qr-v-4",
+        title: "Question Pathway",
+        description: "Map questions as a journey",
+        instructions: [
+          "Draw a path with 10 stops",
+          "Each stop is a question",
+          "Questions should lead logically to each other",
+          "Where does the path end?"
+        ],
+        duration: "15 min",
+        type: "practice",
+        icon: "🛤️"
+      },
+      {
+        id: "qr-v-5",
+        title: "Color-Coded Questions",
+        description: "Categorize questions visually",
+        instructions: [
+          "Assign colors: Blue=context, Green=meaning, Red=application",
+          "Write 15 questions",
+          "Highlight each with appropriate color",
+          "What balance do you see?"
+        ],
+        duration: "12 min",
+        type: "drill",
+        icon: "🌈"
+      }
+    ],
+    analytical: [
+      {
+        id: "qr-a-1",
+        title: "75 Questions Challenge",
+        description: "Generate massive question sets",
+        instructions: [
+          "25 Intratextual (inside the text)",
+          "25 Intertextual (across Scripture)",
+          "25 Phototheological (within PT framework)",
+          "Number and categorize each"
+        ],
+        duration: "30 min",
+        type: "drill",
+        icon: "📝"
+      },
+      {
+        id: "qr-a-2",
+        title: "Question Quality Analysis",
+        description: "Evaluate question depth",
+        instructions: [
+          "Write 20 questions",
+          "Rate each 1-5 for depth",
+          "Identify what makes questions better",
+          "Rewrite weak questions"
+        ],
+        duration: "20 min",
+        type: "practice",
+        icon: "📊"
+      },
+      {
+        id: "qr-a-3",
+        title: "Question Chain Building",
+        description: "Create logical question sequences",
+        instructions: [
+          "Start with one observation",
+          "Ask a question about it",
+          "Let the answer spark the next question",
+          "Build a 10-question chain"
+        ],
+        duration: "15 min",
+        type: "drill",
+        icon: "🔗"
+      },
+      {
+        id: "qr-a-4",
+        title: "Cross-Reference Questions",
+        description: "Questions that connect passages",
+        instructions: [
+          "Read your passage",
+          "Write 10 questions that require other Scripture to answer",
+          "Note which books/passages would help",
+          "This is intertextual questioning"
+        ],
+        duration: "15 min",
+        type: "practice",
+        icon: "📚"
+      },
+      {
+        id: "qr-a-5",
+        title: "Application Question Development",
+        description: "Move from text to life",
+        instructions: [
+          "Start with textual questions",
+          "Develop 'So what?' questions",
+          "Create 'How does this apply?' questions",
+          "End with personal commitment questions"
+        ],
+        duration: "15 min",
+        type: "practice",
+        icon: "🎯"
+      }
+    ],
+    devotional: [
+      {
+        id: "qr-d-1",
+        title: "Questions for God",
+        description: "Turn study into dialogue",
+        instructions: [
+          "Write 5 questions you want to ask God about this text",
+          "Sit in silence listening",
+          "Journal any impressions",
+          "Trust God to answer in His time"
+        ],
+        duration: "20 min",
+        type: "reflection",
+        icon: "🙏"
+      },
+      {
+        id: "qr-d-2",
+        title: "Heart Questions",
+        description: "Let the text question you",
+        instructions: [
+          "What is this text asking of me?",
+          "Where does it challenge me?",
+          "What change is required?",
+          "Respond with honest prayer"
+        ],
+        duration: "15 min",
+        type: "reflection",
+        icon: "💖"
+      },
+      {
+        id: "qr-d-3",
+        title: "Wonder Journal",
+        description: "Embrace holy curiosity",
+        instructions: [
+          "Create 'I wonder...' statements",
+          "Let wonder lead to worship",
+          "Some questions don't need answers",
+          "Marvel at God's depth"
+        ],
+        duration: "15 min",
+        type: "reflection",
+        icon: "✨"
+      },
+      {
+        id: "qr-d-4",
+        title: "Jesus' Questions",
+        description: "Study how Jesus asked questions",
+        instructions: [
+          "Find 5 questions Jesus asked in the Gospels",
+          "Why did He ask rather than tell?",
+          "How do His questions probe the heart?",
+          "Let one of His questions address you"
+        ],
+        duration: "15 min",
+        type: "reflection",
+        icon: "❓"
+      },
+      {
+        id: "qr-d-5",
+        title: "Unanswered Questions Trust",
+        description: "Rest in mystery",
+        instructions: [
+          "Identify questions you can't fully answer",
+          "Practice trusting God with unknowns",
+          "Thank God that He knows all",
+          "Find peace in His sovereignty"
+        ],
+        duration: "15 min",
+        type: "reflection",
+        icon: "🕊️"
+      }
+    ],
+    warrior: [
+      {
+        id: "qr-w-1",
+        title: "Question Sprint",
+        description: "Generate questions under time pressure",
+        instructions: [
+          "5 minutes on the clock",
+          "Write as many questions as possible",
+          "No repeats, each must be unique",
+          "Score: total valid questions"
+        ],
+        duration: "8 min",
+        type: "challenge",
+        icon: "⏱️"
+      },
+      {
+        id: "qr-w-2",
+        title: "Question Type Race",
+        description: "Hit all question categories fast",
+        instructions: [
+          "Must write: 3 Who, 3 What, 3 When, 3 Where, 3 Why, 3 How",
+          "Time yourself",
+          "Target: Under 3 minutes",
+          "Quality still matters"
+        ],
+        duration: "8 min",
+        type: "drill",
+        icon: "🏃"
+      },
+      {
+        id: "qr-w-3",
+        title: "Rapid-Fire Q&A",
+        description: "Question and answer ping-pong",
+        instructions: [
+          "Partner asks text-based questions",
+          "Answer in 15 seconds or less",
+          "Alternate roles",
+          "Score correct answers"
+        ],
+        duration: "10 min",
+        type: "challenge",
+        icon: "🏓"
+      },
+      {
+        id: "qr-w-4",
+        title: "Deep Question Challenge",
+        description: "Compete for most profound question",
+        instructions: [
+          "Each person writes best question in 2 minutes",
+          "Share and rate each other's depth",
+          "Winner has most thought-provoking question",
+          "Explain why it's deep"
+        ],
+        duration: "10 min",
+        type: "challenge",
+        icon: "🏆"
+      },
+      {
+        id: "qr-w-5",
+        title: "Question Answer Hunting",
+        description: "Find answers in Scripture quickly",
+        instructions: [
+          "Given 5 questions about a passage",
+          "Race to find biblical answers",
+          "Must cite verse references",
+          "First to complete all 5 wins"
+        ],
+        duration: "12 min",
+        type: "challenge",
+        icon: "🔍"
+      }
+    ]
   }
 };
 

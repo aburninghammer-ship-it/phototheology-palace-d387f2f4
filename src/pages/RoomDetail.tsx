@@ -334,6 +334,15 @@ export default function RoomDetail() {
 
               {/* LEARN TAB */}
               <TabsContent value="learn" className="space-y-6 mt-6">
+                {/* Path-specific exercises - shown first when user has active path */}
+                {user && (
+                  <PathRoomExercises 
+                    roomId={room.id} 
+                    roomName={room.name} 
+                    floorNumber={floor.number} 
+                  />
+                )}
+                
                 {showQuickStart && <ValueProposition roomId={room.id} />}
                 {showQuickStart && <QuickStartGuide roomId={room.id} roomName={room.name} />}
 
