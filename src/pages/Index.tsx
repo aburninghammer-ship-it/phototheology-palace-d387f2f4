@@ -38,6 +38,8 @@ import { InsideThePalace } from "@/components/InsideThePalace";
 import { ComparisonChart } from "@/components/ComparisonChart";
 import { ExitIntentPopup } from "@/components/retention/ExitIntentPopup";
 import { SessionTracker } from "@/components/analytics/SessionTracker";
+import { FourPathsShowcase } from "@/components/FourPathsShowcase";
+import { DeepApproachSection } from "@/components/DeepApproachSection";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -108,6 +110,12 @@ const Index = () => {
 
       {/* Comparison Chart */}
       <ComparisonChart />
+
+      {/* Deep Approach - Quick vs Deep Messaging */}
+      <DeepApproachSection />
+
+      {/* Four Paths Showcase */}
+      <FourPathsShowcase />
 
       {/* What Phototheology Does - 3 Frame Slider */}
       <WhatPhototheologyDoes />

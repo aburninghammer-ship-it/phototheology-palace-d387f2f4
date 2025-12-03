@@ -200,6 +200,7 @@ const DevotionalProfileDetail = lazy(() => import("./pages/DevotionalProfileDeta
 const PublicDevotionalView = lazy(() => import("./pages/PublicDevotionalView"));
 const WhyPhototheology = lazy(() => import("./pages/WhyPhototheology"));
 const MusicCategories = lazy(() => import("./pages/MusicCategories"));
+const Paths = lazy(() => import("./pages/Paths"));
 
 const queryClient = new QueryClient();
 
@@ -259,6 +260,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/paths" element={<Paths />} />
             <Route path="/why-phototheology" element={<WhyPhototheology />} />
             <Route path="/app-tour" element={<AppTour />} />
             <Route path="/access" element={

@@ -26,7 +26,7 @@ export const PunchyHero = () => {
         >
           <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-primary">
             <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="whitespace-normal sm:whitespace-nowrap">Teaches Bible 5x faster • Never forget a verse again</span>
+            <span className="whitespace-normal sm:whitespace-nowrap">A 2-year mastery journey • Not another quick-fix app</span>
           </span>
         </motion.div>
 
@@ -108,16 +108,16 @@ export const PunchyHero = () => {
           className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-2xl mx-auto mt-10 sm:mt-12 md:mt-16 pt-6 sm:pt-8 border-t border-border/50 px-4"
         >
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">5x</div>
-            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Faster Learning</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">2yr</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Mastery Journey</div>
           </div>
           <div className="text-center">
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-accent">8</div>
             <div className="text-xs sm:text-sm text-muted-foreground mt-1">Palace Floors</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">∞</div>
-            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Connections</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">4</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Learning Paths</div>
           </div>
         </motion.div>
       </div>
