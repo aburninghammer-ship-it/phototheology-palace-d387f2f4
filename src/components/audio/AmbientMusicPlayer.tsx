@@ -279,6 +279,32 @@ export function AmbientMusicPlayer({
     [allTracks, currentTrackId]
   );
 
+  // Ref for stable callback access in event handlers (fixes stale closure in onended)
+  const playbackStateRef = useRef<{
+    allTracks: typeof allTracks;
+    selectedTracks: Set<string>;
+    currentTrackId: string;
+    shuffleMode: boolean;
+    loopMode: "none" | "one" | "all";
+  }>({
+    allTracks,
+    selectedTracks,
+    currentTrackId,
+    shuffleMode,
+    loopMode
+  });
+  
+  // Keep ref updated with latest values
+  useEffect(() => {
+    playbackStateRef.current = {
+      allTracks,
+      selectedTracks,
+      currentTrackId,
+      shuffleMode,
+      loopMode
+    };
+  }, [allTracks, selectedTracks, currentTrackId, shuffleMode, loopMode]);
+
   // Auto-select track based on room
   useEffect(() => {
     if (roomId && ROOM_TRACK_MAP[roomId]) {
@@ -295,17 +321,41 @@ export function AmbientMusicPlayer({
       audioRef.current = new Audio();
       audioRef.current.loop = loopMode === "one";
       
-      // Handle track ended for "all" loop mode
+      // Handle track ended - use ref for latest state to avoid stale closures
       audioRef.current.onended = () => {
-        if (loopMode === "all") {
-          nextTrack();
+        const state = playbackStateRef.current;
+        console.log('[AmbientMusic] Track ended, loopMode:', state.loopMode);
+        
+        if (state.loopMode === "all") {
+          // Get next track using latest state from ref
+          const playableTracks = state.allTracks.filter(t => state.selectedTracks.has(t.id));
+          if (playableTracks.length === 0) return;
+          
+          let nextIndex: number;
+          if (state.shuffleMode) {
+            const otherTracks = playableTracks.filter(t => t.id !== state.currentTrackId);
+            if (otherTracks.length > 0) {
+              const randomIndex = Math.floor(Math.random() * otherTracks.length);
+              nextIndex = playableTracks.findIndex(t => t.id === otherTracks[randomIndex].id);
+            } else {
+              nextIndex = 0;
+            }
+          } else {
+            const currentIndex = playableTracks.findIndex(t => t.id === state.currentTrackId);
+            nextIndex = (currentIndex + 1) % playableTracks.length;
+          }
+          
+          console.log('[AmbientMusic] Auto-playing next track:', playableTracks[nextIndex]?.name);
+          setCurrentTrackId(playableTracks[nextIndex].id);
+          
           // Auto-play next track
           setTimeout(() => {
             audioRef.current?.play().catch(console.error);
           }, 100);
-        } else if (loopMode === "none") {
+        } else if (state.loopMode === "none") {
           setIsPlaying(false);
         }
+        // loopMode === "one" is handled by audio.loop = true
       };
     }
     
@@ -373,22 +423,10 @@ export function AmbientMusicPlayer({
     return unsubscribe;
   }, []);
 
-  // Update loop setting
+  // Update loop setting - only update the loop property, onended is set once at init
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.loop = loopMode === "one";
-      
-      // Update onended handler
-      audioRef.current.onended = () => {
-        if (loopMode === "all") {
-          nextTrack();
-          setTimeout(() => {
-            audioRef.current?.play().catch(console.error);
-          }, 100);
-        } else if (loopMode === "none") {
-          setIsPlaying(false);
-        }
-      };
     }
     localStorage.setItem("pt-ambient-loop-mode", loopMode);
   }, [loopMode]);
