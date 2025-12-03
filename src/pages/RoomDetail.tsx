@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { palaceFloors } from "@/data/palaceData";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,6 +62,8 @@ const QUICK_START_ROOMS = new Set([
 
 export default function RoomDetail() {
   const { floorNumber, roomId } = useParams();
+  const [searchParams] = useSearchParams();
+  const pathActivityId = searchParams.get('pathActivityId') || undefined;
   const navigate = useNavigate();
   const { user } = useAuth();
   const floor = palaceFloors.find(f => f.number === Number(floorNumber));
@@ -945,6 +947,7 @@ export default function RoomDetail() {
                           onCurriculumComplete={(activityId, xpEarned) => 
                             completeActivity({ activityId, xpEarned })
                           }
+                          pathActivityId={pathActivityId}
                         />
                       )}
                     </CardContent>

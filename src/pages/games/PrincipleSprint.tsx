@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { ArrowLeft, Zap, Trophy } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { usePathActivityTracking } from "@/hooks/usePathActivityTracking";
 
 interface Question {
   verse: string;
@@ -39,7 +40,10 @@ const SAMPLE_QUESTIONS: Question[] = [
 
 export default function PrincipleSprint() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const pathActivityId = searchParams.get('pathActivityId') || undefined;
   const { user } = useAuth();
+  const { markPathActivityComplete } = usePathActivityTracking();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedPrinciples, setSelectedPrinciples] = useState<string[]>([]);
   const [score, setScore] = useState(0);
@@ -120,6 +124,9 @@ export default function PrincipleSprint() {
         score,
         metadata: { questions: SAMPLE_QUESTIONS.length }
       });
+      if (pathActivityId) {
+        await markPathActivityComplete(pathActivityId);
+      }
     }
   };
 

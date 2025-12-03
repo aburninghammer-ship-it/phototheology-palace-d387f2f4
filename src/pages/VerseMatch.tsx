@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Trophy, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { usePathActivityTracking } from "@/hooks/usePathActivityTracking";
 
 interface VerseCard {
   id: number;
@@ -19,9 +20,12 @@ interface VerseCard {
 
 const VerseMatch = () => {
   const { mode } = useParams<{ mode?: string }>();
+  const [searchParams] = useSearchParams();
+  const pathActivityId = searchParams.get('pathActivityId') || undefined;
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { markPathActivityComplete } = usePathActivityTracking();
   
   const [cards, setCards] = useState<VerseCard[]>([]);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
@@ -194,6 +198,11 @@ const VerseMatch = () => {
         mode: isVsJeeves ? "vs_jeeves" : "vs_player",
         metadata: { moves, timeElapsed }
       });
+      
+      // Auto-mark path activity complete if provided
+      if (pathActivityId) {
+        await markPathActivityComplete(pathActivityId);
+      }
     } catch (error) {
       console.error("Error saving score:", error);
     }
