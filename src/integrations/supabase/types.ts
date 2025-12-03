@@ -6991,22 +6991,31 @@ export type Database = {
         Row: {
           completed_at: string | null
           drill_id: string
+          feedback: string | null
           id: string
           response: string | null
+          score: number | null
+          time_seconds: number | null
           user_id: string
         }
         Insert: {
           completed_at?: string | null
           drill_id: string
+          feedback?: string | null
           id?: string
           response?: string | null
+          score?: number | null
+          time_seconds?: number | null
           user_id: string
         }
         Update: {
           completed_at?: string | null
           drill_id?: string
+          feedback?: string | null
           id?: string
           response?: string | null
+          score?: number | null
+          time_seconds?: number | null
           user_id?: string
         }
         Relationships: [
