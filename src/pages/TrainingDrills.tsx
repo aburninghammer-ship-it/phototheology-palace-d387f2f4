@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { palaceFloors } from "@/data/palaceData";
-import { Dumbbell, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
+import { Dumbbell, CheckCircle2, Loader2, ArrowLeft, RefreshCw } from "lucide-react";
 
 const TrainingDrills = () => {
   const { user } = useAuth();
@@ -72,7 +72,7 @@ const TrainingDrills = () => {
     setDrills(data);
   };
 
-  const generateDrillsForRoom = async (roomTag: string) => {
+  const generateDrillsForRoom = async (roomTag: string, forceRegenerate = false) => {
     setGenerating(true);
     
     const room = palaceFloors
@@ -85,6 +85,14 @@ const TrainingDrills = () => {
     }
 
     try {
+      // If force regenerating, delete existing drills first
+      if (forceRegenerate) {
+        await supabase
+          .from('training_drills')
+          .delete()
+          .eq('room_tag', roomTag);
+      }
+
       // Call Jeeves to generate 10 drills
       const { data, error } = await supabase.functions.invoke('jeeves', {
         body: {
@@ -282,15 +290,27 @@ const TrainingDrills = () => {
           ) : selectedRoom ? (
             // Show drills for selected room
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" onClick={handleBackToRooms}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Rooms
-                </Button>
-                <div>
-                  <h2 className="text-2xl font-bold">{getRoomByTag(selectedRoom)?.name} Drills</h2>
-                  <p className="text-muted-foreground">Complete these drills to master this room</p>
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-4">
+                  <Button variant="ghost" onClick={handleBackToRooms}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Rooms
+                  </Button>
+                  <div>
+                    <h2 className="text-2xl font-bold">{getRoomByTag(selectedRoom)?.name} Drills</h2>
+                    <p className="text-muted-foreground">Complete these drills to master this room</p>
+                  </div>
                 </div>
+                {drills.length > 0 && !generating && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => generateDrillsForRoom(selectedRoom, true)}
+                    disabled={generating}
+                  >
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Get Fresh Drills
+                  </Button>
+                )}
               </div>
 
               {generating ? (
