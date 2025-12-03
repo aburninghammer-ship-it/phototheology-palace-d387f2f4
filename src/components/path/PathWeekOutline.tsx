@@ -213,7 +213,13 @@ export function PathWeekOutline({ compact = false }: PathWeekOutlineProps) {
               index={index + 1}
               isCompleted={completedActivities.includes(activity.id)}
               onToggle={() => toggleActivity(activity.id)}
-              onNavigate={() => activity.link && navigate(activity.link)}
+              onNavigate={() => {
+                if (activity.link) {
+                  // Append pathActivityId for automatic tracking on completion
+                  const separator = activity.link.includes('?') ? '&' : '?';
+                  navigate(`${activity.link}${separator}pathActivityId=${encodeURIComponent(activity.id)}`);
+                }
+              }}
             />
           ))}
         </CardContent>
