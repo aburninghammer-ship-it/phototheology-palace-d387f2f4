@@ -319,6 +319,7 @@ export function AmbientMusicPlayer({
   useEffect(() => {
     if (!audioRef.current) {
       audioRef.current = new Audio();
+      audioRef.current.preload = "auto";
       
       // Handle track ended - use ref for latest state to avoid stale closures
       audioRef.current.onended = () => {
@@ -328,7 +329,11 @@ export function AmbientMusicPlayer({
         if (state.loopMode === "all") {
           // Get next track using latest state from ref
           const playableTracks = state.allTracks.filter(t => state.selectedTracks.has(t.id));
-          if (playableTracks.length === 0) return;
+          if (playableTracks.length === 0) {
+            console.log('[AmbientMusic] No playable tracks');
+            setIsPlaying(false);
+            return;
+          }
           
           let nextTrackToPlay;
           if (state.shuffleMode) {
@@ -346,16 +351,31 @@ export function AmbientMusicPlayer({
           }
           
           if (nextTrackToPlay && audioRef.current) {
-            console.log('[AmbientMusic] Auto-playing next track:', nextTrackToPlay.name);
+            console.log('[AmbientMusic] Auto-playing next track:', nextTrackToPlay.name, nextTrackToPlay.url);
             // Directly set src and play - don't rely on React state update timing
             audioRef.current.src = nextTrackToPlay.url;
-            audioRef.current.play().catch(console.error);
+            audioRef.current.load(); // Explicitly load the new source
+            audioRef.current.play()
+              .then(() => {
+                console.log('[AmbientMusic] Next track started successfully');
+                setIsPlaying(true); // Ensure playing state is updated
+              })
+              .catch((err) => {
+                console.error('[AmbientMusic] Failed to play next track:', err);
+                setIsPlaying(false);
+              });
             setCurrentTrackId(nextTrackToPlay.id);
           }
         } else if (state.loopMode === "none") {
+          console.log('[AmbientMusic] Loop mode none, stopping');
           setIsPlaying(false);
         }
         // loopMode === "one" is handled by audio.loop = true
+      };
+      
+      // Handle errors
+      audioRef.current.onerror = (e) => {
+        console.error('[AmbientMusic] Audio error:', e);
       };
     }
     
@@ -364,6 +384,7 @@ export function AmbientMusicPlayer({
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.onended = null;
+        audioRef.current.onerror = null;
         audioRef.current = null;
       }
     };
