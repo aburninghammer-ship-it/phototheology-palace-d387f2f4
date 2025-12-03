@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
 import { useAchievements } from "./useAchievements";
+import { usePathActivityTracking } from "./usePathActivityTracking";
 
 export interface DrillQuestion {
   id: string;
@@ -22,12 +23,14 @@ export interface DrillResult {
 export const useDrills = (floorNumber: number, roomId: string) => {
   const { user } = useAuth();
   const { checkAndAwardAchievements } = useAchievements();
+  const { onDrillComplete } = usePathActivityTracking();
   const [loading, setLoading] = useState(false);
 
   const saveDrillResult = async (
     drillType: string,
     result: DrillResult,
-    drillData: any = {}
+    drillData: any = {},
+    pathActivityId?: string // Optional: marks path activity on success
   ) => {
     if (!user) {
       toast.error("Please sign in to save your progress");
@@ -52,6 +55,9 @@ export const useDrills = (floorNumber: number, roomId: string) => {
       
       if (percentage >= 80) {
         toast.success(`Excellent! You scored ${percentage}%`);
+        
+        // Auto-mark path activity as complete on successful drill
+        await onDrillComplete(drillType, roomId, result.score, result.maxScore, pathActivityId);
       } else if (percentage >= 60) {
         toast.success(`Good job! You scored ${percentage}%`);
       } else {
