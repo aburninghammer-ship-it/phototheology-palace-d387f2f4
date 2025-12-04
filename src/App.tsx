@@ -25,6 +25,7 @@ import { DailyVerseNotification } from "@/components/notifications/DailyVerseNot
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { ExitIntentPopup } from "@/components/conversion/ExitIntentPopup";
 import { AmbientMusicPlayer } from "@/components/audio/AmbientMusicPlayer";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 
 // Critical pages - load immediately (landing + auth only)
 import Index from "./pages/Index";
@@ -242,7 +243,7 @@ function App() {
                         </div>
                         <div className="flex flex-1 w-full">
                           <MessagingSidebar />
-                          <main className="flex-1 w-full overflow-x-hidden">
+                          <main className="flex-1 w-full overflow-x-hidden pb-mobile-nav">
                           <Suspense fallback={<LoadingScreen />}>
                             <Routes>
             <Route path="/" element={<Index />} />
@@ -472,6 +473,7 @@ function App() {
                     </Suspense>
                   </main>
                   </div>
+                  <MobileBottomNav />
                 </div>
               </SidebarProvider>
               </UserPreferencesProvider>
