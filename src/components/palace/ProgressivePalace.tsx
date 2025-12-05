@@ -250,9 +250,15 @@ const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
         `bg-gradient-to-br ${gradient}`,
         "flex flex-col items-center justify-center text-center relative"
       )}>
-        {/* Large background emoji/icon */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-20 text-6xl pointer-events-none">
+        {/* Large colorful emoji/icon */}
+        <div className="absolute inset-0 flex items-center justify-center text-5xl pointer-events-none drop-shadow-lg"
+          style={{ filter: 'saturate(1.5) brightness(1.1)' }}>
           {roomIcon}
+        </div>
+        
+        {/* Subtle glow effect behind icon */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-16 h-16 rounded-full bg-white/20 blur-xl" />
         </div>
         
         {/* Content */}
