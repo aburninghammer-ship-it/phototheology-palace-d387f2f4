@@ -38,6 +38,15 @@ export const FinalCTA = () => {
           >
             Watch Demo
           </Button>
+          
+          <Button
+            size="lg"
+            variant="secondary"
+            onClick={() => window.open("https://phototheologygamedeck.com/", "_blank")}
+            className="text-lg px-8 py-6 h-auto"
+          >
+            Get the Card Deck
+          </Button>
         </div>
 
         <p className="text-sm text-muted-foreground pt-4">
