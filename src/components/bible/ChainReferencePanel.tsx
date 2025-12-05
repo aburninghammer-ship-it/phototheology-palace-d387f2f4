@@ -56,7 +56,10 @@ export const ChainReferencePanel = ({ book, chapter, verses, onHighlight }: Chai
 
   const analyzePrinciple = async () => {
     setLoading(true);
+    setResults([]); // Clear previous results
     try {
+      console.log("Chain reference: Calling jeeves with", { mode: "chain-reference", principle: selectedPrinciple, book, chapter });
+      
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "chain-reference",
@@ -67,23 +70,53 @@ export const ChainReferencePanel = ({ book, chapter, verses, onHighlight }: Chai
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Chain reference API error:", error);
+        throw error;
+      }
+
+      console.log("Chain reference: Raw response", data);
 
       // Parse the AI response to extract JSON
       let parsedResults: ChainReferenceResult[] = [];
       try {
-        const content = data.content;
-        // Try to extract JSON from markdown code blocks or plain text
-        const jsonMatch = content.match(/\[[\s\S]*\]/);
+        const content = data?.content || "";
+        console.log("Chain reference: Content to parse", content);
+        
+        if (!content) {
+          throw new Error("Empty response from Jeeves");
+        }
+        
+        // Clean control characters and fix common JSON issues
+        let cleanedContent = content
+          .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove control chars
+          .replace(/```json\s*/g, '') // Remove markdown code blocks
+          .replace(/```\s*/g, '');
+        
+        // Try to extract JSON array from the content
+        const jsonMatch = cleanedContent.match(/\[[\s\S]*\]/);
         if (jsonMatch) {
+          console.log("Chain reference: JSON match found", jsonMatch[0].substring(0, 200));
           parsedResults = JSON.parse(jsonMatch[0]);
+          console.log("Chain reference: Parsed results count", parsedResults.length);
+        } else {
+          console.warn("Chain reference: No JSON array found in response");
+          throw new Error("No JSON array found in response");
         }
       } catch (parseError) {
-        console.error("Failed to parse AI response:", parseError);
+        console.error("Chain reference: Failed to parse AI response:", parseError);
         toast({
-          title: "Error",
-          description: "Failed to parse principle connections",
+          title: "Parsing Error",
+          description: "Failed to parse principle connections. Try again.",
           variant: "destructive",
+        });
+        return;
+      }
+
+      if (parsedResults.length === 0) {
+        toast({
+          title: "No Connections Found",
+          description: `No ${PRINCIPLES.find(p => p.value === selectedPrinciple)?.label} connections found in this chapter.`,
         });
         return;
       }
@@ -100,7 +133,7 @@ export const ChainReferencePanel = ({ book, chapter, verses, onHighlight }: Chai
       console.error("Chain reference error:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to analyze principle",
+        description: error.message || "Failed to analyze principle. Please try again.",
         variant: "destructive",
       });
     } finally {
