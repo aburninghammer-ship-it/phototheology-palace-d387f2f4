@@ -1873,6 +1873,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false }: Sequenc
                   book={currentItem?.book || ""}
                   chapter={currentItem?.chapter || 1}
                   depth={currentCommentaryDepth}
+                  size="sm"
+                  variant="outline"
                 />
                 <Badge variant="secondary" className="animate-pulse bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30">
                   <span className="mr-1">🔊</span> Speaking
