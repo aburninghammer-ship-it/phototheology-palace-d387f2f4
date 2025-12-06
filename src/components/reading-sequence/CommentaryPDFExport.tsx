@@ -134,12 +134,14 @@ export function CommentaryPDFExport({
       onClick={exportToPDF} 
       disabled={exporting || !commentary}
       title="Export commentary to PDF"
+      className="gap-2"
     >
       {exporting ? (
         <Loader2 className="w-4 h-4 animate-spin" />
       ) : (
         <Download className="w-4 h-4" />
       )}
+      {size !== "icon" && (exporting ? "Exporting..." : "Export PDF")}
     </Button>
   );
 }
