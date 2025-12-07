@@ -14,10 +14,12 @@ export function PWAUpdatePrompt() {
   } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
       if (r) {
-        // Check for updates every hour
+        // Check for updates every 5 minutes instead of hourly
         setInterval(() => {
           r.update();
-        }, 60 * 60 * 1000);
+        }, 5 * 60 * 1000);
+        // Also check immediately on registration
+        r.update();
       }
     },
     onRegisterError(error) {
