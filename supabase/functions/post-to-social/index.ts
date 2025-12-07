@@ -35,10 +35,13 @@ serve(async (req) => {
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      throw new Error("Unauthorized");
+      console.error("Auth error:", userError);
+      throw new Error("Unauthorized - please sign in again");
     }
 
     const { platform, content, url, imageUrl }: PostToSocialRequest = await req.json();
+    
+    console.log(`Attempting to post to ${platform} for user ${user.id}`);
 
     // Get user's social media connection
     const { data: connection, error: connectionError } = await supabase
@@ -50,22 +53,40 @@ serve(async (req) => {
       .single();
 
     if (connectionError || !connection) {
-      throw new Error(`No active ${platform} connection found. Please connect your account first.`);
+      console.error("Connection error:", connectionError);
+      throw new Error(`No active ${platform} connection found. Please connect your ${platform} account in your profile settings.`);
     }
 
     // Check if token is expired
     if (connection.token_expires_at && new Date(connection.token_expires_at) < new Date()) {
-      throw new Error(`Your ${platform} token has expired. Please reconnect your account.`);
+      console.error(`Token expired for ${platform}`);
+      // Mark connection as inactive
+      await supabase
+        .from("social_media_connections")
+        .update({ is_active: false })
+        .eq("id", connection.id);
+      
+      throw new Error(`Your ${platform} authorization has expired. Please reconnect your account in profile settings.`);
     }
 
     // Decrypt the access token (using base64 decoding - matches client-side encoding)
     const encryptedToken = connection.access_token_encrypted;
     if (!encryptedToken) {
+      console.error(`No encrypted token found for ${platform}`);
       throw new Error(`No access token found for ${platform}. Please reconnect your account.`);
     }
-    const accessToken = atob(encryptedToken);
+    
+    let accessToken: string;
+    try {
+      accessToken = atob(encryptedToken);
+    } catch (e) {
+      console.error("Token decode error:", e);
+      throw new Error(`Invalid token format for ${platform}. Please reconnect your account.`);
+    }
 
     let response;
+    
+    console.log(`Posting to ${platform}...`);
     
     // Post to respective platform
     switch (platform) {
@@ -82,7 +103,7 @@ serve(async (req) => {
         throw new Error("Unsupported platform");
     }
 
-    console.log(`Successfully posted to ${platform}:`, response);
+    console.log(`Successfully posted to ${platform}:`, JSON.stringify(response));
 
     return new Response(
       JSON.stringify({ success: true, data: response }),
@@ -94,7 +115,7 @@ serve(async (req) => {
   } catch (error: any) {
     console.error("Error posting to social media:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message || "Failed to post to social media" }),
       {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },

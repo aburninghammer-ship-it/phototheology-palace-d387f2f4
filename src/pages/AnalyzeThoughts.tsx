@@ -9,9 +9,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Lightbulb, Send, BookOpen, Target, TrendingUp, Sparkles, Building2, Link2, Loader2,
   ChevronDown, AlertTriangle, CheckCircle2, BookMarked, Layers, Shield, GraduationCap,
-  Church, Cross, Moon, Scale, Compass, Save, Download, Copy, Gem, FolderOpen
+  Church, Cross, Moon, Scale, Compass, Save, Download, Copy, Gem, FolderOpen, MessageSquare,
+  Zap, ArrowRight
 } from "lucide-react";
 import { ExportToStudyButton } from "@/components/ExportToStudyButton";
+import { QuickShareButton } from "@/components/social/QuickShareButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useThoughtAnalysisHistory, SavedAnalysis, DeeperInsight } from "@/hooks/useThoughtAnalysisHistory";
@@ -21,8 +23,43 @@ import { SavedAnalysesList } from "@/components/analyze/SavedAnalysesList";
 import { QuickAudioButton } from "@/components/audio";
 import { FollowUpChat } from "@/components/analyze/FollowUpChat";
 
+interface StrengthItem {
+  point: string;
+  expansion?: string;
+}
+
+interface GrowthItem {
+  point: string;
+  expansion?: string;
+}
+
+interface PalaceRoom {
+  code: string;
+  name: string;
+  relevance: string;
+  practicePrompt?: string;
+}
+
+interface ScriptureConnection {
+  reference: string;
+  connection: string;
+}
+
+interface TypologyLayer {
+  symbol: string;
+  meaning: string;
+  reference: string;
+  insight?: string;
+}
+
+interface FurtherStudyItem {
+  topic: string;
+  whyItMatters?: string;
+}
+
 interface AnalysisResult {
   summary: string;
+  narrativeAnalysis?: string;
   overallScore: number;
   categories: {
     biblicalAccuracy: number;
@@ -32,15 +69,15 @@ interface AnalysisResult {
     doctrinalSoundness: number;
     sanctuaryHarmony: number;
   };
-  strengths: string[];
-  growthAreas: string[];
-  palaceRooms: { code: string; name: string; relevance: string }[];
-  scriptureConnections: { reference: string; connection: string }[];
-  typologyLayers: { symbol: string; meaning: string; reference: string }[];
+  strengths: (string | StrengthItem)[];
+  growthAreas: (string | GrowthItem)[];
+  palaceRooms: PalaceRoom[];
+  scriptureConnections: ScriptureConnection[];
+  typologyLayers: TypologyLayer[];
   deeperInsights?: DeeperInsight[];
   potentialMisinterpretations: string[];
   alignmentCheck: { status: "aligned" | "caution" | "concern"; notes: string };
-  furtherStudy: string[];
+  furtherStudy: (string | FurtherStudyItem)[];
   encouragement: string;
 }
 
@@ -68,6 +105,22 @@ const categoryLabels: Record<string, { label: string; icon: React.ReactNode }> =
   sanctuaryHarmony: { label: "Sanctuary Harmony", icon: <Compass className="h-4 w-4" /> },
 };
 
+// Helper to normalize strength/growth items
+const normalizeItem = (item: string | { point: string; expansion?: string }): { point: string; expansion?: string } => {
+  if (typeof item === 'string') {
+    return { point: item };
+  }
+  return item;
+};
+
+// Helper to normalize further study items
+const normalizeFurtherStudy = (item: string | FurtherStudyItem): FurtherStudyItem => {
+  if (typeof item === 'string') {
+    return { topic: item };
+  }
+  return item;
+};
+
 const AnalyzeThoughts = () => {
   const [input, setInput] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -77,8 +130,21 @@ const AnalyzeThoughts = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | undefined>();
   const [showResults, setShowResults] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['narrative', 'scores']));
 
   const { history, isLoading: historyLoading, saveAnalysis, deleteAnalysis, refetch } = useThoughtAnalysisHistory();
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(section)) {
+        newSet.delete(section);
+      } else {
+        newSet.add(section);
+      }
+      return newSet;
+    });
+  };
 
   // Trigger animation when result changes
   useEffect(() => {
@@ -199,7 +265,7 @@ const AnalyzeThoughts = () => {
 
   const handleExport = () => {
     if (!result) return;
-    const content = `PHOTOTHEOLOGY THOUGHT ANALYSIS\n==============================\nDate: ${new Date().toLocaleString()}\n\nYOUR THOUGHT:\n${input}\n\nSUMMARY:\n${result.summary || 'N/A'}\n\nOVERALL SCORE: ${result.overallScore}/100\n\nSTRENGTHS:\n${result.strengths?.map(s => `• ${s}`).join('\n') || 'N/A'}\n\nGROWTH AREAS:\n${result.growthAreas?.map(a => `• ${a}`).join('\n') || 'N/A'}\n\nENCOURAGEMENT:\n${result.encouragement || 'N/A'}`;
+    const content = `PHOTOTHEOLOGY THOUGHT ANALYSIS\n==============================\nDate: ${new Date().toLocaleString()}\n\nYOUR THOUGHT:\n${input}\n\nSUMMARY:\n${result.summary || 'N/A'}\n\nOVERALL SCORE: ${result.overallScore}/100\n\nSTRENGTHS:\n${result.strengths?.map(s => `• ${typeof s === 'string' ? s : s.point}`).join('\n') || 'N/A'}\n\nGROWTH AREAS:\n${result.growthAreas?.map(a => `• ${typeof a === 'string' ? a : a.point}`).join('\n') || 'N/A'}\n\nENCOURAGEMENT:\n${result.encouragement || 'N/A'}`;
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -212,7 +278,8 @@ const AnalyzeThoughts = () => {
 
   const handleCopy = () => {
     if (!result) return;
-    navigator.clipboard.writeText(`Score: ${result.overallScore}/100\n\nStrengths: ${result.strengths?.join(', ')}\n\nEncouragement: ${result.encouragement}`);
+    const strengthsText = result.strengths?.map(s => typeof s === 'string' ? s : s.point).join(', ');
+    navigator.clipboard.writeText(`Score: ${result.overallScore}/100\n\nStrengths: ${strengthsText}\n\nEncouragement: ${result.encouragement}`);
     toast.success("Copied!");
   };
 
@@ -223,6 +290,17 @@ const AnalyzeThoughts = () => {
       case "concern": return <Badge className="bg-red-500/20 text-red-400 border-red-500/30"><AlertTriangle className="h-3 w-3 mr-1" />Concern</Badge>;
       default: return null;
     }
+  };
+
+  // Format narrative analysis with proper paragraphs
+  const formatNarrative = (text: string) => {
+    if (!text) return null;
+    const paragraphs = text.split('\n\n').filter(p => p.trim());
+    return paragraphs.map((p, i) => (
+      <p key={i} className="text-base leading-relaxed text-foreground/90 mb-4 last:mb-0">
+        {p}
+      </p>
+    ));
   };
 
   return (
@@ -279,14 +357,17 @@ const AnalyzeThoughts = () => {
                 </div>
               </div>
               
-              <div className="flex flex-wrap gap-2 items-center">
+              <div className="space-y-2">
                 <span className="text-sm text-muted-foreground">Add layer:</span>
-                {scriptureSuggestions.map((s) => (
-                  <Button key={s.label} variant="outline" size="sm" onClick={() => addSuggestion(s.prompt)}
-                    className="text-xs bg-purple-500/10 border-purple-500/30 hover:bg-purple-500/20">
-                    <s.icon className="h-3 w-3 mr-1 text-purple-400" />{s.label}
-                  </Button>
-                ))}
+                <div className="flex flex-wrap gap-2">
+                  {scriptureSuggestions.map((s) => (
+                    <Button key={s.label} variant="outline" size="sm" onClick={() => addSuggestion(s.prompt)}
+                      className="text-xs bg-purple-500/10 border-purple-500/30 hover:bg-purple-500/20 flex-1 sm:flex-none min-w-[calc(50%-4px)] sm:min-w-0">
+                      <s.icon className="h-3 w-3 mr-1 text-purple-400" />
+                      <span className="truncate">{s.label}</span>
+                    </Button>
+                  ))}
+                </div>
               </div>
 
               <Collapsible open={checklistOpen} onOpenChange={setChecklistOpen}>
@@ -337,7 +418,7 @@ const AnalyzeThoughts = () => {
                 <ExportToStudyButton
                   type="thought-analysis"
                   title={`Thought Analysis — ${new Date().toLocaleDateString()}`}
-                  content={`## My Thought\n${input}\n\n## Summary\n${result.summary || 'N/A'}\n\n## Overall Score: ${result.overallScore}/100\n\n## Strengths\n${result.strengths?.map(s => `- ${s}`).join('\n') || 'N/A'}\n\n## Growth Areas\n${result.growthAreas?.map(a => `- ${a}`).join('\n') || 'N/A'}\n\n## Palace Rooms\n${result.palaceRooms?.map(r => `- ${r}`).join('\n') || 'N/A'}\n\n## Scripture Connections\n${result.scriptureConnections?.map(s => `- ${s}`).join('\n') || 'N/A'}\n\n## Encouragement\n${result.encouragement || 'N/A'}`}
+                  content={`## My Thought\n${input}\n\n## Summary\n${result.summary || 'N/A'}\n\n## Overall Score: ${result.overallScore}/100\n\n## Strengths\n${result.strengths?.map(s => `- ${typeof s === 'string' ? s : s.point}`).join('\n') || 'N/A'}\n\n## Growth Areas\n${result.growthAreas?.map(a => `- ${typeof a === 'string' ? a : a.point}`).join('\n') || 'N/A'}\n\n## Palace Rooms\n${result.palaceRooms?.map(r => `- ${r.name}`).join('\n') || 'N/A'}\n\n## Scripture Connections\n${result.scriptureConnections?.map(s => `- ${s.reference}`).join('\n') || 'N/A'}\n\n## Encouragement\n${result.encouragement || 'N/A'}`}
                   metadata={{
                     score: result.overallScore,
                   }}
@@ -350,10 +431,55 @@ const AnalyzeThoughts = () => {
                 <Button onClick={handleCopy} variant="outline" className="bg-purple-500/10 border-purple-500/30 text-purple-400">
                   <Copy className="h-4 w-4 mr-2" />Copy
                 </Button>
+                <QuickShareButton
+                  title="My Thought Analysis"
+                  content={result.encouragement || result.summary || "I analyzed my thoughts using Phototheology!"}
+                  type="insight"
+                  variant="outline"
+                  size="sm"
+                />
               </motion.div>
 
-              {/* Summary */}
-              {result.summary && (
+              {/* Narrative Analysis - The Main Teaching Moment */}
+              {result.narrativeAnalysis && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+                  <Card className="bg-gradient-to-br from-amber-500/10 via-purple-500/10 to-blue-500/10 border-amber-500/30 shadow-xl">
+                    <CardHeader className="border-b border-border/50 cursor-pointer" onClick={() => toggleSection('narrative')}>
+                      <CardTitle className="flex items-center justify-between">
+                        <span className="flex items-center gap-2">
+                          <MessageSquare className="h-5 w-5 text-amber-400" />
+                          <span className="bg-gradient-to-r from-amber-200 via-purple-200 to-blue-200 bg-clip-text text-transparent">
+                            Jeeves's Analysis
+                          </span>
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <QuickAudioButton text={result.narrativeAnalysis} variant="ghost" size="sm" />
+                          <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${expandedSections.has('narrative') ? 'rotate-180' : ''}`} />
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <AnimatePresence>
+                      {expandedSections.has('narrative') && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <CardContent className="pt-6">
+                            <div className="prose prose-invert max-w-none">
+                              {formatNarrative(result.narrativeAnalysis)}
+                            </div>
+                          </CardContent>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </Card>
+                </motion.div>
+              )}
+
+              {/* Summary - Compact if narrative exists */}
+              {result.summary && !result.narrativeAnalysis && (
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
                   <Card className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/20">
                     <CardContent className="pt-6">
@@ -375,43 +501,57 @@ const AnalyzeThoughts = () => {
               {/* Animated Scores */}
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }}>
                 <Card className="bg-card/80 backdrop-blur-sm border-purple-500/20 shadow-xl overflow-hidden">
-                  <CardHeader className="border-b border-border/50">
-                    <CardTitle className="flex items-center gap-2">
-                      <Target className="h-5 w-5 text-amber-400" />
-                      <span className="bg-gradient-to-r from-amber-200 to-purple-200 bg-clip-text text-transparent">Doctrinal Integrity Score</span>
+                  <CardHeader className="border-b border-border/50 cursor-pointer" onClick={() => toggleSection('scores')}>
+                    <CardTitle className="flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <Target className="h-5 w-5 text-amber-400" />
+                        <span className="bg-gradient-to-r from-amber-200 to-purple-200 bg-clip-text text-transparent">Doctrinal Integrity Score</span>
+                      </span>
+                      <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${expandedSections.has('scores') ? 'rotate-180' : ''}`} />
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6">
-                    {/* Main Score */}
-                    <div className="flex justify-center mb-8">
-                      <AnimatedScore score={result.overallScore} size="lg" delay={500} />
-                    </div>
-                    
-                    {/* Category Scores Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                      {Object.entries(result.categories || {}).map(([key, value], index) => {
-                        const cat = categoryLabels[key];
-                        if (!cat) return null;
-                        return (
-                          <motion.div 
-                            key={key}
-                            className="flex flex-col items-center"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6 + index * 0.1 }}
-                          >
-                            <AnimatedScore 
-                              score={value} 
-                              size="sm" 
-                              delay={700 + index * 150}
-                              showLabel
-                              label={cat.label}
-                            />
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
+                  <AnimatePresence>
+                    {expandedSections.has('scores') && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <CardContent className="pt-6">
+                          {/* Main Score */}
+                          <div className="flex justify-center mb-8">
+                            <AnimatedScore score={result.overallScore} size="lg" delay={500} />
+                          </div>
+                          
+                          {/* Category Scores Grid */}
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                            {Object.entries(result.categories || {}).map(([key, value], index) => {
+                              const cat = categoryLabels[key];
+                              if (!cat) return null;
+                              return (
+                                <motion.div 
+                                  key={key}
+                                  className="flex flex-col items-center"
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: 0.6 + index * 0.1 }}
+                                >
+                                  <AnimatedScore 
+                                    score={value} 
+                                    size="sm" 
+                                    delay={700 + index * 150}
+                                    showLabel
+                                    label={cat.label}
+                                  />
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        </CardContent>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </Card>
               </motion.div>
 
@@ -430,18 +570,52 @@ const AnalyzeThoughts = () => {
                 </motion.div>
               )}
 
-              {/* Strengths & Growth */}
+              {/* Strengths & Growth - Enhanced */}
               <motion.div className="grid md:grid-cols-2 gap-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
                 <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border-emerald-500/20">
                   <CardHeader><CardTitle className="flex items-center gap-2 text-emerald-400"><TrendingUp className="h-5 w-5" />Strengths</CardTitle></CardHeader>
                   <CardContent>
-                    <ul className="space-y-2">{(result.strengths || []).map((s, i) => <li key={i} className="flex items-start gap-2"><span className="text-emerald-400">✓</span><span className="text-sm">{s}</span></li>)}</ul>
+                    <ul className="space-y-4">
+                      {(result.strengths || []).map((s, i) => {
+                        const item = normalizeItem(s);
+                        return (
+                          <li key={i} className="group">
+                            <div className="flex items-start gap-2">
+                              <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                              <div>
+                                <span className="font-medium text-emerald-200">{item.point}</span>
+                                {item.expansion && (
+                                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{item.expansion}</p>
+                                )}
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </CardContent>
                 </Card>
                 <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border-amber-500/20">
                   <CardHeader><CardTitle className="flex items-center gap-2 text-amber-400"><Lightbulb className="h-5 w-5" />Growth Areas</CardTitle></CardHeader>
                   <CardContent>
-                    <ul className="space-y-2">{(result.growthAreas || []).map((a, i) => <li key={i} className="flex items-start gap-2"><span className="text-amber-400">→</span><span className="text-sm">{a}</span></li>)}</ul>
+                    <ul className="space-y-4">
+                      {(result.growthAreas || []).map((a, i) => {
+                        const item = normalizeItem(a);
+                        return (
+                          <li key={i} className="group">
+                            <div className="flex items-start gap-2">
+                              <ArrowRight className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+                              <div>
+                                <span className="font-medium text-amber-200">{item.point}</span>
+                                {item.expansion && (
+                                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{item.expansion}</p>
+                                )}
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -458,24 +632,35 @@ const AnalyzeThoughts = () => {
                 </motion.div>
               )}
 
-              {/* Palace Mapping */}
+              {/* Palace Mapping - Enhanced with Practice Prompts */}
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
                 <Card className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/20">
                   <CardHeader className="border-b border-border/50">
                     <CardTitle className="flex items-center gap-2"><Building2 className="h-5 w-5 text-purple-400" /><span className="bg-gradient-to-r from-purple-200 to-blue-200 bg-clip-text text-transparent">Palace Mapping</span></CardTitle>
                   </CardHeader>
                   <CardContent className="pt-6">
-                    <div className="grid gap-3">
+                    <div className="grid gap-4">
                       {(result.palaceRooms || []).map((r, i) => (
                         <motion.div 
                           key={i} 
-                          className="flex items-start gap-3 p-4 rounded-lg bg-background/30 border border-purple-500/10"
+                          className="p-4 rounded-xl bg-background/30 border border-purple-500/10 hover:border-purple-500/30 transition-all"
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.9 + i * 0.1 }}
                         >
-                          <Badge variant="outline" className="font-mono bg-purple-500/20 text-purple-300 border-purple-500/30">{r.code}</Badge>
-                          <div><p className="font-medium text-purple-200">{r.name}</p><p className="text-sm text-muted-foreground">{r.relevance}</p></div>
+                          <div className="flex items-start gap-3">
+                            <Badge variant="outline" className="font-mono bg-purple-500/20 text-purple-300 border-purple-500/30 shrink-0">{r.code}</Badge>
+                            <div className="flex-1">
+                              <p className="font-medium text-purple-200 mb-1">{r.name}</p>
+                              <p className="text-sm text-muted-foreground mb-2">{r.relevance}</p>
+                              {r.practicePrompt && (
+                                <div className="flex items-start gap-2 mt-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                                  <Zap className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                                  <p className="text-sm text-amber-200/90 italic">{r.practicePrompt}</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </motion.div>
                       ))}
                     </div>
@@ -483,17 +668,24 @@ const AnalyzeThoughts = () => {
                 </Card>
               </motion.div>
 
-              {/* Typology Layers */}
+              {/* Typology Layers - Enhanced */}
               {result.typologyLayers?.length > 0 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
                   <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-blue-500/20">
                     <CardHeader className="border-b border-border/50"><CardTitle className="flex items-center gap-2"><Layers className="h-5 w-5 text-blue-400" /><span className="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent">Typology Layers</span></CardTitle></CardHeader>
                     <CardContent className="pt-6">
-                      <div className="grid gap-3">
+                      <div className="grid gap-4">
                         {result.typologyLayers.map((l, i) => (
-                          <div key={i} className="p-4 rounded-lg bg-background/30 border border-blue-500/10">
-                            <div className="flex items-center gap-2 mb-2"><Badge className="bg-blue-500/20 text-blue-300">{l.symbol}</Badge><span className="text-blue-400">→</span><span className="font-medium text-blue-200">{l.meaning}</span></div>
+                          <div key={i} className="p-4 rounded-xl bg-background/30 border border-blue-500/10">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge className="bg-blue-500/20 text-blue-300">{l.symbol}</Badge>
+                              <span className="text-blue-400">→</span>
+                              <span className="font-medium text-blue-200">{l.meaning}</span>
+                            </div>
                             <p className="text-sm text-muted-foreground">{l.reference}</p>
+                            {l.insight && (
+                              <p className="text-sm text-blue-200/80 mt-2 italic border-l-2 border-blue-500/30 pl-3">{l.insight}</p>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -560,16 +752,19 @@ const AnalyzeThoughts = () => {
                 </motion.div>
               )}
 
-              {/* Scripture Connections */}
+              {/* Scripture Connections - Enhanced */}
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
                 <Card className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/20">
                   <CardHeader className="border-b border-border/50"><CardTitle className="flex items-center gap-2"><Link2 className="h-5 w-5 text-amber-400" /><span className="bg-gradient-to-r from-amber-200 to-orange-200 bg-clip-text text-transparent">Scripture Connections</span></CardTitle></CardHeader>
                   <CardContent className="pt-6">
-                    <div className="grid gap-3">
+                    <div className="grid gap-4">
                       {(result.scriptureConnections || []).map((c, i) => (
-                        <div key={i} className="flex items-start gap-3 p-4 rounded-lg bg-background/30 border border-amber-500/10">
+                        <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-background/30 border border-amber-500/10">
                           <BookOpen className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
-                          <div><p className="font-medium text-amber-300">{c.reference}</p><p className="text-sm text-muted-foreground">{c.connection}</p></div>
+                          <div>
+                            <p className="font-medium text-amber-300 mb-1">{c.reference}</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{c.connection}</p>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -577,13 +772,32 @@ const AnalyzeThoughts = () => {
                 </Card>
               </motion.div>
 
-              {/* Further Study */}
+              {/* Further Study - Enhanced with clickable links */}
               {result.furtherStudy?.length > 0 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
                   <Card className="bg-card/80 border-purple-500/20">
                     <CardHeader><CardTitle className="flex items-center gap-2"><GraduationCap className="h-5 w-5 text-purple-400" />Further Study</CardTitle></CardHeader>
                     <CardContent>
-                      <div className="flex flex-wrap gap-2">{result.furtherStudy.map((t, i) => <Badge key={i} className="py-2 px-4 bg-purple-500/20 border-purple-500/30 text-purple-200">{t}</Badge>)}</div>
+                      <div className="grid gap-3">
+                        {result.furtherStudy.map((item, i) => {
+                          const study = normalizeFurtherStudy(item);
+                          return (
+                            <a
+                              key={i}
+                              href={`/encyclopedia?search=${encodeURIComponent(study.topic)}`}
+                              className="block p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer group active:scale-[0.98]"
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <p className="font-medium text-sm sm:text-base text-purple-200 group-hover:text-purple-100 flex-1">{study.topic}</p>
+                                <ArrowRight className="h-4 w-4 text-purple-400 flex-shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" />
+                              </div>
+                              {study.whyItMatters && (
+                                <p className="text-xs sm:text-sm text-muted-foreground mt-1">{study.whyItMatters}</p>
+                              )}
+                            </a>
+                          );
+                        })}
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -597,7 +811,7 @@ const AnalyzeThoughts = () => {
                       <div className="p-3 rounded-full bg-gradient-to-br from-amber-400 to-purple-400 shadow-lg"><Sparkles className="h-6 w-6 text-white" /></div>
                       <div>
                         <p className="font-medium mb-2 text-lg bg-gradient-to-r from-amber-200 via-purple-200 to-blue-200 bg-clip-text text-transparent">Encouragement from Jeeves</p>
-                        <p className="text-muted-foreground leading-relaxed">{result.encouragement}</p>
+                        <p className="text-foreground/90 leading-relaxed text-base">{result.encouragement}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -610,8 +824,8 @@ const AnalyzeThoughts = () => {
                 analysisResult={{
                   summary: result.summary,
                   overallScore: result.overallScore,
-                  strengths: result.strengths,
-                  growthAreas: result.growthAreas,
+                  strengths: result.strengths?.map(s => typeof s === 'string' ? s : s.point) || [],
+                  growthAreas: result.growthAreas?.map(a => typeof a === 'string' ? a : a.point) || [],
                   palaceRooms: result.palaceRooms,
                   encouragement: result.encouragement,
                 }}

@@ -20,6 +20,7 @@ import { useFreeTier } from "@/hooks/useFreeTier";
 import { Crown, Zap, User as UserIcon } from "lucide-react";
 import { PathProfileSection, PathCertificatesGallery } from "@/components/path";
 import { usePath } from "@/hooks/usePath";
+import { SocialMediaConnect } from "@/components/SocialMediaConnect";
 
 
 export default function Profile() {
@@ -360,6 +361,11 @@ export default function Profile() {
               </CardContent>
             </Card>
           )}
+
+          {/* Social Media Connections */}
+          <div id="social">
+            <SocialMediaConnect />
+          </div>
 
           {/* Notification Preferences */}
           <NotificationPreferences />

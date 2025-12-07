@@ -561,10 +561,24 @@ All colors MUST be HSL.
     min-height: 44px; /* iOS accessibility guideline */
   }
   
+  /* Fix for in-app browsers (Google App, Facebook, etc.) that may block touch */
+  html, body, #root {
+    touch-action: pan-x pan-y;
+    -webkit-touch-callout: default;
+  }
+  
   /* Ensure all buttons are touch-friendly */
   button, a, [role="button"] {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Ensure scrollable containers work properly */
+  [data-radix-scroll-area-viewport],
+  .overflow-y-auto,
+  .overflow-auto {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   
   /* Optimize for mobile viewports */
@@ -581,15 +595,27 @@ All colors MUST be HSL.
   }
 
   /* Prevent horizontal overflow on all screen sizes */
-  html, body {
+  html {
     overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     width: 100%;
     position: relative;
     max-width: 100vw;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
 
-  /* Ensure all containers respect viewport width */
-  * {
+  /* Ensure all containers respect viewport width - exclude scrollable elements */
+  *:not([data-radix-scroll-area-viewport]):not(.overflow-x-auto):not(.overflow-y-auto):not(.overflow-auto) {
     max-width: 100%;
   }
 

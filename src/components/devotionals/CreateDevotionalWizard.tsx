@@ -13,10 +13,67 @@ interface CreateDevotionalWizardProps {
   onClose: () => void;
 }
 
-const THEMES = [
-  "Faith", "Fear", "Identity", "Marriage", "Healing", "Purpose",
-  "Calling", "Addiction Recovery", "Forgiveness", "End-Time Readiness",
-  "Fruit of the Spirit", "Sanctuary", "Character", "Prayer Life",
+const SUBJECT_OPTIONS = [
+  { 
+    id: "sanctuary", 
+    label: "The Sanctuary", 
+    description: "Journey through the tabernacle blueprint of salvation",
+    emoji: "⛺"
+  },
+  { 
+    id: "passion-week", 
+    label: "Last Week of Christ's Life", 
+    description: "Walk day-by-day through the Passion Week",
+    emoji: "✝️"
+  },
+  { 
+    id: "exodus", 
+    label: "The Exodus", 
+    description: "From bondage to the Promised Land",
+    emoji: "🌊"
+  },
+  { 
+    id: "daniel", 
+    label: "Daniel", 
+    description: "Prophecy, faithfulness, and the end times",
+    emoji: "🦁"
+  },
+  { 
+    id: "isaiah", 
+    label: "Isaiah", 
+    description: "The gospel prophet and Messianic hope",
+    emoji: "📜"
+  },
+  { 
+    id: "law-grace", 
+    label: "Law and Grace", 
+    description: "Understanding the harmony of obedience and faith",
+    emoji: "⚖️"
+  },
+  { 
+    id: "three-angels", 
+    label: "Three Angels' Messages", 
+    description: "Revelation 14's urgent call to the world",
+    emoji: "👼"
+  },
+  { 
+    id: "righteousness-faith", 
+    label: "Righteousness by Faith", 
+    description: "Christ's righteousness as our only hope",
+    emoji: "🙏"
+  },
+  { 
+    id: "revelation", 
+    label: "Revelation", 
+    description: "The unveiling of Jesus Christ and end-time events",
+    emoji: "📖"
+  },
+  { 
+    id: "types", 
+    label: "Types & Shadows", 
+    description: "Old Testament symbols pointing to Christ",
+    emoji: "🔍"
+  },
 ];
 
 const FORMATS = [
@@ -144,28 +201,36 @@ export function CreateDevotionalWizard({ onClose }: CreateDevotionalWizardProps)
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>What do you want God to work on?</CardTitle>
-                <CardDescription>Choose a theme for your devotional journey</CardDescription>
+                <CardTitle>Choose Your Subject</CardTitle>
+                <CardDescription>Select a topic for your devotional journey</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {THEMES.map((theme) => (
-                    <Button
-                      key={theme}
-                      variant={formData.theme === theme ? "default" : "outline"}
-                      className="h-auto py-3"
-                      onClick={() => setFormData({ ...formData, theme, customTheme: "" })}
+                <div className="grid gap-3">
+                  {SUBJECT_OPTIONS.map((subject) => (
+                    <div
+                      key={subject.id}
+                      className={cn(
+                        "flex items-start gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all",
+                        formData.theme === subject.label 
+                          ? "border-primary bg-primary/10" 
+                          : "border-transparent hover:border-muted bg-muted/30"
+                      )}
+                      onClick={() => setFormData({ ...formData, theme: subject.label, customTheme: "" })}
                     >
-                      {theme}
-                    </Button>
+                      <span className="text-2xl">{subject.emoji}</span>
+                      <div>
+                        <h4 className="font-medium">{subject.label}</h4>
+                        <p className="text-sm text-muted-foreground">{subject.description}</p>
+                      </div>
+                    </div>
                   ))}
                 </div>
 
                 <div className="pt-4 border-t">
-                  <Label htmlFor="customTheme">Or enter your own theme:</Label>
+                  <Label htmlFor="customTheme">Or choose your own subject:</Label>
                   <Input
                     id="customTheme"
-                    placeholder="e.g., Overcoming anxiety, Walking with God..."
+                    placeholder="e.g., The Beatitudes, Life of David, Book of Romans..."
                     value={formData.customTheme}
                     onChange={(e) =>
                       setFormData({ ...formData, customTheme: e.target.value, theme: "" })

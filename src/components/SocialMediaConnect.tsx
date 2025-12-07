@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Facebook, Twitter, Linkedin, Unlink, Check } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Unlink, Check, Share2, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
@@ -169,12 +170,15 @@ export const SocialMediaConnect = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Social Media Accounts</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Share2 className="h-5 w-5 text-primary" />
+          Social Media Accounts
+        </CardTitle>
         <CardDescription>
-          Connect your social media accounts to share challenges directly to your feed
+          Connect your social accounts to share gems, achievements, and insights directly from the app
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         {platforms.map((platform) => {
           const Icon = platform.icon;
           const connected = isConnected(platform.name);
@@ -183,22 +187,24 @@ export const SocialMediaConnect = () => {
           return (
             <div
               key={platform.name}
-              className="flex items-center justify-between p-4 border rounded-lg"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 border rounded-lg"
             >
-              <div className="flex items-center gap-3">
-                <Icon className={`h-6 w-6 ${platform.color}`} />
-                <div>
-                  <p className="font-medium">{platform.label}</p>
+              <div className="flex items-center gap-3 min-w-0">
+                <Icon className={`h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 ${platform.color}`} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-medium text-sm sm:text-base">{platform.label}</p>
+                    {connected && (
+                      <Badge variant="secondary" className="gap-1 text-xs">
+                        <Check className="h-3 w-3" />
+                        Connected
+                      </Badge>
+                    )}
+                  </div>
                   {connected && username && (
-                    <p className="text-sm text-muted-foreground">@{username}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground truncate">@{username}</p>
                   )}
                 </div>
-                {connected && (
-                  <Badge variant="secondary" className="gap-1">
-                    <Check className="h-3 w-3" />
-                    Connected
-                  </Badge>
-                )}
               </div>
               
               {connected ? (
@@ -206,7 +212,7 @@ export const SocialMediaConnect = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleDisconnect(platform.name)}
-                  className="gap-2"
+                  className="gap-2 w-full sm:w-auto"
                 >
                   <Unlink className="h-4 w-4" />
                   Disconnect
@@ -216,7 +222,7 @@ export const SocialMediaConnect = () => {
                   size="sm"
                   onClick={() => handleConnect(platform.name)}
                   disabled={connecting === platform.name}
-                  className="gap-2"
+                  className="gap-2 w-full sm:w-auto"
                 >
                   <Icon className="h-4 w-4" />
                   Connect
@@ -225,6 +231,14 @@ export const SocialMediaConnect = () => {
             </div>
           );
         })}
+
+        {/* Info about OAuth configuration */}
+        <Alert className="mt-4 bg-muted/50">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="text-sm">
+            Social media connections use OAuth for secure authentication. Your credentials are never stored directly.
+          </AlertDescription>
+        </Alert>
       </CardContent>
     </Card>
   );
