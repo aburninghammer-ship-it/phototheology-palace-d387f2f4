@@ -241,22 +241,21 @@ const AnalyzeThoughts = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { toast.error("Please log in"); return; }
 
-      const { error } = await supabase.from('gems').insert({
+      // Build gem content from analysis result
+      const gemContent = `**Your Thought:**\n${input}\n\n**Summary:**\n${result.summary || 'N/A'}\n\n**Overall Score:** ${result.overallScore}/100\n\n**Strengths:**\n${result.strengths?.map(s => `• ${typeof s === 'string' ? s : s.point}`).join('\n') || 'N/A'}\n\n**Growth Areas:**\n${result.growthAreas?.map(a => `• ${typeof a === 'string' ? a : a.point}`).join('\n') || 'N/A'}\n\n**Encouragement:**\n${result.encouragement || 'N/A'}`;
+
+      const { error } = await supabase.from('user_gems').insert({
         user_id: user.id,
-        title: `Thought Analysis - ${new Date().toLocaleDateString()}`,
-        verse1: input.substring(0, 500),
-        verse2: result.summary || '',
-        verse3: result.encouragement || '',
-        connection_explanation: JSON.stringify({
-          overallScore: result.overallScore,
-          strengths: result.strengths,
-          growthAreas: result.growthAreas,
-        }),
-        principle_codes: result.palaceRooms?.map(r => r.code) || []
+        gem_name: `Thought Analysis - ${new Date().toLocaleDateString()}`,
+        gem_content: gemContent,
+        room_id: 'gr',
+        floor_number: 1,
+        category: 'Thought Analysis'
       });
       if (error) throw error;
-      toast.success("Saved to gems!");
+      toast.success("Saved to Gems Room! 💎");
     } catch (error) {
+      console.error("Error saving gem:", error);
       toast.error("Failed to save");
     } finally {
       setIsSaving(false);

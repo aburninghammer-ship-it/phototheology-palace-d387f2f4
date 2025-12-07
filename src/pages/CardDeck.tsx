@@ -636,24 +636,44 @@ export default function CardDeck() {
         return;
       }
       
-      const studyData = {
-        user_id: user.id,
-        verse_text: verseText,
-        verse_reference: displayText.split(':')[0] || verseText.substring(0, 50),
-        cards_used: JSON.stringify(cardsUsed),
-        conversation_history: JSON.stringify(conversationHistory),
-        is_gem: asGem,
-        gem_title: asGem ? gemTitle : null,
-        gem_notes: asGem ? gemNotes : null,
-      };
-      
-      const { error } = await supabase.from('deck_studies').insert(studyData);
-      
-      if (error) throw error;
+      if (asGem) {
+        // Save to user_gems table for Gems Room integration
+        const gemContent = conversationHistory
+          .map(msg => `**${msg.role === 'user' ? 'You' : 'Jeeves'}:** ${msg.content}`)
+          .join('\n\n');
+        
+        const fullGemContent = `**Verse/Story:**\n${verseText}\n\n**Cards Used:** ${cardsUsed.join(', ')}\n\n${gemContent}${gemNotes ? `\n\n**Notes:**\n${gemNotes}` : ''}`;
+        
+        const { error } = await supabase.from('user_gems').insert({
+          user_id: user.id,
+          gem_name: gemTitle,
+          gem_content: fullGemContent,
+          room_id: 'gr',
+          floor_number: 1,
+          category: 'Card Deck Study'
+        });
+        
+        if (error) throw error;
+      } else {
+        // Save to deck_studies for regular study sessions
+        const studyData = {
+          user_id: user.id,
+          verse_text: verseText,
+          verse_reference: displayText.split(':')[0] || verseText.substring(0, 50),
+          cards_used: JSON.stringify(cardsUsed),
+          conversation_history: JSON.stringify(conversationHistory),
+          is_gem: false,
+          gem_title: null,
+          gem_notes: null,
+        };
+        
+        const { error } = await supabase.from('deck_studies').insert(studyData);
+        if (error) throw error;
+      }
       
       toast({
-        title: asGem ? "Gem saved!" : "Study saved!",
-        description: asGem ? `Your gem "${gemTitle}" has been saved.` : "Your study session has been saved.",
+        title: asGem ? "Gem saved! 💎" : "Study saved!",
+        description: asGem ? `Your gem "${gemTitle}" has been saved to the Gems Room.` : "Your study session has been saved.",
       });
       
       setSaveDialogOpen(false);
