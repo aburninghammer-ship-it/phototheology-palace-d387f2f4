@@ -92,11 +92,11 @@ export const PunchyHero = () => {
             onClick={() => navigate(user ? "/palace" : "/auth")}
             className="text-base sm:text-lg md:text-xl px-6 sm:px-8 md:px-10 py-5 sm:py-6 md:py-7 gradient-palace shadow-2xl hover:shadow-primary/30 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-xs sm:max-w-none"
           >
-            Start Free Trial
+            Start Free — No Credit Card
             <ChevronRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
           </Button>
           <p className="text-xs sm:text-sm text-muted-foreground text-center px-2">
-            Join 1000's of Christians who finally understand what they study
+            Free forever tier • Upgrade when you're ready
           </p>
         </motion.div>
 

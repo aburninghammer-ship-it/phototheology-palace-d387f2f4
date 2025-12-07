@@ -21,9 +21,9 @@ export const FinalCTA = () => {
           <Button
             size="lg"
             onClick={() => navigate("/auth")}
-            className="text-lg px-8 py-6 h-auto group"
+            className="text-lg px-8 py-6 h-auto group gradient-palace"
           >
-            Start Free Trial
+            Start Free — No Credit Card
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           

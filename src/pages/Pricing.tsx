@@ -220,15 +220,15 @@ export default function Pricing() {
       <div className="container mx-auto px-4 pt-24 pb-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <Badge className="mb-4 gradient-palace text-white border-0">
-            <CreditCard className="h-3 w-3 mr-1" />
-            7-Day Free Trial • Credit Card Required
+          <Badge className="mb-4 bg-green-600/10 text-green-600 border-green-600/20">
+            <Gift className="h-3 w-3 mr-1" />
+            Free Forever Tier • No Credit Card
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-palace bg-clip-text text-transparent mb-4">
-            Choose Your Plan
+            Start Free. Upgrade When Ready.
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Start free with limited features, or try Premium with a 7-day trial
+            Explore the Palace at no cost. No trial countdown. No pressure.
           </p>
           
           {/* Billing Period Toggle - Enhanced */}
@@ -264,30 +264,54 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* 7-Day Premium Trial Callout */}
-        <Card className="mb-8 border-2 border-accent/30 bg-gradient-to-r from-accent/5 to-primary/5 max-w-2xl mx-auto">
+        {/* Start Free CTA - Primary */}
+        <Card className="mb-8 border-2 border-green-600/30 bg-gradient-to-r from-green-600/5 to-green-600/10 max-w-2xl mx-auto">
           <CardContent className="p-6 text-center">
-            <Badge className="mb-3 gradient-palace text-white border-0">
-              <Zap className="h-3 w-3 mr-1" />
-              7-Day Free Trial
+            <Badge className="mb-3 bg-green-600 text-white border-0">
+              <Check className="h-3 w-3 mr-1" />
+              Recommended Start
             </Badge>
-            <h3 className="text-xl font-bold mb-2">Not sure which plan? Try Premium for 7 days.</h3>
+            <h3 className="text-xl font-bold mb-2">Start with the Free Tier</h3>
             <p className="text-muted-foreground mb-4">
-              Get full access to all 8 floors, every AI feature, and premium tools. 
-              <span className="flex items-center justify-center gap-1 mt-1 text-sm">
-                <CreditCard className="h-3 w-3" /> Credit card required • Cancel anytime
+              Get Floor 1 (6 rooms), daily devotionals, Jeeves AI (10/day), and more — forever free.
+              <span className="flex items-center justify-center gap-1 mt-1 text-sm font-medium text-green-600">
+                No credit card • No expiration
               </span>
             </p>
             <Button 
-              onClick={() => startTrialWithCard('premium')} 
-              className="gradient-palace"
-              disabled={isStartingTrial}
+              onClick={startFreeAccount}
+              className="bg-green-600 hover:bg-green-700"
             >
-              {isStartingTrial ? "Starting..." : "Start 7-Day Premium Trial"}
+              Get Started Free
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardContent>
         </Card>
+
+        {/* 7-Day Premium Trial - Secondary */}
+        <div className="text-center mb-8">
+          <p className="text-sm text-muted-foreground mb-3">Ready for the full experience?</p>
+          <Card className="inline-block border border-accent/30 bg-gradient-to-r from-accent/5 to-primary/5">
+            <CardContent className="p-4 flex flex-col sm:flex-row items-center gap-4">
+              <div className="text-left">
+                <p className="font-medium text-sm">Try Premium for 7 days free</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <CreditCard className="h-3 w-3" /> Credit card required • Cancel anytime
+                </p>
+              </div>
+              <Button 
+                onClick={() => startTrialWithCard('premium')} 
+                variant="outline"
+                size="sm"
+                disabled={isStartingTrial}
+                className="whitespace-nowrap"
+              >
+                {isStartingTrial ? "Starting..." : "Start Trial"}
+                <Zap className="ml-1 h-3 w-3" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Access Code Link */}
         <div className="text-center mb-8">
