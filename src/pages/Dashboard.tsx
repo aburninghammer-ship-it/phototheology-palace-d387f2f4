@@ -14,7 +14,7 @@ import { PalaceProgressDashboard } from "@/components/PalaceProgressDashboard";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { JeevesWelcomeModal } from "@/components/retention/JeevesWelcomeModal";
 import { PathBanner, PathDashboardWidget } from "@/components/path";
-import { Brain, Building2 } from "lucide-react";
+import { Brain, Building2, Headphones } from "lucide-react";
 import { 
   BookOpen, 
   Flame, 
@@ -311,6 +311,14 @@ export default function Dashboard() {
                 >
                   <BookOpen className="mr-2 h-4 w-4" />
                   Read Bible
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => navigate("/read-me-the-bible")}
+                >
+                  <Headphones className="mr-2 h-4 w-4" />
+                  Listen to Bible
                 </Button>
                 <Button 
                   variant="outline" 

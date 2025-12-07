@@ -13,6 +13,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NavigationStyleToggle } from "@/components/NavigationStyleToggle";
 import { ReturnToPathBanner } from "@/components/path/ReturnToPathBanner";
+import { SessionModeIndicator } from "@/components/session/SessionModeIndicator";
+import { SessionStartButton } from "@/components/session/SessionStartButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -105,6 +107,12 @@ export const Navigation = () => {
                       </Badge>
                     )}
                   </Button>
+
+                  {/* Session Mode Controls */}
+                  <div className="hidden sm:flex items-center gap-2">
+                    <SessionModeIndicator />
+                    <SessionStartButton />
+                  </div>
 
                   <NavigationStyleToggle />
 
