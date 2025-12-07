@@ -59,14 +59,22 @@ export default function DevotionalProfileDetail() {
         ? `Addressing ${profile.struggles.map(s => STRUGGLE_LABELS[s]?.label || s).join(", ")} for ${profile.name}`
         : `Spiritual growth and encouragement for ${profile.name}`;
       
-      // Create the plan first
+      // Create the plan first - use valid study_style values
+      const studyStyleMap: Record<string, string> = {
+        gentle: "reading",
+        encouraging: "meditation",
+        direct: "study",
+        challenging: "battle",
+      };
+      const validStudyStyle = studyStyleMap[profile.preferred_tone || "gentle"] || "reading";
+      
       const newPlan = await createPlan.mutateAsync({
         title: `Devotional Plan for ${profile.name}`,
         description: `A personalized devotional addressing ${profile.name}'s spiritual journey`,
         theme,
         format: "room-driven",
         duration: 7,
-        studyStyle: profile.preferred_tone || "gentle",
+        studyStyle: validStudyStyle,
       });
 
       // Generate content - include CADE fields from profile
@@ -75,7 +83,7 @@ export default function DevotionalProfileDetail() {
         theme,
         format: "room-driven",
         duration: 7,
-        studyStyle: profile.preferred_tone || "gentle",
+        studyStyle: validStudyStyle,
         profileName: profile.name,
         // CADE context fields
         primaryIssue: profile.primary_issue || (profile.struggles?.[0] || undefined),
