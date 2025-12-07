@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Gamepad2, Swords, Trophy, Sparkles, Play } from "lucide-react";
+import { Gamepad2, Trophy, Sparkles, Play } from "lucide-react";
 
 interface RoomGame {
   id: string;
@@ -15,24 +15,24 @@ interface RoomGame {
   badge?: string;
 }
 
-// Map room IDs to their specific games
+// Map room IDs to their specific games - each game links to a valid route
 const roomGamesMap: Record<string, RoomGame[]> = {
   // Floor 1 - Furnishing Floor
   sr: [
     { id: "story-room", name: "Story Sequence", description: "Put Bible stories in correct order", path: "/games/story-room", icon: "📖", difficulty: "easy", xpReward: 25 },
-    { id: "story-sprint", name: "Story Sprint", description: "Speed-identify Bible narratives", path: "/games/principle-sprint", icon: "⚡", difficulty: "medium", xpReward: 35 },
+    { id: "genesis-highrise", name: "Genesis HighRise", description: "Build the Genesis tower chapter by chapter", path: "/genesis-highrise", icon: "🏗️", difficulty: "medium", xpReward: 35 },
   ],
   ir: [
-    { id: "frame-snapshot", name: "Frame Snapshot", description: "Visualize and describe scenes", path: "/games/frame-snapshot", icon: "👁️", difficulty: "medium", xpReward: 30 },
-    { id: "memory-palace", name: "Memory Palace Builder", description: "Build mental palaces from Scripture", path: "/games/memory-palace-builder", icon: "🏰", difficulty: "hard", xpReward: 50 },
+    { id: "frame-snapshot", name: "Frame Snapshot", description: "Visualize and describe biblical scenes", path: "/games/frame-snapshot", icon: "👁️", difficulty: "medium", xpReward: 30 },
+    { id: "concentration-room", name: "Imagination Practice", description: "Deep immersion into Scripture scenes", path: "/games/concentration-room", icon: "🎭", difficulty: "medium", xpReward: 35 },
   ],
   "24fps": [
-    { id: "frame-snapshot", name: "24FPS Challenge", description: "Create chapter image associations", path: "/games/frame-snapshot", icon: "🎬", difficulty: "medium", xpReward: 35 },
-    { id: "genesis-highrise", name: "Genesis HighRise", description: "Build the Genesis tower", path: "/genesis-highrise", icon: "🏗️", difficulty: "easy", xpReward: 25 },
+    { id: "frame-snapshot-24", name: "24FPS Challenge", description: "Create chapter image associations", path: "/games/frame-snapshot", icon: "🎬", difficulty: "medium", xpReward: 35 },
+    { id: "genesis-highrise-24", name: "Genesis HighRise", description: "Build the Genesis tower", path: "/genesis-highrise", icon: "🏗️", difficulty: "easy", xpReward: 25 },
   ],
   br: [
-    { id: "first-letter", name: "First Letter Game", description: "Recall verses by first letters", path: "/games/first-letter", icon: "🔤", difficulty: "medium", xpReward: 30 },
-    { id: "memory-practice", name: "Memory Palace Practice", description: "Navigate your mental palace", path: "/games/memory-palace-practice", icon: "🗺️", difficulty: "medium", xpReward: 35 },
+    { id: "bible-rendered", name: "Bible Rendered", description: "Render Scripture into mental images", path: "/bible-rendered", icon: "🖼️", difficulty: "medium", xpReward: 30 },
+    { id: "memory-games", name: "Memory Games", description: "Test your Scripture memory", path: "/memory/games", icon: "🧠", difficulty: "medium", xpReward: 35 },
   ],
   tr: [
     { id: "verse-match", name: "Verse Match", description: "Match verses to visual translations", path: "/verse-match", icon: "🎨", difficulty: "easy", xpReward: 20 },
@@ -53,7 +53,7 @@ const roomGamesMap: Record<string, RoomGame[]> = {
     { id: "equations-challenge", name: "Equations Challenge", description: "Solve symbolic Bible puzzles", path: "/equations-challenge", icon: "🔢", difficulty: "hard", xpReward: 45 },
   ],
   st: [
-    { id: "connection-dash", name: "Connection Dash", description: "Link symbols to meanings", path: "/games/connection-dash", icon: "🔗", difficulty: "medium", xpReward: 35 },
+    { id: "connection-dash", name: "Symbol Connections", description: "Link symbols to meanings", path: "/games/connection-dash", icon: "🔗", difficulty: "medium", xpReward: 35 },
     { id: "chain-chess", name: "Chain Chess", description: "Build symbolic verse chains", path: "/games/chain-chess/new", icon: "♟️", difficulty: "hard", xpReward: 50 },
   ],
   qr: [
@@ -61,101 +61,122 @@ const roomGamesMap: Record<string, RoomGame[]> = {
     { id: "escape-room", name: "Escape Room", description: "Solve puzzles to escape", path: "/escape-room", icon: "🚪", difficulty: "hard", xpReward: 60 },
   ],
   qa: [
-    { id: "chain-chess", name: "Q&A Chains", description: "Build question-answer chains", path: "/games/chain-chess/new", icon: "💬", difficulty: "medium", xpReward: 40 },
-    { id: "branch-study", name: "Branch Study", description: "Explore branching connections", path: "/branch-study", icon: "🌳", difficulty: "medium", xpReward: 35 },
+    { id: "branch-study", name: "Branch Study", description: "Build question-answer branches", path: "/branch-study", icon: "🌳", difficulty: "medium", xpReward: 40 },
+    { id: "chain-chess-qa", name: "Q&A Chains", description: "Chain verses that answer each other", path: "/games/chain-chess/new", icon: "💬", difficulty: "medium", xpReward: 35 },
   ],
   
   // Floor 3 - Freestyle Floor
   nf: [
-    { id: "connection-dash", name: "Nature Connections", description: "Find Scripture in nature", path: "/games/connection-dash", icon: "🌿", difficulty: "medium", xpReward: 35 },
+    { id: "connection-dash-nf", name: "Nature Connections", description: "Find Scripture in nature", path: "/games/connection-dash", icon: "🌿", difficulty: "medium", xpReward: 35 },
+    { id: "controversy-raid-nf", name: "Nature Freestyle", description: "Link natural world to biblical truth", path: "/games/controversy-raid", icon: "🌳", difficulty: "medium", xpReward: 40 },
   ],
   pf: [
-    { id: "principle-sprint", name: "Personal Parable", description: "Create life-to-Scripture links", path: "/games/principle-sprint", icon: "🪞", difficulty: "medium", xpReward: 35 },
+    { id: "principle-sprint-pf", name: "Personal Parable", description: "Create life-to-Scripture links", path: "/games/principle-sprint", icon: "🪞", difficulty: "medium", xpReward: 35 },
+    { id: "story-room-pf", name: "My Story Game", description: "Turn your story into Scripture", path: "/games/story-room", icon: "📔", difficulty: "easy", xpReward: 30 },
   ],
   bf: [
-    { id: "chain-chess", name: "Verse Genetics", description: "Find verse family connections", path: "/games/chain-chess/new", icon: "🧬", difficulty: "hard", xpReward: 45 },
-    { id: "connection-dash", name: "Bible Freestyle", description: "Speed-link verses", path: "/games/connection-dash", icon: "⚡", difficulty: "medium", xpReward: 35 },
+    { id: "chain-chess-bf", name: "Verse Genetics", description: "Find verse family connections", path: "/games/chain-chess/new", icon: "🧬", difficulty: "hard", xpReward: 45 },
+    { id: "connection-dash-bf", name: "Bible Freestyle", description: "Speed-link verses together", path: "/games/connection-dash", icon: "⚡", difficulty: "medium", xpReward: 35 },
   ],
   hf: [
-    { id: "controversy-raid", name: "Controversy Raid", description: "Navigate cultural debates", path: "/games/controversy-raid", icon: "📜", difficulty: "hard", xpReward: 50 },
-    { id: "culture-controversy", name: "Culture Analysis", description: "Analyze with Scripture lens", path: "/culture-controversy", icon: "🌍", difficulty: "medium", xpReward: 40 },
+    { id: "controversy-raid", name: "Controversy Raid", description: "Navigate cultural debates biblically", path: "/games/controversy-raid", icon: "📜", difficulty: "hard", xpReward: 50 },
+    { id: "culture-controversy", name: "Culture Analysis", description: "Analyze culture with Scripture lens", path: "/culture-controversy", icon: "🌍", difficulty: "medium", xpReward: 40 },
   ],
   lr: [
-    { id: "principle-sprint", name: "Listen & Link", description: "Connect what you hear", path: "/games/principle-sprint", icon: "👂", difficulty: "medium", xpReward: 30 },
+    { id: "witness-trial-lr", name: "Listen & Respond", description: "Hear and connect what you learn", path: "/games/witness-trial", icon: "👂", difficulty: "medium", xpReward: 30 },
+    { id: "observation-lr", name: "Active Listening", description: "Observe what others share", path: "/games/observation-room", icon: "🎧", difficulty: "easy", xpReward: 25 },
   ],
   
   // Floor 4 - Next Level Floor
   cr: [
-    { id: "concentration-room", name: "Concentration Room", description: "Christ-centered focus", path: "/games/concentration-room", icon: "✝️", difficulty: "medium", xpReward: 40 },
+    { id: "concentration-room-cr", name: "Concentration Room", description: "Christ-centered focus training", path: "/games/concentration-room", icon: "✝️", difficulty: "medium", xpReward: 40 },
     { id: "christ-lock", name: "Christ Lock", description: "Unlock Christ in every text", path: "/games/christ-lock", icon: "🔓", difficulty: "hard", xpReward: 50, badge: "Popular" },
   ],
   dr: [
-    { id: "dimensions-room", name: "Dimensions Room", description: "See all 5 dimensions", path: "/games/dimensions-room", icon: "💠", difficulty: "hard", xpReward: 50 },
+    { id: "dimensions-room", name: "Dimensions Room", description: "See all 5 dimensions of Scripture", path: "/games/dimensions-room", icon: "💠", difficulty: "hard", xpReward: 50 },
+    { id: "principle-sprint-dr", name: "Dimension Sprint", description: "Rapidly apply all dimensions", path: "/games/principle-sprint", icon: "🎯", difficulty: "medium", xpReward: 35 },
   ],
   c6: [
-    { id: "connect-6", name: "Connect 6 Draft", description: "Match genres to texts", path: "/games/connect-6-draft", icon: "📚", difficulty: "medium", xpReward: 35 },
+    { id: "connect-6", name: "Connect 6 Draft", description: "Match genres to texts strategically", path: "/games/connect6-draft", icon: "📚", difficulty: "medium", xpReward: 35 },
+    { id: "story-room-c6", name: "Genre Stories", description: "Identify story genres", path: "/games/story-room", icon: "🎭", difficulty: "easy", xpReward: 25 },
   ],
   trm: [
-    { id: "sanctuary-run", name: "Theme Wall Run", description: "Navigate the theme walls", path: "/games/sanctuary-run", icon: "🏛️", difficulty: "medium", xpReward: 40 },
+    { id: "sanctuary-run", name: "Theme Wall Run", description: "Navigate the sanctuary theme walls", path: "/games/sanctuary-run", icon: "🏛️", difficulty: "medium", xpReward: 40 },
+    { id: "blue-room-trm", name: "Theme Explorer", description: "Explore major biblical themes", path: "/games/blue-room", icon: "🧱", difficulty: "medium", xpReward: 35 },
   ],
   tz: [
-    { id: "time-zone", name: "Time Zone Invasion", description: "Defend the timeline", path: "/games/time-zone-invasion", icon: "⏰", difficulty: "hard", xpReward: 50, badge: "New" },
+    { id: "time-zone", name: "Time Zone Invasion", description: "Defend the biblical timeline", path: "/games/time-zone-invasion", icon: "⏰", difficulty: "hard", xpReward: 50, badge: "New" },
+    { id: "chain-chess-tz", name: "Timeline Chain", description: "Chain events chronologically", path: "/games/chain-chess/new", icon: "📅", difficulty: "hard", xpReward: 45 },
   ],
   prm: [
-    { id: "pattern-match", name: "Pattern Match", description: "Find recurring patterns", path: "/games/connection-dash", icon: "🎵", difficulty: "medium", xpReward: 35 },
+    { id: "connection-dash-prm", name: "Pattern Match", description: "Find recurring biblical patterns", path: "/games/connection-dash", icon: "🎵", difficulty: "medium", xpReward: 35 },
+    { id: "chain-chess-prm", name: "Pattern Chains", description: "Build pattern connections", path: "/games/chain-chess/new", icon: "🔄", difficulty: "hard", xpReward: 45 },
   ],
   "p||": [
-    { id: "parallels", name: "Parallel Vision", description: "Match mirrored events", path: "/games/connection-dash", icon: "🪞", difficulty: "hard", xpReward: 45 },
+    { id: "connection-dash-parallel", name: "Parallel Vision", description: "Match mirrored biblical events", path: "/games/connection-dash", icon: "🪞", difficulty: "hard", xpReward: 45 },
+    { id: "observation-parallel", name: "Parallel Detective", description: "Spot parallel structures", path: "/games/observation-room", icon: "👁️", difficulty: "medium", xpReward: 35 },
   ],
   frt: [
-    { id: "fruit-test", name: "Fruit Inspector", description: "Test for spiritual fruit", path: "/games/principle-sprint", icon: "🍇", difficulty: "medium", xpReward: 30 },
+    { id: "principle-sprint-frt", name: "Fruit Inspector", description: "Test interpretations for spiritual fruit", path: "/games/principle-sprint", icon: "🍇", difficulty: "medium", xpReward: 30 },
+    { id: "observation-frt", name: "Fruit Finder", description: "Identify fruit of the Spirit", path: "/games/observation-room", icon: "🌱", difficulty: "easy", xpReward: 25 },
   ],
   cec: [
-    { id: "christ-lock", name: "Christ Every Chapter", description: "Find Christ in each chapter", path: "/games/christ-lock", icon: "👑", difficulty: "hard", xpReward: 50 },
+    { id: "christ-lock-cec", name: "Christ Every Chapter", description: "Find Christ in each chapter", path: "/games/christ-lock", icon: "👑", difficulty: "hard", xpReward: 50 },
+    { id: "concentration-cec", name: "Chapter Focus", description: "Deep dive into chapters", path: "/games/concentration-room", icon: "📖", difficulty: "medium", xpReward: 40 },
   ],
   r66: [
-    { id: "r66-trace", name: "66-Book Trace", description: "Trace themes through all 66", path: "/games/chain-chess/new", icon: "📿", difficulty: "hard", xpReward: 60 },
+    { id: "chain-chess-r66", name: "66-Book Trace", description: "Trace themes through all 66 books", path: "/games/chain-chess/new", icon: "📿", difficulty: "hard", xpReward: 60 },
+    { id: "story-room-r66", name: "Book Stories", description: "Know each book's narrative", path: "/games/story-room", icon: "📚", difficulty: "medium", xpReward: 40 },
   ],
   
   // Floor 5 - Vision Floor
   bl: [
-    { id: "blue-room", name: "Blue Room Challenge", description: "Navigate the sanctuary", path: "/games/blue-room", icon: "⛪", difficulty: "hard", xpReward: 50, badge: "Popular" },
-    { id: "sanctuary-run", name: "Sanctuary Run", description: "Race through the temple", path: "/games/sanctuary-run", icon: "🏃", difficulty: "medium", xpReward: 40 },
+    { id: "blue-room", name: "Blue Room Challenge", description: "Navigate the sanctuary blueprint", path: "/games/blue-room", icon: "⛪", difficulty: "hard", xpReward: 50, badge: "Popular" },
+    { id: "sanctuary-run-bl", name: "Sanctuary Run", description: "Race through the temple stations", path: "/games/sanctuary-run", icon: "🏃", difficulty: "medium", xpReward: 40 },
   ],
   pr: [
-    { id: "escape-dragon", name: "Escape the Dragon", description: "Navigate prophecy puzzles", path: "/games/escape-the-dragon", icon: "🐉", difficulty: "hard", xpReward: 55, badge: "Popular" },
-    { id: "prophecy-watch", name: "Prophecy Watch", description: "Track prophetic timelines", path: "/prophecy-watch", icon: "🔮", difficulty: "hard", xpReward: 50 },
+    { id: "escape-dragon", name: "Escape the Dragon", description: "Navigate prophecy puzzles", path: "/games/escape-dragon", icon: "🐉", difficulty: "hard", xpReward: 55, badge: "Popular" },
+    { id: "time-zone-pr", name: "Prophecy Timeline", description: "Track prophetic timelines", path: "/games/time-zone-invasion", icon: "🔮", difficulty: "hard", xpReward: 50 },
   ],
   "3a": [
-    { id: "three-angels", name: "Three Angels Sprint", description: "Master the messages", path: "/games/principle-sprint", icon: "👼", difficulty: "hard", xpReward: 45 },
+    { id: "principle-sprint-3a", name: "Three Angels Sprint", description: "Master the three angels' messages", path: "/games/principle-sprint", icon: "👼", difficulty: "hard", xpReward: 45 },
+    { id: "controversy-3a", name: "Angels' Mission", description: "Apply the messages to issues", path: "/games/controversy-raid", icon: "📢", difficulty: "hard", xpReward: 50 },
   ],
   fe: [
-    { id: "feasts-game", name: "Feast Calendar", description: "Match feasts to meanings", path: "/games/connection-dash", icon: "🎊", difficulty: "medium", xpReward: 35 },
+    { id: "connection-dash-fe", name: "Feast Calendar", description: "Match feasts to their meanings", path: "/games/connection-dash", icon: "🎊", difficulty: "medium", xpReward: 35 },
+    { id: "sanctuary-run-fe", name: "Feast Journey", description: "Walk through the feast cycle", path: "/games/sanctuary-run", icon: "🗓️", difficulty: "medium", xpReward: 40 },
   ],
   
   // Floor 6 - Three Heavens Floor
   "123h": [
-    { id: "three-heavens", name: "Heaven Sorter", description: "Place events in correct heaven", path: "/games/time-zone-invasion", icon: "☁️", difficulty: "hard", xpReward: 50 },
+    { id: "time-zone-123h", name: "Heaven Sorter", description: "Place events in correct heaven era", path: "/games/time-zone-invasion", icon: "☁️", difficulty: "hard", xpReward: 50 },
+    { id: "dimensions-123h", name: "Heaven Dimensions", description: "See heavenly perspectives", path: "/games/dimensions-room", icon: "🌌", difficulty: "hard", xpReward: 55 },
   ],
   cycles: [
-    { id: "cycle-race", name: "Cycle Race", description: "Navigate the 8 cycles", path: "/games/chain-chess/new", icon: "🔄", difficulty: "hard", xpReward: 55 },
+    { id: "chain-chess-cycles", name: "Cycle Race", description: "Navigate the 8 redemptive cycles", path: "/games/chain-chess/new", icon: "🔄", difficulty: "hard", xpReward: 55 },
+    { id: "time-zone-cycles", name: "Cycle Timeline", description: "Map cycles chronologically", path: "/games/time-zone-invasion", icon: "⚙️", difficulty: "hard", xpReward: 50 },
   ],
   jr: [
-    { id: "juice-room", name: "Juice Extractor", description: "Squeeze meaning from books", path: "/games/principle-sprint", icon: "🍊", difficulty: "hard", xpReward: 50 },
+    { id: "principle-sprint-jr", name: "Juice Extractor", description: "Squeeze meaning from entire books", path: "/games/principle-sprint", icon: "🍊", difficulty: "hard", xpReward: 50 },
+    { id: "observation-jr", name: "Deep Observation", description: "Find every detail in a book", path: "/games/observation-room", icon: "🔬", difficulty: "hard", xpReward: 55 },
   ],
   math: [
-    { id: "equation-builder", name: "Math Room", description: "Build complex equations", path: "/games/equation-builder", icon: "🔢", difficulty: "hard", xpReward: 55 },
+    { id: "equation-builder-math", name: "Math Room", description: "Build complex theological equations", path: "/games/equation-builder", icon: "🔢", difficulty: "hard", xpReward: 55 },
+    { id: "equations-math", name: "Equation Master", description: "Solve advanced equation puzzles", path: "/equations-challenge", icon: "🧮", difficulty: "hard", xpReward: 50 },
   ],
   
   // Floor 7 - Spiritual & Emotional Floor
   frm: [
-    { id: "fire-room", name: "Fire Room Challenge", description: "Face the flames of conviction", path: "/games/principle-sprint", icon: "🔥", difficulty: "hard", xpReward: 45 },
+    { id: "concentration-frm", name: "Fire Room Challenge", description: "Face the flames of conviction", path: "/games/concentration-room", icon: "🔥", difficulty: "hard", xpReward: 45 },
+    { id: "principle-sprint-frm", name: "Fire Sprint", description: "Rapid conviction applications", path: "/games/principle-sprint", icon: "⚡", difficulty: "hard", xpReward: 50 },
   ],
   mr: [
-    { id: "meditation-game", name: "Meditation Master", description: "Deep meditative practice", path: "/games/concentration-room", icon: "🙏", difficulty: "medium", xpReward: 35 },
+    { id: "concentration-mr", name: "Meditation Master", description: "Deep meditative Scripture practice", path: "/games/concentration-room", icon: "🙏", difficulty: "medium", xpReward: 35 },
+    { id: "observation-mr", name: "Slow Observation", description: "Patient, detailed study", path: "/games/observation-room", icon: "🕯️", difficulty: "medium", xpReward: 30 },
   ],
   srm: [
-    { id: "speed-room", name: "Speed Drill", description: "Rapid-fire applications", path: "/games/principle-sprint", icon: "⚡", difficulty: "hard", xpReward: 50 },
+    { id: "principle-sprint-srm", name: "Speed Drill", description: "Rapid-fire Scripture applications", path: "/games/principle-sprint", icon: "⚡", difficulty: "hard", xpReward: 50 },
+    { id: "connection-dash-srm", name: "Speed Connections", description: "Fast verse linking", path: "/games/connection-dash", icon: "🏎️", difficulty: "hard", xpReward: 45 },
   ],
 };
 
