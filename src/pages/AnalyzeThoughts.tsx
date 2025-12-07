@@ -19,6 +19,7 @@ import { AnimatedScore } from "@/components/analyze/AnimatedScore";
 import { VoiceInput } from "@/components/analyze/VoiceInput";
 import { SavedAnalysesList } from "@/components/analyze/SavedAnalysesList";
 import { QuickAudioButton } from "@/components/audio";
+import { FollowUpChat } from "@/components/analyze/FollowUpChat";
 
 interface AnalysisResult {
   summary: string;
@@ -602,6 +603,19 @@ const AnalyzeThoughts = () => {
                   </CardContent>
                 </Card>
               </motion.div>
+
+              {/* Follow-up Chat */}
+              <FollowUpChat
+                originalThought={input}
+                analysisResult={{
+                  summary: result.summary,
+                  overallScore: result.overallScore,
+                  strengths: result.strengths,
+                  growthAreas: result.growthAreas,
+                  palaceRooms: result.palaceRooms,
+                  encouragement: result.encouragement,
+                }}
+              />
             </motion.div>
           )}
         </AnimatePresence>
