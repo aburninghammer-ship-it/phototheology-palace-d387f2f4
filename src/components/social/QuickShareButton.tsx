@@ -145,7 +145,7 @@ export const QuickShareButton = ({
       <DropdownMenuTrigger asChild>
         <Button variant={variant} size={size} className="gap-2">
           <Share2 className="h-4 w-4" />
-          {size !== "icon" && "Share"}
+          {size !== "icon" && <span className="hidden sm:inline">Share</span>}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
