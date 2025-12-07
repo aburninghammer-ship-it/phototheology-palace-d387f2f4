@@ -142,3 +142,6 @@ verify_jwt = false
 
 [functions.generate-quick-devotion]
 verify_jwt = false
+
+[functions.generate-gem]
+verify_jwt = false
