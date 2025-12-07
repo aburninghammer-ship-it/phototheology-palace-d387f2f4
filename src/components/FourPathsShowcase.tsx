@@ -16,9 +16,17 @@ export const FourPathsShowcase = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             Four Paths. One Palace.
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
             Choose the learning style that fits how your mind works. Each path leads through the same palace—but your journey is uniquely yours.
           </p>
+          <div className="bg-primary/10 border border-primary/20 rounded-xl p-6 max-w-3xl mx-auto">
+            <h3 className="font-semibold text-lg text-primary mb-2">A 2-Year Mastery Journey</h3>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Each path is a complete <span className="text-foreground font-medium">2-year curriculum</span> designed to take you from beginner to master. 
+              You'll ascend all 8 floors of the Palace, unlock every room, and earn your Master title. 
+              The path you choose shapes <em>how</em> you learn—through images, analysis, devotion, or action—but every path covers the full Phototheology system.
+            </p>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
