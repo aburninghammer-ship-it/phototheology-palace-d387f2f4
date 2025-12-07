@@ -207,6 +207,54 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
+    // SECURITY: Verify user authentication and plan ownership
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Create a client with the user's token to verify their identity
+    const userSupabase = createClient(SUPABASE_URL!, Deno.env.get("SUPABASE_ANON_KEY")!, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: { user }, error: authError } = await userSupabase.auth.getUser();
+    if (authError || !user) {
+      console.error("Auth error:", authError);
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Verify the user owns this devotional plan
+    const { data: plan, error: planError } = await supabase
+      .from("devotional_plans")
+      .select("user_id")
+      .eq("id", planId)
+      .single();
+
+    if (planError || !plan) {
+      console.error("Plan lookup error:", planError);
+      return new Response(
+        JSON.stringify({ error: "Devotional plan not found" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (plan.user_id !== user.id) {
+      console.error("Ownership mismatch:", { planOwner: plan.user_id, requestingUser: user.id });
+      return new Response(
+        JSON.stringify({ error: "You do not have permission to modify this devotional plan" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`[generate-devotional] Authenticated user ${user.id} generating plan ${planId}`);
+
     // Update plan status to generating
     await supabase
       .from("devotional_plans")
