@@ -6232,6 +6232,211 @@ export type Database = {
         }
         Relationships: []
       }
+      session_jeeves_interactions: {
+        Row: {
+          analysis_type: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          prompt: string
+          response: string
+          session_id: string
+        }
+        Insert: {
+          analysis_type?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          prompt: string
+          response: string
+          session_id: string
+        }
+        Update: {
+          analysis_type?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          prompt?: string
+          response?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_jeeves_interactions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_notes: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          note_type: string | null
+          related_room: string | null
+          related_verse: string | null
+          session_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          note_type?: string | null
+          related_room?: string | null
+          related_verse?: string | null
+          session_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          note_type?: string | null
+          related_room?: string | null
+          related_verse?: string | null
+          session_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_notes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_pt_interactions: {
+        Row: {
+          created_at: string | null
+          floor_number: number | null
+          id: string
+          interaction_data: Json | null
+          interaction_type: string
+          principle_code: string | null
+          room_code: string | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          floor_number?: number | null
+          id?: string
+          interaction_data?: Json | null
+          interaction_type: string
+          principle_code?: string | null
+          room_code?: string | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          floor_number?: number | null
+          id?: string
+          interaction_data?: Json | null
+          interaction_type?: string
+          principle_code?: string | null
+          room_code?: string | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_pt_interactions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_tabs: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          session_id: string
+          tab_order: number | null
+          tab_state: Json | null
+          tab_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          session_id: string
+          tab_order?: number | null
+          tab_state?: Json | null
+          tab_type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          session_id?: string
+          tab_order?: number | null
+          tab_state?: Json | null
+          tab_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_tabs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_verses: {
+        Row: {
+          accessed_at: string | null
+          book: string
+          chapter: number
+          cross_references: string[] | null
+          highlights: Json | null
+          id: string
+          notes: string | null
+          session_id: string
+          verse_end: number | null
+          verse_start: number | null
+        }
+        Insert: {
+          accessed_at?: string | null
+          book: string
+          chapter: number
+          cross_references?: string[] | null
+          highlights?: Json | null
+          id?: string
+          notes?: string | null
+          session_id: string
+          verse_end?: number | null
+          verse_start?: number | null
+        }
+        Update: {
+          accessed_at?: string | null
+          book?: string
+          chapter?: number
+          cross_references?: string[] | null
+          highlights?: Json | null
+          id?: string
+          notes?: string | null
+          session_id?: string
+          verse_end?: number | null
+          verse_start?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_verses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_media_connections: {
         Row: {
           access_token_encrypted: string | null
@@ -8197,6 +8402,7 @@ export type Database = {
       generate_challenge_share_code: { Args: never; Returns: string }
       generate_profile_invite_token: { Args: never; Returns: string }
       generate_referral_code: { Args: { user_id: string }; Returns: string }
+      generate_session_share_token: { Args: never; Returns: string }
       get_available_seats: { Args: { _church_id: string }; Returns: number }
       get_or_create_conversation: {
         Args: { other_user_id: string }
