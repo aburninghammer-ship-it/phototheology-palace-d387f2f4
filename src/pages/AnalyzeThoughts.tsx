@@ -769,7 +769,7 @@ const AnalyzeThoughts = () => {
                 </Card>
               </motion.div>
 
-              {/* Further Study - Enhanced */}
+              {/* Further Study - Enhanced with clickable links */}
               {result.furtherStudy?.length > 0 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
                   <Card className="bg-card/80 border-purple-500/20">
@@ -779,12 +779,19 @@ const AnalyzeThoughts = () => {
                         {result.furtherStudy.map((item, i) => {
                           const study = normalizeFurtherStudy(item);
                           return (
-                            <div key={i} className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                              <p className="font-medium text-purple-200">{study.topic}</p>
+                            <a
+                              key={i}
+                              href={`/encyclopedia?search=${encodeURIComponent(study.topic)}`}
+                              className="block p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer group"
+                            >
+                              <div className="flex items-center justify-between">
+                                <p className="font-medium text-purple-200 group-hover:text-purple-100">{study.topic}</p>
+                                <ArrowRight className="h-4 w-4 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
                               {study.whyItMatters && (
                                 <p className="text-sm text-muted-foreground mt-1">{study.whyItMatters}</p>
                               )}
-                            </div>
+                            </a>
                           );
                         })}
                       </div>
