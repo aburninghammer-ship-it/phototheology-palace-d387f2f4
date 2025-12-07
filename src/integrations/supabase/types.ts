@@ -6735,41 +6735,74 @@ export type Database = {
       }
       study_sessions: {
         Row: {
+          ai_summary: string | null
+          ai_summary_generated_at: string | null
           created_at: string
           description: string | null
           id: string
           is_active: boolean | null
+          is_public: boolean | null
           jeeves_context: Json | null
+          last_auto_save_at: string | null
           last_opened_at: string | null
+          saved_at: string | null
+          session_state: Json | null
+          share_token: string | null
+          started_at: string | null
+          status: string | null
           tabs_data: Json
           tags: string[] | null
+          thumbnail_url: string | null
           title: string
+          total_duration_seconds: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          ai_summary?: string | null
+          ai_summary_generated_at?: string | null
           created_at?: string
           description?: string | null
           id?: string
           is_active?: boolean | null
+          is_public?: boolean | null
           jeeves_context?: Json | null
+          last_auto_save_at?: string | null
           last_opened_at?: string | null
+          saved_at?: string | null
+          session_state?: Json | null
+          share_token?: string | null
+          started_at?: string | null
+          status?: string | null
           tabs_data?: Json
           tags?: string[] | null
+          thumbnail_url?: string | null
           title: string
+          total_duration_seconds?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          ai_summary?: string | null
+          ai_summary_generated_at?: string | null
           created_at?: string
           description?: string | null
           id?: string
           is_active?: boolean | null
+          is_public?: boolean | null
           jeeves_context?: Json | null
+          last_auto_save_at?: string | null
           last_opened_at?: string | null
+          saved_at?: string | null
+          session_state?: Json | null
+          share_token?: string | null
+          started_at?: string | null
+          status?: string | null
           tabs_data?: Json
           tags?: string[] | null
+          thumbnail_url?: string | null
           title?: string
+          total_duration_seconds?: number | null
           updated_at?: string
           user_id?: string
         }
