@@ -13,27 +13,66 @@ serve(async (req) => {
   }
 
   try {
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
-      apiVersion: "2023-10-16",
-    });
+    // Get the authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing authorization header" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") || "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
     );
 
+    // Verify the user is authenticated and is an admin
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error("Authentication error:", authError);
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Check if user has admin role
+    const { data: roleData, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .single();
+
+    if (roleError || !roleData) {
+      console.error("Admin role check failed:", roleError);
+      return new Response(JSON.stringify({ error: "Forbidden: Admin role required" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    console.log("Admin user verified:", user.email);
+
+    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+      apiVersion: "2023-10-16",
+    });
+
     console.log("Starting Stripe subscription sync...");
 
     const results: any[] = [];
 
     // Get all users from auth
-    const { data: authData, error: authError } = await supabase.auth.admin.listUsers({
+    const { data: authData, error: listError } = await supabase.auth.admin.listUsers({
       perPage: 1000,
     });
 
-    if (authError) {
-      console.error("Error listing users:", authError);
-      throw new Error("Failed to list users: " + authError.message);
+    if (listError) {
+      console.error("Error listing users:", listError);
+      throw new Error("Failed to list users: " + listError.message);
     }
 
     const users = authData?.users || [];
