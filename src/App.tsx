@@ -17,6 +17,7 @@ import { DirectMessagesProvider } from "@/contexts/DirectMessagesContext";
 import { PageStateProvider } from "@/contexts/PageStateContext";
 import { GlobalAudioProvider } from "@/contexts/GlobalAudioContext";
 import { StudySessionProvider } from "@/contexts/StudySessionContext";
+import { SessionModeProvider } from "@/contexts/SessionModeContext";
 import { SplashScreen } from "@/components/SplashScreen";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "next-themes";
@@ -30,6 +31,7 @@ import { ExitIntentPopup } from "@/components/conversion/ExitIntentPopup";
 import { AmbientMusicPlayer } from "@/components/audio/AmbientMusicPlayer";
 import { GlobalMiniPlayer } from "@/components/audio/GlobalMiniPlayer";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { SessionPromptDialog } from "@/components/session/SessionPromptDialog";
 
 // Critical pages - load immediately (landing + auth only)
 import Index from "./pages/Index";
@@ -207,6 +209,7 @@ const WhyPhototheology = lazy(() => import("./pages/WhyPhototheology"));
 const MusicCategories = lazy(() => import("./pages/MusicCategories"));
 const Paths = lazy(() => import("./pages/Paths"));
 const PathWeek = lazy(() => import("./pages/PathWeek"));
+const Sessions = lazy(() => import("./pages/Sessions"));
 
 const queryClient = new QueryClient();
 
@@ -232,6 +235,7 @@ function App() {
               <PageStateProvider>
               <GlobalAudioProvider>
               <StudySessionProvider>
+              <SessionModeProvider>
               <PageTracker />
               <LiveNotificationsProvider>
                 <AchievementProvider>
@@ -244,6 +248,8 @@ function App() {
                         <DailyVerseNotification />
                         <InstallPrompt />
                         <ExitIntentPopup />
+                        {/* Session Mode Prompt Dialog */}
+                        <SessionPromptDialog />
                         {/* Global Mini Player for Bible Reading */}
                         <GlobalMiniPlayer />
                         {/* Floating Ambient Music Player - higher on mobile to avoid nav */}
@@ -476,6 +482,11 @@ function App() {
                 <GuildDetail />
               </ProtectedRoute>
             } />
+            <Route path="/sessions" element={
+              <ProtectedRoute>
+                <Sessions />
+              </ProtectedRoute>
+            } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
                     </Routes>
@@ -489,6 +500,7 @@ function App() {
             </DirectMessagesProvider>
           </AchievementProvider>
         </LiveNotificationsProvider>
+        </SessionModeProvider>
         </StudySessionProvider>
         </GlobalAudioProvider>
         </PageStateProvider>
