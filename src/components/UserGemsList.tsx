@@ -39,6 +39,15 @@ export function UserGemsList({ floorNumber, roomId }: UserGemsListProps) {
     }
   }, [user, floorNumber, roomId]);
 
+  // Listen for gems-updated events to refresh the list
+  useEffect(() => {
+    const handleGemsUpdated = () => {
+      fetchGems();
+    };
+    window.addEventListener('gems-updated', handleGemsUpdated);
+    return () => window.removeEventListener('gems-updated', handleGemsUpdated);
+  }, [user]);
+
   const fetchGems = async () => {
     if (!user) return;
     

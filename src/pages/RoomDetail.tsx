@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
 import { genesisImages } from "@/assets/24fps/genesis";
 import { UserGemsList } from "@/components/UserGemsList";
+import { GemGenerator } from "@/components/gems/GemGenerator";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -503,6 +504,15 @@ export default function RoomDetail() {
 
                 {room.id === "gr" && (
                   <>
+                    <GemGenerator 
+                      floorNumber={floor.number} 
+                      roomId={room.id} 
+                      onGemSaved={() => {
+                        // Trigger refresh of gems list
+                        const event = new CustomEvent('gems-updated');
+                        window.dispatchEvent(event);
+                      }}
+                    />
                     <UserGemsList floorNumber={floor.number} roomId={room.id} />
                     <SermonTitlesList />
                   </>
