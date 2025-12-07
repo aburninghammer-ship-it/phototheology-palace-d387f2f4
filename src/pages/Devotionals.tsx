@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus, GraduationCap, Home, HeartHandshake } from "lucide-react";
+import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus, GraduationCap, Home, HeartHandshake, Sun } from "lucide-react";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { devotionalsSteps } from "@/config/howItWorksSteps";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
@@ -18,6 +18,7 @@ import { DevotionalForFriendWizard } from "@/components/devotionals/DevotionalFo
 import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
 import { CreateProfileWizard } from "@/components/devotionals/CreateProfileWizard";
 import { DevotionalProfileCard } from "@/components/devotionals/DevotionalProfileCard";
+import { QuickDevotion } from "@/components/devotionals/QuickDevotion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -47,6 +48,7 @@ export default function Devotionals() {
   const [showWizard, setShowWizard] = useState(false);
   const [showFriendWizard, setShowFriendWizard] = useState(false);
   const [showProfileWizard, setShowProfileWizard] = useState(false);
+  const [showQuickDevotion, setShowQuickDevotion] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteProfileId, setDeleteProfileId] = useState<string | null>(null);
 
@@ -103,7 +105,23 @@ export default function Devotionals() {
             <HowItWorksDialog title="How to Use Devotionals" steps={devotionalsSteps} />
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4 mt-8">
+          <div className="grid md:grid-cols-4 gap-4 mt-8">
+            {/* Quick Daily Devotion */}
+            <Card 
+              className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all cursor-pointer group shadow-xl" 
+              onClick={() => setShowQuickDevotion(true)}
+            >
+              <CardContent className="p-6 flex items-center gap-4">
+                <div className="p-4 rounded-full bg-gradient-to-br from-amber-400 to-yellow-400 shadow-lg group-hover:scale-110 transition-transform">
+                  <Sun className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-lg">Quick Devotion</h3>
+                  <p className="text-sm text-white/70">One-day themed devotion</p>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Create New */}
             <Card 
               className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all cursor-pointer group shadow-xl" 
@@ -115,12 +133,12 @@ export default function Devotionals() {
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-lg">Create Devotional</h3>
-                  <p className="text-sm text-white/70">Start your personalized journey</p>
+                  <p className="text-sm text-white/70">Multi-day journey</p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Devotional Profiles - NEW */}
+            {/* Devotional Profiles */}
             <Card 
               className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all cursor-pointer group shadow-xl" 
               onClick={() => setShowProfileWizard(true)}
@@ -139,12 +157,12 @@ export default function Devotionals() {
             {/* Stats */}
             <Card className="bg-white/10 backdrop-blur-sm border-white/20 shadow-xl">
               <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-4 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 shadow-lg">
+                <div className="p-4 rounded-full bg-gradient-to-br from-purple-400 to-violet-400 shadow-lg">
                   <Star className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-lg">5 Unique Formats</h3>
-                  <p className="text-sm text-white/70">24FPS, Blueprint, Palace Tour & more</p>
+                  <p className="text-sm text-white/70">24FPS, Blueprint & more</p>
                 </div>
               </CardContent>
             </Card>
@@ -549,6 +567,11 @@ export default function Devotionals() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Quick Devotion Modal */}
+      {showQuickDevotion && (
+        <QuickDevotion onClose={() => setShowQuickDevotion(false)} />
+      )}
     </div>
   );
 }
