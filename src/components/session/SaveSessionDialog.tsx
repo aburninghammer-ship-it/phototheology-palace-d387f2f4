@@ -28,10 +28,19 @@ export function SaveSessionDialog({
 }: SaveSessionDialogProps) {
   const { currentSession, saveSession, isSaving } = useSessionMode();
   
-  const [title, setTitle] = useState(currentSession?.title || '');
-  const [description, setDescription] = useState(currentSession?.description || '');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [tagInput, setTagInput] = useState('');
-  const [tags, setTags] = useState<string[]>(currentSession?.tags || []);
+  const [tags, setTags] = useState<string[]>([]);
+
+  // Initialize state when dialog opens or session changes
+  React.useEffect(() => {
+    if (open && currentSession) {
+      setTitle(currentSession.title || '');
+      setDescription(currentSession.description || '');
+      setTags(currentSession.tags || []);
+    }
+  }, [open, currentSession]);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -70,12 +79,12 @@ export function SaveSessionDialog({
         
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="save-title">Session Title</Label>
+            <Label htmlFor="save-title">Session Name</Label>
             <Input
               id="save-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter a memorable title"
+              placeholder="e.g., Samson Session, Daniel 7 Study..."
             />
           </div>
           
