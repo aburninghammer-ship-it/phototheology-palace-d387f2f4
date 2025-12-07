@@ -62,6 +62,18 @@ const SUBJECT_OPTIONS = [
     description: "Christ's righteousness as our only hope",
     emoji: "🙏"
   },
+  { 
+    id: "revelation", 
+    label: "Revelation", 
+    description: "The unveiling of Jesus Christ and end-time events",
+    emoji: "📖"
+  },
+  { 
+    id: "types", 
+    label: "Types & Shadows", 
+    description: "Old Testament symbols pointing to Christ",
+    emoji: "🔍"
+  },
 ];
 
 const FORMATS = [
