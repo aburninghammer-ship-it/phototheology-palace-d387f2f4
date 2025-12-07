@@ -13,6 +13,7 @@ import {
   Zap, ArrowRight
 } from "lucide-react";
 import { ExportToStudyButton } from "@/components/ExportToStudyButton";
+import { QuickShareButton } from "@/components/social/QuickShareButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useThoughtAnalysisHistory, SavedAnalysis, DeeperInsight } from "@/hooks/useThoughtAnalysisHistory";
@@ -427,6 +428,13 @@ const AnalyzeThoughts = () => {
                 <Button onClick={handleCopy} variant="outline" className="bg-purple-500/10 border-purple-500/30 text-purple-400">
                   <Copy className="h-4 w-4 mr-2" />Copy
                 </Button>
+                <QuickShareButton
+                  title="My Thought Analysis"
+                  content={result.encouragement || result.summary || "I analyzed my thoughts using Phototheology!"}
+                  type="insight"
+                  variant="outline"
+                  size="sm"
+                />
               </motion.div>
 
               {/* Narrative Analysis - The Main Teaching Moment */}
