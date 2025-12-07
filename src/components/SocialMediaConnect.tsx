@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Facebook, Twitter, Linkedin, Unlink, Check } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Unlink, Check, Share2, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
@@ -169,9 +170,12 @@ export const SocialMediaConnect = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Social Media Accounts</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Share2 className="h-5 w-5 text-primary" />
+          Social Media Accounts
+        </CardTitle>
         <CardDescription>
-          Connect your social media accounts to share challenges directly to your feed
+          Connect your social accounts to share gems, achievements, and insights directly from the app
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -225,6 +229,14 @@ export const SocialMediaConnect = () => {
             </div>
           );
         })}
+
+        {/* Info about OAuth configuration */}
+        <Alert className="mt-4 bg-muted/50">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="text-sm">
+            Social media connections use OAuth for secure authentication. Your credentials are never stored directly.
+          </AlertDescription>
+        </Alert>
       </CardContent>
     </Card>
   );
