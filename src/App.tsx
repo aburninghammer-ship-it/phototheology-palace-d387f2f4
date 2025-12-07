@@ -16,6 +16,7 @@ import { AchievementProvider } from "@/components/AchievementProvider";
 import { DirectMessagesProvider } from "@/contexts/DirectMessagesContext";
 import { PageStateProvider } from "@/contexts/PageStateContext";
 import { GlobalAudioProvider } from "@/contexts/GlobalAudioContext";
+import { StudySessionProvider } from "@/contexts/StudySessionContext";
 import { SplashScreen } from "@/components/SplashScreen";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "next-themes";
@@ -230,6 +231,7 @@ function App() {
             <BrowserRouter>
               <PageStateProvider>
               <GlobalAudioProvider>
+              <StudySessionProvider>
               <PageTracker />
               <LiveNotificationsProvider>
                 <AchievementProvider>
@@ -487,6 +489,7 @@ function App() {
             </DirectMessagesProvider>
           </AchievementProvider>
         </LiveNotificationsProvider>
+        </StudySessionProvider>
         </GlobalAudioProvider>
         </PageStateProvider>
       </BrowserRouter>
