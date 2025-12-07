@@ -154,9 +154,9 @@ export const TransparencySection = () => {
               </ul>
               <Button 
                 className="w-full mt-6 gradient-palace"
-                onClick={() => navigate("/auth")}
+                onClick={() => navigate("/pricing")}
               >
-                Start Free Trial
+                View Premium Plans
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>

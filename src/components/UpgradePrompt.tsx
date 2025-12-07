@@ -1,16 +1,68 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Crown, Lock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Crown, Lock, Sparkles, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface UpgradePromptProps {
   feature: string;
   description?: string;
   className?: string;
+  variant?: "card" | "inline" | "minimal";
+  showTrialOption?: boolean;
 }
 
-export const UpgradePrompt = ({ feature, description, className = "" }: UpgradePromptProps) => {
+export const UpgradePrompt = ({ 
+  feature, 
+  description, 
+  className = "",
+  variant = "card",
+  showTrialOption = true,
+}: UpgradePromptProps) => {
   const navigate = useNavigate();
+
+  if (variant === "minimal") {
+    return (
+      <div className={`flex items-center gap-2 p-2 rounded-md bg-primary/5 border border-primary/20 ${className}`}>
+        <Lock className="h-4 w-4 text-primary" />
+        <span className="text-sm text-muted-foreground flex-1">{feature} requires Premium</span>
+        <Button 
+          onClick={() => navigate("/pricing")}
+          size="sm"
+          variant="ghost"
+          className="text-primary hover:text-primary"
+        >
+          Upgrade
+          <ArrowRight className="ml-1 h-3 w-3" />
+        </Button>
+      </div>
+    );
+  }
+
+  if (variant === "inline") {
+    return (
+      <div className={`flex items-center justify-between gap-4 p-4 rounded-lg bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 ${className}`}>
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-full bg-primary/10">
+            <Crown className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <p className="font-medium">{feature}</p>
+            <p className="text-sm text-muted-foreground">
+              {description || "Upgrade to unlock this feature"}
+            </p>
+          </div>
+        </div>
+        <Button 
+          onClick={() => navigate("/pricing")}
+          className="gradient-palace shrink-0"
+        >
+          <Sparkles className="mr-2 h-4 w-4" />
+          Upgrade
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <Card className={`border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5 ${className}`}>
@@ -24,16 +76,23 @@ export const UpgradePrompt = ({ feature, description, className = "" }: UpgradeP
         <p className="text-muted-foreground">
           {description || `${feature} is available with a premium subscription.`}
         </p>
-        <Button 
-          onClick={() => navigate("/pricing")}
-          className="gradient-palace"
-        >
-          <Crown className="mr-2 h-4 w-4" />
-          Upgrade to Premium
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          Start with a 7-day free trial
-        </p>
+        
+        <div className="flex flex-col gap-2">
+          <Button 
+            onClick={() => navigate("/pricing")}
+            className="gradient-palace"
+          >
+            <Crown className="mr-2 h-4 w-4" />
+            View Premium Plans
+          </Button>
+          
+          {showTrialOption && (
+            <Badge variant="secondary" className="mx-auto gap-1">
+              <Sparkles className="h-3 w-3" />
+              7-day free trial available
+            </Badge>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

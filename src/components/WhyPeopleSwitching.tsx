@@ -48,10 +48,13 @@ export const WhyPeopleSwitching = () => {
           <Button
             size="lg"
             onClick={() => navigate("/auth")}
-            className="text-lg px-8 py-6 h-auto"
+            className="text-lg px-8 py-6 h-auto gradient-palace"
           >
-            Start Free Trial
+            Start Free — No Credit Card
           </Button>
+          <p className="text-sm text-muted-foreground mt-2">
+            Free forever tier • Upgrade when ready
+          </p>
         </div>
       </div>
     </section>
