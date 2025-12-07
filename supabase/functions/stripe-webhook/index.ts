@@ -89,13 +89,17 @@ serve(async (req) => {
             updateData.trial_ends_at = trialEnd.toISOString();
           }
 
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .update(updateData)
-            .eq('id', metadata.user_id);
+          const { error: subscriptionError } = await supabase
+            .from('user_subscriptions')
+            .upsert({
+              user_id: metadata.user_id,
+              ...updateData
+            }, {
+              onConflict: 'user_id'
+            });
 
-          if (profileError) {
-            console.error('Error updating profile for individual subscription:', profileError);
+          if (subscriptionError) {
+            console.error('Error updating subscription for individual subscription:', subscriptionError);
           } else {
             console.log(`Individual subscription activated for user ${metadata.user_id}, tier: ${tier}, status: ${isInTrial ? 'trial' : 'active'}`);
           }
@@ -242,14 +246,14 @@ serve(async (req) => {
           }
         }
 
-        // Also update individual profile if exists
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('id')
+        // Also update individual subscription if exists
+        const { data: userSub } = await supabase
+          .from('user_subscriptions')
+          .select('user_id')
           .eq('stripe_customer_id', customerId)
           .single();
 
-        if (profile) {
+        if (userSub) {
           const updateData: Record<string, any> = {
             subscription_status: subscription.status === 'trialing' ? 'trial' : (isActive ? 'active' : 'cancelled'),
             subscription_renewal_date: renewalDate.toISOString(),
@@ -261,14 +265,14 @@ serve(async (req) => {
           }
 
           const { error } = await supabase
-            .from('profiles')
+            .from('user_subscriptions')
             .update(updateData)
             .eq('stripe_customer_id', customerId);
 
           if (error) {
-            console.error('Error updating profile subscription:', error);
+            console.error('Error updating user subscription:', error);
           } else {
-            console.log(`Profile subscription updated for customer ${customerId}: ${subscription.status}`);
+            console.log(`User subscription updated for customer ${customerId}: ${subscription.status}`);
           }
         }
         break;
@@ -292,19 +296,19 @@ serve(async (req) => {
           console.log(`Church subscription cancelled for customer ${customerId}`);
         }
 
-        // Mark individual profile subscription as cancelled
-        const { error: profileError } = await supabase
-          .from('profiles')
+        // Mark individual user subscription as cancelled
+        const { error: subscriptionError } = await supabase
+          .from('user_subscriptions')
           .update({
             subscription_status: 'cancelled',
             subscription_cancelled_at: new Date().toISOString(),
           })
           .eq('stripe_customer_id', customerId);
 
-        if (profileError) {
-          console.error('Error cancelling profile subscription:', profileError);
+        if (subscriptionError) {
+          console.error('Error cancelling user subscription:', subscriptionError);
         } else {
-          console.log(`Profile subscription cancelled for customer ${customerId}`);
+          console.log(`User subscription cancelled for customer ${customerId}`);
         }
         break;
       }
@@ -319,9 +323,9 @@ serve(async (req) => {
           .update({ subscription_status: 'past_due' })
           .eq('stripe_customer_id', customerId);
 
-        // Mark individual profile as past_due
+        // Mark individual user subscription as expired
         await supabase
-          .from('profiles')
+          .from('user_subscriptions')
           .update({ subscription_status: 'expired' })
           .eq('stripe_customer_id', customerId);
 
@@ -339,9 +343,9 @@ serve(async (req) => {
           const renewalDate = new Date(subscription.current_period_end * 1000);
           const isActive = subscription.status === 'active' || subscription.status === 'trialing';
 
-          // Update profile with new renewal date
+          // Update user subscription with new renewal date
           await supabase
-            .from('profiles')
+            .from('user_subscriptions')
             .update({
               subscription_status: isActive ? 'active' : subscription.status,
               subscription_renewal_date: renewalDate.toISOString(),

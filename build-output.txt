@@ -1,0 +1,372 @@
+
+> vite_react_shadcn_ts@0.0.0 build
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+
+/grid.svg referenced in /grid.svg didn't resolve at build time, it will remain unchanged to be resolved at runtime
+[32m✓[39m 4696 modules transformed.
+rendering chunks...
+[33mwarnings when minifying css:
+▲ [WARNING] Expected identifier but found "." [css-syntax-error]
+
+    <stdin>:8087:10:
+      8087 │ .max-w-\\[.*\\], [class*="max-w-"], .w-screen, .min-w-full {
+           ╵           ^
+
+[39m
+computing gzip size...
+[2mdist/[22m[32mmanifest.webmanifest                           [39m[1m[2m    0.39 kB[22m[1m[22m
+[2mdist/[22m[32mindex.html                                     [39m[1m[2m    3.67 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+[2mdist/[22m[32massets/genesis-28-BFaCf-gy.jpg                 [39m[1m[2m   14.82 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-45-Do69XBqy.jpg                 [39m[1m[2m   15.09 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-41-XzaIow0V.jpg                 [39m[1m[2m   15.57 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-37-C3vCXq0i.jpg                 [39m[1m[2m   16.72 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-48-t-67zNm1.jpg                 [39m[1m[2m   18.14 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-36-BA7iaMnW.jpg                 [39m[1m[2m   18.41 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-40-BFbpVB1R.jpg                 [39m[1m[2m   19.02 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-34-BigaTPau.jpg                 [39m[1m[2m   19.10 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-35-CvRgC78l.jpg                 [39m[1m[2m   19.42 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-32-BhULjTK_.jpg                 [39m[1m[2m   19.75 kB[22m[1m[22m
+[2mdist/[22m[32massets/video-training-thumbnail-IueiaQrT.png   [39m[1m[2m   20.07 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-39-C989UDnQ.jpg                 [39m[1m[2m   20.35 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-26-NYNJb9U0.jpg                 [39m[1m[2m   20.78 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-50-GuTAt9v6.jpg                 [39m[1m[2m   21.27 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-44-DnljQHMa.jpg                 [39m[1m[2m   21.29 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-49-BxXo9vzS.jpg                 [39m[1m[2m   21.66 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-29-1NovHaiW.jpg                 [39m[1m[2m   22.20 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-33-je9W7_Qw.jpg                 [39m[1m[2m   22.54 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-47-SsjIAEEm.jpg                 [39m[1m[2m   22.73 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-31-DZRhUkt8.jpg                 [39m[1m[2m   23.78 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-43-uhTOHniF.jpg                 [39m[1m[2m   23.80 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-27-Chyrqg_h.jpg                 [39m[1m[2m   24.17 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-42-C65UgmQX.jpg                 [39m[1m[2m   24.85 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-46-FBZZObcu.jpg                 [39m[1m[2m   25.46 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-30-C95NEXb7.jpg                 [39m[1m[2m   28.27 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-38-DUxgDFUD.jpg                 [39m[1m[2m   29.38 kB[22m[1m[22m
+[2mdist/[22m[32massets/video-poster-sSvnmrUE.png               [39m[1m[2m   30.03 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-25-IlyFSZvM.jpg                 [39m[1m[2m   30.12 kB[22m[1m[22m
+[2mdist/[22m[32massets/master-deploy-X_JHEVJ3.png              [39m[1m[2m   38.19 kB[22m[1m[22m
+[2mdist/[22m[32massets/demo-study-buttons-ulOKtR_V.png         [39m[1m[2m   41.89 kB[22m[1m[22m
+[2mdist/[22m[32massets/practice-with-ai-2cYAmUSw.png           [39m[1m[2m   50.99 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-20-8lYtdsg3.jpg                 [39m[1m[2m   66.24 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-17-K2tTZM2h.jpg                 [39m[1m[2m   66.77 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-24-mH6j1LC9.jpg                 [39m[1m[2m   71.24 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-23-BHZQBmX8.jpg                 [39m[1m[2m   72.19 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-21-B-TyDVs9.jpg                 [39m[1m[2m   74.25 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-05-CNKyW11N.jpg                 [39m[1m[2m   74.77 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-14-6HaCfyai.jpg                 [39m[1m[2m   78.61 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-07-Ui9mDZfQ.jpg                 [39m[1m[2m   83.06 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-10-6Cjbybfs.jpg                 [39m[1m[2m   86.39 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-18-BK0rtbzp.jpg                 [39m[1m[2m   87.56 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-08-UoHO7JlG.jpg                 [39m[1m[2m   90.39 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-09-RAGuN2jW.jpg                 [39m[1m[2m   90.50 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-15-CukVFS9V.jpg                 [39m[1m[2m   92.36 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-01-OUTcXSjY.jpg                 [39m[1m[2m  107.53 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-12-OerQ3bcl.jpg                 [39m[1m[2m  109.24 kB[22m[1m[22m
+[2mdist/[22m[32massets/palace-card-back-C7zUSwEN.jpg           [39m[1m[2m  115.65 kB[22m[1m[22m
+[2mdist/[22m[32massets/demo-pt-codes-BYGZ2UIa.png              [39m[1m[2m  118.02 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-19-CPQ5O_Bf.jpg                 [39m[1m[2m  133.00 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-22-Cv53MmJn.jpg                 [39m[1m[2m  137.21 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-02-yzG2x1_C.jpg                 [39m[1m[2m  163.88 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-11-DEGuig79.jpg                 [39m[1m[2m  180.45 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-06-DMRGaKYk.jpg                 [39m[1m[2m  192.47 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-04-ESIZpnuS.jpg                 [39m[1m[2m  192.95 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-13-DlKuHY3e.jpg                 [39m[1m[2m  200.54 kB[22m[1m[22m
+[2mdist/[22m[32massets/demo-study-modes-FvyqbhPo.png           [39m[1m[2m  211.52 kB[22m[1m[22m
+[2mdist/[22m[32massets/demo-5-dimensions-t7HIjeWG.png          [39m[1m[2m  216.93 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-03-DCGDAlYi.jpg                 [39m[1m[2m  218.67 kB[22m[1m[22m
+[2mdist/[22m[32massets/demo-commentary-2akeIAoP.png            [39m[1m[2m  223.04 kB[22m[1m[22m
+[2mdist/[22m[32massets/genesis-16-BBLhRMgu.jpg                 [39m[1m[2m  309.80 kB[22m[1m[22m
+[2mdist/[22m[32massets/demo-navigation-CaP3qyuH.png            [39m[1m[2m  327.10 kB[22m[1m[22m
+[2mdist/[22m[32massets/demo-translation-BGukllVA.png           [39m[1m[2m  392.98 kB[22m[1m[22m
+[2mdist/[22m[32massets/magic-eye-BfzqLBuO.png                  [39m[1m[2m  561.73 kB[22m[1m[22m
+[2mdist/[22m[32massets/phototheology-hero-C2GncmQ4.png         [39m[1m[2m3,546.32 kB[22m[1m[22m
+[2mdist/[22m[35massets/index-DmAatU4-.css                      [39m[1m[2m  294.35 kB[22m[1m[22m[2m │ gzip:  37.54 kB[22m
+[2mdist/[22m[36massets/js/collapsible-DAFoo6iu.js              [39m[1m[2m    0.10 kB[22m[1m[22m[2m │ gzip:   0.11 kB[22m
+[2mdist/[22m[36massets/js/sanitize-qXEB0YAx.js                 [39m[1m[2m    0.25 kB[22m[1m[22m[2m │ gzip:   0.18 kB[22m
+[2mdist/[22m[36massets/js/glass-bubbles-DUCj8TlA.js            [39m[1m[2m    0.26 kB[22m[1m[22m[2m │ gzip:   0.16 kB[22m
+[2mdist/[22m[36massets/js/plus-Cyh6QGCM.js                     [39m[1m[2m    0.32 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+[2mdist/[22m[36massets/js/filter-BaEyY1a3.js                   [39m[1m[2m    0.33 kB[22m[1m[22m[2m │ gzip:   0.26 kB[22m
+[2mdist/[22m[36massets/js/arrow-left-BBl9194N.js               [39m[1m[2m    0.33 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2mdist/[22m[36massets/js/code-Ctbkod4W.js                     [39m[1m[2m    0.35 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2mdist/[22m[36massets/js/circle-play-YBPEUM0w.js              [39m[1m[2m    0.36 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2mdist/[22m[36massets/js/book-nrPL05b7.js                     [39m[1m[2m    0.36 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+[2mdist/[22m[36massets/js/info-8GZyCzMR.js                     [39m[1m[2m    0.37 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+[2mdist/[22m[36massets/js/circle-x-B-Oo5pPB.js                 [39m[1m[2m    0.37 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+[2mdist/[22m[36massets/js/trending-down-B5ceVUDd.js            [39m[1m[2m    0.38 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+[2mdist/[22m[36massets/js/gem-B7lzawL_.js                      [39m[1m[2m    0.39 kB[22m[1m[22m[2m │ gzip:   0.29 kB[22m
+[2mdist/[22m[36massets/js/headphones-CQ8QDaQH.js               [39m[1m[2m    0.41 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+[2mdist/[22m[36massets/js/history-s9PkRhbt.js                  [39m[1m[2m    0.41 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[36massets/js/link-2-B3rxbtwE.js                   [39m[1m[2m    0.41 kB[22m[1m[22m[2m │ gzip:   0.31 kB[22m
+[2mdist/[22m[36massets/js/type-BiMD1VyE.js                     [39m[1m[2m    0.41 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[36massets/js/wind-CZ4BUjPD.js                     [39m[1m[2m    0.42 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[36massets/js/circle-alert-Lbf3QGRk.js             [39m[1m[2m    0.42 kB[22m[1m[22m[2m │ gzip:   0.29 kB[22m
+[2mdist/[22m[36massets/js/external-link-321tGbe9.js            [39m[1m[2m    0.42 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[36massets/js/chart-column-Dgpmlrhd.js             [39m[1m[2m    0.42 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[36massets/js/compass-ymSB_xU2.js                  [39m[1m[2m    0.42 kB[22m[1m[22m[2m │ gzip:   0.31 kB[22m
+[2mdist/[22m[36massets/js/map-pin-BGGYbpcc.js                  [39m[1m[2m    0.42 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+[2mdist/[22m[36massets/js/scroll-BcjHmcGJ.js                   [39m[1m[2m    0.44 kB[22m[1m[22m[2m │ gzip:   0.31 kB[22m
+[2mdist/[22m[36massets/js/mic-CFa2QJKm.js                      [39m[1m[2m    0.44 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+[2mdist/[22m[36massets/js/maximize-Cr3eKuZQ.js                 [39m[1m[2m    0.46 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[36massets/js/linkedin-CuBHbp6o.js                 [39m[1m[2m    0.46 kB[22m[1m[22m[2m │ gzip:   0.34 kB[22m
+[2mdist/[22m[36massets/js/grid-3x3-BKqmVpsb.js                 [39m[1m[2m    0.46 kB[22m[1m[22m[2m │ gzip:   0.31 kB[22m
+[2mdist/[22m[36massets/js/list-Cs5RX16o.js                     [39m[1m[2m    0.47 kB[22m[1m[22m[2m │ gzip:   0.29 kB[22m
+[2mdist/[22m[36massets/js/chef-hat-DrGanio3.js                 [39m[1m[2m    0.48 kB[22m[1m[22m[2m │ gzip:   0.34 kB[22m
+[2mdist/[22m[36massets/js/cross-pvt0iKfY.js                    [39m[1m[2m    0.48 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[36massets/js/user-plus-DQdN2vV_.js                [39m[1m[2m    0.48 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2mdist/[22m[36massets/js/VoiceChatWidget-C2yPCRIX.js          [39m[1m[2m    0.49 kB[22m[1m[22m[2m │ gzip:   0.35 kB[22m
+[2mdist/[22m[36massets/js/square-pen-CzDG9UAK.js               [39m[1m[2m    0.49 kB[22m[1m[22m[2m │ gzip:   0.34 kB[22m
+[2mdist/[22m[36massets/js/refresh-cw-DTmmfg7F.js               [39m[1m[2m    0.49 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2mdist/[22m[36massets/js/tag-CYeDXDjp.js                      [39m[1m[2m    0.50 kB[22m[1m[22m[2m │ gzip:   0.35 kB[22m
+[2mdist/[22m[36massets/js/save-r0c9_aGv.js                     [39m[1m[2m    0.50 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2mdist/[22m[36massets/js/bot-DEcAgACG.js                      [39m[1m[2m    0.50 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2mdist/[22m[36massets/js/scroll-text-CWFDZkW8.js              [39m[1m[2m    0.52 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2mdist/[22m[36massets/js/scale-C5DJLg2b.js                    [39m[1m[2m    0.53 kB[22m[1m[22m[2m │ gzip:   0.34 kB[22m
+[2mdist/[22m[36massets/js/layers-dR0gAw-n.js                   [39m[1m[2m    0.53 kB[22m[1m[22m[2m │ gzip:   0.34 kB[22m
+[2mdist/[22m[36massets/js/usePalaceProgress-DwJzIdTs.js        [39m[1m[2m    0.57 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/js/construction-CoVEKMM1.js             [39m[1m[2m    0.59 kB[22m[1m[22m[2m │ gzip:   0.36 kB[22m
+[2mdist/[22m[36massets/js/mic-off-DGiuTumO.js                  [39m[1m[2m    0.59 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/[22m[36massets/js/map-DY6cSadH.js                      [39m[1m[2m    0.59 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/[22m[36massets/js/eye-off-d5npgqT5.js                  [39m[1m[2m    0.60 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/[22m[36massets/js/medal-LZZJq9if.js                    [39m[1m[2m    0.60 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/[22m[36massets/js/NotFound-BwGdpjs7.js                 [39m[1m[2m    0.62 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/[22m[36massets/js/church-kE7c440S.js                   [39m[1m[2m    0.63 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+[2mdist/[22m[36massets/js/castle-CIMAZGuH.js                   [39m[1m[2m    0.65 kB[22m[1m[22m[2m │ gzip:   0.37 kB[22m
+[2mdist/[22m[36massets/js/wand-sparkles-Ck1IACb6.js            [39m[1m[2m    0.68 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/js/calculator-ejzRuPKK.js               [39m[1m[2m    0.70 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/[22m[36massets/js/swords-BjYIOrKR.js                   [39m[1m[2m    0.72 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+[2mdist/[22m[36massets/js/bible-DiMrV-FV.js                    [39m[1m[2m    0.72 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/js/dumbbell-CL4J6_Z8.js                 [39m[1m[2m    0.73 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/js/puzzle-l_l1a79w.js                   [39m[1m[2m    0.74 kB[22m[1m[22m[2m │ gzip:   0.37 kB[22m
+[2mdist/[22m[36massets/js/useReadingHistory-Cmqes5Xg.js        [39m[1m[2m    0.75 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[2mdist/[22m[36massets/js/palette-BMTd8cxR.js                  [39m[1m[2m    0.78 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+[2mdist/[22m[36massets/js/telescope-9my7OopP.js                [39m[1m[2m    0.79 kB[22m[1m[22m[2m │ gzip:   0.48 kB[22m
+[2mdist/[22m[36massets/js/party-popper-DXyVn0dt.js             [39m[1m[2m    0.90 kB[22m[1m[22m[2m │ gzip:   0.52 kB[22m
+[2mdist/[22m[36massets/js/useMasteryStreak-I-LDJslz.js         [39m[1m[2m    0.96 kB[22m[1m[22m[2m │ gzip:   0.51 kB[22m
+[2mdist/[22m[36massets/js/AuthCallback-Czio3xd_.js             [39m[1m[2m    1.02 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2mdist/[22m[36massets/js/ChurchSignupCancelled-gPcVOjHW.js    [39m[1m[2m    1.25 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2mdist/[22m[36massets/js/QuickAudioButton-Cxubm8DO.js         [39m[1m[2m    1.28 kB[22m[1m[22m[2m │ gzip:   0.69 kB[22m
+[2mdist/[22m[36massets/js/ManageSubscription-Cw5Lb3iY.js       [39m[1m[2m    1.32 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+[2mdist/[22m[36massets/js/offlineAudioCache-BxxYtUU2.js        [39m[1m[2m    1.46 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2mdist/[22m[36massets/js/validationSchemas-8knlJfGQ.js        [39m[1m[2m    1.51 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+[2mdist/[22m[36massets/js/useSubscription-QVn6gdC8.js          [39m[1m[2m    1.52 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+[2mdist/[22m[36massets/js/useRoomUnlock-CX3EALVH.js            [39m[1m[2m    1.54 kB[22m[1m[22m[2m │ gzip:   0.74 kB[22m
+[2mdist/[22m[36massets/js/ApologeticsGPT-CZVawp-l.js           [39m[1m[2m    1.61 kB[22m[1m[22m[2m │ gzip:   0.79 kB[22m
+[2mdist/[22m[36massets/js/FrameSnapshot-c3RED-S9.js            [39m[1m[2m    1.78 kB[22m[1m[22m[2m │ gzip:   0.95 kB[22m
+[2mdist/[22m[36massets/js/SermonPDFExport-Bcw5C_Sk.js          [39m[1m[2m    1.83 kB[22m[1m[22m[2m │ gzip:   0.98 kB[22m
+[2mdist/[22m[36massets/js/index-ObZYcR4D.js                    [39m[1m[2m    1.93 kB[22m[1m[22m[2m │ gzip:   0.74 kB[22m
+[2mdist/[22m[36massets/js/ChurchSignupSuccess-Dr-ym_XB.js      [39m[1m[2m    1.98 kB[22m[1m[22m[2m │ gzip:   0.85 kB[22m
+[2mdist/[22m[36massets/js/useSpacedRepetition-Cp2YLvqw.js      [39m[1m[2m    2.02 kB[22m[1m[22m[2m │ gzip:   0.94 kB[22m
+[2mdist/[22m[36massets/js/MemoryGameSelect-CSoOAebv.js         [39m[1m[2m    2.04 kB[22m[1m[22m[2m │ gzip:   0.95 kB[22m
+[2mdist/[22m[36massets/js/useTextToSpeech-DNIqWyVZ.js          [39m[1m[2m    2.08 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
+[2mdist/[22m[36massets/js/index-DtBPdpxp.js                    [39m[1m[2m    2.17 kB[22m[1m[22m[2m │ gzip:   0.97 kB[22m
+[2mdist/[22m[36massets/js/switch-CQzpg1hn.js                   [39m[1m[2m    2.45 kB[22m[1m[22m[2m │ gzip:   1.23 kB[22m
+[2mdist/[22m[36massets/js/AccessCode-DRi4DzLs.js               [39m[1m[2m    2.45 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+[2mdist/[22m[36massets/js/WitnessTrial-CqWpD8T4.js             [39m[1m[2m    2.57 kB[22m[1m[22m[2m │ gzip:   1.24 kB[22m
+[2mdist/[22m[36massets/js/useErrorHandler-CVwcHQjo.js          [39m[1m[2m    2.64 kB[22m[1m[22m[2m │ gzip:   1.46 kB[22m
+[2mdist/[22m[36massets/js/SpacedRepetitionReview-DdnZMSsX.js   [39m[1m[2m    2.76 kB[22m[1m[22m[2m │ gzip:   0.96 kB[22m
+[2mdist/[22m[36massets/js/KidGPT-BZDbPLIh.js                   [39m[1m[2m    2.83 kB[22m[1m[22m[2m │ gzip:   1.20 kB[22m
+[2mdist/[22m[36massets/js/useReadingPlans-Baf0_g8p.js          [39m[1m[2m    2.84 kB[22m[1m[22m[2m │ gzip:   1.10 kB[22m
+[2mdist/[22m[36massets/js/PhototheologyGPT-DRUgo70F.js         [39m[1m[2m    2.89 kB[22m[1m[22m[2m │ gzip:   1.20 kB[22m
+[2mdist/[22m[36massets/js/StudentVerification-DyWTZTUr.js      [39m[1m[2m    3.03 kB[22m[1m[22m[2m │ gzip:   1.31 kB[22m
+[2mdist/[22m[36massets/js/DanielRevelationGPT-DuqScEGp.js      [39m[1m[2m    3.05 kB[22m[1m[22m[2m │ gzip:   1.34 kB[22m
+[2mdist/[22m[36massets/js/Certificates-2bXy3jMI.js             [39m[1m[2m    3.11 kB[22m[1m[22m[2m │ gzip:   1.26 kB[22m
+[2mdist/[22m[36massets/js/useDevotionals-CEUj-WRU.js           [39m[1m[2m    3.28 kB[22m[1m[22m[2m │ gzip:   1.11 kB[22m
+[2mdist/[22m[36massets/js/Feedback-D5TJ7Zi5.js                 [39m[1m[2m    3.33 kB[22m[1m[22m[2m │ gzip:   1.39 kB[22m
+[2mdist/[22m[36massets/js/EnhancedSocialShare-D1O5SO88.js      [39m[1m[2m    3.35 kB[22m[1m[22m[2m │ gzip:   1.43 kB[22m
+[2mdist/[22m[36massets/js/JoinChurch-BcBe0j14.js               [39m[1m[2m    3.39 kB[22m[1m[22m[2m │ gzip:   1.35 kB[22m
+[2mdist/[22m[36massets/js/useDevotionalProfiles-B82F0pWH.js    [39m[1m[2m    3.48 kB[22m[1m[22m[2m │ gzip:   0.97 kB[22m
+[2mdist/[22m[36massets/js/ControversyRaid-DhofAleb.js          [39m[1m[2m    3.63 kB[22m[1m[22m[2m │ gzip:   1.62 kB[22m
+[2mdist/[22m[36massets/js/bibleBooks-DU3Dr3eH.js               [39m[1m[2m    3.65 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+[2mdist/[22m[36massets/js/BibleSearch-a3UQSKOW.js              [39m[1m[2m    3.71 kB[22m[1m[22m[2m │ gzip:   1.46 kB[22m
+[2mdist/[22m[36massets/js/Connect6Draft-DlCu73Xt.js            [39m[1m[2m    3.82 kB[22m[1m[22m[2m │ gzip:   1.68 kB[22m
+[2mdist/[22m[36massets/js/RevelationCourseKids-B4xhYgN_.js     [39m[1m[2m    3.89 kB[22m[1m[22m[2m │ gzip:   1.33 kB[22m
+[2mdist/[22m[36massets/js/DeleteAccount-BlF3zmhV.js            [39m[1m[2m    3.91 kB[22m[1m[22m[2m │ gzip:   1.51 kB[22m
+[2mdist/[22m[36massets/js/Streaks-Bgk6RXJ0.js                  [39m[1m[2m    3.93 kB[22m[1m[22m[2m │ gzip:   1.18 kB[22m
+[2mdist/[22m[36massets/js/HowItWorksDialog-DzHFMnpY.js         [39m[1m[2m    3.94 kB[22m[1m[22m[2m │ gzip:   1.55 kB[22m
+[2mdist/[22m[36massets/js/radio-group-DSMnTfxD.js              [39m[1m[2m    3.95 kB[22m[1m[22m[2m │ gzip:   1.79 kB[22m
+[2mdist/[22m[36massets/js/BibleChapter-CEwGcm06.js             [39m[1m[2m    4.00 kB[22m[1m[22m[2m │ gzip:   1.59 kB[22m
+[2mdist/[22m[36massets/js/PublicSeriesBrowser-p8oC8b57.js      [39m[1m[2m    4.04 kB[22m[1m[22m[2m │ gzip:   1.63 kB[22m
+[2mdist/[22m[36massets/js/MemoryPalaceBuilder-B3wxg1Kl.js      [39m[1m[2m    4.36 kB[22m[1m[22m[2m │ gzip:   1.74 kB[22m
+[2mdist/[22m[36massets/js/SocialShareButton-DNmoLWVf.js        [39m[1m[2m    4.39 kB[22m[1m[22m[2m │ gzip:   1.58 kB[22m
+[2mdist/[22m[36massets/js/FirstLetterGame-DfgUtZmZ.js          [39m[1m[2m    4.42 kB[22m[1m[22m[2m │ gzip:   1.65 kB[22m
+[2mdist/[22m[36massets/js/MemoryPalacePractice-Bq_98NCJ.js     [39m[1m[2m    4.43 kB[22m[1m[22m[2m │ gzip:   1.48 kB[22m
+[2mdist/[22m[36massets/js/MemoryGame-BH_IEvc9.js               [39m[1m[2m    4.48 kB[22m[1m[22m[2m │ gzip:   1.78 kB[22m
+[2mdist/[22m[36massets/js/GameLeaderboard-B4KCzs4p.js          [39m[1m[2m    4.56 kB[22m[1m[22m[2m │ gzip:   1.60 kB[22m
+[2mdist/[22m[36massets/js/LiveStudy-DMKzv6mu.js                [39m[1m[2m    4.57 kB[22m[1m[22m[2m │ gzip:   1.92 kB[22m
+[2mdist/[22m[36massets/js/accordion-C866andQ.js                [39m[1m[2m    4.58 kB[22m[1m[22m[2m │ gzip:   1.83 kB[22m
+[2mdist/[22m[36massets/js/PrivacyPolicy-wXWjBpe8.js            [39m[1m[2m    4.68 kB[22m[1m[22m[2m │ gzip:   1.52 kB[22m
+[2mdist/[22m[36massets/js/alert-dialog-DZloB-Dm.js             [39m[1m[2m    4.75 kB[22m[1m[22m[2m │ gzip:   1.74 kB[22m
+[2mdist/[22m[36massets/js/RevelationCourse-aaCuJhQp.js         [39m[1m[2m    4.98 kB[22m[1m[22m[2m │ gzip:   1.50 kB[22m
+[2mdist/[22m[36massets/js/PublicImageLibrary-BFg4AI1y.js       [39m[1m[2m    5.00 kB[22m[1m[22m[2m │ gzip:   2.02 kB[22m
+[2mdist/[22m[36massets/js/AdminSubscriptions-CMvhLsvb.js       [39m[1m[2m    5.08 kB[22m[1m[22m[2m │ gzip:   1.41 kB[22m
+[2mdist/[22m[36massets/js/TreasureHunt-BqWmIgqK.js             [39m[1m[2m    5.12 kB[22m[1m[22m[2m │ gzip:   2.04 kB[22m
+[2mdist/[22m[36massets/js/TextShareButton-BIWcbOZf.js          [39m[1m[2m    5.18 kB[22m[1m[22m[2m │ gzip:   2.50 kB[22m
+[2mdist/[22m[36massets/js/SermonArchive-Chi-SPsL.js            [39m[1m[2m    5.18 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+[2mdist/[22m[36massets/js/ShareDevotionalDialog-DsFJjLqH.js    [39m[1m[2m    5.22 kB[22m[1m[22m[2m │ gzip:   1.95 kB[22m
+[2mdist/[22m[36massets/js/MemoryGamePlay-2NOADIZ_.js           [39m[1m[2m    5.23 kB[22m[1m[22m[2m │ gzip:   1.65 kB[22m
+[2mdist/[22m[36massets/js/PrincipleSprint-CWkvooNS.js          [39m[1m[2m    5.23 kB[22m[1m[22m[2m │ gzip:   1.90 kB[22m
+[2mdist/[22m[36massets/js/ShareChallenge-C5YJGQmb.js           [39m[1m[2m    5.30 kB[22m[1m[22m[2m │ gzip:   2.30 kB[22m
+[2mdist/[22m[36massets/js/TrainingDrills-CmmcJ-ts.js           [39m[1m[2m    5.52 kB[22m[1m[22m[2m │ gzip:   2.13 kB[22m
+[2mdist/[22m[36massets/js/ChristLock-rt9GnEGN.js               [39m[1m[2m    5.61 kB[22m[1m[22m[2m │ gzip:   2.16 kB[22m
+[2mdist/[22m[36massets/js/UserMasterySword-DB7ywozY.js         [39m[1m[2m    5.64 kB[22m[1m[22m[2m │ gzip:   1.50 kB[22m
+[2mdist/[22m[36massets/js/BlueprintMap-Bke-7L-I.js             [39m[1m[2m    5.72 kB[22m[1m[22m[2m │ gzip:   1.77 kB[22m
+[2mdist/[22m[36massets/js/workbox-window.prod.es5-B9K5rw8f.js  [39m[1m[2m    5.72 kB[22m[1m[22m[2m │ gzip:   2.35 kB[22m
+[2mdist/[22m[36massets/js/TimeZoneInvasion-CdwMhtQF.js         [39m[1m[2m    5.82 kB[22m[1m[22m[2m │ gzip:   2.24 kB[22m
+[2mdist/[22m[36massets/js/Courses-Co_orDkz.js                  [39m[1m[2m    5.90 kB[22m[1m[22m[2m │ gzip:   2.07 kB[22m
+[2mdist/[22m[36massets/js/KidsGamePlay-CLGNb_wY.js             [39m[1m[2m    5.93 kB[22m[1m[22m[2m │ gzip:   2.27 kB[22m
+[2mdist/[22m[36massets/js/GamePlay-CTYu4o21.js                 [39m[1m[2m    6.17 kB[22m[1m[22m[2m │ gzip:   2.26 kB[22m
+[2mdist/[22m[36massets/js/TermsOfService-C0bjjWAD.js           [39m[1m[2m    6.17 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+[2mdist/[22m[36massets/js/ChainWar-CYEUlj-8.js                 [39m[1m[2m    6.26 kB[22m[1m[22m[2m │ gzip:   2.40 kB[22m
+[2mdist/[22m[36massets/js/PrincipleTournaments-Cis61ezN.js     [39m[1m[2m    6.31 kB[22m[1m[22m[2m │ gzip:   2.17 kB[22m
+[2mdist/[22m[36massets/js/EquationBuilder-BBbkVU6g.js          [39m[1m[2m    6.34 kB[22m[1m[22m[2m │ gzip:   2.60 kB[22m
+[2mdist/[22m[36massets/js/BlueRoomGame-CjZBtC-r.js             [39m[1m[2m    6.45 kB[22m[1m[22m[2m │ gzip:   2.56 kB[22m
+[2mdist/[22m[36massets/js/StudyGroups-C_0mCjmw.js              [39m[1m[2m    6.45 kB[22m[1m[22m[2m │ gzip:   2.23 kB[22m
+[2mdist/[22m[36massets/js/FloorDetail-DG03TKM1.js              [39m[1m[2m    6.46 kB[22m[1m[22m[2m │ gzip:   2.65 kB[22m
+[2mdist/[22m[36massets/js/PrincipleCards-BvFYR7l5.js           [39m[1m[2m    6.47 kB[22m[1m[22m[2m │ gzip:   2.26 kB[22m
+[2mdist/[22m[36massets/js/StoryRoomGame-Cmd1DK60.js            [39m[1m[2m    6.50 kB[22m[1m[22m[2m │ gzip:   2.52 kB[22m
+[2mdist/[22m[36massets/js/PTKidsGames-DhtIfPwu.js              [39m[1m[2m    6.54 kB[22m[1m[22m[2m │ gzip:   2.28 kB[22m
+[2mdist/[22m[36massets/js/GrowthJournal-CzDRH8Z5.js            [39m[1m[2m    6.68 kB[22m[1m[22m[2m │ gzip:   1.91 kB[22m
+[2mdist/[22m[36massets/js/AppUpdateIdeas-Bkta9q7B.js           [39m[1m[2m    6.70 kB[22m[1m[22m[2m │ gzip:   2.44 kB[22m
+[2mdist/[22m[36massets/js/SanctuaryRun-BdOgQzTC.js             [39m[1m[2m    6.75 kB[22m[1m[22m[2m │ gzip:   2.57 kB[22m
+[2mdist/[22m[36massets/js/VerseMatch-D_GFmdSQ.js               [39m[1m[2m    6.81 kB[22m[1m[22m[2m │ gzip:   2.45 kB[22m
+[2mdist/[22m[36massets/js/SeriesPresentationMode-By1Br4Rh.js   [39m[1m[2m    6.90 kB[22m[1m[22m[2m │ gzip:   2.25 kB[22m
+[2mdist/[22m[36massets/js/DimensionsRoom-B_TlieGY.js           [39m[1m[2m    6.94 kB[22m[1m[22m[2m │ gzip:   2.94 kB[22m
+[2mdist/[22m[36massets/js/ResearchMode-CGrtOZls.js             [39m[1m[2m    7.02 kB[22m[1m[22m[2m │ gzip:   2.47 kB[22m
+[2mdist/[22m[36massets/js/EscapeRoomPlay-BuLpJUyA.js           [39m[1m[2m    7.07 kB[22m[1m[22m[2m │ gzip:   2.57 kB[22m
+[2mdist/[22m[36massets/js/howItWorksSteps-lvwKc5bV.js          [39m[1m[2m    7.14 kB[22m[1m[22m[2m │ gzip:   2.86 kB[22m
+[2mdist/[22m[36massets/js/ConnectionDash-DgNKSP9j.js           [39m[1m[2m    7.16 kB[22m[1m[22m[2m │ gzip:   2.62 kB[22m
+[2mdist/[22m[36massets/js/PTKidsGamePlay-W9y1SHu9.js           [39m[1m[2m    7.19 kB[22m[1m[22m[2m │ gzip:   2.79 kB[22m
+[2mdist/[22m[36massets/js/ConcentrationRoom-BYq4iBXM.js        [39m[1m[2m    7.27 kB[22m[1m[22m[2m │ gzip:   3.02 kB[22m
+[2mdist/[22m[36massets/js/Referrals-DEbHW6Cj.js                [39m[1m[2m    7.32 kB[22m[1m[22m[2m │ gzip:   2.08 kB[22m
+[2mdist/[22m[36massets/js/EscapeTheDragon-CLYYvGTB.js          [39m[1m[2m    7.44 kB[22m[1m[22m[2m │ gzip:   2.92 kB[22m
+[2mdist/[22m[36massets/js/PrinciplePuzzle-Dt1HQpi1.js          [39m[1m[2m    7.47 kB[22m[1m[22m[2m │ gzip:   2.53 kB[22m
+[2mdist/[22m[36massets/js/SeriesLessonEditor-DwSHB-kE.js       [39m[1m[2m    7.48 kB[22m[1m[22m[2m │ gzip:   2.17 kB[22m
+[2mdist/[22m[36massets/js/LiveStudyRoom-B18b6cK0.js            [39m[1m[2m    7.54 kB[22m[1m[22m[2m │ gzip:   2.66 kB[22m
+[2mdist/[22m[36massets/js/CultureControversy-XRcLcuU6.js       [39m[1m[2m    7.56 kB[22m[1m[22m[2m │ gzip:   2.69 kB[22m
+[2mdist/[22m[36massets/js/SeriesPresenter-immfeRfV.js          [39m[1m[2m    7.73 kB[22m[1m[22m[2m │ gzip:   2.18 kB[22m
+[2mdist/[22m[36massets/js/ChurchSignup-C9MNKYT7.js             [39m[1m[2m    7.76 kB[22m[1m[22m[2m │ gzip:   2.76 kB[22m
+[2mdist/[22m[36massets/js/PrincipleCardsGame-B17HQogi.js       [39m[1m[2m    7.96 kB[22m[1m[22m[2m │ gzip:   2.73 kB[22m
+[2mdist/[22m[36massets/js/PalaceQuiz-B652lhMH.js               [39m[1m[2m    7.97 kB[22m[1m[22m[2m │ gzip:   2.91 kB[22m
+[2mdist/[22m[36massets/js/UserAnalytics-DiBgvGwb.js            [39m[1m[2m    7.99 kB[22m[1m[22m[2m │ gzip:   2.34 kB[22m
+[2mdist/[22m[36massets/js/PowerOfTheLamb-axVM_yDH.js           [39m[1m[2m    8.05 kB[22m[1m[22m[2m │ gzip:   2.04 kB[22m
+[2mdist/[22m[36massets/js/TreasureHuntPlay-B2GK9Omt.js         [39m[1m[2m    8.39 kB[22m[1m[22m[2m │ gzip:   2.69 kB[22m
+[2mdist/[22m[36massets/js/ObservationGame-BfmsKXxB.js          [39m[1m[2m    8.46 kB[22m[1m[22m[2m │ gzip:   3.59 kB[22m
+[2mdist/[22m[36massets/js/PalaceExplorer-CBfGDd5b.js           [39m[1m[2m    8.54 kB[22m[1m[22m[2m │ gzip:   2.78 kB[22m
+[2mdist/[22m[36massets/js/BibleEncyclopedia-XlFTuOz5.js        [39m[1m[2m    8.62 kB[22m[1m[22m[2m │ gzip:   3.27 kB[22m
+[2mdist/[22m[36massets/js/EncyclopediaArticle-T0iuSvop.js      [39m[1m[2m    8.68 kB[22m[1m[22m[2m │ gzip:   2.57 kB[22m
+[2mdist/[22m[36massets/js/CriticsAnalysis-CyYG_q2k.js          [39m[1m[2m    8.69 kB[22m[1m[22m[2m │ gzip:   2.53 kB[22m
+[2mdist/[22m[36massets/js/ContentLibrary-chlyGPpf.js           [39m[1m[2m    8.84 kB[22m[1m[22m[2m │ gzip:   2.66 kB[22m
+[2mdist/[22m[36massets/js/PTMultiplayerLobby-CXOUcB6D.js       [39m[1m[2m    8.92 kB[22m[1m[22m[2m │ gzip:   3.03 kB[22m
+[2mdist/[22m[36massets/js/bibleApi-B2JLb2SD.js                 [39m[1m[2m    8.92 kB[22m[1m[22m[2m │ gzip:   3.55 kB[22m
+[2mdist/[22m[36massets/js/StudyPartners-B-M2RC8z.js            [39m[1m[2m    9.33 kB[22m[1m[22m[2m │ gzip:   2.82 kB[22m
+[2mdist/[22m[36massets/js/TournamentDetail-Um7J0Wa4.js         [39m[1m[2m    9.36 kB[22m[1m[22m[2m │ gzip:   2.76 kB[22m
+[2mdist/[22m[36massets/js/TagInput-DpwZhARU.js                 [39m[1m[2m    9.37 kB[22m[1m[22m[2m │ gzip:   3.64 kB[22m
+[2mdist/[22m[36massets/js/SimpleVoiceRoom-BuDz_vUV.js          [39m[1m[2m    9.43 kB[22m[1m[22m[2m │ gzip:   3.69 kB[22m
+[2mdist/[22m[36massets/js/MemorizationVerses-pdcwlELf.js       [39m[1m[2m    9.57 kB[22m[1m[22m[2m │ gzip:   3.25 kB[22m
+[2mdist/[22m[36massets/js/PTIntegrationPanel-BKAFJcjm.js       [39m[1m[2m    9.58 kB[22m[1m[22m[2m │ gzip:   3.18 kB[22m
+[2mdist/[22m[36massets/js/AscensionsExpansions-Bkp-a7VB.js     [39m[1m[2m    9.70 kB[22m[1m[22m[2m │ gzip:   3.35 kB[22m
+[2mdist/[22m[36massets/js/MemoryGameComplete-BkVDscjj.js       [39m[1m[2m    9.87 kB[22m[1m[22m[2m │ gzip:   2.83 kB[22m
+[2mdist/[22m[36massets/js/MusicCategories-C9atYnnr.js          [39m[1m[2m    9.93 kB[22m[1m[22m[2m │ gzip:   3.22 kB[22m
+[2mdist/[22m[36massets/js/DailyVerse-DFoADddU.js               [39m[1m[2m   10.04 kB[22m[1m[22m[2m │ gzip:   3.14 kB[22m
+[2mdist/[22m[36massets/js/BranchStudy-wjxidmH9.js              [39m[1m[2m   10.24 kB[22m[1m[22m[2m │ gzip:   3.53 kB[22m
+[2mdist/[22m[36massets/js/OfflineContent-Dj0hZIiv.js           [39m[1m[2m   10.32 kB[22m[1m[22m[2m │ gzip:   3.11 kB[22m
+[2mdist/[22m[36massets/js/ProphecyWatch-CviGtlY_.js            [39m[1m[2m   10.35 kB[22m[1m[22m[2m │ gzip:   3.52 kB[22m
+[2mdist/[22m[36massets/js/UserProfile-BQUAqHuy.js              [39m[1m[2m   10.55 kB[22m[1m[22m[2m │ gzip:   2.99 kB[22m
+[2mdist/[22m[36massets/js/BibleStudyLeader-BE_pBP5s.js         [39m[1m[2m   10.87 kB[22m[1m[22m[2m │ gzip:   3.42 kB[22m
+[2mdist/[22m[36massets/js/Flashcards-BhdJAtV4.js               [39m[1m[2m   10.88 kB[22m[1m[22m[2m │ gzip:   3.21 kB[22m
+[2mdist/[22m[36massets/js/AreaChart-CVIhuCli.js                [39m[1m[2m   10.96 kB[22m[1m[22m[2m │ gzip:   4.06 kB[22m
+[2mdist/[22m[36massets/js/VideoTraining-D6fDiLeZ.js            [39m[1m[2m   11.18 kB[22m[1m[22m[2m │ gzip:   4.18 kB[22m
+[2mdist/[22m[36massets/js/ReportCardDisplay-BKEcjEKz.js        [39m[1m[2m   11.21 kB[22m[1m[22m[2m │ gzip:   3.58 kB[22m
+[2mdist/[22m[36massets/js/ChefChallenge-xXemaIOg.js            [39m[1m[2m   11.30 kB[22m[1m[22m[2m │ gzip:   3.81 kB[22m
+[2mdist/[22m[36massets/js/KidsGames-jKww_J56.js                [39m[1m[2m   11.52 kB[22m[1m[22m[2m │ gzip:   4.19 kB[22m
+[2mdist/[22m[36massets/js/DevotionalProfileDetail-B8Kgsdng.js  [39m[1m[2m   12.23 kB[22m[1m[22m[2m │ gzip:   3.99 kB[22m
+[2mdist/[22m[36massets/js/PublicDevotionalView-DX82FXNN.js     [39m[1m[2m   12.32 kB[22m[1m[22m[2m │ gzip:   3.45 kB[22m
+[2mdist/[22m[36massets/js/format-CnQnMc7Y.js                   [39m[1m[2m   12.63 kB[22m[1m[22m[2m │ gzip:   3.37 kB[22m
+[2mdist/[22m[36massets/js/FloorMastery-BRFqTkY6.js             [39m[1m[2m   12.73 kB[22m[1m[22m[2m │ gzip:   3.94 kB[22m
+[2mdist/[22m[36massets/js/ThemeCrossReference-Cv4v20CX.js      [39m[1m[2m   12.76 kB[22m[1m[22m[2m │ gzip:   4.20 kB[22m
+[2mdist/[22m[36massets/js/DailyReading-DzxgRQQ3.js             [39m[1m[2m   12.76 kB[22m[1m[22m[2m │ gzip:   4.19 kB[22m
+[2mdist/[22m[36massets/js/formatJeevesResponse-C25LoXqA.js     [39m[1m[2m   12.83 kB[22m[1m[22m[2m │ gzip:   3.81 kB[22m
+[2mdist/[22m[36massets/js/Guilds-CyHq5POV.js                   [39m[1m[2m   12.84 kB[22m[1m[22m[2m │ gzip:   3.78 kB[22m
+[2mdist/[22m[36massets/js/GenesisHighRise-BFOdUjTB.js          [39m[1m[2m   12.96 kB[22m[1m[22m[2m │ gzip:   4.71 kB[22m
+[2mdist/[22m[36massets/js/Onboarding-gkJV6fYr.js               [39m[1m[2m   14.64 kB[22m[1m[22m[2m │ gzip:   4.13 kB[22m
+[2mdist/[22m[36massets/js/AdminAnalytics-BlnVS-Lt.js           [39m[1m[2m   14.75 kB[22m[1m[22m[2m │ gzip:   4.70 kB[22m
+[2mdist/[22m[36massets/js/WhyPhototheology-C1w8pi30.js         [39m[1m[2m   14.76 kB[22m[1m[22m[2m │ gzip:   3.73 kB[22m
+[2mdist/[22m[36massets/js/VerseMemoryHall-N8Mu91A0.js          [39m[1m[2m   14.97 kB[22m[1m[22m[2m │ gzip:   4.13 kB[22m
+[2mdist/[22m[36massets/js/Leaderboard-2VJjub3T.js              [39m[1m[2m   15.06 kB[22m[1m[22m[2m │ gzip:   3.80 kB[22m
+[2mdist/[22m[36massets/js/PartnerDashboard-CmhbASAp.js         [39m[1m[2m   15.41 kB[22m[1m[22m[2m │ gzip:   4.14 kB[22m
+[2mdist/[22m[36massets/js/DevotionalView-CzyamlSU.js           [39m[1m[2m   15.42 kB[22m[1m[22m[2m │ gzip:   4.12 kB[22m
+[2mdist/[22m[36massets/js/Bible-BYojP2R-.js                    [39m[1m[2m   15.50 kB[22m[1m[22m[2m │ gzip:   5.16 kB[22m
+[2mdist/[22m[36massets/js/AppTour-BrMG1prw.js                  [39m[1m[2m   15.53 kB[22m[1m[22m[2m │ gzip:   4.91 kB[22m
+[2mdist/[22m[36massets/js/BibleRenderedRoom-BfmbEL0h.js        [39m[1m[2m   15.56 kB[22m[1m[22m[2m │ gzip:   5.48 kB[22m
+[2mdist/[22m[36massets/js/PalaceCardGame-4B_4Z2Bs.js           [39m[1m[2m   15.96 kB[22m[1m[22m[2m │ gzip:   5.96 kB[22m
+[2mdist/[22m[36massets/js/PTMultiplayerGame-f1VNL_IO.js        [39m[1m[2m   16.42 kB[22m[1m[22m[2m │ gzip:   5.63 kB[22m
+[2mdist/[22m[36massets/js/QuarterlyStudy-BLILrawp.js           [39m[1m[2m   17.18 kB[22m[1m[22m[2m │ gzip:   6.21 kB[22m
+[2mdist/[22m[36massets/js/EscapeRoom-kSU5CawV.js               [39m[1m[2m   17.22 kB[22m[1m[22m[2m │ gzip:   4.63 kB[22m
+[2mdist/[22m[36massets/js/CommunityOptimized-B6GhVFOx.js       [39m[1m[2m   17.77 kB[22m[1m[22m[2m │ gzip:   5.58 kB[22m
+[2mdist/[22m[36massets/js/GuildDetail-qZ-ZB9QJ.js              [39m[1m[2m   18.59 kB[22m[1m[22m[2m │ gzip:   5.01 kB[22m
+[2mdist/[22m[36massets/js/AdminBibleImport-GrLW4aJb.js         [39m[1m[2m   19.38 kB[22m[1m[22m[2m │ gzip:   5.02 kB[22m
+[2mdist/[22m[36massets/js/MemoryListEditor-CGXE4xcK.js         [39m[1m[2m   19.89 kB[22m[1m[22m[2m │ gzip:   5.45 kB[22m
+[2mdist/[22m[36massets/js/ReadingPlans-BsH_R3TJ.js             [39m[1m[2m   19.90 kB[22m[1m[22m[2m │ gzip:   5.83 kB[22m
+[2mdist/[22m[36massets/js/PalaceAI-AIl9CT2K.js                 [39m[1m[2m   20.49 kB[22m[1m[22m[2m │ gzip:   4.51 kB[22m
+[2mdist/[22m[36massets/js/AdminStrongsImport-gI38HnKS.js       [39m[1m[2m   20.81 kB[22m[1m[22m[2m │ gzip:   4.63 kB[22m
+[2mdist/[22m[36massets/js/BlueprintStress-B7Cb_4Oa.js          [39m[1m[2m   20.83 kB[22m[1m[22m[2m │ gzip:   7.41 kB[22m
+[2mdist/[22m[36massets/js/BlueprintFinancial-CE-kKkfd.js       [39m[1m[2m   20.87 kB[22m[1m[22m[2m │ gzip:   7.49 kB[22m
+[2mdist/[22m[36massets/js/purify.es-B6FQ9oRL.js                [39m[1m[2m   22.57 kB[22m[1m[22m[2m │ gzip:   8.74 kB[22m
+[2mdist/[22m[36massets/js/ChainChess-Cscg4oOI.js               [39m[1m[2m   22.88 kB[22m[1m[22m[2m │ gzip:   7.27 kB[22m
+[2mdist/[22m[36massets/js/SermonBuilder-DHev0jrJ.js            [39m[1m[2m   23.58 kB[22m[1m[22m[2m │ gzip:   6.92 kB[22m
+[2mdist/[22m[36massets/js/BlueprintGrief-CwQ1z9xU.js           [39m[1m[2m   23.62 kB[22m[1m[22m[2m │ gzip:   9.09 kB[22m
+[2mdist/[22m[36massets/js/BibleImageLibrary-glN0kriL.js        [39m[1m[2m   23.70 kB[22m[1m[22m[2m │ gzip:   5.94 kB[22m
+[2mdist/[22m[36massets/js/Community-kmPGqujB.js                [39m[1m[2m   23.72 kB[22m[1m[22m[2m │ gzip:   6.78 kB[22m
+[2mdist/[22m[36massets/js/ChurchAdmin-cphV0WF2.js              [39m[1m[2m   23.72 kB[22m[1m[22m[2m │ gzip:   6.69 kB[22m
+[2mdist/[22m[36massets/js/BlueprintStronghold-C034IhNq.js      [39m[1m[2m   23.86 kB[22m[1m[22m[2m │ gzip:   8.89 kB[22m
+[2mdist/[22m[36massets/js/BlueprintMarriage-jqWW8rw6.js        [39m[1m[2m   24.94 kB[22m[1m[22m[2m │ gzip:   9.18 kB[22m
+[2mdist/[22m[36massets/js/PieChart-C_qCoXpn.js                 [39m[1m[2m   26.14 kB[22m[1m[22m[2m │ gzip:   7.13 kB[22m
+[2mdist/[22m[36massets/js/revelationCourseData-DHkAdnYJ.js     [39m[1m[2m   26.34 kB[22m[1m[22m[2m │ gzip:   8.52 kB[22m
+[2mdist/[22m[36massets/js/BlueprintMentalHealth-Ckyja6m2.js    [39m[1m[2m   26.90 kB[22m[1m[22m[2m │ gzip:  10.09 kB[22m
+[2mdist/[22m[36massets/js/EquationsChallenge-BMfnu36q.js       [39m[1m[2m   28.43 kB[22m[1m[22m[2m │ gzip:   8.09 kB[22m
+[2mdist/[22m[36massets/js/MasteryDashboard-CoKI_97U.js         [39m[1m[2m   28.57 kB[22m[1m[22m[2m │ gzip:   6.67 kB[22m
+[2mdist/[22m[36massets/js/StudyEditor-Dh-4t4YK.js              [39m[1m[2m   29.11 kB[22m[1m[22m[2m │ gzip:   8.63 kB[22m
+[2mdist/[22m[36massets/js/Dashboard-FMchsCBJ.js                [39m[1m[2m   29.30 kB[22m[1m[22m[2m │ gzip:   7.87 kB[22m
+[2mdist/[22m[36massets/js/Achievements-CiJD6DIg.js             [39m[1m[2m   29.53 kB[22m[1m[22m[2m │ gzip:   8.16 kB[22m
+[2mdist/[22m[36massets/js/Profile-B8QwBdwM.js                  [39m[1m[2m   29.78 kB[22m[1m[22m[2m │ gzip:   7.49 kB[22m
+[2mdist/[22m[36massets/js/BibleReference-DaIPaLTB.js           [39m[1m[2m   31.21 kB[22m[1m[22m[2m │ gzip:   7.96 kB[22m
+[2mdist/[22m[36massets/js/Games-6iJJofKu.js                    [39m[1m[2m   31.58 kB[22m[1m[22m[2m │ gzip:   9.11 kB[22m
+[2mdist/[22m[36massets/js/AnalyzeThoughts-BngS4zEQ.js          [39m[1m[2m   31.80 kB[22m[1m[22m[2m │ gzip:   8.85 kB[22m
+[2mdist/[22m[36massets/js/Palace-BPtiXktt.js                   [39m[1m[2m   33.81 kB[22m[1m[22m[2m │ gzip:   9.45 kB[22m
+[2mdist/[22m[36massets/js/ConcentrationGame-BGHUOxVZ.js        [39m[1m[2m   36.89 kB[22m[1m[22m[2m │ gzip:  11.58 kB[22m
+[2mdist/[22m[36massets/js/DanielCourse-B6BRVKN-.js             [39m[1m[2m   37.36 kB[22m[1m[22m[2m │ gzip:  11.69 kB[22m
+[2mdist/[22m[36massets/js/BlueprintWeightLoss-CtkX7NqQ.js      [39m[1m[2m   40.15 kB[22m[1m[22m[2m │ gzip:  14.80 kB[22m
+[2mdist/[22m[36massets/js/PhototheologyCourse-B5My5F8e.js      [39m[1m[2m   40.18 kB[22m[1m[22m[2m │ gzip:  12.54 kB[22m
+[2mdist/[22m[36massets/js/MyStudies-CWLA87KW.js                [39m[1m[2m   41.55 kB[22m[1m[22m[2m │ gzip:  12.24 kB[22m
+[2mdist/[22m[36massets/js/DailyChallenges-obVp3Wp1.js          [39m[1m[2m   45.73 kB[22m[1m[22m[2m │ gzip:  11.52 kB[22m
+[2mdist/[22m[36massets/js/Memory-CZka7ZGm.js                   [39m[1m[2m   47.96 kB[22m[1m[22m[2m │ gzip:  12.61 kB[22m
+[2mdist/[22m[36massets/js/Devotionals-B2y5Fr76.js              [39m[1m[2m   63.31 kB[22m[1m[22m[2m │ gzip:  15.35 kB[22m
+[2mdist/[22m[36massets/js/BibleStudySeriesBuilder-B5m4HNO9.js  [39m[1m[2m   64.28 kB[22m[1m[22m[2m │ gzip:  18.57 kB[22m
+[2mdist/[22m[36massets/js/BlueprintCourse-DhOPbIuk.js          [39m[1m[2m   67.52 kB[22m[1m[22m[2m │ gzip:  23.31 kB[22m
+[2mdist/[22m[36massets/js/ReadMeTheBible-epautURd.js           [39m[1m[2m   71.20 kB[22m[1m[22m[2m │ gzip:  20.16 kB[22m
+[2mdist/[22m[36massets/js/SpiritualTraining-D1PwhDT3.js        [39m[1m[2m  126.71 kB[22m[1m[22m[2m │ gzip:  39.65 kB[22m
+[2mdist/[22m[36massets/js/index.es-CkNZGZoR.js                 [39m[1m[2m  150.45 kB[22m[1m[22m[2m │ gzip:  51.42 kB[22m
+[2mdist/[22m[36massets/js/BibleReader-zIlEHYo-.js              [39m[1m[2m  151.47 kB[22m[1m[22m[2m │ gzip:  39.81 kB[22m
+[2mdist/[22m[36massets/js/RoomDetail-CU6o9OUP.js               [39m[1m[2m  166.59 kB[22m[1m[22m[2m │ gzip:  41.97 kB[22m
+[2mdist/[22m[36massets/js/html2canvas.esm-CBrSDip1.js          [39m[1m[2m  201.42 kB[22m[1m[22m[2m │ gzip:  48.03 kB[22m
+[2mdist/[22m[36massets/js/palaceData-Dn7Y3Zjz.js               [39m[1m[2m  202.22 kB[22m[1m[22m[2m │ gzip:  79.05 kB[22m
+[2mdist/[22m[36massets/js/CardDeck-ChficDmE.js                 [39m[1m[2m  272.39 kB[22m[1m[22m[2m │ gzip:  79.95 kB[22m
+[2mdist/[22m[36massets/js/index-CAgtEzw5.js                    [39m[1m[2m  358.16 kB[22m[1m[22m[2m │ gzip: 114.27 kB[22m
+[2mdist/[22m[36massets/js/BarChart-DYpdZ9oH.js                 [39m[1m[2m  367.10 kB[22m[1m[22m[2m │ gzip: 101.70 kB[22m
+[2mdist/[22m[36massets/js/index-BlfSqgH4.js                    [39m[1m[33m1,876.49 kB[39m[22m[2m │ gzip: 538.67 kB[22m
+[33m
+(!) Some chunks are larger than 1000 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 14.30s[39m
+
+PWA v1.1.0
+mode      generateSW
+precache  280 entries (6523.69 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-f02509b7.js

@@ -52,13 +52,12 @@ export function useFreeTier(): FreeTierAccess {
     queryKey: ["user-subscription", user?.id],
     queryFn: async () => {
       if (!user) return null;
-      
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("subscription_status, subscription_tier, trial_ends_at, is_student, has_lifetime_access, promotional_access_expires_at")
-        .eq("id", user.id)
-        .single();
-      
+
+      // Use secure function to get subscription summary (no direct payment data access)
+      const { data, error } = await supabase.rpc('get_subscription_summary', {
+        check_user_id: user.id
+      });
+
       if (error) throw error;
       return data;
     },
@@ -111,22 +110,14 @@ export function useFreeTier(): FreeTierAccess {
   // Determine user's tier
   const getTier = (): FreeTierAccess["tier"] => {
     if (!user || !profile) return "free";
-    
-    // Check lifetime access
-    if (profile.has_lifetime_access) return "premium";
-    
-    // Check promotional access
-    if (profile.promotional_access_expires_at && new Date(profile.promotional_access_expires_at) > new Date()) {
-      return "premium";
-    }
-    
+
+    // Profile is now the subscription summary from get_subscription_summary()
+    // which includes: has_access, tier, is_trial, is_lifetime, is_student, status
+    if (profile.is_lifetime) return "premium";
     if (profile.is_student) return "student";
-    if (profile.subscription_status === "active") {
-      return (profile.subscription_tier as FreeTierAccess["tier"]) || "premium";
-    }
-    if (profile.trial_ends_at && new Date(profile.trial_ends_at) > new Date()) {
-      return "trial";
-    }
+    if (profile.is_trial) return "trial";
+    if (profile.tier) return profile.tier as FreeTierAccess["tier"];
+
     return "free";
   };
 

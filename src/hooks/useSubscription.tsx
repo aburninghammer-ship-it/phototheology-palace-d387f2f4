@@ -49,34 +49,29 @@ export function useSubscription() {
 
   const loadSubscription = async () => {
     try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("subscription_status, subscription_tier, trial_ends_at, is_student, student_expires_at, has_lifetime_access, promotional_access_expires_at")
-        .eq("id", user!.id)
-        .single();
+      // Use secure function to get subscription summary (no direct payment data access)
+      const { data: summary, error: summaryError } = await supabase.rpc('get_subscription_summary', {
+        check_user_id: user!.id
+      });
+
+      if (summaryError) throw summaryError;
 
       // Check church access
       const { data: churchAccess } = await supabase.rpc('has_church_access', {
         _user_id: user!.id
       }).single();
 
-      if (profile) {
-        const now = new Date();
-        const trialValid = profile.trial_ends_at && new Date(profile.trial_ends_at) > now;
-        const studentValid = profile.is_student && profile.student_expires_at && new Date(profile.student_expires_at) > now;
-        const promotionalValid = profile.promotional_access_expires_at && new Date(profile.promotional_access_expires_at) > now;
-        
-        // All access types: lifetime (including access codes), active subscription, trial, student, promotional
-        const hasPersonalAccess = profile.has_lifetime_access || profile.subscription_status === 'active' || trialValid || studentValid || promotionalValid;
+      if (summary) {
+        const hasPersonalAccess = summary.has_access || false;
         const hasChurchAccess = churchAccess?.has_access || false;
-        
+
         setSubscription({
-          status: (profile.subscription_status as any) || 'none',
-          tier: (profile.subscription_tier as any) || null,
-          isStudent: profile.is_student || false,
-          trialEndsAt: profile.trial_ends_at,
-          studentExpiresAt: profile.student_expires_at,
-          promotionalExpiresAt: profile.promotional_access_expires_at,
+          status: summary.status || 'none',
+          tier: summary.tier || null,
+          isStudent: summary.is_student || false,
+          trialEndsAt: summary.trial_ends_at,
+          studentExpiresAt: null, // Available in summary if needed
+          promotionalExpiresAt: null, // Available in summary if needed
           hasAccess: hasPersonalAccess || hasChurchAccess,
           church: {
             hasChurchAccess,
