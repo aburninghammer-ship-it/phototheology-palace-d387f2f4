@@ -21,6 +21,7 @@ import { genesisImages } from "@/assets/24fps/genesis";
 import { UserGemsList } from "@/components/UserGemsList";
 import { GemGenerator } from "@/components/gems/GemGenerator";
 import { FreestyleGame } from "@/components/freestyle/FreestyleGame";
+import { RoomGames } from "@/components/rooms/RoomGames";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -541,6 +542,9 @@ export default function RoomDetail() {
 
               {/* PRACTICE TAB */}
               <TabsContent value="practice" className="space-y-6 mt-6">
+                {/* Room-specific games */}
+                <RoomGames roomId={room.id} roomName={room.name} />
+                
                 <RoomPracticeSpace
                   floorNumber={floor.number}
                   roomId={room.id}
