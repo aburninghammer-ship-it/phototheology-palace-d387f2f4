@@ -357,14 +357,17 @@ const AnalyzeThoughts = () => {
                 </div>
               </div>
               
-              <div className="flex flex-wrap gap-2 items-center">
+              <div className="space-y-2">
                 <span className="text-sm text-muted-foreground">Add layer:</span>
-                {scriptureSuggestions.map((s) => (
-                  <Button key={s.label} variant="outline" size="sm" onClick={() => addSuggestion(s.prompt)}
-                    className="text-xs bg-purple-500/10 border-purple-500/30 hover:bg-purple-500/20">
-                    <s.icon className="h-3 w-3 mr-1 text-purple-400" />{s.label}
-                  </Button>
-                ))}
+                <div className="flex flex-wrap gap-2">
+                  {scriptureSuggestions.map((s) => (
+                    <Button key={s.label} variant="outline" size="sm" onClick={() => addSuggestion(s.prompt)}
+                      className="text-xs bg-purple-500/10 border-purple-500/30 hover:bg-purple-500/20 flex-1 sm:flex-none min-w-[calc(50%-4px)] sm:min-w-0">
+                      <s.icon className="h-3 w-3 mr-1 text-purple-400" />
+                      <span className="truncate">{s.label}</span>
+                    </Button>
+                  ))}
+                </div>
               </div>
 
               <Collapsible open={checklistOpen} onOpenChange={setChecklistOpen}>
@@ -782,14 +785,14 @@ const AnalyzeThoughts = () => {
                             <a
                               key={i}
                               href={`/encyclopedia?search=${encodeURIComponent(study.topic)}`}
-                              className="block p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer group"
+                              className="block p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer group active:scale-[0.98]"
                             >
-                              <div className="flex items-center justify-between">
-                                <p className="font-medium text-purple-200 group-hover:text-purple-100">{study.topic}</p>
-                                <ArrowRight className="h-4 w-4 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <div className="flex items-center justify-between gap-2">
+                                <p className="font-medium text-sm sm:text-base text-purple-200 group-hover:text-purple-100 flex-1">{study.topic}</p>
+                                <ArrowRight className="h-4 w-4 text-purple-400 flex-shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" />
                               </div>
                               {study.whyItMatters && (
-                                <p className="text-sm text-muted-foreground mt-1">{study.whyItMatters}</p>
+                                <p className="text-xs sm:text-sm text-muted-foreground mt-1">{study.whyItMatters}</p>
                               )}
                             </a>
                           );
