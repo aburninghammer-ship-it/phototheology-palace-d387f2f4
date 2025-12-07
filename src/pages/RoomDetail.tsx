@@ -20,6 +20,7 @@ import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
 import { genesisImages } from "@/assets/24fps/genesis";
 import { UserGemsList } from "@/components/UserGemsList";
 import { GemGenerator } from "@/components/gems/GemGenerator";
+import { FreestyleGame } from "@/components/freestyle/FreestyleGame";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -516,6 +517,11 @@ export default function RoomDetail() {
                     <UserGemsList floorNumber={floor.number} roomId={room.id} />
                     <SermonTitlesList />
                   </>
+                )}
+
+                {/* Freestyle Game for Floor 3 rooms */}
+                {["nf", "pf", "bf", "hf", "lr"].includes(room.id) && (
+                  <FreestyleGame roomId={room.id} roomName={room.name} />
                 )}
 
                 {room.id === "cec" && (
