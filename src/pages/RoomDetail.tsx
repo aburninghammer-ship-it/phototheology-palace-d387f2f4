@@ -525,6 +525,9 @@ export default function RoomDetail() {
                   <FreestyleGame roomId={room.id} roomName={room.name} />
                 )}
 
+                {/* Room-specific games - shown in Learn tab for visibility */}
+                <RoomGames roomId={room.id} roomName={room.name} />
+
                 {room.id === "cec" && (
                   <Card>
                     <CardHeader>
@@ -542,9 +545,6 @@ export default function RoomDetail() {
 
               {/* PRACTICE TAB */}
               <TabsContent value="practice" className="space-y-6 mt-6">
-                {/* Room-specific games */}
-                <RoomGames roomId={room.id} roomName={room.name} />
-                
                 <RoomPracticeSpace
                   floorNumber={floor.number}
                   roomId={room.id}
