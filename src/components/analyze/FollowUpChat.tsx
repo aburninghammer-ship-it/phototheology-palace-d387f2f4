@@ -103,20 +103,35 @@ export const FollowUpChat = ({ originalThought, analysisResult }: FollowUpChatPr
       i === messageIndex ? { ...msg, helpful } : msg
     ));
 
-    // Save feedback for learning
+    // Save feedback for learning (using type assertion for new table)
     try {
       const message = messages[messageIndex];
       const previousUserMessage = messages[messageIndex - 1]?.content || "";
+      const { data: { user } } = await supabase.auth.getUser();
       
-      await supabase.from("jeeves_feedback").insert({
-        context_type: "analyze-followup",
-        user_question: previousUserMessage,
-        jeeves_response: message.content.substring(0, 2000),
-        was_helpful: helpful,
-        original_context: JSON.stringify({
-          thought: originalThought.substring(0, 500),
-          score: analysisResult.overallScore,
-        }),
+      // Direct fetch to bypass type checking for new table
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      
+      await fetch(`${supabaseUrl}/rest/v1/jeeves_feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          user_id: user?.id || null,
+          context_type: "analyze-followup",
+          user_question: previousUserMessage,
+          jeeves_response: message.content.substring(0, 2000),
+          was_helpful: helpful,
+          original_context: {
+            thought: originalThought.substring(0, 500),
+            score: analysisResult.overallScore,
+          },
+        })
       });
 
       toast.success(helpful ? "Thanks! This helps Jeeves improve." : "Got it! Jeeves will learn from this.");

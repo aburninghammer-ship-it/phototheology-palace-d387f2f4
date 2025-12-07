@@ -3312,6 +3312,39 @@ export type Database = {
         }
         Relationships: []
       }
+      jeeves_feedback: {
+        Row: {
+          context_type: string
+          created_at: string
+          id: string
+          jeeves_response: string | null
+          original_context: Json | null
+          user_id: string | null
+          user_question: string | null
+          was_helpful: boolean
+        }
+        Insert: {
+          context_type: string
+          created_at?: string
+          id?: string
+          jeeves_response?: string | null
+          original_context?: Json | null
+          user_id?: string | null
+          user_question?: string | null
+          was_helpful: boolean
+        }
+        Update: {
+          context_type?: string
+          created_at?: string
+          id?: string
+          jeeves_response?: string | null
+          original_context?: Json | null
+          user_id?: string | null
+          user_question?: string | null
+          was_helpful?: boolean
+        }
+        Relationships: []
+      }
       jeeves_interactions: {
         Row: {
           created_at: string

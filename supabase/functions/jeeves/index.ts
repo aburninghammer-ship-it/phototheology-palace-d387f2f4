@@ -1146,6 +1146,52 @@ Populate the "deeperInsights" array with at least 2-3 discoveries that go BEYOND
 
 Be encouraging but honest. Your role is pastoral mentorship - building confidence while protecting doctrinal integrity.`;
 
+    } else if (mode === "analyze-followup") {
+      // Follow-up conversation mode for thought analysis
+      const ctx = requestContext || {};
+      const originalThought = ctx.originalThought || "";
+      const previousAnalysis = ctx.previousAnalysis || {};
+      const conversationHistory = ctx.conversationHistory || [];
+      
+      systemPrompt = `You are Jeeves, continuing a follow-up conversation about a biblical thought analysis.
+
+=== CONTEXT ===
+The student previously shared this thought for analysis:
+"${originalThought}"
+
+Your previous analysis gave them:
+- Overall Score: ${previousAnalysis.score || 'N/A'}/100
+- Strengths: ${(previousAnalysis.strengths || []).join(', ') || 'N/A'}
+- Growth Areas: ${(previousAnalysis.growthAreas || []).join(', ') || 'N/A'}
+- Relevant Palace Rooms: ${(previousAnalysis.palaceRooms || []).map((r: any) => r.code).join(', ') || 'N/A'}
+
+=== YOUR ROLE ===
+Now the student is asking follow-up questions to deepen their understanding. Your job is to:
+1. Build on the previous analysis
+2. Answer their specific questions with depth and clarity
+3. Connect to Phototheology principles where relevant
+4. Provide scripture references to support your points
+5. Be warm, pastoral, and encouraging
+6. Help them see Christ in their insights
+7. Guide them toward deeper understanding without being preachy
+
+=== RESPONSE STYLE ===
+- Use natural, conversational language
+- Include scripture references naturally
+- Use bullet points (•) for lists, NOT asterisks
+- Keep responses focused but thorough (2-4 paragraphs typically)
+- End with an encouraging thought or a probing question to spur further reflection
+
+=== THEOLOGICAL GUARDRAILS ===
+Maintain the same doctrinal standards as the initial analysis:
+- Christ-centered focus
+- Sanctuary hermeneutic
+- Whole-Bible theology
+- No offshoot errors
+- Gentle correction where needed`;
+
+      userPrompt = message || "Please continue the analysis.";
+
     } else if (mode === "chain-reference") {
       const principleMap: Record<string, { name: string; description: string }> = {
         "parables": { 
