@@ -40,6 +40,9 @@ import { ExitIntentPopup } from "@/components/retention/ExitIntentPopup";
 import { SessionTracker } from "@/components/analytics/SessionTracker";
 import { FourPathsShowcase } from "@/components/FourPathsShowcase";
 import { DeepApproachSection } from "@/components/DeepApproachSection";
+import { InteractiveWalkthrough } from "@/components/InteractiveWalkthrough";
+import { TransparencySection } from "@/components/TransparencySection";
+import { HermeneuticsStatement } from "@/components/HermeneuticsStatement";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -108,6 +111,9 @@ const Index = () => {
       {/* Explainer Video */}
       <ExplainerVideo />
 
+      {/* Interactive Walkthrough - Psalm 23 Demo */}
+      <InteractiveWalkthrough />
+
       {/* Comparison Chart */}
       <ComparisonChart />
 
@@ -120,8 +126,8 @@ const Index = () => {
       {/* What Phototheology Does - 3 Frame Slider */}
       <WhatPhototheologyDoes />
 
-      {/* Free Tier Banner - Show what's included free */}
-      <FreeTierBanner />
+      {/* Transparency Section - Free vs Paid + FAQ */}
+      <TransparencySection />
 
       {/* User Count Badge */}
       <div className="flex justify-center py-8 bg-gradient-to-b from-background to-muted/30">
@@ -341,6 +347,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Hermeneutics Statement - How We Interpret Scripture */}
+      <HermeneuticsStatement />
 
       {/* Magic Eye Easter Egg */}
       <MagicEyeEasterEgg />
