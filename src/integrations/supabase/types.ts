@@ -6733,6 +6733,48 @@ export type Database = {
         }
         Relationships: []
       }
+      study_sessions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          jeeves_context: Json | null
+          last_opened_at: string | null
+          tabs_data: Json
+          tags: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          jeeves_context?: Json | null
+          last_opened_at?: string | null
+          tabs_data?: Json
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          jeeves_context?: Json | null
+          last_opened_at?: string | null
+          tabs_data?: Json
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       thought_analyses: {
         Row: {
           alignment_check: Json | null
