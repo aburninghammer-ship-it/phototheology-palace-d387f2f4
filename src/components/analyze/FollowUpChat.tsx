@@ -63,6 +63,8 @@ export const FollowUpChat = ({ originalThought, analysisResult }: FollowUpChatPr
     setIsLoading(true);
 
     try {
+      console.log("Sending follow-up message:", { text, originalThought: originalThought.substring(0, 50) });
+      
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "analyze-followup",
@@ -81,11 +83,22 @@ export const FollowUpChat = ({ originalThought, analysisResult }: FollowUpChatPr
         },
       });
 
+      console.log("Follow-up response:", { data, error });
+
       if (error) throw error;
+
+      // Handle different response formats from the edge function
+      const responseContent = data?.response || data?.content || data?.message || 
+        (typeof data === 'string' ? data : null);
+      
+      if (!responseContent) {
+        console.error("No valid response content found in:", data);
+        throw new Error("Empty response from Jeeves");
+      }
 
       const assistantMessage: Message = {
         role: "assistant",
-        content: data.response || "I apologize, but I couldn't generate a response. Please try again.",
+        content: responseContent,
         helpful: null,
       };
       setMessages(prev => [...prev, assistantMessage]);
