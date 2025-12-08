@@ -2,16 +2,23 @@
 // Maps room IDs to their card artwork
 
 // Floor 1 - Furnishing (Green cards)
-// No cards uploaded yet
+import storyRoom from "@/assets/cards/floor1/story-room.jpeg";
+import translationRoom from "@/assets/cards/floor1/translation-room.jpeg";
+import movieRoom from "@/assets/cards/floor1/movie-room.jpeg";
+import fps24Room from "@/assets/cards/floor1/24fps-room.jpeg";
 
 // Floor 2 - Investigation (Yellow cards)
 import questionsRoom from "@/assets/cards/floor2/questions-room.jpeg";
+import qaRoom from "@/assets/cards/floor2/qa-room.jpeg";
+import defComRoom from "@/assets/cards/floor2/def-com-room.jpeg";
+import symbolsTypesRoom from "@/assets/cards/floor2/symbols-types-room.jpeg";
 
 // Floor 3 - Freestyle (Orange cards)
 import listeningRoom from "@/assets/cards/floor3/listening-room.jpeg";
 import historySocialFreestyle from "@/assets/cards/floor3/history-social-freestyle.jpeg";
 import natureFreestyle from "@/assets/cards/floor3/nature-freestyle.jpeg";
 import lifeExperienceFreestyle from "@/assets/cards/floor3/life-experience-freestyle.jpeg";
+import bibleFreestyle from "@/assets/cards/floor3/bible-freestyle.jpeg";
 
 // Floor 4 - Next Level (Red cards)
 // No cards uploaded yet
@@ -36,14 +43,24 @@ export interface CardImage {
 
 // Registry mapping room IDs to card images
 export const cardImageRegistry: Record<string, string> = {
+  // Floor 1 - Furnishing
+  "sr": storyRoom,
+  "tr": translationRoom,
+  "br": movieRoom,
+  "24": fps24Room,
+  
   // Floor 2 - Investigation
   "qr": questionsRoom,
+  "qa": qaRoom,
+  "dc": defComRoom,
+  "st": symbolsTypesRoom,
   
   // Floor 3 - Freestyle
   "lr": listeningRoom,
   "hf": historySocialFreestyle,
   "nf": natureFreestyle,
   "pf": lifeExperienceFreestyle,
+  "bf": bibleFreestyle,
   
   // Floor 5 - Vision
   "bl": blueRoom,
@@ -52,6 +69,36 @@ export const cardImageRegistry: Record<string, string> = {
 
 // Card metadata for the deck feature
 export const cardData: CardImage[] = [
+  // Floor 1 - Furnishing (Green)
+  {
+    roomId: "sr",
+    roomName: "Story Room",
+    floor: 1,
+    imagePath: storyRoom,
+    instruction: "This card encourages the memorization of Bible stories. These will be the building blocks of your \"Freestyle.\""
+  },
+  {
+    roomId: "tr",
+    roomName: "Translation (Encoding) Room",
+    floor: 1,
+    imagePath: translationRoom,
+    instruction: "This card teaches us to translate the text from word to image. Translating Philippians 2:5, \"Let this mind be in you, which was also in Christ Jesus,\" one might see a hospital room where a \"brain transplant\" is occurring."
+  },
+  {
+    roomId: "br",
+    roomName: "Movie Room (The Bible Rendered)",
+    floor: 1,
+    imagePath: movieRoom,
+    instruction: "This room juices down each set of 24 chapters into one image for a total of 50 images that move you from Genesis to Revelation."
+  },
+  {
+    roomId: "24",
+    roomName: "24FPS Room",
+    floor: 1,
+    imagePath: fps24Room,
+    instruction: "This room focuses on memorizing the themes of each chapter, 24 chapters at a time. Create your own image for the theme of each chapter."
+  },
+  
   // Floor 2 - Investigation (Yellow)
   {
     roomId: "qr",
@@ -60,11 +107,32 @@ export const cardData: CardImage[] = [
     imagePath: questionsRoom,
     instruction: "Use this card to ask the text as many questions as you can. This card is designed to help you investigate a text more closely. Aim for 50 to 100 questions, even from the shortest text of the Bible, \"Jesus wept.\""
   },
+  {
+    roomId: "qa",
+    roomName: "Question and Answer Room",
+    floor: 2,
+    imagePath: qaRoom,
+    instruction: "Ask the text a series of questions and each by finding the answer in another text."
+  },
+  {
+    roomId: "dc",
+    roomName: "Def-Com Room / E-Sword",
+    floor: 2,
+    imagePath: defComRoom,
+    instruction: "Using Bible software or Bible study materials (concordance, etc.) look up key words, meanings, and commentary to learn more about the text."
+  },
+  {
+    roomId: "st",
+    roomName: "Symbols/Types Room",
+    floor: 2,
+    imagePath: symbolsTypesRoom,
+    instruction: "What symbols or types are in the story or can be connected to the story?"
+  },
   
   // Floor 3 - Freestyle (Orange)
   {
     roomId: "nf",
-    roomName: "Nature/Freestyle Room",
+    roomName: "Nature Freestyle Room",
     floor: 3,
     imagePath: natureFreestyle,
     instruction: "Apply an object lesson from nature in connection with the text."
@@ -89,6 +157,13 @@ export const cardData: CardImage[] = [
     floor: 3,
     imagePath: listeningRoom,
     instruction: "Pull a lesson from a sermon you've heard previously to help expound upon the text."
+  },
+  {
+    roomId: "bf",
+    roomName: "Bible Freestyle Room (Verse Genetics)",
+    floor: 3,
+    imagePath: bibleFreestyle,
+    instruction: "Connect a \"random\" text with the text and find the connection between them."
   },
   
   // Floor 5 - Vision (Blue)
