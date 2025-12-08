@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target } from "lucide-react";
+import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target, StickyNote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
@@ -323,6 +323,13 @@ export const Navigation = () => {
                   >
                     <BookOpen className="h-3.5 w-3.5 text-sky-500" />
                     <span className="bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent font-semibold">My Studies</span>
+                  </Link>
+                  <Link 
+                    to="/notes" 
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 hover:from-yellow-500/20 hover:to-amber-500/20"
+                  >
+                    <BookOpen className="h-3.5 w-3.5 text-yellow-500" />
+                    <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent font-semibold">Notes</span>
                   </Link>
                   <Link 
                     to="/games" 
