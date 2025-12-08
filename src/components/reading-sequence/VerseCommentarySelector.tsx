@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Volume2, Loader2 } from 'lucide-react';
 import { useTextToSpeech } from '@/hooks/useTextToSpeech';
@@ -17,8 +17,32 @@ export const VerseCommentarySelector = ({
 }: VerseCommentarySelectorProps) => {
   const [loading, setLoading] = useState(false);
   const [commentary, setCommentary] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const { toast } = useToast();
   const { speak, isPlaying, stop } = useTextToSpeech();
+
+  // Fetch user's first name for personalized commentary
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('display_name, username')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile?.display_name) {
+          // Extract first name
+          const firstName = profile.display_name.trim().split(/\s+/)[0];
+          setUserName(firstName || profile.display_name);
+        } else if (profile?.username) {
+          setUserName(profile.username);
+        }
+      }
+    };
+    fetchUserName();
+  }, []);
 
   const generateCommentary = async (): Promise<string | null> => {
     setLoading(true);
@@ -36,9 +60,9 @@ export const VerseCommentarySelector = ({
         return commentaryText;
       }
 
-      // Generate new commentary via edge function
+      // Generate new commentary via edge function with user's name
       const { data, error } = await supabase.functions.invoke("generate-verse-commentary", {
-        body: { verseReference, verseText, depth: "intermediate" },
+        body: { verseReference, verseText, depth: "intermediate", userName },
       });
 
       if (error) throw error;

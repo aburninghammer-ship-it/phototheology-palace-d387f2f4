@@ -14,10 +14,14 @@ if (typeof window !== 'undefined') {
 }
 
 export const setGlobalMusicVolume = (volume: number) => {
-  currentVolume = volume;
+  // Clamp volume to 0-100 range
+  const clampedVolume = Math.max(0, Math.min(100, volume));
+  currentVolume = clampedVolume;
   localStorage.setItem('pt-music-volume-pct', currentVolume.toString());
+  
+  // Notify all listeners immediately
   volumeListeners.forEach(listener => listener(currentVolume));
-  console.log('[MusicVolumeControl] Set volume to:', currentVolume, '%');
+  console.log('[MusicVolumeControl] Set volume to:', currentVolume, '% (listeners:', volumeListeners.size, ')');
 };
 
 export const getGlobalMusicVolume = () => currentVolume;

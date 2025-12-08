@@ -105,17 +105,29 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const musicAudioRef = useRef<HTMLAudioElement | null>(null); // Background music audio
   
   // Fetch user's display name for personalized commentary
+  // Extract first name from display_name for more personal address
   useEffect(() => {
     const fetchUserName = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('display_name')
+          .select('display_name, username')
           .eq('id', user.id)
           .single();
+        
         if (profile?.display_name) {
-          setUserName(profile.display_name);
+          // Extract first name (take first word before space)
+          const firstName = profile.display_name.trim().split(/\s+/)[0];
+          if (firstName && firstName.length > 0) {
+            setUserName(firstName);
+            console.log('[SequencePlayer] User first name set to:', firstName);
+          } else {
+            setUserName(profile.display_name);
+          }
+        } else if (profile?.username) {
+          // Fallback to username if no display name
+          setUserName(profile.username);
         }
       }
     };
@@ -274,7 +286,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       
       try {
         const { data, error } = await supabase.functions.invoke("generate-chapter-commentary", {
-          body: { book, chapter, chapterText, depth },
+          body: { book, chapter, chapterText, depth, userName },
         });
         
         clearTimeout(timeoutId);
@@ -1698,13 +1710,24 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   const handleMusicVolumeChange = (value: number[]) => {
     const newVolume = value[0];
+    console.log('[SequencePlayer] Music volume slider changed to:', newVolume);
     setMusicVolume(newVolume);
-    // Update internal music player
+    
+    // Update internal music player immediately (critical for mobile)
     if (musicAudioRef.current) {
       musicAudioRef.current.volume = newVolume / 100;
+      console.log('[SequencePlayer] Internal music volume set to:', newVolume / 100);
     }
-    // Also update the global ambient music player
+    
+    // Also update the global ambient music player (for external AmbientMusicPlayer component)
     setGlobalMusicVolume(newVolume);
+    
+    // Force immediate update on any audio elements with class 'ambient-music' (backup)
+    document.querySelectorAll('audio.ambient-music').forEach((audio: Element) => {
+      if (audio instanceof HTMLAudioElement) {
+        audio.volume = newVolume / 100;
+      }
+    });
   };
 
   // Handle voice change - clear cache and regenerate current audio

@@ -167,10 +167,19 @@ export function AmbientMusicPlayer({
   useAudioDucking(handleDuckChange);
 
   // Simple volume management - direct HTML5 audio volume control
+  // This effect runs whenever volume, muted state, or ducking changes
   useEffect(() => {
     const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
     if (audioRef.current) {
+      // Force immediate volume update - critical for mobile responsiveness
       audioRef.current.volume = effectiveVolume;
+      
+      // Double-check after a short delay (iOS sometimes needs this)
+      requestAnimationFrame(() => {
+        if (audioRef.current) {
+          audioRef.current.volume = effectiveVolume;
+        }
+      });
     }
     console.log(`[AmbientMusic] Volume: base=${volume}, duck=${duckMultiplier}, effective=${effectiveVolume}`);
   }, [volume, isMuted, duckMultiplier]);

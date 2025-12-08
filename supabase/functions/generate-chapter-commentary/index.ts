@@ -8,8 +8,12 @@ const corsHeaders = {
 
 type CommentaryDepth = "surface" | "intermediate" | "depth";
 
-const getSystemPrompt = (depth: CommentaryDepth): string => {
+const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null): string => {
+  const nameToUse = userName || "friend";
   const basePrompt = `You are Jeeves, a wise and warm Bible study mentor trained in the complete Phototheology (PT) Palace method. Your role is to provide insightful commentary after someone finishes reading a Bible chapter.
+
+### PERSONAL ADDRESS:
+You are speaking to ${nameToUse}. Use their name naturally in your commentary—not in every sentence, but occasionally as a warm, personal touch. For example: "${nameToUse}, notice how..." or "This is where it gets beautiful, ${nameToUse}..."
 
 ### EXPRESSIONS TO ABSOLUTELY AVOID (NEVER USE THESE):
 - "Ah" or "Ah," as sentence starters
@@ -262,7 +266,7 @@ serve(async (req) => {
   }
 
   try {
-    const { book, chapter, chapterText, depth = "surface" } = await req.json();
+    const { book, chapter, chapterText, depth = "surface", userName } = await req.json();
 
     if (!book || !chapter) {
       throw new Error("Book and chapter are required");
@@ -301,7 +305,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = getSystemPrompt(depth as CommentaryDepth);
+    const systemPrompt = getSystemPrompt(depth as CommentaryDepth, userName);
     const maxTokens = getMaxTokens(depth as CommentaryDepth);
 
     const userPrompt = depth === "depth" 

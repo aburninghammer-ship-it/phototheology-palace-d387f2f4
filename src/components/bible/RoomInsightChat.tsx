@@ -57,15 +57,21 @@ export const RoomInsightChat = ({
     setLoading(true);
 
     try {
-      // Get user profile to pass name to Jeeves
+      // Get user profile to pass name to Jeeves (extract first name for personal touch)
       const { data: { user } } = await supabase.auth.getUser();
       const { data: profile } = user ? await supabase
         .from('profiles')
-        .select('display_name')
+        .select('display_name, username')
         .eq('id', user.id)
         .single() : { data: null };
 
-      const userName = profile?.display_name || null;
+      // Extract first name from display_name for more personal address
+      let userName: string | null = null;
+      if (profile?.display_name) {
+        userName = profile.display_name.trim().split(/\s+/)[0] || profile.display_name;
+      } else if (profile?.username) {
+        userName = profile.username;
+      }
 
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
