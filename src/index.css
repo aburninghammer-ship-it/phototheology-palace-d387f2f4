@@ -652,4 +652,17 @@ All colors MUST be HSL.
       hyphens: auto;
     }
   }
+
+  /* 3D Card Flip Styles */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
 }
