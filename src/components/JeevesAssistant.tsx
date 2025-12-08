@@ -440,28 +440,30 @@ export const JeevesAssistant = ({
                   </Card>
 
                   {/* Palace Room Mapping Card */}
-                  <Card className="border border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5">
-                    <CardContent className="pt-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Building2 className="h-5 w-5 text-primary" />
-                        <span className="font-semibold">Palace Room Mapping</span>
-                      </div>
-                      <div className="space-y-2 text-sm">
-                        <div className="p-2 bg-background/50 rounded">
-                          <span className="text-muted-foreground">Primary Room: </span>
-                          <span className="font-medium text-primary">{analysisResult.palaceMapping.primaryRoom}</span>
+                  {analysisResult.palaceMapping && (
+                    <Card className="border border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5">
+                      <CardContent className="pt-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Building2 className="h-5 w-5 text-primary" />
+                          <span className="font-semibold">Palace Room Mapping</span>
                         </div>
-                        <div className="p-2 bg-background/50 rounded">
-                          <span className="text-muted-foreground">Related Rooms: </span>
-                          <span className="font-medium">{analysisResult.palaceMapping.relatedRooms.join(", ")}</span>
+                        <div className="space-y-2 text-sm">
+                          <div className="p-2 bg-background/50 rounded">
+                            <span className="text-muted-foreground">Primary Room: </span>
+                            <span className="font-medium text-primary">{analysisResult.palaceMapping.primaryRoom}</span>
+                          </div>
+                          <div className="p-2 bg-background/50 rounded">
+                            <span className="text-muted-foreground">Related Rooms: </span>
+                            <span className="font-medium">{analysisResult.palaceMapping.relatedRooms?.join(", ") || "None"}</span>
+                          </div>
+                          <div className="p-2 bg-background/50 rounded">
+                            <span className="text-muted-foreground">Floor Recommendation: </span>
+                            <span className="font-medium">{analysisResult.palaceMapping.floorRecommendation}</span>
+                          </div>
                         </div>
-                        <div className="p-2 bg-background/50 rounded">
-                          <span className="text-muted-foreground">Floor Recommendation: </span>
-                          <span className="font-medium">{analysisResult.palaceMapping.floorRecommendation}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  )}
 
                   {/* Scripture Connections Card */}
                   <Card className="border border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-cyan-500/5">
