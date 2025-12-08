@@ -52,6 +52,12 @@ import parallelRoom from "@/assets/cards/floor4/parallel-room.jpeg";
 import concentrationRoom from "@/assets/cards/floor4/concentration-room.jpeg";
 import patternsRoom from "@/assets/cards/floor4/patterns-room.jpeg";
 import dimensionsRoom from "@/assets/cards/floor4/dimensions-room.jpeg";
+import dimensionLiteral from "@/assets/cards/floor4/dimension-literal.jpeg";
+import dimensionChrist from "@/assets/cards/floor4/dimension-christ.jpeg";
+import dimensionMe from "@/assets/cards/floor4/dimension-me.jpeg";
+import dimensionChurch from "@/assets/cards/floor4/dimension-church.jpeg";
+import dimensionHeaven from "@/assets/cards/floor4/dimension-heaven.jpeg";
+import themeGospel from "@/assets/cards/floor4/theme-gospel.jpeg";
 import connect6Prophecy from "@/assets/cards/floor4/connect6-prophecy.jpeg";
 import connect6Poetry from "@/assets/cards/floor4/connect6-poetry.jpeg";
 import connect6History from "@/assets/cards/floor4/connect6-history.jpeg";
@@ -61,6 +67,10 @@ import connect6Epistles from "@/assets/cards/floor4/connect6-epistles.jpeg";
 import blueRoom from "@/assets/cards/floor5/blue-room.jpeg";
 import threeAngelsRoom from "@/assets/cards/floor5/three-angels-room.jpeg";
 import prophecyRoom from "@/assets/cards/floor5/prophecy-room.jpeg";
+// Three Angels individual cards
+import angelFirst from "@/assets/cards/floor5/angel-first.jpeg";
+import angelSecond from "@/assets/cards/floor5/angel-second.jpeg";
+import angelThird from "@/assets/cards/floor5/angel-third.jpeg";
 // Sanctuary stations
 import sanctuaryAltar from "@/assets/cards/floor5/sanctuary-altar.jpeg";
 import sanctuaryLaver from "@/assets/cards/floor5/sanctuary-laver.jpeg";
@@ -92,6 +102,7 @@ import cycle3Semitic from "@/assets/cards/floor6/cycle-3-semitic.jpeg";
 import cycle4Abrahamic from "@/assets/cards/floor6/cycle-4-abrahamic.jpeg";
 import cycle5Mosaic from "@/assets/cards/floor6/cycle-5-mosaic.jpeg";
 import cycle6Cyrusic from "@/assets/cards/floor6/cycle-6-cyrusic.jpeg";
+import cycleCyrusChrist from "@/assets/cards/floor6/cycle-cyc.jpeg";
 import cycle7Spirit from "@/assets/cards/floor6/cycle-7-spirit.jpeg";
 import cycle8Remnant from "@/assets/cards/floor6/cycle-8-remnant.jpeg";
 // Three Heavens
@@ -109,6 +120,11 @@ import floor7Back from "@/assets/cards/floor7/card-back.jpeg";
 
 // Default card back
 import cardBack from "@/assets/cards/card-back.jpeg";
+import cardBackPuzzle from "@/assets/cards/card-back-puzzle.jpg";
+
+// Branding assets
+import deckHeroDisplay from "@/assets/branding/deck-hero-display.png";
+export { deckHeroDisplay, cardBackPuzzle };
 
 export interface CardImage {
   roomId: string;
@@ -173,10 +189,19 @@ export const cardImageRegistry: Record<string, string> = {
   "p": parallelRoom,
   "cr": concentrationRoom,
   "dr": dimensionsRoom,
+  "dr-literal": dimensionLiteral,
+  "dr-christ": dimensionChrist,
+  "dr-me": dimensionMe,
+  "dr-church": dimensionChurch,
+  "dr-heaven": dimensionHeaven,
+  "trm-gospel": themeGospel,
   
   // Floor 5 - Vision
   "bl": blueRoom,
   "3a": threeAngelsRoom,
+  "3a-first": angelFirst,
+  "3a-second": angelSecond,
+  "3a-third": angelThird,
   "pr": prophecyRoom,
   // Sanctuary stations
   "bl-altar": sanctuaryAltar,
@@ -209,6 +234,7 @@ export const cardImageRegistry: Record<string, string> = {
   "@ab": cycle4Abrahamic,
   "@mo": cycle5Mosaic,
   "@cy": cycle6Cyrusic,
+  "@cyc": cycleCyrusChrist,
   "@sp": cycle7Spirit,
   "@re": cycle8Remnant,
   // Three Heavens
@@ -669,6 +695,20 @@ export const cardData: CardImage[] = [
   { roomId: "mr", roomName: "Meditation Room", floor: 7, imagePath: meditationRoom, instruction: "Meditate slowly on the study." },
   { roomId: "frm", roomName: "Fire Room", floor: 7, imagePath: fireRoom, instruction: "Enter the emotional weight of the text." },
   { roomId: "srm", roomName: "Speed Room", floor: 7, imagePath: speedRoom, instruction: "Practice rapid application of PT principles." },
+  // Floor 4 - 5 Dimensions
+  { roomId: "dr-literal", roomName: "Dimension - Literal", floor: 4, imagePath: dimensionLiteral, instruction: "What does the text literally mean? The plain sense of the words." },
+  { roomId: "dr-christ", roomName: "Dimension - Christ", floor: 4, imagePath: dimensionChrist, instruction: "How does the text point to Jesus Christ?" },
+  { roomId: "dr-me", roomName: "Dimension - Me", floor: 4, imagePath: dimensionMe, instruction: "How does the text apply to me personally?" },
+  { roomId: "dr-church", roomName: "Dimension - Church", floor: 4, imagePath: dimensionChurch, instruction: "How does the text apply to the church body?" },
+  { roomId: "dr-heaven", roomName: "Dimension - Heaven", floor: 4, imagePath: dimensionHeaven, instruction: "How does the text apply to heaven and eternal realities?" },
+  // Floor 4 - Gospel Floor Theme
+  { roomId: "trm-gospel", roomName: "Theme Room - Gospel Floor", floor: 4, imagePath: themeGospel, instruction: "Study the text against the backdrop of the gospel: justification, sanctification, glorification." },
+  // Floor 5 - Three Angels Individual
+  { roomId: "3a-first", roomName: "First Angel's Message", floor: 5, imagePath: angelFirst, instruction: "Fear God, give glory, the hour of judgment - Revelation 14:6-7." },
+  { roomId: "3a-second", roomName: "Second Angel's Message", floor: 5, imagePath: angelSecond, instruction: "Babylon is fallen - Revelation 14:8." },
+  { roomId: "3a-third", roomName: "Third Angel's Message", floor: 5, imagePath: angelThird, instruction: "Warning against beast, image, mark; endurance of saints - Revelation 14:9-12." },
+  // Floor 6 - Cyrus-Christ Cycle
+  { roomId: "@cyc", roomName: "8 Cycles Room - Cyrus-Christ", floor: 6, imagePath: cycleCyrusChrist, instruction: "Study within the Cyrus-Christ Cycle. Type meets antitype - the true Anointed fulfillment." },
 ];
 
 // Get card back image for a specific floor, or default
