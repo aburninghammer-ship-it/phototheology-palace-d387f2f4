@@ -3,26 +3,27 @@ import { ChevronRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import heroCardsDisplay from "@/assets/branding/hero-cards-display.png";
 
 export const PunchyHero = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
   return (
-    <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-primary/5 to-accent/10 pb-safe">
+    <section className="relative min-h-[90vh] sm:min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-background via-primary/5 to-accent/10 pb-safe">
       {/* Subtle animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-8 sm:py-0">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-8 sm:py-0">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-6 sm:mb-8"
+          className="mb-4 sm:mb-6"
         >
           <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-primary">
             <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -30,27 +31,12 @@ export const PunchyHero = () => {
           </span>
         </motion.div>
 
-        {/* Scripture Reference */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-6 sm:mb-8"
-        >
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground italic max-w-2xl mx-auto px-4">
-            "many shall run to and fro, and knowledge shall be increased"
-          </p>
-          <p className="text-xs sm:text-sm text-muted-foreground/70 mt-1">
-            — Daniel 12:4
-          </p>
-        </motion.div>
-
         {/* Main Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 leading-tight sm:leading-[1.1] px-2"
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 sm:mb-4 leading-tight sm:leading-[1.1] px-2"
         >
           The Bible,{" "}
           <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent inline-block">
@@ -62,8 +48,8 @@ export const PunchyHero = () => {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-3 sm:mb-4 px-4"
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-2 px-4"
         >
           Most people read Scripture and forget it by lunch.
         </motion.p>
@@ -71,8 +57,8 @@ export const PunchyHero = () => {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium max-w-3xl mx-auto mb-8 sm:mb-10 px-4"
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="text-sm sm:text-base md:text-lg font-medium max-w-2xl mx-auto mb-6 px-4"
         >
           Phototheology turns the Bible into a{" "}
           <span className="text-primary font-semibold whitespace-nowrap">visual palace</span>
@@ -80,11 +66,27 @@ export const PunchyHero = () => {
           <span className="text-accent font-semibold whitespace-nowrap">actually remember it</span>.
         </motion.p>
 
+        {/* Hero Card Deck Image */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+          className="mb-8 px-4"
+        >
+          <img 
+            src={heroCardsDisplay} 
+            alt="Phototheology Card Deck - 8 floors of Bible study principles" 
+            className="w-full max-w-4xl mx-auto drop-shadow-2xl"
+            loading="eager"
+            decoding="async"
+          />
+        </motion.div>
+
         {/* Single CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
           className="flex flex-col items-center gap-3 sm:gap-4 px-4"
         >
           <Button
@@ -104,8 +106,8 @@ export const PunchyHero = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-2xl mx-auto mt-10 sm:mt-12 md:mt-16 pt-6 sm:pt-8 border-t border-border/50 px-4"
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-2xl mx-auto mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-border/50 px-4"
         >
           <div className="text-center">
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">2yr</div>
@@ -116,8 +118,8 @@ export const PunchyHero = () => {
             <div className="text-xs sm:text-sm text-muted-foreground mt-1">Palace Floors</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">4</div>
-            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Learning Paths</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">100+</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Principle Cards</div>
           </div>
         </motion.div>
       </div>
