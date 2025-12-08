@@ -8669,6 +8669,19 @@ export type Database = {
           username: string
         }[]
       }
+      get_safe_public_profile: {
+        Args: { _profile_id: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          current_floor: number
+          display_name: string
+          id: string
+          master_title: string
+          points: number
+          username: string
+        }[]
+      }
       get_subscription_summary: {
         Args: { _user_id?: string }
         Returns: {
