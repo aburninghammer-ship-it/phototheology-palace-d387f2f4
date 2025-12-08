@@ -44,6 +44,8 @@ import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 import { RoomTour } from "@/components/onboarding/RoomTour";
 import { useRoomTour } from "@/hooks/useRoomTour";
 import { PathRoomExercises, ReturnToPathBanner } from "@/components/path";
+import { RoomCard } from "@/components/palace/RoomCard";
+import { getCardImage } from "@/data/cardImages";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -290,24 +292,35 @@ export default function RoomDetail() {
               </Button>
             </div>
             
-            <div className="flex items-center gap-4 mb-4">
-              <span className="text-6xl drop-shadow-2xl">
-                {
-                  {sr: "📖", ir: "👁️", "24fps": "🎬", br: "🗺️", tr: "🎨", gr: "💎",
-                   or: "🔍", dc: "🧪", st: "🔗", qr: "❓", qa: "💬",
-                   nf: "🌿", pf: "🪞", bf: "🧬", hf: "📜", lr: "👂",
-                   cr: "✝️", dr: "💠", c6: "📚", trm: "🏛️", tz: "⏰", prm: "🎵", "p||": "🪞", frt: "🍇", cec: "👑", r66: "📿",
-                   bl: "⛪", pr: "🔮", "3a": "👼", fe: "🎊",
-                   "123h": "☁️", cycles: "🔄", jr: "🍊", math: "🔢",
-                   frm: "🔥", mr: "🙏", srm: "⚡"}[room.id] || "⭐"
-                }
-              </span>
-              <div>
-                <h1 className="text-5xl md:text-6xl font-serif font-black drop-shadow-2xl tracking-tight">{room.name}</h1>
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-4">
+              {/* Show card image if available, otherwise show emoji */}
+              {getCardImage(room.id) ? (
+                <div className="flex-shrink-0">
+                  <RoomCard
+                    roomId={room.id}
+                    roomName={room.name}
+                    floor={floor.number}
+                    size="sm"
+                  />
+                </div>
+              ) : (
+                <span className="text-6xl drop-shadow-2xl flex-shrink-0">
+                  {
+                    {sr: "📖", ir: "👁️", "24fps": "🎬", br: "🗺️", tr: "🎨", gr: "💎",
+                     or: "🔍", dc: "🧪", st: "🔗", qr: "❓", qa: "💬",
+                     nf: "🌿", pf: "🪞", bf: "🧬", hf: "📜", lr: "👂",
+                     cr: "✝️", dr: "💠", c6: "📚", trm: "🏛️", tz: "⏰", prm: "🎵", "p||": "🪞", frt: "🍇", cec: "👑", r66: "📿",
+                     bl: "⛪", pr: "🔮", "3a": "👼", fe: "🎊",
+                     "123h": "☁️", cycles: "🔄", jr: "🍊", math: "🔢",
+                     frm: "🔥", mr: "🙏", srm: "⚡"}[room.id] || "⭐"
+                  }
+                </span>
+              )}
+              <div className="flex-1">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-black drop-shadow-2xl tracking-tight">{room.name}</h1>
+                <p className="text-lg md:text-xl lg:text-2xl leading-relaxed opacity-95 drop-shadow-lg mt-2">{room.purpose}</p>
               </div>
             </div>
-            
-            <p className="text-xl md:text-2xl leading-relaxed opacity-95 drop-shadow-lg">{room.purpose}</p>
           </div>
         </div>
 
