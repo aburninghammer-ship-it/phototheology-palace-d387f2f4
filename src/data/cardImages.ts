@@ -23,7 +23,16 @@ import lifeExperienceFreestyle from "@/assets/cards/floor3/life-experience-frees
 import bibleFreestyle from "@/assets/cards/floor3/bible-freestyle.jpeg";
 
 // Floor 4 - Next Level (Red cards)
-// No cards uploaded yet
+import fruitGentleness from "@/assets/cards/floor4/fruit-gentleness.jpeg";
+import fruitPeace from "@/assets/cards/floor4/fruit-peace.jpeg";
+import fruitMeekness from "@/assets/cards/floor4/fruit-meekness.jpeg";
+import fruitTemperance from "@/assets/cards/floor4/fruit-temperance.jpeg";
+import fruitLongsuffering from "@/assets/cards/floor4/fruit-longsuffering.jpeg";
+import fruitJoy from "@/assets/cards/floor4/fruit-joy.jpeg";
+import fruitFaith from "@/assets/cards/floor4/fruit-faith.jpeg";
+import fruitLove from "@/assets/cards/floor4/fruit-love.jpeg";
+import fruitGoodness from "@/assets/cards/floor4/fruit-goodness.jpeg";
+import timezoneHeavenPresent from "@/assets/cards/floor4/timezone-heaven-present.jpeg";
 
 // Floor 5 - Vision (Blue cards)
 import blueRoom from "@/assets/cards/floor5/blue-room.jpeg";
@@ -79,6 +88,18 @@ export const cardImageRegistry: Record<string, string> = {
   "nf": natureFreestyle,
   "pf": lifeExperienceFreestyle,
   "bf": bibleFreestyle,
+  
+  // Floor 4 - Next Level (Fruit Room variants + Time Zone)
+  "frt-gentleness": fruitGentleness,
+  "frt-peace": fruitPeace,
+  "frt-meekness": fruitMeekness,
+  "frt-temperance": fruitTemperance,
+  "frt-longsuffering": fruitLongsuffering,
+  "frt-joy": fruitJoy,
+  "frt-faith": fruitFaith,
+  "frt-love": fruitLove,
+  "frt-goodness": fruitGoodness,
+  "tz-heaven-present": timezoneHeavenPresent,
   
   // Floor 5 - Vision
   "bl": blueRoom,
@@ -207,6 +228,79 @@ export const cardData: CardImage[] = [
     floor: 3,
     imagePath: bibleFreestyle,
     instruction: "Connect a \"random\" text with the text and find the connection between them."
+  },
+  
+  // Floor 4 - Next Level (Red) - Fruit Room variants
+  {
+    roomId: "frt-love",
+    roomName: "Fruit Room - Love",
+    floor: 4,
+    imagePath: fruitLove,
+    instruction: "Study the text in the context of the specific fruit of the spirit: LOVE."
+  },
+  {
+    roomId: "frt-joy",
+    roomName: "Fruit Room - Joy",
+    floor: 4,
+    imagePath: fruitJoy,
+    instruction: "Study the text in the context of the specific fruit of the spirit: JOY."
+  },
+  {
+    roomId: "frt-peace",
+    roomName: "Fruit Room - Peace",
+    floor: 4,
+    imagePath: fruitPeace,
+    instruction: "Study the text in the context of the specific fruit of the spirit: PEACE."
+  },
+  {
+    roomId: "frt-longsuffering",
+    roomName: "Fruit Room - Longsuffering",
+    floor: 4,
+    imagePath: fruitLongsuffering,
+    instruction: "Study the text in the context of the specific fruit of the spirit: LONGSUFFERING."
+  },
+  {
+    roomId: "frt-gentleness",
+    roomName: "Fruit Room - Gentleness",
+    floor: 4,
+    imagePath: fruitGentleness,
+    instruction: "Study the text in the context of the specific fruit of the spirit: GENTLENESS."
+  },
+  {
+    roomId: "frt-goodness",
+    roomName: "Fruit Room - Goodness",
+    floor: 4,
+    imagePath: fruitGoodness,
+    instruction: "Study the text in the context of the specific fruit of the spirit: GOODNESS."
+  },
+  {
+    roomId: "frt-faith",
+    roomName: "Fruit Room - Faith",
+    floor: 4,
+    imagePath: fruitFaith,
+    instruction: "Study the text in the context of the specific fruit of the spirit: FAITH."
+  },
+  {
+    roomId: "frt-meekness",
+    roomName: "Fruit Room - Meekness",
+    floor: 4,
+    imagePath: fruitMeekness,
+    instruction: "Study the text in the context of the specific fruit of the spirit: MEEKNESS."
+  },
+  {
+    roomId: "frt-temperance",
+    roomName: "Fruit Room - Temperance",
+    floor: 4,
+    imagePath: fruitTemperance,
+    instruction: "Study the text in the context of the specific fruit of the spirit: TEMPERANCE."
+  },
+  // Floor 4 - Time Zone Room variants
+  {
+    roomId: "tz-heaven-present",
+    roomName: "Time Zone Room - Heaven Present",
+    floor: 4,
+    imagePath: timezoneHeavenPresent,
+    instruction: "Study the text in the context of events in Heaven's present."
   },
   
   // Floor 5 - Vision (Blue)
