@@ -49,44 +49,45 @@ export function useSubscription() {
 
   const loadSubscription = async () => {
     try {
-      // Query profiles table directly
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('subscription_tier, subscription_status, has_lifetime_access, trial_ends_at, promotional_access_expires_at')
-        .eq('id', user!.id)
-        .single();
-
-      if (profileError) throw profileError;
+      // Use secure function to get subscription summary
+      const { data: subData, error: subError } = await supabase
+        .rpc('get_subscription_summary', { _user_id: user!.id });
 
       // Check church access
       const { data: churchAccess } = await supabase.rpc('has_church_access', {
         _user_id: user!.id
       }).single();
 
-      if (profile) {
-        const now = new Date();
-        const hasLifetime = profile.has_lifetime_access || false;
-        const hasActiveSub = profile.subscription_status === 'active';
-        const hasTrial = profile.trial_ends_at && new Date(profile.trial_ends_at) > now;
-        const hasPromo = profile.promotional_access_expires_at && new Date(profile.promotional_access_expires_at) > now;
-        const hasChurchAccess = churchAccess?.has_access || false;
+      const hasChurchAccess = churchAccess?.has_access || false;
+
+      if (subData && subData.length > 0) {
+        const sub = subData[0];
         
-        const hasPersonalAccess = hasLifetime || hasActiveSub || hasTrial || hasPromo;
-
-        // Determine status
-        let status: SubscriptionStatus['status'] = 'none';
-        if (hasLifetime || hasActiveSub) status = 'active';
-        else if (hasTrial) status = 'trial';
-        else if (profile.subscription_status === 'cancelled') status = 'cancelled';
-
         setSubscription({
-          status,
-          tier: (profile.subscription_tier as SubscriptionStatus['tier']) || null,
-          isStudent: profile.subscription_tier === 'student',
-          trialEndsAt: profile.trial_ends_at,
+          status: sub.status as SubscriptionStatus['status'],
+          tier: sub.tier as SubscriptionStatus['tier'],
+          isStudent: sub.tier === 'student',
+          trialEndsAt: sub.trial_ends_at,
           studentExpiresAt: null,
-          promotionalExpiresAt: profile.promotional_access_expires_at,
-          hasAccess: hasPersonalAccess || hasChurchAccess,
+          promotionalExpiresAt: null,
+          hasAccess: sub.has_access || hasChurchAccess,
+          church: {
+            hasChurchAccess,
+            churchId: churchAccess?.church_id || null,
+            churchTier: churchAccess?.church_tier as any || null,
+            churchRole: churchAccess?.role as any || null,
+          },
+        });
+      } else {
+        // No subscription record - set defaults with church access check
+        setSubscription({
+          status: 'none',
+          tier: 'free',
+          isStudent: false,
+          trialEndsAt: null,
+          studentExpiresAt: null,
+          promotionalExpiresAt: null,
+          hasAccess: hasChurchAccess,
           church: {
             hasChurchAccess,
             churchId: churchAccess?.church_id || null,
