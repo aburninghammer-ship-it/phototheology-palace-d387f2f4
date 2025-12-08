@@ -13,17 +13,25 @@ export function PWAUpdatePrompt() {
     updateServiceWorker,
   } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
+      console.log('SW registered:', swUrl);
       if (r) {
-        // Check for updates every 5 minutes instead of hourly
+        // Check for updates every 2 minutes for faster detection
         setInterval(() => {
+          console.log('Checking for SW update...');
           r.update();
-        }, 5 * 60 * 1000);
-        // Also check immediately on registration
+        }, 2 * 60 * 1000);
+        // Check immediately on registration
         r.update();
       }
     },
+    onNeedRefresh() {
+      console.log('New content available, showing update prompt');
+    },
+    onOfflineReady() {
+      console.log('App ready for offline use');
+    },
     onRegisterError(error) {
-      console.log('SW registration error', error);
+      console.error('SW registration error:', error);
     },
   });
 
