@@ -33,6 +33,13 @@ import fruitFaith from "@/assets/cards/floor4/fruit-faith.jpeg";
 import fruitLove from "@/assets/cards/floor4/fruit-love.jpeg";
 import fruitGoodness from "@/assets/cards/floor4/fruit-goodness.jpeg";
 import timezoneHeavenPresent from "@/assets/cards/floor4/timezone-heaven-present.jpeg";
+import timezoneHeavenPast from "@/assets/cards/floor4/timezone-heaven-past.jpeg";
+import timezoneHeavenFuture from "@/assets/cards/floor4/timezone-heaven-future.jpeg";
+import timezoneEarthFuture from "@/assets/cards/floor4/timezone-earth-future.jpeg";
+import timezoneEarthPresent from "@/assets/cards/floor4/timezone-earth-present.jpeg";
+import timezoneEarthPast from "@/assets/cards/floor4/timezone-earth-past.jpeg";
+import connect6Parables from "@/assets/cards/floor4/connect6-parables.jpeg";
+import connect6Gospels from "@/assets/cards/floor4/connect6-gospels.jpeg";
 
 // Floor 5 - Vision (Blue cards)
 import blueRoom from "@/assets/cards/floor5/blue-room.jpeg";
@@ -100,6 +107,13 @@ export const cardImageRegistry: Record<string, string> = {
   "frt-love": fruitLove,
   "frt-goodness": fruitGoodness,
   "tz-heaven-present": timezoneHeavenPresent,
+  "tz-heaven-past": timezoneHeavenPast,
+  "tz-heaven-future": timezoneHeavenFuture,
+  "tz-earth-future": timezoneEarthFuture,
+  "tz-earth-present": timezoneEarthPresent,
+  "tz-earth-past": timezoneEarthPast,
+  "c6-parables": connect6Parables,
+  "c6-gospels": connect6Gospels,
   
   // Floor 5 - Vision
   "bl": blueRoom,
@@ -301,6 +315,56 @@ export const cardData: CardImage[] = [
     floor: 4,
     imagePath: timezoneHeavenPresent,
     instruction: "Study the text in the context of events in Heaven's present."
+  },
+  {
+    roomId: "tz-heaven-past",
+    roomName: "Time Zone Room - Heaven Past",
+    floor: 4,
+    imagePath: timezoneHeavenPast,
+    instruction: "Study the text in the context of events in Heaven's past."
+  },
+  {
+    roomId: "tz-heaven-future",
+    roomName: "Time Zone Room - Heaven Future",
+    floor: 4,
+    imagePath: timezoneHeavenFuture,
+    instruction: "Study the text in the context of events in Heaven's future."
+  },
+  {
+    roomId: "tz-earth-past",
+    roomName: "Time Zone Room - Earth Past",
+    floor: 4,
+    imagePath: timezoneEarthPast,
+    instruction: "Study the text in the context of events in Earth's past."
+  },
+  {
+    roomId: "tz-earth-present",
+    roomName: "Time Zone Room - Earth Present",
+    floor: 4,
+    imagePath: timezoneEarthPresent,
+    instruction: "Study the text in the context of events in Earth's present."
+  },
+  {
+    roomId: "tz-earth-future",
+    roomName: "Time Zone Room - Earth Future",
+    floor: 4,
+    imagePath: timezoneEarthFuture,
+    instruction: "Study the text in the context of events in Earth's future."
+  },
+  // Floor 4 - Connect 6 Room variants
+  {
+    roomId: "c6-parables",
+    roomName: "Connect 6 Room - Parables",
+    floor: 4,
+    imagePath: connect6Parables,
+    instruction: "Connect the text with a parable."
+  },
+  {
+    roomId: "c6-gospels",
+    roomName: "Connect 6 Room - Gospels",
+    floor: 4,
+    imagePath: connect6Gospels,
+    instruction: "Connect the text with a gospel account."
   },
   
   // Floor 5 - Vision (Blue)
