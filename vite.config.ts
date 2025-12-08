@@ -48,24 +48,26 @@ export default defineConfig(({ mode }) => ({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              }
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days instead of 365
+              },
+              networkTimeoutSeconds: 3
             }
           },
           {
             urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'gstatic-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              }
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days instead of 365
+              },
+              networkTimeoutSeconds: 3
             }
           },
           {
