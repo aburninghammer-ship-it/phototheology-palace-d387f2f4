@@ -30,7 +30,7 @@ export function RoomCard({
 }: RoomCardProps) {
   const [isFlipped, setIsFlipped] = useState(showBack);
   const cardImage = getCardImage(roomId);
-  const cardBackImage = getCardBack();
+  const cardBackImage = getCardBack(floor);
   const floorColor = floorColors[floor] || floorColors[1];
 
   const handleClick = () => {
