@@ -69,16 +69,31 @@ serve(async (req) => {
       throw new Error(`Your ${platform} authorization has expired. Please reconnect your account in profile settings.`);
     }
 
-    // Decrypt the access token (using base64 decoding - matches client-side encoding)
+    // Decrypt the access token using database encryption function
     const encryptedToken = connection.access_token_encrypted;
     if (!encryptedToken) {
       console.error(`No encrypted token found for ${platform}`);
       throw new Error(`No access token found for ${platform}. Please reconnect your account.`);
     }
     
+    // Use service role client to decrypt token
+    const serviceClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+    
     let accessToken: string;
     try {
-      accessToken = atob(encryptedToken);
+      const { data: decryptResult, error: decryptError } = await serviceClient
+        .rpc('decrypt_token', { encrypted_token: encryptedToken });
+      
+      if (decryptError || !decryptResult) {
+        // Fallback to base64 for legacy tokens
+        console.log("Trying legacy base64 decode...");
+        accessToken = atob(encryptedToken);
+      } else {
+        accessToken = decryptResult;
+      }
     } catch (e) {
       console.error("Token decode error:", e);
       throw new Error(`Invalid token format for ${platform}. Please reconnect your account.`);

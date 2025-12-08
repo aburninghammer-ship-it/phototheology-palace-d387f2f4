@@ -55,6 +55,9 @@ verify_jwt = false
 [functions.verify-student]
 verify_jwt = true
 
+[functions.confirm-student-verification]
+verify_jwt = true
+
 [functions.analyze-quarterly-lesson]
 verify_jwt = false
 
