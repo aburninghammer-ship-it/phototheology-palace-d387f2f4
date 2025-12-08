@@ -1,4 +1,4 @@
-import { Home, BookOpen, Building2, Gamepad2, User } from "lucide-react";
+import { Home, BookOpen, Building2, Gamepad2, User, StickyNote } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,7 +7,7 @@ const navItems = [
   { icon: Home, label: "Home", path: "/dashboard" },
   { icon: BookOpen, label: "Bible", path: "/bible" },
   { icon: Building2, label: "Palace", path: "/palace" },
-  { icon: Gamepad2, label: "Games", path: "/games" },
+  { icon: StickyNote, label: "Notes", path: "/notes" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
 

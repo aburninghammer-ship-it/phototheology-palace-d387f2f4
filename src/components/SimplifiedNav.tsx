@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { BookOpen, Gamepad2, GraduationCap, Users, User, Menu, Home, Crown, Settings, Brain } from "lucide-react";
+import { BookOpen, Gamepad2, GraduationCap, Users, User, Menu, Home, Crown, Settings, Brain, StickyNote } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -37,6 +37,7 @@ export const SimplifiedNav = () => {
     { to: "/bible-image-library", label: "Image Library", icon: BookOpen },
     { to: "/quarterly-study", label: "Quarterly Study", icon: BookOpen },
     { to: "/memorization", label: "Memorization", icon: BookOpen },
+    { to: "/notes", label: "Notes", icon: StickyNote },
   ];
 
   const practiceLinks = [
