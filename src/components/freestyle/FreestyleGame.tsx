@@ -124,10 +124,10 @@ export const FreestyleGame = ({ roomId, roomName }: FreestyleGameProps) => {
   };
 
   const addObject = () => {
-    if (newObject.trim() && userObjects.length < 5) {
+    if (newObject.trim() && userObjects.length < 10) {
       // Handle comma-separated input for multiple objects at once
       const newObjects = newObject.split(',').map(o => o.trim()).filter(o => o.length > 0);
-      const remainingSlots = 5 - userObjects.length;
+      const remainingSlots = 10 - userObjects.length;
       const objectsToAdd = newObjects.slice(0, remainingSlots);
       
       if (objectsToAdd.length > 0) {
@@ -357,22 +357,22 @@ export const FreestyleGame = ({ roomId, roomName }: FreestyleGameProps) => {
             <div className="p-4 bg-gradient-to-r from-accent/10 to-primary/10 rounded-xl border border-accent/20">
               <h4 className="font-semibold mb-2">⚔️ Challenge Jeeves!</h4>
               <p className="text-sm text-muted-foreground">
-                Give Jeeves 2-5 random objects and watch him create a master-level freestyle connection!
+                Give Jeeves 2-10 random objects, places, events, or people and watch him create a master-level freestyle connection!
               </p>
             </div>
 
             <div className="space-y-3">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Enter an object, event, or nature element..."
+                  placeholder="Enter an object, place, event, or person..."
                   value={newObject}
                   onChange={(e) => setNewObject(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && addObject()}
-                  disabled={userObjects.length >= 5}
+                  disabled={userObjects.length >= 10}
                 />
                 <Button 
                   onClick={addObject} 
-                  disabled={!newObject.trim() || userObjects.length >= 5}
+                  disabled={!newObject.trim() || userObjects.length >= 10}
                   size="icon"
                 >
                   <Plus className="h-4 w-4" />
@@ -412,7 +412,7 @@ export const FreestyleGame = ({ roomId, roomName }: FreestyleGameProps) => {
                 ) : (
                   <>
                     <Swords className="h-4 w-4" />
-                    Challenge Jeeves ({userObjects.length}/5 objects)
+                    Challenge Jeeves ({userObjects.length}/10 items)
                   </>
                 )}
               </Button>
