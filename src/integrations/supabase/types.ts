@@ -8552,6 +8552,18 @@ export type Database = {
       generate_session_share_token: { Args: never; Returns: string }
       generate_student_verification_code: { Args: never; Returns: string }
       get_available_seats: { Args: { _church_id: string }; Returns: number }
+      get_church_public_info: {
+        Args: { _church_id: string }
+        Returns: {
+          branded_name: string
+          created_at: string
+          id: string
+          logo_url: string
+          max_seats: number
+          name: string
+          tier: Database["public"]["Enums"]["church_tier"]
+        }[]
+      }
       get_or_create_conversation: {
         Args: { other_user_id: string }
         Returns: string
@@ -8564,6 +8576,19 @@ export type Database = {
           created_at: string
           display_name: string
           id: string
+          username: string
+        }[]
+      }
+      get_safe_profile: {
+        Args: { _user_id: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          created_at: string
+          display_name: string
+          id: string
+          points: number
+          subscription_tier: string
           username: string
         }[]
       }
