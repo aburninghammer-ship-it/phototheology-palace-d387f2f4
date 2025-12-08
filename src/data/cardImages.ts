@@ -6,6 +6,8 @@ import storyRoom from "@/assets/cards/floor1/story-room.jpeg";
 import translationRoom from "@/assets/cards/floor1/translation-room.jpeg";
 import movieRoom from "@/assets/cards/floor1/movie-room.jpeg";
 import fps24Room from "@/assets/cards/floor1/24fps-room.jpeg";
+import imaginationRoom from "@/assets/cards/floor1/imagination-room.jpeg";
+import gemsRoom from "@/assets/cards/floor1/gems-room.jpeg";
 import floor1Back from "@/assets/cards/floor1/card-back.jpeg";
 
 // Floor 2 - Investigation (Yellow cards)
@@ -13,6 +15,7 @@ import questionsRoom from "@/assets/cards/floor2/questions-room.jpeg";
 import qaRoom from "@/assets/cards/floor2/qa-room.jpeg";
 import defComRoom from "@/assets/cards/floor2/def-com-room.jpeg";
 import symbolsTypesRoom from "@/assets/cards/floor2/symbols-types-room.jpeg";
+import observationRoom from "@/assets/cards/floor2/observation-room.jpeg";
 import floor2Back from "@/assets/cards/floor2/card-back.jpeg";
 
 // Floor 3 - Freestyle (Orange cards)
@@ -48,10 +51,31 @@ import themeLifeOfChrist from "@/assets/cards/floor4/theme-life-of-christ.jpeg";
 import parallelRoom from "@/assets/cards/floor4/parallel-room.jpeg";
 import concentrationRoom from "@/assets/cards/floor4/concentration-room.jpeg";
 import patternsRoom from "@/assets/cards/floor4/patterns-room.jpeg";
+import dimensionsRoom from "@/assets/cards/floor4/dimensions-room.jpeg";
+import connect6Prophecy from "@/assets/cards/floor4/connect6-prophecy.jpeg";
+import connect6Poetry from "@/assets/cards/floor4/connect6-poetry.jpeg";
+import connect6History from "@/assets/cards/floor4/connect6-history.jpeg";
+import connect6Epistles from "@/assets/cards/floor4/connect6-epistles.jpeg";
 
 // Floor 5 - Vision (Blue cards)
 import blueRoom from "@/assets/cards/floor5/blue-room.jpeg";
 import threeAngelsRoom from "@/assets/cards/floor5/three-angels-room.jpeg";
+import prophecyRoom from "@/assets/cards/floor5/prophecy-room.jpeg";
+// Sanctuary stations
+import sanctuaryAltar from "@/assets/cards/floor5/sanctuary-altar.jpeg";
+import sanctuaryLaver from "@/assets/cards/floor5/sanctuary-laver.jpeg";
+import sanctuaryLampstand from "@/assets/cards/floor5/sanctuary-lampstand.jpeg";
+import sanctuaryShowbread from "@/assets/cards/floor5/sanctuary-showbread.jpeg";
+import sanctuaryIncense from "@/assets/cards/floor5/sanctuary-incense.jpeg";
+import sanctuaryArk from "@/assets/cards/floor5/sanctuary-ark.jpeg";
+// Feast days
+import feastPassover from "@/assets/cards/floor5/feast-passover.jpeg";
+import feastUnleavened from "@/assets/cards/floor5/feast-unleavened.jpeg";
+import feastFirstfruits from "@/assets/cards/floor5/feast-firstfruits.jpeg";
+import feastPentecost from "@/assets/cards/floor5/feast-pentecost.jpeg";
+import feastTrumpets from "@/assets/cards/floor5/feast-trumpets.jpeg";
+import feastAtonement from "@/assets/cards/floor5/feast-atonement.jpeg";
+import feastTabernacles from "@/assets/cards/floor5/feast-tabernacles.jpeg";
 
 // Floor 6 - Three Heavens (Purple cards) - Mathematics Room variants
 import mathDaniel70week from "@/assets/cards/floor6/math-daniel-70week.jpeg";
@@ -66,10 +90,21 @@ import cycle1Adamic from "@/assets/cards/floor6/cycle-1-adamic.jpeg";
 import cycle2Noahic from "@/assets/cards/floor6/cycle-2-noahic.jpeg";
 import cycle3Semitic from "@/assets/cards/floor6/cycle-3-semitic.jpeg";
 import cycle4Abrahamic from "@/assets/cards/floor6/cycle-4-abrahamic.jpeg";
+import cycle5Mosaic from "@/assets/cards/floor6/cycle-5-mosaic.jpeg";
+import cycle6Cyrusic from "@/assets/cards/floor6/cycle-6-cyrusic.jpeg";
+import cycle7Spirit from "@/assets/cards/floor6/cycle-7-spirit.jpeg";
+import cycle8Remnant from "@/assets/cards/floor6/cycle-8-remnant.jpeg";
+// Three Heavens
+import heaven1H from "@/assets/cards/floor6/heaven-1h.jpeg";
+import heaven2H from "@/assets/cards/floor6/heaven-2h.jpeg";
+import heaven3H from "@/assets/cards/floor6/heaven-3h.jpeg";
+// Juice Room
+import juiceRoom from "@/assets/cards/floor6/juice-room.jpeg";
 
 // Floor 7 - Spiritual/Emotional (Turquoise cards)
 import meditationRoom from "@/assets/cards/floor7/meditation-room.jpeg";
 import fireRoom from "@/assets/cards/floor7/fire-room.jpeg";
+import speedRoom from "@/assets/cards/floor7/speed-room.jpeg";
 import floor7Back from "@/assets/cards/floor7/card-back.jpeg";
 
 // Default card back
@@ -90,12 +125,15 @@ export const cardImageRegistry: Record<string, string> = {
   "tr": translationRoom,
   "br": movieRoom,
   "24": fps24Room,
+  "ir": imaginationRoom,
+  "gr": gemsRoom,
   
   // Floor 2 - Investigation
   "qr": questionsRoom,
   "qa": qaRoom,
   "dc": defComRoom,
   "st": symbolsTypesRoom,
+  "or": observationRoom,
   
   // Floor 3 - Freestyle
   "lr": listeningRoom,
@@ -122,6 +160,10 @@ export const cardImageRegistry: Record<string, string> = {
   "tz-earth-past": timezoneEarthPast,
   "c6-parables": connect6Parables,
   "c6-gospels": connect6Gospels,
+  "c6-prophecy": connect6Prophecy,
+  "c6-poetry": connect6Poetry,
+  "c6-history": connect6History,
+  "c6-epistles": connect6Epistles,
   "trm-heaven": themeHeaven,
   "trm-sanctuary": themeSanctuary,
   "trm-time-prophecy": themeTimeProphecy,
@@ -130,10 +172,27 @@ export const cardImageRegistry: Record<string, string> = {
   "prm": patternsRoom,
   "p": parallelRoom,
   "cr": concentrationRoom,
+  "dr": dimensionsRoom,
   
   // Floor 5 - Vision
   "bl": blueRoom,
   "3a": threeAngelsRoom,
+  "pr": prophecyRoom,
+  // Sanctuary stations
+  "bl-altar": sanctuaryAltar,
+  "bl-laver": sanctuaryLaver,
+  "bl-lampstand": sanctuaryLampstand,
+  "bl-showbread": sanctuaryShowbread,
+  "bl-incense": sanctuaryIncense,
+  "bl-ark": sanctuaryArk,
+  // Feast days
+  "feast-passover": feastPassover,
+  "feast-unleavened": feastUnleavened,
+  "feast-firstfruits": feastFirstfruits,
+  "feast-pentecost": feastPentecost,
+  "feast-trumpets": feastTrumpets,
+  "feast-atonement": feastAtonement,
+  "feast-tabernacles": feastTabernacles,
   
   // Floor 6 - Three Heavens (Mathematics Room variants)
   "math-70week": mathDaniel70week,
@@ -148,10 +207,21 @@ export const cardImageRegistry: Record<string, string> = {
   "@no": cycle2Noahic,
   "@se": cycle3Semitic,
   "@ab": cycle4Abrahamic,
+  "@mo": cycle5Mosaic,
+  "@cy": cycle6Cyrusic,
+  "@sp": cycle7Spirit,
+  "@re": cycle8Remnant,
+  // Three Heavens
+  "1h": heaven1H,
+  "2h": heaven2H,
+  "3h": heaven3H,
+  // Juice Room
+  "jr": juiceRoom,
   
   // Floor 7 - Spiritual/Emotional
   "mr": meditationRoom,
   "frm": fireRoom,
+  "srm": speedRoom,
 };
 
 // Floor-specific card backs
@@ -537,22 +607,68 @@ export const cardData: CardImage[] = [
     imagePath: cycle4Abrahamic,
     instruction: "Study the text within the context of one of the 8 cycles of scripture. #4 of 8: Compare, contrast, or study within the Abrahamic Cycle. (Ur to Egyptian Bondage)"
   },
-  
-  // Floor 7 - Spiritual/Emotional (Turquoise)
   {
-    roomId: "mr",
-    roomName: "Meditation Room",
-    floor: 7,
-    imagePath: meditationRoom,
-    instruction: "Spend time meditating on the study after you have fully completed it."
+    roomId: "@mo",
+    roomName: "8 Cycles Room - #5 Mosaic",
+    floor: 6,
+    imagePath: cycle5Mosaic,
+    instruction: "Study within the Mosaic Cycle. (Exodus to Babylonian Exile)"
   },
   {
-    roomId: "frm",
-    roomName: "Fire Room",
-    floor: 7,
-    imagePath: fireRoom,
-    instruction: "Enter into the feeling and emotion of the text or study."
+    roomId: "@cy",
+    roomName: "8 Cycles Room - #6 Cyrusic",
+    floor: 6,
+    imagePath: cycle6Cyrusic,
+    instruction: "Study within the Cyrusic Cycle. (Exile to Return & Rebuild)"
   },
+  {
+    roomId: "@sp",
+    roomName: "8 Cycles Room - #7 Spirit",
+    floor: 6,
+    imagePath: cycle7Spirit,
+    instruction: "Study within the Spirit Cycle. (Pentecost to Church Age)"
+  },
+  {
+    roomId: "@re",
+    roomName: "8 Cycles Room - #8 Remnant",
+    floor: 6,
+    imagePath: cycle8Remnant,
+    instruction: "Study within the Remnant Cycle. (End-Time to Second Coming)"
+  },
+  { roomId: "1h", roomName: "First Heaven (1H)", floor: 6, imagePath: heaven1H, instruction: "Study in context of DoL¹/NE¹ - Babylonian destruction to Cyrusic restoration." },
+  { roomId: "2h", roomName: "Second Heaven (2H)", floor: 6, imagePath: heaven2H, instruction: "Study in context of DoL²/NE² - 70 AD to New Covenant order." },
+  { roomId: "3h", roomName: "Third Heaven (3H)", floor: 6, imagePath: heaven3H, instruction: "Study in context of DoL³/NE³ - Final judgment to New Creation." },
+  { roomId: "jr", roomName: "Juice Room", floor: 6, imagePath: juiceRoom, instruction: "Squeeze every insight from the text using all PT principles." },
+  // Floor 1 additions
+  { roomId: "ir", roomName: "Imagination Room", floor: 1, imagePath: imaginationRoom, instruction: "Step inside the story. Immerse yourself as if you were there." },
+  { roomId: "gr", roomName: "Gems Room", floor: 1, imagePath: gemsRoom, instruction: "Collect striking insights that shine with clarity." },
+  // Floor 2 addition
+  { roomId: "or", roomName: "Observation Room", floor: 2, imagePath: observationRoom, instruction: "Log details without interpretation. Notice every fingerprint." },
+  // Floor 4 additions
+  { roomId: "dr", roomName: "Dimensions Room", floor: 4, imagePath: dimensionsRoom, instruction: "Study the text across 5 dimensions: Literal, Christ, Me, Church, Heaven." },
+  { roomId: "c6-prophecy", roomName: "Connect 6 - Prophecy", floor: 4, imagePath: connect6Prophecy, instruction: "Connect the text with prophetic literature." },
+  { roomId: "c6-poetry", roomName: "Connect 6 - Poetry", floor: 4, imagePath: connect6Poetry, instruction: "Connect the text with poetic literature." },
+  { roomId: "c6-history", roomName: "Connect 6 - History", floor: 4, imagePath: connect6History, instruction: "Connect the text with historical narrative." },
+  { roomId: "c6-epistles", roomName: "Connect 6 - Epistles", floor: 4, imagePath: connect6Epistles, instruction: "Connect the text with apostolic letters." },
+  // Floor 5 additions
+  { roomId: "pr", roomName: "Prophecy Room", floor: 5, imagePath: prophecyRoom, instruction: "See God's master plan through prophetic timelines." },
+  { roomId: "bl-altar", roomName: "Altar of Sacrifice", floor: 5, imagePath: sanctuaryAltar, instruction: "Study in context of the Altar - the cross." },
+  { roomId: "bl-laver", roomName: "Laver", floor: 5, imagePath: sanctuaryLaver, instruction: "Study in context of the Laver - baptism and cleansing." },
+  { roomId: "bl-lampstand", roomName: "Lampstand", floor: 5, imagePath: sanctuaryLampstand, instruction: "Study in context of the Lampstand - light of the Spirit." },
+  { roomId: "bl-showbread", roomName: "Table of Showbread", floor: 5, imagePath: sanctuaryShowbread, instruction: "Study in context of the Showbread - Word of God." },
+  { roomId: "bl-incense", roomName: "Altar of Incense", floor: 5, imagePath: sanctuaryIncense, instruction: "Study in context of the Incense Altar - intercession." },
+  { roomId: "bl-ark", roomName: "Ark of the Covenant", floor: 5, imagePath: sanctuaryArk, instruction: "Study in context of the Ark - law, mercy, God's throne." },
+  { roomId: "feast-passover", roomName: "Feast of Passover", floor: 5, imagePath: feastPassover, instruction: "Study in context of Passover - Christ our Lamb." },
+  { roomId: "feast-unleavened", roomName: "Feast of Unleavened Bread", floor: 5, imagePath: feastUnleavened, instruction: "Study in context of Unleavened Bread - purity." },
+  { roomId: "feast-firstfruits", roomName: "Feast of Firstfruits", floor: 5, imagePath: feastFirstfruits, instruction: "Study in context of Firstfruits - resurrection." },
+  { roomId: "feast-pentecost", roomName: "Feast of Pentecost", floor: 5, imagePath: feastPentecost, instruction: "Study in context of Pentecost - Holy Spirit outpouring." },
+  { roomId: "feast-trumpets", roomName: "Feast of Trumpets", floor: 5, imagePath: feastTrumpets, instruction: "Study in context of Trumpets - awakening call." },
+  { roomId: "feast-atonement", roomName: "Day of Atonement", floor: 5, imagePath: feastAtonement, instruction: "Study in context of Yom Kippur - judgment." },
+  { roomId: "feast-tabernacles", roomName: "Feast of Tabernacles", floor: 5, imagePath: feastTabernacles, instruction: "Study in context of Tabernacles - God dwelling with man." },
+  // Floor 7
+  { roomId: "mr", roomName: "Meditation Room", floor: 7, imagePath: meditationRoom, instruction: "Meditate slowly on the study." },
+  { roomId: "frm", roomName: "Fire Room", floor: 7, imagePath: fireRoom, instruction: "Enter the emotional weight of the text." },
+  { roomId: "srm", roomName: "Speed Room", floor: 7, imagePath: speedRoom, instruction: "Practice rapid application of PT principles." },
 ];
 
 // Get card back image for a specific floor, or default
