@@ -311,9 +311,9 @@ export const phototheologyCourse: CourseDay[] = [
   {
     day: 23,
     week: 4,
-    title: "Connect-6 Room (C6)",
+    title: "Connect-6 (C6)",
     floor: "Floor 4: Christ-Centered Depth",
-    room: "Connect-6 Room",
+    room: "Connect-6",
     focus: "Genres linkage (Prophecy, Parables, etc.)",
     scripture: "Matthew 13:3",
     scriptureText: "Behold, a sower went forth to sow.",
