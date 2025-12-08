@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Calendar, MessageSquare, Sparkles, Plus, Pin, Trash2, Clock, History as HistoryIcon, Lightbulb } from "lucide-react";
+import { ArrowLeft, Send, Calendar, MessageSquare, Sparkles, Plus, Pin, Trash2, Clock, History as HistoryIcon, Lightbulb, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { useDevotionalPlan, useDevotionals } from "@/hooks/useDevotionals";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { ProfileDevotionGenerator } from "@/components/devotionals/ProfileDevotionGenerator";
 import { format, formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -211,13 +212,22 @@ export default function DevotionalProfileDetail() {
         )}
 
         {/* Tabs */}
-        <Tabs defaultValue="devotionals" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="generate" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="generate" className="flex items-center gap-1">
+              <Zap className="h-3 w-3" />
+              Generate
+            </TabsTrigger>
             <TabsTrigger value="devotionals">Devotionals</TabsTrigger>
             <TabsTrigger value="notes">Notes</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
             <TabsTrigger value="insights">Insights</TabsTrigger>
           </TabsList>
+
+          {/* Generate Deep Devotion Tab */}
+          <TabsContent value="generate" className="space-y-4">
+            <ProfileDevotionGenerator profile={profile} />
+          </TabsContent>
 
           {/* Devotionals Tab */}
           <TabsContent value="devotionals" className="space-y-4">
