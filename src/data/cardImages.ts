@@ -6,12 +6,14 @@ import storyRoom from "@/assets/cards/floor1/story-room.jpeg";
 import translationRoom from "@/assets/cards/floor1/translation-room.jpeg";
 import movieRoom from "@/assets/cards/floor1/movie-room.jpeg";
 import fps24Room from "@/assets/cards/floor1/24fps-room.jpeg";
+import floor1Back from "@/assets/cards/floor1/card-back.jpeg";
 
 // Floor 2 - Investigation (Yellow cards)
 import questionsRoom from "@/assets/cards/floor2/questions-room.jpeg";
 import qaRoom from "@/assets/cards/floor2/qa-room.jpeg";
 import defComRoom from "@/assets/cards/floor2/def-com-room.jpeg";
 import symbolsTypesRoom from "@/assets/cards/floor2/symbols-types-room.jpeg";
+import floor2Back from "@/assets/cards/floor2/card-back.jpeg";
 
 // Floor 3 - Freestyle (Orange cards)
 import listeningRoom from "@/assets/cards/floor3/listening-room.jpeg";
@@ -27,10 +29,17 @@ import bibleFreestyle from "@/assets/cards/floor3/bible-freestyle.jpeg";
 import blueRoom from "@/assets/cards/floor5/blue-room.jpeg";
 import threeAngelsRoom from "@/assets/cards/floor5/three-angels-room.jpeg";
 
-// Floor 6-8 cards
-// No cards uploaded yet
+// Floor 6 - Three Heavens (Purple cards)
+import mathDaniel70week from "@/assets/cards/floor6/math-daniel-70week.jpeg";
+import math70year from "@/assets/cards/floor6/math-70year.jpeg";
+import mathNoah120year from "@/assets/cards/floor6/math-noah-120year.jpeg";
 
-// Card back
+// Floor 7 - Spiritual/Emotional (Turquoise cards)
+import meditationRoom from "@/assets/cards/floor7/meditation-room.jpeg";
+import fireRoom from "@/assets/cards/floor7/fire-room.jpeg";
+import floor7Back from "@/assets/cards/floor7/card-back.jpeg";
+
+// Default card back
 import cardBack from "@/assets/cards/card-back.jpeg";
 
 export interface CardImage {
@@ -65,6 +74,22 @@ export const cardImageRegistry: Record<string, string> = {
   // Floor 5 - Vision
   "bl": blueRoom,
   "3a": threeAngelsRoom,
+  
+  // Floor 6 - Three Heavens (Mathematics Room variants)
+  "math-70week": mathDaniel70week,
+  "math-70year": math70year,
+  "math-120year": mathNoah120year,
+  
+  // Floor 7 - Spiritual/Emotional
+  "mr": meditationRoom,
+  "frm": fireRoom,
+};
+
+// Floor-specific card backs
+export const floorCardBacks: Record<number, string> = {
+  1: floor1Back,
+  2: floor2Back,
+  7: floor7Back,
 };
 
 // Card metadata for the deck feature
@@ -181,10 +206,54 @@ export const cardData: CardImage[] = [
     imagePath: threeAngelsRoom,
     instruction: "Study the text in the context of the Revelation 14:6-12 specifically."
   },
+  
+  // Floor 6 - Three Heavens (Purple) - Mathematics Room variants
+  {
+    roomId: "math-70week",
+    roomName: "Mathematics Room (Daniel's 70 Weeks)",
+    floor: 6,
+    imagePath: mathDaniel70week,
+    instruction: "Connect with the mathematics of Daniel's 70-week prophecy."
+  },
+  {
+    roomId: "math-70year",
+    roomName: "Mathematics Room (70 Years)",
+    floor: 6,
+    imagePath: math70year,
+    instruction: "Connect with the mathematics of the 70-year prophecy."
+  },
+  {
+    roomId: "math-120year",
+    roomName: "Mathematics Room (Noah's 120 Years)",
+    floor: 6,
+    imagePath: mathNoah120year,
+    instruction: "Connect with the mathematics of Noah's 120-year prophecy."
+  },
+  
+  // Floor 7 - Spiritual/Emotional (Turquoise)
+  {
+    roomId: "mr",
+    roomName: "Meditation Room",
+    floor: 7,
+    imagePath: meditationRoom,
+    instruction: "Spend time meditating on the study after you have fully completed it."
+  },
+  {
+    roomId: "frm",
+    roomName: "Fire Room",
+    floor: 7,
+    imagePath: fireRoom,
+    instruction: "Enter into the feeling and emotion of the text or study."
+  },
 ];
 
-// Get card back image
-export const getCardBack = () => cardBack;
+// Get card back image for a specific floor, or default
+export const getCardBack = (floor?: number) => {
+  if (floor && floorCardBacks[floor]) {
+    return floorCardBacks[floor];
+  }
+  return cardBack;
+};
 
 // Get card image for a room, returns undefined if no card exists
 export const getCardImage = (roomId: string): string | undefined => {
@@ -209,6 +278,6 @@ export const floorColors: Record<number, { bg: string; border: string; name: str
   4: { bg: "bg-red-900/30", border: "border-red-500", name: "red" },
   5: { bg: "bg-blue-900/30", border: "border-blue-500", name: "blue" },
   6: { bg: "bg-purple-900/30", border: "border-purple-500", name: "purple" },
-  7: { bg: "bg-pink-900/30", border: "border-pink-500", name: "pink" },
+  7: { bg: "bg-cyan-900/30", border: "border-cyan-500", name: "turquoise" },
   8: { bg: "bg-amber-900/30", border: "border-amber-500", name: "gold" },
 };
