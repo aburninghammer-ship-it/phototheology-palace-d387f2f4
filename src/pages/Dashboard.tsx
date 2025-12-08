@@ -14,6 +14,7 @@ import { PalaceProgressDashboard } from "@/components/PalaceProgressDashboard";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { JeevesWelcomeModal } from "@/components/retention/JeevesWelcomeModal";
 import { PathBanner, PathDashboardWidget } from "@/components/path";
+import { QuickNotes } from "@/components/notes/QuickNotes";
 import { Brain, Building2, Headphones } from "lucide-react";
 import { 
   BookOpen, 
@@ -346,6 +347,9 @@ export default function Dashboard() {
                 </Button>
               </CardContent>
             </Card>
+
+            {/* Quick Notes - Offline Available */}
+            <QuickNotes compact />
 
             <SpacedRepetitionReview />
           </div>
