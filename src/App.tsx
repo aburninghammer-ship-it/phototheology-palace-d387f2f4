@@ -27,6 +27,7 @@ import { VoiceChatInviteNotification } from "@/components/voice/VoiceChatInviteN
 import { PageTracker } from "@/components/PageTracker";
 import { DailyVerseNotification } from "@/components/notifications/DailyVerseNotification";
 import { DailyTipNotificationProvider } from "@/components/notifications/DailyTipNotification";
+import { SMSOptInPrompt } from "@/components/notifications/SMSOptInPrompt";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { ExitIntentPopup } from "@/components/conversion/ExitIntentPopup";
 import { AmbientMusicPlayer } from "@/components/audio/AmbientMusicPlayer";
@@ -252,6 +253,8 @@ function App() {
                         <DailyTipNotificationProvider />
                         <InstallPrompt />
                         <ExitIntentPopup />
+                        {/* SMS Opt-In Onboarding Prompt */}
+                        <SMSOptInPrompt />
                         {/* Session Mode Prompt Dialog */}
                         <SessionPromptDialog />
                         {/* Global Mini Player for Bible Reading */}
