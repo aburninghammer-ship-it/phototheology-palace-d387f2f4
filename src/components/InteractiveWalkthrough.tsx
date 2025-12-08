@@ -611,7 +611,7 @@ export const InteractiveWalkthrough = () => {
         <div className="text-center mb-10">
           <Badge className="mb-4 bg-accent/20 text-accent border-accent/30">
             <Sparkles className="h-3 w-3 mr-1" />
-            Interactive Demo — 38 Rooms, 100+ Principles
+            Interactive Demo — {ALL_PRINCIPLES.length} Palace Principles
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             See How the Palace Method Works

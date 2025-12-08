@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
-import { DailyNotificationSettings } from "@/components/notifications/DailyNotificationSettings";
 import { SubscriptionRenewal } from "@/components/SubscriptionRenewal";
 import { AnnouncementManager } from "@/components/admin/AnnouncementManager";
 import { useFreeTier } from "@/hooks/useFreeTier";
@@ -22,7 +21,6 @@ import { Crown, Zap, User as UserIcon } from "lucide-react";
 import { PathProfileSection, PathCertificatesGallery } from "@/components/path";
 import { usePath } from "@/hooks/usePath";
 import { SocialMediaConnect } from "@/components/SocialMediaConnect";
-import { AppVersionCard } from "@/components/AppVersionCard";
 
 
 export default function Profile() {
@@ -371,12 +369,6 @@ export default function Profile() {
 
           {/* Notification Preferences */}
           <NotificationPreferences />
-
-          {/* Daily Notification Settings */}
-          <DailyNotificationSettings />
-
-          {/* App Version & Updates */}
-          <AppVersionCard />
 
           {/* Announcements (Owner Only) */}
           {isOwner && (

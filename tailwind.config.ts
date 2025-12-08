@@ -12,15 +12,6 @@ export default {
         "2xl": "1400px",
       },
     },
-    screens: {
-      'sm': '640px',
-      'md': '768px',
-      'ipad': '834px',      // iPad Mini & iPad portrait
-      'lg': '1024px',       // iPad landscape
-      'ipad-pro': '1194px', // iPad Pro landscape
-      'xl': '1280px',
-      '2xl': '1536px',
-    },
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

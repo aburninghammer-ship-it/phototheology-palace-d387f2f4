@@ -70,8 +70,8 @@ const Palace = () => {
         <PalaceTour onComplete={handleTourComplete} onSkip={handleTourSkip} />
       )}
       
-      <div className="pt-24 pb-16 px-4 ipad:px-8 ipad-pro:px-12">
-        <div className="container mx-auto max-w-6xl ipad:max-w-5xl ipad-pro:max-w-6xl">
+      <div className="pt-24 pb-16 px-4">
+        <div className="container mx-auto max-w-6xl">
           {/* Breadcrumbs */}
           <PalaceBreadcrumbs />
           
@@ -87,7 +87,7 @@ const Palace = () => {
               <span className="text-sm font-semibold text-white">The Master System</span>
             </div>
             
-            <h1 className="font-serif text-5xl md:text-6xl ipad:text-5xl ipad-pro:text-6xl font-bold mb-4 bg-gradient-palace bg-clip-text text-transparent">
+            <h1 className="font-serif text-5xl md:text-6xl font-bold mb-4 bg-gradient-palace bg-clip-text text-transparent">
               The Eight-Floor Palace
             </h1>
             
@@ -150,7 +150,7 @@ const Palace = () => {
             <h2 className="font-serif text-2xl font-semibold mb-4 text-center">
               The Palace Metaphor
             </h2>
-            <div className="grid md:grid-cols-2 ipad:grid-cols-2 gap-4 ipad:gap-6 text-sm text-muted-foreground">
+            <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
               <div>
                 <Link to="/palace/floor/1" id="floor-1" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
                   <strong className="text-foreground">The 1st Floor</strong> fills your shelves with stories and images (width).

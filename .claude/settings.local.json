@@ -20,11 +20,7 @@
       "Bash(cat:*)",
       "Bash(grep:*)",
       "WebSearch",
-      "Bash(npx supabase gen types typescript --local:*)",
-      "Bash(certutil -hashfile:*)",
-      "Bash(git check-ignore:*)",
-      "Bash(git ls-tree:*)",
-      "Bash(git revert:*)"
+      "Bash(npx supabase gen types typescript --local:*)"
     ],
     "deny": [],
     "ask": []

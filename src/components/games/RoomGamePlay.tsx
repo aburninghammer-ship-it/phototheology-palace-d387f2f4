@@ -709,25 +709,25 @@ export function RoomGamePlay() {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Navigation />
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
-        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4 sm:mb-6">
+      <div className="container mx-auto px-4 py-8">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
 
-        <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+        <div className="max-w-3xl mx-auto space-y-6">
           {/* Game Header */}
           <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
-            <CardHeader className="p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <CardHeader>
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl sm:text-4xl">{game.icon}</span>
+                  <span className="text-4xl">{game.icon}</span>
                   <div>
-                    <CardTitle className="text-xl sm:text-2xl">{game.name}</CardTitle>
+                    <CardTitle className="text-2xl">{game.name}</CardTitle>
                     <CardDescription>{game.roomName}</CardDescription>
                   </div>
                 </div>
-                <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2">
+                <div className="flex flex-col items-end gap-2">
                   <Badge className={difficultyColors[game.difficulty]}>{game.difficulty}</Badge>
                   <span className="text-sm text-muted-foreground flex items-center gap-1">
                     <Trophy className="h-4 w-4" />
@@ -741,8 +741,8 @@ export function RoomGamePlay() {
           {/* Score Display */}
           {roundsPlayed > 0 && (
             <Card className="bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border-amber-500/20">
-              <CardContent className="p-3 sm:py-4">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <CardContent className="py-4">
+                <div className="flex justify-between items-center">
                   <span className="font-medium">Session Progress</span>
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-muted-foreground">Rounds: {roundsPlayed}</span>
@@ -794,7 +794,7 @@ export function RoomGamePlay() {
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     placeholder="Type your response here..."
-                    className="min-h-[150px] sm:min-h-[200px]"
+                    className="min-h-[200px]"
                   />
                 </div>
                 <Button 
@@ -837,11 +837,11 @@ export function RoomGamePlay() {
                   <span className="font-medium">XP Earned:</span>
                   <span className="text-xl font-bold text-primary">+{result.score}</span>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex gap-3">
                   <Button onClick={handleNextRound} className="flex-1">
                     Play Again
                   </Button>
-                  <Button variant="outline" onClick={() => navigate(-1)} className="flex-1 sm:flex-none">
+                  <Button variant="outline" onClick={() => navigate(-1)}>
                     Back to Room
                   </Button>
                 </div>
