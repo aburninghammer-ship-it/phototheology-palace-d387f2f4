@@ -104,7 +104,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const musicAudioRef = useRef<HTMLAudioElement | null>(null); // Background music audio
   
-  // Fetch user's display name for personalized commentary
+  // Fetch user's name for personalized commentary
   useEffect(() => {
     const fetchUserName = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -115,7 +115,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           .eq('id', user.id)
           .single();
         if (profile?.display_name) {
-          setUserName(profile.display_name);
+          // Use first word of display_name for personalization
+          setUserName(profile.display_name.split(' ')[0]);
         }
       }
     };
@@ -274,7 +275,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       
       try {
         const { data, error } = await supabase.functions.invoke("generate-chapter-commentary", {
-          body: { book, chapter, chapterText, depth },
+          body: { book, chapter, chapterText, depth, userName },
         });
         
         clearTimeout(timeoutId);
