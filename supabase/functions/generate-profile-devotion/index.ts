@@ -55,20 +55,22 @@ Devotionals should feel like 4–5 movements of a symphony.
 
 STRUCTURE (Implicit in all devotions):
 
-**Paragraph 1 — The Scene Unfolds**
-Begin with a vivid, imaginative entry point. Describe a moment, tension, problem, or spiritual condition hidden in or suggested by the verse. Do not explain yet—evoke. Use sensory details. Drop the reader INTO the text.
+CRITICAL LENGTH REQUIREMENT: Each paragraph must be SUBSTANTIAL—minimum 100-150 words per paragraph. The total devotional should be 500-750 words minimum. DO NOT write thin, sparse paragraphs. Each paragraph should have multiple sentences that develop the thought fully, with layered imagery, theological depth, and emotional resonance. Think "essay paragraph" not "social media post."
 
-**Paragraph 2 — The Scripture Turns**
-Introduce the chosen verse(s) in a natural, narrative way. Highlight a surprising angle—something rarely noticed. Hint at deeper meaning, but do not reveal the "center gem" yet.
+**Paragraph 1 — The Scene Unfolds (100-150 words)**
+Begin with a vivid, imaginative entry point that IMMERSES the reader. Describe a moment, tension, problem, or spiritual condition hidden in or suggested by the verse. Use rich sensory details—what would they see, hear, smell, feel? Set the historical and emotional context. Paint the scene so vividly the reader stands INSIDE the biblical moment. Build tension or curiosity. Do not explain yet—evoke. Create atmosphere.
 
-**Paragraph 3 — The Hidden Thread**
-Draw together patterns, contrasts, echoes, or movements within the text. This is where theological depth operates silently—connect time, character, symbolism, setting, or tension across the Scripture. Show how the text weaves with other biblical moments.
+**Paragraph 2 — The Scripture Turns (100-150 words)**
+Introduce the chosen verse(s) woven naturally into the narrative. Highlight a surprising angle—something rarely noticed by casual readers. Examine specific Hebrew or Greek nuances if relevant. Point out what the original audience would have understood that modern readers miss. Build curiosity about where this is leading. Hint at deeper meaning, but do not reveal the "center gem" yet. Let the text breathe and speak.
 
-**Paragraph 4 — The Revelation**
-Deliver the central insight—the "Gem" of the devotional. This is the ah-ha moment. Elegant, simple, surprising, and spiritually piercing. Grounded in Christ's work, the sanctuary, or the great controversy—implicitly.
+**Paragraph 3 — The Hidden Thread (100-150 words)**
+Draw together patterns, contrasts, echoes, or movements within the text. This is where theological depth operates silently—connect time, character, symbolism, setting, or tension across Scripture. Show how this moment echoes Genesis, anticipates Revelation, or mirrors the sanctuary. Trace the thread through multiple biblical moments. Show the reader connections they have never seen. Build the theological case with layered evidence.
 
-**Paragraph 5 — The Appeal**
-Bring the insight into the reader's life—not moralism, but heart transformation. End with a single sentence "strike line" that lingers for days.
+**Paragraph 4 — The Revelation (100-150 words)**
+Deliver the central insight—the "Gem" of the devotional. This is the ah-ha moment. State it clearly, then EXPAND on its implications. What does this mean for our understanding of God? Of Christ? Of salvation? Of the cosmic conflict? Unpack the gem's facets. Show how this truth transforms theology and life. Make it elegant, surprising, and spiritually piercing. Ground it in Christ's work, the sanctuary, or the great controversy—implicitly.
+
+**Paragraph 5 — The Appeal (100-150 words)**
+Bring the insight into the reader's life with specificity—not generic moralism, but heart transformation rooted in what was just revealed. How does this truth meet them in their actual struggles? What changes when this gem is believed? Paint the "before and after" of embracing this truth. Build to an emotional and spiritual crescendo. End with a single sentence "strike line" that pierces the heart and lingers for days.
 
 CONTENT GUARDRAILS:
 
