@@ -125,8 +125,15 @@ export const FreestyleGame = ({ roomId, roomName }: FreestyleGameProps) => {
 
   const addObject = () => {
     if (newObject.trim() && userObjects.length < 5) {
-      setUserObjects([...userObjects, newObject.trim()]);
-      setNewObject("");
+      // Handle comma-separated input for multiple objects at once
+      const newObjects = newObject.split(',').map(o => o.trim()).filter(o => o.length > 0);
+      const remainingSlots = 5 - userObjects.length;
+      const objectsToAdd = newObjects.slice(0, remainingSlots);
+      
+      if (objectsToAdd.length > 0) {
+        setUserObjects([...userObjects, ...objectsToAdd]);
+        setNewObject("");
+      }
     }
   };
 
