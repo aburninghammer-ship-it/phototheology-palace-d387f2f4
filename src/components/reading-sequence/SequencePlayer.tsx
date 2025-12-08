@@ -1918,6 +1918,43 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                 <p className="text-xs text-muted-foreground">Phototheological Insights</p>
               </div>
               <div className="flex items-center gap-2">
+                {/* Commentary Audio Controls */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-amber-600 hover:text-amber-500 hover:bg-amber-500/10"
+                  onClick={() => {
+                    if (audioRef.current) {
+                      audioRef.current.currentTime = 0;
+                      toast.success("Restarted from beginning", { duration: 1500 });
+                    } else if (browserUtteranceRef.current && window.speechSynthesis) {
+                      // For browser TTS, cancel and restart
+                      window.speechSynthesis.cancel();
+                      const utterance = new SpeechSynthesisUtterance(commentaryText);
+                      utterance.rate = currentSequence?.playbackSpeed || 1;
+                      browserUtteranceRef.current = utterance;
+                      window.speechSynthesis.speak(utterance);
+                      toast.success("Restarted from beginning", { duration: 1500 });
+                    }
+                  }}
+                  title="Restart commentary from beginning"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-amber-600 hover:text-amber-500 hover:bg-amber-500/10"
+                  onClick={() => {
+                    if (audioRef.current) {
+                      audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 10);
+                      toast.success("Rewound 10 seconds", { duration: 1500 });
+                    }
+                  }}
+                  title="Rewind 10 seconds"
+                >
+                  <RefreshCw className="h-4 w-4 transform scale-x-[-1]" />
+                </Button>
                 <ExportToStudyButton
                   type="commentary"
                   title={`${currentItem?.book || "Bible"} ${currentItem?.chapter || 1} Commentary`}
