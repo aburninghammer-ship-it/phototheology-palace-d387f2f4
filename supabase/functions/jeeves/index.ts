@@ -2928,6 +2928,51 @@ Player's narrative: ${narrative}
 Does this form a coherent 4-part salvation story using these frames?
 Return JSON: { "coherent": true/false, "feedback": "brief comment" }`;
 
+    } else if (mode === "validate_room_game") {
+      // Generic room game validation for all 185 room-specific games
+      const { gameType, roomId, roomName, userInput, verseReference, difficulty, instructions } = requestBody;
+      
+      console.log(`=== ROOM GAME VALIDATION: ${gameType} (${roomName}) ===`);
+      
+      const gameTypeInstructions: Record<string, string> = {
+        "sequence": "Check if the Bible stories are in correct chronological order and transitions are logical.",
+        "beats": "Check if story beats capture key plot points and flow naturally.",
+        "senses": "Check if all 5 senses are genuinely represented with vivid, biblically-grounded details.",
+        "empathy": "Check if the character perspective is biblically accurate and emotionally authentic.",
+        "observations": "Check if observations are pure facts from the text (no interpretations).",
+        "observations_30": "Check if there are 30 distinct, valid observations without interpretation.",
+        "questions_75": "Check if questions are diverse (intratextual, intertextual, Phototheological).",
+        "nature_parable": "Check if the nature lesson connects authentically to Scripture.",
+        "christ_centered": "Check if Christ is genuinely revealed in the passage, not forced.",
+        "five_dimensions": "Check if all 5 dimensions (Literal, Christ, Me, Church, Heaven) are addressed.",
+        "sanctuary_journey": "Check if sanctuary stations are correctly ordered and gospel flows.",
+        "heart_fire": "Check for genuine spiritual engagement and conviction.",
+      };
+      
+      const gameInstr = gameTypeInstructions[gameType] || "Evaluate biblical accuracy and depth.";
+      
+      systemPrompt = `You are Jeeves, validating a ${roomName} game response.
+
+GAME TYPE: ${gameType}
+INSTRUCTIONS GIVEN TO PLAYER: ${instructions}
+DIFFICULTY: ${difficulty}
+
+VALIDATION CRITERIA:
+${gameInstr}
+
+Be encouraging but honest. Award points based on:
+- Biblical accuracy (did they get facts right?)
+- Depth of insight (did they go beyond surface level?)
+- Room principle application (did they use the room's method?)
+
+Return ONLY valid JSON: { "valid": true/false, "feedback": "2-3 sentences of specific feedback", "score": 0-${difficulty === 'hard' ? 50 : difficulty === 'medium' ? 35 : 25} }`;
+
+      userPrompt = `Player response for ${roomName} - ${gameType}:
+
+${verseReference ? `Verse/Passage: ${verseReference}\n\n` : ''}${userInput}
+
+Evaluate this response.`;
+
     } else if (mode === "generate_chef_verses") {
       // Generate random verses for Chef Challenge with proper KJV text from Bible API
       const { minVerses, maxVerses, difficulty } = requestBody;

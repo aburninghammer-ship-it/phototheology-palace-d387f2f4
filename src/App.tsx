@@ -162,6 +162,7 @@ const PrincipleSprint = lazy(() => import("./pages/games/PrincipleSprint"));
 const ConnectionDash = lazy(() => import("./pages/games/ConnectionDash"));
 const BranchStudy = lazy(() => import("./pages/BranchStudy"));
 const FrameSnapshot = lazy(() => import("./pages/games/FrameSnapshot"));
+const RoomGamePlay = lazy(() => import("./components/games/RoomGamePlay"));
 const StoryRoomGame = lazy(() => import("./pages/games/StoryRoomGame"));
 const ObservationGame = lazy(() => import("./pages/games/ObservationGame"));
 const ConcentrationRoom = lazy(() => import("./pages/games/ConcentrationRoom"));
@@ -359,6 +360,7 @@ function App() {
             <Route path="/games/palace_quiz/:mode?" element={<ProtectedRoute><PalaceQuiz /></ProtectedRoute>} />
             <Route path="/games/verse_match/:mode?" element={<ProtectedRoute><VerseMatch /></ProtectedRoute>} />
             <Route path="/games/principle_puzzle/:mode?" element={<ProtectedRoute><PrinciplePuzzle /></ProtectedRoute>} />
+            <Route path="/games/room-game/:gameId" element={<ProtectedRoute><RoomGamePlay /></ProtectedRoute>} />
             <Route path="/games/:gameId/:mode?" element={<ProtectedRoute><GamePlay /></ProtectedRoute>} />
             <Route path="/kids-games" element={<ProtectedRoute><KidsGames /></ProtectedRoute>} />
             <Route path="/kids-games/:gameId" element={<ProtectedRoute><KidsGamePlay /></ProtectedRoute>} />
