@@ -811,6 +811,13 @@ export type Database = {
             referencedRelation: "churches"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "church_campaigns_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
         ]
       }
       church_invitations: {
@@ -858,6 +865,13 @@ export type Database = {
             referencedRelation: "churches"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "church_invitations_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
         ]
       }
       church_members: {
@@ -891,6 +905,13 @@ export type Database = {
             columns: ["church_id"]
             isOneToOne: false
             referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "church_members_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
             referencedColumns: ["id"]
           },
         ]
@@ -8412,6 +8433,36 @@ export type Database = {
       }
     }
     Views: {
+      churches_public_info: {
+        Row: {
+          branded_name: string | null
+          created_at: string | null
+          id: string | null
+          logo_url: string | null
+          max_seats: number | null
+          name: string | null
+          tier: Database["public"]["Enums"]["church_tier"] | null
+        }
+        Insert: {
+          branded_name?: string | null
+          created_at?: string | null
+          id?: string | null
+          logo_url?: string | null
+          max_seats?: number | null
+          name?: string | null
+          tier?: Database["public"]["Enums"]["church_tier"] | null
+        }
+        Update: {
+          branded_name?: string | null
+          created_at?: string | null
+          id?: string | null
+          logo_url?: string | null
+          max_seats?: number | null
+          name?: string | null
+          tier?: Database["public"]["Enums"]["church_tier"] | null
+        }
+        Relationships: []
+      }
       user_growth_journal: {
         Row: {
           challenge_id: string | null
