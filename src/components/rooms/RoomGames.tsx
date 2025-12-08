@@ -22,18 +22,18 @@ interface RoomGame {
 const roomGamesMap: Record<string, RoomGame[]> = {
   // ===== FLOOR 1 - FURNISHING FLOOR (Memory & Visualization) =====
   sr: [
-    { id: "sr-sequence", name: "Story Sequence", description: "Arrange Bible stories in correct chronological order", path: "/games/story-room", icon: "📖", difficulty: "easy", xpReward: 25 },
+    { id: "sr-sequence", name: "Story Sequence", description: "Arrange Bible stories in correct chronological order", path: "/games/room-game/sr-sequence", icon: "📖", difficulty: "easy", xpReward: 25 },
     { id: "sr-genesis", name: "Genesis HighRise", description: "Build the Genesis tower chapter by chapter", path: "/genesis-highrise", icon: "🏗️", difficulty: "medium", xpReward: 35 },
-    { id: "sr-beat-builder", name: "Beat Builder", description: "Create story beats from narrative passages", path: "/games/story-room", icon: "🎬", difficulty: "medium", xpReward: 30 },
+    { id: "sr-beat-builder", name: "Beat Builder", description: "Create story beats from narrative passages", path: "/games/room-game/sr-beat-builder", icon: "🎬", difficulty: "medium", xpReward: 30 },
     { id: "sr-story-race", name: "Story Race", description: "Speed-match stories to their beat lists", path: "/games/principle-sprint", icon: "🏃", difficulty: "hard", xpReward: 40 },
     { id: "sr-narrative-chain", name: "Narrative Chain", description: "Chain connected stories across books", path: "/games/chain-chess/new", icon: "🔗", difficulty: "hard", xpReward: 45 },
   ],
   ir: [
     { id: "ir-immersion", name: "Immersion Chamber", description: "Deep sensory experience in biblical scenes", path: "/games/concentration-room", icon: "👁️", difficulty: "medium", xpReward: 35 },
     { id: "ir-frame-snapshot", name: "Frame Snapshot", description: "Visualize and describe biblical scenes vividly", path: "/games/frame-snapshot", icon: "📸", difficulty: "medium", xpReward: 30 },
-    { id: "ir-sense-finder", name: "Sense Finder", description: "Identify all 5 senses in a passage", path: "/games/observation-room", icon: "🎭", difficulty: "easy", xpReward: 25 },
+    { id: "ir-sense-finder", name: "Sense Finder", description: "Identify all 5 senses in a passage", path: "/games/room-game/ir-sense-finder", icon: "🎭", difficulty: "easy", xpReward: 25 },
     { id: "ir-scene-painter", name: "Scene Painter", description: "Describe what you see, hear, smell, taste, touch", path: "/games/story-room", icon: "🎨", difficulty: "medium", xpReward: 35 },
-    { id: "ir-empathy-walk", name: "Empathy Walk", description: "Step into a biblical character's shoes", path: "/games/dimensions-room", icon: "👣", difficulty: "hard", xpReward: 45 },
+    { id: "ir-empathy-walk", name: "Empathy Walk", description: "Step into a biblical character's shoes", path: "/games/room-game/ir-empathy-walk", icon: "👣", difficulty: "hard", xpReward: 45 },
   ],
   "24fps": [
     { id: "24fps-chapter", name: "24FPS Challenge", description: "Create memorable chapter image associations", path: "/games/frame-snapshot", icon: "🎬", difficulty: "medium", xpReward: 35 },
@@ -68,9 +68,9 @@ const roomGamesMap: Record<string, RoomGame[]> = {
   or: [
     { id: "or-detective", name: "Observation Detective", description: "Find details others miss in the text", path: "/games/observation-room", icon: "🔍", difficulty: "medium", xpReward: 35 },
     { id: "or-witness", name: "Witness Trial", description: "Cross-examine Scripture passages", path: "/games/witness-trial", icon: "⚖️", difficulty: "hard", xpReward: 45 },
-    { id: "or-fingerprint", name: "Fingerprint Logger", description: "Catalog observations without interpretation", path: "/games/story-room", icon: "🔎", difficulty: "easy", xpReward: 25 },
+    { id: "or-fingerprint", name: "Fingerprint Logger", description: "Catalog observations without interpretation", path: "/games/room-game/or-fingerprint", icon: "🔎", difficulty: "easy", xpReward: 25 },
     { id: "or-scene", name: "Crime Scene", description: "Investigate a passage like a detective", path: "/games/observation-room", icon: "🕵️", difficulty: "medium", xpReward: 35 },
-    { id: "or-30", name: "30 Observations", description: "Generate 30 observations from one text", path: "/games/principle-sprint", icon: "📝", difficulty: "hard", xpReward: 50 },
+    { id: "or-30", name: "30 Observations", description: "Generate 30 observations from one text", path: "/games/room-game/or-30", icon: "📝", difficulty: "hard", xpReward: 50 },
   ],
   dc: [
     { id: "dc-equation", name: "Equation Builder", description: "Build theological equations from symbols", path: "/games/equation-builder", icon: "🧮", difficulty: "hard", xpReward: 50 },
