@@ -8609,6 +8609,16 @@ export type Database = {
       generate_session_share_token: { Args: never; Returns: string }
       generate_student_verification_code: { Args: never; Returns: string }
       get_available_seats: { Args: { _church_id: string }; Returns: number }
+      get_church_billing_info: {
+        Args: { _church_id: string }
+        Returns: {
+          billing_email: string
+          stripe_customer_id: string
+          subscription_ends_at: string
+          subscription_started_at: string
+          subscription_status: string
+        }[]
+      }
       get_church_public_info: {
         Args: { _church_id: string }
         Returns: {
@@ -8631,6 +8641,16 @@ export type Database = {
           avatar_url: string
           bio: string
           created_at: string
+          display_name: string
+          id: string
+          username: string
+        }[]
+      }
+      get_public_profile_info: {
+        Args: { _profile_id: string }
+        Returns: {
+          avatar_url: string
+          bio: string
           display_name: string
           id: string
           username: string
