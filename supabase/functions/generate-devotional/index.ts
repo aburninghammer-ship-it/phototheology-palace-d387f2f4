@@ -395,11 +395,19 @@ OUTPUT FORMAT - Return a JSON array of ${duration} days:
     const forPersonNote = capitalizedName ? `\nThis devotional is specifically for: ${capitalizedName}. Use their name naturally and sparingly (1-2 times per section). Always capitalize their name properly.` : "";
     const issueNote = primaryIssue ? `\nPRIMARY STRUGGLE: ${primaryIssue}${issueDescription ? ` - ${issueDescription}` : ""}` : "";
 
-    const userPrompt = `Create a ${duration}-day devotional on the theme: "${theme}"
+const userPrompt = `Create a ${duration}-day devotional on the theme: "${theme}"
 Format: ${format}
 Study Style: ${studyStyle}${forPersonNote}${issueNote}
 
-Generate all ${duration} days as a JSON array. Each day should progressively build understanding while always pointing to Christ${primaryIssue ? " and addressing their specific struggle with compassion and biblical wisdom" : ""}.`;
+CRITICAL LENGTH REQUIREMENTS - ENFORCE STRICTLY:
+- Each day's "devotional_body" MUST be 500-750 words (5 full paragraphs)
+- Each paragraph MUST be 100-150 words with 4-6 sentences
+- "christ_connection" MUST be 4-6 substantial sentences
+- "application" MUST be 3-4 sentences of specific, actionable wisdom
+- "prayer" MUST be 5-8 sentences of heartfelt, text-specific prayer
+- DO NOT produce thin, sparse, or truncated content
+
+Generate all ${duration} days as a JSON array. Each day should progressively build understanding while always pointing to Christ${primaryIssue ? " and addressing their specific struggle with compassion and biblical wisdom" : ""}. Make each day SUBSTANTIAL and theologically rich.`;
 
     console.log("Calling AI to generate devotional...");
     console.log("CADE enabled:", !!primaryIssue);
@@ -439,7 +447,7 @@ IMPORTANT: Start numbering from day_number: ${startDay}`
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash-lite", // Use faster model for devotionals
+            model: "google/gemini-2.5-pro", // Use pro model for richer devotional content
             messages: [
               { role: "system", content: systemPrompt },
               { role: "user", content: batchUserPrompt },
