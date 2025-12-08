@@ -68,6 +68,15 @@ export const ShareToCommunity = ({
       const sanitizedTitle = sanitizeHtml(title);
       const sanitizedDescription = sanitizeHtml(description);
 
+      // Sanitize shared content - only include safe, non-private fields
+      const safeSharedContent = {
+        type: content.type,
+        id: content.id,
+        title: sanitizeHtml(content.title),
+        preview: sanitizeHtml(content.preview.substring(0, 500)), // Limit preview length
+        // Explicitly exclude any private metadata like session IDs, personal notes, etc.
+      };
+
       const { error } = await supabase
         .from("community_posts")
         .insert([{
@@ -76,7 +85,7 @@ export const ShareToCommunity = ({
           content: sanitizedDescription || `I'm sharing my ${content.type} with the community. Check it out!`,
           category: "study",
           tags,
-          shared_content: content as any
+          shared_content: safeSharedContent as any
         }]);
 
       if (error) throw error;
