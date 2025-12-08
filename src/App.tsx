@@ -211,6 +211,7 @@ const MusicCategories = lazy(() => import("./pages/MusicCategories"));
 const Paths = lazy(() => import("./pages/Paths"));
 const PathWeek = lazy(() => import("./pages/PathWeek"));
 const Sessions = lazy(() => import("./pages/Sessions"));
+const Notes = lazy(() => import("./pages/Notes"));
 
 const queryClient = new QueryClient();
 
@@ -440,6 +441,7 @@ function App() {
             <Route path="/content-library" element={<ProtectedRoute><ContentLibrary /></ProtectedRoute>} />
             <Route path="/my-progress" element={<ProtectedRoute><UserAnalytics /></ProtectedRoute>} />
             <Route path="/streaks" element={<ProtectedRoute><Streaks /></ProtectedRoute>} />
+            <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
             <Route path="/church-admin" element={<ProtectedRoute><ChurchAdmin /></ProtectedRoute>} />
             <Route path="/join-church" element={<ProtectedRoute><JoinChurch /></ProtectedRoute>} />
             <Route path="/church-signup" element={<ChurchSignup />} />
