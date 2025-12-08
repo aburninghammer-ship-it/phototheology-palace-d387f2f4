@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -23,6 +24,7 @@ interface DevotionContent {
 
 export function QuickDevotion({ onClose }: QuickDevotionProps) {
   const [theme, setTheme] = useState("");
+  const [description, setDescription] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [devotion, setDevotion] = useState<DevotionContent | null>(null);
 
@@ -34,8 +36,13 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
 
     setIsGenerating(true);
     try {
+      // Combine theme and description for richer context
+      const fullTheme = description.trim() 
+        ? `${theme.trim()} - ${description.trim()}`
+        : theme.trim();
+      
       const { data, error } = await supabase.functions.invoke("generate-quick-devotion", {
-        body: { theme: theme.trim() },
+        body: { theme: fullTheme },
       });
 
       if (error) throw error;
@@ -67,7 +74,7 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
         </CardHeader>
         <CardContent className="space-y-6">
           {!devotion ? (
-            <div className="space-y-4">
+<div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="theme">What theme would you like to explore today?</Label>
                 <Input
@@ -75,8 +82,21 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
                   placeholder="e.g., Trust in God, Forgiveness, Patience..."
                   value={theme}
                   onChange={(e) => setTheme(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && generateDevotion()}
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Tell us more about what you'd like (optional)</Label>
+                <Textarea
+                  id="description"
+                  placeholder="e.g., I'm struggling with anxiety at work and need encouragement... or I want to understand how God's faithfulness applies to my current situation..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  className="resize-none"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Share your situation, questions, or what you hope to receive from this devotion.
+                </p>
               </div>
               <Button
                 onClick={generateDevotion}
