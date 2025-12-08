@@ -22,6 +22,7 @@ import { Crown, Zap, User as UserIcon } from "lucide-react";
 import { PathProfileSection, PathCertificatesGallery } from "@/components/path";
 import { usePath } from "@/hooks/usePath";
 import { SocialMediaConnect } from "@/components/SocialMediaConnect";
+import { AppVersionCard } from "@/components/AppVersionCard";
 
 
 export default function Profile() {
@@ -373,6 +374,9 @@ export default function Profile() {
 
           {/* Daily Notification Settings */}
           <DailyNotificationSettings />
+
+          {/* App Version & Updates */}
+          <AppVersionCard />
 
           {/* Announcements (Owner Only) */}
           {isOwner && (
