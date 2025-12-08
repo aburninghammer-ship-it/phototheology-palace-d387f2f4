@@ -40,6 +40,14 @@ import timezoneEarthPresent from "@/assets/cards/floor4/timezone-earth-present.j
 import timezoneEarthPast from "@/assets/cards/floor4/timezone-earth-past.jpeg";
 import connect6Parables from "@/assets/cards/floor4/connect6-parables.jpeg";
 import connect6Gospels from "@/assets/cards/floor4/connect6-gospels.jpeg";
+import themeHeaven from "@/assets/cards/floor4/theme-heaven.jpeg";
+import themeSanctuary from "@/assets/cards/floor4/theme-sanctuary.jpeg";
+import themeTimeProphecy from "@/assets/cards/floor4/theme-time-prophecy.jpeg";
+import themeGreatControversy from "@/assets/cards/floor4/theme-great-controversy.jpeg";
+import themeLifeOfChrist from "@/assets/cards/floor4/theme-life-of-christ.jpeg";
+import parallelRoom from "@/assets/cards/floor4/parallel-room.jpeg";
+import concentrationRoom from "@/assets/cards/floor4/concentration-room.jpeg";
+import patternsRoom from "@/assets/cards/floor4/patterns-room.jpeg";
 
 // Floor 5 - Vision (Blue cards)
 import blueRoom from "@/assets/cards/floor5/blue-room.jpeg";
@@ -114,6 +122,14 @@ export const cardImageRegistry: Record<string, string> = {
   "tz-earth-past": timezoneEarthPast,
   "c6-parables": connect6Parables,
   "c6-gospels": connect6Gospels,
+  "trm-heaven": themeHeaven,
+  "trm-sanctuary": themeSanctuary,
+  "trm-time-prophecy": themeTimeProphecy,
+  "trm-great-controversy": themeGreatControversy,
+  "trm-life-of-christ": themeLifeOfChrist,
+  "prm": patternsRoom,
+  "p": parallelRoom,
+  "cr": concentrationRoom,
   
   // Floor 5 - Vision
   "bl": blueRoom,
@@ -365,6 +381,64 @@ export const cardData: CardImage[] = [
     floor: 4,
     imagePath: connect6Gospels,
     instruction: "Connect the text with a gospel account."
+  },
+  // Floor 4 - Theme Room variants
+  {
+    roomId: "trm-heaven",
+    roomName: "Theme Room - Heaven Ceiling",
+    floor: 4,
+    imagePath: themeHeaven,
+    instruction: "Study the text against the backdrop of events in Heaven."
+  },
+  {
+    roomId: "trm-sanctuary",
+    roomName: "Theme Room - Sanctuary Wall",
+    floor: 4,
+    imagePath: themeSanctuary,
+    instruction: "Study the text against the backdrop of the Sanctuary."
+  },
+  {
+    roomId: "trm-time-prophecy",
+    roomName: "Theme Room - Time Prophecy Wall",
+    floor: 4,
+    imagePath: themeTimeProphecy,
+    instruction: "Study the text against the backdrop of time prophecies in the Bible."
+  },
+  {
+    roomId: "trm-great-controversy",
+    roomName: "Theme Room - Great Controversy Wall",
+    floor: 4,
+    imagePath: themeGreatControversy,
+    instruction: "Study the text against the backdrop of the Great Controversy."
+  },
+  {
+    roomId: "trm-life-of-christ",
+    roomName: "Theme Room - Life of Christ Wall",
+    floor: 4,
+    imagePath: themeLifeOfChrist,
+    instruction: "Study the text against the backdrop of the life of Christ."
+  },
+  // Floor 4 - Concentration, Patterns, Parallel Rooms
+  {
+    roomId: "cr",
+    roomName: "Concentration Room",
+    floor: 4,
+    imagePath: concentrationRoom,
+    instruction: "Find Jesus in the text."
+  },
+  {
+    roomId: "prm",
+    roomName: "Patterns Room",
+    floor: 4,
+    imagePath: patternsRoom,
+    instruction: "Find parallels to the story or text under consideration. Find patterns within the story under consideration."
+  },
+  {
+    roomId: "p",
+    roomName: "Parallel Room",
+    floor: 4,
+    imagePath: parallelRoom,
+    instruction: "Find one or more parallels to the text or story."
   },
   
   // Floor 5 - Vision (Blue)
