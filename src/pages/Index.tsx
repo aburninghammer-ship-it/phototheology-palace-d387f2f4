@@ -32,7 +32,7 @@ import { FinalCTA } from "@/components/FinalCTA";
 import { PunchyHero } from "@/components/PunchyHero";
 import { FreeTierBanner } from "@/components/FreeTierBanner";
 import { MagicEyeEasterEgg } from "@/components/MagicEyeEasterEgg";
-import { ExplainerVideo } from "@/components/ExplainerVideo";
+
 import { WhatPhototheologyDoes } from "@/components/WhatPhototheologyDoes";
 import { InsideThePalace } from "@/components/InsideThePalace";
 import { ComparisonChart } from "@/components/ComparisonChart";
@@ -108,8 +108,6 @@ const Index = () => {
       {/* Punchy Hero Section - The 10-second hook */}
       <PunchyHero />
 
-      {/* Explainer Video */}
-      <ExplainerVideo />
 
       {/* Interactive Walkthrough - Psalm 23 Demo */}
       <InteractiveWalkthrough />
