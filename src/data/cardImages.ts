@@ -29,10 +29,19 @@ import bibleFreestyle from "@/assets/cards/floor3/bible-freestyle.jpeg";
 import blueRoom from "@/assets/cards/floor5/blue-room.jpeg";
 import threeAngelsRoom from "@/assets/cards/floor5/three-angels-room.jpeg";
 
-// Floor 6 - Three Heavens (Purple cards)
+// Floor 6 - Three Heavens (Purple cards) - Mathematics Room variants
 import mathDaniel70week from "@/assets/cards/floor6/math-daniel-70week.jpeg";
 import math70year from "@/assets/cards/floor6/math-70year.jpeg";
 import mathNoah120year from "@/assets/cards/floor6/math-noah-120year.jpeg";
+import mathExodus400 from "@/assets/cards/floor6/math-exodus-400.jpeg";
+import math1260year from "@/assets/cards/floor6/math-1260year.jpeg";
+import math2300year from "@/assets/cards/floor6/math-2300year.jpeg";
+import mathDivine from "@/assets/cards/floor6/math-divine.jpeg";
+// Floor 6 - 8 Cycles Room cards
+import cycle1Adamic from "@/assets/cards/floor6/cycle-1-adamic.jpeg";
+import cycle2Noahic from "@/assets/cards/floor6/cycle-2-noahic.jpeg";
+import cycle3Semitic from "@/assets/cards/floor6/cycle-3-semitic.jpeg";
+import cycle4Abrahamic from "@/assets/cards/floor6/cycle-4-abrahamic.jpeg";
 
 // Floor 7 - Spiritual/Emotional (Turquoise cards)
 import meditationRoom from "@/assets/cards/floor7/meditation-room.jpeg";
@@ -79,6 +88,15 @@ export const cardImageRegistry: Record<string, string> = {
   "math-70week": mathDaniel70week,
   "math-70year": math70year,
   "math-120year": mathNoah120year,
+  "math-400year": mathExodus400,
+  "math-1260year": math1260year,
+  "math-2300year": math2300year,
+  "math-divine": mathDivine,
+  // Floor 6 - 8 Cycles Room
+  "@ad": cycle1Adamic,
+  "@no": cycle2Noahic,
+  "@se": cycle3Semitic,
+  "@ab": cycle4Abrahamic,
   
   // Floor 7 - Spiritual/Emotional
   "mr": meditationRoom,
@@ -228,6 +246,64 @@ export const cardData: CardImage[] = [
     floor: 6,
     imagePath: mathNoah120year,
     instruction: "Connect with the mathematics of Noah's 120-year prophecy."
+  },
+  {
+    roomId: "math-400year",
+    roomName: "Mathematics Room (Exodus 400 Years)",
+    floor: 6,
+    imagePath: mathExodus400,
+    instruction: "Connect with the mathematics of the Exodus 400-year prophecy."
+  },
+  {
+    roomId: "math-1260year",
+    roomName: "Mathematics Room (1260 Years)",
+    floor: 6,
+    imagePath: math1260year,
+    instruction: "Connect with the mathematics of the 1260-year prophecy."
+  },
+  {
+    roomId: "math-2300year",
+    roomName: "Mathematics Room (2300 Years)",
+    floor: 6,
+    imagePath: math2300year,
+    instruction: "Connect with the mathematics of the 2300-year prophecy."
+  },
+  {
+    roomId: "math-divine",
+    roomName: "Mathematics Room (Divine Math)",
+    floor: 6,
+    imagePath: mathDivine,
+    instruction: "In which cycle of divine math is the text located? Is there any significance?"
+  },
+  
+  // Floor 6 - 8 Cycles Room
+  {
+    roomId: "@ad",
+    roomName: "8 Cycles Room - #1 Adamic",
+    floor: 6,
+    imagePath: cycle1Adamic,
+    instruction: "Study the text within the context of one of the 8 cycles of scripture. #1 of 8: Compare, contrast, or study within the Adamic Cycle. (Eden to Eden Lost)"
+  },
+  {
+    roomId: "@no",
+    roomName: "8 Cycles Room - #2 Noahic",
+    floor: 6,
+    imagePath: cycle2Noahic,
+    instruction: "Study the text within the context of one of the 8 cycles of scripture. #2 of 8: Compare, contrast, or study within the Noahic Cycle. (Post Eden to the Flood)"
+  },
+  {
+    roomId: "@se",
+    roomName: "8 Cycles Room - #3 Semitic",
+    floor: 6,
+    imagePath: cycle3Semitic,
+    instruction: "Study the text within the context of one of the 8 cycles of scripture. #3 of 8: Compare, contrast, or study within the Semitic Cycle. (Flood to Tower of Babel)"
+  },
+  {
+    roomId: "@ab",
+    roomName: "8 Cycles Room - #4 Abrahamic",
+    floor: 6,
+    imagePath: cycle4Abrahamic,
+    instruction: "Study the text within the context of one of the 8 cycles of scripture. #4 of 8: Compare, contrast, or study within the Abrahamic Cycle. (Ur to Egyptian Bondage)"
   },
   
   // Floor 7 - Spiritual/Emotional (Turquoise)
