@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, Send, Copy, Check, RefreshCw } from "lucide-react";
+import { Loader2, Sparkles, Send, Copy, Check, RefreshCw, BookOpen, Church, Link2, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { DevotionalProfile } from "@/hooks/useDevotionalProfiles";
@@ -27,6 +26,14 @@ export interface GeneratedDevotion {
   generated_for: string;
   theme_used: string | null;
   generated_at: string;
+  // New Phototheology-rich fields
+  sanctuary_connection?: string;
+  cycle_placement?: string;
+  types_and_symbols?: string[];
+  cross_references?: string[];
+  christ_name?: string;
+  christ_action?: string;
+  application?: string;
 }
 
 const SUGGESTED_THEMES = [
@@ -77,7 +84,7 @@ export function ProfileDevotionGenerator({ profile, onDevotionGenerated }: Profi
 
       setGeneratedDevotion(data);
       onDevotionGenerated?.(data);
-      toast.success(`Devotion generated for ${profile.name}`);
+      toast.success(`Deep Phototheology devotion generated for ${profile.name}`);
     } catch (error) {
       console.error("Error generating devotion:", error);
       toast.error("Failed to generate devotion. Please try again.");
@@ -89,11 +96,23 @@ export function ProfileDevotionGenerator({ profile, onDevotionGenerated }: Profi
   const copyToClipboard = async () => {
     if (!generatedDevotion) return;
     
-    const text = `${generatedDevotion.title}\n\n${generatedDevotion.scripture_reference}\n"${generatedDevotion.scripture_text}"\n\n${generatedDevotion.devotional_body}\n\n${generatedDevotion.strike_line}\n\n🙏 Prayer:\n${generatedDevotion.prayer}`;
+    let text = `${generatedDevotion.title}\n\n📖 ${generatedDevotion.scripture_reference}\n"${generatedDevotion.scripture_text}"\n\n${generatedDevotion.devotional_body}\n\n✨ ${generatedDevotion.strike_line}`;
+    
+    if (generatedDevotion.sanctuary_connection) {
+      text += `\n\n⛪ Sanctuary Connection:\n${generatedDevotion.sanctuary_connection}`;
+    }
+    if (generatedDevotion.christ_name && generatedDevotion.christ_action) {
+      text += `\n\n✝️ Christ Revealed:\n${generatedDevotion.christ_name} — ${generatedDevotion.christ_action}`;
+    }
+    if (generatedDevotion.application) {
+      text += `\n\n🎯 Application:\n${generatedDevotion.application}`;
+    }
+    text += `\n\n🙏 Prayer:\n${generatedDevotion.prayer}`;
+    text += `\n\n🧠 Memory Hook:\n${generatedDevotion.memory_hook}`;
     
     await navigator.clipboard.writeText(text);
     setCopied(true);
-    toast.success("Devotion copied to clipboard!");
+    toast.success("Full devotion copied to clipboard!");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -110,10 +129,10 @@ export function ProfileDevotionGenerator({ profile, onDevotionGenerated }: Profi
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
-              Generate Deep Devotion for {profile.name}
+              Generate Deep Phototheology Devotion for {profile.name}
             </CardTitle>
             <CardDescription>
-              Create a personalized, Phototheology-rich devotional using the master framework
+              Christ-saturated • Sanctuary-mapped • Palace-structured • Theologically dense
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -148,7 +167,7 @@ export function ProfileDevotionGenerator({ profile, onDevotionGenerated }: Profi
                 onChange={(e) => setScripture(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                Leave blank and the AI will choose the perfect Scripture for {profile.name}'s situation
+                Leave blank and Jeeves will choose the perfect Scripture for {profile.name}'s situation
               </p>
             </div>
 
@@ -177,7 +196,7 @@ export function ProfileDevotionGenerator({ profile, onDevotionGenerated }: Profi
               {isGenerating ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Crafting Deep Devotion...
+                  Crafting Deep Phototheology Devotion...
                 </>
               ) : (
                 <>
@@ -218,7 +237,7 @@ export function ProfileDevotionGenerator({ profile, onDevotionGenerated }: Profi
               <p className="font-semibold text-amber-800 dark:text-amber-200 mb-2">
                 📖 {generatedDevotion.scripture_reference}
               </p>
-              <p className="text-amber-900 dark:text-amber-100 italic">
+              <p className="text-amber-900 dark:text-amber-100 italic text-lg leading-relaxed">
                 "{generatedDevotion.scripture_text}"
               </p>
             </div>
@@ -235,18 +254,114 @@ export function ProfileDevotionGenerator({ profile, onDevotionGenerated }: Profi
               </p>
             </div>
 
+            {/* Phototheology Depth Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Christ Connection */}
+              {(generatedDevotion.christ_name || generatedDevotion.christ_action) && (
+                <div className="bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30 rounded-lg p-4 border border-rose-200/50 dark:border-rose-800/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg">✝️</span>
+                    <p className="font-semibold text-rose-800 dark:text-rose-200">Christ Revealed</p>
+                  </div>
+                  {generatedDevotion.christ_name && (
+                    <p className="text-sm font-medium text-rose-700 dark:text-rose-300 mb-1">
+                      {generatedDevotion.christ_name}
+                    </p>
+                  )}
+                  {generatedDevotion.christ_action && (
+                    <p className="text-sm text-rose-600 dark:text-rose-400">
+                      {generatedDevotion.christ_action}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Sanctuary Connection */}
+              {generatedDevotion.sanctuary_connection && (
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg p-4 border border-blue-200/50 dark:border-blue-800/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Church className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <p className="font-semibold text-blue-800 dark:text-blue-200">Sanctuary Station</p>
+                  </div>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {generatedDevotion.sanctuary_connection}
+                  </p>
+                </div>
+              )}
+
+              {/* Cycle Placement */}
+              {generatedDevotion.cycle_placement && (
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 rounded-lg p-4 border border-purple-200/50 dark:border-purple-800/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <BookOpen className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    <p className="font-semibold text-purple-800 dark:text-purple-200">Redemption Cycle</p>
+                  </div>
+                  <p className="text-sm text-purple-700 dark:text-purple-300">
+                    {generatedDevotion.cycle_placement}
+                  </p>
+                </div>
+              )}
+
+              {/* Types & Symbols */}
+              {generatedDevotion.types_and_symbols && generatedDevotion.types_and_symbols.length > 0 && (
+                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-lg p-4 border border-emerald-200/50 dark:border-emerald-800/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                    <p className="font-semibold text-emerald-800 dark:text-emerald-200">Types & Symbols</p>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {generatedDevotion.types_and_symbols.map((symbol, i) => (
+                      <Badge key={i} variant="secondary" className="text-xs bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+                        {symbol}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Cross References */}
+            {generatedDevotion.cross_references && generatedDevotion.cross_references.length > 0 && (
+              <div className="bg-muted/30 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Link2 className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm font-medium">Cross References</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {generatedDevotion.cross_references.map((ref, i) => (
+                    <Badge key={i} variant="outline" className="text-xs">
+                      {ref}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Application */}
+            {generatedDevotion.application && (
+              <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 rounded-lg p-4 border border-orange-200/50 dark:border-orange-800/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">🎯</span>
+                  <p className="font-semibold text-orange-800 dark:text-orange-200">Application</p>
+                </div>
+                <p className="text-orange-900 dark:text-orange-100">
+                  {generatedDevotion.application}
+                </p>
+              </div>
+            )}
+
             {/* Prayer */}
             <div className="bg-muted/50 rounded-lg p-4">
               <p className="font-semibold mb-2">🙏 Prayer</p>
-              <p className="text-muted-foreground">{generatedDevotion.prayer}</p>
+              <p className="text-muted-foreground italic">{generatedDevotion.prayer}</p>
             </div>
 
             {/* Memory Hook */}
-            <div className="flex items-center gap-3 bg-accent/10 rounded-lg p-3">
+            <div className="flex items-start gap-3 bg-accent/10 rounded-lg p-4">
               <span className="text-2xl">🧠</span>
               <div>
-                <p className="text-sm font-medium">Memory Hook</p>
-                <p className="text-sm text-muted-foreground">{generatedDevotion.memory_hook}</p>
+                <p className="text-sm font-medium mb-1">Memory Hook</p>
+                <p className="text-muted-foreground">{generatedDevotion.memory_hook}</p>
               </div>
             </div>
 
