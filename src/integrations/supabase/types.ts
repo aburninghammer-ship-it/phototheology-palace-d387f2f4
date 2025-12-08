@@ -4485,6 +4485,39 @@ export type Database = {
         }
         Relationships: []
       }
+      pending_student_verifications: {
+        Row: {
+          attempts: number
+          created_at: string
+          edu_email: string
+          expires_at: string
+          id: string
+          user_id: string
+          verification_code: string
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          edu_email: string
+          expires_at?: string
+          id?: string
+          user_id: string
+          verification_code: string
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          edu_email?: string
+          expires_at?: string
+          id?: string
+          user_id?: string
+          verification_code?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       personalized_drills: {
         Row: {
           addresses_weakness: boolean | null
@@ -8517,6 +8550,7 @@ export type Database = {
       generate_profile_invite_token: { Args: never; Returns: string }
       generate_referral_code: { Args: { user_id: string }; Returns: string }
       generate_session_share_token: { Args: never; Returns: string }
+      generate_student_verification_code: { Args: never; Returns: string }
       get_available_seats: { Args: { _church_id: string }; Returns: number }
       get_or_create_conversation: {
         Args: { other_user_id: string }
