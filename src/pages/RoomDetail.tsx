@@ -19,6 +19,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
 import { genesisImages } from "@/assets/24fps/genesis";
 import { UserGemsList } from "@/components/UserGemsList";
+import { GemGenerator } from "@/components/gems/GemGenerator";
+import { FreestyleGame } from "@/components/freestyle/FreestyleGame";
+import { RoomGames } from "@/components/rooms/RoomGames";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -321,15 +324,17 @@ export default function RoomDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 p-1 bg-muted/50 backdrop-blur-sm">
+              <TabsList className="grid w-full grid-cols-4 p-1 bg-muted/50 backdrop-blur-sm">
                 <TabsTrigger value="learn" className="data-[state=active]:shadow-glow transition-all duration-300">
                   📚 Learn
+                </TabsTrigger>
+                <TabsTrigger value="games" className="data-[state=active]:shadow-glow transition-all duration-300">
+                  🎮 Games
                 </TabsTrigger>
                 <TabsTrigger value="practice" className="data-[state=active]:shadow-glow transition-all duration-300">
                   🎯 Practice
                 </TabsTrigger>
                 <TabsTrigger value="master" className="data-[state=active]:shadow-glow transition-all duration-300">
-                  <Trophy className="h-4 w-4 mr-2" />
                   👑 Master
                 </TabsTrigger>
               </TabsList>
@@ -503,9 +508,23 @@ export default function RoomDetail() {
 
                 {room.id === "gr" && (
                   <>
+                    <GemGenerator 
+                      floorNumber={floor.number} 
+                      roomId={room.id} 
+                      onGemSaved={() => {
+                        // Trigger refresh of gems list
+                        const event = new CustomEvent('gems-updated');
+                        window.dispatchEvent(event);
+                      }}
+                    />
                     <UserGemsList floorNumber={floor.number} roomId={room.id} />
                     <SermonTitlesList />
                   </>
+                )}
+
+                {/* Freestyle Game for Floor 3 rooms */}
+                {["nf", "pf", "bf", "hf", "lr"].includes(room.id) && (
+                  <FreestyleGame roomId={room.id} roomName={room.name} />
                 )}
 
                 {room.id === "cec" && (
@@ -518,6 +537,35 @@ export default function RoomDetail() {
                     </CardHeader>
                     <CardContent>
                       <ChristChapterFindings />
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
+
+              {/* GAMES TAB */}
+              <TabsContent value="games" className="space-y-6 mt-6">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold mb-2">🎮 {room.name} Games</h2>
+                  <p className="text-muted-foreground">
+                    Practice {room.name} principles through interactive challenges and earn XP!
+                  </p>
+                </div>
+                
+                <RoomGames roomId={room.id} roomName={room.name} />
+                
+                {/* Freestyle Game also shown in Games tab for Floor 3 rooms */}
+                {["nf", "pf", "bf", "hf", "lr"].includes(room.id) && (
+                  <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        ⚡ Freestyle Challenge
+                      </CardTitle>
+                      <CardDescription>
+                        Real-time freestyle practice with Jeeves
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <FreestyleGame roomId={room.id} roomName={room.name} />
                     </CardContent>
                   </Card>
                 )}

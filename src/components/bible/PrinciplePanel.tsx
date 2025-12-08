@@ -211,27 +211,57 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose, onHig
     }
   };
 
-  const handleSaveAsGem = () => {
+  const handleSaveAsGem = async () => {
     if (!annotation) return;
     
-    const gemText = `${book} ${chapter}:${verse}\n"${verseText}"\n\nPrinciples: ${
-      [
-        ...(annotation.principles.dimensions || []),
-        ...(annotation.principles.cycles || []),
-        ...(annotation.principles.horizons || []),
-        ...(annotation.principles.timeZones || []),
-        ...(annotation.principles.sanctuary || []),
-        ...(annotation.principles.feasts || []),
-        ...(annotation.principles.walls || [])
-      ].join(", ")
-    }\n\n${annotation.commentary}`;
+    const principlesText = [
+      ...(annotation.principles.dimensions || []),
+      ...(annotation.principles.cycles || []),
+      ...(annotation.principles.horizons || []),
+      ...(annotation.principles.timeZones || []),
+      ...(annotation.principles.sanctuary || []),
+      ...(annotation.principles.feasts || []),
+      ...(annotation.principles.walls || [])
+    ].join(", ");
     
-    navigator.clipboard.writeText(gemText);
+    const gemContent = `"${verseText}"\n\nPrinciples: ${principlesText}\n\n${annotation.commentary}`;
+    const gemName = `${book} ${chapter}:${verse} Analysis`;
     
-    toast({
-      title: "Gem Saved!",
-      description: "Analysis copied to clipboard. Paste it into your notes.",
-    });
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        toast({
+          title: "Sign in required",
+          description: "Please sign in to save gems.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Save to user_gems table
+      const { error } = await supabase.from("user_gems").insert({
+        user_id: userData.user.id,
+        gem_name: gemName,
+        gem_content: gemContent,
+        room_id: "gr",
+        floor_number: 1,
+        category: "Verse Analysis",
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Gem Saved! 💎",
+        description: "Your analysis has been saved to the Gems Room.",
+      });
+    } catch (error) {
+      console.error("Error saving gem:", error);
+      toast({
+        title: "Failed to save",
+        description: "Could not save gem. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleExportStudy = () => {

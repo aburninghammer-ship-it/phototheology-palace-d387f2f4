@@ -9,14 +9,14 @@ export const PunchyHero = () => {
   const { user } = useAuth();
 
   return (
-    <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-primary/5 to-accent/10 pb-safe">
+    <section className="relative min-h-[85vh] sm:min-h-[90vh] ipad:min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-primary/5 to-accent/10 pb-safe">
       {/* Subtle animated background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 ipad:w-[28rem] ipad:h-[28rem] bg-primary/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 ipad:w-[28rem] ipad:h-[28rem] bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-8 sm:py-0">
+      <div className="relative z-10 max-w-5xl ipad:max-w-4xl ipad-pro:max-w-5xl mx-auto px-4 sm:px-6 ipad:px-10 lg:px-8 text-center py-8 sm:py-0">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -50,7 +50,7 @@ export const PunchyHero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 leading-tight sm:leading-[1.1] px-2"
+          className="text-3xl sm:text-4xl md:text-6xl ipad:text-5xl ipad-pro:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 ipad:mb-8 leading-tight sm:leading-[1.1] px-2"
         >
           The Bible,{" "}
           <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent inline-block">
@@ -105,7 +105,7 @@ export const PunchyHero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.7 }}
-          className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-2xl mx-auto mt-10 sm:mt-12 md:mt-16 pt-6 sm:pt-8 border-t border-border/50 px-4"
+          className="grid grid-cols-3 gap-4 sm:gap-6 ipad:gap-10 md:gap-8 max-w-2xl ipad:max-w-3xl mx-auto mt-10 sm:mt-12 ipad:mt-14 md:mt-16 pt-6 sm:pt-8 ipad:pt-10 border-t border-border/50 px-4"
         >
           <div className="text-center">
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">2yr</div>

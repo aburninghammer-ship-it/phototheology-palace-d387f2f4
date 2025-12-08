@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import palaceImage from "@/assets/palace-card-back.jpg";
+import ptCardsSpread from "@/assets/pt-cards-spread.jpg";
 import { Users, Copy, Check } from "lucide-react";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { searchBible } from "@/services/bibleApi";
@@ -636,24 +637,44 @@ export default function CardDeck() {
         return;
       }
       
-      const studyData = {
-        user_id: user.id,
-        verse_text: verseText,
-        verse_reference: displayText.split(':')[0] || verseText.substring(0, 50),
-        cards_used: JSON.stringify(cardsUsed),
-        conversation_history: JSON.stringify(conversationHistory),
-        is_gem: asGem,
-        gem_title: asGem ? gemTitle : null,
-        gem_notes: asGem ? gemNotes : null,
-      };
-      
-      const { error } = await supabase.from('deck_studies').insert(studyData);
-      
-      if (error) throw error;
+      if (asGem) {
+        // Save to user_gems table for Gems Room integration
+        const gemContent = conversationHistory
+          .map(msg => `**${msg.role === 'user' ? 'You' : 'Jeeves'}:** ${msg.content}`)
+          .join('\n\n');
+        
+        const fullGemContent = `**Verse/Story:**\n${verseText}\n\n**Cards Used:** ${cardsUsed.join(', ')}\n\n${gemContent}${gemNotes ? `\n\n**Notes:**\n${gemNotes}` : ''}`;
+        
+        const { error } = await supabase.from('user_gems').insert({
+          user_id: user.id,
+          gem_name: gemTitle,
+          gem_content: fullGemContent,
+          room_id: 'gr',
+          floor_number: 1,
+          category: 'Card Deck Study'
+        });
+        
+        if (error) throw error;
+      } else {
+        // Save to deck_studies for regular study sessions
+        const studyData = {
+          user_id: user.id,
+          verse_text: verseText,
+          verse_reference: displayText.split(':')[0] || verseText.substring(0, 50),
+          cards_used: JSON.stringify(cardsUsed),
+          conversation_history: JSON.stringify(conversationHistory),
+          is_gem: false,
+          gem_title: null,
+          gem_notes: null,
+        };
+        
+        const { error } = await supabase.from('deck_studies').insert(studyData);
+        if (error) throw error;
+      }
       
       toast({
-        title: asGem ? "Gem saved!" : "Study saved!",
-        description: asGem ? `Your gem "${gemTitle}" has been saved.` : "Your study session has been saved.",
+        title: asGem ? "Gem saved! 💎" : "Study saved!",
+        description: asGem ? `Your gem "${gemTitle}" has been saved to the Gems Room.` : "Your study session has been saved.",
       });
       
       setSaveDialogOpen(false);
@@ -1174,14 +1195,22 @@ export default function CardDeck() {
       
       <main className="container mx-auto px-4 pt-24 pb-12">
         <div className="max-w-6xl mx-auto space-y-6">
-          {/* Header */}
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold bg-gradient-palace bg-clip-text text-transparent">
-              Phototheology Card Deck
-            </h1>
-            <p className="text-muted-foreground">
-              Study Scripture with Phototheology principles
-            </p>
+          {/* Hero Banner with Card Spread */}
+          <div className="relative rounded-2xl overflow-hidden mb-8">
+            <img 
+              src={ptCardsSpread} 
+              alt="Phototheology Card Collection" 
+              className="w-full h-48 sm:h-64 md:h-80 ipad:h-96 object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-palace bg-clip-text text-transparent drop-shadow-lg">
+                Phototheology Card Deck
+              </h1>
+              <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+                100+ principle cards to unlock Scripture's hidden depths
+              </p>
+            </div>
           </div>
 
           {user && (

@@ -142,3 +142,12 @@ verify_jwt = false
 
 [functions.generate-quick-devotion]
 verify_jwt = false
+
+[functions.generate-gem]
+verify_jwt = false
+
+[functions.freestyle-game]
+verify_jwt = false
+
+[functions.generate-profile-devotion]
+verify_jwt = false
