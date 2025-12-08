@@ -1274,6 +1274,33 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_tip_logs: {
+        Row: {
+          delivery_status: string | null
+          id: string
+          sent_at: string
+          tip_content: string
+          tip_type: string
+          user_id: string
+        }
+        Insert: {
+          delivery_status?: string | null
+          id?: string
+          sent_at?: string
+          tip_content: string
+          tip_type: string
+          user_id: string
+        }
+        Update: {
+          delivery_status?: string | null
+          id?: string
+          sent_at?: string
+          tip_content?: string
+          tip_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_verses: {
         Row: {
           breakdown: Json
@@ -6436,6 +6463,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sms_notification_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          is_enabled: boolean
+          last_sent_at: string | null
+          phone_number: string | null
+          preferred_time: string | null
+          timezone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          last_sent_at?: string | null
+          phone_number?: string | null
+          preferred_time?: string | null
+          timezone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          last_sent_at?: string | null
+          phone_number?: string | null
+          preferred_time?: string | null
+          timezone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       social_media_connections: {
         Row: {
