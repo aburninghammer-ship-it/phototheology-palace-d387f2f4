@@ -111,18 +111,31 @@ serve(async (req) => {
 
     console.log(`Generating Phototheology devotion for theme: ${theme}`);
 
-    const userPrompt = `Create a DENSE, theologically rich Phototheology devotion on the theme: "${theme}"
+const userPrompt = `Create a DENSE, theologically rich Phototheology devotion on the theme: "${theme}"
 
-Requirements:
-- Select a Scripture that powerfully addresses this theme (include 3-8 verses minimum)
-- Begin with a vivid scene that draws the reader in
-- Reveal a surprising angle most readers miss
-- Draw hidden threads and connections across Scripture
-- Build to a central "gem" insight about Christ
-- End with an appeal that transforms, not moralizes
-- Close with a strike line that lingers
+ABSOLUTE LENGTH REQUIREMENT - THIS IS MANDATORY:
+- The "devotional_body" field MUST contain 5 FULL paragraphs
+- Each paragraph MUST be 100-150 words (4-6 sentences minimum)
+- Total devotional_body length: 500-750 words MINIMUM
+- DO NOT produce thin, sparse, or truncated content
+- If your response is under 500 words, YOU HAVE FAILED
 
-The devotional must feel like drinking from a fire hose of theological insight while reading like a narrative that unfolds naturally. Never sound formulaic or generic.`;
+CONTENT REQUIREMENTS:
+- Select a Scripture that powerfully addresses this theme (include 3-8 verses - the FULL TEXT)
+- Begin with a vivid scene that draws the reader in with sensory details
+- Reveal a surprising theological angle most readers miss
+- Draw hidden threads and connections across Scripture (Genesis to Revelation)
+- Build to a central "gem" insight about Christ that is profound and unexpected
+- End with an appeal that transforms the heart, not generic moralism
+- Close with a strike line that pierces and lingers
+
+EACH SECTION MUST BE SUBSTANTIAL:
+- "christ_connection": 3-4 sentences minimum explaining how Christ is revealed
+- "application": 3-4 sentences minimum with specific, actionable wisdom
+- "memory_hook": A vivid, detailed mental image (2-3 sentences)
+- "prayer": 4-5 sentences of heartfelt, text-specific prayer
+
+The devotional must feel like drinking from a fire hose of theological insight while reading like a narrative that unfolds naturally.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -131,7 +144,7 @@ The devotional must feel like drinking from a fire hose of theological insight w
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: MASTER_DEVOTIONAL_PROMPT },
           { role: "user", content: userPrompt },

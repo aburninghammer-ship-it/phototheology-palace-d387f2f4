@@ -137,16 +137,32 @@ Their struggle with this theme becomes the ENTRY POINT. The SOLUTION is Christ r
     prompt += `\n\nSELECT SCRIPTURE: Choose a passage that powerfully addresses their situation. Include full text (KJV, 3-8 verses).`;
   }
 
-  prompt += `
+prompt += `
 
-REQUIREMENTS:
-- Begin with a vivid scene that draws them in
-- Reveal a surprising angle most readers miss
-- Draw hidden threads and connections across Scripture (without naming principles)
+REQUIREMENTS - EACH SECTION MUST BE SUBSTANTIAL:
+
+ABSOLUTE LENGTH REQUIREMENT - THIS IS MANDATORY:
+- The "devotional_body" field MUST contain 5 FULL paragraphs separated by double newlines
+- Each paragraph MUST be 100-150 words (4-6 sentences minimum)  
+- Total devotional_body length: 500-750 words MINIMUM
+- DO NOT produce thin, sparse, or truncated content
+- If your response is under 500 words, YOU HAVE FAILED
+
+CONTENT DEPTH REQUIREMENTS:
+- Begin with a vivid scene that draws them in with sensory details and emotional weight
+- Reveal a surprising theological angle most readers miss
+- Draw hidden threads and connections across Scripture (Genesis to Revelation, sanctuary patterns)
 - Build to a central "gem" insight about Christ that meets their specific need
-- End with an appeal that transforms, not moralizes
-- Close with a strike line that lingers
-- Pray specifically for their situation
+- End with an appeal that transforms the heart, not generic moralism
+- Close with a strike line that lingers for days
+
+EACH OUTPUT FIELD MUST BE SUBSTANTIAL:
+- "devotional_body": 5 full paragraphs, 500-750 words total
+- "christ_name": The specific role/title of Christ revealed (e.g., "Burden Bearer", "Wounded Healer")
+- "christ_action": 3-4 sentences on what Christ specifically does for THEM in this text
+- "application": 3-4 sentences of practical, specific wisdom for their situation
+- "prayer": 4-5 sentences of heartfelt, situation-specific prayer
+- "memory_hook": A vivid, detailed mental image (2-3 sentences)
 
 The devotional must feel personal and theologically rich while reading like a narrative that unfolds naturally. Never sound formulaic.
 
@@ -155,15 +171,15 @@ OUTPUT (JSON):
   "title": "Evocative, specific title",
   "scripture_reference": "Book Chapter:Verse(s)",
   "scripture_text": "Full KJV text (3-8 verses)",
-  "devotional_body": "Complete 4-5 paragraph devotional. Separate paragraphs with double newlines. Each paragraph 4-6 sentences minimum. Meaty, not sparse.",
-  "sanctuary_connection": "How this connects to sanctuary truth (implicitly)",
-  "cross_references": ["2-3 related Scripture references"],
-  "christ_name": "Specific name/role of Christ revealed (e.g., 'Lamb', 'High Priest')",
-  "christ_action": "What Christ does in/through this text for THEM",
-  "application": "Practical application for their specific situation",
+  "devotional_body": "Complete 5 paragraph devotional. Separate paragraphs with double newlines. Each paragraph 4-6 sentences minimum. 500-750 words total.",
+  "sanctuary_connection": "How this connects to sanctuary truth (2-3 sentences)",
+  "cross_references": ["3-4 related Scripture references"],
+  "christ_name": "Specific name/role of Christ revealed",
+  "christ_action": "What Christ does in/through this text for THEM (3-4 sentences)",
+  "application": "Practical application for their specific situation (3-4 sentences)",
   "strike_line": "One memorable piercing sentence",
-  "prayer": "Text-specific, Christ-exalting prayer for their situation (3-4 sentences)",
-  "memory_hook": "Vivid mental image to lodge the insight"
+  "prayer": "Text-specific, Christ-exalting prayer for their situation (4-5 sentences)",
+  "memory_hook": "Vivid mental image to lodge the insight (2-3 sentences)"
 }
 
 Respond ONLY with valid JSON.`;
@@ -202,7 +218,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: MASTER_DEVOTIONAL_PROMPT },
           { role: "user", content: userPrompt },
