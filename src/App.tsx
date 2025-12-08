@@ -26,6 +26,7 @@ import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { VoiceChatInviteNotification } from "@/components/voice/VoiceChatInviteNotification";
 import { PageTracker } from "@/components/PageTracker";
 import { DailyVerseNotification } from "@/components/notifications/DailyVerseNotification";
+import { DailyTipNotificationProvider } from "@/components/notifications/DailyTipNotification";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { ExitIntentPopup } from "@/components/conversion/ExitIntentPopup";
 import { AmbientMusicPlayer } from "@/components/audio/AmbientMusicPlayer";
@@ -211,6 +212,7 @@ const MusicCategories = lazy(() => import("./pages/MusicCategories"));
 const Paths = lazy(() => import("./pages/Paths"));
 const PathWeek = lazy(() => import("./pages/PathWeek"));
 const Sessions = lazy(() => import("./pages/Sessions"));
+const Notes = lazy(() => import("./pages/Notes"));
 
 const queryClient = new QueryClient();
 
@@ -247,6 +249,7 @@ function App() {
                         <AnnouncementBanner />
                         <VoiceChatInviteNotification />
                         <DailyVerseNotification />
+                        <DailyTipNotificationProvider />
                         <InstallPrompt />
                         <ExitIntentPopup />
                         {/* Session Mode Prompt Dialog */}
@@ -423,6 +426,7 @@ function App() {
             <Route path="/public-image-library" element={<ProtectedRoute><PublicImageLibrary /></ProtectedRoute>} />
             <Route path="/app-update-ideas" element={<ProtectedRoute><AppUpdateIdeas /></ProtectedRoute>} />
             <Route path="/offline-content" element={<ProtectedRoute><OfflineContent /></ProtectedRoute>} />
+            <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
             <Route path="/critics-analysis" element={<ProtectedRoute><CriticsAnalysis /></ProtectedRoute>} />
