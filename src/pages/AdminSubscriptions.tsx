@@ -25,11 +25,12 @@ interface SubscriptionStats {
 }
 
 export default function AdminSubscriptions() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
 
   const handleSyncStripeSubscriptions = async () => {
@@ -59,33 +60,48 @@ export default function AdminSubscriptions() {
   };
 
   useEffect(() => {
-    checkAdminAndLoadStats();
-  }, [user]);
-
-  const checkAdminAndLoadStats = async () => {
+    // Wait for auth to finish loading before making any decisions
+    if (authLoading) {
+      console.log("[AdminSubscriptions] Auth still loading...");
+      return;
+    }
+    
     if (!user) {
+      console.log("[AdminSubscriptions] No user, redirecting to auth");
       navigate("/auth");
       return;
     }
+    
+    checkAdminAndLoadStats();
+  }, [user, authLoading, navigate]);
+
+  const checkAdminAndLoadStats = async () => {
+    if (!user) return;
 
     console.log("[AdminSubscriptions] Checking admin for user:", user.id);
 
-    // Check if user is admin
+    // Check if user is admin using the has_role function for security
     const { data: roleData, error: roleError } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
       .eq("role", "admin")
-      .single();
+      .maybeSingle();
 
     console.log("[AdminSubscriptions] Role check result:", { roleData, roleError });
 
+    if (roleError) {
+      console.error("[AdminSubscriptions] Error checking role:", roleError);
+    }
+
     if (!roleData) {
       console.log("[AdminSubscriptions] No admin role found, redirecting to dashboard");
+      setIsAdmin(false);
       navigate("/dashboard");
       return;
     }
 
+    setIsAdmin(true);
     await loadStats();
   };
 
