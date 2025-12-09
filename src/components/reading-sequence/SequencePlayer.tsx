@@ -635,8 +635,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     audioRef.current = audio;
     setAudioUrl(url);
 
-    // Critical: Prevent double-triggering by using a flag
+    // Critical: Prevent double-triggering by using a flag, but allow replay
     let hasEnded = false;
+    
+    // Reset flag when audio is seeked (for replay functionality)
+    audio.onseeked = () => {
+      hasEnded = false;
+    };
     
     audio.onended = () => {
       if (hasEnded) {
@@ -708,8 +713,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         audio.playbackRate = playbackSpeed;
         audioRef.current = audio;
         
-          // Critical: Prevent double-triggering
+          // Critical: Prevent double-triggering, but allow replay
           let hasEnded = false;
+          audio.onseeked = () => { hasEnded = false; };
           audio.onended = () => {
             if (hasEnded) return;
             hasEnded = true;
@@ -1196,8 +1202,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           audio.playbackRate = playbackSpeed;
           audioRef.current = audio;
           
-          // Critical: Prevent double-triggering
+          // Critical: Prevent double-triggering, but allow replay
           let hasEnded = false;
+          audio.onseeked = () => { hasEnded = false; };
           audio.onended = () => {
             if (hasEnded) return;
             hasEnded = true;
@@ -1295,8 +1302,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             audio.playbackRate = playbackSpeed;
             audioRef.current = audio;
             
-            // Critical: Prevent double-triggering
+            // Critical: Prevent double-triggering, but allow replay
             let hasEnded = false;
+            audio.onseeked = () => { hasEnded = false; };
             audio.onended = () => {
               if (hasEnded) return;
               hasEnded = true;
