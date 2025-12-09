@@ -166,18 +166,29 @@ const AnalyzeThoughts = () => {
     setSelectedHistoryId(undefined);
     
     try {
+      console.log('[AnalyzeThoughts] Invoking jeeves with mode: analyze-thoughts');
       const { data, error } = await supabase.functions.invoke('jeeves', {
         body: { mode: 'analyze-thoughts', message: input }
       });
 
-      if (error) throw error;
+      console.log('[AnalyzeThoughts] Response:', { data, error });
+
+      if (error) {
+        console.error('[AnalyzeThoughts] Edge function error:', error);
+        throw error;
+      }
 
       let analysisResult: AnalysisResult;
       if (data.analysis) {
         analysisResult = data.analysis;
       } else if (data.response) {
         analysisResult = typeof data.response === 'string' ? JSON.parse(data.response) : data.response;
+      } else if (data.error) {
+        // Handle error returned in response body
+        toast.error(data.error || "Analysis failed");
+        return;
       } else {
+        console.error('[AnalyzeThoughts] Unexpected response format:', data);
         toast.error("Unexpected response format");
         return;
       }
@@ -188,9 +199,10 @@ const AnalyzeThoughts = () => {
       await saveAnalysis(input, analysisResult);
       
       toast.success("Analysis complete!");
-    } catch (error) {
-      console.error('Analysis error:', error);
-      toast.error("Failed to analyze. Please try again.");
+    } catch (error: any) {
+      console.error('[AnalyzeThoughts] Analysis error:', error);
+      const errorMessage = error?.message || error?.error || "Failed to analyze. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsAnalyzing(false);
     }
