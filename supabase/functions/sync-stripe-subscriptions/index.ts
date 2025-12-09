@@ -7,12 +7,19 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[SYNC-STRIPE-SUBSCRIPTIONS] ${step}${detailsStr}`);
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    logStep("Function started");
+
     // Get the authorization header
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
@@ -32,36 +39,42 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
-      console.error("Authentication error:", authError);
+      logStep("Authentication error", { error: authError });
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Check if user has admin role
-    const { data: roleData, error: roleError } = await supabase
+    // Check if user has admin role OR is in admin_users table
+    const { data: roleData } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
       .eq("role", "admin")
       .single();
 
-    if (roleError || !roleData) {
-      console.error("Admin role check failed:", roleError);
+    const { data: adminUser } = await supabase
+      .from("admin_users")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!roleData && !adminUser) {
+      logStep("Admin role check failed");
       return new Response(JSON.stringify({ error: "Forbidden: Admin role required" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    console.log("Admin user verified:", user.email);
+    logStep("Admin user verified", { email: user.email });
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
-      apiVersion: "2023-10-16",
+      apiVersion: "2025-08-27.basil",
     });
 
-    console.log("Starting Stripe subscription sync...");
+    logStep("Starting Stripe subscription sync...");
 
     const results: any[] = [];
 
@@ -71,20 +84,20 @@ serve(async (req) => {
     });
 
     if (listError) {
-      console.error("Error listing users:", listError);
+      logStep("Error listing users", { error: listError });
       throw new Error("Failed to list users: " + listError.message);
     }
 
     const users = authData?.users || [];
-    console.log(`Found ${users.length} users to check`);
+    logStep(`Found ${users.length} users to check`);
 
     // For each user, check if they have a Stripe subscription
-    for (const user of users) {
-      if (!user.email) continue;
+    for (const authUser of users) {
+      if (!authUser.email) continue;
 
       // Search for Stripe customer by email
       const customers = await stripe.customers.list({
-        email: user.email,
+        email: authUser.email,
         limit: 1,
       });
 
@@ -109,36 +122,27 @@ serve(async (req) => {
       const activeSub = subscriptions.data[0] || trialingSubscriptions.data[0];
 
       if (!activeSub) {
-        // Check if profile already has this customer ID without active sub
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("subscription_status, stripe_customer_id")
-          .eq("id", user.id)
-          .single();
-
-        if (profile?.stripe_customer_id === customer.id && profile?.subscription_status !== "active") {
-          results.push({
-            email: user.email,
-            status: "no_active_subscription",
-          });
-        }
+        results.push({
+          email: authUser.email,
+          status: "no_active_subscription",
+        });
         continue;
       }
 
-      // Get current profile
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("subscription_status, subscription_tier, stripe_customer_id")
-        .eq("id", user.id)
+      // Check if already synced in user_subscriptions table
+      const { data: existingSub } = await supabase
+        .from("user_subscriptions")
+        .select("stripe_subscription_id, subscription_status")
+        .eq("user_id", authUser.id)
         .single();
 
       // Skip if already synced correctly
-      if (profile?.stripe_customer_id === customer.id && 
-          (profile?.subscription_status === "active" || profile?.subscription_status === "trial")) {
+      if (existingSub?.stripe_subscription_id === activeSub.id && 
+          (existingSub?.subscription_status === "active" || existingSub?.subscription_status === "trial")) {
         results.push({
-          email: user.email,
+          email: authUser.email,
           status: "already_synced",
-          current_status: profile.subscription_status,
+          current_status: existingSub.subscription_status,
         });
         continue;
       }
@@ -152,16 +156,28 @@ serve(async (req) => {
         "price_1SZNyCFGDAd3RU8IPwPJVesp", // Essential monthly
         "price_1SZNyVFGDAd3RU8IPgRPqKXH", // Essential annual
       ];
+      // Premium tier price IDs (from new pricing)
+      const premiumPrices = [
+        "price_1SZNyiFGDAd3RU8I4JHYEsEi", // Premium monthly
+        "price_1SZNyuFGDAd3RU8IjeGIvPEb", // Premium annual
+        "price_1SKn0VFGDAd3RU8Io19mT9No", // Legacy premium monthly
+        "price_1SKn12FGDAd3RU8IBpc45ctZ", // Legacy premium annual
+        "price_1ONMQ9FGDAd3RU8IcBaBYmoJ", // Older premium
+      ];
+
       if (essentialPrices.includes(priceId || "")) {
         tier = "essential";
+      } else if (premiumPrices.includes(priceId || "")) {
+        tier = "premium";
       }
 
       const isTrialing = activeSub.status === "trialing";
       const renewalDate = new Date(activeSub.current_period_end * 1000);
       const trialEnd = activeSub.trial_end ? new Date(activeSub.trial_end * 1000) : null;
 
-      // Update profile
+      // Upsert to user_subscriptions table (not profiles!)
       const updateData: Record<string, any> = {
+        user_id: authUser.id,
         subscription_status: isTrialing ? "trial" : "active",
         subscription_tier: tier,
         stripe_customer_id: customer.id,
@@ -175,27 +191,28 @@ serve(async (req) => {
         updateData.trial_ends_at = trialEnd.toISOString();
       }
 
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update(updateData)
-        .eq("id", user.id);
-
-      if (updateError) {
-        results.push({
-          email: user.email,
-          status: "error",
-          error: updateError.message,
+      const { error: upsertError } = await supabase
+        .from("user_subscriptions")
+        .upsert(updateData, {
+          onConflict: 'user_id'
         });
-        console.error(`Error updating ${user.email}:`, updateError);
+
+      if (upsertError) {
+        results.push({
+          email: authUser.email,
+          status: "error",
+          error: upsertError.message,
+        });
+        logStep(`Error updating ${authUser.email}`, { error: upsertError });
       } else {
         results.push({
-          email: user.email,
+          email: authUser.email,
           status: "updated",
           tier,
           subscription_status: isTrialing ? "trial" : "active",
-          previous_status: profile?.subscription_status || "none",
+          previous_status: existingSub?.subscription_status || "none",
         });
-        console.log(`Updated ${user.email}: ${tier} (${isTrialing ? "trial" : "active"})`);
+        logStep(`Updated ${authUser.email}: ${tier} (${isTrialing ? "trial" : "active"})`);
       }
     }
 
@@ -207,7 +224,7 @@ serve(async (req) => {
       errors: results.filter(r => r.status === "error").length,
     };
 
-    console.log("Sync completed:", summary);
+    logStep("Sync completed", summary);
 
     return new Response(JSON.stringify({ 
       success: true,
@@ -219,7 +236,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error("Sync error:", error);
+    logStep("Sync error", { error: error instanceof Error ? error.message : "Unknown" });
     return new Response(JSON.stringify({ 
       success: false,
       error: error instanceof Error ? error.message : "Unknown error" 
