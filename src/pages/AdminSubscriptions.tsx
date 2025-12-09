@@ -119,9 +119,16 @@ export default function AdminSubscriptions() {
   const loadStats = async () => {
     try {
       // Get user subscriptions from user_subscriptions table (synced from Stripe)
-      const { data: userSubs } = await supabase
+      const { data: userSubs, error: subsError } = await supabase
         .from("user_subscriptions")
         .select("subscription_status, subscription_tier, payment_source, is_recurring, trial_ends_at");
+
+      console.log("[AdminSubscriptions] userSubs query result:", { 
+        count: userSubs?.length, 
+        error: subsError,
+        stripeCount: userSubs?.filter(s => s.payment_source === 'stripe' || s.is_recurring === true).length,
+        sample: userSubs?.slice(0, 3)
+      });
 
       // Also get profiles for lifetime access info
       const { data: profiles } = await supabase
@@ -156,6 +163,8 @@ export default function AdminSubscriptions() {
           totalTrial++;
         }
       });
+
+      console.log("[AdminSubscriptions] Counted stats:", { totalPaid, totalTrial, tierCounts });
 
       // Count lifetime access from profiles
       profiles?.forEach(profile => {
