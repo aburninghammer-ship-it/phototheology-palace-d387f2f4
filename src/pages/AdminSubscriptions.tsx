@@ -68,15 +68,20 @@ export default function AdminSubscriptions() {
       return;
     }
 
+    console.log("[AdminSubscriptions] Checking admin for user:", user.id);
+
     // Check if user is admin
-    const { data: roleData } = await supabase
+    const { data: roleData, error: roleError } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
       .eq("role", "admin")
       .single();
 
+    console.log("[AdminSubscriptions] Role check result:", { roleData, roleError });
+
     if (!roleData) {
+      console.log("[AdminSubscriptions] No admin role found, redirecting to dashboard");
       navigate("/dashboard");
       return;
     }
