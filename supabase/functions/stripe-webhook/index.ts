@@ -1,9 +1,9 @@
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.21.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
-  apiVersion: '2023-10-16',
+  apiVersion: '2025-08-27.basil',
 });
 
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
@@ -14,16 +14,25 @@ const tierSeats = {
   tier3: 300,
 };
 
+// Helper logging function for debugging
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
+};
+
 serve(async (req) => {
   const signature = req.headers.get('Stripe-Signature');
   const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
   if (!signature || !webhookSecret) {
+    logStep('ERROR: Missing signature or webhook secret');
     return new Response('Missing signature or webhook secret', { status: 400 });
   }
 
   try {
     const body = await req.text();
+    logStep('Received webhook request', { bodyLength: body.length });
+    
     const receivedEvent = await stripe.webhooks.constructEventAsync(
       body,
       signature,
@@ -36,46 +45,80 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log(`Webhook received: ${receivedEvent.type}`);
+    logStep(`Webhook received: ${receivedEvent.type}`, { eventId: receivedEvent.id });
 
     switch (receivedEvent.type) {
       case 'checkout.session.completed': {
         const session = receivedEvent.data.object as Stripe.Checkout.Session;
         const metadata = session.metadata;
+        const customerId = session.customer as string;
+        const customerEmail = session.customer_email || session.customer_details?.email;
+
+        logStep('Processing checkout.session.completed', { 
+          sessionId: session.id, 
+          metadata, 
+          customerId,
+          customerEmail,
+          mode: session.mode 
+        });
 
         if (!metadata || !metadata.user_id) {
-          console.error('Missing user_id in session metadata');
-          break;
+          // Try to find user by email if user_id not in metadata
+          if (customerEmail) {
+            logStep('No user_id in metadata, trying to find by email', { email: customerEmail });
+            const { data: userByEmail } = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('email', customerEmail)
+              .single();
+            
+            if (userByEmail) {
+              metadata!.user_id = userByEmail.id;
+              logStep('Found user by email', { userId: userByEmail.id });
+            } else {
+              logStep('ERROR: Could not find user by email', { email: customerEmail });
+              break;
+            }
+          } else {
+            logStep('ERROR: Missing user_id in session metadata and no email available');
+            break;
+          }
         }
 
         // Check if this is an INDIVIDUAL subscription (not a church)
-        // Individual subscriptions have is_trial or no church_name
-        const isIndividualSubscription = metadata.is_trial === 'true' || !metadata.church_name;
+        const isIndividualSubscription = metadata?.is_trial === 'true' || !metadata?.church_name;
 
         if (isIndividualSubscription) {
-          // Handle individual premium subscription
-          console.log(`Processing individual subscription for user ${metadata.user_id}`);
+          logStep(`Processing individual subscription for user ${metadata.user_id}`);
           
           const tier = metadata.tier || 'premium';
-          const subscription = session.subscription 
-            ? await stripe.subscriptions.retrieve(session.subscription as string)
-            : null;
-          
-          const renewalDate = subscription 
-            ? new Date(subscription.current_period_end * 1000)
-            : null;
-          
-          // Determine if user is in trial
-          const isInTrial = subscription?.status === 'trialing';
-          const trialEnd = subscription?.trial_end 
-            ? new Date(subscription.trial_end * 1000)
-            : null;
+          let subscription = null;
+          let renewalDate = null;
+          let isInTrial = false;
+          let trialEnd = null;
 
-          // Update user profile with subscription
+          if (session.subscription) {
+            subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+            renewalDate = new Date(subscription.current_period_end * 1000);
+            isInTrial = subscription.status === 'trialing';
+            trialEnd = subscription.trial_end 
+              ? new Date(subscription.trial_end * 1000)
+              : null;
+            logStep('Retrieved subscription details', { 
+              subscriptionId: subscription.id, 
+              status: subscription.status,
+              renewalDate,
+              isInTrial,
+              trialEnd
+            });
+          }
+
+          // Prepare update data
           const updateData: Record<string, any> = {
+            user_id: metadata.user_id,
             subscription_status: isInTrial ? 'trial' : 'active',
             subscription_tier: tier,
-            stripe_customer_id: session.customer as string,
+            stripe_customer_id: customerId,
             stripe_subscription_id: subscription?.id || null,
             payment_source: 'stripe',
             is_recurring: true,
@@ -89,19 +132,18 @@ serve(async (req) => {
             updateData.trial_ends_at = trialEnd.toISOString();
           }
 
+          logStep('Upserting subscription', updateData);
+
           const { error: subscriptionError } = await supabase
             .from('user_subscriptions')
-            .upsert({
-              user_id: metadata.user_id,
-              ...updateData
-            }, {
+            .upsert(updateData, {
               onConflict: 'user_id'
             });
 
           if (subscriptionError) {
-            console.error('Error updating subscription for individual subscription:', subscriptionError);
+            logStep('ERROR updating subscription', { error: subscriptionError });
           } else {
-            console.log(`Individual subscription activated for user ${metadata.user_id}, tier: ${tier}, status: ${isInTrial ? 'trial' : 'active'}`);
+            logStep(`Individual subscription activated for user ${metadata.user_id}, tier: ${tier}, status: ${isInTrial ? 'trial' : 'active'}`);
           }
 
           // Send purchase notification email
@@ -123,9 +165,10 @@ serve(async (req) => {
                   subscriptionTier: tier,
                 }
               });
+              logStep('Purchase notification sent', { email: profile.email });
             }
           } catch (emailError) {
-            console.error('Failed to send purchase notification:', emailError);
+            logStep('Failed to send purchase notification', { error: emailError });
           }
 
           break;
@@ -133,7 +176,7 @@ serve(async (req) => {
 
         // Handle CHURCH subscription (original logic)
         if (!metadata.tier || !metadata.church_name) {
-          console.error('Missing tier or church_name in church subscription metadata');
+          logStep('ERROR: Missing tier or church_name in church subscription metadata');
           break;
         }
 
@@ -145,7 +188,7 @@ serve(async (req) => {
           .single();
 
         if (existingMembership) {
-          console.error('User already has a church membership');
+          logStep('ERROR: User already has a church membership');
           break;
         }
 
@@ -165,13 +208,13 @@ serve(async (req) => {
             contact_phone: metadata.contact_phone || null,
             subscription_status: 'active',
             subscription_ends_at: churchRenewalDate.toISOString(),
-            stripe_customer_id: session.customer as string,
+            stripe_customer_id: customerId,
           })
           .select()
           .single();
 
         if (churchError) {
-          console.error('Error creating church:', churchError);
+          logStep('ERROR creating church', { error: churchError });
           break;
         }
 
@@ -185,7 +228,7 @@ serve(async (req) => {
           });
 
         if (memberError) {
-          console.error('Error adding admin member:', memberError);
+          logStep('ERROR adding admin member', { error: memberError });
           await supabase.from('churches').delete().eq('id', church.id);
           break;
         }
@@ -209,10 +252,10 @@ serve(async (req) => {
             }
           });
         } catch (emailError) {
-          console.error('Failed to send purchase notification:', emailError);
+          logStep('Failed to send church purchase notification', { error: emailError });
         }
 
-        console.log(`Church created successfully: ${church.id}`);
+        logStep(`Church created successfully: ${church.id}`);
         break;
       }
 
@@ -222,6 +265,13 @@ serve(async (req) => {
         const renewalDate = new Date(subscription.current_period_end * 1000);
         const isActive = subscription.status === 'active' || subscription.status === 'trialing';
 
+        logStep('Processing subscription update', { 
+          subscriptionId: subscription.id, 
+          customerId, 
+          status: subscription.status,
+          renewalDate 
+        });
+
         // Try to update church subscription
         const { data: church } = await supabase
           .from('churches')
@@ -230,7 +280,6 @@ serve(async (req) => {
           .single();
 
         if (church) {
-          // Update church subscription
           const { error } = await supabase
             .from('churches')
             .update({
@@ -240,9 +289,9 @@ serve(async (req) => {
             .eq('stripe_customer_id', customerId);
 
           if (error) {
-            console.error('Error updating church subscription:', error);
+            logStep('ERROR updating church subscription', { error });
           } else {
-            console.log(`Church subscription updated for customer ${customerId}`);
+            logStep(`Church subscription updated for customer ${customerId}`);
           }
         }
 
@@ -259,7 +308,6 @@ serve(async (req) => {
             subscription_renewal_date: renewalDate.toISOString(),
           };
 
-          // Update trial_ends_at if in trial
           if (subscription.trial_end) {
             updateData.trial_ends_at = new Date(subscription.trial_end * 1000).toISOString();
           }
@@ -270,10 +318,12 @@ serve(async (req) => {
             .eq('stripe_customer_id', customerId);
 
           if (error) {
-            console.error('Error updating user subscription:', error);
+            logStep('ERROR updating user subscription', { error });
           } else {
-            console.log(`User subscription updated for customer ${customerId}: ${subscription.status}`);
+            logStep(`User subscription updated for customer ${customerId}: ${subscription.status}`);
           }
+        } else {
+          logStep('No existing user subscription found for customer', { customerId });
         }
         break;
       }
@@ -281,6 +331,8 @@ serve(async (req) => {
       case 'customer.subscription.deleted': {
         const subscription = receivedEvent.data.object as Stripe.Subscription;
         const customerId = subscription.customer as string;
+
+        logStep('Processing subscription deletion', { subscriptionId: subscription.id, customerId });
 
         // Mark church subscription as cancelled
         const { error: churchError } = await supabase
@@ -291,9 +343,9 @@ serve(async (req) => {
           .eq('stripe_customer_id', customerId);
 
         if (churchError) {
-          console.error('Error cancelling church subscription:', churchError);
+          logStep('ERROR cancelling church subscription', { error: churchError });
         } else {
-          console.log(`Church subscription cancelled for customer ${customerId}`);
+          logStep(`Church subscription cancelled for customer ${customerId}`);
         }
 
         // Mark individual user subscription as cancelled
@@ -306,9 +358,9 @@ serve(async (req) => {
           .eq('stripe_customer_id', customerId);
 
         if (subscriptionError) {
-          console.error('Error cancelling user subscription:', subscriptionError);
+          logStep('ERROR cancelling user subscription', { error: subscriptionError });
         } else {
-          console.log(`User subscription cancelled for customer ${customerId}`);
+          logStep(`User subscription cancelled for customer ${customerId}`);
         }
         break;
       }
@@ -316,6 +368,8 @@ serve(async (req) => {
       case 'invoice.payment_failed': {
         const invoice = receivedEvent.data.object as Stripe.Invoice;
         const customerId = invoice.customer as string;
+
+        logStep('Processing payment failure', { invoiceId: invoice.id, customerId });
 
         // Mark church subscription as past_due
         await supabase
@@ -329,14 +383,15 @@ serve(async (req) => {
           .update({ subscription_status: 'expired' })
           .eq('stripe_customer_id', customerId);
 
-        console.log(`Payment failed for customer ${customerId}`);
+        logStep(`Payment failed for customer ${customerId}`);
         break;
       }
 
       case 'invoice.payment_succeeded': {
-        // Handle successful renewal payments
         const invoice = receivedEvent.data.object as Stripe.Invoice;
         const customerId = invoice.customer as string;
+
+        logStep('Processing payment success', { invoiceId: invoice.id, customerId });
 
         if (invoice.subscription) {
           const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
@@ -344,7 +399,7 @@ serve(async (req) => {
           const isActive = subscription.status === 'active' || subscription.status === 'trialing';
 
           // Update user subscription with new renewal date
-          await supabase
+          const { error } = await supabase
             .from('user_subscriptions')
             .update({
               subscription_status: isActive ? 'active' : subscription.status,
@@ -352,13 +407,17 @@ serve(async (req) => {
             })
             .eq('stripe_customer_id', customerId);
 
-          console.log(`Payment succeeded, renewal date updated for customer ${customerId}`);
+          if (error) {
+            logStep('ERROR updating renewal date', { error });
+          } else {
+            logStep(`Payment succeeded, renewal date updated for customer ${customerId}`);
+          }
         }
         break;
       }
 
       default:
-        console.log(`Unhandled event type: ${receivedEvent.type}`);
+        logStep(`Unhandled event type: ${receivedEvent.type}`);
     }
 
     return new Response(JSON.stringify({ received: true }), {
@@ -367,7 +426,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Webhook error:', error);
+    logStep('Webhook error', { error: error instanceof Error ? error.message : String(error) });
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
