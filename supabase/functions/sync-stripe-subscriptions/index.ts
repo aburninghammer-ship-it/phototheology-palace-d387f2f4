@@ -93,158 +93,167 @@ serve(async (req) => {
 
     // For each user, check if they have a Stripe subscription
     for (const authUser of users) {
-      if (!authUser.email) continue;
+      try {
+        if (!authUser.email) continue;
 
-      // Search for Stripe customer by email
-      const customers = await stripe.customers.list({
-        email: authUser.email,
-        limit: 1,
-      });
-
-      if (customers.data.length === 0) continue;
-
-      const customer = customers.data[0];
-      
-      // Check for active subscription
-      const subscriptions = await stripe.subscriptions.list({
-        customer: customer.id,
-        status: "active",
-        limit: 1,
-      });
-
-      // Also check trialing
-      const trialingSubscriptions = await stripe.subscriptions.list({
-        customer: customer.id,
-        status: "trialing",
-        limit: 1,
-      });
-
-      const activeSub = subscriptions.data[0] || trialingSubscriptions.data[0];
-
-      if (!activeSub) {
-        results.push({
+        // Search for Stripe customer by email
+        const customers = await stripe.customers.list({
           email: authUser.email,
-          status: "no_active_subscription",
+          limit: 1,
         });
-        continue;
-      }
 
-      // Check if already synced in user_subscriptions table
-      const { data: existingSub } = await supabase
-        .from("user_subscriptions")
-        .select("stripe_subscription_id, subscription_status")
-        .eq("user_id", authUser.id)
-        .single();
+        if (customers.data.length === 0) continue;
 
-      // Skip if already synced correctly
-      if (existingSub?.stripe_subscription_id === activeSub.id && 
-          (existingSub?.subscription_status === "active" || existingSub?.subscription_status === "trial")) {
-        results.push({
-          email: authUser.email,
-          status: "already_synced",
-          current_status: existingSub.subscription_status,
+        const customer = customers.data[0];
+        
+        // Check for active subscription
+        const subscriptions = await stripe.subscriptions.list({
+          customer: customer.id,
+          status: "active",
+          limit: 1,
         });
-        continue;
-      }
 
-      // Determine tier from price
-      const priceId = activeSub.items.data[0]?.price?.id;
-      let tier = "premium"; // default
-      
-      // Essential tier price IDs
-      const essentialPrices = [
-        "price_1SZNyCFGDAd3RU8IPwPJVesp", // Essential monthly
-        "price_1SZNyVFGDAd3RU8IPgRPqKXH", // Essential annual
-      ];
-      // Premium tier price IDs (from new pricing)
-      const premiumPrices = [
-        "price_1SZNyiFGDAd3RU8I4JHYEsEi", // Premium monthly
-        "price_1SZNyuFGDAd3RU8IjeGIvPEb", // Premium annual
-        "price_1SKn0VFGDAd3RU8Io19mT9No", // Legacy premium monthly
-        "price_1SKn12FGDAd3RU8IBpc45ctZ", // Legacy premium annual
-        "price_1ONMQ9FGDAd3RU8IcBaBYmoJ", // Older premium
-      ];
+        // Also check trialing
+        const trialingSubscriptions = await stripe.subscriptions.list({
+          customer: customer.id,
+          status: "trialing",
+          limit: 1,
+        });
 
-      if (essentialPrices.includes(priceId || "")) {
-        tier = "essential";
-      } else if (premiumPrices.includes(priceId || "")) {
-        tier = "premium";
-      }
+        const activeSub = subscriptions.data[0] || trialingSubscriptions.data[0];
 
-      const isTrialing = activeSub.status === "trialing";
-      
-      // Safely create renewal date - handle invalid timestamps
-      let renewalDate: Date | null = null;
-      if (activeSub.current_period_end && activeSub.current_period_end > 0) {
-        try {
-          renewalDate = new Date(activeSub.current_period_end * 1000);
-          // Validate the date is valid
-          if (isNaN(renewalDate.getTime())) {
-            renewalDate = null;
-          }
-        } catch (e) {
-          logStep("Invalid current_period_end", { value: activeSub.current_period_end });
-          renewalDate = null;
+        if (!activeSub) {
+          results.push({
+            email: authUser.email,
+            status: "no_active_subscription",
+          });
+          continue;
         }
-      }
 
-      // Safely create trial end date - handle invalid timestamps
-      let trialEnd: Date | null = null;
-      if (activeSub.trial_end && activeSub.trial_end > 0) {
-        try {
-          trialEnd = new Date(activeSub.trial_end * 1000);
-          // Validate the date is valid
-          if (isNaN(trialEnd.getTime())) {
-            trialEnd = null;
-          }
-        } catch (e) {
-          logStep("Invalid trial_end", { value: activeSub.trial_end });
-          trialEnd = null;
+        // Check if already synced in user_subscriptions table
+        const { data: existingSub } = await supabase
+          .from("user_subscriptions")
+          .select("stripe_subscription_id, subscription_status")
+          .eq("user_id", authUser.id)
+          .single();
+
+        // Skip if already synced correctly
+        if (existingSub?.stripe_subscription_id === activeSub.id && 
+            (existingSub?.subscription_status === "active" || existingSub?.subscription_status === "trial")) {
+          results.push({
+            email: authUser.email,
+            status: "already_synced",
+            current_status: existingSub.subscription_status,
+          });
+          continue;
         }
-      }
 
-      // Upsert to user_subscriptions table (not profiles!)
-      const updateData: Record<string, any> = {
-        user_id: authUser.id,
-        subscription_status: isTrialing ? "trial" : "active",
-        subscription_tier: tier,
-        stripe_customer_id: customer.id,
-        stripe_subscription_id: activeSub.id,
-        payment_source: "stripe",
-        is_recurring: true,
-      };
+        // Determine tier from price
+        const priceId = activeSub.items.data[0]?.price?.id;
+        let tier = "premium"; // default
+        
+        // Essential tier price IDs
+        const essentialPrices = [
+          "price_1SZNyCFGDAd3RU8IPwPJVesp", // Essential monthly
+          "price_1SZNyVFGDAd3RU8IPgRPqKXH", // Essential annual
+        ];
+        // Premium tier price IDs (from new pricing)
+        const premiumPrices = [
+          "price_1SZNyiFGDAd3RU8I4JHYEsEi", // Premium monthly
+          "price_1SZNyuFGDAd3RU8IjeGIvPEb", // Premium annual
+          "price_1SKn0VFGDAd3RU8Io19mT9No", // Legacy premium monthly
+          "price_1SKn12FGDAd3RU8IBpc45ctZ", // Legacy premium annual
+          "price_1ONMQ9FGDAd3RU8IcBaBYmoJ", // Older premium
+        ];
 
-      // Only add dates if they are valid
-      if (renewalDate) {
-        updateData.subscription_renewal_date = renewalDate.toISOString();
-      }
+        if (essentialPrices.includes(priceId || "")) {
+          tier = "essential";
+        } else if (premiumPrices.includes(priceId || "")) {
+          tier = "premium";
+        }
 
-      if (trialEnd) {
-        updateData.trial_ends_at = trialEnd.toISOString();
-      }
+        const isTrialing = activeSub.status === "trialing";
+        
+        // Safely create renewal date - handle invalid timestamps
+        let renewalDateStr: string | null = null;
+        const periodEnd = activeSub.current_period_end;
+        if (periodEnd && typeof periodEnd === 'number' && periodEnd > 0) {
+          try {
+            const renewalDate = new Date(periodEnd * 1000);
+            if (!isNaN(renewalDate.getTime())) {
+              renewalDateStr = renewalDate.toISOString();
+            }
+          } catch (e) {
+            logStep("Invalid current_period_end", { email: authUser.email, value: periodEnd });
+          }
+        }
 
-      const { error: upsertError } = await supabase
-        .from("user_subscriptions")
-        .upsert(updateData, {
-          onConflict: 'user_id'
-        });
+        // Safely create trial end date - handle invalid timestamps
+        let trialEndStr: string | null = null;
+        const trialEndVal = activeSub.trial_end;
+        if (trialEndVal && typeof trialEndVal === 'number' && trialEndVal > 0) {
+          try {
+            const trialEnd = new Date(trialEndVal * 1000);
+            if (!isNaN(trialEnd.getTime())) {
+              trialEndStr = trialEnd.toISOString();
+            }
+          } catch (e) {
+            logStep("Invalid trial_end", { email: authUser.email, value: trialEndVal });
+          }
+        }
 
-      if (upsertError) {
-        results.push({
-          email: authUser.email,
-          status: "error",
-          error: upsertError.message,
-        });
-        logStep(`Error updating ${authUser.email}`, { error: upsertError });
-      } else {
-        results.push({
-          email: authUser.email,
-          status: "updated",
-          tier,
+        // Upsert to user_subscriptions table (not profiles!)
+        const updateData: Record<string, any> = {
+          user_id: authUser.id,
           subscription_status: isTrialing ? "trial" : "active",
-          previous_status: existingSub?.subscription_status || "none",
+          subscription_tier: tier,
+          stripe_customer_id: customer.id,
+          stripe_subscription_id: activeSub.id,
+          payment_source: "stripe",
+          is_recurring: true,
+        };
+
+        // Only add dates if they are valid
+        if (renewalDateStr) {
+          updateData.subscription_renewal_date = renewalDateStr;
+        }
+
+        if (trialEndStr) {
+          updateData.trial_ends_at = trialEndStr;
+        }
+
+        const { error: upsertError } = await supabase
+          .from("user_subscriptions")
+          .upsert(updateData, {
+            onConflict: 'user_id'
+          });
+
+        if (upsertError) {
+          results.push({
+            email: authUser.email,
+            status: "error",
+            error: upsertError.message,
+          });
+          logStep(`Error updating ${authUser.email}`, { error: upsertError });
+        } else {
+          results.push({
+            email: authUser.email,
+            status: "updated",
+            tier,
+            subscription_status: isTrialing ? "trial" : "active",
+            previous_status: existingSub?.subscription_status || "none",
+          });
+          logStep(`Updated ${authUser.email}: ${tier} (${isTrialing ? "trial" : "active"})`);
+        }
+      } catch (userError) {
+        // Catch per-user errors so one bad user doesn't crash the entire sync
+        const errorMsg = userError instanceof Error ? userError.message : String(userError);
+        logStep(`Error processing user ${authUser.email}`, { error: errorMsg });
+        results.push({
+          email: authUser.email || "unknown",
+          status: "error",
+          error: errorMsg,
         });
-        logStep(`Updated ${authUser.email}: ${tier} (${isTrialing ? "trial" : "active"})`);
       }
     }
 
