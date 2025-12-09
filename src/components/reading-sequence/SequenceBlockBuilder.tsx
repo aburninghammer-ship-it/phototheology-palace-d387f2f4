@@ -411,8 +411,8 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
                       <Label className="text-xs text-muted-foreground">Verse</Label>
                       <Input
                         type="number"
-                        value={newVerse}
-                        onChange={(e) => setNewVerse(parseInt(e.target.value) || 1)}
+                        value={newVerse === 0 ? "" : newVerse}
+                        onChange={(e) => setNewVerse(e.target.value === "" ? 0 : parseInt(e.target.value) || 1)}
                         min={1}
                         className="h-10"
                         disabled={!newBook}
