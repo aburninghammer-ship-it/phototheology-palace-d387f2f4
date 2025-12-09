@@ -128,13 +128,27 @@ export function useDevotionals() {
       issueDescription?: string;
       issueSeverity?: string;
     }) => {
-      const { data, error } = await supabase.functions.invoke("generate-devotional", {
-        body: params,
-      });
+      try {
+        const { data, error } = await supabase.functions.invoke("generate-devotional", {
+          body: params,
+        });
 
-      if (error) throw error;
-      if (data.error) throw new Error(data.error);
-      return data;
+        if (error) {
+          // Check for specific error types
+          if (error.message?.includes("FunctionsFetchError") || error.message?.includes("Failed to send")) {
+            throw new Error("The devotional is still being generated. This can take 2-5 minutes for longer devotionals. Please check back in a moment.");
+          }
+          throw error;
+        }
+        if (data?.error) throw new Error(data.error);
+        return data;
+      } catch (err: any) {
+        // Handle timeout/network errors more gracefully
+        if (err.name === "FunctionsFetchError" || err.message?.includes("Failed to send")) {
+          throw new Error("Generation is in progress. For 40-day devotionals, this can take several minutes. Please wait and refresh the page.");
+        }
+        throw err;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["devotional-plans"] });
@@ -145,9 +159,9 @@ export function useDevotionals() {
     },
     onError: (error) => {
       toast({
-        title: "Generation Failed",
+        title: "Generation In Progress",
         description: error.message,
-        variant: "destructive",
+        variant: "default",
       });
     },
   });
