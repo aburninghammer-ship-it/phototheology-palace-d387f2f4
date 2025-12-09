@@ -697,6 +697,12 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
                             <span className="font-medium">Scholarly</span>
                             <span className="text-xs text-muted-foreground ml-2">Deep study</span>
                           </SelectItem>
+                          {block.commentaryMode === "verse" && (
+                            <SelectItem value="deep-drill">
+                              <span className="font-medium">🧠 Deep Drill</span>
+                              <span className="text-xs text-muted-foreground ml-2">Full Palace (16+ principles)</span>
+                            </SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     </div>
