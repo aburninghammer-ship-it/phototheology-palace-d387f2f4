@@ -1,13 +1,27 @@
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ChevronRight, Sparkles, Play, Users, Star, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import heroCardsDisplay from "@/assets/branding/hero-cards-display.png";
 
+const socialProof = [
+  "600+ students learning",
+  "46% weekly return rate", 
+  "Loved by pastors & teachers",
+];
+
 export const PunchyHero = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const scrollToDemo = () => {
+    const demoSection = document.getElementById("interactive-demo");
+    if (demoSection) {
+      demoSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <section className="relative min-h-[90vh] sm:min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-background via-primary/5 to-accent/10 pb-safe">
@@ -27,44 +41,63 @@ export const PunchyHero = () => {
         >
           <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-primary">
             <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="whitespace-normal sm:whitespace-nowrap">A 2-year mastery journey • Not another quick-fix app</span>
+            <span className="whitespace-normal sm:whitespace-nowrap">Not another devotional app • A complete Bible study system</span>
           </span>
         </motion.div>
 
-        {/* Main Headline */}
+        {/* Main Headline - Clearer Value Prop */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 sm:mb-4 leading-tight sm:leading-[1.1] px-2"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-5 leading-tight sm:leading-[1.1] px-2"
         >
-          The Bible,{" "}
+          Finally{" "}
           <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent inline-block">
-            but unforgettable.
+            understand
+          </span>{" "}
+          the Bible
+          <br className="hidden sm:block" />
+          <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
+            — and{" "}
+            <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+              remember it
+            </span>
           </span>
         </motion.h1>
 
-        {/* Subheadline */}
+        {/* Clear Subheadline */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-2 px-4"
+          className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-6 px-4"
         >
-          Most people read Scripture and forget it by lunch.
+          A visual memory system that transforms how you study Scripture.
+          <br className="hidden sm:block" />
+          <span className="font-medium text-foreground">
+            See connections. Build understanding. Never forget what you learned.
+          </span>
         </motion.p>
 
-        <motion.p
+        {/* Social Proof Pills */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-sm sm:text-base md:text-lg font-medium max-w-2xl mx-auto mb-6 px-4"
+          className="flex flex-wrap justify-center gap-2 mb-6"
         >
-          Phototheology turns the Bible into a{" "}
-          <span className="text-primary font-semibold whitespace-nowrap">visual palace</span>
-          {" "}—so you understand it, connect it, and{" "}
-          <span className="text-accent font-semibold whitespace-nowrap">actually remember it</span>.
-        </motion.p>
+          {socialProof.map((item, i) => (
+            <Badge 
+              key={i} 
+              variant="outline" 
+              className="bg-background/80 backdrop-blur-sm border-border/50 px-3 py-1"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-green-500" />
+              {item}
+            </Badge>
+          ))}
+        </motion.div>
 
         {/* Hero Card Deck Image */}
         <motion.div
@@ -82,12 +115,12 @@ export const PunchyHero = () => {
           />
         </motion.div>
 
-        {/* Single CTA */}
+        {/* Dual CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col items-center gap-3 sm:gap-4 px-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4"
         >
           <Button
             size="lg"
@@ -97,10 +130,25 @@ export const PunchyHero = () => {
             Start Free — No Credit Card
             <ChevronRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
           </Button>
-          <p className="text-xs sm:text-sm text-muted-foreground text-center px-2">
-            Free forever tier • Upgrade when you're ready
-          </p>
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={scrollToDemo}
+            className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 border-2 hover:bg-primary/5 w-full sm:w-auto max-w-xs sm:max-w-none"
+          >
+            <Play className="mr-2 h-5 w-5" />
+            See It In Action
+          </Button>
         </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          className="text-xs sm:text-sm text-muted-foreground text-center mt-4 px-2"
+        >
+          Free forever tier • Cancel anytime • No spam
+        </motion.p>
 
         {/* Quick Stats */}
         <motion.div
@@ -110,16 +158,16 @@ export const PunchyHero = () => {
           className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-2xl mx-auto mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-border/50 px-4"
         >
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">2yr</div>
-            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Mastery Journey</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-accent">8</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">8</div>
             <div className="text-xs sm:text-sm text-muted-foreground mt-1">Palace Floors</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">100+</div>
-            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Principle Cards</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-accent">100+</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Study Principles</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">AI</div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1">Powered Guide</div>
           </div>
         </motion.div>
       </div>

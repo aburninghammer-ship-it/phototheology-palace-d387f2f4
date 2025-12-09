@@ -15,6 +15,8 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { JeevesWelcomeModal } from "@/components/retention/JeevesWelcomeModal";
 import { PathBanner, PathDashboardWidget } from "@/components/path";
 import { QuickNotes } from "@/components/notes/QuickNotes";
+import { CommunityHighlight } from "@/components/dashboard/CommunityHighlight";
+import { QuickAIPrompt } from "@/components/dashboard/QuickAIPrompt";
 import { Brain, Building2, Headphones } from "lucide-react";
 import { 
   BookOpen, 
@@ -347,6 +349,12 @@ export default function Dashboard() {
                 </Button>
               </CardContent>
             </Card>
+
+            {/* Quick AI Prompt - Surface Jeeves */}
+            <QuickAIPrompt />
+
+            {/* Community Highlight - Surface trending posts */}
+            <CommunityHighlight />
 
             {/* Quick Notes - Offline Available */}
             <QuickNotes compact />
