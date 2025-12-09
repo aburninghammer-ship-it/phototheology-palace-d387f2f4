@@ -8721,6 +8721,7 @@ export type Database = {
         Args: { points_to_add: number; user_id: string }
         Returns: undefined
       }
+      is_admin_user: { Args: { _user_id: string }; Returns: boolean }
       is_church_admin: {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
