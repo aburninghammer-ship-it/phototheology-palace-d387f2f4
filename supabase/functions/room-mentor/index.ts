@@ -46,8 +46,8 @@ serve(async (req) => {
     }
 
     // Build greeting based on user's name
-    // Priority: userName from request body, then fetched userFirstName, then generic "friend"
-    const greeting = userName || userFirstName || "friend";
+    // Priority: userName from request body, then fetched userFirstName, then generic "there"
+    const greeting = userName || userFirstName || "there";
 
     // Build mentor system prompt based on mastery level
     const mentorPrompt = `You are Jeeves, ${greeting}'s training partner in **sparring mode** for the ${roomName} room.
