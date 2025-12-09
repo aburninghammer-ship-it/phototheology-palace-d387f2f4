@@ -131,24 +131,18 @@ export default function AdminSubscriptions() {
       const tierCounts = { essential: 0, premium: 0, student: 0 };
 
       // Count from user_subscriptions (Stripe synced data)
+      // Note: is_recurring=true indicates an active Stripe subscription (set by sync function)
       userSubs?.forEach(sub => {
         const trialValid = sub.trial_ends_at && new Date(sub.trial_ends_at) > now;
+        const isStripePaid = sub.subscription_status === 'active' && (sub.payment_source === 'stripe' || sub.is_recurring === true);
         
-        if (sub.subscription_status === 'active' && sub.payment_source === 'stripe') {
+        if (isStripePaid) {
           totalPaid++;
           if (sub.subscription_tier === 'essential') tierCounts.essential++;
           else if (sub.subscription_tier === 'premium') tierCounts.premium++;
           else if (sub.subscription_tier === 'student') tierCounts.student++;
-        } else if (sub.subscription_status === 'trial' || trialValid) {
-          // Only count free tier trials, not premium trials (which are paying)
-          if (sub.subscription_tier === 'free') {
-            totalTrial++;
-          } else if (sub.payment_source === 'stripe') {
-            // Premium/essential trials that are from Stripe are still counted as paid
-            totalPaid++;
-            if (sub.subscription_tier === 'essential') tierCounts.essential++;
-            else if (sub.subscription_tier === 'premium') tierCounts.premium++;
-          }
+        } else if (sub.subscription_status === 'trial' || (trialValid && !isStripePaid)) {
+          totalTrial++;
         }
       });
 
