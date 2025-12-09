@@ -440,7 +440,7 @@ export const JeevesAssistant = ({
                   </Card>
 
                   {/* Palace Room Mapping Card */}
-                  {analysisResult.palaceMapping && (
+                  {analysisResult.palaceMapping && analysisResult.palaceMapping.primaryRoom && (
                     <Card className="border border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5">
                       <CardContent className="pt-4">
                         <div className="flex items-center gap-2 mb-3">
@@ -456,43 +456,49 @@ export const JeevesAssistant = ({
                             <span className="text-muted-foreground">Related Rooms: </span>
                             <span className="font-medium">{analysisResult.palaceMapping.relatedRooms?.join(", ") || "None"}</span>
                           </div>
-                          <div className="p-2 bg-background/50 rounded">
-                            <span className="text-muted-foreground">Floor Recommendation: </span>
-                            <span className="font-medium">{analysisResult.palaceMapping.floorRecommendation}</span>
-                          </div>
+                          {analysisResult.palaceMapping.floorRecommendation && (
+                            <div className="p-2 bg-background/50 rounded">
+                              <span className="text-muted-foreground">Floor Recommendation: </span>
+                              <span className="font-medium">{analysisResult.palaceMapping.floorRecommendation}</span>
+                            </div>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
                   )}
 
                   {/* Scripture Connections Card */}
-                  <Card className="border border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-cyan-500/5">
-                    <CardContent className="pt-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <BookMarked className="h-5 w-5 text-blue-600" />
-                        <span className="font-semibold text-blue-700">Scripture Connections</span>
-                      </div>
-                      <div className="space-y-2">
-                        {analysisResult.scriptureConnections.map((scripture, idx) => (
-                          <div key={idx} className="p-2 bg-background/50 rounded text-sm">
-                            <span className="font-semibold text-blue-600">{scripture.reference}</span>
-                            <span className="text-muted-foreground"> — {scripture.connection}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  {analysisResult.scriptureConnections && analysisResult.scriptureConnections.length > 0 && (
+                    <Card className="border border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-cyan-500/5">
+                      <CardContent className="pt-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <BookMarked className="h-5 w-5 text-blue-600" />
+                          <span className="font-semibold text-blue-700">Scripture Connections</span>
+                        </div>
+                        <div className="space-y-2">
+                          {analysisResult.scriptureConnections.map((scripture, idx) => (
+                            <div key={idx} className="p-2 bg-background/50 rounded text-sm">
+                              <span className="font-semibold text-blue-600">{scripture.reference}</span>
+                              <span className="text-muted-foreground"> — {scripture.connection}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                   {/* Encouragement Card */}
-                  <Card className="border border-pink-500/30 bg-gradient-to-br from-pink-500/5 to-rose-500/5">
-                    <CardContent className="pt-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Lightbulb className="h-5 w-5 text-pink-600" />
-                        <span className="font-semibold text-pink-700">Encouragement</span>
-                      </div>
-                      <p className="text-sm italic">{analysisResult.encouragement}</p>
-                    </CardContent>
-                  </Card>
+                  {analysisResult.encouragement && (
+                    <Card className="border border-pink-500/30 bg-gradient-to-br from-pink-500/5 to-rose-500/5">
+                      <CardContent className="pt-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Lightbulb className="h-5 w-5 text-pink-600" />
+                          <span className="font-semibold text-pink-700">Encouragement</span>
+                        </div>
+                        <p className="text-sm italic">{analysisResult.encouragement}</p>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               )}
             </TabsContent>
