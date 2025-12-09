@@ -107,10 +107,15 @@ export default function AdminSubscriptions() {
 
   const loadStats = async () => {
     try {
-      // Get user subscriptions
+      // Get user subscriptions from user_subscriptions table (synced from Stripe)
+      const { data: userSubs } = await supabase
+        .from("user_subscriptions")
+        .select("subscription_status, subscription_tier, payment_source, is_recurring, trial_ends_at");
+
+      // Also get profiles for lifetime access info
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("subscription_status, subscription_tier, has_lifetime_access, trial_ends_at, student_expires_at, promotional_access_expires_at, payment_source, is_recurring");
+        .select("has_lifetime_access, payment_source, subscription_tier");
 
       // Get church subscriptions
       const { data: churches } = await supabase
@@ -125,29 +130,35 @@ export default function AdminSubscriptions() {
       let totalTrial = 0;
       const tierCounts = { essential: 0, premium: 0, student: 0 };
 
+      // Count from user_subscriptions (Stripe synced data)
+      userSubs?.forEach(sub => {
+        const trialValid = sub.trial_ends_at && new Date(sub.trial_ends_at) > now;
+        
+        if (sub.subscription_status === 'active' && sub.payment_source === 'stripe') {
+          totalPaid++;
+          if (sub.subscription_tier === 'essential') tierCounts.essential++;
+          else if (sub.subscription_tier === 'premium') tierCounts.premium++;
+          else if (sub.subscription_tier === 'student') tierCounts.student++;
+        } else if (sub.subscription_status === 'trial' || trialValid) {
+          // Only count free tier trials, not premium trials (which are paying)
+          if (sub.subscription_tier === 'free') {
+            totalTrial++;
+          } else if (sub.payment_source === 'stripe') {
+            // Premium/essential trials that are from Stripe are still counted as paid
+            totalPaid++;
+            if (sub.subscription_tier === 'essential') tierCounts.essential++;
+            else if (sub.subscription_tier === 'premium') tierCounts.premium++;
+          }
+        }
+      });
+
+      // Count lifetime access from profiles
       profiles?.forEach(profile => {
-        const trialValid = profile.trial_ends_at && new Date(profile.trial_ends_at) > now;
-        const studentValid = profile.student_expires_at && new Date(profile.student_expires_at) > now;
-        
-        // Only count as paid if payment_source is 'stripe' or 'lifetime'
-        const isActuallyPaying = profile.payment_source === 'stripe' || profile.payment_source === 'lifetime';
-        
         if (profile.has_lifetime_access && profile.payment_source === 'lifetime') {
           totalLifetime++;
           totalPaid++;
           if (profile.subscription_tier === 'essential') tierCounts.essential++;
           else if (profile.subscription_tier === 'premium') tierCounts.premium++;
-        } else if (profile.subscription_status === 'active' && !trialValid && isActuallyPaying && profile.is_recurring) {
-          // Only count recurring Stripe subscriptions as paid
-          totalPaid++;
-          if (profile.subscription_tier === 'essential') tierCounts.essential++;
-          else if (profile.subscription_tier === 'premium') tierCounts.premium++;
-        } else if (studentValid && profile.payment_source === 'stripe') {
-          // Only count students who are actually paying via Stripe
-          totalPaid++;
-          tierCounts.student++;
-        } else if (trialValid) {
-          totalTrial++;
         }
       });
 
