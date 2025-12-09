@@ -172,8 +172,36 @@ serve(async (req) => {
       }
 
       const isTrialing = activeSub.status === "trialing";
-      const renewalDate = new Date(activeSub.current_period_end * 1000);
-      const trialEnd = activeSub.trial_end ? new Date(activeSub.trial_end * 1000) : null;
+      
+      // Safely create renewal date - handle invalid timestamps
+      let renewalDate: Date | null = null;
+      if (activeSub.current_period_end && activeSub.current_period_end > 0) {
+        try {
+          renewalDate = new Date(activeSub.current_period_end * 1000);
+          // Validate the date is valid
+          if (isNaN(renewalDate.getTime())) {
+            renewalDate = null;
+          }
+        } catch (e) {
+          logStep("Invalid current_period_end", { value: activeSub.current_period_end });
+          renewalDate = null;
+        }
+      }
+
+      // Safely create trial end date - handle invalid timestamps
+      let trialEnd: Date | null = null;
+      if (activeSub.trial_end && activeSub.trial_end > 0) {
+        try {
+          trialEnd = new Date(activeSub.trial_end * 1000);
+          // Validate the date is valid
+          if (isNaN(trialEnd.getTime())) {
+            trialEnd = null;
+          }
+        } catch (e) {
+          logStep("Invalid trial_end", { value: activeSub.trial_end });
+          trialEnd = null;
+        }
+      }
 
       // Upsert to user_subscriptions table (not profiles!)
       const updateData: Record<string, any> = {
@@ -182,10 +210,14 @@ serve(async (req) => {
         subscription_tier: tier,
         stripe_customer_id: customer.id,
         stripe_subscription_id: activeSub.id,
-        subscription_renewal_date: renewalDate.toISOString(),
         payment_source: "stripe",
         is_recurring: true,
       };
+
+      // Only add dates if they are valid
+      if (renewalDate) {
+        updateData.subscription_renewal_date = renewalDate.toISOString();
+      }
 
       if (trialEnd) {
         updateData.trial_ends_at = trialEnd.toISOString();
