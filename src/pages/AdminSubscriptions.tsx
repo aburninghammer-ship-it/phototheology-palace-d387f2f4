@@ -118,22 +118,18 @@ export default function AdminSubscriptions() {
 
   const loadStats = async () => {
     try {
-      // Get user subscriptions from user_subscriptions table (synced from Stripe)
+      // Get user subscriptions from user_subscriptions table
       const { data: userSubs, error: subsError } = await supabase
         .from("user_subscriptions")
-        .select("subscription_status, subscription_tier, payment_source, is_recurring, trial_ends_at");
+        .select("subscription_status, subscription_tier, has_lifetime_access");
 
       console.log("[AdminSubscriptions] userSubs query result:", { 
         count: userSubs?.length, 
         error: subsError,
-        stripeCount: userSubs?.filter(s => s.payment_source === 'stripe' || s.is_recurring === true).length,
+        activeCount: userSubs?.filter(s => s.subscription_status === 'active').length,
+        trialCount: userSubs?.filter(s => s.subscription_status === 'trial').length,
         sample: userSubs?.slice(0, 3)
       });
-
-      // Also get profiles for lifetime access info
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("has_lifetime_access, payment_source, subscription_tier");
 
       // Get church subscriptions
       const { data: churches } = await supabase
@@ -141,40 +137,27 @@ export default function AdminSubscriptions() {
         .select("tier, max_seats, subscription_status")
         .eq("subscription_status", "active");
 
-      const now = new Date();
-      
       let totalPaid = 0;
       let totalLifetime = 0;
       let totalTrial = 0;
       const tierCounts = { essential: 0, premium: 0, student: 0 };
 
-      // Count from user_subscriptions (Stripe synced data)
-      // Note: is_recurring=true indicates an active Stripe subscription (set by sync function)
+      // Count from user_subscriptions table directly
       userSubs?.forEach(sub => {
-        const trialValid = sub.trial_ends_at && new Date(sub.trial_ends_at) > now;
-        const isStripePaid = sub.subscription_status === 'active' && (sub.payment_source === 'stripe' || sub.is_recurring === true);
-        
-        if (isStripePaid) {
+        if (sub.subscription_status === 'active') {
           totalPaid++;
           if (sub.subscription_tier === 'essential') tierCounts.essential++;
           else if (sub.subscription_tier === 'premium') tierCounts.premium++;
           else if (sub.subscription_tier === 'student') tierCounts.student++;
-        } else if (sub.subscription_status === 'trial' || (trialValid && !isStripePaid)) {
+        } else if (sub.subscription_status === 'trial') {
           totalTrial++;
         }
       });
 
-      console.log("[AdminSubscriptions] Counted stats:", { totalPaid, totalTrial, tierCounts });
+      // Count lifetime access from user_subscriptions
+      totalLifetime = userSubs?.filter(sub => sub.has_lifetime_access === true).length || 0;
 
-      // Count lifetime access from profiles
-      profiles?.forEach(profile => {
-        if (profile.has_lifetime_access && profile.payment_source === 'lifetime') {
-          totalLifetime++;
-          totalPaid++;
-          if (profile.subscription_tier === 'essential') tierCounts.essential++;
-          else if (profile.subscription_tier === 'premium') tierCounts.premium++;
-        }
-      });
+      console.log("[AdminSubscriptions] Counted stats:", { totalPaid, totalTrial, totalLifetime, tierCounts });
 
       const churchSeats = {
         tier1: churches?.filter(c => c.tier === 'tier1').reduce((sum, c) => sum + c.max_seats, 0) || 0,
