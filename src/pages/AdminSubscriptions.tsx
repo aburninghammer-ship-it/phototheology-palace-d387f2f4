@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, RefreshCw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface SubscriptionStats {
   totalPaid: number;
@@ -25,8 +27,36 @@ interface SubscriptionStats {
 export default function AdminSubscriptions() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
+
+  const handleSyncStripeSubscriptions = async () => {
+    setSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('sync-stripe-subscriptions');
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Sync Complete",
+        description: `Synced ${data?.synced || 0} subscriptions successfully`,
+      });
+      
+      // Reload stats after sync
+      await loadStats();
+    } catch (error: any) {
+      console.error("Sync error:", error);
+      toast({
+        title: "Sync Failed",
+        description: error.message || "Failed to sync subscriptions",
+        variant: "destructive",
+      });
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   useEffect(() => {
     checkAdminAndLoadStats();
@@ -133,9 +163,28 @@ export default function AdminSubscriptions() {
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Subscription Analytics</h1>
-        <p className="text-muted-foreground">Overview of paid users and church subscriptions</p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Subscription Analytics</h1>
+          <p className="text-muted-foreground">Overview of paid users and church subscriptions</p>
+        </div>
+        <Button 
+          onClick={handleSyncStripeSubscriptions} 
+          disabled={syncing}
+          variant="outline"
+        >
+          {syncing ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Syncing...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Sync Stripe Subscriptions
+            </>
+          )}
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
