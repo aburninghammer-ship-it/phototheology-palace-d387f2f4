@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-type CommentaryDepth = "surface" | "intermediate" | "depth";
+type CommentaryDepth = "surface" | "intermediate" | "depth" | "deep-drill";
 
 const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null) => {
   const nameToUse = userName || "there";
@@ -219,6 +219,44 @@ CRITICAL FOR SPOKEN DELIVERY (MANDATORY):
 - Apply the Fire Room: Let scholarly depth become soul-piercing conviction
 - Use "you" and "your"—speak directly to the listener's heart
 - End with spiritual application that leaves the listener closer to Christ, not just more knowledgeable`,
+    "deep-drill": `
+### COMMENTARY STYLE: FULL PALACE DEEP DRILL (Maximum Depth - Single Verse)
+Produce a FULL Palace Commentary on this single Bible verse applying AT LEAST 16 DISTINCT Phototheology principles from across ALL floors.
+**BUT DO NOT NAME OR REFERENCE THE PRINCIPLES/ROOMS.**
+
+Instead, weave them naturally into a unified, literary, theologically rich commentary.
+
+**MANDATORY PRINCIPLES TO APPLY (weave naturally - don't name them):**
+1. Story context - where does this fit in the larger narrative?
+2. Imagination immersion - what sensory details illuminate this moment?
+3. Symbolic translation - what mental images crystallize the meaning?
+4. Greek/Hebrew insights - what do the original words reveal?
+5. Observation details - what specific words, numbers, or actions stand out?
+6. Symbol identification - what types point to Christ (lamb, rock, water, light)?
+7. Scripture cross-references - what other verses echo or parallel this?
+8. Nature illustrations - what natural phenomena illuminate this truth?
+9. Personal application - how does this transform daily life?
+10. Christ-centered revelation - how does this SPECIFICALLY reveal Jesus?
+11. Five dimensions - literal, Christ, personal, church, and heavenly meanings
+12. Sanctuary connections - altar, laver, lampstand, table, incense, ark relevance
+13. Feast connections - Passover through Tabernacles links
+14. Prophetic timeline placement - where does this sit in redemptive history?
+15. Pattern recognition - recurring biblical motifs (40 days, 3 days, deliverers)
+16. Covenant cycle placement - which cycle and stage (Fall/Covenant/Sanctuary/Enemy/Restoration)?
+17. Devotional fire - let this verse BURN with conviction, comfort, or awe
+18. Fruit test - does this produce love, joy, peace in the reader?
+
+**TONE**: Profound, clear, reflective, Christ-centered. Like a theologian, mystic, and scholar collaborating.
+
+**OUTPUT STRUCTURE**:
+- Open with the HEART of the verse - what is God saying to the soul?
+- Layer theological depth with devotional warmth
+- Draw connections across Scripture (OT/NT, Sanctuary, Kingdom, Prophecy)
+- Highlight narrative logic, symbolic imagery, theological depth
+- Retain a pastoral, devotional dimension throughout
+- End by drawing the listener into deeper intimacy with Christ
+
+**HARD LIMIT**: 450-650 words maximum. Quality over quantity.`,
   };
 
   return basePrompt + depthInstructions[depth];
@@ -230,6 +268,7 @@ const getMaxTokens = (depth: CommentaryDepth) => {
     case "surface": return 200;      // Was 150 - give room to finish sentences
     case "intermediate": return 400; // Was 300 - allow complete thoughts
     case "depth": return 650;        // Was 500 - scholarly depth needs space
+    case "deep-drill": return 1200;  // Full Palace deep drill - comprehensive analysis
     default: return 200;
   }
 };

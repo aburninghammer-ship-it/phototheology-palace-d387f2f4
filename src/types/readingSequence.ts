@@ -9,7 +9,7 @@ export interface SequenceItem {
   order: number;
 }
 
-export type CommentaryDepth = "surface" | "intermediate" | "depth";
+export type CommentaryDepth = "surface" | "intermediate" | "depth" | "deep-drill";
 export type CommentaryMode = "chapter" | "verse";
 
 export interface ReadingSequenceBlock {
