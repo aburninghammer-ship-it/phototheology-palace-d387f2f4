@@ -38,11 +38,12 @@ const CHAPTER_COUNTS: Record<string, number> = {
   "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1, Revelation: 22,
 };
 
-type SelectionMode = "single" | "chapters" | "book" | "books";
+type SelectionMode = "single-verse" | "single" | "chapters" | "book" | "books";
 
 export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBlockBuilderProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectionMode, setSelectionMode] = useState<SelectionMode>("single");
+  const [newVerse, setNewVerse] = useState<number>(1);
   const [newBook, setNewBook] = useState<string>("");
   const [newChapter, setNewChapter] = useState<number>(1);
   const [endChapter, setEndChapter] = useState<number>(1);
@@ -50,6 +51,28 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
 
   // Debug: Log when block changes
   console.log("SequenceBlockBuilder render, items:", block.items.length);
+
+  const addSingleVerse = () => {
+    console.log("addSingleVerse called:", { newBook, newChapter, newVerse });
+    if (!newBook) {
+      console.log("No book selected");
+      return;
+    }
+    const newItem: SequenceItem = {
+      id: crypto.randomUUID(),
+      book: newBook,
+      chapter: newChapter,
+      startVerse: newVerse,
+      endVerse: newVerse, // Same verse for single verse selection
+      order: block.items.length,
+    };
+    console.log("Adding single verse item:", newItem);
+    onChange({
+      ...block,
+      items: [...block.items, newItem],
+    });
+    toast.success(`Added ${newBook} ${newChapter}:${newVerse}`);
+  };
 
   const addSingleChapter = () => {
     console.log("addSingleChapter called:", { newBook, newChapter });
@@ -337,13 +360,78 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
               )}
               
               <Tabs value={selectionMode} onValueChange={(v) => setSelectionMode(v as SelectionMode)}>
-                <TabsList className="grid w-full grid-cols-4 h-9">
+                <TabsList className="grid w-full grid-cols-5 h-9">
+                  <TabsTrigger value="single-verse" className="text-xs">Single Verse</TabsTrigger>
                   <TabsTrigger value="single" className="text-xs">Single Chapter</TabsTrigger>
                   <TabsTrigger value="chapters" className="text-xs">Chapter Range</TabsTrigger>
                   <TabsTrigger value="book" className="text-xs">Whole Book</TabsTrigger>
                   <TabsTrigger value="books" className="text-xs">Book Range</TabsTrigger>
                 </TabsList>
               </Tabs>
+
+              {/* Single Verse - for Deep Drill */}
+              {selectionMode === "single-verse" && (
+                <div className="space-y-2">
+                  <div className="flex gap-2 items-end flex-wrap">
+                    <div className="flex-1 min-w-[150px]">
+                      <Label className="text-xs text-muted-foreground">Book</Label>
+                      <Select value={newBook} onValueChange={setNewBook}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select book" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px] bg-popover">
+                          {BIBLE_BOOKS.map((book) => (
+                            <SelectItem key={book} value={book}>
+                              {book}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="w-20">
+                      <Label className="text-xs text-muted-foreground">Chapter</Label>
+                      <Select
+                        value={String(newChapter)}
+                        onValueChange={(v) => setNewChapter(parseInt(v))}
+                        disabled={!newBook}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[200px] bg-popover">
+                          {Array.from({ length: CHAPTER_COUNTS[newBook] || 1 }, (_, i) => i + 1).map((ch) => (
+                            <SelectItem key={ch} value={String(ch)}>
+                              {ch}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="w-20">
+                      <Label className="text-xs text-muted-foreground">Verse</Label>
+                      <Input
+                        type="number"
+                        value={newVerse}
+                        onChange={(e) => setNewVerse(parseInt(e.target.value) || 1)}
+                        min={1}
+                        className="h-10"
+                        disabled={!newBook}
+                      />
+                    </div>
+                    <Button 
+                      onClick={addSingleVerse} 
+                      disabled={!newBook} 
+                      size="sm"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground bg-primary/10 p-2 rounded">
+                    🧠 Perfect for <span className="font-semibold text-primary">Deep Drill</span> commentary - select one verse for full 16+ principle Palace analysis
+                  </p>
+                </div>
+              )}
 
               {/* Single Chapter */}
               {selectionMode === "single" && (
