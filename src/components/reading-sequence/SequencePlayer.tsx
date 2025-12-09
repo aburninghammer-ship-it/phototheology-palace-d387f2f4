@@ -2232,14 +2232,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                 <Smartphone className="h-3 w-3" />
                 <span>Use device volume for reader</span>
               </div>
-              <div className="flex items-center gap-2 w-full touch-none">
+              <div className="flex items-center gap-2 w-full py-2">
                 <span className="w-12 text-right shrink-0">Music</span>
                 <Slider
                   value={[musicVolume]}
                   max={100}
                   step={1}
                   onValueChange={handleMusicVolumeChange}
-                  className="flex-1 touch-none"
+                  className="flex-1"
                 />
                 <span className="w-10 text-right shrink-0">{musicVolume}%</span>
               </div>
