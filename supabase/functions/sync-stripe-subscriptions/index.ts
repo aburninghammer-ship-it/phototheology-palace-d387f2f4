@@ -133,12 +133,14 @@ serve(async (req) => {
         // Check if already synced in user_subscriptions table
         const { data: existingSub } = await supabase
           .from("user_subscriptions")
-          .select("stripe_subscription_id, subscription_status")
+          .select("stripe_subscription_id, subscription_status, payment_source, is_recurring")
           .eq("user_id", authUser.id)
           .single();
 
-        // Skip if already synced correctly
+        // Only skip if FULLY synced (same stripe_subscription_id AND payment_source is stripe AND is_recurring is true)
         if (existingSub?.stripe_subscription_id === activeSub.id && 
+            existingSub?.payment_source === "stripe" &&
+            existingSub?.is_recurring === true &&
             (existingSub?.subscription_status === "active" || existingSub?.subscription_status === "trial")) {
           results.push({
             email: authUser.email,
