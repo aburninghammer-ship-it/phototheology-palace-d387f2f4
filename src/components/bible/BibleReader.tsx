@@ -35,6 +35,7 @@ import { ReadingStreakBadge } from "./ReadingStreakBadge";
 import { useVerseHighlights } from "@/hooks/useVerseHighlights";
 import { useVerseNotes } from "@/hooks/useVerseNotes";
 import { useReadingStreak } from "@/hooks/useReadingStreak";
+import { AIPromptBanner } from "@/components/AIPromptBanner";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -247,6 +248,21 @@ export const BibleReader = () => {
           </Button>
         </div>
       </div>
+
+      {/* AI Prompt Banner - Surface Jeeves */}
+      {!jeevesMode && (
+        <AIPromptBanner 
+          context="bible" 
+          book={book} 
+          chapter={chapter}
+          onAskJeeves={() => {
+            setJeevesMode(true);
+            setTimeout(() => {
+              jeevesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+          }}
+        />
+      )}
 
       <PTCodeSearch />
 

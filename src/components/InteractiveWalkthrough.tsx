@@ -606,7 +606,7 @@ export const InteractiveWalkthrough = () => {
   };
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+    <section id="interactive-demo" className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <Badge className="mb-4 bg-accent/20 text-accent border-accent/30">
