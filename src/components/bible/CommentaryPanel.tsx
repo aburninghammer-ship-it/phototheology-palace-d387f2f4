@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, MessageSquare, Sparkles, X, BookOpen } from "lucide-react";
+import { Loader2, MessageSquare, Sparkles, X, BookOpen, Crown, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
@@ -41,6 +41,12 @@ const parseRoomInsights = (commentary: string) => {
   }
   
   return rooms;
+};
+
+// Check if verse text is too short for deep analysis
+const isVerseTooShort = (text: string): boolean => {
+  const wordCount = text.trim().split(/\s+/).length;
+  return wordCount < 4; // Less than 4 words is too short
 };
 
 const PRINCIPLE_OPTIONS = [
@@ -165,6 +171,12 @@ const COMMENTARY_OPTIONS = [
   { value: "sop", label: "Spirit of Prophecy (SOP)" },
 ];
 
+const WORD_LENGTH_OPTIONS = [
+  { value: "short", label: "Short (~250 words)", maxWords: 250 },
+  { value: "medium", label: "Medium (~450 words)", maxWords: 450 },
+  { value: "long", label: "Long (~650 words)", maxWords: 650 },
+];
+
 interface CommentaryPanelProps {
   book: string;
   chapter: number;
@@ -178,12 +190,14 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
   const [loading, setLoading] = useState(false);
   const [commentary, setCommentary] = useState<string | null>(null);
   const [usedPrinciples, setUsedPrinciples] = useState<string[]>([]);
-  const [analysisMode, setAnalysisMode] = useState<"revealed" | "applied">("applied");
+  const [analysisMode, setAnalysisMode] = useState<"revealed" | "applied" | "deep-palace">("applied");
   const [selectedCommentary, setSelectedCommentary] = useState<string>("clarke");
   const [commentaryMode, setCommentaryMode] = useState(false);
   const [availableCommentaries, setAvailableCommentaries] = useState<string[]>([]);
   const [checkingAvailability, setCheckingAvailability] = useState(true);
   const [activeDimensions, setActiveDimensions] = useState<string[]>(["2D"]); // Default to Christ dimension
+  const [deepPalaceLength, setDeepPalaceLength] = useState<string>("medium");
+  const [showHiddenStructure, setShowHiddenStructure] = useState(false);
   const { toast } = useToast();
 
   // Check which commentaries are available for this specific verse
@@ -230,14 +244,29 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
       return;
     }
 
+    // Failsafe: Check if verse is too short for Deep Palace mode
+    if (analysisMode === "deep-palace" && isVerseTooShort(verseText)) {
+      toast({
+        title: "Verse Too Short",
+        description: "Deep Palace Commentary requires a verse with adequate narrative or doctrinal components. Please choose a longer verse.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     setCommentaryMode(useClassicCommentary);
     try {
       // Determine the correct mode
       let mode = analysisMode === "revealed" ? "commentary-revealed" : "commentary-applied";
+      if (analysisMode === "deep-palace") {
+        mode = "deep-palace-commentary";
+      }
       if (useClassicCommentary) {
         mode = selectedCommentary === "sop" ? "commentary-sop" : "commentary-classic";
       }
+
+      const lengthConfig = WORD_LENGTH_OPTIONS.find(l => l.value === deepPalaceLength);
 
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
@@ -249,6 +278,9 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
             ? selectedPrinciples.map(id => PRINCIPLE_OPTIONS.find(p => p.id === id)?.label)
             : undefined,
           classicCommentary: useClassicCommentary && selectedCommentary !== "sop" ? selectedCommentary : undefined,
+          // Deep Palace specific options
+          maxWords: analysisMode === "deep-palace" ? lengthConfig?.maxWords : undefined,
+          showHiddenStructure: analysisMode === "deep-palace" ? showHiddenStructure : undefined,
         },
       });
 
@@ -300,16 +332,17 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
           
           <div>
             <h4 className="text-sm font-semibold mb-3">Analysis Mode:</h4>
-            <div className="flex gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-4">
               <Button
                 variant={analysisMode === "revealed" ? "default" : "outline"}
                 onClick={() => {
                   setAnalysisMode("revealed");
                   setCommentary(null);
                 }}
-                className="flex-1"
+                className="flex-1 min-w-[120px]"
+                size="sm"
               >
-                Revealed Principles
+                Revealed
               </Button>
               <Button
                 variant={analysisMode === "applied" ? "default" : "outline"}
@@ -317,17 +350,72 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
                   setAnalysisMode("applied");
                   setCommentary(null);
                 }}
-                className="flex-1"
+                className="flex-1 min-w-[120px]"
+                size="sm"
               >
-                Applied Principles
+                Applied
+              </Button>
+              <Button
+                variant={analysisMode === "deep-palace" ? "default" : "outline"}
+                onClick={() => {
+                  setAnalysisMode("deep-palace");
+                  setCommentary(null);
+                }}
+                className="flex-1 min-w-[120px] gradient-palace text-white"
+                size="sm"
+              >
+                <Crown className="h-3 w-3 mr-1" />
+                Deep Palace
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mb-3">
               {analysisMode === "revealed" 
                 ? "Identify which principles and dimensions are revealed in this text" 
-                : "Select principles to apply to this verse, or let AI randomly select"}
+                : analysisMode === "applied"
+                ? "Select principles to apply to this verse, or let AI randomly select"
+                : "Full Palace Commentary using 16+ principles (single verse only)"}
             </p>
           </div>
+
+          {/* Deep Palace Settings */}
+          {analysisMode === "deep-palace" && (
+            <div className="p-3 rounded-lg bg-gradient-to-br from-purple-500/10 to-amber-500/10 border border-primary/20 space-y-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                <Crown className="h-4 w-4" />
+                Deep Palace Settings
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground">Output Length:</label>
+                <Select value={deepPalaceLength} onValueChange={setDeepPalaceLength}>
+                  <SelectTrigger className="h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {WORD_LENGTH_OPTIONS.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={showHiddenStructure}
+                  onCheckedChange={(checked) => setShowHiddenStructure(!!checked)}
+                />
+                <span className="text-xs">Show Hidden Structure (reveal principles used)</span>
+              </label>
+
+              {isVerseTooShort(verseText) && (
+                <p className="text-xs text-destructive">
+                  ⚠️ This verse is too short for Deep Palace analysis. Please select a longer verse.
+                </p>
+              )}
+            </div>
+          )}
 
           {analysisMode === "applied" && (
             <div>
@@ -357,18 +445,22 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
             <div className="flex gap-2">
               <Button
                 onClick={() => generateCommentary(false, false)}
-                disabled={loading || (analysisMode === "applied" && selectedPrinciples.length === 0)}
-                className="flex-1 gradient-royal text-white shadow-blue"
+                disabled={
+                  loading || 
+                  (analysisMode === "applied" && selectedPrinciples.length === 0) ||
+                  (analysisMode === "deep-palace" && isVerseTooShort(verseText))
+                }
+                className={`flex-1 ${analysisMode === "deep-palace" ? "gradient-palace" : "gradient-royal"} text-white shadow-blue`}
               >
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Analyzing...
+                    {analysisMode === "deep-palace" ? "Analyzing Palace..." : "Analyzing..."}
                   </>
                 ) : (
                   <>
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    {analysisMode === "revealed" ? "Analyze" : "Generate"}
+                    {analysisMode === "deep-palace" ? <Crown className="h-4 w-4 mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
+                    {analysisMode === "revealed" ? "Analyze" : analysisMode === "deep-palace" ? "Deep Analyze" : "Generate"}
                   </>
                 )}
               </Button>
@@ -376,16 +468,16 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
               {commentary && !commentaryMode && (
                 <Button
                   onClick={() => generateCommentary(true, false)}
-                  disabled={loading}
+                  disabled={loading || (analysisMode === "deep-palace" && isVerseTooShort(verseText))}
                   variant="outline"
                   className="flex-1"
                 >
                   {loading ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
-                    <Sparkles className="h-4 w-4 mr-2" />
+                    <RefreshCw className="h-4 w-4 mr-2" />
                   )}
-                  {analysisMode === "revealed" ? "Re-analyze" : "Random Refresh"}
+                  {analysisMode === "deep-palace" ? "New Perspective" : analysisMode === "revealed" ? "Re-analyze" : "Random Refresh"}
                 </Button>
               )}
             </div>
