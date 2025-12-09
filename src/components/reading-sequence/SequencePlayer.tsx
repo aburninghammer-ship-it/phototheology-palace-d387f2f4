@@ -2234,14 +2234,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               </div>
               <div className="flex items-center gap-2 w-full py-2">
                 <span className="w-12 text-right shrink-0">Music</span>
-                <Slider
-                  value={[musicVolume]}
-                  max={100}
-                  step={1}
-                  onValueChange={handleMusicVolumeChange}
-                  className="flex-1"
-                />
-                <span className="w-10 text-right shrink-0">{musicVolume}%</span>
+                <div className="flex-1 flex items-center justify-between gap-1">
+                  {[0, 10, 25, 50, 75, 100].map((pct) => (
+                    <Button
+                      key={pct}
+                      variant={musicVolume === pct ? "default" : "outline"}
+                      size="sm"
+                      className="h-8 min-w-[40px] text-xs px-2"
+                      onClick={() => {
+                        setMusicVolume(pct);
+                        setGlobalMusicVolume(pct);
+                      }}
+                    >
+                      {pct}%
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
