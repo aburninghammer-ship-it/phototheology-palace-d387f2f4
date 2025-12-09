@@ -97,8 +97,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   });
   
   // Commentary depth can be changed mid-session
-  const [currentCommentaryDepth, setCurrentCommentaryDepth] = useState<"surface" | "intermediate" | "depth">(() => {
-    return (activeSequences[currentSeqIdx]?.commentaryDepth as "surface" | "intermediate" | "depth") || 'surface';
+  const [currentCommentaryDepth, setCurrentCommentaryDepth] = useState<"surface" | "intermediate" | "depth" | "deep-drill">(() => {
+    return (activeSequences[currentSeqIdx]?.commentaryDepth as "surface" | "intermediate" | "depth" | "deep-drill") || 'surface';
   });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -1773,7 +1773,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, [currentVoice, isPlaying, isPaused, chapterContent, currentItem, isPlayingCommentary, commentaryText, currentVerseIdx]);
 
   // Handle commentary depth change - clear commentary cache
-  const handleCommentaryDepthChange = useCallback((newDepth: "surface" | "intermediate" | "depth") => {
+  const handleCommentaryDepthChange = useCallback((newDepth: "surface" | "intermediate" | "depth" | "deep-drill") => {
     console.log("[Commentary] Changing depth from", currentCommentaryDepth, "to", newDepth);
     setCurrentCommentaryDepth(newDepth);
     
@@ -1781,7 +1781,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     commentaryCache.current.clear();
     prefetchingCommentaryRef.current.clear();
     
-    const depthLabels = { surface: "Surface", intermediate: "Intermediate", depth: "Scholarly" };
+    const depthLabels = { surface: "Surface", intermediate: "Intermediate", depth: "Scholarly", "deep-drill": "Deep Drill" };
     toast.success(`Commentary depth changed to ${depthLabels[newDepth]}`);
   }, [currentCommentaryDepth]);
 
@@ -2122,7 +2122,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           <div className="flex items-center gap-3">
             <BookOpen className="h-4 w-4 text-muted-foreground" />
             <span className="text-xs text-muted-foreground w-12">Depth</span>
-            <Select value={currentCommentaryDepth} onValueChange={handleCommentaryDepthChange}>
+            <Select value={currentCommentaryDepth} onValueChange={(v) => handleCommentaryDepthChange(v as "surface" | "intermediate" | "depth" | "deep-drill")}>
               <SelectTrigger className="flex-1 h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
@@ -2145,6 +2145,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                     <span className="text-muted-foreground text-[10px]">Deep study</span>
                   </div>
                 </SelectItem>
+                <SelectItem value="deep-drill" className="text-xs">
+                  <div className="flex flex-col">
+                    <span className="font-medium">🧠 Deep Drill</span>
+                    <span className="text-muted-foreground text-[10px]">Full Palace (16+ principles)</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -2163,7 +2169,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                     <Volume2 className="h-4 w-4" />
                   )}
                 </Button>
-                <span className="text-xs text-muted-foreground w-12">Reader</span>
+                <span className="text-xs text-muted-foreground w-16">Reader</span>
                 <Slider
                   value={[isMuted ? 0 : volume]}
                   max={100}
@@ -2171,11 +2177,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   onValueChange={handleVolumeChange}
                   className="flex-1"
                 />
+                <span className="text-xs text-muted-foreground w-10 text-right">{isMuted ? 0 : volume}%</span>
               </div>
 
               {/* Music volume slider */}
               <div className="flex items-center gap-3">
-                <span className="text-xs text-muted-foreground w-12 ml-10">Music</span>
+                <span className="text-xs text-muted-foreground w-16 ml-10">Music</span>
                 <Slider
                   value={[musicVolume]}
                   max={100}
@@ -2183,18 +2190,19 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   onValueChange={handleMusicVolumeChange}
                   className="flex-1"
                 />
+                <span className="text-xs text-muted-foreground w-10 text-right">{musicVolume}%</span>
               </div>
             </>
           )}
           
           {isMobile && (
-            <div className="flex flex-col gap-1 py-1 text-xs text-muted-foreground items-center">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2 py-1 text-xs text-muted-foreground">
+              <div className="flex items-center justify-center gap-2">
                 <Smartphone className="h-3 w-3" />
                 <span>Use device volume for reader</span>
               </div>
-              <div className="flex items-center gap-2 w-full max-w-xs">
-                <span className="w-12 text-right">Music</span>
+              <div className="flex items-center gap-2 w-full">
+                <span className="w-12 text-right shrink-0">Music</span>
                 <Slider
                   value={[musicVolume]}
                   max={100}
@@ -2202,6 +2210,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   onValueChange={handleMusicVolumeChange}
                   className="flex-1"
                 />
+                <span className="w-10 text-right shrink-0">{musicVolume}%</span>
               </div>
             </div>
           )}
