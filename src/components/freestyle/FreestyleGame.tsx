@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Sparkles, Swords, Trophy, Star, Zap, Target, Plus, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
 interface FreestyleGameProps {
   roomId: string;
@@ -424,8 +425,8 @@ export const FreestyleGame = ({ roomId, roomName }: FreestyleGameProps) => {
                   <Star className="h-5 w-5 text-amber-500" />
                   <h4 className="font-bold">Jeeves' Master Freestyle:</h4>
                 </div>
-                <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                  {jeevesResponse}
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  {formatJeevesResponse(jeevesResponse)}
                 </div>
                 <Button 
                   variant="outline" 
