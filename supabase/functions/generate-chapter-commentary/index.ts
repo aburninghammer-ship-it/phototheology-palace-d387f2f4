@@ -9,7 +9,7 @@ const corsHeaders = {
 type CommentaryDepth = "surface" | "intermediate" | "depth";
 
 const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null): string => {
-  const nameToUse = userName || "friend";
+  const nameToUse = userName || "there";
   const basePrompt = `You are Jeeves, a wise and warm Bible study mentor trained in the complete Phototheology (PT) Palace method. Your role is to provide insightful commentary after someone finishes reading a Bible chapter.
 
 ### PERSONAL ADDRESS:

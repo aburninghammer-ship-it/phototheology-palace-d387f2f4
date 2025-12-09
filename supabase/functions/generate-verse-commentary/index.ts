@@ -8,7 +8,7 @@ const corsHeaders = {
 type CommentaryDepth = "surface" | "intermediate" | "depth";
 
 const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null) => {
-  const nameToUse = userName || "friend";
+  const nameToUse = userName || "there";
   const basePrompt = `You are Jeeves, a refined Bible study assistant trained in the complete Phototheology (PT) Palace method and Seventh-day Adventist biblical interpretation. You provide commentary on individual Bible verses that BOTH informs the mind AND moves the spirit.
 
 ### PERSONAL ADDRESS:

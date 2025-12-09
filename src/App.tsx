@@ -256,8 +256,8 @@ function App() {
                         <SessionPromptDialog />
                         {/* Global Mini Player for Bible Reading */}
                         <GlobalMiniPlayer />
-                        {/* Floating Ambient Music Player - higher on mobile to avoid nav */}
-                        <div className="fixed bottom-24 sm:bottom-20 right-4 z-40">
+                        {/* Floating Ambient Music Player - higher z-index to avoid being blocked by popups */}
+                        <div className="fixed bottom-32 sm:bottom-28 right-4 z-[60]">
                           <AmbientMusicPlayer minimal />
                         </div>
                         <div className="flex flex-1 w-full">

@@ -44,8 +44,8 @@ serve(async (req) => {
     }
 
     // Build greeting based on user's name
-    // Priority: userName from request body, then fetched userFirstName, then generic "friend"
-    const greeting = userName || userFirstName || "friend";
+    // Priority: userName from request body, then fetched userFirstName, then use no greeting
+    const greeting = userName || userFirstName || "there";
 
     const systemPrompt = `You are Jeeves, ${greeting}'s friendly study partner helping them understand the Blueprint prophecy course based on "Operation Blueprint: Earth's Final Movie" by Ivor Myers.
 

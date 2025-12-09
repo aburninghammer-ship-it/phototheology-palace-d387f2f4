@@ -149,7 +149,7 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 function generateEmailContent(campaign: any, profile: any, customData: any): string {
-  const displayName = profile?.display_name || 'Friend';
+  const displayName = profile?.display_name || 'there';
   
   switch (campaign.type) {
     case 'welcome':
