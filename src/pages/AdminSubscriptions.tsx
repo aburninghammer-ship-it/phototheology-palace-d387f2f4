@@ -76,33 +76,44 @@ export default function AdminSubscriptions() {
   }, [user, authLoading, navigate]);
 
   const checkAdminAndLoadStats = async () => {
-    if (!user) return;
-
-    console.log("[AdminSubscriptions] Checking admin for user:", user.id);
-
-    // Check if user is admin using the has_role function for security
-    const { data: roleData, error: roleError } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("role", "admin")
-      .maybeSingle();
-
-    console.log("[AdminSubscriptions] Role check result:", { roleData, roleError });
-
-    if (roleError) {
-      console.error("[AdminSubscriptions] Error checking role:", roleError);
-    }
-
-    if (!roleData) {
-      console.log("[AdminSubscriptions] No admin role found, redirecting to dashboard");
-      setIsAdmin(false);
-      navigate("/dashboard");
+    if (!user) {
+      setLoading(false);
       return;
     }
 
-    setIsAdmin(true);
-    await loadStats();
+    console.log("[AdminSubscriptions] Checking admin for user:", user.id);
+
+    try {
+      // Check if user is admin using the has_role function for security
+      const { data: roleData, error: roleError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      console.log("[AdminSubscriptions] Role check result:", { roleData, roleError });
+
+      if (roleError) {
+        console.error("[AdminSubscriptions] Error checking role:", roleError);
+        setLoading(false);
+        return;
+      }
+
+      if (!roleData) {
+        console.log("[AdminSubscriptions] No admin role found, redirecting to dashboard");
+        setIsAdmin(false);
+        setLoading(false);
+        navigate("/dashboard");
+        return;
+      }
+
+      setIsAdmin(true);
+      await loadStats();
+    } catch (error) {
+      console.error("[AdminSubscriptions] Error in checkAdminAndLoadStats:", error);
+      setLoading(false);
+    }
   };
 
   const loadStats = async () => {
