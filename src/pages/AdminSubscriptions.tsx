@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface SubscriptionStats {
   totalPaid: number;
+  totalFree: number;
   byTier: {
     essential: number;
     premium: number;
@@ -138,6 +139,7 @@ export default function AdminSubscriptions() {
         .eq("subscription_status", "active");
 
       let totalPaid = 0;
+      let totalFree = 0;
       let totalLifetime = 0;
       let totalTrial = 0;
       const tierCounts = { essential: 0, premium: 0, student: 0 };
@@ -151,6 +153,8 @@ export default function AdminSubscriptions() {
           else if (sub.subscription_tier === 'student') tierCounts.student++;
         } else if (sub.subscription_status === 'trial') {
           totalTrial++;
+        } else if (!sub.subscription_status || sub.subscription_status === 'free' || sub.subscription_tier === 'free' || !sub.subscription_tier) {
+          totalFree++;
         }
       });
 
@@ -167,6 +171,7 @@ export default function AdminSubscriptions() {
 
       setStats({
         totalPaid,
+        totalFree,
         byTier: tierCounts,
         totalLifetime,
         totalTrial,
@@ -216,7 +221,7 @@ export default function AdminSubscriptions() {
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card>
           <CardHeader>
             <CardTitle>Total Paid Users</CardTitle>
@@ -224,6 +229,16 @@ export default function AdminSubscriptions() {
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold">{stats.totalPaid}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Free Tier</CardTitle>
+            <CardDescription>Users on free plan</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">{stats.totalFree}</div>
           </CardContent>
         </Card>
 
