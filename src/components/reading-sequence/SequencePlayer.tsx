@@ -635,13 +635,21 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     audioRef.current = audio;
     setAudioUrl(url);
 
+    // Critical: Prevent double-triggering by using a flag
+    let hasEnded = false;
+    
     audio.onended = () => {
+      if (hasEnded) {
+        console.log("[Commentary] onended already fired, ignoring duplicate");
+        return;
+      }
+      hasEnded = true;
       console.log("[Commentary] Finished playing");
       audioRef.current = null;
       setIsPlayingCommentary(false);
       playingCommentaryRef.current = false;
       setCommentaryText(null);
-      URL.revokeObjectURL(url);
+      if (url) URL.revokeObjectURL(url);
       onComplete();
     };
 
@@ -700,13 +708,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         audio.playbackRate = playbackSpeed;
         audioRef.current = audio;
         
-        audio.onended = () => {
-          audioRef.current = null;
-          setIsPlayingCommentary(false);
-          playingCommentaryRef.current = false;
-          setCommentaryText(null);
-          moveToNextChapter();
-        };
+          // Critical: Prevent double-triggering
+          let hasEnded = false;
+          audio.onended = () => {
+            if (hasEnded) return;
+            hasEnded = true;
+            audioRef.current = null;
+            setIsPlayingCommentary(false);
+            playingCommentaryRef.current = false;
+            setCommentaryText(null);
+            moveToNextChapter();
+          };
         
         audio.onerror = () => {
           audioRef.current = null;
@@ -1184,7 +1196,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           audio.playbackRate = playbackSpeed;
           audioRef.current = audio;
           
+          // Critical: Prevent double-triggering
+          let hasEnded = false;
           audio.onended = () => {
+            if (hasEnded) return;
+            hasEnded = true;
             console.log("[Verse Commentary] Cached audio ended");
             audioRef.current = null;
             setIsPlayingCommentary(false);
@@ -1279,7 +1295,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             audio.playbackRate = playbackSpeed;
             audioRef.current = audio;
             
+            // Critical: Prevent double-triggering
+            let hasEnded = false;
             audio.onended = () => {
+              if (hasEnded) return;
+              hasEnded = true;
               audioRef.current = null;
               setIsPlayingCommentary(false);
               playingCommentaryRef.current = false;
@@ -1708,12 +1728,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     }
   };
 
-  const handleMusicVolumeChange = (value: number[]) => {
+  const handleMusicVolumeChange = useCallback((value: number[]) => {
     const newVolume = value[0];
     console.log('[SequencePlayer] Music volume slider changed to:', newVolume);
+    
+    // Update state
     setMusicVolume(newVolume);
     
-    // Update internal music player immediately (critical for mobile)
+    // Update internal music player immediately and synchronously (critical for mobile)
     if (musicAudioRef.current) {
       musicAudioRef.current.volume = newVolume / 100;
       console.log('[SequencePlayer] Internal music volume set to:', newVolume / 100);
@@ -1723,12 +1745,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     setGlobalMusicVolume(newVolume);
     
     // Force immediate update on any audio elements with class 'ambient-music' (backup)
-    document.querySelectorAll('audio.ambient-music').forEach((audio: Element) => {
+    const audioElements = document.querySelectorAll('audio.ambient-music');
+    audioElements.forEach((audio: Element) => {
       if (audio instanceof HTMLAudioElement) {
         audio.volume = newVolume / 100;
       }
     });
-  };
+  }, []);
 
   // Handle voice change - clear cache and regenerate current audio
   const handleVoiceChange = useCallback((newVoice: VoiceId) => {
@@ -2201,14 +2224,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                 <Smartphone className="h-3 w-3" />
                 <span>Use device volume for reader</span>
               </div>
-              <div className="flex items-center gap-2 w-full">
+              <div className="flex items-center gap-2 w-full touch-none">
                 <span className="w-12 text-right shrink-0">Music</span>
                 <Slider
                   value={[musicVolume]}
                   max={100}
                   step={1}
                   onValueChange={handleMusicVolumeChange}
-                  className="flex-1"
+                  className="flex-1 touch-none"
                 />
                 <span className="w-10 text-right shrink-0">{musicVolume}%</span>
               </div>
