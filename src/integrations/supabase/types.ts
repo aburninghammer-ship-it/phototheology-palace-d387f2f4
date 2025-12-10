@@ -4485,6 +4485,51 @@ export type Database = {
         }
         Relationships: []
       }
+      patreon_connections: {
+        Row: {
+          access_token: string | null
+          connected_at: string | null
+          entitled_cents: number | null
+          id: string
+          is_active_patron: boolean | null
+          patreon_email: string | null
+          patreon_name: string | null
+          patreon_user_id: string
+          refresh_token: string | null
+          token_expires_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          connected_at?: string | null
+          entitled_cents?: number | null
+          id?: string
+          is_active_patron?: boolean | null
+          patreon_email?: string | null
+          patreon_name?: string | null
+          patreon_user_id: string
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          connected_at?: string | null
+          entitled_cents?: number | null
+          id?: string
+          is_active_patron?: boolean | null
+          patreon_email?: string | null
+          patreon_name?: string | null
+          patreon_user_id?: string
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       pending_student_verifications: {
         Row: {
           attempts: number

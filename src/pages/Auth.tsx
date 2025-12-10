@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Building2, Sparkles, Mail, Lock, User, Loader2 } from "lucide-react";
+import { Building2, Sparkles, Mail, Lock, User, Loader2, Crown } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
@@ -27,8 +27,12 @@ const referralCodeSchema = z.string().trim().max(20).regex(/^[A-Z0-9]*$/).option
 export default function Auth() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [patreonLoading, setPatreonLoading] = useState(false);
   const [error, setError] = useState("");
+  
+  const isPatreonMode = searchParams.get('patreon') === 'true';
 
   // Redirect if already logged in
   useEffect(() => {
@@ -258,6 +262,31 @@ export default function Auth() {
     }
   };
 
+  const handlePatreonConnect = async () => {
+    setPatreonLoading(true);
+    setError("");
+    
+    try {
+      const redirectUri = `${window.location.origin}/patreon-callback`;
+      
+      const { data, error: fnError } = await supabase.functions.invoke("patreon-auth", {
+        body: { redirectUri, userId: user?.id },
+      });
+      
+      if (fnError) throw fnError;
+      
+      if (data?.authUrl) {
+        window.location.href = data.authUrl;
+      } else {
+        throw new Error("Failed to get Patreon authorization URL");
+      }
+    } catch (err) {
+      console.error("Patreon connect error:", err);
+      setError("Failed to connect to Patreon. Please try again.");
+      setPatreonLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center gradient-dreamy p-4">
       <div className="w-full max-w-md">
@@ -274,6 +303,49 @@ export default function Auth() {
           </h1>
           <p className="text-muted-foreground">The Palace of Biblical Wisdom</p>
         </Link>
+
+        {/* Patreon Connection Mode */}
+        {isPatreonMode && (
+          <Card className="glass-card mb-4 border-primary/30">
+            <CardHeader className="text-center pb-2">
+              <div className="flex justify-center mb-2">
+                <Crown className="h-10 w-10 text-amber-500" />
+              </div>
+              <CardTitle className="text-xl">Welcome, Patron!</CardTitle>
+              <CardDescription>
+                Connect your Patreon account to unlock your full access benefits
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              <Button
+                onClick={handlePatreonConnect}
+                disabled={patreonLoading}
+                className="w-full bg-[#FF424D] hover:bg-[#E63946] text-white"
+                size="lg"
+              >
+                {patreonLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Crown className="mr-2 h-4 w-4" />
+                    Connect Patreon Account
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-center text-muted-foreground">
+                Already have an account? Log in first, then connect your Patreon.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="glass-card">
           <Tabs defaultValue="login" className="w-full" onValueChange={() => setShowPasswordReset(false)}>
