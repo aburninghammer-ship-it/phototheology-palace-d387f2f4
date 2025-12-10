@@ -47,8 +47,8 @@ const FAQ_ITEMS = [
     answer: "Yes, truly free forever. You get permanent access to Floors 1-2, daily devotionals, and basic Jeeves chat. No credit card required, no expiration. We believe everyone should have access to foundational Bible study tools."
   },
   {
-    question: "What's the difference between the app and the card deck/courses?",
-    answer: "The Phototheology App is a standalone digital Bible study platform. The physical card deck and video courses are separate products that complement the app but are not required. The app contains the complete Palace method — you don't need anything else to master it."
+    question: "What's the difference between the suite and the card deck/courses?",
+    answer: "The Phototheology Bible Learning Suite is a standalone digital platform. The physical card deck and video courses are separate products that complement the suite but are not required. The suite contains the complete Palace method — you don't need anything else to master it."
   },
   {
     question: "How is this different from YouVersion or Logos?",

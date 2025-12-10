@@ -10,8 +10,8 @@ interface SEOProps {
 }
 
 export const SEO = ({ 
-  title = "The Phototheology Digital Bible",
-  description = "Master Bible study through the 8-floor Palace method. Store Scripture as images, patterns, and structures with Christ-centered interpretation.",
+  title = "Phototheology Bible Learning Suite",
+  description = "The complete Bible learning suite. Master Scripture through the 8-floor Palace method — store God's Word as images, patterns, and structures with Christ-centered interpretation.",
   canonical,
   noindex = false,
   image = "https://thephototheologyapp.com/phototheology-hero.png"
@@ -19,7 +19,7 @@ export const SEO = ({
   const location = useLocation();
   const baseUrl = "https://thephototheologyapp.com";
   const canonicalUrl = canonical || `${baseUrl}${location.pathname}`;
-  const fullTitle = title === "The Phototheology Digital Bible" ? title : `${title} | Phototheology`;
+  const fullTitle = title === "Phototheology Bible Learning Suite" ? title : `${title} | Phototheology`;
 
   return (
     <Helmet>
@@ -35,7 +35,7 @@ export const SEO = ({
       <meta property="og:type" content="website" />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={image} />
-      <meta property="og:site_name" content="Phototheology" />
+      <meta property="og:site_name" content="Phototheology Bible Learning Suite" />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
