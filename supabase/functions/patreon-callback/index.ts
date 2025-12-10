@@ -53,9 +53,9 @@ serve(async (req) => {
     const tokens = await tokenResponse.json();
     console.log("Token exchange successful, expires_in:", tokens.expires_in);
 
-    // Fetch Patreon identity and memberships
+    // Fetch Patreon identity and memberships - include campaign data for yearly subscriptions
     const identityResponse = await fetch(
-      "https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields%5Buser%5D=full_name,email&fields%5Bmember%5D=patron_status,currently_entitled_amount_cents,last_charge_status,last_charge_date",
+      "https://www.patreon.com/api/oauth2/v2/identity?include=memberships,memberships.campaign&fields%5Buser%5D=full_name,email&fields%5Bmember%5D=patron_status,currently_entitled_amount_cents,last_charge_status,last_charge_date,pledge_cadence,will_pay_amount_cents&fields%5Bcampaign%5D=creation_name",
       {
         headers: { Authorization: `Bearer ${tokens.access_token}` },
       }
@@ -80,22 +80,34 @@ serve(async (req) => {
     
     // Check if they're an active patron - accept multiple valid statuses
     // Patreon returns: active_patron, declined_patron, former_patron
-    // Also check last_charge_status for paid memberships
+    // Also check last_charge_status for paid memberships and will_pay_amount_cents for yearly
     const isActivePatron = memberships.some((m: any) => {
       const status = m.attributes?.patron_status;
       const lastChargeStatus = m.attributes?.last_charge_status;
       const entitledCents = m.attributes?.currently_entitled_amount_cents || 0;
+      const willPayCents = m.attributes?.will_pay_amount_cents || 0;
+      const pledgeCadence = m.attributes?.pledge_cadence; // 1 = monthly, 12 = yearly
       
-      console.log(`Checking membership - status: ${status}, lastChargeStatus: ${lastChargeStatus}, entitledCents: ${entitledCents}`);
+      console.log(`Checking membership - status: ${status}, lastChargeStatus: ${lastChargeStatus}, entitledCents: ${entitledCents}, willPayCents: ${willPayCents}, pledgeCadence: ${pledgeCadence}`);
       
-      // Active if patron_status is active OR if they have paid recently and have entitlements
+      // Active if:
+      // 1. patron_status is active_patron
+      // 2. They have paid recently and have entitlements
+      // 3. They have a will_pay amount (yearly subscribers before next charge)
+      // 4. They're not a declined/former patron and have entitlements or pending payment
       return status === "active_patron" || 
              (lastChargeStatus === "Paid" && entitledCents > 0) ||
-             (status && status !== "former_patron" && status !== "declined_patron" && entitledCents > 0);
+             willPayCents > 0 ||
+             (status && status !== "former_patron" && status !== "declined_patron" && (entitledCents > 0 || willPayCents > 0));
     });
     
+    // Get entitled cents - use will_pay_amount_cents if currently_entitled is 0 (yearly subscribers)
     const entitledCents = memberships.reduce(
-      (max: number, m: any) => Math.max(max, m.attributes?.currently_entitled_amount_cents || 0),
+      (max: number, m: any) => {
+        const current = m.attributes?.currently_entitled_amount_cents || 0;
+        const willPay = m.attributes?.will_pay_amount_cents || 0;
+        return Math.max(max, current, willPay);
+      },
       0
     );
 
