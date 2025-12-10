@@ -12,16 +12,20 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Patreon callback started");
+    
     const clientId = Deno.env.get("PATREON_CLIENT_ID");
     const clientSecret = Deno.env.get("PATREON_CLIENT_SECRET");
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     if (!clientId || !clientSecret) {
+      console.error("Patreon credentials not configured");
       throw new Error("Patreon credentials not configured");
     }
 
     const { code, redirectUri, userId } = await req.json();
+    console.log("Request params:", { code: code ? "present" : "missing", redirectUri, userId: userId || "not provided" });
     
     if (!code || !redirectUri) {
       throw new Error("code and redirectUri are required");
@@ -47,32 +51,55 @@ serve(async (req) => {
     }
 
     const tokens = await tokenResponse.json();
+    console.log("Token exchange successful, expires_in:", tokens.expires_in);
 
     // Fetch Patreon identity and memberships
     const identityResponse = await fetch(
-      "https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields%5Buser%5D=full_name,email&fields%5Bmember%5D=patron_status,currently_entitled_amount_cents",
+      "https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields%5Buser%5D=full_name,email&fields%5Bmember%5D=patron_status,currently_entitled_amount_cents,last_charge_status,last_charge_date",
       {
         headers: { Authorization: `Bearer ${tokens.access_token}` },
       }
     );
 
     if (!identityResponse.ok) {
+      const identityError = await identityResponse.text();
+      console.error("Failed to fetch Patreon identity:", identityError);
       throw new Error("Failed to fetch Patreon identity");
     }
 
     const identity = await identityResponse.json();
+    console.log("Patreon identity response:", JSON.stringify(identity, null, 2));
+    
     const patreonUser = identity.data;
     const memberships = identity.included?.filter((i: any) => i.type === "member") || [];
     
-    // Check if they're an active patron
-    const isActivePatron = memberships.some(
-      (m: any) => m.attributes?.patron_status === "active_patron"
-    );
+    console.log("Found memberships:", memberships.length);
+    memberships.forEach((m: any, i: number) => {
+      console.log(`Membership ${i}:`, JSON.stringify(m.attributes, null, 2));
+    });
+    
+    // Check if they're an active patron - accept multiple valid statuses
+    // Patreon returns: active_patron, declined_patron, former_patron
+    // Also check last_charge_status for paid memberships
+    const isActivePatron = memberships.some((m: any) => {
+      const status = m.attributes?.patron_status;
+      const lastChargeStatus = m.attributes?.last_charge_status;
+      const entitledCents = m.attributes?.currently_entitled_amount_cents || 0;
+      
+      console.log(`Checking membership - status: ${status}, lastChargeStatus: ${lastChargeStatus}, entitledCents: ${entitledCents}`);
+      
+      // Active if patron_status is active OR if they have paid recently and have entitlements
+      return status === "active_patron" || 
+             (lastChargeStatus === "Paid" && entitledCents > 0) ||
+             (status && status !== "former_patron" && status !== "declined_patron" && entitledCents > 0);
+    });
     
     const entitledCents = memberships.reduce(
       (max: number, m: any) => Math.max(max, m.attributes?.currently_entitled_amount_cents || 0),
       0
     );
+
+    console.log("Final determination - isActivePatron:", isActivePatron, "entitledCents:", entitledCents);
 
     // Store connection in database
     if (userId && supabaseUrl && supabaseServiceKey) {
