@@ -51,7 +51,7 @@ const categoryConfig = {
       { to: "/memory", label: "Memory Palace", icon: "🧠" },
       { to: "/verse-memory-hall", label: "Verse Memory Hall (Legacy)", icon: "📚" },
       { to: "/bible-image-library", label: "Image Library", icon: "🎨" },
-      { to: "/quarterly-study", label: "Amplified Quarterly", icon: "📅" },
+      { to: "/quarterly-study", label: "Lesson Study", icon: "📅" },
       { to: "/bible-study-leader", label: "Lead Bible Study", icon: "👥" },
     ],
   },

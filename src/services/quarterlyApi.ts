@@ -21,7 +21,7 @@ export interface Quarterly {
 }
 
 /**
- * Fetches the current Sabbath School quarterly using alternative API
+ * Fetches the current lesson quarterly using alternative API
  */
 export async function getCurrentQuarterly(language: string = "en"): Promise<Quarterly | null> {
   try {
@@ -160,8 +160,8 @@ export async function getQuarterlyLesson(
     // Fallback: Return basic structure with actual content
     const studyContent = `
       <div class="lesson-intro">
-        <h3>📖 Official Sabbath School Lesson</h3>
-        <p>This lesson is part of the official Adult Sabbath School Quarterly. For the complete lesson with all daily readings, discussion questions, and EGW notes, please access the official PDF.</p>
+        <h3>📖 Official Lesson Study</h3>
+        <p>This lesson is part of the official Adult Lesson Quarterly. For the complete lesson with all daily readings, discussion questions, and EGW notes, please access the official PDF.</p>
         
         <div class="study-approach">
           <h4>🎯 How to Use This Platform</h4>

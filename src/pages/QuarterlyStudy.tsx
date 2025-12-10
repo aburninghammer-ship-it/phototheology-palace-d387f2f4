@@ -104,7 +104,7 @@ const QuarterlyStudy = () => {
       } else {
         toast({
           title: "Unable to load quarterly",
-          description: "Could not fetch the current Sabbath School quarterly",
+          description: "Could not fetch the current lesson quarterly",
           variant: "destructive",
         });
       }
@@ -230,10 +230,10 @@ const QuarterlyStudy = () => {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-serif font-bold gradient-text mb-2">
-            Amplified Quarterly Study
+            Lesson Study with Jeeves
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Apply the 38 Palace Rooms to your Sabbath School lessons
+            Apply the 38 Palace Rooms to your weekly lesson study
           </p>
         </div>
 
