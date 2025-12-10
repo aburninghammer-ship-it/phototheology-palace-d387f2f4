@@ -52,6 +52,15 @@ export const FinalCTA = () => {
         <p className="text-sm text-muted-foreground pt-4">
           No credit card required • Start building your palace today
         </p>
+
+        <p className="text-sm text-muted-foreground/80 pt-2">
+          <span 
+            onClick={() => navigate("/auth?patreon=true")} 
+            className="text-primary/80 hover:text-primary cursor-pointer underline underline-offset-2 transition-colors"
+          >
+            Already a Patron? Connect now for full access →
+          </span>
+        </p>
       </div>
     </section>
   );
