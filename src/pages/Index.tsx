@@ -43,6 +43,7 @@ import { DeepApproachSection } from "@/components/DeepApproachSection";
 import { InteractiveWalkthrough } from "@/components/InteractiveWalkthrough";
 import { TransparencySection } from "@/components/TransparencySection";
 import { HermeneuticsStatement } from "@/components/HermeneuticsStatement";
+import { MobileStickyCtaBar } from "@/components/MobileStickyCtaBar";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -465,6 +466,9 @@ const Index = () => {
       <FinalCTA />
 
       <Footer />
+      
+      {/* Mobile Sticky CTA Bar */}
+      <MobileStickyCtaBar />
     </div>
   );
 };

@@ -45,38 +45,55 @@ export const PunchyHero = () => {
           </span>
         </motion.div>
 
-        {/* Main Headline - Clearer Value Prop */}
+        {/* Main Headline - Mobile-first, clearer */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-5 leading-tight sm:leading-[1.1] px-2"
         >
-          Finally{" "}
-          <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent inline-block">
-            understand
-          </span>{" "}
-          the Bible
-          <br className="hidden sm:block" />
-          <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
-            — and{" "}
-            <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-              remember it
+          {/* Mobile: Shorter, punchier headline */}
+          <span className="sm:hidden">
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Master
+            </span>{" "}
+            the Bible
+          </span>
+          {/* Desktop: Full headline */}
+          <span className="hidden sm:inline">
+            Finally{" "}
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              understand
+            </span>{" "}
+            the Bible
+            <br />
+            <span className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
+              — and{" "}
+              <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+                remember it
+              </span>
             </span>
           </span>
         </motion.h1>
 
-        {/* Clear Subheadline */}
+        {/* Clear Subheadline - Mobile optimized */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-6 px-4"
         >
-          A visual memory system that transforms how you study Scripture.
-          <br className="hidden sm:block" />
-          <span className="font-medium text-foreground">
-            See connections. Build understanding. Never forget what you learned.
+          {/* Mobile: Ultra-short */}
+          <span className="sm:hidden">
+            A visual system to <span className="font-medium text-foreground">understand & remember</span> Scripture.
+          </span>
+          {/* Desktop: Full message */}
+          <span className="hidden sm:block">
+            A visual memory system that transforms how you study Scripture.
+            <br />
+            <span className="font-medium text-foreground">
+              See connections. Build understanding. Never forget what you learned.
+            </span>
           </span>
         </motion.p>
 
@@ -91,7 +108,7 @@ export const PunchyHero = () => {
             <Badge 
               key={i} 
               variant="outline" 
-              className="bg-background/80 backdrop-blur-sm border-border/50 px-3 py-1"
+              className={`bg-background/80 backdrop-blur-sm border-border/50 px-3 py-1 ${i === 2 ? 'hidden sm:flex' : ''}`}
             >
               <CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-green-500" />
               {item}
@@ -99,7 +116,7 @@ export const PunchyHero = () => {
           ))}
         </motion.div>
 
-        {/* Hero Card Deck Image */}
+        {/* Hero Card Deck Image - Smaller on mobile */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -109,7 +126,7 @@ export const PunchyHero = () => {
           <img 
             src={heroCardsDisplay} 
             alt="Phototheology Card Deck - 8 floors of Bible study principles" 
-            className="w-full max-w-4xl mx-auto drop-shadow-2xl"
+            className="w-full max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto drop-shadow-2xl"
             loading="eager"
             decoding="async"
           />
