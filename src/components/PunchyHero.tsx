@@ -8,7 +8,7 @@ import heroCardsDisplay from "@/assets/branding/hero-cards-display.png";
 
 const socialProof = [
   "Thousands taught over 20 years",
-  "46% weekly return rate", 
+  "Discover Christ in every chapter", 
   "Loved by pastors & teachers",
 ];
 
