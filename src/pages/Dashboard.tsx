@@ -329,7 +329,7 @@ export default function Dashboard() {
                   onClick={() => navigate("/quarterly-study")}
                 >
                   <Calendar className="mr-2 h-4 w-4 text-primary" />
-                  Sabbath School with Jeeves
+                  Lesson Study with Jeeves
                 </Button>
                 <Button 
                   variant="outline" 

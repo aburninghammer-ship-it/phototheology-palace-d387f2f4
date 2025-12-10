@@ -53,7 +53,7 @@ export const WizardStep1 = ({ formData, updateFormData }: WizardStep1Props) => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="sabbath-school">Sabbath School / Bible Class</SelectItem>
+              <SelectItem value="sabbath-school">Lesson Study / Bible Class</SelectItem>
               <SelectItem value="small-group">Small Group / Home Group</SelectItem>
               <SelectItem value="evangelistic">Evangelistic Series</SelectItem>
               <SelectItem value="youth-group">Youth Group</SelectItem>

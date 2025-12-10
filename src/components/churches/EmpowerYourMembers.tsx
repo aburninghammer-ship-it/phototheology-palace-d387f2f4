@@ -107,7 +107,7 @@ export const EmpowerYourMembers = () => {
               </p>
               <p className="flex items-center gap-2">
                 <span className="text-primary">✓</span>
-                <span className="font-semibold">Ready-to-deploy teaching materials for small groups and Sabbath School</span>
+                <span className="font-semibold">Ready-to-deploy teaching materials for small groups and lesson study</span>
               </p>
               <p className="flex items-center gap-2">
                 <span className="text-primary">✓</span>

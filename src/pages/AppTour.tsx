@@ -391,7 +391,7 @@ const AppTour = () => {
                     <strong>Bible Rendered</strong> - 24-chapter visual memory system.<br/>
                     <strong>Verse Memory Hall</strong> - Memorization challenges.<br/>
                     <strong>Image Library</strong> - AI-generated biblical art.<br/>
-                    <strong>Amplified Quarterly</strong> - Sabbath School lessons with AI enhancement.
+                    <strong>Amplified Quarterly</strong> - Lesson Study with AI enhancement.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

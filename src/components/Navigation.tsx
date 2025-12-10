@@ -513,7 +513,7 @@ export const Navigation = () => {
                         <Link to="/encyclopedia">Bible Encyclopedia</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to="/quarterly-study">Sabbath School</Link>
+                        <Link to="/quarterly-study">Lesson Study</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link to="/prophecy-watch">Prophecy Watch</Link>

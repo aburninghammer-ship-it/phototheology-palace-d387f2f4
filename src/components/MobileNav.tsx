@@ -106,7 +106,7 @@ export const MobileNav = () => {
               </Link>
               <Link to="/quarterly-study">
                 <Button variant="ghost" className="w-full justify-start" size="sm">
-                  📅 Amplified Quarterly
+                  📅 Lesson Study
                 </Button>
               </Link>
               <Link to="/bible-study-leader">
