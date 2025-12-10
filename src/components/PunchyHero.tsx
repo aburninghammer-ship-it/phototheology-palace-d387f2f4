@@ -150,6 +150,20 @@ export const PunchyHero = () => {
           Free forever tier • Cancel anytime • No spam
         </motion.p>
 
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.75 }}
+          className="text-sm sm:text-base text-center mt-3 px-2"
+        >
+          <span 
+            onClick={() => navigate("/auth?patreon=true")} 
+            className="text-primary hover:text-primary/80 cursor-pointer font-medium underline underline-offset-4 decoration-primary/50 hover:decoration-primary transition-all"
+          >
+            Already a Patron? Connect for full access →
+          </span>
+        </motion.p>
+
         {/* Quick Stats */}
         <motion.div
           initial={{ opacity: 0 }}
