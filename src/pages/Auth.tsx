@@ -34,12 +34,12 @@ export default function Auth() {
   
   const isPatreonMode = searchParams.get('patreon') === 'true';
 
-  // Redirect if already logged in
+  // Redirect if already logged in (but NOT if in Patreon mode - let them connect)
   useEffect(() => {
-    if (user) {
+    if (user && !isPatreonMode) {
       navigate("/dashboard");
     }
-  }, [user, navigate]);
+  }, [user, navigate, isPatreonMode]);
   
   // Login form
   const [loginEmail, setLoginEmail] = useState("");
@@ -311,9 +311,14 @@ export default function Auth() {
               <div className="flex justify-center mb-2">
                 <Crown className="h-10 w-10 text-amber-500" />
               </div>
-              <CardTitle className="text-xl">Welcome, Patron!</CardTitle>
+              <CardTitle className="text-xl">
+                {user ? "Connect Your Patreon" : "Welcome, Patron!"}
+              </CardTitle>
               <CardDescription>
-                Connect your Patreon account to unlock your full access benefits
+                {user 
+                  ? "Link your Patreon account to unlock your full Patron benefits"
+                  : "Connect your Patreon account to unlock your full access benefits"
+                }
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -340,13 +345,26 @@ export default function Auth() {
                   </>
                 )}
               </Button>
-              <p className="text-xs text-center text-muted-foreground">
-                Already have an account? Log in first, then connect your Patreon.
-              </p>
+              {!user && (
+                <p className="text-xs text-center text-muted-foreground">
+                  Already have an account? Log in first, then connect your Patreon.
+                </p>
+              )}
+              {user && (
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  Back to Dashboard
+                </Button>
+              )}
             </CardContent>
           </Card>
         )}
 
+        {/* Hide login/signup form if user is logged in and in Patreon mode */}
+        {!(user && isPatreonMode) && (
         <Card className="glass-card">
           <Tabs defaultValue="login" className="w-full" onValueChange={() => setShowPasswordReset(false)}>
             <TabsList className="grid w-full grid-cols-2">
@@ -631,17 +649,20 @@ export default function Auth() {
             </TabsContent>
           </Tabs>
         </Card>
+        )}
 
-        {/* Try Demo Link */}
-        <div className="text-center mt-4">
-          <Button
-            variant="link"
-            onClick={() => navigate("/interactive-demo")}
-            className="text-muted-foreground hover:text-primary"
-          >
-            Want to try first? Explore the free demo →
-          </Button>
-        </div>
+        {/* Try Demo Link - hide for logged in users in Patreon mode */}
+        {!(user && isPatreonMode) && (
+          <div className="text-center mt-4">
+            <Button
+              variant="link"
+              onClick={() => navigate("/interactive-demo")}
+              className="text-muted-foreground hover:text-primary"
+            >
+              Want to try first? Explore the free demo →
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
