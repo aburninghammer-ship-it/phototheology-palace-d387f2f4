@@ -78,7 +78,13 @@ serve(async (req) => {
     if (userId && supabaseUrl && supabaseServiceKey) {
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
       
-      // Update or insert Patreon connection
+      // Encrypt tokens before storing
+      const { data: encryptedAccess } = await supabase
+        .rpc('encrypt_token', { plain_token: tokens.access_token });
+      const { data: encryptedRefresh } = await supabase
+        .rpc('encrypt_token', { plain_token: tokens.refresh_token });
+
+      // Update or insert Patreon connection with encrypted tokens
       const { error: upsertError } = await supabase
         .from("patreon_connections")
         .upsert({
@@ -88,8 +94,8 @@ serve(async (req) => {
           patreon_name: patreonUser.attributes?.full_name,
           is_active_patron: isActivePatron,
           entitled_cents: entitledCents,
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token,
+          access_token: encryptedAccess || tokens.access_token,
+          refresh_token: encryptedRefresh || tokens.refresh_token,
           token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
           connected_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
