@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Sparkles, Play, Users, Star, CheckCircle2 } from "lucide-react";
+import { ChevronRight, Sparkles, Play, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import heroCardsDisplay from "@/assets/branding/hero-cards-display.png";
-
+import { UserCountBadge } from "@/components/UserCountBadge";
 const socialProof = [
   "Thousands taught over 20 years",
   "Discover Christ in every chapter", 
@@ -102,7 +102,7 @@ export const PunchyHero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-wrap justify-center gap-2 mb-6"
+          className="flex flex-wrap justify-center gap-2 mb-4"
         >
           {socialProof.map((item, i) => (
             <Badge 
@@ -114,6 +114,16 @@ export const PunchyHero = () => {
               {item}
             </Badge>
           ))}
+        </motion.div>
+
+        {/* User Count Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.35 }}
+          className="mb-6"
+        >
+          <UserCountBadge />
         </motion.div>
 
         {/* Hero Card Deck Image - Smaller on mobile */}
