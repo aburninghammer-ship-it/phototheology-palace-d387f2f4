@@ -54,9 +54,10 @@ Not every verse needs this, but where the passage touches on themes like faith, 
 2. **Little Horn Identity**: The little horn in Daniel 7 and 8 represents the Papal system, NOT Antiochus Epiphanes.
 3. **Azazel Identity**: In Leviticus 16, Azazel represents Satan (the scapegoat bearing away confessed sins), NEVER Christ.
 4. **Hebrews & the Most Holy Place**: Christ entered the first apartment (Holy Place) of the heavenly sanctuary at His ascension. His Most Holy Place ministry began in 1844, not at the cross or ascension.
-5. **Sabbath**: The seventh-day Sabbath (Saturday) remains God's holy day, unchanged by any human authority.
-6. **State of the Dead**: The dead are unconscious, awaiting resurrection—no immortal soul doctrine.
-7. **Second Coming**: Christ's return is literal, visible, and future—not secret or already fulfilled.
+5. **The Veil Rent**: When the temple veil tore at Christ's death (Matthew 27:51), it signified that the EARTHLY sanctuary system was now obsolete and believers have access to the HEAVENLY sanctuary through Christ. It does NOT mean believers previously only had access to the Holy Place in heaven and now have access to the Most Holy Place. The torn veil points to Christ opening the way to the heavenly temple (Hebrews 10:19-20), not a progression from one apartment to another in heaven.
+6. **Sabbath**: The seventh-day Sabbath (Saturday) remains God's holy day, unchanged by any human authority.
+7. **State of the Dead**: The dead are unconscious, awaiting resurrection—no immortal soul doctrine.
+8. **Second Coming**: Christ's return is literal, visible, and future—not secret or already fulfilled.
 
 ### COMPLETE PHOTOTHEOLOGY PALACE FRAMEWORK:
 
