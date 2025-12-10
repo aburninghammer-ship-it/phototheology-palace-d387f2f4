@@ -12,7 +12,8 @@ import {
   X,
   Loader2,
   Download,
-  Volume2
+  Volume2,
+  Sparkles
 } from "lucide-react";
 import { QuickAudioButton } from "@/components/audio";
 import {
@@ -67,6 +68,7 @@ const StudyEditor = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [isFormatting, setIsFormatting] = useState(false);
   const [studyOwnerId, setStudyOwnerId] = useState<string>("");
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -231,6 +233,52 @@ const StudyEditor = () => {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const formatAndSaveStudy = async () => {
+    if (!canEdit) {
+      toast({
+        title: "Permission denied",
+        description: "You only have view access to this study",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsFormatting(true);
+    try {
+      const formattedContent = await formatContent(content);
+      
+      const { error } = await supabase
+        .from("user_studies")
+        .update({
+          title,
+          content: formattedContent,
+          tags,
+          is_favorite: isFavorite,
+          updated_by: user?.id,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setContent(formattedContent);
+      setHasChanges(false);
+      setLastSaved(new Date());
+      toast({
+        title: "Formatted!",
+        description: "Your study has been beautifully formatted and saved",
+      });
+    } catch (error: any) {
+      console.error("Error formatting study:", error);
+      toast({
+        title: "Error",
+        description: error?.message || "Failed to format study",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFormatting(false);
     }
   };
 
@@ -412,6 +460,24 @@ const StudyEditor = () => {
             <ShareStudyDialog title={title} content={content} />
             {canEdit && (
               <>
+                <Button
+                  variant="outline"
+                  onClick={formatAndSaveStudy}
+                  disabled={isFormatting || saving}
+                  className="gap-2"
+                >
+                  {isFormatting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Formatting...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      Format
+                    </>
+                  )}
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
