@@ -283,7 +283,6 @@ export function StudyPreviewCard({
 
         <div className="flex items-center justify-between pt-3 border-t mt-auto gap-1">
           <Button
-            variant="ghost"
             size="sm"
             onClick={(e) => {
               e.stopPropagation();
@@ -292,7 +291,7 @@ export function StudyPreviewCard({
             className="gap-1.5 text-xs h-8"
           >
             <Edit className="w-3.5 h-3.5" />
-            Edit
+            Resume Study
           </Button>
           <Button
             variant="ghost"
