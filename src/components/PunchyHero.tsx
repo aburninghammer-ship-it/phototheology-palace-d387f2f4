@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import heroCardsDisplay from "@/assets/branding/hero-cards-display.png";
 
 const socialProof = [
-  "600+ students learning",
+  "Thousands taught over 20 years",
   "46% weekly return rate", 
   "Loved by pastors & teachers",
 ];
