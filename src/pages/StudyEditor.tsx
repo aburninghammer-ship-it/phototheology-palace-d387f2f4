@@ -464,17 +464,17 @@ const StudyEditor = () => {
                   variant="outline"
                   onClick={formatAndSaveStudy}
                   disabled={isFormatting || saving}
-                  className="gap-2"
+                  className="gap-2 bg-primary/10 hover:bg-primary/20 border-primary/30"
                 >
                   {isFormatting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Formatting...
+                      Jeeves is formatting...
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4" />
-                      Format
+                      <Sparkles className="w-4 h-4 text-primary" />
+                      Format Notes
                     </>
                   )}
                 </Button>
