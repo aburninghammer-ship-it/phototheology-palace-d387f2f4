@@ -17,7 +17,7 @@ import { PathBanner, PathDashboardWidget } from "@/components/path";
 import { QuickNotes } from "@/components/notes/QuickNotes";
 import { CommunityHighlight } from "@/components/dashboard/CommunityHighlight";
 import { QuickAIPrompt } from "@/components/dashboard/QuickAIPrompt";
-import { Brain, Building2, Headphones } from "lucide-react";
+import { Brain, Building2, Headphones, Calendar } from "lucide-react";
 import { 
   BookOpen, 
   Flame, 
@@ -322,6 +322,14 @@ export default function Dashboard() {
                 >
                   <Headphones className="mr-2 h-4 w-4" />
                   Listen to Bible
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start bg-primary/10 border-primary/30 hover:bg-primary/20"
+                  onClick={() => navigate("/quarterly-study")}
+                >
+                  <Calendar className="mr-2 h-4 w-4 text-primary" />
+                  Sabbath School with Jeeves
                 </Button>
                 <Button 
                   variant="outline" 
