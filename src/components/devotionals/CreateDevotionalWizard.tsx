@@ -136,6 +136,7 @@ export function CreateDevotionalWizard({ onClose }: CreateDevotionalWizardProps)
     title: "",
     theme: "",
     customTheme: "",
+    customDescription: "",
     format: "standard",
     duration: 30,
     studyStyle: "reading",
@@ -143,7 +144,9 @@ export function CreateDevotionalWizard({ onClose }: CreateDevotionalWizardProps)
 
   const { createPlan, generateDevotional, isGenerating } = useDevotionals();
 
-  const actualTheme = formData.customTheme || formData.theme;
+  const actualTheme = formData.customDescription 
+    ? `${formData.customTheme}: ${formData.customDescription}` 
+    : formData.customTheme || formData.theme;
   const canProceed = step === 1 ? !!actualTheme : step === 2 ? !!formData.format : step === 3;
 
   const handleCreate = async () => {
@@ -226,17 +229,38 @@ export function CreateDevotionalWizard({ onClose }: CreateDevotionalWizardProps)
                   ))}
                 </div>
 
-                <div className="pt-4 border-t">
-                  <Label htmlFor="customTheme">Or choose your own subject:</Label>
-                  <Input
-                    id="customTheme"
-                    placeholder="e.g., The Beatitudes, Life of David, Book of Romans..."
-                    value={formData.customTheme}
-                    onChange={(e) =>
-                      setFormData({ ...formData, customTheme: e.target.value, theme: "" })
-                    }
-                    className="mt-2"
-                  />
+                <div className="pt-4 border-t space-y-4">
+                  <div>
+                    <Label htmlFor="customTheme">Or choose your own subject:</Label>
+                    <Input
+                      id="customTheme"
+                      placeholder="e.g., The Beatitudes, Life of David, Book of Romans..."
+                      value={formData.customTheme}
+                      onChange={(e) =>
+                        setFormData({ ...formData, customTheme: e.target.value, theme: "" })
+                      }
+                      className="mt-2"
+                    />
+                  </div>
+                  
+                  {formData.customTheme && (
+                    <div>
+                      <Label htmlFor="customDescription">Tell us more about what you'd like:</Label>
+                      <Textarea
+                        id="customDescription"
+                        placeholder="Describe what you want your devotional to focus on. For example: I'm struggling with doubt and want to explore how biblical figures overcame their doubts through faith. Include practical applications for modern life..."
+                        value={formData.customDescription || ""}
+                        onChange={(e) =>
+                          setFormData({ ...formData, customDescription: e.target.value })
+                        }
+                        rows={4}
+                        className="mt-2 resize-none"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Share your situation, specific questions, or what you hope to receive from this devotional.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
