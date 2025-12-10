@@ -29,7 +29,7 @@ import { ThematicTagging } from "./ThematicTagging";
 import { ThemeCrossReference } from "./ThemeCrossReference";
 import { MemoryToolsPanel } from "./MemoryToolsPanel";
 import { StudyModeSelector } from "./StudyModeSelector";
-import { UserMetricsDashboard } from "./UserMetricsDashboard";
+
 import { DimensionFilter } from "./DimensionFilter";
 import { ReadingStreakBadge } from "./ReadingStreakBadge";
 import { useVerseHighlights } from "@/hooks/useVerseHighlights";
@@ -399,9 +399,8 @@ export const BibleReader = () => {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Reading Pane */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Study Mode & Metrics */}
+          {/* Study Mode */}
           <StudyModeSelector activeMode={studyMode} onModeChange={setStudyMode} />
-          <UserMetricsDashboard />
           
           <Card variant="glass" className={`p-6 shadow-elegant hover:shadow-hover transition-smooth ${preferences.reading_mode === 'focus' ? 'max-w-3xl mx-auto' : ''}`}>
             <div className={`space-y-4 ${fontSizeClass}`}>
