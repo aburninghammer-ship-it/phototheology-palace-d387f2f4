@@ -198,6 +198,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const PatreonCallback = lazy(() => import("./pages/PatreonCallback"));
 const PalaceExplorer = lazy(() => import("./pages/PalaceExplorer"));
 const CardDeck = lazy(() => import("./pages/CardDeck"));
 const PTMultiplayerLobby = lazy(() => import("./pages/PTMultiplayerLobby"));
@@ -269,6 +270,7 @@ function App() {
             <Route path="/genesis-challenge" element={<GenesisHighRise />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/patreon-callback" element={<PatreonCallback />} />
             <Route path="/interactive-demo" element={<InteractiveDemo />} />
             <Route path="/onboarding" element={
               <ProtectedRoute>
