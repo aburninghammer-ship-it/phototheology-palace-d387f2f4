@@ -24,7 +24,7 @@ import { ImportPassageDialog } from "@/components/series-builder/ImportPassageDi
 import { useBibleState } from "@/hooks/useBibleState";
 import { VerseImageAttachment } from "./VerseImageAttachment";
 import { ApologeticsPanel } from "./ApologeticsPanel";
-import { PTCodeSearch } from "./PTCodeSearch";
+
 import { ThematicTagging } from "./ThematicTagging";
 import { ThemeCrossReference } from "./ThemeCrossReference";
 import { MemoryToolsPanel } from "./MemoryToolsPanel";
@@ -263,8 +263,6 @@ export const BibleReader = () => {
           }}
         />
       )}
-
-      <PTCodeSearch />
 
       {/* Audio Controls */}
       <div className="flex items-center gap-2 flex-wrap">
