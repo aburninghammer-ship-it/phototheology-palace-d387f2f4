@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -484,24 +485,50 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
             {/* Analytics */}
             <StudyAnalytics studies={studies} />
 
-            {/* Continue Where You Left Off */}
+            {/* Continue Where You Left Off - Enhanced */}
             {mostRecentStudy && (
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <PlayCircle className="w-5 h-5 text-primary" />
-                  <h2 className="text-xl font-semibold">Continue Where You Left Off</h2>
+              <Card className="bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10 border-primary/30 p-6 mb-2">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+                      <PlayCircle className="w-8 h-8 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold mb-1">Continue Your Study</h2>
+                      <p className="text-lg font-medium text-foreground/90 line-clamp-1">{mostRecentStudy.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Last edited {formatDistanceToNow(new Date(mostRecentStudy.updated_at), { addSuffix: true })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 w-full md:w-auto">
+                    <Button 
+                      onClick={() => navigate(`/my-studies/${mostRecentStudy.id}`)}
+                      size="lg"
+                      className="gap-2 flex-1 md:flex-none"
+                    >
+                      <PlayCircle className="w-5 h-5" />
+                      Resume Study
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={() => {
+                        setStudyToDelete(mostRecentStudy.id);
+                        setDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Star 
+                        className={`w-5 h-5 ${mostRecentStudy.is_favorite ? "fill-amber-500 text-amber-500" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(mostRecentStudy.id, mostRecentStudy.is_favorite);
+                        }}
+                      />
+                    </Button>
+                  </div>
                 </div>
-                <StudyPreviewCard
-                  study={mostRecentStudy}
-                  variant="featured"
-                  onToggleFavorite={toggleFavorite}
-                  onDelete={(id) => {
-                    setStudyToDelete(id);
-                    setDeleteDialogOpen(true);
-                  }}
-                  onEdit={(id) => navigate(`/my-studies/${id}`)}
-                />
-              </div>
+              </Card>
             )}
 
             {/* Sort & Filter Bar */}

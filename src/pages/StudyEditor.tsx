@@ -164,6 +164,24 @@ const StudyEditor = () => {
     }
   };
 
+  const formatContent = async (rawContent: string): Promise<string> => {
+    try {
+      const { data, error } = await supabase.functions.invoke('format-study-content', {
+        body: { content: rawContent, title }
+      });
+      
+      if (error) {
+        console.error("Format error:", error);
+        return rawContent;
+      }
+      
+      return data?.formattedContent || rawContent;
+    } catch (err) {
+      console.error("Format error:", err);
+      return rawContent;
+    }
+  };
+
   const saveStudy = async () => {
     if (!canEdit) {
       toast({
@@ -176,11 +194,14 @@ const StudyEditor = () => {
 
     setSaving(true);
     try {
+      // Auto-format the content before saving
+      const formattedContent = await formatContent(content);
+      
       const { error } = await supabase
         .from("user_studies")
         .update({
           title,
-          content,
+          content: formattedContent,
           tags,
           is_favorite: isFavorite,
           updated_by: user?.id,
@@ -192,11 +213,13 @@ const StudyEditor = () => {
         throw error;
       }
 
+      // Update local state with formatted content
+      setContent(formattedContent);
       setHasChanges(false);
       setLastSaved(new Date());
       toast({
-        title: "Success",
-        description: "Study saved successfully",
+        title: "Study saved & formatted",
+        description: "Your study has been beautifully formatted",
       });
     } catch (error: any) {
       console.error("Error saving study:", error);
