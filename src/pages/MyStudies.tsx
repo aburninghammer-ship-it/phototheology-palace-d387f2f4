@@ -513,17 +513,10 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
                     <Button
                       variant="outline"
                       size="lg"
-                      onClick={() => {
-                        setStudyToDelete(mostRecentStudy.id);
-                        setDeleteDialogOpen(true);
-                      }}
+                      onClick={() => toggleFavorite(mostRecentStudy.id, mostRecentStudy.is_favorite)}
                     >
                       <Star 
                         className={`w-5 h-5 ${mostRecentStudy.is_favorite ? "fill-amber-500 text-amber-500" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFavorite(mostRecentStudy.id, mostRecentStudy.is_favorite);
-                        }}
                       />
                     </Button>
                   </div>
