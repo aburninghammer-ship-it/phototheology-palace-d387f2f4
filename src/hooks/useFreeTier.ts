@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface FreeTierAccess {
   // What tier the user is on
-  tier: "free" | "trial" | "essential" | "premium" | "student";
+  tier: "free" | "trial" | "essential" | "premium" | "student" | "patron";
   
   // Feature access
   canAccessFloor: (floorNumber: number) => boolean;
@@ -65,6 +65,24 @@ export function useFreeTier(): FreeTierAccess {
     enabled: !!user,
   });
 
+  // Also check for active Patreon connection
+  const { data: patreonConnection } = useQuery({
+    queryKey: ["patreon-connection", user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('patreon_connections')
+        .select('is_active_patron, entitled_cents')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) return null;
+      return data;
+    },
+    enabled: !!user,
+  });
+
   // Count today's Jeeves usage
   const { data: jeevesUsage } = useQuery({
     queryKey: ["jeeves-daily-usage", user?.id],
@@ -114,6 +132,9 @@ export function useFreeTier(): FreeTierAccess {
 
     if (profile.has_lifetime_access) return "premium";
     
+    // Check Patreon connection first
+    if (patreonConnection?.is_active_patron) return "patron";
+    
     // Check if trial is active
     if (profile.trial_ends_at) {
       const trialEnd = new Date(profile.trial_ends_at);
@@ -126,6 +147,7 @@ export function useFreeTier(): FreeTierAccess {
       if (promoEnd > new Date()) return "premium";
     }
     
+    if (profile.subscription_tier === 'patron') return "patron";
     if (profile.subscription_tier === 'student') return "student";
     if (profile.subscription_tier === 'premium') return "premium";
     if (profile.subscription_tier === 'essential') return "essential";
@@ -135,7 +157,7 @@ export function useFreeTier(): FreeTierAccess {
   };
 
   const tier = getTier();
-  const isPremium = ["premium", "essential", "trial", "student"].includes(tier);
+  const isPremium = ["premium", "essential", "trial", "student", "patron"].includes(tier);
   const isLoading = profileLoading;
   
   // Usage tracking

@@ -66,6 +66,18 @@ export function SubscriptionBanner() {
     );
   }
 
+  // Patron subscription (Patreon)
+  if (subscription.tier === 'patron') {
+    return (
+      <Alert className="border-orange-500 bg-orange-50 dark:bg-orange-950/20">
+        <Crown className="h-4 w-4 text-orange-600" />
+        <AlertDescription>
+          <strong>Patreon Patron:</strong> Thank you for supporting us! You have full Premium access.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   // Active subscription
   if (subscription.status === 'active' && subscription.tier && subscription.tier !== 'student') {
     return (
