@@ -183,6 +183,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Hoist these for error handler access
+  let capturedPlanId: string | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let supabaseClient: any = null;
+
   try {
     const { 
       planId, 
@@ -196,6 +201,8 @@ serve(async (req) => {
       issueDescription,
       issueSeverity
     } = await req.json();
+    
+    capturedPlanId = planId;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -206,6 +213,7 @@ serve(async (req) => {
     }
 
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+    supabaseClient = supabase;
 
     // SECURITY: Verify user authentication and plan ownership
     const authHeader = req.headers.get("Authorization");
@@ -471,12 +479,26 @@ IMPORTANT: Start numbering from day_number: ${startDay}`
           throw new Error(`AI generation failed: ${response.status}`);
         }
         
-        const data = await response.json();
-        console.log(`Batch ${batch + 1} response received, parsing content...`);
+        const responseText = await response.text();
+        console.log(`Batch ${batch + 1} response received, length: ${responseText.length}`);
+        
+        if (!responseText || responseText.trim().length === 0) {
+          throw new Error(`Empty response from AI for batch ${batch + 1}. Please try again.`);
+        }
+        
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (jsonErr) {
+          console.error(`Failed to parse AI response for batch ${batch + 1}:`, responseText.substring(0, 500));
+          throw new Error(`AI returned invalid response for batch ${batch + 1}. Please try again.`);
+        }
+        
         const content = data.choices?.[0]?.message?.content;
 
         if (!content) {
-          throw new Error(`No content generated for batch ${batch + 1}`);
+          console.error(`No content in AI response for batch ${batch + 1}:`, JSON.stringify(data).substring(0, 500));
+          throw new Error(`No content generated for batch ${batch + 1}. Please try again.`);
         }
         
         console.log(`Batch ${batch + 1} content length:`, content.length);
@@ -598,19 +620,14 @@ IMPORTANT: Start numbering from day_number: ${startDay}`
     console.error("Error in generate-devotional:", error);
     
     // Reset plan status to draft on failure so user can retry
+    // Note: planId is already captured earlier in the function
     try {
-      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-      const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-      if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
-        const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-        const body = await req.clone().json().catch(() => ({}));
-        if (body.planId) {
-          await supabase
-            .from("devotional_plans")
-            .update({ status: "draft" })
-            .eq("id", body.planId);
-          console.log("Reset plan status to draft for retry");
-        }
+    if (supabaseClient && capturedPlanId) {
+      await supabaseClient
+        .from("devotional_plans")
+        .update({ status: "draft" })
+        .eq("id", capturedPlanId);
+        console.log("Reset plan status to draft for retry");
       }
     } catch (resetError) {
       console.error("Failed to reset plan status:", resetError);
