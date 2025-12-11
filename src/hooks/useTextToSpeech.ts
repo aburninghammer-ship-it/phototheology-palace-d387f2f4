@@ -109,8 +109,8 @@ interface SpeakOptions {
 
 export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
   const { 
-    defaultVoice = 'onyx', 
-    defaultProvider = 'openai',
+    defaultVoice = 'henry', 
+    defaultProvider = 'speechify',
     onStart, 
     onEnd, 
     onError 
