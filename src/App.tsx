@@ -33,6 +33,8 @@ import { AmbientMusicPlayer } from "@/components/audio/AmbientMusicPlayer";
 import { GlobalMiniPlayer } from "@/components/audio/GlobalMiniPlayer";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { SessionPromptDialog } from "@/components/session/SessionPromptDialog";
+import { DonationBanner } from "@/components/DonationBanner";
+import { FontSizeControl } from "@/components/FontSizeControl";
 
 // Critical pages - load immediately (landing + auth only)
 import Index from "./pages/Index";
@@ -214,6 +216,7 @@ const Paths = lazy(() => import("./pages/Paths"));
 const PathWeek = lazy(() => import("./pages/PathWeek"));
 const Sessions = lazy(() => import("./pages/Sessions"));
 const Notes = lazy(() => import("./pages/Notes"));
+const DonationSuccess = lazy(() => import("./pages/DonationSuccess"));
 
 const queryClient = new QueryClient();
 
@@ -247,6 +250,8 @@ function App() {
                     <UserPreferencesProvider>
                     <SidebarProvider defaultOpen={false}>
                       <div className="min-h-screen flex flex-col w-full">
+                        <DonationBanner />
+                        <FontSizeControl />
                         <AnnouncementBanner />
                         <VoiceChatInviteNotification />
                         <DailyVerseNotification />
@@ -283,6 +288,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/donation-success" element={<DonationSuccess />} />
             <Route path="/paths" element={<Paths />} />
             <Route path="/path/week" element={<ProtectedRoute><PathWeek /></ProtectedRoute>} />
             <Route path="/why-phototheology" element={<WhyPhototheology />} />
