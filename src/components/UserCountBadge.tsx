@@ -45,18 +45,13 @@ export function UserCountBadge() {
         },
         (payload) => {
           console.log('New user signed up:', payload);
-          // Increment count when new user signs up with active or trial status
-          const newProfile = payload.new as any;
-          if (
-            newProfile.subscription_status === 'active' || 
-            newProfile.subscription_status === 'trial' ||
-            newProfile.has_lifetime_access === true
-          ) {
-            setUserCount((prev) => (prev || 0) + 1);
-            // Trigger confetti celebration
-            setShowConfetti(true);
-            setTimeout(() => setShowConfetti(false), 5000);
-          }
+          // Trigger confetti celebration for any new signup
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 5000);
+          // Refresh the count from the database to get accurate number
+          supabase.rpc("get_active_user_count").then(({ data }) => {
+            if (data !== null) setUserCount(data);
+          });
         }
       )
       .subscribe();
