@@ -4050,6 +4050,117 @@ ${category === "people" ? `**PEOPLE:**
 
 
       userPrompt = `Please provide comprehensive encyclopedia information about: ${query}`;
+    } else if (mode === "guesthouse_generate_prompt") {
+      // GuestHouse: Generate a game prompt for live sessions
+      const { gameType, verse: gameVerse, difficulty: gameDifficulty } = requestBody;
+      
+      const gameInstructions: { [key: string]: string } = {
+        "call_the_room": `Generate a "Call the Room" prompt where players must identify which Phototheology Palace room applies to this verse. Include:
+- The verse text
+- 4 room options (one correct, three plausible but wrong)
+- The correct answer
+- A brief explanation of why that room applies`,
+        "verse_fracture": `Generate a "Verse Fracture" puzzle where the verse is scrambled and players must reassemble it. Include:
+- The original verse reference
+- The verse broken into 6-8 phrase segments (shuffled)
+- A hint about the theme`,
+        "palace_pulse": `Generate a "Palace Pulse" speed round with 3 quick questions about applying Palace rooms to verses. Include:
+- 3 short verse snippets
+- The correct room code for each
+- Time allocation (15 seconds each)`,
+        "build_the_study": `Generate a "Build the Study" collaborative outline starter. Include:
+- A key verse to anchor the study
+- 3-4 suggested main points using Palace principles
+- Cross-reference suggestions
+- A Christ-centered conclusion prompt`,
+        "reveal_the_gem": `Generate a "Reveal the Gem" hidden insight challenge. Include:
+- A verse with a non-obvious Phototheology connection
+- 3 hints (progressively more revealing)
+- The "gem" insight to discover
+- The Palace room(s) that unlock this insight`
+      };
+      
+      systemPrompt = `You are Jeeves, creating engaging Bible study game prompts for a live multiplayer session.
+
+${PALACE_SCHEMA}
+
+**TASK:** Create a ${gameType.replace(/_/g, ' ')} game prompt.
+**DIFFICULTY:** ${gameDifficulty || 'medium'}
+**VERSE/PASSAGE:** ${gameVerse || 'Select an appropriate verse'}
+
+${gameInstructions[gameType] || 'Create an engaging Bible study challenge using Phototheology principles.'}
+
+Return as JSON with these fields:
+- promptText: The main prompt/question for players
+- options: Array of options (if applicable)
+- correctAnswer: The correct answer
+- explanation: Why this is correct
+- timeLimit: Suggested time in seconds
+- points: Points for correct answer
+- hints: Array of progressive hints (optional)`;
+
+      userPrompt = `Generate a ${gameType} game prompt${gameVerse ? ` using ${gameVerse}` : ''} at ${gameDifficulty || 'medium'} difficulty.`;
+
+    } else if (mode === "guesthouse_grade_response") {
+      // GuestHouse: Grade a player's response
+      const { gameType, playerResponse, correctAnswer, promptData } = requestBody;
+      
+      systemPrompt = `You are Jeeves, grading a player's response in a live Bible study game session.
+
+${PALACE_SCHEMA}
+
+**GAME TYPE:** ${gameType}
+**THE PROMPT:** ${JSON.stringify(promptData)}
+**CORRECT ANSWER:** ${correctAnswer}
+**PLAYER'S RESPONSE:** ${playerResponse}
+
+**GRADING CRITERIA:**
+- Accuracy: Does the answer match or closely align with the correct answer?
+- Understanding: Does the player show understanding of the Phototheology principle?
+- Insight: Any additional biblical insight demonstrated?
+
+Return as JSON:
+{
+  "score": 0-100,
+  "isCorrect": boolean,
+  "feedback": "Brief encouraging feedback",
+  "partialCredit": boolean,
+  "bonusPoints": 0-10 (for exceptional insight)
+}`;
+
+      userPrompt = `Grade this player response: "${playerResponse}"`;
+
+    } else if (mode === "guesthouse_group_insight") {
+      // GuestHouse: Generate group insights from collective responses
+      const { responses, promptData, gameType } = requestBody;
+      
+      systemPrompt = `You are Jeeves, synthesizing insights from a group Bible study session.
+
+${PALACE_SCHEMA}
+
+**CONTEXT:** A group of ${responses?.length || 0} players just completed a ${gameType} challenge.
+
+**THE PROMPT:** ${JSON.stringify(promptData)}
+
+**PLAYER RESPONSES:**
+${responses?.map((r: any, i: number) => `Player ${i + 1}: ${r.response} (Score: ${r.score})`).join('\n') || 'No responses'}
+
+**YOUR TASK:**
+1. Identify common insights across the group
+2. Highlight the most creative/unique responses
+3. Synthesize a "group gem" - a collective insight that emerged
+4. Suggest a follow-up study direction
+
+Return as JSON:
+{
+  "groupGem": "The collective insight",
+  "topResponses": ["Best responses with attribution"],
+  "commonThemes": ["Themes that appeared"],
+  "christConnection": "How this points to Christ",
+  "followUpStudy": "Suggested next study topic/verse"
+}`;
+
+      userPrompt = `Analyze these group responses and generate insights.`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
