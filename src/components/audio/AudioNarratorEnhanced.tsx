@@ -37,7 +37,7 @@ interface AudioNarratorEnhancedProps {
   autoPlay?: boolean;
   voice?: VoiceId;
   showVoiceSelector?: boolean;
-  mode?: 'elevenlabs' | 'browser' | 'auto';
+  mode?: 'speechify' | 'browser' | 'auto';
 }
 
 export const AudioNarratorEnhanced = ({
@@ -45,7 +45,7 @@ export const AudioNarratorEnhanced = ({
   title,
   className,
   autoPlay = false,
-  voice: initialVoice = "daniel",
+  voice: initialVoice = "henry",
   showVoiceSelector = true,
   mode = 'auto'
 }: AudioNarratorEnhancedProps) => {
