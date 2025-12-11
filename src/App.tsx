@@ -40,9 +40,10 @@ import { FontSizeControl } from "@/components/FontSizeControl";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 
-// Lazy load pricing and demo
+// Lazy load pricing, demo, and donation
 const Pricing = lazy(() => import("./pages/Pricing"));
 const InteractiveDemo = lazy(() => import("./pages/InteractiveDemo"));
+const DonationPage = lazy(() => import("./pages/DonationPage"));
 
 // Lazy load all other pages
 const Palace = lazy(() => import("./pages/Palace"));
@@ -288,6 +289,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/donate" element={<DonationPage />} />
             <Route path="/donation-success" element={<DonationSuccess />} />
             <Route path="/paths" element={<Paths />} />
             <Route path="/path/week" element={<ProtectedRoute><PathWeek /></ProtectedRoute>} />
