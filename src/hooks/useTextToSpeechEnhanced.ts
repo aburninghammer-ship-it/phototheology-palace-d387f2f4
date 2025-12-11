@@ -300,7 +300,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
         body: {
           text: text.trim(),
           voice: opts.voice || selectedVoice,
-          provider: 'speechify',
+          provider: 'openai',
           book: opts.book,
           chapter: opts.chapter,
           verse: opts.verse,
