@@ -441,6 +441,17 @@ export const BibleReader = () => {
               )}
             </div>
           </Card>
+          
+          {/* Bottom Navigation */}
+          <div className="flex justify-center pt-4">
+            <Button
+              onClick={() => navigateChapter("next")}
+              className="gradient-palace text-white shadow-lg hover:shadow-xl transition-all"
+            >
+              Next Chapter
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
         </div>
 
         {/* Right Panel - Dynamic based on mode - Floating/Sticky */}
