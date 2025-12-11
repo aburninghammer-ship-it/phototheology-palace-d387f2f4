@@ -29,7 +29,7 @@ import { ReadingSequenceBlock, SequenceItem } from "@/types/readingSequence";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getGlobalMusicVolume, setGlobalMusicVolume } from "@/hooks/useMusicVolumeControl";
-import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import { SPEECHIFY_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 import { useGlobalAudio } from "@/contexts/GlobalAudioContext";
 import {
   Select,
@@ -93,7 +93,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const activeSequences = sequences.filter((s) => s.enabled && s.items.length > 0);
   
   const [currentVoice, setCurrentVoice] = useState<VoiceId>(() => {
-    return (activeSequences[currentSeqIdx]?.voice as VoiceId) || 'onyx';
+    return (activeSequences[currentSeqIdx]?.voice as VoiceId) || 'henry';
   });
   
   // Commentary depth can be changed mid-session
@@ -528,7 +528,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     
     try {
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
-        body: { text, voice },
+        body: { text, voice, provider: 'speechify' },
       });
 
       if (error) throw error;
@@ -2012,7 +2012,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       }
     }
     
-    toast.success(`Voice changed to ${OPENAI_VOICES.find(v => v.id === newVoice)?.name}`);
+    toast.success(`Voice changed to ${SPEECHIFY_VOICES.find(v => v.id === newVoice)?.name}`);
   }, [currentVoice, isPlaying, isPaused, chapterContent, currentItem, isPlayingCommentary, commentaryText, currentVerseIdx]);
 
   // Handle commentary depth change - clear commentary cache
@@ -2351,12 +2351,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               <SelectTrigger className="flex-1 h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                {OPENAI_VOICES.map((voice) => (
-                  <SelectItem key={voice.id} value={voice.id} className="text-xs">
-                    <div className="flex flex-col">
-                      <span className="font-medium">{voice.name}</span>
-                      <span className="text-muted-foreground text-[10px]">{voice.description}</span>
+              <SelectContent className="max-h-[300px] bg-background border-border">
+                {SPEECHIFY_VOICES.map((voice) => (
+                  <SelectItem 
+                    key={voice.id} 
+                    value={voice.id} 
+                    className="text-xs py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                  >
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-semibold">{voice.name}</span>
+                      <span className="text-[10px] opacity-70">{voice.description}</span>
                     </div>
                   </SelectItem>
                 ))}
