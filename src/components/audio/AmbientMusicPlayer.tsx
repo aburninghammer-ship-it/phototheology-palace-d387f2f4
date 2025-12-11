@@ -247,7 +247,7 @@ export function AmbientMusicPlayer({
   // Function to play next track - extracted for reuse
   const playNextTrackFromState = useCallback(() => {
     const state = playbackStateRef.current;
-    console.log('[AmbientMusic] Playing next track, loopMode:', state.loopMode);
+    console.log('[AmbientMusic] Playing next track, loopMode:', state.loopMode, 'currentTrackId:', state.currentTrackId);
     
     const playableTracks = state.allTracks.filter(t => state.selectedTracks.has(t.id));
     if (playableTracks.length === 0) {
@@ -255,6 +255,8 @@ export function AmbientMusicPlayer({
       setIsPlaying(false);
       return;
     }
+    
+    console.log('[AmbientMusic] Playable tracks:', playableTracks.map(t => t.id));
     
     let nextTrackToPlay;
     if (state.shuffleMode) {
@@ -275,6 +277,15 @@ export function AmbientMusicPlayer({
     
     if (nextTrackToPlay && audioRef.current) {
       console.log('[AmbientMusic] Auto-playing next track:', nextTrackToPlay.name, nextTrackToPlay.url);
+      
+      // CRITICAL: Update the ref SYNCHRONOUSLY before React state update
+      // This prevents race conditions where onended fires before ref is updated
+      playbackStateRef.current = {
+        ...playbackStateRef.current,
+        currentTrackId: nextTrackToPlay.id
+      };
+      
+      // Then update React state (async)
       setCurrentTrackId(nextTrackToPlay.id);
       
       const audio = audioRef.current;
@@ -286,16 +297,16 @@ export function AmbientMusicPlayer({
         if (audioRef.current) {
           audioRef.current.play()
             .then(() => {
-              console.log('[AmbientMusic] Next track started successfully');
+              console.log('[AmbientMusic] Next track started successfully:', nextTrackToPlay.name);
               setIsPlaying(true);
             })
             .catch((err) => {
               console.error('[AmbientMusic] Failed to play next track:', err);
-              // Try again with next track
+              // Try again with next track after a delay
               setTimeout(() => playNextTrackFromState(), 500);
             });
         }
-      }, 100);
+      }, 150);
     }
   }, []);
 

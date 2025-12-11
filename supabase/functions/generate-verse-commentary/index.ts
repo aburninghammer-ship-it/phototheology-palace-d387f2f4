@@ -103,11 +103,12 @@ Not every verse needs this, but where the passage touches on themes like faith, 
 - Christ in Every Chapter Room: Name Christ's role explicitly
 - Room 66: Trace theme through all 66 books
 
-**5th Floor - Vision (Prophecy & Sanctuary):**
+**5th Floor - Vision (Sanctuary & Feasts):**
 - Blue Room (Sanctuary): Connect to sanctuary furniture and services (Altar, Laver, Lampstand, Table, Incense, Ark, Veil, Gate)
-- Prophecy Room: Daniel and Revelation timelines, repeat-and-enlarge patterns
 - Three Angels' Room: Everlasting Gospel, Babylon Fallen, Beast Warning
 - Feasts Room: Connect to Israel's feasts (Passover, Unleavened Bread, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles)
+
+NOTE: Prophecy is NOT a standalone room—it is one of six genres classified in the Connect 6 Room (Floor 4). When applying prophetic interpretation, use the Connect 6 Room's prophecy genre along with sanctuary typology from the Blue Room.
 
 **6th Floor - Three Heavens & Cycles:**
 - Eight Cycles: @Adamic → @Noahic → @Abrahamic → @Mosaic → @Cyrusic → @Cyrus-Christ → @Spirit → @Remnant
@@ -228,7 +229,7 @@ CRITICAL FOR SPOKEN DELIVERY (MANDATORY):
 - MUST weave together connections from AT LEAST 4-5 different categories:
   * Sanctuary typology (Blue Room): Connect to specific furniture/services
   * Feast Calendar (Feasts Room): Show feast-day fulfillment or foreshadowing
-  * Prophecy Room: Link to Daniel/Revelation timelines with SPECIFIC DATES, historicist interpretation
+  * Prophecy Genre (Connect 6 Room): Link to Daniel/Revelation timelines with SPECIFIC DATES, historicist interpretation
   * Parallels Room: Identify mirrored actions across Scripture (e.g., Babel/Pentecost, first/second exodus)
   * Time Zone Room: Place in 6-zone framework (past/present/future × heaven/earth)
   * Patterns Room: Note recurring motifs (40 days, 3 days, deliverer patterns)
