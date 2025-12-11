@@ -4,30 +4,31 @@ import { toast } from 'sonner';
 import { isOnline } from '@/services/offlineAudioCache';
 
 // Available Speechify voices
-export const SPEECHIFY_VOICES = [
-  { id: 'henry', name: 'Henry', description: 'Natural male narrator' },
-  { id: 'mrbeast', name: 'MrBeast', description: 'Energetic and engaging male' },
-  { id: 'gwyneth', name: 'Gwyneth', description: 'Calm and soothing female' },
-  { id: 'snoop', name: 'Snoop', description: 'Laid-back and smooth male' },
-  { id: 'matthew', name: 'Matthew', description: 'Clear and articulate male' },
-  { id: 'george', name: 'George', description: 'Distinguished British male' },
-  { id: 'oliver', name: 'Oliver', description: 'Youthful and friendly male' },
-  { id: 'emma', name: 'Emma', description: 'Warm and friendly female' },
-  { id: 'james', name: 'James', description: 'Professional male narrator' },
-  { id: 'sophia', name: 'Sophia', description: 'Elegant and refined female' },
+export const OPENAI_VOICES = [
+  { id: 'onyx', name: 'Onyx', description: 'Deep and authoritative male' },
+  { id: 'alloy', name: 'Alloy', description: 'Neutral and balanced' },
+  { id: 'echo', name: 'Echo', description: 'Warm and conversational male' },
+  { id: 'fable', name: 'Fable', description: 'Expressive British accent' },
+  { id: 'nova', name: 'Nova', description: 'Warm and engaging female' },
+  { id: 'shimmer', name: 'Shimmer', description: 'Clear and bright female' },
+  { id: 'ash', name: 'Ash', description: 'Soft and gentle' },
+  { id: 'coral', name: 'Coral', description: 'Warm and friendly female' },
+  { id: 'sage', name: 'Sage', description: 'Calm and thoughtful' },
+  { id: 'ballad', name: 'Ballad', description: 'Smooth storyteller' },
+  { id: 'verse', name: 'Verse', description: 'Poetic and expressive' },
 ] as const;
 
-export type VoiceId = typeof SPEECHIFY_VOICES[number]['id'];
+export type VoiceId = typeof OPENAI_VOICES[number]['id'];
 
-type TTSMode = 'speechify' | 'browser' | 'auto';
+type TTSMode = 'openai' | 'browser' | 'auto';
 
 interface UseTextToSpeechEnhancedOptions {
   defaultVoice?: VoiceId;
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (error: string) => void;
-  mode?: TTSMode; // 'elevenlabs', 'browser', or 'auto' (default: auto)
-  timeout?: number; // Timeout for ElevenLabs requests (default: 10000ms)
+  mode?: TTSMode; // 'openai', 'browser', or 'auto' (default: auto)
+  timeout?: number; // Timeout for OpenAI requests (default: 10000ms)
 }
 
 interface SpeakOptions {
@@ -47,7 +48,7 @@ interface SpeakOptions {
  */
 export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions = {}) {
   const {
-    defaultVoice = 'henry',
+    defaultVoice = 'onyx',
     onStart,
     onEnd,
     onError,
@@ -59,7 +60,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>(defaultVoice);
   const [wasCached, setWasCached] = useState(false);
-  const [currentMode, setCurrentMode] = useState<'speechify' | 'browser'>('speechify');
+  const [currentMode, setCurrentMode] = useState<'openai' | 'browser'>('openai');
   const [networkStatus, setNetworkStatus] = useState<'online' | 'offline' | 'slow'>('online');
   const [browserVoices, setBrowserVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedBrowserVoice, setSelectedBrowserVoice] = useState<SpeechSynthesisVoice | null>(null);
@@ -377,7 +378,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
       audio.load();
 
       await audio.play();
-      setCurrentMode('speechify');
+      setCurrentMode('openai');
       setIsPlaying(true);
       onStartRef.current?.();
 
@@ -415,7 +416,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
 
       if (mode === 'browser') {
         shouldUseBrowser = true;
-      } else if (mode === 'speechify') {
+      } else if (mode === 'openai') {
         shouldUseBrowser = false;
       } else {
         // Auto mode: decide based on network
@@ -455,9 +456,9 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     isPlaying,
     selectedVoice,
     setSelectedVoice,
-    voices: SPEECHIFY_VOICES,
+    voices: OPENAI_VOICES,
     wasCached,
-    currentMode, // 'speechify' or 'browser'
+    currentMode, // 'openai' or 'browser'
     networkStatus, // 'online', 'offline', or 'slow'
     browserVoices,
     selectedBrowserVoice,

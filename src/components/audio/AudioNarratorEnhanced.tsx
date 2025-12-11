@@ -37,7 +37,7 @@ interface AudioNarratorEnhancedProps {
   autoPlay?: boolean;
   voice?: VoiceId;
   showVoiceSelector?: boolean;
-  mode?: 'speechify' | 'browser' | 'auto';
+  mode?: 'openai' | 'browser' | 'auto';
 }
 
 export const AudioNarratorEnhanced = ({
@@ -45,7 +45,7 @@ export const AudioNarratorEnhanced = ({
   title,
   className,
   autoPlay = false,
-  voice: initialVoice = "henry",
+  voice: initialVoice = "onyx",
   showVoiceSelector = true,
   mode = 'auto'
 }: AudioNarratorEnhancedProps) => {
