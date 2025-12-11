@@ -32,26 +32,26 @@ export const PunchyHero = () => {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-8 sm:py-0">
-        {/* Main Title */}
+        {/* Main Title - Glass Style */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="mb-3 sm:mb-4"
         >
-          <h2 className="font-display text-lg sm:text-xl md:text-2xl font-semibold tracking-wide text-primary uppercase">
+          <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold tracking-widest text-primary uppercase drop-shadow-[0_0_10px_hsl(var(--primary)/0.5)]">
             Phototheology Bible Study Suite
           </h2>
         </motion.div>
 
-        {/* Badge */}
+        {/* Badge - Glass Style */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.05 }}
           className="mb-4 sm:mb-6"
         >
-          <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-primary">
+          <span className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-background/20 backdrop-blur-md border border-primary/30 text-xs sm:text-sm font-medium text-primary shadow-[0_4px_30px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)]">
             <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
             <span className="whitespace-normal sm:whitespace-nowrap">Not another devotional app • A complete Bible study system</span>
           </span>
