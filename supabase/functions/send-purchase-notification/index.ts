@@ -40,11 +40,13 @@ const handler = async (req: Request): Promise<Response> => {
     }).format(amount / 100);
 
     // Determine tier label for subject
-    const tierLabel = subscriptionTier 
-      ? subscriptionTier.charAt(0).toUpperCase() + subscriptionTier.slice(1).toLowerCase()
-      : 'Unknown';
+    const tierLabel = subscriptionTier === 'donation' ? 'Donation'
+      : subscriptionTier 
+        ? subscriptionTier.charAt(0).toUpperCase() + subscriptionTier.slice(1).toLowerCase()
+        : 'Unknown';
     
-    const tierEmoji = subscriptionTier === 'premium' ? '👑' 
+    const tierEmoji = subscriptionTier === 'donation' ? '💝'
+      : subscriptionTier === 'premium' ? '👑' 
       : subscriptionTier === 'essential' ? '⭐' 
       : subscriptionTier === 'student' ? '🎓'
       : '💰';

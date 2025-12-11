@@ -62,6 +62,32 @@ serve(async (req) => {
           mode: session.mode 
         });
 
+        // Handle one-time donations
+        if (session.mode === 'payment' && session.submit_type === 'donate') {
+          logStep('Processing donation', { 
+            amount: session.amount_total, 
+            email: customerEmail 
+          });
+
+          // Send donation notification email
+          try {
+            await supabase.functions.invoke('send-purchase-notification', {
+              body: {
+                userEmail: customerEmail || 'anonymous',
+                userName: session.customer_details?.name || 'Anonymous Donor',
+                amount: session.amount_total || 0,
+                currency: session.currency || 'usd',
+                product: 'Donation',
+                subscriptionTier: 'donation',
+              }
+            });
+            logStep('Donation notification sent', { email: customerEmail });
+          } catch (emailError) {
+            logStep('Failed to send donation notification', { error: emailError });
+          }
+          break;
+        }
+
         if (!metadata || !metadata.user_id) {
           // Try to find user by email if user_id not in metadata
           if (customerEmail) {
