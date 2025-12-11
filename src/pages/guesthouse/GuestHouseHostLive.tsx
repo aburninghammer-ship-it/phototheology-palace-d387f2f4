@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 import { 
   Users, 
   Play, 
@@ -13,11 +14,14 @@ import {
   Trophy,
   Clock,
   Zap,
-  SkipForward
+  SkipForward,
+  Sparkles,
+  Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PresenceIndicators } from "@/components/guesthouse/PresenceIndicators";
+import { generateGamePrompt } from "@/lib/guesthouseJeeves";
 import type { Json } from "@/integrations/supabase/types";
 
 const GAME_TYPES = [
@@ -53,6 +57,8 @@ export default function GuestHouseHostLive() {
   const [activePrompt, setActivePrompt] = useState<SessionPrompt | null>(null);
   const [loading, setLoading] = useState(true);
   const [sessionTime, setSessionTime] = useState(0);
+  const [generatingPrompt, setGeneratingPrompt] = useState(false);
+  const [customVerse, setCustomVerse] = useState("John 3:16");
 
   useEffect(() => {
     if (!eventId) return;
@@ -141,16 +147,21 @@ export default function GuestHouseHostLive() {
 
   const launchGame = async (gameType: string) => {
     try {
+      setGeneratingPrompt(true);
+      
       // Deactivate any existing prompts
       await supabase
         .from("guesthouse_session_prompts")
         .update({ is_active: false })
         .eq("event_id", eventId);
 
+      // Generate AI prompt for the game
+      const aiPrompt = await generateGamePrompt(gameType, customVerse || "John 3:16", "medium");
+      
       // Get max sequence order
       const maxOrder = prompts.length > 0 ? Math.max(...prompts.map(p => (p as any).sequence_order || 0)) : 0;
 
-      // Create new prompt
+      // Create new prompt with AI-generated content
       const { data, error } = await supabase
         .from("guesthouse_session_prompts")
         .insert({
@@ -158,7 +169,8 @@ export default function GuestHouseHostLive() {
           prompt_type: gameType,
           prompt_data: { 
             started_at: new Date().toISOString(),
-            verse: "John 3:16"
+            verse: customVerse || "John 3:16",
+            ...aiPrompt
           },
           is_active: true,
           sequence_order: maxOrder + 1
@@ -169,19 +181,21 @@ export default function GuestHouseHostLive() {
       if (error) throw error;
 
       setActivePrompt(data);
+      setGeneratingPrompt(false);
       toast.success(`${GAME_TYPES.find(g => g.id === gameType)?.name} launched!`);
       
       // Broadcast to all guests
       await supabase.channel(`event-${eventId}`).send({
         type: 'broadcast',
         event: 'game_start',
-        payload: { promptId: data.id, gameType }
+        payload: { promptId: data.id, gameType, promptData: aiPrompt }
       });
 
       fetchPrompts();
     } catch (error) {
       console.error("Error launching game:", error);
       toast.error("Failed to launch game");
+      setGeneratingPrompt(false);
     }
   };
 
@@ -281,7 +295,13 @@ export default function GuestHouseHostLive() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {activePrompt ? (
+              {generatingPrompt ? (
+                <div className="text-center py-12">
+                  <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-primary" />
+                  <h3 className="text-xl font-bold mb-2">Jeeves is crafting your challenge...</h3>
+                  <p className="text-muted-foreground">Preparing AI-powered Bible study prompt</p>
+                </div>
+              ) : activePrompt ? (
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <span className="text-4xl">
@@ -302,8 +322,22 @@ export default function GuestHouseHostLive() {
                   </p>
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground mb-4">No active game. Select a game to launch:</p>
+                <div className="space-y-6">
+                  {/* Verse Input */}
+                  <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    <div className="flex-1">
+                      <label className="text-sm font-medium">Study Verse</label>
+                      <Input
+                        value={customVerse}
+                        onChange={(e) => setCustomVerse(e.target.value)}
+                        placeholder="John 3:16"
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                  
+                  <p className="text-muted-foreground text-center">Select a game to launch:</p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {GAME_TYPES.map((game) => (
                       <Button
@@ -311,6 +345,7 @@ export default function GuestHouseHostLive() {
                         variant="outline"
                         className="h-auto py-4 flex flex-col items-center gap-2"
                         onClick={() => launchGame(game.id)}
+                        disabled={generatingPrompt}
                       >
                         <span className="text-2xl">{game.icon}</span>
                         <span className="text-sm font-medium">{game.name}</span>
