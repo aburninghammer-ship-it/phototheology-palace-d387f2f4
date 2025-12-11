@@ -59,7 +59,7 @@ export const DonationBanner = () => {
   if (isDismissed) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-primary/90 to-primary py-2 px-4 shadow-md">
+    <div className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-primary/90 to-primary py-3 px-4 shadow-md touch-auto">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1">
           <Heart className="h-5 w-5 text-primary-foreground animate-pulse" />
