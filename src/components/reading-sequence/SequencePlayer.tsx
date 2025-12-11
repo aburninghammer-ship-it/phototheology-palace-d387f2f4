@@ -30,6 +30,7 @@ import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getGlobalMusicVolume, setGlobalMusicVolume } from "@/hooks/useMusicVolumeControl";
 import { SPEECHIFY_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import { useSpeechifyVoices } from "@/hooks/useSpeechifyVoices";
 import { useGlobalAudio } from "@/contexts/GlobalAudioContext";
 import {
   Select,
@@ -66,6 +67,7 @@ interface ChapterContent {
 
 export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceName }: SequencePlayerProps) => {
   const { setBibleAudioState, updateBibleProgress, setShowMiniPlayer } = useGlobalAudio();
+  const { voices: speechifyVoices, isLoading: voicesLoading } = useSpeechifyVoices();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -2012,8 +2014,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       }
     }
     
-    toast.success(`Voice changed to ${SPEECHIFY_VOICES.find(v => v.id === newVoice)?.name}`);
-  }, [currentVoice, isPlaying, isPaused, chapterContent, currentItem, isPlayingCommentary, commentaryText, currentVerseIdx]);
+    const voiceName = speechifyVoices.find(v => v.id === newVoice)?.name || newVoice;
+    toast.success(`Voice changed to ${voiceName}`);
+  }, [currentVoice, isPlaying, isPaused, chapterContent, currentItem, isPlayingCommentary, commentaryText, currentVerseIdx, speechifyVoices]);
 
   // Handle commentary depth change - clear commentary cache
   const handleCommentaryDepthChange = useCallback((newDepth: "surface" | "intermediate" | "depth" | "deep-drill") => {
@@ -2352,18 +2355,25 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="max-h-[300px] bg-background border-border">
-                {SPEECHIFY_VOICES.map((voice) => (
-                  <SelectItem 
-                    key={voice.id} 
-                    value={voice.id} 
-                    className="text-xs py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
-                  >
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-semibold">{voice.name}</span>
-                      <span className="text-[10px] opacity-70">{voice.description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
+                {voicesLoading ? (
+                  <div className="p-4 text-center text-xs text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
+                    Loading voices...
+                  </div>
+                ) : (
+                  speechifyVoices.map((voice) => (
+                    <SelectItem 
+                      key={voice.id} 
+                      value={voice.id} 
+                      className="text-xs py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-semibold">{voice.name}</span>
+                        <span className="text-[10px] opacity-70">{voice.description}</span>
+                      </div>
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>

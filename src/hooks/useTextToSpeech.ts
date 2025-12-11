@@ -49,18 +49,17 @@ export const ELEVENLABS_VOICES = [
   { id: 'bill', name: 'Bill', description: 'Trustworthy male' },
 ] as const;
 
-// Speechify voices
+// Speechify voices - these are verified working voice IDs
+// More voices are available via the list-speechify-voices API
 export const SPEECHIFY_VOICES = [
   { id: 'henry', name: 'Henry', description: 'Natural male' },
   { id: 'mrbeast', name: 'MrBeast', description: 'Energetic male' },
-  { id: 'gwyneth', name: 'Gwyneth', description: 'Calm female' },
-  { id: 'snoop', name: 'Snoop', description: 'Laid-back male' },
-  { id: 'matthew', name: 'Matthew', description: 'Clear male' },
   { id: 'george', name: 'George', description: 'British male' },
-  { id: 'oliver', name: 'Oliver', description: 'Young male' },
-  { id: 'emma', name: 'Emma', description: 'Friendly female' },
-  { id: 'james', name: 'James', description: 'Professional male' },
-  { id: 'sophia', name: 'Sophia', description: 'Warm female' },
+  { id: 'cliff', name: 'Cliff', description: 'Warm male' },
+  { id: 'cody', name: 'Cody', description: 'Friendly male' },
+  { id: 'kristy', name: 'Kristy', description: 'Clear female' },
+  { id: 'natasha', name: 'Natasha', description: 'Expressive female' },
+  { id: 'cindy', name: 'Cindy', description: 'Warm female' },
 ] as const;
 
 export type VoiceId = string;

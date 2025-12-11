@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Verse } from "@/types/bible";
 import { SPEECHIFY_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import { useSpeechifyVoices } from "@/hooks/useSpeechifyVoices";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -39,6 +40,7 @@ interface AudioControlsProps {
 const SILENT_AUDIO = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
 
 export const AudioControls = ({ verses, onVerseHighlight, className }: AudioControlsProps) => {
+  const { voices: speechifyVoices, isLoading: voicesLoading } = useSpeechifyVoices();
   const [showSettings, setShowSettings] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -434,19 +436,26 @@ export const AudioControls = ({ verses, onVerseHighlight, className }: AudioCont
                   <SelectValue placeholder="Select voice" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border-border">
-                  {SPEECHIFY_VOICES.map((voice) => (
-                    <SelectItem 
-                      key={voice.id} 
-                      value={voice.id}
-                      className="py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
-                    >
-                      {voice.name}
-                    </SelectItem>
-                  ))}
+                  {voicesLoading ? (
+                    <div className="p-4 text-center text-xs text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
+                      Loading...
+                    </div>
+                  ) : (
+                    speechifyVoices.map((voice) => (
+                      <SelectItem 
+                        key={voice.id} 
+                        value={voice.id}
+                        className="py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                      >
+                        {voice.name}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground mt-1">
-                {SPEECHIFY_VOICES.find(v => v.id === selectedVoice)?.description}
+                {speechifyVoices.find(v => v.id === selectedVoice)?.description}
               </p>
             </div>
             
