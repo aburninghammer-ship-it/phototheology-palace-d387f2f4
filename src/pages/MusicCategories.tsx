@@ -198,7 +198,7 @@ export default function MusicCategories() {
                   setVolume(v[0]);
                   if (v[0] > 0 && isMuted) setIsMuted(false);
                 }}
-                className="flex-1"
+                className="flex-1 touch-pan-x"
               />
               <span className="text-sm text-muted-foreground w-12">
                 {Math.round((isMuted ? 0 : volume) * 100)}%
