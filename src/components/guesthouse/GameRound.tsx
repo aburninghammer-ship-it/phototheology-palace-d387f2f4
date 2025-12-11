@@ -27,6 +27,7 @@ const GAME_ICONS: Record<string, string> = {
   silent_coexegesis: "🤫",
   drill_drop: "🎯",
   reveal_the_gem: "💎",
+  verse_hunt: "🔍",
 };
 
 const GAME_NAMES: Record<string, string> = {
@@ -37,6 +38,7 @@ const GAME_NAMES: Record<string, string> = {
   silent_coexegesis: "Silent Co-Exegesis",
   drill_drop: "Drill Drop",
   reveal_the_gem: "Reveal the Gem",
+  verse_hunt: "Verse Hunt",
 };
 
 export function GameRound({

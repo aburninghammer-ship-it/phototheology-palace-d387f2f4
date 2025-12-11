@@ -4161,6 +4161,65 @@ Return as JSON:
 }`;
 
       userPrompt = `Analyze these group responses and generate insights.`;
+    } else if (mode === "verse_hunt_generate") {
+      // Verse Hunt: Generate a clue trail game
+      const { difficulty: huntDifficulty, category: huntCategory } = requestBody;
+      
+      const clueCountByDifficulty: { [key: string]: number } = {
+        "easy": 3,
+        "medium": 5,
+        "hard": 7
+      };
+      const clueCount = clueCountByDifficulty[huntDifficulty || "medium"] || 5;
+      
+      systemPrompt = `You are Jeeves, the Phototheology master, creating a "Verse Hunt" game.
+
+${PALACE_SCHEMA}
+
+**VERSE HUNT RULES:**
+The Verse Hunt is a trail of clues that lead players to discover a specific Bible verse. Each clue points to an INTERMEDIATE passage that connects to the NEXT clue, eventually leading to the TARGET verse.
+
+**YOUR TASK:**
+1. Choose a TARGET VERSE - a significant verse with rich Phototheology connections
+2. Create ${clueCount} CLUES that form a trail:
+   - Clue 1: Starts from a COMPLETELY DIFFERENT Bible story
+   - Each subsequent clue: References a passage that connects via Phototheology principle (type, parallel, pattern, symbol)
+   - Final clue: Points directly to the target verse
+3. Each clue should require BIBLE STUDY to solve - not just trivia
+4. Use Phototheology principles as the connections (types, parallels, patterns, sanctuary, feasts, etc.)
+
+**DIFFICULTY:** ${huntDifficulty || "medium"}
+${huntCategory ? `**CATEGORY FOCUS:** ${huntCategory}` : ""}
+
+**CLUE TRAIL EXAMPLE (for John 3:14-15 about the bronze serpent):**
+- Clue 1: "In Numbers, a deadly plague was healed by looking at something lifted up. What was lifted?"
+  (Points to Numbers 21:8-9 - the bronze serpent)
+- Clue 2: "This Old Testament symbol is a TYPE pointing to the Cross. What did Jesus compare His crucifixion to in conversation with a Pharisee?"
+  (Uses TYPE principle to connect to John 3)
+- Clue 3: "The man Jesus spoke to came by night, seeking eternal life. Find the verse where Jesus explains how this Old Testament type would save all who believe."
+  (Direct pointer to John 3:14-15)
+
+Return as JSON:
+{
+  "targetVerse": {
+    "book": "Book Name",
+    "chapter": number,
+    "verse": number,
+    "text": "Full verse text (KJV)"
+  },
+  "clueTrail": [
+    {
+      "clue": "The clue text - should require study, not just trivia",
+      "hintBook": "Optional book hint",
+      "hintChapter": "Optional chapter hint",
+      "ptPrinciple": "The Phototheology principle connecting this to the next clue (Type, Parallel, Pattern, Symbol, Sanctuary, Feast, etc.)",
+      "revealed": false
+    }
+  ],
+  "difficulty": "${huntDifficulty || "medium"}"
+}`;
+
+      userPrompt = `Generate a Verse Hunt game at ${huntDifficulty || "medium"} difficulty${huntCategory ? ` focusing on ${huntCategory}` : ""}. Create ${clueCount} clues that form a trail requiring real Bible study.`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
