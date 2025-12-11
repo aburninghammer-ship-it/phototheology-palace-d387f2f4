@@ -281,6 +281,8 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
           // Deep Palace specific options
           maxWords: analysisMode === "deep-palace" ? lengthConfig?.maxWords : undefined,
           showHiddenStructure: analysisMode === "deep-palace" ? showHiddenStructure : undefined,
+          // 5-Dimension Filter - pass active dimensions to filter commentary layers
+          activeDimensions: activeDimensions.length > 0 ? activeDimensions : undefined,
         },
       });
 

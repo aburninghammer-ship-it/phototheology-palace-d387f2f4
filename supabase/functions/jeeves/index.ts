@@ -239,6 +239,7 @@ serve(async (req) => {
       lessonCount,
       // Commentary properties
       classicCommentary,
+      activeDimensions,
       // User identification
       userName,
       // Card deck properties
@@ -1337,9 +1338,28 @@ ${PALACE_SCHEMA}
 
 CRITICAL: Only reference rooms that exist in the Palace Schema above. Never make up methodologies.`;
 
+      // Build dimension filter instructions based on activeDimensions
+      const dimensionMap: Record<string, string> = {
+        "1D": "Literal dimension",
+        "2D": "Christ-centered dimension", 
+        "3D": "Personal dimension",
+        "4D": "Church/Community dimension",
+        "5D": "Heavenly/Eschatological dimension"
+      };
+      
+      const filteredDimensions = activeDimensions && activeDimensions.length > 0
+        ? activeDimensions.map((d: string) => dimensionMap[d]).filter(Boolean)
+        : Object.values(dimensionMap);
+      
+      const dimensionInstructions = filteredDimensions.map((dim: string) => `• ${dim}: [explain if present]`).join("\n");
+      
+      const dimensionFilterNote = activeDimensions && activeDimensions.length > 0 && activeDimensions.length < 5
+        ? `\n\nNOTE: The user has filtered to focus on these specific dimensions: ${filteredDimensions.join(", ")}. Only analyze these dimensions, skip the others.`
+        : "";
+
       userPrompt = `Analyze ${book} ${chapter}:${verseText.verse} to identify which principles and dimensions are REVEALED in the text.
 
-Verse text: "${verseText.text}"
+Verse text: "${verseText.text}"${dimensionFilterNote}
 
 FORMATTING INSTRUCTIONS — NON-NEGOTIABLE:
 - Do NOT use markdown or asterisks anywhere.
@@ -1352,11 +1372,7 @@ Write 2–3 sentences about what immediately stands out in this text. Include at
 
 Dimensions Revealed
 List each dimension that is present with a short explanation, each on its own line:
-• Literal dimension: [explain if present]
-• Christ-centered dimension: [explain if present]
-• Personal dimension: [explain if present]
-• Church/Community dimension: [explain if present]
-• Heavenly/Eschatological dimension: [explain if present]
+${dimensionInstructions}
 
 Palace Principles Visible
 Identify which rooms naturally connect (use emojis in-line):
