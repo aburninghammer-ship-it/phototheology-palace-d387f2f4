@@ -227,6 +227,7 @@ const GuestHousePlay = lazy(() => import("./pages/guesthouse/GuestHousePlay"));
 const GuestHouseAssembly = lazy(() => import("./pages/guesthouse/GuestHouseAssembly"));
 const GuestHouseHost = lazy(() => import("./pages/guesthouse/GuestHouseHost"));
 const GuestHouseHostLive = lazy(() => import("./pages/guesthouse/GuestHouseHostLive"));
+const GuestHouseGuestLive = lazy(() => import("./pages/guesthouse/GuestHouseGuestLive"));
 
 const queryClient = new QueryClient();
 
@@ -518,6 +519,7 @@ function App() {
             <Route path="/guesthouse/event/:eventId" element={<GuestHouseEvent />} />
             <Route path="/guesthouse/lobby/:eventId" element={<GuestHouseLobby />} />
             <Route path="/guesthouse/play/:eventId" element={<GuestHousePlay />} />
+            <Route path="/guesthouse/live/:eventId" element={<GuestHouseGuestLive />} />
             <Route path="/guesthouse/assembly/:eventId" element={<GuestHouseAssembly />} />
             
             {/* GuestHouse Host Routes (Auth Required) */}
