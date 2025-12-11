@@ -147,27 +147,29 @@ export const RoomInsightChat = ({
       </div>
 
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full justify-between hover:bg-primary/5"
-          >
-            <span className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              Ask about this room
-              {messages.length > 0 && (
-                <Badge variant="secondary" className="ml-2">
-                  {messages.length}
-                </Badge>
+        <div className="flex items-center gap-2">
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 justify-between hover:bg-primary/5"
+            >
+              <span className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                Ask about this room
+                {messages.length > 0 && (
+                  <Badge variant="secondary" className="ml-2">
+                    {messages.length}
+                  </Badge>
+                )}
+              </span>
+              {isOpen ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
               )}
-            </span>
-            {isOpen ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </Button>
+            </Button>
+          </CollapsibleTrigger>
           {messages.length > 0 && (
             <ExportToStudyButton
               type="room-insight"
@@ -183,7 +185,7 @@ export const RoomInsightChat = ({
               variant="ghost"
             />
           )}
-        </CollapsibleTrigger>
+        </div>
         
         <CollapsibleContent className="mt-3 space-y-3">
           {messages.length > 0 && (
