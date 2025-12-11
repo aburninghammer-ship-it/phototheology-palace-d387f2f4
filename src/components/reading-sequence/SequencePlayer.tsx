@@ -152,6 +152,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // Use refs to track state for event handlers to avoid stale closures on mobile
   const isPlayingRef = useRef(false);
   const isPausedRef = useRef(false);
+  // Volume refs to ensure audio elements always get current volume (critical for mobile)
+  const volumeRef = useRef(volume);
+  const isMutedRef = useRef(isMuted);
   
   const isMobile = useIsMobile();
 
@@ -160,6 +163,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     isPlayingRef.current = isPlaying;
     isPausedRef.current = isPaused;
   }, [isPlaying, isPaused]);
+  
+  // Keep volume refs in sync
+  useEffect(() => {
+    volumeRef.current = volume;
+    isMutedRef.current = isMuted;
+    // Also update any currently playing audio
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume / 100;
+      console.log('[SequencePlayer] Volume ref sync - applied to audioRef:', isMuted ? 0 : volume / 100);
+    }
+  }, [volume, isMuted]);
   useEffect(() => {
     const keepAlive = () => {
       if (isPlaying && !isPaused && speechSynthesis.speaking) {
@@ -643,7 +657,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     }
 
     const audio = new Audio(url);
-    audio.volume = isMuted ? 0 : volume / 100;
+    // Use refs for volume to avoid stale closures on mobile
+    audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
+    console.log('[Commentary] Audio created with volume:', audio.volume);
     // Apply playback speed from current sequence
     const playbackSpeed = currentSequence?.playbackSpeed || 1;
     audio.playbackRate = playbackSpeed;
@@ -722,7 +738,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         playingCommentaryRef.current = true;
         
         const audio = new Audio(cached.audioUrl);
-        audio.volume = isMuted ? 0 : volume / 100;
+        // Use refs for volume to avoid stale closures on mobile
+        audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
+        console.log('[ChapterComplete] Audio created with volume:', audio.volume);
         // Apply playback speed from sequence
         const playbackSpeed = currentSeq?.playbackSpeed || 1;
         audio.playbackRate = playbackSpeed;
@@ -1113,9 +1131,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     }
 
     // Create and configure audio element FIRST
-    console.log("[PlayVerse] Creating Audio element with volume:", isMuted ? 0 : volume / 100);
+    // Use refs for volume to avoid stale closures on mobile
+    const currentVolume = isMutedRef.current ? 0 : volumeRef.current / 100;
+    console.log("[PlayVerse] Creating Audio element with volume:", currentVolume);
     const audio = new Audio(url);
-    audio.volume = isMuted ? 0 : volume / 100;
+    audio.volume = currentVolume;
     audio.preload = 'auto'; // Better mobile compatibility
     
     // Apply playback speed from sequence settings (already found above)
@@ -1242,7 +1262,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           playingCommentaryRef.current = true;
           
           const commentaryAudio = new Audio(cached.audioUrl);
-          commentaryAudio.volume = isMuted ? 0 : volume / 100;
+          // Use refs for volume to avoid stale closures on mobile
+          commentaryAudio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
           commentaryAudio.preload = 'auto';
           const playbackSpeed = currentSeq?.playbackSpeed || 1;
           commentaryAudio.playbackRate = playbackSpeed;
@@ -1351,7 +1372,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             playingCommentaryRef.current = true;
             
             const chapterCommentaryAudio = new Audio(cached.audioUrl);
-            chapterCommentaryAudio.volume = isMuted ? 0 : volume / 100;
+            // Use refs for volume to avoid stale closures on mobile
+            chapterCommentaryAudio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
             chapterCommentaryAudio.preload = 'auto';
             const playbackSpeed = currentSeq?.playbackSpeed || 1;
             chapterCommentaryAudio.playbackRate = playbackSpeed;
@@ -1795,9 +1817,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   };
 
   const handleVolumeChange = (value: number[]) => {
-    setVolume(value[0]);
+    const newVolume = value[0];
+    console.log('[SequencePlayer] TTS volume changed to:', newVolume);
+    setVolume(newVolume);
+    // Refs are updated by effect, but also apply immediately to current audio
     if (audioRef.current) {
-      audioRef.current.volume = value[0] / 100;
+      const effectiveVolume = isMutedRef.current ? 0 : newVolume / 100;
+      audioRef.current.volume = effectiveVolume;
+      console.log('[SequencePlayer] Applied TTS volume to audioRef:', effectiveVolume);
     }
   };
 
@@ -1882,9 +1909,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, [currentCommentaryDepth]);
 
   const toggleMute = () => {
-    setIsMuted(!isMuted);
+    const newMuted = !isMuted;
+    console.log('[SequencePlayer] Mute toggled to:', newMuted);
+    setIsMuted(newMuted);
+    // Apply immediately to current audio
     if (audioRef.current) {
-      audioRef.current.volume = isMuted ? volume / 100 : 0;
+      const effectiveVolume = newMuted ? 0 : volumeRef.current / 100;
+      audioRef.current.volume = effectiveVolume;
+      console.log('[SequencePlayer] Applied mute toggle to audioRef:', effectiveVolume);
     }
   };
   // Auto-scroll to current verse
