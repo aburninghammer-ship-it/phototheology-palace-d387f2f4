@@ -24,8 +24,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { SPEECHIFY_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
-import { useSpeechifyVoices } from "@/hooks/useSpeechifyVoices";
+import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -43,10 +42,9 @@ export const AudioNarrator = ({
   title,
   className,
   autoPlay = false,
-  voice: initialVoice = "henry",
+  voice: initialVoice = "onyx",
   showVoiceSelector = true
 }: AudioNarratorProps) => {
-  const { voices: speechifyVoices, isLoading: voicesLoading } = useSpeechifyVoices();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -225,7 +223,7 @@ export const AudioNarrator = ({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const selectedVoiceInfo = SPEECHIFY_VOICES.find(v => v.id === selectedVoice);
+  const selectedVoiceInfo = OPENAI_VOICES.find(v => v.id === selectedVoice);
 
   return (
     <Card className={cn("overflow-hidden", className)}>
@@ -249,25 +247,18 @@ export const AudioNarrator = ({
                     <SelectValue placeholder="Select voice" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] bg-background border-border">
-                    {voicesLoading ? (
-                      <div className="p-4 text-center text-xs text-muted-foreground">
-                        <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
-                        Loading voices...
-                      </div>
-                    ) : (
-                      speechifyVoices.map((voice) => (
-                        <SelectItem 
-                          key={voice.id} 
-                          value={voice.id} 
-                          className="text-xs py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
-                        >
-                          <div className="flex flex-col">
-                            <span className="font-medium">{voice.name}</span>
-                            <span className="text-muted-foreground text-[10px]">{voice.description}</span>
-                          </div>
-                        </SelectItem>
-                      ))
-                    )}
+                    {OPENAI_VOICES.map((voice) => (
+                      <SelectItem 
+                        key={voice.id} 
+                        value={voice.id} 
+                        className="text-xs py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium">{voice.name}</span>
+                          <span className="text-muted-foreground text-[10px]">{voice.description}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
