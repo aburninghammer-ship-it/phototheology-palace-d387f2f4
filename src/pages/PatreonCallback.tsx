@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,9 +10,16 @@ export default function PatreonCallback() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [processing, setProcessing] = useState(true);
+  const processedRef = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
+      // Prevent double-processing (React StrictMode / double-render protection)
+      if (processedRef.current) {
+        console.log("Patreon callback already processed, skipping");
+        return;
+      }
+      
       const code = searchParams.get("code");
       const error = searchParams.get("error");
 
@@ -27,6 +34,20 @@ export default function PatreonCallback() {
         navigate("/auth?patreon=true");
         return;
       }
+
+      // Mark as processed BEFORE the async call
+      processedRef.current = true;
+      
+      // Also check sessionStorage to prevent page refresh re-submission
+      const processedCode = sessionStorage.getItem("patreon_processed_code");
+      if (processedCode === code) {
+        console.log("This Patreon code was already processed");
+        navigate("/dashboard");
+        return;
+      }
+      
+      // Store the code we're processing
+      sessionStorage.setItem("patreon_processed_code", code);
 
       try {
         const redirectUri = `${window.location.origin}/patreon-callback`;
@@ -50,7 +71,9 @@ export default function PatreonCallback() {
         }
       } catch (err) {
         console.error("Patreon callback error:", err);
-        toast.error("Failed to connect Patreon account");
+        // Clear the processed code on error so user can retry
+        sessionStorage.removeItem("patreon_processed_code");
+        toast.error("Failed to connect Patreon account. Please try again.");
         navigate("/auth?patreon=true");
       } finally {
         setProcessing(false);
