@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { GripVertical, Plus, Trash2, BookOpen, ChevronDown, ChevronUp, Mic, Volume2 } from "lucide-react";
 import { BIBLE_BOOKS } from "@/types/bible";
 import { ReadingSequenceBlock, SequenceItem, CommentaryDepth, CommentaryMode } from "@/types/readingSequence";
-import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import { SPEECHIFY_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 import { Input } from "@/components/ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -631,9 +631,13 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
                   <SelectTrigger className="h-9">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[250px] bg-popover">
-                    {OPENAI_VOICES.map((voice) => (
-                      <SelectItem key={voice.id} value={voice.id}>
+                <SelectContent className="max-h-[250px] bg-background border-border">
+                    {SPEECHIFY_VOICES.map((voice) => (
+                      <SelectItem 
+                        key={voice.id} 
+                        value={voice.id}
+                        className="py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                      >
                         <span className="font-medium">{voice.name}</span>
                         <span className="text-xs text-muted-foreground ml-2">{voice.description}</span>
                       </SelectItem>
@@ -751,9 +755,13 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
                         <SelectTrigger className="h-9">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="max-h-[250px] bg-popover">
-                  {OPENAI_VOICES.map((voice) => (
-                            <SelectItem key={voice.id} value={voice.id}>
+                        <SelectContent className="max-h-[250px] bg-background border-border">
+                  {SPEECHIFY_VOICES.map((voice) => (
+                            <SelectItem 
+                              key={voice.id} 
+                              value={voice.id}
+                              className="py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                            >
                               <span className="font-medium">{voice.name}</span>
                               <span className="text-xs text-muted-foreground ml-2">{voice.description}</span>
                             </SelectItem>

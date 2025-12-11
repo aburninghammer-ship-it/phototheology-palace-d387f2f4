@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Headphones, Settings, BookOpen, Film, Sparkles, Volume2 } from "lucide-react";
 import { AudioNarrator } from "./AudioNarrator";
 import { cn } from "@/lib/utils";
-import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import { SPEECHIFY_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 
 interface PTAudioModeProps {
   content: {
@@ -18,7 +18,7 @@ interface PTAudioModeProps {
 }
 
 export const PTAudioMode = ({ content, className }: PTAudioModeProps) => {
-  const [voice, setVoice] = useState<VoiceId>("onyx");
+  const [voice, setVoice] = useState<VoiceId>("henry");
   const [autoAdvance, setAutoAdvance] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -72,9 +72,13 @@ export const PTAudioMode = ({ content, className }: PTAudioModeProps) => {
               <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                {OPENAI_VOICES.map((v) => (
-                  <SelectItem key={v.id} value={v.id}>
+              <SelectContent className="max-h-[300px] bg-background border-border">
+                {SPEECHIFY_VOICES.map((v) => (
+                  <SelectItem 
+                    key={v.id} 
+                    value={v.id}
+                    className="py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                  >
                     <div className="flex flex-col">
                       <span>{v.name}</span>
                       <span className="text-xs text-muted-foreground">{v.description}</span>

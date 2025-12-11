@@ -24,7 +24,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import { SPEECHIFY_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -42,7 +42,7 @@ export const AudioNarrator = ({
   title,
   className,
   autoPlay = false,
-  voice: initialVoice = "onyx",
+  voice: initialVoice = "henry",
   showVoiceSelector = true
 }: AudioNarratorProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -223,7 +223,7 @@ export const AudioNarrator = ({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const selectedVoiceInfo = OPENAI_VOICES.find(v => v.id === selectedVoice);
+  const selectedVoiceInfo = SPEECHIFY_VOICES.find(v => v.id === selectedVoice);
 
   return (
     <Card className={cn("overflow-hidden", className)}>
@@ -246,9 +246,13 @@ export const AudioNarrator = ({
                   <SelectTrigger className="w-[140px] h-8 text-xs">
                     <SelectValue placeholder="Select voice" />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {OPENAI_VOICES.map((voice) => (
-                      <SelectItem key={voice.id} value={voice.id} className="text-xs">
+                  <SelectContent className="max-h-[300px] bg-background border-border">
+                    {SPEECHIFY_VOICES.map((voice) => (
+                      <SelectItem 
+                        key={voice.id} 
+                        value={voice.id} 
+                        className="text-xs py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                      >
                         <div className="flex flex-col">
                           <span className="font-medium">{voice.name}</span>
                           <span className="text-muted-foreground text-[10px]">{voice.description}</span>
