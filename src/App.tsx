@@ -225,6 +225,8 @@ const GuestHouseEvent = lazy(() => import("./pages/guesthouse/GuestHouseEvent"))
 const GuestHouseLobby = lazy(() => import("./pages/guesthouse/GuestHouseLobby"));
 const GuestHousePlay = lazy(() => import("./pages/guesthouse/GuestHousePlay"));
 const GuestHouseAssembly = lazy(() => import("./pages/guesthouse/GuestHouseAssembly"));
+const GuestHouseHost = lazy(() => import("./pages/guesthouse/GuestHouseHost"));
+const GuestHouseHostLive = lazy(() => import("./pages/guesthouse/GuestHouseHostLive"));
 
 const queryClient = new QueryClient();
 
@@ -517,6 +519,10 @@ function App() {
             <Route path="/guesthouse/lobby/:eventId" element={<GuestHouseLobby />} />
             <Route path="/guesthouse/play/:eventId" element={<GuestHousePlay />} />
             <Route path="/guesthouse/assembly/:eventId" element={<GuestHouseAssembly />} />
+            
+            {/* GuestHouse Host Routes (Auth Required) */}
+            <Route path="/guesthouse/host" element={<ProtectedRoute><GuestHouseHost /></ProtectedRoute>} />
+            <Route path="/guesthouse/host/live/:eventId" element={<ProtectedRoute><GuestHouseHostLive /></ProtectedRoute>} />
             
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
