@@ -3,33 +3,23 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { isOnline } from '@/services/offlineAudioCache';
 
-// Available ElevenLabs voices
-export const ELEVENLABS_VOICES = [
-  { id: 'aria', name: 'Aria', description: 'Warm and expressive female voice' },
-  { id: 'roger', name: 'Roger', description: 'Deep and authoritative male voice' },
-  { id: 'sarah', name: 'Sarah', description: 'Clear and professional female voice' },
-  { id: 'laura', name: 'Laura', description: 'Gentle and soothing female voice' },
-  { id: 'charlie', name: 'Charlie', description: 'Friendly and casual male voice' },
-  { id: 'george', name: 'George', description: 'Distinguished British male voice' },
-  { id: 'callum', name: 'Callum', description: 'Young and energetic male voice' },
-  { id: 'river', name: 'River', description: 'Calm and meditative voice' },
-  { id: 'liam', name: 'Liam', description: 'Strong and confident male voice' },
-  { id: 'charlotte', name: 'Charlotte', description: 'Elegant and refined female voice' },
-  { id: 'alice', name: 'Alice', description: 'Bright and cheerful female voice' },
-  { id: 'matilda', name: 'Matilda', description: 'Warm Australian female voice' },
-  { id: 'will', name: 'Will', description: 'Casual American male voice' },
-  { id: 'jessica', name: 'Jessica', description: 'Articulate and clear female voice' },
-  { id: 'eric', name: 'Eric', description: 'Mature and wise male voice' },
-  { id: 'chris', name: 'Chris', description: 'Versatile and natural male voice' },
-  { id: 'brian', name: 'Brian', description: 'Deep and resonant male voice' },
-  { id: 'daniel', name: 'Daniel', description: 'British narrator voice' },
-  { id: 'lily', name: 'Lily', description: 'Sweet and youthful female voice' },
-  { id: 'bill', name: 'Bill', description: 'Gravelly and distinctive male voice' },
+// Available Speechify voices
+export const SPEECHIFY_VOICES = [
+  { id: 'henry', name: 'Henry', description: 'Natural male narrator' },
+  { id: 'mrbeast', name: 'MrBeast', description: 'Energetic and engaging male' },
+  { id: 'gwyneth', name: 'Gwyneth', description: 'Calm and soothing female' },
+  { id: 'snoop', name: 'Snoop', description: 'Laid-back and smooth male' },
+  { id: 'matthew', name: 'Matthew', description: 'Clear and articulate male' },
+  { id: 'george', name: 'George', description: 'Distinguished British male' },
+  { id: 'oliver', name: 'Oliver', description: 'Youthful and friendly male' },
+  { id: 'emma', name: 'Emma', description: 'Warm and friendly female' },
+  { id: 'james', name: 'James', description: 'Professional male narrator' },
+  { id: 'sophia', name: 'Sophia', description: 'Elegant and refined female' },
 ] as const;
 
-export type VoiceId = typeof ELEVENLABS_VOICES[number]['id'];
+export type VoiceId = typeof SPEECHIFY_VOICES[number]['id'];
 
-type TTSMode = 'elevenlabs' | 'browser' | 'auto';
+type TTSMode = 'speechify' | 'browser' | 'auto';
 
 interface UseTextToSpeechEnhancedOptions {
   defaultVoice?: VoiceId;
@@ -57,7 +47,7 @@ interface SpeakOptions {
  */
 export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions = {}) {
   const {
-    defaultVoice = 'daniel',
+    defaultVoice = 'henry',
     onStart,
     onEnd,
     onError,
@@ -69,7 +59,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>(defaultVoice);
   const [wasCached, setWasCached] = useState(false);
-  const [currentMode, setCurrentMode] = useState<'elevenlabs' | 'browser'>('elevenlabs');
+  const [currentMode, setCurrentMode] = useState<'speechify' | 'browser'>('speechify');
   const [networkStatus, setNetworkStatus] = useState<'online' | 'offline' | 'slow'>('online');
   const [browserVoices, setBrowserVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedBrowserVoice, setSelectedBrowserVoice] = useState<SpeechSynthesisVoice | null>(null);
@@ -310,6 +300,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
         body: {
           text: text.trim(),
           voice: opts.voice || selectedVoice,
+          provider: 'speechify',
           book: opts.book,
           chapter: opts.chapter,
           verse: opts.verse,
@@ -386,7 +377,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
       audio.load();
 
       await audio.play();
-      setCurrentMode('elevenlabs');
+      setCurrentMode('speechify');
       setIsPlaying(true);
       onStartRef.current?.();
 
@@ -424,7 +415,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
 
       if (mode === 'browser') {
         shouldUseBrowser = true;
-      } else if (mode === 'elevenlabs') {
+      } else if (mode === 'speechify') {
         shouldUseBrowser = false;
       } else {
         // Auto mode: decide based on network
@@ -464,9 +455,9 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     isPlaying,
     selectedVoice,
     setSelectedVoice,
-    voices: ELEVENLABS_VOICES,
+    voices: SPEECHIFY_VOICES,
     wasCached,
-    currentMode, // 'elevenlabs' or 'browser'
+    currentMode, // 'speechify' or 'browser'
     networkStatus, // 'online', 'offline', or 'slow'
     browserVoices,
     selectedBrowserVoice,
