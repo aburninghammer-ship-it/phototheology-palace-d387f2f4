@@ -350,8 +350,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
       console.log("[Verse Commentary] Generating", depth, "commentary for", book, chapter + ":" + verse);
       
-      // Add timeout to edge function call
-      const timeoutMs = 10000; // 10 second timeout for verse commentary
+      // Add timeout to edge function call - longer for deep-drill
+      const timeoutMs = depth === "deep-drill" ? 30000 : 15000; // 30s for deep-drill, 15s for others
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       
@@ -484,6 +484,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
       if (error) throw error;
 
+      // Handle URL response (cached or just-cached)
+      if (data?.audioUrl) {
+        console.log("[TTS] Using returned audio URL");
+        return data.audioUrl;
+      }
+
+      // Handle base64 response
       if (data?.audioContent) {
         const byteCharacters = atob(data.audioContent);
         const byteNumbers = new Array(byteCharacters.length);
@@ -494,6 +501,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         const blob = new Blob([byteArray], { type: "audio/mpeg" });
         return URL.createObjectURL(blob);
       }
+      console.warn("[TTS] No audio content in response");
       return null;
     } catch (e) {
       console.error("Error generating TTS:", e);
@@ -580,8 +588,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     playingCommentaryRef.current = true;
     setIsLoading(true);
 
-    // Add timeout to TTS generation - longer for commentary
-    const timeoutMs = 60000; // 60 seconds for long chapter commentary
+    // Add timeout to TTS generation - longer for commentary (can be deep-drill which is very long)
+    const timeoutMs = 90000; // 90 seconds for potentially long commentary
     const timeoutPromise = new Promise<string | null>((_, reject) => 
       setTimeout(() => reject(new Error('TTS generation timeout')), timeoutMs)
     );
