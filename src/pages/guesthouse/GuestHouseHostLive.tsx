@@ -9,19 +9,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { 
   Users, 
-  Play, 
   MessageSquare,
   Trophy,
   Clock,
   Zap,
   SkipForward,
   Sparkles,
-  Loader2
+  Loader2,
+  Gift
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PresenceIndicators } from "@/components/guesthouse/PresenceIndicators";
+import { Leaderboard } from "@/components/guesthouse/Leaderboard";
 import { generateGamePrompt } from "@/lib/guesthouseJeeves";
+import { useGuesthouseScoring } from "@/hooks/useGuesthouseScoring";
 import type { Json } from "@/integrations/supabase/types";
 
 const GAME_TYPES = [
@@ -38,6 +40,9 @@ interface Guest {
   id: string;
   display_name: string;
   is_checked_in: boolean;
+  score?: number;
+  rounds_played?: number;
+  correct_answers?: number;
 }
 
 interface SessionPrompt {
@@ -59,6 +64,9 @@ export default function GuestHouseHostLive() {
   const [sessionTime, setSessionTime] = useState(0);
   const [generatingPrompt, setGeneratingPrompt] = useState(false);
   const [customVerse, setCustomVerse] = useState("John 3:16");
+  const [responseCount, setResponseCount] = useState(0);
+
+  const { leaderboard, awardBonusPoints } = useGuesthouseScoring(eventId || "");
 
   useEffect(() => {
     if (!eventId) return;
@@ -118,9 +126,9 @@ export default function GuestHouseHostLive() {
   const fetchGuests = async () => {
     const { data, error } = await supabase
       .from("guesthouse_guests")
-      .select("id, display_name, is_checked_in")
+      .select("id, display_name, is_checked_in, score, rounds_played, correct_answers")
       .eq("event_id", eventId)
-      .order("created_at", { ascending: false });
+      .order("score", { ascending: false });
 
     if (error) {
       console.error("Error fetching guests:", error);
@@ -128,6 +136,23 @@ export default function GuestHouseHostLive() {
     }
     setGuests(data || []);
   };
+
+  const fetchResponseCount = async () => {
+    if (!activePrompt) return;
+    const { count } = await supabase
+      .from("guesthouse_responses")
+      .select("*", { count: "exact", head: true })
+      .eq("prompt_id", activePrompt.id);
+    setResponseCount(count || 0);
+  };
+
+  useEffect(() => {
+    if (activePrompt) {
+      fetchResponseCount();
+      const interval = setInterval(fetchResponseCount, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [activePrompt]);
 
   const fetchPrompts = async () => {
     const { data, error } = await supabase
@@ -398,50 +423,32 @@ export default function GuestHouseHostLive() {
         <div className="col-span-4 space-y-4">
           <PresenceIndicators eventId={eventId!} guestCount={guests.length} />
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-yellow-500" />
-                Guests
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-64">
-                {guests.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">
-                    Waiting for guests to join...
-                  </p>
-                ) : (
-                  <div className="space-y-2">
-                    {guests.map((guest, index) => (
-                      <motion.div
-                        key={guest.id}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                            index === 0 ? "bg-yellow-500 text-yellow-950" :
-                            index === 1 ? "bg-gray-300 text-gray-700" :
-                            index === 2 ? "bg-amber-600 text-amber-50" :
-                            "bg-muted text-muted-foreground"
-                          }`}>
-                            {index + 1}
-                          </span>
-                          <span className="font-medium">{guest.display_name}</span>
-                        </div>
-                        <Badge variant={guest.is_checked_in ? "default" : "outline"}>
-                          {guest.is_checked_in ? "Ready" : "Joining"}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          {/* Leaderboard */}
+          <Leaderboard 
+            guests={leaderboard.length > 0 ? leaderboard : guests.map(g => ({
+              id: g.id,
+              display_name: g.display_name,
+              score: g.score || 0,
+              rounds_played: g.rounds_played || 0,
+              correct_answers: g.correct_answers || 0
+            }))} 
+          />
+
+          {/* Response Status */}
+          {activePrompt && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Response Status</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-muted-foreground">Submissions</span>
+                  <span className="font-bold">{responseCount} / {guests.length}</span>
+                </div>
+                <Progress value={(responseCount / Math.max(guests.length, 1)) * 100} />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Quick Actions */}
           <Card>
@@ -453,13 +460,28 @@ export default function GuestHouseHostLive() {
                 <MessageSquare className="w-4 h-4" />
                 Send Announcement
               </Button>
-              <Button variant="outline" className="w-full justify-start gap-2">
-                <Trophy className="w-4 h-4" />
+              <Button 
+                variant="outline" 
+                className="w-full justify-start gap-2"
+                onClick={() => {
+                  const guestId = guests[0]?.id;
+                  if (guestId) {
+                    awardBonusPoints(guestId, 50, "Host bonus");
+                    toast.success("Bonus points awarded!");
+                  }
+                }}
+              >
+                <Gift className="w-4 h-4" />
                 Award Bonus Points
               </Button>
-              <Button variant="outline" className="w-full justify-start gap-2">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start gap-2"
+                onClick={endCurrentGame}
+                disabled={!activePrompt}
+              >
                 <SkipForward className="w-4 h-4" />
-                Skip to Results
+                End Round & Show Results
               </Button>
             </CardContent>
           </Card>
