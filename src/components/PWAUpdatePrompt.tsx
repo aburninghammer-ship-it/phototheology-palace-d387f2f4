@@ -4,9 +4,23 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Download, RefreshCw } from 'lucide-react';
 
+// Key for tracking recent updates to prevent prompt spam
+const UPDATE_COOLDOWN_KEY = 'pwa_update_cooldown';
+const UPDATE_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown after update
+
+function isInCooldown(): boolean {
+  const cooldownUntil = localStorage.getItem(UPDATE_COOLDOWN_KEY);
+  if (!cooldownUntil) return false;
+  return Date.now() < parseInt(cooldownUntil, 10);
+}
+
+function setCooldown(): void {
+  localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + UPDATE_COOLDOWN_MS));
+}
+
 export function PWAUpdatePrompt() {
   const [showReload, setShowReload] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   
   const {
     offlineReady: [offlineReady, setOfflineReady],
@@ -16,18 +30,30 @@ export function PWAUpdatePrompt() {
     onRegisteredSW(swUrl, r) {
       console.log('SW registered:', swUrl);
       if (r) {
-        // Check for updates every 2 minutes for faster detection
+        // Check for updates every 5 minutes (less aggressive)
         setInterval(() => {
-          console.log('Checking for SW update...');
+          // Don't check if in cooldown
+          if (!isInCooldown()) {
+            console.log('Checking for SW update...');
+            r.update();
+          }
+        }, 5 * 60 * 1000);
+        
+        // Only check immediately if not in cooldown
+        if (!isInCooldown()) {
           r.update();
-        }, 2 * 60 * 1000);
-        // Check immediately on registration
-        r.update();
+        }
       }
     },
     onNeedRefresh() {
-      console.log('New content available, showing update prompt');
-      setShowReload(true);
+      console.log('New content available, checking cooldown...');
+      // Only show prompt if not in cooldown period
+      if (!isInCooldown()) {
+        console.log('Showing update prompt');
+        setShowReload(true);
+      } else {
+        console.log('In cooldown period, skipping prompt');
+      }
     },
     onOfflineReady() {
       console.log('App ready for offline use');
@@ -38,44 +64,59 @@ export function PWAUpdatePrompt() {
   });
 
   useEffect(() => {
-    if (needRefresh) {
+    // Only show if needRefresh is true AND not in cooldown
+    if (needRefresh && !isInCooldown()) {
       setShowReload(true);
     }
   }, [needRefresh]);
 
-  const handleUpdate = useCallback(() => {
-    updateServiceWorker(true);
-    // Small delay to ensure SW is activated before reload
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
-  }, [updateServiceWorker]);
-
-  const handleCheckForUpdates = useCallback(async () => {
-    setIsChecking(true);
+  const handleUpdate = useCallback(async () => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+    
     try {
-      // Try to get the SW registration and check for updates
+      // Set cooldown before updating to prevent immediate re-prompt
+      setCooldown();
+      
+      // Update the service worker
+      await updateServiceWorker(true);
+      
+      // Wait for SW to activate, then reload
       if ('serviceWorker' in navigator) {
         const registration = await navigator.serviceWorker.getRegistration();
-        if (registration) {
-          await registration.update();
-          // If there's a waiting worker, show the update prompt
-          if (registration.waiting) {
-            setShowReload(true);
-          }
+        if (registration?.waiting) {
+          // Send skip waiting message
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          
+          // Wait for the new SW to activate
+          await new Promise<void>((resolve) => {
+            const onControllerChange = () => {
+              navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+              resolve();
+            };
+            navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+            // Timeout after 3 seconds
+            setTimeout(resolve, 3000);
+          });
         }
       }
+      
+      // Reload the page
+      window.location.reload();
     } catch (error) {
-      console.error('Error checking for updates:', error);
-    } finally {
-      setIsChecking(false);
+      console.error('Error during update:', error);
+      setIsUpdating(false);
+      // Still try to reload
+      window.location.reload();
     }
-  }, []);
+  }, [updateServiceWorker, isUpdating]);
 
   const close = () => {
     setOfflineReady(false);
     setNeedRefresh(false);
     setShowReload(false);
+    // Set a shorter cooldown when user dismisses
+    localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + 2 * 60 * 1000)); // 2 min cooldown
   };
 
   if (!offlineReady && !showReload) return null;
@@ -107,11 +148,12 @@ export function PWAUpdatePrompt() {
                 variant="default" 
                 size="sm"
                 className="flex-1 sm:flex-initial"
+                disabled={isUpdating}
               >
-                <RefreshCw className="h-3 w-3 mr-1" />
-                Reload
+                <RefreshCw className={`h-3 w-3 mr-1 ${isUpdating ? 'animate-spin' : ''}`} />
+                {isUpdating ? 'Updating...' : 'Reload'}
               </Button>
-              <Button onClick={close} variant="outline" size="sm" className="flex-1 sm:flex-initial">
+              <Button onClick={close} variant="outline" size="sm" className="flex-1 sm:flex-initial" disabled={isUpdating}>
                 Later
               </Button>
             </div>
@@ -128,6 +170,11 @@ export function useCheckForUpdates() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const checkForUpdates = useCallback(async () => {
+    // Don't check if in cooldown
+    if (isInCooldown()) {
+      return false;
+    }
+    
     setIsChecking(true);
     try {
       if ('serviceWorker' in navigator) {
@@ -150,6 +197,7 @@ export function useCheckForUpdates() {
   }, []);
 
   const applyUpdate = useCallback(async () => {
+    setCooldown();
     if ('serviceWorker' in navigator) {
       const registration = await navigator.serviceWorker.getRegistration();
       if (registration?.waiting) {
