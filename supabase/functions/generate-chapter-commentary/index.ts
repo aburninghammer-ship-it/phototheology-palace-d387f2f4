@@ -94,9 +94,10 @@ ${personalAddressSection}
   * Ark of the Covenant = law, mercy seat, God's throne
   * Veil = separation, access through Christ
   * Gate = Christ as the door
-- Prophecy Room: Daniel and Revelation timelines, repeat-and-enlarge patterns
 - Three Angels' Room: Everlasting Gospel, Babylon Fallen, Beast/Image/Mark Warning
 - Feasts Room: Connect to Israel's feasts when applicable
+
+NOTE: Prophecy is NOT a standalone room—it is one of six genres classified in the Connect 6 Room (Floor 4). When applying prophetic principles, use the Connect 6 Room's prophecy genre classification along with sanctuary typology from the Blue Room.
   * Passover, Unleavened Bread, Firstfruits (Spring - fulfilled at First Coming)
   * Pentecost (fulfilled at Spirit's outpouring)
   * Trumpets, Day of Atonement, Tabernacles (Fall - fulfilling in end-time events)
@@ -254,7 +255,7 @@ You MUST engage with ALL 8 floors throughout the commentary. Don't just mention 
 - Parallels Room: Show mirrored actions across Scripture (e.g., Babel/Pentecost)
 - Fruit Room: Ensure interpretation produces Christlike character
 
-**Floor 5 (Vision):** Connect to sanctuary typology (Blue Room - altar, laver, lampstand, showbread, incense, ark, veil, gate), place in prophetic timelines with SPECIFIC DATES (Prophecy Room), relate to Three Angels' Messages when relevant, connect to biblical feasts (Feasts Room)
+**Floor 5 (Vision):** Connect to sanctuary typology (Blue Room - altar, laver, lampstand, showbread, incense, ark, veil, gate), apply prophetic interpretation using the Connect 6 Room's prophecy genre with SPECIFIC DATES when relevant, relate to Three Angels' Messages, connect to biblical feasts (Feasts Room)
 
 **Floor 6 (Cycles & Heavens):** Place chapter in one of the 8 covenant cycles (Adamic, Noahic, Abrahamic, Mosaic, Cyrusic, Cyrus-Christ, Spirit, Remnant) and identify which Day-of-the-LORD horizon (1H: Babylon→Restoration, 2H: 70AD→New Covenant, 3H: Final→New Creation)
 
