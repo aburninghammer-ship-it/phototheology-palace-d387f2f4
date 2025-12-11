@@ -138,20 +138,28 @@ export const PunchyHero = () => {
           <UserCountBadge />
         </motion.div>
 
-        {/* Hero Card Deck Image - Smaller on mobile */}
+        {/* Hero Card Deck Image - Glass container */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           className="mb-8 px-4"
         >
-          <img 
-            src={heroCardsDisplay} 
-            alt="Phototheology Card Deck - 8 floors of Bible study principles" 
-            className="w-full max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto drop-shadow-2xl"
-            loading="eager"
-            decoding="async"
-          />
+          <div className="relative p-3 sm:p-5 md:p-6 rounded-2xl backdrop-blur-md bg-white/5 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto overflow-hidden">
+            {/* Inner gradient glow */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-accent/10 pointer-events-none" />
+            {/* Animated floating orbs */}
+            <div className="absolute top-4 left-4 w-2 h-2 rounded-full bg-cyan-400/60 animate-pulse" />
+            <div className="absolute bottom-6 right-8 w-1.5 h-1.5 rounded-full bg-yellow-400/60 animate-pulse delay-300" />
+            <div className="absolute top-1/2 right-4 w-1 h-1 rounded-full bg-primary/60 animate-pulse delay-700" />
+            <img 
+              src={heroCardsDisplay} 
+              alt="Phototheology Card Deck - 8 floors of Bible study principles" 
+              className="relative w-full drop-shadow-2xl"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
         </motion.div>
 
         {/* Dual CTA */}
