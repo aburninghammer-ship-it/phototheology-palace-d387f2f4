@@ -78,6 +78,18 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const keepAliveIntervalRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  
+  // Use refs for callbacks to avoid stale closures in event handlers
+  const onEndRef = useRef(onEnd);
+  const onErrorRef = useRef(onError);
+  const onStartRef = useRef(onStart);
+  
+  // Keep refs updated
+  useEffect(() => {
+    onEndRef.current = onEnd;
+    onErrorRef.current = onError;
+    onStartRef.current = onStart;
+  }, [onEnd, onError, onStart]);
 
   // Keep speech synthesis alive on mobile browsers
   useEffect(() => {
@@ -191,14 +203,16 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
     }
 
     // Stop browser TTS
     speechSynthesis.cancel();
 
     setIsPlaying(false);
-    onEnd?.();
-  }, [onEnd]);
+    onEndRef.current?.();
+  }, []);
 
   // Browser TTS fallback with chunking for long texts
   const speakWithBrowser = useCallback(async (text: string) => {
@@ -228,8 +242,9 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
 
         const speakChunk = () => {
           if (currentChunkIndex >= chunks.length) {
+            console.log('[TTS] All chunks completed');
             setIsPlaying(false);
-            onEnd?.();
+            onEndRef.current?.();
             resolve();
             return;
           }
@@ -246,7 +261,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
             if (currentChunkIndex === 0) {
               setCurrentMode('browser');
               setIsPlaying(true);
-              onStart?.();
+              onStartRef.current?.();
             }
             console.log(`[TTS] Playing chunk ${currentChunkIndex + 1}/${chunks.length}`);
           };
@@ -278,7 +293,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
         reject(error);
       }
     });
-  }, [selectedBrowserVoice, onStart, onEnd]);
+  }, [selectedBrowserVoice]);
 
   // ElevenLabs TTS with timeout
   const speakWithElevenLabs = useCallback(async (text: string, speakOptions?: SpeakOptions) => {
@@ -341,48 +356,50 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
         await audioContextRef.current.resume();
       }
 
-      audioRef.current.src = audioUrl;
+      const audio = audioRef.current;
+      const isBlobUrl = audioUrl.startsWith('blob:');
       
-      // Handle playback end
-      audioRef.current.onended = () => {
+      // Set up event handlers BEFORE setting src for reliability
+      audio.onended = () => {
+        console.log('[TTS Enhanced] Audio ended naturally');
         setIsPlaying(false);
-        if (audioUrl.startsWith('blob:')) {
+        if (isBlobUrl) {
           URL.revokeObjectURL(audioUrl);
         }
-        onEnd?.();
+        onEndRef.current?.();
       };
       
-      // Handle errors with retry logic
-      audioRef.current.onerror = () => {
-        console.error('[TTS] Audio playback error');
+      audio.onerror = (e) => {
+        console.error('[TTS Enhanced] Audio playback error:', e);
         setIsPlaying(false);
-        if (audioUrl.startsWith('blob:')) {
+        if (isBlobUrl) {
           URL.revokeObjectURL(audioUrl);
         }
         throw new Error('Audio playback failed');
       };
 
-      // Handle interruptions (phone calls, etc.)
-      audioRef.current.onpause = () => {
-        console.log('[TTS] Audio paused (possibly by system)');
+      audio.onpause = () => {
+        console.log('[TTS Enhanced] Audio paused (possibly by system)');
       };
 
-      await audioRef.current.play();
+      audio.src = audioUrl;
+      audio.load();
+
+      await audio.play();
       setCurrentMode('elevenlabs');
       setIsPlaying(true);
-      onStart?.();
+      onStartRef.current?.();
 
     } catch (error) {
       clearTimeout(timeoutId);
 
-      // If abort, network is slow/offline
       if (error instanceof Error && error.name === 'AbortError') {
         throw new Error('Network timeout - connection too slow');
       }
 
       throw error;
     }
-  }, [selectedVoice, timeout, onStart, onEnd]);
+  }, [selectedVoice, timeout]);
 
   const speak = useCallback(async (text: string, speakOptions?: SpeakOptions | VoiceId) => {
     if (!text.trim()) {
