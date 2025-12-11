@@ -3128,6 +3128,312 @@ export type Database = {
         }
         Relationships: []
       }
+      guesthouse_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          game_config: Json | null
+          game_type: string | null
+          host_user_id: string | null
+          id: string
+          max_guests: number
+          scheduled_at: string
+          session_type: string
+          social_share_image_url: string | null
+          social_share_text: string | null
+          status: string
+          title: string
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          game_config?: Json | null
+          game_type?: string | null
+          host_user_id?: string | null
+          id?: string
+          max_guests?: number
+          scheduled_at: string
+          session_type?: string
+          social_share_image_url?: string | null
+          social_share_text?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          game_config?: Json | null
+          game_type?: string | null
+          host_user_id?: string | null
+          id?: string
+          max_guests?: number
+          scheduled_at?: string
+          session_type?: string
+          social_share_image_url?: string | null
+          social_share_text?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
+      guesthouse_game_library: {
+        Row: {
+          content: Json
+          created_at: string
+          difficulty: string
+          game_type: string
+          id: string
+          last_used_at: string | null
+          scripture_reference: string | null
+          theme: string | null
+          title: string
+          used_count: number
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          difficulty?: string
+          game_type: string
+          id?: string
+          last_used_at?: string | null
+          scripture_reference?: string | null
+          theme?: string | null
+          title: string
+          used_count?: number
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          difficulty?: string
+          game_type?: string
+          id?: string
+          last_used_at?: string | null
+          scripture_reference?: string | null
+          theme?: string | null
+          title?: string
+          used_count?: number
+        }
+        Relationships: []
+      }
+      guesthouse_group_results: {
+        Row: {
+          completion_time_seconds: number | null
+          created_at: string
+          discoveries: Json
+          event_id: string
+          group_name: string
+          id: string
+          total_score: number | null
+        }
+        Insert: {
+          completion_time_seconds?: number | null
+          created_at?: string
+          discoveries?: Json
+          event_id: string
+          group_name: string
+          id?: string
+          total_score?: number | null
+        }
+        Update: {
+          completion_time_seconds?: number | null
+          created_at?: string
+          discoveries?: Json
+          event_id?: string
+          group_name?: string
+          id?: string
+          total_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guesthouse_group_results_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guesthouse_guests: {
+        Row: {
+          checked_in_at: string | null
+          created_at: string
+          display_name: string
+          email: string | null
+          event_id: string
+          group_color: string | null
+          group_name: string | null
+          id: string
+          is_checked_in: boolean
+          user_id: string | null
+        }
+        Insert: {
+          checked_in_at?: string | null
+          created_at?: string
+          display_name: string
+          email?: string | null
+          event_id: string
+          group_color?: string | null
+          group_name?: string | null
+          id?: string
+          is_checked_in?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          checked_in_at?: string | null
+          created_at?: string
+          display_name?: string
+          email?: string | null
+          event_id?: string
+          group_color?: string | null
+          group_name?: string | null
+          id?: string
+          is_checked_in?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guesthouse_guests_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guesthouse_prompt_responses: {
+        Row: {
+          created_at: string
+          guest_id: string
+          id: string
+          prompt_id: string
+          response_data: Json
+          response_type: string
+        }
+        Insert: {
+          created_at?: string
+          guest_id: string
+          id?: string
+          prompt_id: string
+          response_data?: Json
+          response_type: string
+        }
+        Update: {
+          created_at?: string
+          guest_id?: string
+          id?: string
+          prompt_id?: string
+          response_data?: Json
+          response_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guesthouse_prompt_responses_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_guests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guesthouse_prompt_responses_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_session_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guesthouse_reactions: {
+        Row: {
+          created_at: string
+          emoji: string
+          event_id: string
+          guest_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji: string
+          event_id: string
+          guest_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          event_id?: string
+          guest_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guesthouse_reactions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guesthouse_reactions_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_guests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guesthouse_session_prompts: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          event_id: string
+          id: string
+          is_active: boolean
+          prompt_data: Json
+          prompt_type: string
+          sequence_order: number
+          started_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          event_id: string
+          id?: string
+          is_active?: boolean
+          prompt_data?: Json
+          prompt_type: string
+          sequence_order: number
+          started_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          event_id?: string
+          id?: string
+          is_active?: boolean
+          prompt_data?: Json
+          prompt_type?: string
+          sequence_order?: number
+          started_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guesthouse_session_prompts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guild_activities: {
         Row: {
           activity_data: Json | null

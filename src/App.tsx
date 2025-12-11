@@ -219,6 +219,13 @@ const Sessions = lazy(() => import("./pages/Sessions"));
 const Notes = lazy(() => import("./pages/Notes"));
 const DonationSuccess = lazy(() => import("./pages/DonationSuccess"));
 
+// GuestHouse pages (public)
+const GuestHouseLanding = lazy(() => import("./pages/guesthouse/GuestHouseLanding"));
+const GuestHouseEvent = lazy(() => import("./pages/guesthouse/GuestHouseEvent"));
+const GuestHouseLobby = lazy(() => import("./pages/guesthouse/GuestHouseLobby"));
+const GuestHousePlay = lazy(() => import("./pages/guesthouse/GuestHousePlay"));
+const GuestHouseAssembly = lazy(() => import("./pages/guesthouse/GuestHouseAssembly"));
+
 const queryClient = new QueryClient();
 
 function App() {
