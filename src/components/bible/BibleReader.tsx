@@ -456,14 +456,6 @@ export const BibleReader = () => {
 
         {/* Right Panel - Dynamic based on mode - Floating/Sticky */}
         <div className="lg:col-span-1 space-y-6 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto" ref={jeevesRef}>
-          {/* Dimension Filter (Advanced Mode Only) */}
-          {studyMode === "advanced" && (
-            <DimensionFilter 
-              activeDimensions={activeDimensions}
-              onToggle={toggleDimension}
-            />
-          )}
-          
           {chainReferenceMode ? (
             <ChainReferencePanel
               book={book}
