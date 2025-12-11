@@ -36,12 +36,15 @@ export const DimensionFilter = ({ activeDimensions, onToggle }: DimensionFilterP
           return (
             <Button
               key={dim.id}
-              variant={isActive ? "default" : "outline"}
+              variant="outline"
               size="sm"
               onClick={() => onToggle(dim.id)}
-              className={`flex-col h-auto py-3 gap-1 ${
-                isActive ? dim.color + " text-white hover:opacity-90" : ""
+              className={`flex-col h-auto py-3 gap-1 border-2 transition-all ${
+                isActive 
+                  ? `${dim.color} text-white border-transparent hover:opacity-90 shadow-lg` 
+                  : "hover:bg-accent/10"
               }`}
+              style={isActive ? { backgroundColor: undefined } : undefined}
             >
               <Icon className="h-4 w-4" />
               <span className="text-xs font-semibold">{dim.name}</span>
