@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Heart, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,10 +64,13 @@ export const DonationBanner = () => {
         <div className="flex items-center gap-3 flex-1">
           <Heart className="h-5 w-5 text-primary-foreground animate-pulse" />
           <p className="text-sm text-primary-foreground font-medium hidden sm:block">
-            Help us make this app better! Your donation supports continued development.
+            Help us make this app better!{" "}
+            <Link to="/donate" className="underline hover:no-underline">
+              Learn more
+            </Link>
           </p>
           <p className="text-sm text-primary-foreground font-medium sm:hidden">
-            Support us!
+            <Link to="/donate" className="underline">Support us!</Link>
           </p>
         </div>
         <div className="flex items-center gap-2">
