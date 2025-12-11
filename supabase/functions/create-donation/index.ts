@@ -6,7 +6,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const DONATION_PRICE_ID = "price_1ScyykFGDAd3RU8Id72ENqCz";
+// Price IDs for preset amounts
+const PRICE_IDS: Record<number, string> = {
+  5: "price_1ScyykFGDAd3RU8Id72ENqCz",
+  50: "price_1Sd0K6FGDAd3RU8IqILqXG5l",
+  500: "price_1Sd0LZFGDAd3RU8IlC2ABtJt",
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -20,16 +25,41 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    const { email } = await req.json().catch(() => ({}));
+    const { email, amount } = await req.json().catch(() => ({}));
+    const donationAmount = Number(amount) || 5;
     
-    const session = await stripe.checkout.sessions.create({
-      customer_email: email || undefined,
-      line_items: [
+    console.log("[CREATE-DONATION] Amount requested:", donationAmount);
+
+    let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+
+    // Check if it's a preset amount with a price ID
+    if (PRICE_IDS[donationAmount]) {
+      lineItems = [
         {
-          price: DONATION_PRICE_ID,
+          price: PRICE_IDS[donationAmount],
           quantity: 1,
         },
-      ],
+      ];
+    } else {
+      // Custom amount - use price_data
+      lineItems = [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "Support Phototheology Development",
+              description: `$${donationAmount} donation to support continued development`,
+            },
+            unit_amount: donationAmount * 100, // Convert to cents
+          },
+          quantity: 1,
+        },
+      ];
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      customer_email: email || undefined,
+      line_items: lineItems,
       mode: "payment",
       success_url: `${req.headers.get("origin")}/donation-success`,
       cancel_url: `${req.headers.get("origin")}/`,
