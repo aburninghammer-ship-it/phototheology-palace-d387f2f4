@@ -119,9 +119,9 @@ export function PWAInstallButton() {
         <span className="hidden sm:inline">Install App</span>
         <Badge 
           variant="secondary" 
-          className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-accent text-accent-foreground animate-pulse"
+          className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-primary text-primary-foreground"
         >
-          !
+          ✓
         </Badge>
       </Button>
 

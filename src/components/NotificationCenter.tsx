@@ -21,11 +21,14 @@ export function NotificationCenter() {
     console.log('🔔 NotificationCenter: Notification clicked', {
       id: notification.id,
       type: notification.type,
-      metadata: notification.metadata
+      metadata: notification.metadata,
+      is_read: notification.is_read
     });
     
-    // Mark as read first and wait for it to complete
-    await markAsRead(notification.id);
+    // Mark as read first and wait for it to complete (only if not already read)
+    if (!notification.is_read) {
+      await markAsRead(notification.id);
+    }
     
     // Handle message notifications by opening the messaging sidebar
     if (notification.type === 'message' || notification.type === 'direct_message') {
