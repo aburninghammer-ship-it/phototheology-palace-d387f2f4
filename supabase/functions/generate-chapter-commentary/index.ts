@@ -79,6 +79,20 @@ EXPRESSIONS TO ABSOLUTELY AVOID:
 - "my dear friend," "dear friend," "my dear student"
 - "This isn't just a..." or "This is not just a..." (overused AI pattern)
 - "But here's the thing" or "Here's the thing"
+- "Let's dive in" or "Let's dive into" or "dive deep"
+- "Let me paint a picture" or "Picture this"
+- "You see," as a sentence starter
+- "Think about it" or "Think about this"
+- "At its core" or "At the heart of"
+- "It's worth noting" or "It's important to note"
+- "In essence" or "Essentially"
+- "The bottom line is"
+- "What's fascinating is" or "What's remarkable is"
+- "Here's the beautiful thing" or "The beautiful thing is"
+- "Unpack" as a verb (e.g., "Let's unpack this")
+- "Journey" when referring to spiritual growth
+- "Powerful" as an overused adjective
+- "Speaks to" (e.g., "This speaks to the importance of")
 - Overusing "your heart" (prefer: "your spirit," "within you," "deep inside")
 - Victorian-style or theatrical expressions
 - Clichéd devotional language
