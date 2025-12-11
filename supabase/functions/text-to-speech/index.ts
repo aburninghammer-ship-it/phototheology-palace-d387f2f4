@@ -36,19 +36,17 @@ const ELEVENLABS_VOICES: Record<string, string> = {
   'bill': 'pqHfZKP75CvOlQylNhV4',
 };
 
-// Speechify voice IDs - these are the actual API voice IDs
-// Format: language_gender_name (e.g., en-US-male-henry)
+// Speechify voice IDs - verified working voices
+// Note: More voices available via list-speechify-voices endpoint
 const SPEECHIFY_VOICES: Record<string, string> = {
   'henry': 'henry',
   'mrbeast': 'mrbeast', 
-  'gwyneth': 'gwyneth',
-  'snoop': 'snoop',
-  'matthew': 'matthew',
   'george': 'george',
-  'oliver': 'oliver',
-  'emma': 'emma',
-  'james': 'james',
-  'sophia': 'sophia',
+  'cliff': 'cliff',
+  'cody': 'cody',
+  'kristy': 'kristy',
+  'natasha': 'natasha',
+  'cindy': 'cindy',
 };
 
 const MAX_CHARS = 4096;

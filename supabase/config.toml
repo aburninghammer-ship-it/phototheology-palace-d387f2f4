@@ -163,3 +163,6 @@ verify_jwt = false
 
 [functions.get-contextual-help]
 verify_jwt = false
+
+[functions.list-speechify-voices]
+verify_jwt = false
