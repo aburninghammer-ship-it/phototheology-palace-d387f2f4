@@ -32,11 +32,23 @@ export const PunchyHero = () => {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-8 sm:py-0">
-        {/* Badge */}
+        {/* Main Title */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          className="mb-3 sm:mb-4"
+        >
+          <h2 className="font-display text-lg sm:text-xl md:text-2xl font-semibold tracking-wide text-primary uppercase">
+            Phototheology Bible Study Suite
+          </h2>
+        </motion.div>
+
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.05 }}
           className="mb-4 sm:mb-6"
         >
           <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-primary">
