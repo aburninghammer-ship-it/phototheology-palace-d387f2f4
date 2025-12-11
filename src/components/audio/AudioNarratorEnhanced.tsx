@@ -207,12 +207,16 @@ export const AudioNarratorEnhanced = ({
                 <SelectTrigger className="w-full h-8 text-xs">
                   <SelectValue placeholder="Select voice" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
+                <SelectContent className="max-h-[300px] bg-background border-border">
                   {voices.map((voice) => (
-                    <SelectItem key={voice.id} value={voice.id} className="text-xs">
-                      <div className="flex flex-col">
-                        <span className="font-medium">{voice.name}</span>
-                        <span className="text-muted-foreground text-[10px]">{voice.description}</span>
+                    <SelectItem 
+                      key={voice.id} 
+                      value={voice.id} 
+                      className="text-xs py-2.5 px-3 cursor-pointer data-[state=checked]:bg-amber-500 data-[state=checked]:text-amber-950 focus:bg-amber-500/80 focus:text-amber-950"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-semibold">{voice.name}</span>
+                        <span className="text-[10px] opacity-70">{voice.description}</span>
                       </div>
                     </SelectItem>
                   ))}
