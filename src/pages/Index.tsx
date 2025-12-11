@@ -22,6 +22,7 @@ import { ExitIntentPopup } from "@/components/retention/ExitIntentPopup";
 import { SessionTracker } from "@/components/analytics/SessionTracker";
 import { FourPathsShowcase } from "@/components/FourPathsShowcase";
 import { MobileStickyCtaBar } from "@/components/MobileStickyCtaBar";
+import { LandingPathFilter } from "@/components/landing/LandingPathFilter";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -86,6 +87,9 @@ const Index = () => {
 
       {/* 1. Hero - The 10-second hook */}
       <PunchyHero />
+
+      {/* 1.5 Path Filter - "Is This for Me?" - BEFORE auth */}
+      <LandingPathFilter />
 
       {/* 2. Explainer Video */}
       <ExplainerVideo />
