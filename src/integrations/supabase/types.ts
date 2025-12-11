@@ -1787,11 +1787,13 @@ export type Database = {
           invite_token: string | null
           is_active: boolean | null
           issue_description: string | null
+          issue_description_encrypted: string | null
           issue_severity: string | null
           last_devotional_sent_at: string | null
           linked_user_id: string | null
           name: string
           pastoral_notes: Json | null
+          pastoral_notes_encrypted: string | null
           preferred_rooms: string[] | null
           preferred_themes: string[] | null
           preferred_tone: string | null
@@ -1816,11 +1818,13 @@ export type Database = {
           invite_token?: string | null
           is_active?: boolean | null
           issue_description?: string | null
+          issue_description_encrypted?: string | null
           issue_severity?: string | null
           last_devotional_sent_at?: string | null
           linked_user_id?: string | null
           name: string
           pastoral_notes?: Json | null
+          pastoral_notes_encrypted?: string | null
           preferred_rooms?: string[] | null
           preferred_themes?: string[] | null
           preferred_tone?: string | null
@@ -1845,11 +1849,13 @@ export type Database = {
           invite_token?: string | null
           is_active?: boolean | null
           issue_description?: string | null
+          issue_description_encrypted?: string | null
           issue_severity?: string | null
           last_devotional_sent_at?: string | null
           linked_user_id?: string | null
           name?: string
           pastoral_notes?: Json | null
+          pastoral_notes_encrypted?: string | null
           preferred_rooms?: string[] | null
           preferred_themes?: string[] | null
           preferred_tone?: string | null
@@ -8675,6 +8681,21 @@ export type Database = {
           max_seats: number
           name: string
           tier: Database["public"]["Enums"]["church_tier"]
+        }[]
+      }
+      get_decrypted_devotional_profile: {
+        Args: { _profile_id: string }
+        Returns: {
+          issue_description: string
+          pastoral_notes: Json
+        }[]
+      }
+      get_decrypted_patreon_tokens: {
+        Args: { _user_id: string }
+        Returns: {
+          access_token: string
+          refresh_token: string
+          token_expires_at: string
         }[]
       }
       get_or_create_conversation: {
