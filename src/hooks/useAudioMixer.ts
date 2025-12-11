@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface AudioSegment {
   audioUrl?: string;
@@ -22,7 +23,8 @@ export const useAudioMixer = () => {
   const fetchAudioBuffer = async (
     audioContext: OfflineAudioContext | AudioContext,
     url?: string,
-    base64Content?: string
+    base64Content?: string,
+    useProxy = false
   ): Promise<AudioBuffer | null> => {
     try {
       let arrayBuffer: ArrayBuffer;
@@ -36,9 +38,29 @@ export const useAudioMixer = () => {
         }
         arrayBuffer = bytes.buffer;
       } else if (url) {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Failed to fetch: ${url}`);
-        arrayBuffer = await response.arrayBuffer();
+        // Use proxy for external URLs to avoid CORS issues
+        if (useProxy && (url.includes('pixabay.com') || url.includes('cdn.') || !url.startsWith(window.location.origin))) {
+          console.log("Using proxy for:", url);
+          const { data, error } = await supabase.functions.invoke("fetch-audio-proxy", {
+            body: { url },
+          });
+          
+          if (error || !data?.audioContent) {
+            throw new Error(error?.message || "Failed to fetch via proxy");
+          }
+          
+          // Decode base64 from proxy
+          const binaryString = atob(data.audioContent);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          arrayBuffer = bytes.buffer;
+        } else {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`Failed to fetch: ${url}`);
+          arrayBuffer = await response.arrayBuffer();
+        }
       } else {
         return null;
       }
@@ -61,10 +83,10 @@ export const useAudioMixer = () => {
       // First, use a regular AudioContext to decode all audio
       const tempContext = new AudioContext();
       
-      // Fetch music
+      // Fetch music (use proxy for CORS)
       setProgress(5);
       console.log("Fetching music...");
-      const musicBuffer = await fetchAudioBuffer(tempContext, musicUrl);
+      const musicBuffer = await fetchAudioBuffer(tempContext, musicUrl, undefined, true);
       if (!musicBuffer) {
         throw new Error("Failed to load background music");
       }
