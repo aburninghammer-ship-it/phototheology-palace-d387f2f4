@@ -328,8 +328,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
       console.log("[Commentary] Generating", depth, "chapter commentary for", book, chapter);
       
-      // Add timeout to edge function call
-      const timeoutMs = 20000; // 20 second timeout for chapter commentary
+      // Add timeout to edge function call - longer for depth commentary which generates more text
+      const timeoutMs = depth === "depth" ? 60000 : depth === "intermediate" ? 40000 : 25000;
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       
@@ -637,8 +637,27 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     playingCommentaryRef.current = true;
     setIsLoading(true);
 
+    // For very long commentary, use browser TTS directly to avoid timeout issues on mobile
+    const MAX_API_TTS_LENGTH = 4000; // OpenAI's limit is 4096 chars
+    const useBrowserTTS = offlineMode || !isOnline() || text.length > MAX_API_TTS_LENGTH * 2;
+    
+    if (useBrowserTTS) {
+      console.log("[Commentary] Using browser TTS for long commentary or offline mode");
+      setIsLoading(false);
+      const playbackSpeed = currentSequence?.playbackSpeed || 1;
+      notifyTTSStarted();
+      speakWithBrowserTTS(text, playbackSpeed, () => {
+        notifyTTSStopped();
+        setIsPlayingCommentary(false);
+        playingCommentaryRef.current = false;
+        setCommentaryText(null);
+        onComplete();
+      });
+      return;
+    }
+
     // Add timeout to TTS generation - longer for commentary (can be deep-drill which is very long)
-    const timeoutMs = 90000; // 90 seconds for potentially long commentary
+    const timeoutMs = 120000; // 120 seconds for potentially long commentary (increased from 90)
     const timeoutPromise = new Promise<string | null>((_, reject) => 
       setTimeout(() => reject(new Error('TTS generation timeout')), timeoutMs)
     );
@@ -656,7 +675,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       
       // Fallback to browser TTS for commentary
       const playbackSpeed = currentSequence?.playbackSpeed || 1;
+      notifyTTSStarted();
       speakWithBrowserTTS(text, playbackSpeed, () => {
+        notifyTTSStopped();
         setIsPlayingCommentary(false);
         playingCommentaryRef.current = false;
         setCommentaryText(null);
@@ -1853,8 +1874,23 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     speechSynthesis.cancel();
     browserUtteranceRef.current = null;
     
+    // Clear commentary state when skipping
+    setIsPlayingCommentary(false);
+    playingCommentaryRef.current = false;
+    setCommentaryText(null);
+    
     if (currentItemIdx < totalItems - 1) {
-      shouldPlayNextRef.current = isPlaying && continuePlayingRef.current;
+      // Allow auto-play when skipping: if we were playing OR paused (user wants to continue), set shouldPlayNext
+      const wasActive = isPlaying || isPaused;
+      shouldPlayNextRef.current = wasActive;
+      continuePlayingRef.current = wasActive;
+      
+      // Set playing state immediately for better UX on mobile
+      if (wasActive) {
+        setIsPlaying(true);
+        setIsPaused(false);
+      }
+      
       setCurrentItemIdx((prev) => prev + 1);
       setCurrentVerseIdx(0);
       setChapterContent(null);
@@ -1871,14 +1907,31 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     speechSynthesis.cancel();
     browserUtteranceRef.current = null;
     
+    // Clear commentary state when skipping
+    setIsPlayingCommentary(false);
+    playingCommentaryRef.current = false;
+    setCommentaryText(null);
+    
     if (currentItemIdx > 0) {
-      shouldPlayNextRef.current = isPlaying && continuePlayingRef.current;
+      // Allow auto-play when skipping: if we were playing OR paused (user wants to continue), set shouldPlayNext
+      const wasActive = isPlaying || isPaused;
+      shouldPlayNextRef.current = wasActive;
+      continuePlayingRef.current = wasActive;
+      
+      // Set playing state immediately for better UX on mobile
+      if (wasActive) {
+        setIsPlaying(true);
+        setIsPaused(false);
+      }
+      
       setCurrentItemIdx((prev) => prev - 1);
       setCurrentVerseIdx(0);
       setChapterContent(null);
       lastFetchedRef.current = null;
     } else {
-      shouldPlayNextRef.current = isPlaying && continuePlayingRef.current;
+      const wasActive = isPlaying || isPaused;
+      shouldPlayNextRef.current = wasActive;
+      continuePlayingRef.current = wasActive;
       setCurrentVerseIdx(0);
     }
   };
