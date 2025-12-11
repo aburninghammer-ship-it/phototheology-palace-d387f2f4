@@ -145,15 +145,17 @@ serve(async (req) => {
         throw new Error("Failed to save Patreon connection");
       }
 
-      // If active patron, grant premium access
+      // If active patron, grant premium access (use 'premium' as valid tier)
       if (isActivePatron) {
         await supabase
           .from("profiles")
           .update({ 
-            subscription_tier: "patron",
+            subscription_tier: "premium",
+            subscription_status: "active",
             updated_at: new Date().toISOString()
           })
           .eq("id", userId);
+        console.log("Granted premium access to user:", userId);
       }
     }
 
