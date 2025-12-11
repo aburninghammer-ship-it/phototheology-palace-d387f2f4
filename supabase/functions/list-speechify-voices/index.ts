@@ -20,7 +20,7 @@ serve(async (req) => {
 
     console.log('[Speechify] Fetching available voices...');
 
-    const response = await fetch('https://api.sws.speechify.com/v1/tts/voices/list', {
+    const response = await fetch('https://api.sws.speechify.com/v1/voices', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${speechifyApiKey}`,
