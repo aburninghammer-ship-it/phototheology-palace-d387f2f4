@@ -27,6 +27,23 @@ interface GroupInsight {
   followUpStudy: string;
 }
 
+interface VerseHuntData {
+  targetVerse: {
+    book: string;
+    chapter: number;
+    verse: number;
+    text: string;
+  };
+  clueTrail: Array<{
+    clue: string;
+    hintBook?: string;
+    hintChapter?: string;
+    ptPrinciple?: string;
+    revealed: boolean;
+  }>;
+  difficulty: string;
+}
+
 export async function generateGamePrompt(
   gameType: string,
   verse?: string,
@@ -126,6 +143,46 @@ export async function generateGroupInsight(
     return content as GroupInsight;
   } catch (error) {
     console.error("Error generating group insight:", error);
+    return null;
+  }
+}
+
+export async function generateVerseHunt(
+  difficulty: "easy" | "medium" | "hard" = "medium",
+  category?: string
+): Promise<VerseHuntData | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke("jeeves", {
+      body: {
+        mode: "verse_hunt_generate",
+        difficulty,
+        category
+      }
+    });
+
+    if (error) throw error;
+
+    const content = data?.content || data;
+    if (typeof content === "string") {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]) as VerseHuntData;
+        if (parsed.clueTrail?.length > 0) {
+          parsed.clueTrail[0].revealed = true;
+        }
+        return parsed;
+      }
+    }
+    
+    if (content?.targetVerse && content?.clueTrail) {
+      content.clueTrail[0].revealed = true;
+      return content as VerseHuntData;
+    }
+
+    throw new Error("Invalid response format");
+  } catch (error) {
+    console.error("Error generating verse hunt:", error);
+    toast.error("Failed to generate Verse Hunt game");
     return null;
   }
 }
