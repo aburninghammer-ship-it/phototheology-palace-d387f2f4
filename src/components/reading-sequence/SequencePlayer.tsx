@@ -22,6 +22,7 @@ import {
   RotateCcw,
   RefreshCw,
   Mic,
+  Share2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -42,6 +43,7 @@ import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { DownloadSequenceDialog } from "./DownloadSequenceDialog";
 import { OfflineModeToggle } from "./OfflineModeToggle";
 import { CommentaryPDFExport } from "./CommentaryPDFExport";
+import { ExportCommentaryDialog } from "./ExportCommentaryDialog";
 import { ExportToStudyButton } from "@/components/ExportToStudyButton";
 import { isOnline, getCachedMusicTrack } from "@/services/offlineAudioCache";
 import { 
@@ -2224,6 +2226,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   depth={currentCommentaryDepth}
                   size="sm"
                   variant="outline"
+                />
+                <ExportCommentaryDialog
+                  commentaryText={commentaryText}
+                  book={currentItem?.book || ""}
+                  chapter={currentItem?.chapter || 1}
+                  voice={currentVoice}
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-amber-600 hover:text-amber-500 hover:bg-amber-500/10"
+                      title="Export & share audio"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  }
                 />
                 <Badge variant="secondary" className="animate-pulse bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30">
                   <span className="mr-1">🔊</span> Speaking
