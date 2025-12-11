@@ -36,10 +36,11 @@ const ELEVENLABS_VOICES: Record<string, string> = {
   'bill': 'pqHfZKP75CvOlQylNhV4',
 };
 
-// Speechify voice IDs (common ones)
+// Speechify voice IDs - these are the actual API voice IDs
+// Format: language_gender_name (e.g., en-US-male-henry)
 const SPEECHIFY_VOICES: Record<string, string> = {
   'henry': 'henry',
-  'mrbeast': 'mrbeast',
+  'mrbeast': 'mrbeast', 
   'gwyneth': 'gwyneth',
   'snoop': 'snoop',
   'matthew': 'matthew',
@@ -276,6 +277,11 @@ async function generateSpeechify(
 ): Promise<ArrayBuffer> {
   const voiceId = SPEECHIFY_VOICES[voice.toLowerCase()] || voice;
   
+  console.log(`[Speechify] Generating speech with voice: ${voiceId}`);
+  
+  // Clean the text - remove SSML tags if present, Speechify expects plain text or proper SSML
+  const cleanText = text.replace(/<[^>]*>/g, '');
+  
   const response = await fetch('https://api.sws.speechify.com/v1/audio/speech', {
     method: 'POST',
     headers: {
@@ -283,7 +289,7 @@ async function generateSpeechify(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      input: `<speak>${text}</speak>`,
+      input: cleanText,
       voice_id: voiceId,
       audio_format: 'mp3',
     }),
@@ -291,6 +297,7 @@ async function generateSpeechify(
 
   if (!response.ok) {
     const errorText = await response.text();
+    console.error(`[Speechify] API error ${response.status}: ${errorText}`);
     throw new Error(`Speechify API error: ${response.status} - ${errorText}`);
   }
 
