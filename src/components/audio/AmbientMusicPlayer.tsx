@@ -108,8 +108,11 @@ export function AmbientMusicPlayer({
   className,
   minimal = false 
 }: AmbientMusicPlayerProps) {
-  // Use simple HTML5 Audio for independence from other audio on the page
+  // Use Web Audio API for volume control - iOS ignores HTML5 audio.volume
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { user } = useAuth();
   const { userTracks, uploading, uploadMusic, deleteMusic, toggleFavorite } = useUserMusic();
@@ -166,21 +169,51 @@ export function AmbientMusicPlayer({
 
   useAudioDucking(handleDuckChange);
 
-  // Simple volume management - direct HTML5 audio volume control
-  // This effect runs whenever volume, muted state, or ducking changes
+  // Initialize Web Audio API for volume control (iOS ignores audio.volume)
+  const initWebAudio = useCallback(() => {
+    if (!audioRef.current || audioContextRef.current) return;
+    
+    try {
+      // Create AudioContext (may need user gesture on iOS)
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        console.warn('[AmbientMusic] Web Audio API not supported');
+        return;
+      }
+      
+      audioContextRef.current = new AudioContextClass();
+      gainNodeRef.current = audioContextRef.current.createGain();
+      sourceNodeRef.current = audioContextRef.current.createMediaElementSource(audioRef.current);
+      
+      // Connect: source -> gain -> destination
+      sourceNodeRef.current.connect(gainNodeRef.current);
+      gainNodeRef.current.connect(audioContextRef.current.destination);
+      
+      // Set initial volume
+      const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
+      gainNodeRef.current.gain.value = effectiveVolume;
+      
+      console.log('[AmbientMusic] Web Audio API initialized, volume:', effectiveVolume);
+    } catch (err) {
+      console.error('[AmbientMusic] Failed to init Web Audio:', err);
+    }
+  }, [isMuted, volume, duckMultiplier]);
+
+  // Volume control via GainNode (works on iOS) with fallback to audio.volume
   useEffect(() => {
     const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
-    if (audioRef.current) {
-      // Force immediate volume update - critical for mobile responsiveness
-      audioRef.current.volume = effectiveVolume;
-      
-      // Double-check after a short delay (iOS sometimes needs this)
-      requestAnimationFrame(() => {
-        if (audioRef.current) {
-          audioRef.current.volume = effectiveVolume;
-        }
-      });
+    
+    // Primary: Use GainNode if available (works on iOS)
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+      console.log(`[AmbientMusic] GainNode volume set: ${effectiveVolume}`);
     }
+    
+    // Fallback: Also set audio.volume for browsers that support it
+    if (audioRef.current) {
+      audioRef.current.volume = effectiveVolume;
+    }
+    
     console.log(`[AmbientMusic] Volume: base=${volume}, duck=${duckMultiplier}, effective=${effectiveVolume}`);
   }, [volume, isMuted, duckMultiplier]);
 
@@ -346,6 +379,13 @@ export function AmbientMusicPlayer({
         audioRef.current.onerror = null;
         audioRef.current = null;
       }
+      // Clean up Web Audio API
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(console.error);
+        audioContextRef.current = null;
+        gainNodeRef.current = null;
+        sourceNodeRef.current = null;
+      }
     };
   }, [playNextTrackFromState]); // Include the callback dependency
 
@@ -431,6 +471,15 @@ export function AmbientMusicPlayer({
       setIsPlaying(false);
     } else {
       try {
+        // Initialize Web Audio API on first user interaction (required for iOS)
+        initWebAudio();
+        
+        // Resume AudioContext if suspended (iOS requirement)
+        if (audioContextRef.current?.state === 'suspended') {
+          await audioContextRef.current.resume();
+          console.log('[AmbientMusic] AudioContext resumed');
+        }
+        
         // Check if current track URL is valid and not previously failed
         if (!isValidAudioUrl(currentTrack.url) || failedUrlsRef.current.has(currentTrack.url)) {
           console.log("[Music] Skipping invalid/failed URL:", currentTrack.url);
@@ -455,8 +504,12 @@ export function AmbientMusicPlayer({
           });
         }
         
-        // Set volume directly on audio element
+        // Set volume via GainNode (iOS) and fallback to audio.volume
         const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
+        if (gainNodeRef.current) {
+          gainNodeRef.current.gain.value = effectiveVolume;
+          console.log('[AmbientMusic] GainNode volume before play:', effectiveVolume);
+        }
         audioRef.current.volume = effectiveVolume;
         
         console.log("Attempting to play:", currentTrack.url);
@@ -538,6 +591,11 @@ export function AmbientMusicPlayer({
     const newMuted = !isMuted;
     setIsMuted(newMuted);
     const effectiveVolume = newMuted ? 0 : volume * duckMultiplier;
+    // Apply to GainNode (iOS) and audio element (fallback)
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+      console.log('[AmbientMusic] toggleMute GainNode:', effectiveVolume);
+    }
     if (audioRef.current) {
       audioRef.current.volume = effectiveVolume;
     }
@@ -607,9 +665,14 @@ export function AmbientMusicPlayer({
     if (newVolume > 0 && isMuted) {
       setIsMuted(false);
     }
-    // Immediately apply to audio element for responsive feedback on mobile
+    // Immediately apply to GainNode for responsive feedback on iOS/mobile
+    const effectiveVolume = newVolume * duckMultiplier;
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+      console.log('[AmbientMusic] GainNode volume set:', effectiveVolume);
+    }
+    // Also set on audio element as fallback
     if (audioRef.current) {
-      const effectiveVolume = newVolume * duckMultiplier;
       audioRef.current.volume = effectiveVolume;
       console.log('[AmbientMusic] Direct volume set:', effectiveVolume);
     }
@@ -627,6 +690,10 @@ export function AmbientMusicPlayer({
     const effectiveVolume = newVolume * duckMultiplier;
     console.log('[AmbientMusic] setVolumePreset:', preset, newVolume, 'effective:', effectiveVolume);
     
+    // Apply to GainNode (iOS) and audio element (fallback)
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+    }
     if (audioRef.current) {
       audioRef.current.volume = effectiveVolume;
     }
