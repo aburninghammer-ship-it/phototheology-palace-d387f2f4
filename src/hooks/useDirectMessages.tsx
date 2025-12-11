@@ -435,9 +435,25 @@ export const useDirectMessages = () => {
           
           if (!isParticipant) return;
           
-          // If this is the active conversation, add the message
+          // If this is the active conversation, add the message only if not already present
+          // (prevents duplication with optimistic updates)
           if (newMessage.conversation_id === activeConversationId) {
-            setMessages(prev => [...prev, { ...newMessage, read_by: [] }]);
+            setMessages(prev => {
+              // Check if message already exists (by id or temp id pattern)
+              const exists = prev.some(msg => 
+                msg.id === newMessage.id || 
+                (msg.id.startsWith('temp-') && msg.sender_id === newMessage.sender_id && msg.content === newMessage.content)
+              );
+              if (exists) {
+                // Replace temp message with real one if it exists
+                return prev.map(msg => 
+                  msg.id.startsWith('temp-') && msg.sender_id === newMessage.sender_id && msg.content === newMessage.content
+                    ? { ...newMessage, read_by: [] }
+                    : msg
+                );
+              }
+              return [...prev, { ...newMessage, read_by: [] }];
+            });
           }
           
           // Always refresh conversations to update last message and ensure recipient sees it
