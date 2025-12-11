@@ -510,6 +510,14 @@ function App() {
                 <Sessions />
               </ProtectedRoute>
             } />
+            
+            {/* GuestHouse Routes (Public - No Auth Required) */}
+            <Route path="/guesthouse" element={<GuestHouseLanding />} />
+            <Route path="/guesthouse/event/:eventId" element={<GuestHouseEvent />} />
+            <Route path="/guesthouse/lobby/:eventId" element={<GuestHouseLobby />} />
+            <Route path="/guesthouse/play/:eventId" element={<GuestHousePlay />} />
+            <Route path="/guesthouse/assembly/:eventId" element={<GuestHouseAssembly />} />
+            
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
                     </Routes>
