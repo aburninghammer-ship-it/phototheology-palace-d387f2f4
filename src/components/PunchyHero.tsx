@@ -39,9 +39,19 @@ export const PunchyHero = () => {
           transition={{ duration: 0.5 }}
           className="mb-3 sm:mb-4"
         >
-          <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold tracking-widest text-primary uppercase drop-shadow-[0_0_10px_hsl(var(--primary)/0.5)]">
-            Phototheology Bible Study Suite
-          </h2>
+          {/* Glass container with gradient border glow */}
+          <div className="relative inline-block p-[2px] rounded-xl bg-gradient-to-r from-cyan-400 via-primary to-accent">
+            <div className="relative px-6 sm:px-8 py-3 sm:py-4 rounded-[10px] bg-background/90 backdrop-blur-md">
+              {/* Inner glow overlay */}
+              <div className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-primary/10 via-transparent to-accent/10 pointer-events-none" />
+              {/* Floating orbs */}
+              <div className="absolute top-2 right-3 w-1.5 h-1.5 rounded-full bg-cyan-400/60 animate-pulse" />
+              <div className="absolute bottom-2 left-4 w-1 h-1 rounded-full bg-yellow-400/50 animate-pulse delay-500" />
+              <h2 className="relative font-display text-lg sm:text-xl md:text-2xl font-bold tracking-widest text-primary uppercase drop-shadow-[0_0_15px_hsl(var(--primary)/0.6)]">
+                Phototheology Bible Study Suite
+              </h2>
+            </div>
+          </div>
         </motion.div>
 
         {/* Badge - Glass Style */}
@@ -145,20 +155,23 @@ export const PunchyHero = () => {
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           className="mb-8 px-4"
         >
-          <div className="relative p-3 sm:p-5 md:p-6 rounded-2xl backdrop-blur-md bg-white/5 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto overflow-hidden">
-            {/* Inner gradient glow */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-accent/10 pointer-events-none" />
-            {/* Animated floating orbs */}
-            <div className="absolute top-4 left-4 w-2 h-2 rounded-full bg-cyan-400/60 animate-pulse" />
-            <div className="absolute bottom-6 right-8 w-1.5 h-1.5 rounded-full bg-yellow-400/60 animate-pulse delay-300" />
-            <div className="absolute top-1/2 right-4 w-1 h-1 rounded-full bg-primary/60 animate-pulse delay-700" />
-            <img 
-              src={heroCardsDisplay} 
-              alt="Phototheology Card Deck - 8 floors of Bible study principles" 
-              className="relative w-full drop-shadow-2xl"
-              loading="eager"
-              decoding="async"
-            />
+          {/* Gradient border glow wrapper */}
+          <div className="relative p-[2px] sm:p-[3px] rounded-2xl bg-gradient-to-r from-green-400 via-cyan-400 to-primary max-w-xs sm:max-w-2xl md:max-w-4xl mx-auto shadow-[0_0_30px_rgba(34,211,238,0.3),0_0_60px_rgba(34,211,238,0.1)]">
+            <div className="relative p-3 sm:p-5 md:p-6 rounded-[14px] bg-background/95 backdrop-blur-md overflow-hidden">
+              {/* Inner gradient glow */}
+              <div className="absolute inset-0 rounded-[14px] bg-gradient-to-br from-primary/10 via-transparent to-accent/10 pointer-events-none" />
+              {/* Animated floating orbs */}
+              <div className="absolute top-4 left-4 w-2 h-2 rounded-full bg-cyan-400/60 animate-pulse" />
+              <div className="absolute bottom-6 right-8 w-1.5 h-1.5 rounded-full bg-yellow-400/60 animate-pulse delay-300" />
+              <div className="absolute top-1/2 right-4 w-1 h-1 rounded-full bg-primary/60 animate-pulse delay-700" />
+              <img 
+                src={heroCardsDisplay} 
+                alt="Phototheology Card Deck - 8 floors of Bible study principles" 
+                className="relative w-full drop-shadow-2xl"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
           </div>
         </motion.div>
 
