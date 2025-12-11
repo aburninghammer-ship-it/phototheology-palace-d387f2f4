@@ -103,6 +103,32 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const musicAudioRef = useRef<HTMLAudioElement | null>(null); // Background music audio
+  const audioUnlockedRef = useRef(false); // Track if audio has been unlocked by user gesture
+  
+  // Create and unlock audio element on first user interaction (iOS requirement)
+  const ensureAudioUnlocked = useCallback(() => {
+    if (audioUnlockedRef.current) return;
+    
+    // Create a persistent audio element that we'll reuse
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.preload = 'auto';
+    }
+    
+    // Play a silent audio to "unlock" the audio context on iOS
+    // This must happen during a user gesture (click/tap)
+    const audio = audioRef.current;
+    audio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAbD/rU9UAAAAAAAAAAAAAAAAAAAAAP/jOMAAABQAJQCAAAhDAH+AIACQA/xQAP/zDAIAAAFPAQD/8wgD/+M4wAAAGMAlAAA';
+    audio.volume = 0.01;
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audioUnlockedRef.current = true;
+      console.log('[iOS] Audio element unlocked for future playback');
+    }).catch(e => {
+      console.log('[iOS] Audio unlock attempt (expected to fail on first load):', e.message);
+    });
+  }, []);
   
   // Fetch user's display name for personalized commentary
   // Extract first name from display_name for more personal address
@@ -1124,7 +1150,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       audioRef.current.pause();
       audioRef.current.onended = null;
       audioRef.current.onerror = null;
-      audioRef.current = null;
     }
     
     // Clean up previous audio URL (but not if it's cached)
@@ -1132,22 +1157,28 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       URL.revokeObjectURL(audioUrl);
     }
 
-    // Create and configure audio element FIRST
-    // Use refs for volume to avoid stale closures on mobile
+    // CRITICAL: Reuse existing audio element if unlocked (iOS), otherwise create new
+    // This is required because iOS blocks new Audio() created after async operations
     const currentVolume = isMutedRef.current ? 0 : volumeRef.current / 100;
-    console.log("[PlayVerse] Creating Audio element with volume:", currentVolume);
-    const audio = new Audio(url);
+    console.log("[PlayVerse] Setting up audio with volume:", currentVolume);
+    
+    let audio: HTMLAudioElement;
+    if (audioUnlockedRef.current && audioRef.current) {
+      // Reuse the unlocked audio element
+      audio = audioRef.current;
+      audio.src = url;
+    } else {
+      // Fallback: create new audio element (works on desktop, may fail on iOS after async)
+      audio = new Audio(url);
+      audioRef.current = audio;
+    }
+    
     audio.volume = currentVolume;
-    audio.preload = 'auto'; // Better mobile compatibility
-    
-    // Apply playback speed from sequence settings (already found above)
+    audio.preload = 'auto';
     audio.playbackRate = playbackSpeed;
-    console.log("[PlayVerse] Setting playback rate to:", playbackSpeed);
+    console.log("[PlayVerse] Audio configured, playback rate:", playbackSpeed);
     
-    // Store reference BEFORE any async operations
-    audioRef.current = audio;
-    
-    // Set URL state AFTER audio is ready (don't trigger cleanup re-render during setup)
+    // Set URL state
     setAudioUrl(url);
 
     // Flag to prevent double-triggering on mobile
@@ -1671,6 +1702,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log("handlePlay called - isPaused:", isPaused, "hasAudio:", !!audioRef.current, "speechPaused:", speechSynthesis.paused);
     console.log("[handlePlay] chapterContent:", chapterContent ? `${chapterContent.book} ${chapterContent.chapter} (${chapterContent.verses?.length} verses)` : "NULL");
     console.log("[handlePlay] currentVerseIdx:", currentVerseIdx, "currentSequence:", currentSequence?.sequenceNumber);
+    
+    // CRITICAL: Unlock audio on first user interaction (iOS requirement)
+    ensureAudioUnlocked();
     
     // Resume paused HTML Audio
     if (isPaused && audioRef.current) {
