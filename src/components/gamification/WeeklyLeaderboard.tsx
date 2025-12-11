@@ -23,16 +23,44 @@ export const WeeklyLeaderboard = () => {
 
   useEffect(() => {
     const loadLeaderboard = async () => {
-      // Get activity counts for users
-      const { data: challenges } = await supabase
+      // Calculate date filter based on timeframe
+      let dateFilter: string | null = null;
+      const now = new Date();
+      
+      if (timeframe === "weekly") {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        dateFilter = weekAgo.toISOString();
+      } else if (timeframe === "monthly") {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        dateFilter = monthAgo.toISOString();
+      }
+
+      // Get activity counts for users with timeframe filter
+      let query = supabase
         .from("challenge_submissions")
-        .select("user_id");
+        .select("user_id, created_at");
+      
+      if (dateFilter) {
+        query = query.gte("created_at", dateFilter);
+      }
+
+      const { data: challenges } = await query;
+
+      if (!challenges || challenges.length === 0) {
+        setLeaderboard([]);
+        setUserRank(null);
+        return;
+      }
+
+      // Get unique user IDs from submissions
+      const userIds = [...new Set(challenges.map(c => c.user_id))];
 
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, display_name");
+        .select("id, display_name")
+        .in("id", userIds);
 
-      if (!challenges || !profiles) return;
+      if (!profiles) return;
 
       // Count submissions per user
       const scoreCounts: Record<string, number> = {};
