@@ -3265,6 +3265,7 @@ export type Database = {
       guesthouse_guests: {
         Row: {
           checked_in_at: string | null
+          correct_answers: number | null
           created_at: string
           display_name: string
           email: string | null
@@ -3273,10 +3274,13 @@ export type Database = {
           group_name: string | null
           id: string
           is_checked_in: boolean
+          rounds_played: number | null
+          score: number | null
           user_id: string | null
         }
         Insert: {
           checked_in_at?: string | null
+          correct_answers?: number | null
           created_at?: string
           display_name: string
           email?: string | null
@@ -3285,10 +3289,13 @@ export type Database = {
           group_name?: string | null
           id?: string
           is_checked_in?: boolean
+          rounds_played?: number | null
+          score?: number | null
           user_id?: string | null
         }
         Update: {
           checked_in_at?: string | null
+          correct_answers?: number | null
           created_at?: string
           display_name?: string
           email?: string | null
@@ -3297,6 +3304,8 @@ export type Database = {
           group_name?: string | null
           id?: string
           is_checked_in?: boolean
+          rounds_played?: number | null
+          score?: number | null
           user_id?: string | null
         }
         Relationships: [
@@ -3386,6 +3395,54 @@ export type Database = {
             columns: ["guest_id"]
             isOneToOne: false
             referencedRelation: "guesthouse_guests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guesthouse_responses: {
+        Row: {
+          created_at: string
+          graded_at: string | null
+          guest_id: string
+          id: string
+          is_correct: boolean | null
+          points_earned: number | null
+          prompt_id: string
+          response_data: Json
+        }
+        Insert: {
+          created_at?: string
+          graded_at?: string | null
+          guest_id: string
+          id?: string
+          is_correct?: boolean | null
+          points_earned?: number | null
+          prompt_id: string
+          response_data?: Json
+        }
+        Update: {
+          created_at?: string
+          graded_at?: string | null
+          guest_id?: string
+          id?: string
+          is_correct?: boolean | null
+          points_earned?: number | null
+          prompt_id?: string
+          response_data?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guesthouse_responses_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_guests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guesthouse_responses_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "guesthouse_session_prompts"
             referencedColumns: ["id"]
           },
         ]
