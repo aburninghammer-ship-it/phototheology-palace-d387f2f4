@@ -244,6 +244,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     prefetchingCommentaryRef.current.clear();
     
     console.log("SequencePlayer mounted, refs reset. Active sequences:", activeSequences.length, "Total items:", totalItems);
+    console.log("[Mount] Sequences prop:", sequences.map(s => ({ enabled: s.enabled, itemCount: s.items.length, voice: s.voice })));
+    console.log("[Mount] First item:", allItems[0]);
   }, []);
 
   // Background music is now always available during playback and is controlled solely by the user volume slider.
@@ -1524,8 +1526,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   // Load chapter when item changes
   useEffect(() => {
+    console.log("[ChapterLoad Effect] Running - currentItem:", currentItem ? `${currentItem.book} ${currentItem.chapter}` : "NULL");
     if (!currentItem) {
-      console.log("No current item, skipping chapter load");
+      console.log("No current item, skipping chapter load. allItems:", allItems.length, "activeSequences:", activeSequences.length);
       return;
     }
     
@@ -1608,6 +1611,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   // Auto-start on mount - runs once when autoPlay is true
   useEffect(() => {
+    console.log("[AutoStart Effect] autoPlay:", autoPlay, "hasStarted:", hasStarted);
     if (!autoPlay || hasStarted) return;
     
     // Wait for content to be ready, then start
@@ -1665,6 +1669,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   const handlePlay = () => {
     console.log("handlePlay called - isPaused:", isPaused, "hasAudio:", !!audioRef.current, "speechPaused:", speechSynthesis.paused);
+    console.log("[handlePlay] chapterContent:", chapterContent ? `${chapterContent.book} ${chapterContent.chapter} (${chapterContent.verses?.length} verses)` : "NULL");
+    console.log("[handlePlay] currentVerseIdx:", currentVerseIdx, "currentSequence:", currentSequence?.sequenceNumber);
     
     // Resume paused HTML Audio
     if (isPaused && audioRef.current) {
@@ -1714,6 +1720,33 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         // Notify music ducking for regular Bible reading
         notifyTTSStarted();
         playVerseAtIndex(currentVerseIdx, chapterContent, voice);
+      }
+    } else {
+      console.warn("[handlePlay] No chapterContent available! Cannot start playback.");
+      console.log("[handlePlay] Current state - isLoading:", isLoading, "currentItem:", currentItem ? `${currentItem.book} ${currentItem.chapter}` : "NULL");
+      // Try to trigger chapter load if we have a current item but no content
+      if (currentItem && !isFetchingChapterRef.current) {
+        console.log("[handlePlay] Attempting to load chapter manually...");
+        setIsLoading(true);
+        fetchChapter(currentItem.book, currentItem.chapter).then(verses => {
+          setIsLoading(false);
+          if (verses) {
+            let filteredVerses = verses;
+            if (currentItem.startVerse) {
+              filteredVerses = verses.filter(
+                (v) => v.verse >= (currentItem.startVerse || 1) && v.verse <= (currentItem.endVerse || verses.length)
+              );
+            }
+            setChapterContent({
+              book: currentItem.book,
+              chapter: currentItem.chapter,
+              verses: filteredVerses,
+            });
+            toast.info("Chapter loaded, tap play again", { duration: 2000 });
+          } else {
+            toast.error("Failed to load chapter");
+          }
+        });
       }
     }
   };
