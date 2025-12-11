@@ -149,10 +149,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const retryCountRef = useRef(0); // Track retry attempts for resilience
   const pausedVerseRef = useRef<{ verseIdx: number; content: ChapterContent; voice: string } | null>(null); // Track paused position
   const keepAliveIntervalRef = useRef<number | null>(null); // Keep speech alive on mobile
+  // Use refs to track state for event handlers to avoid stale closures on mobile
+  const isPlayingRef = useRef(false);
+  const isPausedRef = useRef(false);
   
   const isMobile = useIsMobile();
 
-  // Keep speech synthesis alive on mobile browsers
+  // Keep refs in sync with state for event handlers (avoids stale closures on mobile)
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+    isPausedRef.current = isPaused;
+  }, [isPlaying, isPaused]);
   useEffect(() => {
     const keepAlive = () => {
       if (isPlaying && !isPaused && speechSynthesis.speaking) {
@@ -1109,6 +1116,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log("[PlayVerse] Creating Audio element with volume:", isMuted ? 0 : volume / 100);
     const audio = new Audio(url);
     audio.volume = isMuted ? 0 : volume / 100;
+    audio.preload = 'auto'; // Better mobile compatibility
     
     // Apply playback speed from sequence settings (already found above)
     audio.playbackRate = playbackSpeed;
@@ -1120,6 +1128,40 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     // Set URL state AFTER audio is ready (don't trigger cleanup re-render during setup)
     setAudioUrl(url);
 
+    // Flag to prevent double-triggering on mobile
+    let hasHandledEnd = false;
+    
+    // Handle audio completion - this function is called by onended OR timeupdate fallback
+    const handleAudioComplete = () => {
+      if (hasHandledEnd) {
+        console.log("[Audio] End already handled, skipping duplicate");
+        return;
+      }
+      hasHandledEnd = true;
+      
+      console.log("[Audio] <<< Completed verse:", verseIdx + 1, "| continue:", continuePlayingRef.current, "| isPlayingRef:", isPlayingRef.current, "| isPausedRef:", isPausedRef.current);
+      
+      // Clean up event listeners
+      audio.onended = null;
+      audio.ontimeupdate = null;
+      audio.onerror = null;
+      audioRef.current = null;
+      
+      if (!continuePlayingRef.current) {
+        console.log("[Audio] ❌ continuePlayingRef is false - checking refs for recovery");
+        if (isPlayingRef.current && !isPausedRef.current) {
+          console.log("[Audio] 🔄 RECOVERING - forcing continue");
+          continuePlayingRef.current = true;
+        } else {
+          console.log("[Audio] Not continuing - confirmed stop");
+          return;
+        }
+      }
+      
+      // Continue with verse/commentary logic...
+      handleVerseComplete();
+    };
+
     audio.onloadstart = () => {
       console.log("[Audio] Load started for verse:", verseIdx + 1);
     };
@@ -1130,28 +1172,24 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
     audio.onplay = () => {
       console.log("[Audio] >>> Playing verse:", verseIdx + 1);
-      // Don't call notifyTTSStarted here - we do it when sequence starts
     };
     
+    // Primary end handler
     audio.onended = () => {
-      console.log("[Audio] <<< Ended verse:", verseIdx + 1, "| continue:", continuePlayingRef.current, "| isPlaying:", isPlaying, "| isPaused:", isPaused);
-      // Don't call notifyTTSStopped here - keep music ducked between verses
-      
-      // Clear the audio ref immediately
-      audioRef.current = null;
-      
-      if (!continuePlayingRef.current) {
-        console.error("[Audio] ❌ UNEXPECTED STOP - continuePlayingRef is false but audio ended naturally!");
-        console.error("[Audio] State:", { isPlaying, isPaused, currentItemIdx, verseIdx, totalItems });
-        // Try to recover - if we were playing and not paused, continue anyway
-        if (isPlaying && !isPaused) {
-          console.log("[Audio] 🔄 RECOVERING - forcing continue because isPlaying=true and isPaused=false");
-          continuePlayingRef.current = true;
-        } else {
-          console.log("[Audio] Not continuing - confirmed stop");
-          return;
-        }
+      console.log("[Audio] onended event fired for verse:", verseIdx + 1);
+      handleAudioComplete();
+    };
+    
+    // Fallback for mobile: check if audio is near end via timeupdate
+    audio.ontimeupdate = () => {
+      if (!hasHandledEnd && audio.duration > 0 && audio.currentTime >= audio.duration - 0.1) {
+        console.log("[Audio] timeupdate fallback triggered for verse:", verseIdx + 1);
+        handleAudioComplete();
       }
+    };
+    
+    // Define the verse complete handler (logic extracted from old onended)
+    const handleVerseComplete = () => {
       
       // Find current sequence to check commentary settings
       const currentSeq = activeSequences.find((seq, idx) => {
@@ -1175,11 +1213,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         const cached = commentaryCache.current.get(cacheKey);
         
         const proceedAfterCommentary = () => {
-          // Always check continuePlayingRef before proceeding
+          // Always check continuePlayingRef before proceeding - use refs to avoid stale closures
           if (!continuePlayingRef.current) {
-            console.log("[Verse Commentary] ❌ Stopped - continuePlayingRef is false | isPlaying:", isPlaying, "| isPaused:", isPaused);
-            // Try to recover if we're still in playing state
-            if (isPlaying && !isPaused) {
+            console.log("[Verse Commentary] ❌ Stopped - continuePlayingRef is false | isPlayingRef:", isPlayingRef.current, "| isPausedRef:", isPausedRef.current);
+            // Try to recover using refs
+            if (isPlayingRef.current && !isPausedRef.current) {
               console.log("[Verse Commentary] 🔄 RECOVERING - forcing continue");
               continuePlayingRef.current = true;
             } else {
@@ -1203,20 +1241,21 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           setIsPlayingCommentary(true);
           playingCommentaryRef.current = true;
           
-          const audio = new Audio(cached.audioUrl);
-          audio.volume = isMuted ? 0 : volume / 100;
-          // Apply playback speed from sequence
+          const commentaryAudio = new Audio(cached.audioUrl);
+          commentaryAudio.volume = isMuted ? 0 : volume / 100;
+          commentaryAudio.preload = 'auto';
           const playbackSpeed = currentSeq?.playbackSpeed || 1;
-          audio.playbackRate = playbackSpeed;
-          audioRef.current = audio;
+          commentaryAudio.playbackRate = playbackSpeed;
+          audioRef.current = commentaryAudio;
           
-          // Critical: Prevent double-triggering, but allow replay
-          let hasEnded = false;
-          audio.onseeked = () => { hasEnded = false; };
-          audio.onended = () => {
-            if (hasEnded) return;
-            hasEnded = true;
+          // Mobile-reliable completion handler
+          let commentaryEnded = false;
+          const handleCommentaryComplete = () => {
+            if (commentaryEnded) return;
+            commentaryEnded = true;
             console.log("[Verse Commentary] Cached audio ended");
+            commentaryAudio.onended = null;
+            commentaryAudio.ontimeupdate = null;
             audioRef.current = null;
             setIsPlayingCommentary(false);
             playingCommentaryRef.current = false;
@@ -1224,8 +1263,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             proceedAfterCommentary();
           };
           
-          audio.onerror = (e) => {
+          commentaryAudio.onended = handleCommentaryComplete;
+          commentaryAudio.ontimeupdate = () => {
+            if (!commentaryEnded && commentaryAudio.duration > 0 && commentaryAudio.currentTime >= commentaryAudio.duration - 0.1) {
+              handleCommentaryComplete();
+            }
+          };
+          commentaryAudio.onerror = (e) => {
             console.error("[Verse Commentary] Cached audio error:", e);
+            if (commentaryEnded) return;
+            commentaryEnded = true;
             audioRef.current = null;
             setIsPlayingCommentary(false);
             playingCommentaryRef.current = false;
@@ -1233,7 +1280,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             proceedAfterCommentary();
           };
           
-          audio.play().catch((e) => {
+          commentaryAudio.play().catch((e) => {
             console.error("[Verse Commentary] Cached audio play failed:", e);
             setIsPlayingCommentary(false);
             playingCommentaryRef.current = false;
@@ -1303,19 +1350,21 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             setIsPlayingCommentary(true);
             playingCommentaryRef.current = true;
             
-            const audio = new Audio(cached.audioUrl);
-            audio.volume = isMuted ? 0 : volume / 100;
-            // Apply playback speed from sequence
+            const chapterCommentaryAudio = new Audio(cached.audioUrl);
+            chapterCommentaryAudio.volume = isMuted ? 0 : volume / 100;
+            chapterCommentaryAudio.preload = 'auto';
             const playbackSpeed = currentSeq?.playbackSpeed || 1;
-            audio.playbackRate = playbackSpeed;
-            audioRef.current = audio;
+            chapterCommentaryAudio.playbackRate = playbackSpeed;
+            audioRef.current = chapterCommentaryAudio;
             
-            // Critical: Prevent double-triggering, but allow replay
-            let hasEnded = false;
-            audio.onseeked = () => { hasEnded = false; };
-            audio.onended = () => {
-              if (hasEnded) return;
-              hasEnded = true;
+            // Mobile-reliable completion handler
+            let chapterCommentaryEnded = false;
+            const handleChapterCommentaryComplete = () => {
+              if (chapterCommentaryEnded) return;
+              chapterCommentaryEnded = true;
+              console.log("[Chapter Commentary] Cached audio ended");
+              chapterCommentaryAudio.onended = null;
+              chapterCommentaryAudio.ontimeupdate = null;
               audioRef.current = null;
               setIsPlayingCommentary(false);
               playingCommentaryRef.current = false;
@@ -1323,7 +1372,15 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               moveToNextChapter();
             };
             
-            audio.onerror = () => {
+            chapterCommentaryAudio.onended = handleChapterCommentaryComplete;
+            chapterCommentaryAudio.ontimeupdate = () => {
+              if (!chapterCommentaryEnded && chapterCommentaryAudio.duration > 0 && chapterCommentaryAudio.currentTime >= chapterCommentaryAudio.duration - 0.1) {
+                handleChapterCommentaryComplete();
+              }
+            };
+            chapterCommentaryAudio.onerror = () => {
+              if (chapterCommentaryEnded) return;
+              chapterCommentaryEnded = true;
               audioRef.current = null;
               setIsPlayingCommentary(false);
               playingCommentaryRef.current = false;
@@ -1331,7 +1388,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               moveToNextChapter();
             };
             
-            audio.play().catch(() => {
+            chapterCommentaryAudio.play().catch(() => {
               setIsPlayingCommentary(false);
               playingCommentaryRef.current = false;
               setCommentaryText(null);
