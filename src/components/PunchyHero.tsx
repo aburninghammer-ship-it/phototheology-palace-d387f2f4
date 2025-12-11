@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Sparkles, Play, CheckCircle2 } from "lucide-react";
+import { ChevronRight, Sparkles, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
 import heroCardsDisplay from "@/assets/branding/hero-cards-display.png";
 import { UserCountBadge } from "@/components/UserCountBadge";
 const socialProof = [
@@ -14,7 +13,6 @@ const socialProof = [
 
 export const PunchyHero = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const scrollToDemo = () => {
     const demoSection = document.getElementById("interactive-demo");
@@ -175,52 +173,39 @@ export const PunchyHero = () => {
           </div>
         </motion.div>
 
-        {/* Dual CTA */}
+        {/* Single Primary CTA - Reduced choice paralysis */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4"
+          className="flex flex-col items-center justify-center gap-4 px-4"
         >
           <Button
             size="lg"
-            onClick={() => navigate(user ? "/palace" : "/auth")}
-            className="text-base sm:text-lg md:text-xl px-6 sm:px-8 md:px-10 py-5 sm:py-6 md:py-7 gradient-palace shadow-2xl hover:shadow-primary/30 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-xs sm:max-w-none"
-          >
-            Start Free — No Credit Card
-            <ChevronRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
             onClick={scrollToDemo}
-            className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 border-2 hover:bg-primary/5 w-full sm:w-auto max-w-xs sm:max-w-none"
+            className="text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-14 py-6 sm:py-7 md:py-8 gradient-palace shadow-2xl hover:shadow-primary/30 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-sm"
           >
-            <Play className="mr-2 h-5 w-5" />
-            See It In Action
+            Try a 5-Minute Study
+            <ChevronRight className="ml-2 h-6 w-6 sm:h-7 sm:w-7" />
           </Button>
+          
+          <p className="text-sm text-muted-foreground">
+            No signup required • See how it works instantly
+          </p>
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="text-xs sm:text-sm text-muted-foreground text-center mt-4 px-2"
-        >
-          Free forever tier • Cancel anytime • No spam
-        </motion.p>
-
+        {/* Secondary link - less prominent */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.75 }}
-          className="text-sm sm:text-base text-center mt-3 px-2"
+          className="text-sm text-center mt-6 px-2"
         >
           <span 
             onClick={() => navigate("/auth?patreon=true")} 
-            className="text-primary hover:text-primary/80 cursor-pointer font-medium underline underline-offset-4 decoration-primary/50 hover:decoration-primary transition-all"
+            className="text-muted-foreground hover:text-primary cursor-pointer underline underline-offset-4 decoration-muted-foreground/50 hover:decoration-primary transition-all"
           >
-            Already a Patron? Connect for full access →
+            Already a Patron? Connect here
           </span>
         </motion.p>
 
