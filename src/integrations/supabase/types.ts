@@ -8653,6 +8653,7 @@ export type Database = {
       generate_referral_code: { Args: { user_id: string }; Returns: string }
       generate_session_share_token: { Args: never; Returns: string }
       generate_student_verification_code: { Args: never; Returns: string }
+      get_active_user_count: { Args: never; Returns: number }
       get_available_seats: { Args: { _church_id: string }; Returns: number }
       get_church_billing_info: {
         Args: { _church_id: string }

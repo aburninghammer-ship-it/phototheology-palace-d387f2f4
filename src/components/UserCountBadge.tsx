@@ -20,12 +20,15 @@ export function UserCountBadge() {
 
   useEffect(() => {
     const fetchUserCount = async () => {
-      const { count } = await supabase
-        .from("profiles")
-        .select("*", { count: "exact", head: true })
-        .or("subscription_status.eq.active,subscription_status.eq.trial,has_lifetime_access.eq.true");
+      const { data, error } = await supabase.rpc("get_active_user_count");
       
-      setUserCount(count || 0);
+      if (error) {
+        console.error("Error fetching user count:", error);
+        setUserCount(0);
+        return;
+      }
+      
+      setUserCount(data || 0);
     };
 
     fetchUserCount();
