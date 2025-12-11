@@ -600,13 +600,20 @@ export function AmbientMusicPlayer({
     });
   };
 
-  const handleVolumeChange = (value: number[]) => {
-    console.log('[AmbientMusic] handleVolumeChange called:', value[0]);
-    setVolume(value[0]);
-    if (value[0] > 0 && isMuted) {
+  const handleVolumeChange = useCallback((value: number[]) => {
+    const newVolume = value[0];
+    console.log('[AmbientMusic] handleVolumeChange called:', newVolume);
+    setVolume(newVolume);
+    if (newVolume > 0 && isMuted) {
       setIsMuted(false);
     }
-  };
+    // Immediately apply to audio element for responsive feedback on mobile
+    if (audioRef.current) {
+      const effectiveVolume = newVolume * duckMultiplier;
+      audioRef.current.volume = effectiveVolume;
+      console.log('[AmbientMusic] Direct volume set:', effectiveVolume);
+    }
+  }, [isMuted, duckMultiplier]);
 
   // Direct volume preset function - values match displayed labels (5%, 15%, 30%)
   const setVolumePreset = (preset: 'off' | 'low' | 'med' | 'high') => {
@@ -930,9 +937,10 @@ export function AmbientMusicPlayer({
                 <Slider
                   value={[volume]}
                   onValueChange={handleVolumeChange}
+                  onValueCommit={handleVolumeChange}
                   max={0.30}
                   step={0.01}
-                  className="flex-1"
+                  className="flex-1 touch-pan-x"
                 />
               </div>
             </div>
@@ -1035,7 +1043,8 @@ export function AmbientMusicPlayer({
                 max={1}
                 step={0.01}
                 onValueChange={handleVolumeChange}
-                className="w-20"
+                onValueCommit={handleVolumeChange}
+                className="w-20 touch-pan-x"
               />
             )}
           </div>
