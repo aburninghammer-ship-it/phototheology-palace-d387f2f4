@@ -13,7 +13,6 @@ export const FreeTierBanner = () => {
     { name: "Daily Devotionals", description: "Fresh content every day" },
     { name: "Jeeves AI (10/day)", description: "AI-powered Bible analysis" },
     { name: "Challenges (3/week)", description: "Practice what you learn" },
-    { name: "Bible Reader", description: "Full KJV with Strong's" },
     { name: "Community Access", description: "View discussions & insights" },
   ];
 

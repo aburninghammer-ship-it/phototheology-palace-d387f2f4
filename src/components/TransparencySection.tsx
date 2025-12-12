@@ -23,7 +23,6 @@ const FREE_FEATURES = [
   "Daily Devotionals",
   "Basic Jeeves AI Chat (limited messages)",
   "Daily Challenge",
-  "Bible Reader (KJV)",
   "Community Access",
   "App Tour & Onboarding",
   "Basic Progress Tracking"
