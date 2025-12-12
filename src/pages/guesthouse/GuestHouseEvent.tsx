@@ -31,6 +31,8 @@ interface GuestHouseEvent {
   session_type: string;
   youtube_url: string | null;
   game_type: string | null;
+  requires_access_code: boolean;
+  access_code: string | null;
 }
 
 export default function GuestHouseEvent() {
@@ -247,6 +249,7 @@ export default function GuestHouseEvent() {
               <RegistrationForm 
                 eventId={eventId!}
                 onComplete={handleRegistrationComplete}
+                requiresAccessCode={event.requires_access_code}
               />
             )}
           </motion.div>

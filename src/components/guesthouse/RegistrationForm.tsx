@@ -5,18 +5,59 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Mail, Sparkles, Loader2 } from "lucide-react";
+import { User, Mail, Sparkles, Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 interface RegistrationFormProps {
   eventId: string;
   onComplete: (guestId: string) => void;
+  requiresAccessCode?: boolean;
+  onAccessCodeValidated?: () => void;
 }
 
-export function RegistrationForm({ eventId, onComplete }: RegistrationFormProps) {
+export function RegistrationForm({ 
+  eventId, 
+  onComplete, 
+  requiresAccessCode = false,
+  onAccessCodeValidated 
+}: RegistrationFormProps) {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
+  const [accessCode, setAccessCode] = useState("");
+  const [codeValidated, setCodeValidated] = useState(!requiresAccessCode);
+  const [validatingCode, setValidatingCode] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const handleValidateCode = async () => {
+    if (!accessCode.trim()) {
+      toast.error("Please enter the access code");
+      return;
+    }
+
+    setValidatingCode(true);
+    try {
+      const { data, error } = await supabase
+        .from("guesthouse_events")
+        .select("id")
+        .eq("id", eventId)
+        .eq("access_code", accessCode.trim().toUpperCase())
+        .single();
+
+      if (error || !data) {
+        toast.error("Invalid access code");
+        return;
+      }
+
+      setCodeValidated(true);
+      onAccessCodeValidated?.();
+      toast.success("Access granted!");
+    } catch (error) {
+      console.error("Code validation error:", error);
+      toast.error("Failed to validate code");
+    } finally {
+      setValidatingCode(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +90,60 @@ export function RegistrationForm({ eventId, onComplete }: RegistrationFormProps)
       setLoading(false);
     }
   };
+
+  // Show access code input first if required
+  if (requiresAccessCode && !codeValidated) {
+    return (
+      <Card className="p-8 bg-card/80 backdrop-blur-xl border-primary/20">
+        <div className="text-center mb-6">
+          <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-6 h-6 text-amber-500" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Invite-Only Event</h2>
+          <p className="text-muted-foreground">
+            Enter the access code to join this event.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="accessCode" className="flex items-center gap-2">
+              <Lock className="w-4 h-4" />
+              Access Code
+            </Label>
+            <Input
+              id="accessCode"
+              placeholder="e.g., GH1A2B3C"
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+              className="bg-background/50 text-center text-xl tracking-widest uppercase"
+              maxLength={10}
+            />
+          </div>
+
+          <Button 
+            onClick={handleValidateCode}
+            className="w-full"
+            size="lg"
+            disabled={validatingCode || !accessCode.trim()}
+          >
+            {validatingCode ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Checking...
+              </>
+            ) : (
+              "Enter Event"
+            )}
+          </Button>
+
+          <p className="text-xs text-center text-muted-foreground">
+            Ask the host for the access code if you don't have it.
+          </p>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-8 bg-card/80 backdrop-blur-xl border-primary/20">

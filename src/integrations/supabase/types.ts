@@ -3130,6 +3130,7 @@ export type Database = {
       }
       guesthouse_events: {
         Row: {
+          access_code: string | null
           created_at: string
           description: string | null
           duration_minutes: number
@@ -3138,6 +3139,7 @@ export type Database = {
           host_user_id: string | null
           id: string
           max_guests: number
+          requires_access_code: boolean
           scheduled_at: string
           session_type: string
           social_share_image_url: string | null
@@ -3148,6 +3150,7 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          access_code?: string | null
           created_at?: string
           description?: string | null
           duration_minutes?: number
@@ -3156,6 +3159,7 @@ export type Database = {
           host_user_id?: string | null
           id?: string
           max_guests?: number
+          requires_access_code?: boolean
           scheduled_at: string
           session_type?: string
           social_share_image_url?: string | null
@@ -3166,6 +3170,7 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          access_code?: string | null
           created_at?: string
           description?: string | null
           duration_minutes?: number
@@ -3174,6 +3179,7 @@ export type Database = {
           host_user_id?: string | null
           id?: string
           max_guests?: number
+          requires_access_code?: boolean
           scheduled_at?: string
           session_type?: string
           social_share_image_url?: string | null
@@ -9018,6 +9024,7 @@ export type Database = {
       delete_cancelled_user_data: { Args: never; Returns: undefined }
       encrypt_token: { Args: { plain_token: string }; Returns: string }
       generate_challenge_share_code: { Args: never; Returns: string }
+      generate_guesthouse_access_code: { Args: never; Returns: string }
       generate_profile_invite_token: { Args: never; Returns: string }
       generate_referral_code: { Args: { user_id: string }; Returns: string }
       generate_session_share_token: { Args: never; Returns: string }
