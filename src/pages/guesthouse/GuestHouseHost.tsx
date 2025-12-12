@@ -17,10 +17,13 @@ import {
   Trash2, 
   Copy, 
   Clock,
-  Zap
+  Zap,
+  Sparkles,
+  Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { suggestEventFromPrompt } from "@/lib/guesthouseJeeves";
 
 interface GuestHouseEvent {
   id: string;
@@ -40,11 +43,14 @@ export default function GuestHouseHost() {
   const [events, setEvents] = useState<GuestHouseEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [jeevesPrompt, setJeevesPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     scheduled_at: "",
-    max_guests: 50
+    max_guests: 50,
+    gameTypes: [] as string[]
   });
 
   useEffect(() => {
@@ -107,7 +113,8 @@ export default function GuestHouseHost() {
 
       toast.success("Event created!");
       setShowCreateForm(false);
-      setFormData({ title: "", description: "", scheduled_at: "", max_guests: 50 });
+      setFormData({ title: "", description: "", scheduled_at: "", max_guests: 50, gameTypes: [] });
+      setJeevesPrompt("");
       fetchEvents();
     } catch (error) {
       console.error("Error creating event:", error);
@@ -203,9 +210,60 @@ export default function GuestHouseHost() {
             >
               <Card className="border-primary/50">
                 <CardHeader>
-                  <CardTitle>Create New Event</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    Create New Event
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-6">
+                  {/* Jeeves AI Suggestion */}
+                  <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
+                    <Label className="flex items-center gap-2 text-primary font-medium">
+                      <Sparkles className="w-4 h-4" />
+                      Ask Jeeves to plan your event
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={jeevesPrompt}
+                        onChange={(e) => setJeevesPrompt(e.target.value)}
+                        placeholder="e.g., 'A fun youth group event about the sanctuary' or 'Deep dive into Daniel's prophecies for adults'"
+                        className="flex-1"
+                      />
+                      <Button 
+                        onClick={async () => {
+                          if (!jeevesPrompt.trim()) return;
+                          setIsGenerating(true);
+                          try {
+                            const suggestion = await suggestEventFromPrompt(jeevesPrompt);
+                            if (suggestion) {
+                              setFormData({
+                                ...formData,
+                                title: suggestion.title,
+                                description: suggestion.description,
+                                gameTypes: suggestion.gameTypes || []
+                              });
+                              toast.success(`Jeeves suggests: "${suggestion.theme}" theme, best for ${suggestion.targetAudience}`);
+                            }
+                          } finally {
+                            setIsGenerating(false);
+                          }
+                        }}
+                        disabled={isGenerating || !jeevesPrompt.trim()}
+                        className="gap-2"
+                      >
+                        {isGenerating ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Sparkles className="w-4 h-4" />
+                        )}
+                        Suggest
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Jeeves will suggest a title, description, and recommended game types based on your input.
+                    </p>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="title">Event Title</Label>
@@ -227,7 +285,7 @@ export default function GuestHouseHost() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description (optional)</Label>
+                    <Label htmlFor="description">Description</Label>
                     <Textarea
                       id="description"
                       value={formData.description}
@@ -236,6 +294,20 @@ export default function GuestHouseHost() {
                       rows={3}
                     />
                   </div>
+                  
+                  {formData.gameTypes.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Suggested Games</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.gameTypes.map((game) => (
+                          <Badge key={game} variant="secondary" className="gap-1">
+                            {game.replace(/_/g, ' ')}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="space-y-2">
                     <Label htmlFor="max_guests">Max Guests</Label>
                     <Input
@@ -248,7 +320,10 @@ export default function GuestHouseHost() {
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <Button variant="outline" onClick={() => setShowCreateForm(false)}>
+                    <Button variant="outline" onClick={() => {
+                      setShowCreateForm(false);
+                      setJeevesPrompt("");
+                    }}>
                       Cancel
                     </Button>
                     <Button onClick={createEvent} disabled={!formData.title}>

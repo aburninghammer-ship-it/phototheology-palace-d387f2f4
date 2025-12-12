@@ -298,14 +298,12 @@ export async function generateChainChess(
 }
 
 export async function generateProphecyTimeline(
-  category: "daniel" | "revelation" | "messianic" = "daniel",
   difficulty: "easy" | "medium" | "hard" = "medium"
 ): Promise<ProphecyTimelineData | null> {
   try {
     const { data, error } = await supabase.functions.invoke("jeeves", {
       body: {
         mode: "guesthouse_prophecy_timeline",
-        category,
         difficulty
       }
     });
@@ -322,16 +320,45 @@ export async function generateProphecyTimeline(
     return content as ProphecyTimelineData;
   } catch (error) {
     console.error("Error generating prophecy timeline:", error);
-    // Return fallback data
-    return {
-      events: [
-        { id: "1", title: "Babylon", description: "Head of Gold", verse: "Daniel 2:38", year: "605 BC", order: 1 },
-        { id: "2", title: "Medo-Persia", description: "Chest of Silver", verse: "Daniel 2:39", year: "539 BC", order: 2 },
-        { id: "3", title: "Greece", description: "Belly of Bronze", verse: "Daniel 2:39", year: "331 BC", order: 3 },
-        { id: "4", title: "Rome", description: "Legs of Iron", verse: "Daniel 2:40", year: "168 BC", order: 4 },
-        { id: "5", title: "Divided Kingdoms", description: "Feet of Iron and Clay", verse: "Daniel 2:41", year: "476 AD", order: 5 },
-      ],
-      timeLimit: 150
-    };
+    toast.error("Failed to generate prophecy timeline");
+    return null;
+  }
+}
+
+interface EventSuggestion {
+  title: string;
+  description: string;
+  gameTypes: string[];
+  targetAudience: string;
+  estimatedDuration: number;
+  suggestedTime: string;
+  theme: string;
+}
+
+export async function suggestEventFromPrompt(
+  prompt: string
+): Promise<EventSuggestion | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke("jeeves", {
+      body: {
+        mode: "guesthouse_suggest_event",
+        prompt
+      }
+    });
+
+    if (error) throw error;
+
+    const content = data?.content || data;
+    if (typeof content === "string") {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]) as EventSuggestion;
+      }
+    }
+    return content as EventSuggestion;
+  } catch (error) {
+    console.error("Error suggesting event:", error);
+    toast.error("Failed to generate event suggestion");
+    return null;
   }
 }
