@@ -152,7 +152,7 @@ export default function GuestHouseHost() {
           scheduled_at: formData.scheduled_at || new Date().toISOString(),
           max_guests: formData.max_guests,
           status: "scheduled",
-          session_type: "live",
+          session_type: "live_session",
           game_type: formData.selectedGameType,
           game_config: gameConfig,
           requires_access_code: formData.requiresAccessCode,
