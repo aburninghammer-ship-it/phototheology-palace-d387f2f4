@@ -20,7 +20,8 @@ import {
   Zap,
   Sparkles,
   Loader2,
-  Gamepad2
+  Gamepad2,
+  Video
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -73,7 +74,8 @@ export default function GuestHouseHost() {
     gameTypes: [] as string[],
     selectedGameType: "call_the_room",
     customChallengeDescription: "",
-    requiresAccessCode: false
+    requiresAccessCode: false,
+    youtubeUrl: ""
   });
   const [creatingCustomChallenge, setCreatingCustomChallenge] = useState(false);
 
@@ -156,7 +158,8 @@ export default function GuestHouseHost() {
           game_type: formData.selectedGameType,
           game_config: gameConfig,
           requires_access_code: formData.requiresAccessCode,
-          access_code: accessCode
+          access_code: accessCode,
+          youtube_url: formData.youtubeUrl || null
         });
 
       if (error) throw error;
@@ -167,7 +170,7 @@ export default function GuestHouseHost() {
         toast.success("Event created!");
       }
       setShowCreateForm(false);
-      setFormData({ title: "", description: "", scheduled_at: "", max_guests: 50, gameTypes: [], selectedGameType: "call_the_room", customChallengeDescription: "", requiresAccessCode: false });
+      setFormData({ title: "", description: "", scheduled_at: "", max_guests: 50, gameTypes: [], selectedGameType: "call_the_room", customChallengeDescription: "", requiresAccessCode: false, youtubeUrl: "" });
       setJeevesPrompt("");
       fetchEvents();
     } catch (error) {
@@ -347,6 +350,22 @@ export default function GuestHouseHost() {
                       placeholder="What will you be studying tonight?"
                       rows={3}
                     />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="youtube_url" className="flex items-center gap-2">
+                      <Video className="w-4 h-4" />
+                      YouTube Live URL (Optional)
+                    </Label>
+                    <Input
+                      id="youtube_url"
+                      value={formData.youtubeUrl}
+                      onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                      placeholder="https://youtube.com/live/..."
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      If streaming on YouTube, paste the live URL here. Guests will see a "Watch on YouTube" button.
+                    </p>
                   </div>
                   
                   {formData.gameTypes.length > 0 && (
