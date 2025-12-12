@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Link2, Sparkles, ChevronDown, ChevronUp, Search } from "lucide-react";
+import { Loader2, Link2, ChevronDown, ChevronUp, Search, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CrossReference {
   reference: string;
@@ -254,9 +255,12 @@ export const PTChainReferenceBox = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                    className="w-full justify-between"
+                    className="w-full justify-between hover:bg-primary/10"
                   >
-                    <span className="text-xs font-semibold">Expound</span>
+                    <span className="text-xs font-semibold flex items-center gap-1">
+                      <Info className="h-3 w-3" />
+                      {expandedIndex === index ? "Hide Explanation" : "How This Connects"}
+                    </span>
                     {expandedIndex === index ? (
                       <ChevronUp className="h-4 w-4" />
                     ) : (
@@ -264,11 +268,21 @@ export const PTChainReferenceBox = () => {
                     )}
                   </Button>
 
-                  {expandedIndex === index && result.expounded && (
-                    <div className="mt-3 pt-3 border-t text-sm text-muted-foreground leading-relaxed">
-                      {formatJeevesResponse(result.expounded)}
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {expandedIndex === index && result.expounded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-3 pt-3 border-t text-sm text-muted-foreground leading-relaxed">
+                          {formatJeevesResponse(result.expounded)}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
             </div>

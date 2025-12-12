@@ -1250,27 +1250,38 @@ Maintain the same doctrinal standards as the initial analysis:
       
       console.log("Chain witness mode - analyzing thought:", userMessage.substring(0, 100));
       
-      systemPrompt = `You are a biblical scholar identifying Scripture that supports written thoughts.
+      systemPrompt = `You are a Phototheology biblical scholar identifying Scripture that supports written thoughts.
 
 TASK: Return ${depth} Bible verses (KJV) that support, echo, or reinforce the ideas expressed.
+For each verse, include a brief explanation of HOW it connects to the user's thought.
 
 RULES:
 - Use MULTIPLE books (Old and New Testament)
 - Verses must form a CONCEPTUAL CHAIN, not random proof-texts
 - Prefer verses that INTERPRET other verses
-- Do NOT explain or comment on the verses
+- Include relevant PT codes where applicable
+- Each connection explanation should be 2-3 sentences showing the theological link
 
 OUTPUT FORMAT - Return ONLY valid JSON:
 [
-  {"reference": "Book Chapter:Verse", "text": "Full verse text in KJV"},
-  {"reference": "Book Chapter:Verse", "text": "Full verse text in KJV"}
+  {
+    "reference": "Book Chapter:Verse",
+    "text": "Full verse text in KJV",
+    "connection": "2-3 sentence explanation of how this verse supports, echoes, or reinforces the user's thought. Be specific about the theological or conceptual link.",
+    "ptCodes": ["Optional array of relevant PT codes like @CyC, 2H, CR, ST, BL"]
+  }
 ]
 
-Return ONLY the JSON array. No markdown, no commentary, no explanations.`;
+Return ONLY the JSON array. No markdown wrapping.`;
 
-      userPrompt = `Find ${depth} supporting Scripture verses for this thought:
+      userPrompt = `Find ${depth} supporting Scripture verses for this thought, with explanations of how each connects:
 
-${userMessage}`;
+"${userMessage}"
+
+For each verse:
+1. Provide the full KJV text
+2. Explain specifically HOW this verse supports or echoes the user's thought
+3. Include relevant PT codes if applicable (cycles, horizons, rooms, etc.)`;
 
     } else if (mode === "chain-reference") {
       const principleMap: Record<string, { name: string; description: string }> = {
