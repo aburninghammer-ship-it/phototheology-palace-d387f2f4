@@ -21,20 +21,20 @@ export default function Pricing() {
   useEffect(() => {
     const trialStatus = searchParams.get('trial');
     if (trialStatus === 'success') {
-      toast.success("🎉 Your 7-day trial has started! Enjoy full Premium access.");
+      toast.success("🎉 Your 14-day free trial has started! Enjoy full Premium access.");
       navigate('/palace', { replace: true });
     } else if (trialStatus === 'cancelled') {
       toast.info("Trial checkout was cancelled. No worries, you can try again anytime!");
     }
   }, [searchParams, navigate]);
 
-  const startFreeAccount = () => {
+  const startTrialNow = () => {
     if (!user) {
       navigate("/auth");
       return;
     }
-    toast.success("Welcome! You have free access to Palace Floors 1-2, Devotionals, and more.");
-    navigate("/palace");
+    // Start premium trial by default
+    startTrialWithCard('premium');
   };
 
   const startTrialWithCard = async (plan: 'essential' | 'premium') => {
@@ -82,31 +82,31 @@ export default function Pricing() {
 
   const plans = [
     {
-      id: "free",
-      name: "Free Tier",
+      id: "trial",
+      name: "14-Day Free Trial",
       icon: Sparkles,
       iconColor: "text-green-600",
       monthlyPrice: "$0",
       annualPrice: "$0",
-      period: "always",
-      description: "Start learning today - explore the basics",
-      badge: "No Credit Card",
-      badgeVariant: "secondary" as const,
-      ctaText: "Start Free",
+      period: "for 14 days",
+      description: "Full Premium access — no restrictions",
+      badge: "Start Free Today",
+      badgeVariant: "default" as const,
+      ctaText: "Start Free Trial",
       ctaVariant: "default" as const,
       monthlyUrl: "#",
       annualUrl: "#",
       features: [
-        "✅ Palace Floors 1-2 (Foundation)",
-        "✅ Daily Devotionals",
-        "✅ Basic Jeeves AI Chat",
-        "✅ Daily Challenge",
-        "✅ Bible Reader with Strong's",
-        "✅ Community Access",
-        "✅ Progress Tracking",
-        "No credit card required",
-        "No trial expiration",
-        "Upgrade anytime",
+        "✅ All 8 Palace Floors (Complete System)",
+        "✅ Unlimited Jeeves AI Conversations",
+        "✅ All Premium Games & Courses",
+        "✅ Complete Art of War Dojo",
+        "✅ Audio Bible Reader/Commentary",
+        "✅ Treasure Hunts & Escape Rooms",
+        "✅ Bible Study Leader Tools",
+        "No restrictions for 14 days",
+        "Cancel anytime",
+        "Choose your plan after trial",
       ],
     },
     {
@@ -221,15 +221,15 @@ export default function Pricing() {
       <div className="container mx-auto px-4 pt-24 pb-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <Badge className="mb-4 bg-green-600/10 text-green-600 border-green-600/20">
-            <Gift className="h-3 w-3 mr-1" />
-            Free Forever Tier • No Credit Card
+          <Badge className="mb-4 gradient-palace text-white border-0">
+            <Sparkles className="h-3 w-3 mr-1" />
+            14-Day Free Trial • Full Access
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-palace bg-clip-text text-transparent mb-4">
-            Start Free. Upgrade When Ready.
+            Try Everything Free for 14 Days
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Explore the Palace at no cost. No trial countdown. No pressure.
+            Experience the complete Phototheology Palace with no restrictions. Choose your plan when you're ready.
           </p>
           
           {/* Billing Period Toggle - Enhanced */}
@@ -265,54 +265,30 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* Start Free CTA - Primary */}
-        <Card className="mb-8 border-2 border-green-600/30 bg-gradient-to-r from-green-600/5 to-green-600/10 max-w-2xl mx-auto">
+        {/* Start Trial CTA - Primary */}
+        <Card className="mb-8 border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-accent/10 max-w-2xl mx-auto">
           <CardContent className="p-6 text-center">
-            <Badge className="mb-3 bg-green-600 text-white border-0">
-              <Check className="h-3 w-3 mr-1" />
-              Recommended Start
+            <Badge className="mb-3 gradient-palace text-white border-0">
+              <Sparkles className="h-3 w-3 mr-1" />
+              Most Popular Choice
             </Badge>
-            <h3 className="text-xl font-bold mb-2">Start with the Free Tier</h3>
+            <h3 className="text-xl font-bold mb-2">Start Your 14-Day Free Trial</h3>
             <p className="text-muted-foreground mb-4">
-              Get Floor 1 (6 rooms), daily devotionals, Jeeves AI (10/day), and more — forever free.
-              <span className="flex items-center justify-center gap-1 mt-1 text-sm font-medium text-green-600">
-                No credit card • No expiration
+              Get instant access to all Premium features — no restrictions.
+              <span className="flex items-center justify-center gap-1 mt-1 text-sm font-medium text-primary">
+                <CreditCard className="h-3 w-3" /> Credit card required • Cancel anytime
               </span>
             </p>
             <Button 
-              onClick={startFreeAccount}
-              className="bg-green-600 hover:bg-green-700"
+              onClick={startTrialNow}
+              className="gradient-palace"
+              disabled={isStartingTrial}
             >
-              Get Started Free
+              {isStartingTrial ? "Starting..." : "Start 14-Day Free Trial"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardContent>
         </Card>
-
-        {/* 7-Day Premium Trial - Secondary */}
-        <div className="text-center mb-8">
-          <p className="text-sm text-muted-foreground mb-3">Ready for the full experience?</p>
-          <Card className="inline-block border border-accent/30 bg-gradient-to-r from-accent/5 to-primary/5">
-            <CardContent className="p-4 flex flex-col sm:flex-row items-center gap-4">
-              <div className="text-left">
-                <p className="font-medium text-sm">Try Premium for 7 days free</p>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <CreditCard className="h-3 w-3" /> Credit card required • Cancel anytime
-                </p>
-              </div>
-              <Button 
-                onClick={() => startTrialWithCard('premium')} 
-                variant="outline"
-                size="sm"
-                disabled={isStartingTrial}
-                className="whitespace-nowrap"
-              >
-                {isStartingTrial ? "Starting..." : "Start Trial"}
-                <Zap className="ml-1 h-3 w-3" />
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Access Code Link */}
         <div className="text-center mb-8">
@@ -436,14 +412,15 @@ export default function Pricing() {
                       {plan.ctaText}
                     </Link>
                   </Button>
-                ) : plan.id === "free" ? (
+                ) : plan.id === "trial" ? (
                   <Button
-                    onClick={startFreeAccount}
+                    onClick={startTrialNow}
                     variant={plan.ctaVariant}
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    className="w-full gradient-palace"
                     size="lg"
+                    disabled={isStartingTrial}
                   >
-                    {plan.ctaText}
+                    {isStartingTrial ? "Starting..." : plan.ctaText}
                   </Button>
                 ) : (
                   <Button

@@ -8,31 +8,31 @@ export const FreeTierBanner = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const freeFeatures = [
-    { name: "Palace Floor 1 (6 Rooms)", description: "Foundation of visual Bible study" },
-    { name: "Daily Devotionals", description: "Fresh content every day" },
-    { name: "Jeeves AI (10/day)", description: "AI-powered Bible analysis" },
-    { name: "Challenges (3/week)", description: "Practice what you learn" },
-    { name: "Community Access", description: "View discussions & insights" },
+  const trialFeatures = [
+    { name: "All 8 Palace Floors", description: "Complete visual Bible study system" },
+    { name: "Unlimited Jeeves AI", description: "AI-powered Bible analysis" },
+    { name: "All Premium Games", description: "Full access to 20+ games" },
+    { name: "Art of War Dojo", description: "Complete spiritual warfare training" },
+    { name: "Audio Bible/Commentary", description: "Listen while you learn" },
   ];
 
   return (
     <section className="py-16 px-4 bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="max-w-4xl mx-auto text-center">
-        <Badge variant="secondary" className="mb-4 gap-1">
-          <Gift className="h-3 w-3" />
-          Free Forever
+        <Badge className="mb-4 gap-1 gradient-palace text-white border-0">
+          <Sparkles className="h-3 w-3" />
+          14-Day Free Trial
         </Badge>
         
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          Start Free. <span className="text-primary">No Credit Card.</span>
+          Try Everything Free. <span className="text-primary">No Restrictions.</span>
         </h2>
         <p className="text-lg text-muted-foreground mb-8">
-          Explore the Palace at no cost. No trial countdown. No pressure.
+          Experience the complete Palace for 14 days. Choose your plan when you're ready.
         </p>
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          {freeFeatures.map((feature, index) => (
+          {trialFeatures.map((feature, index) => (
             <div 
               key={index}
               className="flex items-start gap-3 p-4 rounded-lg bg-card border border-border/50 text-left"
@@ -49,10 +49,10 @@ export const FreeTierBanner = () => {
         <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
           <Button
             size="lg"
-            onClick={() => navigate(user ? "/palace" : "/auth")}
+            onClick={() => navigate(user ? "/pricing" : "/auth")}
             className="gradient-palace text-lg px-8 gap-2"
           >
-            Get Started Free
+            Start 14-Day Free Trial
             <ArrowRight className="h-5 w-5" />
           </Button>
           
@@ -62,13 +62,13 @@ export const FreeTierBanner = () => {
             onClick={() => navigate("/pricing")}
             className="gap-2"
           >
-            <Sparkles className="h-4 w-4" />
-            View Premium Plans
+            <Gift className="h-4 w-4" />
+            View All Plans
           </Button>
         </div>
         
         <p className="text-sm text-muted-foreground mt-6">
-          Love it? Upgrade anytime to unlock all 8 floors, unlimited AI, and premium features.
+          Full premium access for 14 days. Cancel anytime.
         </p>
       </div>
     </section>

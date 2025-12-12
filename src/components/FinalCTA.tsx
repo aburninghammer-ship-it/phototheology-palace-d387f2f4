@@ -20,10 +20,10 @@ export const FinalCTA = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
           <Button
             size="lg"
-            onClick={() => navigate("/auth")}
+            onClick={() => navigate("/pricing")}
             className="text-lg px-8 py-6 h-auto group gradient-palace"
           >
-            Start Free — No Credit Card
+            Start 14-Day Free Trial
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           
@@ -50,7 +50,7 @@ export const FinalCTA = () => {
         </div>
 
         <p className="text-sm text-muted-foreground pt-4">
-          No credit card required • Start building your palace today
+          Full premium access for 14 days • Cancel anytime
         </p>
 
         <p className="text-sm text-muted-foreground/80 pt-2">

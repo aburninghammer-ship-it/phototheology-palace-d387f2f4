@@ -3,12 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Check, 
-  X, 
-  Lock,
   Gift,
   HelpCircle,
   ChevronRight,
-  CreditCard
+  Sparkles,
+  Crown
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,32 +17,31 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const FREE_FEATURES = [
-  "Palace Floors 1-2 (Foundation & Investigation)",
-  "Daily Devotionals",
-  "Basic Jeeves AI Chat (limited messages)",
-  "Daily Challenge",
-  "Community Access",
-  "App Tour & Onboarding",
-  "Basic Progress Tracking"
-];
-
-const PAID_FEATURES = [
+const TRIAL_FEATURES = [
   "All 8 Palace Floors (Complete System)",
   "Unlimited Jeeves AI Conversations",
-  "Bible Study Series Builder",
-  "Advanced Drills & Assessments",
-  "Sermon Prep Tools",
-  "Devotional Plan Creator",
-  "Church/Group Features",
-  "Priority Support",
-  "Certificates of Completion"
+  "All Premium Games & Courses",
+  "Art of War Dojo Complete",
+  "Audio Bible Reader/Commentary",
+  "Treasure Hunts & Escape Rooms",
+  "Bible Study Leader Tools",
+  "Full access for 14 days"
+];
+
+const SUBSCRIPTION_BENEFITS = [
+  "Continue full access after trial",
+  "Multiple plan options ($9-$15/mo)",
+  "Annual plans save up to 20%",
+  "Student discount available",
+  "Church/group licensing",
+  "Priority support",
+  "Cancel anytime"
 ];
 
 const FAQ_ITEMS = [
   {
-    question: "Is there really a free tier, or just a trial?",
-    answer: "Yes, truly free forever. You get permanent access to Floors 1-2, daily devotionals, and basic Jeeves chat. No credit card required, no expiration. We believe everyone should have access to foundational Bible study tools."
+    question: "How does the 14-day free trial work?",
+    answer: "Sign up and get full access to all Premium features for 14 days — no restrictions. After your trial, choose a plan that fits your needs. We believe you should experience the full value before deciding."
   },
   {
     question: "What's the difference between the suite and the card deck/courses?",
@@ -63,7 +61,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "Can I cancel anytime?",
-    answer: "Absolutely. No contracts, no hidden fees. Cancel your premium subscription anytime and you'll retain access to all free features. We don't believe in locking people in."
+    answer: "Absolutely. No contracts, no hidden fees. Cancel your subscription anytime. During your trial, you can cancel with no charge. We don't believe in locking people in."
   }
 ];
 
@@ -74,79 +72,43 @@ export const TransparencySection = () => {
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-            <Gift className="h-3 w-3 mr-1" />
-            No Hidden Catches
+          <Badge className="mb-4 gradient-palace text-white border-0">
+            <Sparkles className="h-3 w-3 mr-1" />
+            14-Day Free Trial
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            What's Free vs. What's Premium
+            Try Everything Before You Decide
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We believe in complete transparency. Here's exactly what you get at each level.
+            Experience the complete Phototheology Palace with no restrictions. Choose your plan when you're ready.
           </p>
         </div>
 
         {/* Comparison Cards */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
-          {/* Free Tier */}
-          <Card className="border-2 border-border">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Badge variant="outline" className="mb-2">
-                    <Gift className="h-3 w-3 mr-1" />
-                    Free Forever
-                  </Badge>
-                  <CardTitle className="text-2xl">Free Tier</CardTitle>
-                </div>
-                <div className="text-right">
-                  <p className="text-3xl font-bold">$0</p>
-                  <p className="text-sm text-muted-foreground">No credit card</p>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-3">
-                {FREE_FEATURES.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button 
-                variant="outline" 
-                className="w-full mt-6"
-                onClick={() => navigate("/auth")}
-              >
-                Start Free
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Premium Tier */}
+          {/* 14-Day Free Trial */}
           <Card className="border-2 border-primary/50 bg-gradient-to-br from-primary/5 to-accent/5">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div>
                   <Badge className="mb-2 gradient-palace text-white border-0">
-                    <Lock className="h-3 w-3 mr-1" />
-                    Premium
+                    <Gift className="h-3 w-3 mr-1" />
+                    Start Here
                   </Badge>
-                  <CardTitle className="text-2xl">Full Palace Access</CardTitle>
+                  <CardTitle className="text-2xl">14-Day Free Trial</CardTitle>
                 </div>
                 <div className="text-right">
-                  <p className="text-3xl font-bold">$15<span className="text-lg font-normal">/mo</span></p>
-                  <p className="text-sm text-muted-foreground">Cancel anytime</p>
+                  <p className="text-3xl font-bold">$0</p>
+                  <p className="text-sm text-muted-foreground">for 14 days</p>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">Everything in Free, plus:</p>
+              <p className="text-sm text-muted-foreground mb-4">Full access to everything:</p>
               <ul className="space-y-3">
-                {PAID_FEATURES.map((feature, idx) => (
+                {TRIAL_FEATURES.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
+                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -155,7 +117,45 @@ export const TransparencySection = () => {
                 className="w-full mt-6 gradient-palace"
                 onClick={() => navigate("/pricing")}
               >
-                View Premium Plans
+                <Sparkles className="mr-2 h-4 w-4" />
+                Start Free Trial
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* After Trial */}
+          <Card className="border-2 border-border">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Badge variant="outline" className="mb-2">
+                    <Crown className="h-3 w-3 mr-1" />
+                    After Trial
+                  </Badge>
+                  <CardTitle className="text-2xl">Choose Your Plan</CardTitle>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold">$9-15<span className="text-lg font-normal">/mo</span></p>
+                  <p className="text-sm text-muted-foreground">or save with annual</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">Flexible options:</p>
+              <ul className="space-y-3">
+                {SUBSCRIPTION_BENEFITS.map((benefit, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button 
+                variant="outline"
+                className="w-full mt-6"
+                onClick={() => navigate("/pricing")}
+              >
+                View All Plans
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>

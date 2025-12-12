@@ -145,7 +145,7 @@ export default function GenesisHighRise() {
         }
       } else if (data) {
         setParticipantId(data.id);
-        toast.success("Welcome to the 7-Day Genesis Challenge!");
+        toast.success("Welcome to the Genesis Challenge!");
       }
       
       setShowEmailCapture(false);
@@ -240,13 +240,13 @@ export default function GenesisHighRise() {
   };
 
   const shareChallenge = async () => {
-    const text = `I'm memorizing the Book of Genesis in 7 days using the High Rise Challenge! 🏢📖 ${completedFloors.size}/50 chapters complete. Join me!`;
+    const text = `I'm memorizing the Book of Genesis using the High Rise Challenge! 🏢📖 ${completedFloors.size}/50 chapters complete. Join me!`;
     const url = window.location.href;
     
     try {
       if (navigator.share) {
         await navigator.share({ 
-          title: "Genesis High Rise - 7 Day Challenge", 
+          title: "Genesis High Rise Challenge", 
           text, 
           url
         });
@@ -267,7 +267,7 @@ export default function GenesisHighRise() {
         <div className="text-center mb-12">
           <Badge className="mb-4 text-sm px-4 py-2" variant="secondary">
             <Building2 className="w-4 h-4 mr-2" />
-            FREE 7-Day Challenge
+            FREE Genesis Challenge
           </Badge>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
             The Genesis High Rise
@@ -276,7 +276,7 @@ export default function GenesisHighRise() {
             Could you walk someone through every major scene of Genesis—from creation to Joseph—without opening your Bible?
           </p>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-4">
-            Memorize all 50 chapters in 7 days using the <strong>24FPS visual method</strong>. 
+            Memorize all 50 chapters using the <strong>24FPS visual method</strong>. 
             Each chapter becomes a "floor" you can visit anytime in your mind.
           </p>
         </div>
@@ -290,7 +290,7 @@ export default function GenesisHighRise() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mail className="w-5 h-5" />
-                Start Your 7-Day Challenge
+                Start Your Genesis Challenge
               </CardTitle>
               <CardDescription>
                 Enter your email to track progress and receive daily reminders
