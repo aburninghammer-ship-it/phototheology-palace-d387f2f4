@@ -17,7 +17,7 @@ export const useActiveUsers = () => {
 
   useEffect(() => {
     let isSubscribed = true;
-    let realtimeChannel: any = null;
+    let realtimeChannel: ReturnType<typeof supabase.channel> | null = null;
     
     const updateLastSeen = async () => {
       if (!isSubscribed) return;
@@ -25,10 +25,14 @@ export const useActiveUsers = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user && isSubscribed) {
-          await supabase
+          const { error } = await supabase
             .from("profiles")
             .update({ last_seen: new Date().toISOString() })
             .eq("id", user.id);
+          
+          if (error) {
+            console.error("Error updating last_seen:", error);
+          }
         }
       } catch (error) {
         console.error("Error updating last_seen:", error);
@@ -47,7 +51,9 @@ export const useActiveUsers = () => {
           .order("last_seen", { ascending: false });
         
         if (!error && isSubscribed && data) {
-          setActiveCount(count || data.length);
+          const actualCount = count ?? data.length;
+          console.log(`[ActiveUsers] Fetched ${actualCount} active users`);
+          setActiveCount(actualCount);
           setActiveUsers(data);
         } else if (error) {
           console.error("Error fetching active users:", error);
@@ -57,11 +63,11 @@ export const useActiveUsers = () => {
       }
     };
 
-    // Update user's last_seen immediately
-    updateLastSeen();
-    
-    // Fetch active users count immediately
+    // Fetch active users count immediately (works for all users, even unauthenticated)
     fetchActiveUsers();
+    
+    // Update last_seen for authenticated users
+    updateLastSeen();
     
     // Update every 30 seconds for more responsive count
     const interval = setInterval(() => {
@@ -69,31 +75,40 @@ export const useActiveUsers = () => {
       fetchActiveUsers();
     }, 30000);
 
-    // Set up realtime subscription for profile updates
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user?.id || !isSubscribed) return;
-      
-      realtimeChannel = supabase
-        .channel('profiles-active-users')
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'profiles'
-          },
-          () => {
-            if (isSubscribed) {
-              fetchActiveUsers();
-            }
+    // Set up realtime subscription for profile updates (works for all users)
+    realtimeChannel = supabase
+      .channel('profiles-active-users-global')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: 'last_seen=neq.null'
+        },
+        () => {
+          if (isSubscribed) {
+            fetchActiveUsers();
           }
-        )
-        .subscribe();
+        }
+      )
+      .subscribe((status) => {
+        console.log(`[ActiveUsers] Realtime subscription status: ${status}`);
+      });
+
+    // Also listen for auth state changes to update last_seen when user logs in
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') {
+        console.log('[ActiveUsers] User signed in, updating last_seen');
+        updateLastSeen();
+        fetchActiveUsers();
+      }
     });
 
     return () => {
       isSubscribed = false;
       clearInterval(interval);
+      subscription?.unsubscribe();
       if (realtimeChannel) {
         supabase.removeChannel(realtimeChannel);
       }
