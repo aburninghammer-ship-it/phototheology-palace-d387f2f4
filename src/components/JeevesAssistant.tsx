@@ -28,8 +28,8 @@ interface AnalysisResult {
     christCenteredness: number;
     ptApplication: number;
   };
-  strengths: string[];
-  growthAreas: string[];
+  strengths: (string | { point: string; expansion?: string })[];
+  growthAreas: (string | { point: string; expansion?: string })[];
   palaceMapping: {
     primaryRoom: string;
     relatedRooms: string[];
@@ -41,6 +41,14 @@ interface AnalysisResult {
   }[];
   encouragement: string;
 }
+
+// Helper to normalize strength/growth items that may be strings or objects
+const normalizeAnalysisItem = (item: string | { point: string; expansion?: string }): string => {
+  if (typeof item === 'string') {
+    return item;
+  }
+  return item.point || '';
+};
 
 export const JeevesAssistant = ({ 
   roomTag, 
@@ -414,7 +422,7 @@ export const JeevesAssistant = ({
                         {analysisResult.strengths.map((strength, idx) => (
                           <li key={idx} className="flex items-start gap-2 text-sm">
                             <span className="text-green-600 mt-0.5">•</span>
-                            <span>{strength}</span>
+                            <span>{normalizeAnalysisItem(strength)}</span>
                           </li>
                         ))}
                       </ul>
@@ -432,7 +440,7 @@ export const JeevesAssistant = ({
                         {analysisResult.growthAreas.map((area, idx) => (
                           <li key={idx} className="flex items-start gap-2 text-sm">
                             <span className="text-amber-600 mt-0.5">•</span>
-                            <span>{area}</span>
+                            <span>{normalizeAnalysisItem(area)}</span>
                           </li>
                         ))}
                       </ul>
