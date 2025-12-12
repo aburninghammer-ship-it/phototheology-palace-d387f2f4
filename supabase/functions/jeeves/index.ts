@@ -1238,40 +1238,39 @@ Maintain the same doctrinal standards as the initial analysis:
       // Chain Witness - Supporting Scripture Engine
       // Returns 5-9 verses that support, echo, or reinforce the user's written thoughts
       const depth = requestBody.chainDepth === "full" ? 9 : 5;
+      const userMessage = message || "";
       
-      systemPrompt = `You are analyzing the user's written thoughts.
-Your task is NOT to critique or explain their text.
-Your task is to identify biblical statements that support, echo, or reinforce the ideas expressed.
+      // Validate that we have content to analyze
+      if (!userMessage.trim()) {
+        return new Response(
+          JSON.stringify({ error: "Please enter your thoughts first" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      console.log("Chain witness mode - analyzing thought:", userMessage.substring(0, 100));
+      
+      systemPrompt = `You are a biblical scholar identifying Scripture that supports written thoughts.
 
-### Rules:
-- Produce ${depth} Scripture references maximum.
-- Use MULTIPLE books (Torah, Prophets, Gospels, Epistles, Revelation when relevant).
-- Verses must form a CONCEPTUAL CHAIN, not random proof-texts.
-- Prefer verses that INTERPRET other verses.
-- Avoid controversial or disputed passages unless clearly required.
-- Do NOT explain why the verses were chosen.
-- Do NOT label themes or principles.
-- Do NOT mention systems, methods, or frameworks.
+TASK: Return ${depth} Bible verses (KJV) that support, echo, or reinforce the ideas expressed.
 
-### Output Format:
-Return ONLY a JSON array with objects containing:
-- "reference": the verse reference (e.g., "Proverbs 18:13")
-- "text": the full verse text (KJV)
+RULES:
+- Use MULTIPLE books (Old and New Testament)
+- Verses must form a CONCEPTUAL CHAIN, not random proof-texts
+- Prefer verses that INTERPRET other verses
+- Do NOT explain or comment on the verses
 
-Present verses in LOGICAL PROGRESSION.
-No commentary. No headings. No explanations.
-
-If the user's thought is partially incorrect, still provide biblical verses that best align with the core intent, not the error.
-
-Example output:
+OUTPUT FORMAT - Return ONLY valid JSON:
 [
-  {"reference": "Proverbs 18:13", "text": "He that answereth a matter before he heareth it, it is folly and shame unto him."},
-  {"reference": "Isaiah 1:18", "text": "Come now, and let us reason together, saith the LORD..."}
-]`;
+  {"reference": "Book Chapter:Verse", "text": "Full verse text in KJV"},
+  {"reference": "Book Chapter:Verse", "text": "Full verse text in KJV"}
+]
 
-      userPrompt = `Analyze this thought and return supporting Scripture as a chain of witnesses:
+Return ONLY the JSON array. No markdown, no commentary, no explanations.`;
 
-"${message}"`;
+      userPrompt = `Find ${depth} supporting Scripture verses for this thought:
+
+${userMessage}`;
 
     } else if (mode === "chain-reference") {
       const principleMap: Record<string, { name: string; description: string }> = {
