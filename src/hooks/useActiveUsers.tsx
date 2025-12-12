@@ -14,15 +14,13 @@ interface ActiveUser {
 export const useActiveUsers = () => {
   const [activeCount, setActiveCount] = useState(0);
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>([]);
-  const [retryCount, setRetryCount] = useState(0);
-  const maxRetries = 3;
 
   useEffect(() => {
     let isSubscribed = true;
     let realtimeChannel: any = null;
     
     const updateLastSeen = async () => {
-      if (!isSubscribed || retryCount >= maxRetries) return;
+      if (!isSubscribed) return;
       
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -33,13 +31,12 @@ export const useActiveUsers = () => {
             .eq("id", user.id);
         }
       } catch (error) {
-        // Silently fail - this is not critical functionality
-        setRetryCount(prev => prev + 1);
+        console.error("Error updating last_seen:", error);
       }
     };
 
     const fetchActiveUsers = async () => {
-      if (!isSubscribed || retryCount >= maxRetries) return;
+      if (!isSubscribed) return;
       
       try {
         const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
@@ -50,62 +47,58 @@ export const useActiveUsers = () => {
           .order("last_seen", { ascending: false });
         
         if (!error && isSubscribed && data) {
-          setActiveCount(count || 0);
+          setActiveCount(count || data.length);
           setActiveUsers(data);
+        } else if (error) {
+          console.error("Error fetching active users:", error);
         }
       } catch (error) {
-        // Silently fail - this is not critical functionality
-        setRetryCount(prev => prev + 1);
+        console.error("Error in fetchActiveUsers:", error);
       }
     };
 
-    // Only proceed if we haven't exceeded retry limit
-    if (retryCount < maxRetries) {
-      // Update user's last_seen immediately
+    // Update user's last_seen immediately
+    updateLastSeen();
+    
+    // Fetch active users count immediately
+    fetchActiveUsers();
+    
+    // Update every 30 seconds for more responsive count
+    const interval = setInterval(() => {
       updateLastSeen();
-      
-      // Fetch active users count immediately
       fetchActiveUsers();
+    }, 30000);
+
+    // Set up realtime subscription for profile updates
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user?.id || !isSubscribed) return;
       
-      // Update every 60 seconds (reduced frequency)
-      const interval = setInterval(() => {
-        if (retryCount < maxRetries) {
-          updateLastSeen();
-          fetchActiveUsers();
-        }
-      }, 60000);
-
-      // Set up realtime subscription for profile updates (only if not exceeding retries and user is authenticated)
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        if (!user?.id || !isSubscribed) return;
-        
-        realtimeChannel = supabase
-          .channel('profiles-active-users')
-          .on(
-            'postgres_changes',
-            {
-              event: 'UPDATE',
-              schema: 'public',
-              table: 'profiles'
-            },
-            () => {
-              if (isSubscribed && retryCount < maxRetries) {
-                fetchActiveUsers();
-              }
+      realtimeChannel = supabase
+        .channel('profiles-active-users')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles'
+          },
+          () => {
+            if (isSubscribed) {
+              fetchActiveUsers();
             }
-          )
-          .subscribe();
-      });
+          }
+        )
+        .subscribe();
+    });
 
-      return () => {
-        isSubscribed = false;
-        clearInterval(interval);
-        if (realtimeChannel) {
-          supabase.removeChannel(realtimeChannel);
-        }
-      };
-    }
-  }, [retryCount]);
+    return () => {
+      isSubscribed = false;
+      clearInterval(interval);
+      if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+      }
+    };
+  }, []);
 
   return { activeCount, activeUsers };
 };
