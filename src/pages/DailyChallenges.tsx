@@ -91,9 +91,15 @@ const DailyChallenges = () => {
 
       if (error) throw error;
 
+      // Award 25 points for completing a challenge
+      await supabase.rpc("increment_user_points", { 
+        user_id: user.id, 
+        points_to_add: 25 
+      });
+
       toast({
         title: "Challenge Complete! 🎉",
-        description: "Added to your Growth Journal. Check back tomorrow for the next challenge!",
+        description: "Added to your Growth Journal. +25 points! Check back tomorrow for the next challenge!",
       });
 
       setHasSubmitted(true);
