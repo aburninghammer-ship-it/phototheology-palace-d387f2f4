@@ -28,6 +28,9 @@ const GAME_ICONS: Record<string, string> = {
   drill_drop: "🎯",
   reveal_the_gem: "💎",
   verse_hunt: "🔍",
+  symbol_match: "🎴",
+  chain_chess: "🔗",
+  prophecy_timeline: "📅",
 };
 
 const GAME_NAMES: Record<string, string> = {
@@ -39,6 +42,9 @@ const GAME_NAMES: Record<string, string> = {
   drill_drop: "Drill Drop",
   reveal_the_gem: "Reveal the Gem",
   verse_hunt: "Verse Hunt",
+  symbol_match: "Symbol Match",
+  chain_chess: "Chain Chess",
+  prophecy_timeline: "Prophecy Timeline",
 };
 
 export function GameRound({

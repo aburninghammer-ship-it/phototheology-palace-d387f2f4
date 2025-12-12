@@ -3,22 +3,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Trophy, 
   Clock, 
-  Send, 
-  CheckCircle2, 
   Loader2,
-  Users,
   Sparkles,
-  Star
+  Star,
+  Bell
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { GuestReactions } from "./GuestReactions";
 import { GameRound } from "./GameRound";
+import { SymbolMatchGame } from "./games/SymbolMatchGame";
+import { ChainChessGame } from "./games/ChainChessGame";
+import { ProphecyTimelineGame } from "./games/ProphecyTimelineGame";
 import type { Json } from "@/integrations/supabase/types";
 
 interface GuestMobileViewProps {
@@ -65,6 +64,7 @@ export function GuestMobileView({ eventId, guestId, guestName }: GuestMobileView
   const [loading, setLoading] = useState(true);
   const [showScoreAnimation, setShowScoreAnimation] = useState(false);
   const [lastPoints, setLastPoints] = useState(0);
+  const [announcement, setAnnouncement] = useState<string | null>(null);
 
   useEffect(() => {
     fetchInitialData();
@@ -103,6 +103,14 @@ export function GuestMobileView({ eventId, guestId, guestName }: GuestMobileView
           setTimeout(() => setShowScoreAnimation(false), 2000);
         }
         fetchRanking();
+      })
+      .on('broadcast', { event: 'announcement' }, ({ payload }) => {
+        setAnnouncement(payload.message);
+        toast.info(payload.message, { duration: 5000 });
+        setTimeout(() => setAnnouncement(null), 5000);
+      })
+      .on('broadcast', { event: 'time_extension' }, ({ payload }) => {
+        toast.success(`+${payload.seconds} seconds added!`);
       })
       .subscribe();
 
@@ -252,8 +260,25 @@ export function GuestMobileView({ eventId, guestId, guestName }: GuestMobileView
         </div>
       </div>
 
+      {/* Announcement Banner */}
+      <AnimatePresence>
+        {announcement && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="absolute top-16 left-4 right-4 z-50"
+          >
+            <Card className="p-3 bg-primary text-primary-foreground flex items-center gap-2">
+              <Bell className="w-4 h-4" />
+              <span className="text-sm font-medium">{announcement}</span>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main Content */}
-      <div className="flex-1 p-4 space-y-4">
+      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         <AnimatePresence mode="wait">
           {activePrompt ? (
             <motion.div
@@ -262,14 +287,42 @@ export function GuestMobileView({ eventId, guestId, guestName }: GuestMobileView
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <GameRound
-                promptId={activePrompt.id}
-                promptType={activePrompt.prompt_type}
-                promptData={activePrompt.prompt_data}
-                timeLimit={90}
-                onSubmit={handleSubmitResponse}
-                isSubmitted={hasSubmitted}
-              />
+              {/* Render specialized game components for new game types */}
+              {activePrompt.prompt_type === "symbol_match" && (activePrompt.prompt_data as any)?.symbols ? (
+                <SymbolMatchGame
+                  symbols={(activePrompt.prompt_data as any).symbols}
+                  timeLimit={(activePrompt.prompt_data as any).timeLimit || 120}
+                  onComplete={async (score, timeTaken) => {
+                    await handleSubmitResponse({ score, timeTaken, gameType: "symbol_match" });
+                  }}
+                />
+              ) : activePrompt.prompt_type === "chain_chess" && (activePrompt.prompt_data as any)?.chain ? (
+                <ChainChessGame
+                  startingVerse={(activePrompt.prompt_data as any).startingVerse}
+                  chain={(activePrompt.prompt_data as any).chain}
+                  timeLimit={(activePrompt.prompt_data as any).timeLimit || 180}
+                  onComplete={async (score, linksFound, timeTaken) => {
+                    await handleSubmitResponse({ score, linksFound, timeTaken, gameType: "chain_chess" });
+                  }}
+                />
+              ) : activePrompt.prompt_type === "prophecy_timeline" && (activePrompt.prompt_data as any)?.events ? (
+                <ProphecyTimelineGame
+                  events={(activePrompt.prompt_data as any).events}
+                  timeLimit={(activePrompt.prompt_data as any).timeLimit || 150}
+                  onComplete={async (score, correctOrder, timeTaken) => {
+                    await handleSubmitResponse({ score, correctOrder, timeTaken, gameType: "prophecy_timeline" });
+                  }}
+                />
+              ) : (
+                <GameRound
+                  promptId={activePrompt.id}
+                  promptType={activePrompt.prompt_type}
+                  promptData={activePrompt.prompt_data}
+                  timeLimit={90}
+                  onSubmit={handleSubmitResponse}
+                  isSubmitted={hasSubmitted}
+                />
+              )}
             </motion.div>
           ) : (
             <motion.div
