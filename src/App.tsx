@@ -35,6 +35,8 @@ import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { SessionPromptDialog } from "@/components/session/SessionPromptDialog";
 import { DonationBanner } from "@/components/DonationBanner";
 import { FontSizeControl } from "@/components/FontSizeControl";
+import { usePresenceTracker } from "@/hooks/usePresenceTracker";
+import { PresenceTracker } from "@/components/PresenceTracker";
 
 // Critical pages - load immediately (landing + auth only)
 import Index from "./pages/Index";
@@ -255,6 +257,7 @@ function App() {
               <StudySessionProvider>
               <SessionModeProvider>
               <PageTracker />
+              <PresenceTracker />
               <LiveNotificationsProvider>
                 <AchievementProvider>
                   <DirectMessagesProvider>
