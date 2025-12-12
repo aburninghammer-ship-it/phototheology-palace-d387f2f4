@@ -22,6 +22,7 @@ import { VoiceInput } from "@/components/analyze/VoiceInput";
 import { SavedAnalysesList } from "@/components/analyze/SavedAnalysesList";
 import { QuickAudioButton } from "@/components/audio";
 import { FollowUpChat } from "@/components/analyze/FollowUpChat";
+import { ChainWitness } from "@/components/analyze/ChainWitness";
 
 interface StrengthItem {
   point: string;
@@ -407,6 +408,9 @@ const AnalyzeThoughts = () => {
                 className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-6 text-lg shadow-lg shadow-purple-500/25">
                 {isAnalyzing ? <><Loader2 className="h-5 w-5 mr-2 animate-spin" />Analyzing...</> : <><Send className="h-5 w-5 mr-2" />Analyze My Thoughts</>}
               </Button>
+
+              {/* Chain Witness - Supporting Scripture Engine */}
+              <ChainWitness userThought={input} disabled={isAnalyzing} />
             </CardContent>
           </Card>
         </motion.div>
