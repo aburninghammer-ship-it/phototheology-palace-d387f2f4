@@ -83,12 +83,15 @@ export const useAudioMixer = () => {
       // First, use a regular AudioContext to decode all audio
       const tempContext = new AudioContext();
       
-      // Fetch music (use proxy for CORS)
-      setProgress(5);
-      console.log("Fetching music...");
-      const musicBuffer = await fetchAudioBuffer(tempContext, musicUrl, undefined, true);
-      if (!musicBuffer) {
-        throw new Error("Failed to load background music");
+      // Fetch music only if URL is provided
+      let musicBuffer: AudioBuffer | null = null;
+      if (musicUrl) {
+        setProgress(5);
+        console.log("Fetching music...");
+        musicBuffer = await fetchAudioBuffer(tempContext, musicUrl, undefined, true);
+        if (!musicBuffer) {
+          console.warn("Failed to load background music, continuing without it");
+        }
       }
 
       // Fetch all speech segments
@@ -117,7 +120,9 @@ export const useAudioMixer = () => {
         (acc, buf) => acc + buf.duration + gapBetweenSegments,
         0
       );
-      const totalDuration = Math.max(totalSpeechDuration, musicBuffer.duration);
+      const totalDuration = musicBuffer 
+        ? Math.max(totalSpeechDuration, musicBuffer.duration)
+        : totalSpeechDuration;
 
       console.log(`Total duration: ${totalDuration}s`);
       setProgress(50);
@@ -130,17 +135,19 @@ export const useAudioMixer = () => {
         sampleRate
       );
 
-      // Add music track (looped if needed, at low volume)
-      const musicSource = offlineContext.createBufferSource();
-      musicSource.buffer = musicBuffer;
-      musicSource.loop = totalDuration > musicBuffer.duration;
-      
-      const musicGain = offlineContext.createGain();
-      musicGain.gain.value = musicVolume;
-      
-      musicSource.connect(musicGain);
-      musicGain.connect(offlineContext.destination);
-      musicSource.start(0);
+      // Add music track only if we have one
+      if (musicBuffer) {
+        const musicSource = offlineContext.createBufferSource();
+        musicSource.buffer = musicBuffer;
+        musicSource.loop = totalDuration > musicBuffer.duration;
+        
+        const musicGain = offlineContext.createGain();
+        musicGain.gain.value = musicVolume;
+        
+        musicSource.connect(musicGain);
+        musicGain.connect(offlineContext.destination);
+        musicSource.start(0);
+      }
 
       // Add speech segments sequentially
       let currentTime = 0;

@@ -2231,6 +2231,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   commentaryText={commentaryText}
                   book={currentItem?.book || ""}
                   chapter={currentItem?.chapter || 1}
+                  verseText={chapterContent?.verses?.map(v => `${v.verse}. ${v.text}`).join(" ") || ""}
                   voice={currentVoice}
                   trigger={
                     <Button

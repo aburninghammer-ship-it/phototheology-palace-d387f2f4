@@ -21,11 +21,12 @@ import { useAudioMixer } from "@/hooks/useAudioMixer";
 import { ReadingSequenceBlock, SequenceItem } from "@/types/readingSequence";
 import { toast } from "sonner";
 
-// System ambient tracks
+// System ambient tracks - using reliable free music sources
 const SYSTEM_TRACKS = [
-  { name: "Peaceful Piano", url: "https://cdn.pixabay.com/audio/2024/11/10/audio_1d9d9c7b91.mp3" },
-  { name: "Ambient Meditation", url: "https://cdn.pixabay.com/audio/2022/10/25/audio_384d4e3c50.mp3" },
-  { name: "Soft Strings", url: "https://cdn.pixabay.com/audio/2024/02/14/audio_03d98fca20.mp3" },
+  { name: "No Music", url: "" },
+  { name: "Peaceful Piano", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+  { name: "Ambient Meditation", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+  { name: "Soft Strings", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
 ];
 
 interface DownloadSequenceDialogProps {
@@ -113,11 +114,7 @@ export function DownloadSequenceDialog({ sequences, trigger }: DownloadSequenceD
   };
 
   const handleGenerate = async () => {
-    if (!selectedMusic) {
-      toast.error("Please select background music");
-      return;
-    }
-
+    // selectedMusic can now be empty string (No Music)
     setIsGenerating(true);
     setGenerationProgress(0);
     setAudioSegments([]);
@@ -171,25 +168,46 @@ export function DownloadSequenceDialog({ sequences, trigger }: DownloadSequenceD
       }
 
       setAudioSegments(segments);
-      setGenerationStep("Mixing audio with music...");
       setGenerationProgress(65);
 
-      // Mix audio
-      const blob = await mixAndDownload({
-        musicUrl: selectedMusic,
-        musicVolume: musicVolume / 100,
-        segments,
-        gapBetweenSegments: 0.8,
-      });
+      // Mix audio (with or without music)
+      if (selectedMusic) {
+        setGenerationStep("Mixing audio with music...");
+        const blob = await mixAndDownload({
+          musicUrl: selectedMusic,
+          musicVolume: musicVolume / 100,
+          segments,
+          gapBetweenSegments: 0.8,
+        });
 
-      if (blob) {
-        setGeneratedBlob(blob);
-        setIsDone(true);
-        setGenerationStep("Complete!");
-        setGenerationProgress(100);
-        toast.success("Audio generated successfully!");
+        if (blob) {
+          setGeneratedBlob(blob);
+          setIsDone(true);
+          setGenerationStep("Complete!");
+          setGenerationProgress(100);
+          toast.success("Audio generated successfully!");
+        } else {
+          throw new Error("Failed to mix audio");
+        }
       } else {
-        throw new Error("Failed to mix audio");
+        // No music - just concatenate the TTS audio
+        setGenerationStep("Finalizing audio...");
+        const blob = await mixAndDownload({
+          musicUrl: "", // Empty = no music
+          musicVolume: 0,
+          segments,
+          gapBetweenSegments: 0.8,
+        });
+
+        if (blob) {
+          setGeneratedBlob(blob);
+          setIsDone(true);
+          setGenerationStep("Complete!");
+          setGenerationProgress(100);
+          toast.success("Audio generated successfully!");
+        } else {
+          throw new Error("Failed to generate audio");
+        }
       }
     } catch (err) {
       console.error("Generation error:", err);

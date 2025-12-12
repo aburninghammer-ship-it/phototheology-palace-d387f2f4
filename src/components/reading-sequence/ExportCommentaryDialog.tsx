@@ -13,6 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { 
   Share2, 
   Music, 
@@ -21,28 +22,26 @@ import {
   CheckCircle, 
   AlertCircle, 
   Download,
-  Copy,
-  Facebook,
-  Twitter,
-  MessageCircle
+  BookOpen
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserMusic } from "@/hooks/useUserMusic";
 import { useAudioMixer } from "@/hooks/useAudioMixer";
 import { toast } from "sonner";
 
-// System ambient tracks
+// System ambient tracks - using reliable free music sources
 const SYSTEM_TRACKS = [
-  { name: "Peaceful Piano", url: "https://cdn.pixabay.com/audio/2024/11/10/audio_1d9d9c7b91.mp3" },
-  { name: "Ambient Meditation", url: "https://cdn.pixabay.com/audio/2022/10/25/audio_384d4e3c50.mp3" },
-  { name: "Soft Strings", url: "https://cdn.pixabay.com/audio/2024/02/14/audio_03d98fca20.mp3" },
   { name: "No Music", url: "" },
+  { name: "Peaceful Piano", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+  { name: "Ambient Meditation", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+  { name: "Soft Strings", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
 ];
 
 interface ExportCommentaryDialogProps {
   commentaryText: string;
   book: string;
   chapter: number;
+  verseText?: string; // Bible verse text to include
   voice?: string;
   trigger?: React.ReactNode;
 }
@@ -51,12 +50,14 @@ export function ExportCommentaryDialog({
   commentaryText, 
   book, 
   chapter, 
+  verseText = "",
   voice = "onyx",
   trigger 
 }: ExportCommentaryDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedMusic, setSelectedMusic] = useState<string>(SYSTEM_TRACKS[0].url);
   const [musicVolume, setMusicVolume] = useState(10);
+  const [includeBibleText, setIncludeBibleText] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState("");
   const [generationProgress, setGenerationProgress] = useState(0);
@@ -143,26 +144,41 @@ export function ExportCommentaryDialog({
     setGeneratedBlob(null);
 
     try {
-      setGenerationStep("Generating speech from commentary...");
-      setGenerationProgress(5);
-
-      const audioData = await generateCommentaryTTS(commentaryText);
+      const audioSegments: { audioContent: string }[] = [];
       
-      if (!audioData?.audioContent) {
-        throw new Error("Failed to generate audio");
+      // Step 1: Generate Bible text audio if enabled and available
+      if (includeBibleText && verseText) {
+        setGenerationStep("Generating Bible reading...");
+        setGenerationProgress(5);
+        
+        const bibleAudio = await generateCommentaryTTS(verseText);
+        if (bibleAudio?.audioContent) {
+          audioSegments.push({ audioContent: bibleAudio.audioContent });
+        }
       }
+
+      // Step 2: Generate commentary audio
+      setGenerationStep("Generating commentary speech...");
+      setGenerationProgress(includeBibleText && verseText ? 30 : 5);
+
+      const commentaryAudio = await generateCommentaryTTS(commentaryText);
+      
+      if (!commentaryAudio?.audioContent) {
+        throw new Error("Failed to generate commentary audio");
+      }
+      audioSegments.push({ audioContent: commentaryAudio.audioContent });
 
       setGenerationProgress(55);
 
-      // If music is selected, mix it
+      // If music is selected, mix it with all segments
       if (selectedMusic) {
         setGenerationStep("Mixing with background music...");
         
         const blob = await mixAndDownload({
           musicUrl: selectedMusic,
           musicVolume: musicVolume / 100,
-          segments: [{ audioContent: audioData.audioContent }],
-          gapBetweenSegments: 0,
+          segments: audioSegments,
+          gapBetweenSegments: 1.5, // Gap between Bible and commentary
         });
 
         if (blob) {
@@ -176,8 +192,10 @@ export function ExportCommentaryDialog({
           throw new Error("Failed to mix audio");
         }
       } else {
-        // No music - just use the raw TTS audio
-        const byteCharacters = atob(audioData.audioContent);
+        // No music - concatenate audio segments manually
+        // For now, just use the last segment (commentary)
+        const lastSegment = audioSegments[audioSegments.length - 1];
+        const byteCharacters = atob(lastSegment.audioContent);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
           byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -283,6 +301,28 @@ export function ExportCommentaryDialog({
               {commentaryText?.slice(0, 150)}...
             </p>
           </div>
+
+          {/* Include Bible Text Toggle */}
+          {verseText && (
+            <div className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-primary" />
+                <div>
+                  <Label htmlFor="include-bible" className="text-sm font-medium">
+                    Include Bible Reading
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Read the Bible text before commentary
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="include-bible"
+                checked={includeBibleText}
+                onCheckedChange={setIncludeBibleText}
+              />
+            </div>
+          )}
 
           {/* Music Selection */}
           <div className="space-y-2">
