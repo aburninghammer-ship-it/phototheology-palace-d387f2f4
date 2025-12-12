@@ -43,11 +43,13 @@ export const useActiveUsers = () => {
       if (!isSubscribed) return;
       
       try {
-        const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+        // Use 60 minutes window to account for users with cached old code
+        // who haven't refreshed yet to get the presence tracker updates
+        const sixtyMinutesAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
         const { data, count, error } = await supabase
           .from("profiles")
           .select("id, username, display_name, avatar_url, last_seen, current_floor, master_title", { count: "exact" })
-          .gte("last_seen", fifteenMinutesAgo)
+          .gte("last_seen", sixtyMinutesAgo)
           .order("last_seen", { ascending: false });
         
         if (!error && isSubscribed && data) {
