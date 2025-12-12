@@ -4261,6 +4261,108 @@ Return as JSON:
 }`;
 
       userPrompt = `The host says: "${eventPrompt}". Suggest a complete GuestHouse event.`;
+    } else if (mode === "guesthouse_create_custom_challenge") {
+      // GuestHouse: Create a custom challenge from natural language description
+      const { challengeDescription, teamMode } = requestBody;
+      
+      systemPrompt = `You are Jeeves, the Phototheology master, creating a custom Bible study challenge from scratch.
+
+${PALACE_SCHEMA}
+
+**YOUR TASK:**
+The host has described a custom challenge idea. You must create a complete, runnable challenge specification.
+
+**CHALLENGE DESCRIPTION FROM HOST:**
+"${challengeDescription}"
+
+**TEAM MODE:** ${teamMode ? "Yes - teams compete together" : "No - individuals compete"}
+
+**CREATE A COMPLETE CHALLENGE SPEC:**
+1. Clear title and instructions
+2. What participants must do
+3. How submissions are evaluated (criteria for Jeeves to grade)
+4. Scoring rubric (what earns points)
+5. Time limit
+6. Any special rules
+
+**GRADING APPROACH:**
+- Define specific criteria Jeeves will use to evaluate submissions
+- Quality-based grading (best answer wins, NOT fastest)
+- Include partial credit opportunities
+- Bonus points for exceptional insight
+
+Return as JSON:
+{
+  "title": "Challenge title",
+  "description": "2-3 sentence description",
+  "instructions": "Clear step-by-step instructions for participants",
+  "submissionType": "text" | "verse_selection" | "multiple_choice" | "ranking",
+  "submissionPrompt": "What participants see when submitting",
+  "gradingCriteria": [
+    {"criterion": "Theological accuracy", "weight": 30, "description": "How biblically sound is the response?"},
+    {"criterion": "Creativity", "weight": 25, "description": "Unique insights or connections"},
+    {"criterion": "Christ-centeredness", "weight": 25, "description": "Does it point to Christ?"},
+    {"criterion": "Depth", "weight": 20, "description": "Level of spiritual insight"}
+  ],
+  "scoringRubric": {
+    "excellent": {"min": 90, "points": 100, "description": "Outstanding insight"},
+    "good": {"min": 70, "points": 75, "description": "Solid understanding"},
+    "fair": {"min": 50, "points": 50, "description": "Basic grasp"},
+    "needs_work": {"min": 0, "points": 25, "description": "Attempt made"}
+  },
+  "timeLimit": 180,
+  "bonusOpportunities": ["First to find Christ connection", "Most creative parallel"],
+  "specialRules": ["Any special rules"],
+  "ptRoomsRelevant": ["SR", "CR", "etc"],
+  "teamMode": ${teamMode || false}
+}`;
+
+      userPrompt = `Create a complete custom challenge from this description: "${challengeDescription}"`;
+    } else if (mode === "guesthouse_grade_custom_challenge") {
+      // GuestHouse: Grade a submission for a custom challenge
+      const { challengeSpec, submission, teamName } = requestBody;
+      
+      systemPrompt = `You are Jeeves, grading a submission for a custom Bible study challenge.
+
+${PALACE_SCHEMA}
+
+**CHALLENGE:**
+Title: ${challengeSpec?.title || "Custom Challenge"}
+Instructions: ${challengeSpec?.instructions || "N/A"}
+
+**GRADING CRITERIA:**
+${JSON.stringify(challengeSpec?.gradingCriteria || [], null, 2)}
+
+**SCORING RUBRIC:**
+${JSON.stringify(challengeSpec?.scoringRubric || {}, null, 2)}
+
+**SUBMISSION TO GRADE:**
+${teamName ? `Team: ${teamName}` : "Individual submission"}
+Response: "${submission}"
+
+**YOUR TASK:**
+1. Evaluate against each criterion
+2. Calculate weighted score (0-100)
+3. Identify strengths and areas for growth
+4. Note any bonus points earned
+5. Provide encouraging, constructive feedback
+
+Return as JSON:
+{
+  "overallScore": 0-100,
+  "criteriaScores": [
+    {"criterion": "name", "score": 0-100, "feedback": "specific feedback"}
+  ],
+  "strengths": ["What they did well"],
+  "areasForGrowth": ["Where they can improve"],
+  "bonusPointsEarned": 0-20,
+  "bonusReason": "Why bonus was awarded (if any)",
+  "feedbackMessage": "Encouraging overall feedback",
+  "ptInsight": "A Phototheology insight to help them grow",
+  "rank": "excellent" | "good" | "fair" | "needs_work"
+}`;
+
+      userPrompt = `Grade this submission: "${submission}"`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

@@ -20,6 +20,7 @@ interface GameRoundProps {
 }
 
 const GAME_ICONS: Record<string, string> = {
+  custom_challenge: "🎨",
   call_the_room: "🏠",
   verse_fracture: "🔧",
   build_the_study: "🏗️",
@@ -34,6 +35,7 @@ const GAME_ICONS: Record<string, string> = {
 };
 
 const GAME_NAMES: Record<string, string> = {
+  custom_challenge: "Custom Challenge",
   call_the_room: "Call the Room",
   verse_fracture: "Verse Fracture",
   build_the_study: "Build the Study",

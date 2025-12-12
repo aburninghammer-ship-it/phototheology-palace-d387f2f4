@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Users, 
@@ -23,11 +24,12 @@ import { PresenceIndicators } from "@/components/guesthouse/PresenceIndicators";
 import { Leaderboard } from "@/components/guesthouse/Leaderboard";
 import { HostGameControls } from "@/components/guesthouse/HostGameControls";
 import { SessionAnalytics } from "@/components/guesthouse/SessionAnalytics";
-import { generateGamePrompt, generateSymbolMatch, generateChainChess, generateProphecyTimeline } from "@/lib/guesthouseJeeves";
+import { generateGamePrompt, generateSymbolMatch, generateChainChess, generateProphecyTimeline, createCustomChallenge } from "@/lib/guesthouseJeeves";
 import { useGuesthouseScoring } from "@/hooks/useGuesthouseScoring";
 import type { Json } from "@/integrations/supabase/types";
 
 const GAME_TYPES = [
+  { id: "custom_challenge", name: "✨ Custom Challenge", icon: "🎨", description: "Describe any challenge - Jeeves creates it!", category: "custom" },
   { id: "call_the_room", name: "Call the Room", icon: "🏠", description: "Assign PT rooms to verses", category: "core" },
   { id: "verse_fracture", name: "Verse Fracture", icon: "🔧", description: "Rebuild scrambled verses", category: "core" },
   { id: "build_the_study", name: "Build the Study", icon: "🏗️", description: "Collaborative outline building", category: "core" },
@@ -69,6 +71,8 @@ export default function GuestHouseHostLive() {
   const [sessionTime, setSessionTime] = useState(0);
   const [generatingPrompt, setGeneratingPrompt] = useState(false);
   const [customVerse, setCustomVerse] = useState("John 3:16");
+  const [customChallengeDescription, setCustomChallengeDescription] = useState("");
+  const [showCustomChallengeInput, setShowCustomChallengeInput] = useState(false);
   const [responseCount, setResponseCount] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [activeTab, setActiveTab] = useState("games");
@@ -192,7 +196,21 @@ export default function GuestHouseHostLive() {
       };
 
       // Generate game-specific data
-      if (gameType === "symbol_match") {
+      if (gameType === "custom_challenge") {
+        if (!customChallengeDescription.trim()) {
+          toast.error("Please describe your custom challenge first");
+          setGeneratingPrompt(false);
+          return;
+        }
+        const spec = await createCustomChallenge(customChallengeDescription, false);
+        if (spec) {
+          promptData = { ...promptData, ...spec, isCustomChallenge: true };
+        } else {
+          toast.error("Failed to create custom challenge");
+          setGeneratingPrompt(false);
+          return;
+        }
+      } else if (gameType === "symbol_match") {
         const data = await generateSymbolMatch("medium");
         if (data) promptData = { ...promptData, ...data };
       } else if (gameType === "chain_chess") {
@@ -417,7 +435,58 @@ export default function GuestHouseHostLive() {
                         </div>
                         
                         <div className="space-y-4">
-                          <p className="text-muted-foreground text-center">Select a game to launch:</p>
+                          {/* Custom Challenge - Featured */}
+                          <div className="p-4 rounded-lg border-2 border-primary/50 bg-primary/5">
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="text-2xl">🎨</span>
+                              <div>
+                                <h4 className="font-semibold text-primary">Custom Challenge</h4>
+                                <p className="text-xs text-muted-foreground">Describe any challenge - Jeeves creates it!</p>
+                              </div>
+                            </div>
+                            {showCustomChallengeInput ? (
+                              <div className="space-y-3">
+                                <Textarea
+                                  value={customChallengeDescription}
+                                  onChange={(e) => setCustomChallengeDescription(e.target.value)}
+                                  placeholder="Describe your challenge... e.g., 'Teams race to find the most Christ-centered connection in Leviticus. Best answer wins, not fastest. Grade on creativity and theological depth.'"
+                                  rows={3}
+                                  className="resize-none"
+                                />
+                                <div className="flex gap-2">
+                                  <Button 
+                                    className="flex-1 gap-2"
+                                    onClick={() => launchGame("custom_challenge")}
+                                    disabled={generatingPrompt || !customChallengeDescription.trim()}
+                                  >
+                                    {generatingPrompt ? (
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <Sparkles className="w-4 h-4" />
+                                    )}
+                                    Create & Launch
+                                  </Button>
+                                  <Button 
+                                    variant="outline"
+                                    onClick={() => setShowCustomChallengeInput(false)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <Button 
+                                variant="outline" 
+                                className="w-full gap-2"
+                                onClick={() => setShowCustomChallengeInput(true)}
+                              >
+                                <Sparkles className="w-4 h-4" />
+                                Create Custom Challenge
+                              </Button>
+                            )}
+                          </div>
+
+                          <p className="text-muted-foreground text-center text-sm">Or select a preset game:</p>
                           
                           {/* Core Games */}
                           <div>
@@ -442,7 +511,7 @@ export default function GuestHouseHostLive() {
                           <div>
                             <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">Special Games</p>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                              {GAME_TYPES.filter(g => g.category !== "core").map((game) => (
+                              {GAME_TYPES.filter(g => g.category !== "core" && g.category !== "custom").map((game) => (
                                 <Button
                                   key={game.id}
                                   variant="outline"

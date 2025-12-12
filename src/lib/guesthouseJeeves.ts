@@ -362,3 +362,100 @@ export async function suggestEventFromPrompt(
     return null;
   }
 }
+
+interface CustomChallengeSpec {
+  title: string;
+  description: string;
+  instructions: string;
+  submissionType: "text" | "verse_selection" | "multiple_choice" | "ranking";
+  submissionPrompt: string;
+  gradingCriteria: Array<{
+    criterion: string;
+    weight: number;
+    description: string;
+  }>;
+  scoringRubric: Record<string, { min: number; points: number; description: string }>;
+  timeLimit: number;
+  bonusOpportunities: string[];
+  specialRules: string[];
+  ptRoomsRelevant: string[];
+  teamMode: boolean;
+}
+
+interface CustomChallengeGrade {
+  overallScore: number;
+  criteriaScores: Array<{
+    criterion: string;
+    score: number;
+    feedback: string;
+  }>;
+  strengths: string[];
+  areasForGrowth: string[];
+  bonusPointsEarned: number;
+  bonusReason: string;
+  feedbackMessage: string;
+  ptInsight: string;
+  rank: "excellent" | "good" | "fair" | "needs_work";
+}
+
+export async function createCustomChallenge(
+  challengeDescription: string,
+  teamMode: boolean = false
+): Promise<CustomChallengeSpec | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke("jeeves", {
+      body: {
+        mode: "guesthouse_create_custom_challenge",
+        challengeDescription,
+        teamMode
+      }
+    });
+
+    if (error) throw error;
+
+    const content = data?.content || data;
+    if (typeof content === "string") {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]) as CustomChallengeSpec;
+      }
+    }
+    return content as CustomChallengeSpec;
+  } catch (error) {
+    console.error("Error creating custom challenge:", error);
+    toast.error("Failed to create custom challenge");
+    return null;
+  }
+}
+
+export async function gradeCustomChallenge(
+  challengeSpec: CustomChallengeSpec,
+  submission: string,
+  teamName?: string
+): Promise<CustomChallengeGrade | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke("jeeves", {
+      body: {
+        mode: "guesthouse_grade_custom_challenge",
+        challengeSpec,
+        submission,
+        teamName
+      }
+    });
+
+    if (error) throw error;
+
+    const content = data?.content || data;
+    if (typeof content === "string") {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]) as CustomChallengeGrade;
+      }
+    }
+    return content as CustomChallengeGrade;
+  } catch (error) {
+    console.error("Error grading custom challenge:", error);
+    toast.error("Failed to grade submission");
+    return null;
+  }
+}
