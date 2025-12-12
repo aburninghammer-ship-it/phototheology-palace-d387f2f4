@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/tooltip";
 
 export const MessagingSidebar = () => {
-  const { state, toggleSidebar, open, setOpen, isMobile } = useSidebar();
+  const { state, toggleSidebar, open, setOpen, openMobile, setOpenMobile, isMobile } = useSidebar();
   const { user } = useAuth();
   const { activeUsers } = useActiveUsers();
   const {
@@ -61,6 +61,7 @@ export const MessagingSidebar = () => {
   }, [activeConversationId, isCollapsed, setOpen]);
 
   // Listen for window event to force sidebar open (for deep-linked notifications)
+  // IMPORTANT: This must run even when collapsed, so we can open from notifications
   useEffect(() => {
     console.log('📬 MessagingSidebar: Setting up event listener for open-chat-sidebar');
     
@@ -70,7 +71,8 @@ export const MessagingSidebar = () => {
         detail: e.detail,
         conversationId: e.detail?.conversationId,
         userId: e.detail?.userId,
-        isMobile
+        isMobile,
+        isCollapsed: state === 'collapsed'
       });
       
       // Handle conversationId (from notifications)
@@ -78,23 +80,24 @@ export const MessagingSidebar = () => {
         console.log('📬 MessagingSidebar: Setting conversation:', e.detail.conversationId);
         setActiveConversationId(e.detail.conversationId);
         
-        // Force open on mobile and desktop
+        // Force open the sidebar - use correct method for mobile vs desktop
         console.log('📬 MessagingSidebar: Opening sidebar (isMobile:', isMobile, ')');
-        if (setOpen) {
-          console.log('📬 MessagingSidebar: Using setOpen(true)');
-          setOpen(true);
-        }
-        // Always try toggleSidebar as fallback on mobile if collapsed
-        if (isMobile || state === 'collapsed') {
-          console.log('📬 MessagingSidebar: Also calling toggleSidebar for mobile/collapsed');
-          toggleSidebar();
+        if (isMobile) {
+          console.log('📬 MessagingSidebar: Using setOpenMobile(true) for mobile');
+          setOpenMobile(true);
+        } else {
+          console.log('📬 MessagingSidebar: Using setOpen(true) for desktop');
+          if (setOpen) {
+            setOpen(true);
+          }
         }
         setActiveTab('conversations');
         
         // Small delay to ensure UI updates
         setTimeout(() => {
-          if (!open && setOpen) {
-            console.log('📬 MessagingSidebar: Retry opening after delay');
+          if (isMobile) {
+            setOpenMobile(true);
+          } else if (setOpen) {
             setOpen(true);
           }
         }, 100);
@@ -107,11 +110,10 @@ export const MessagingSidebar = () => {
         if (convId) {
           console.log('📬 MessagingSidebar: Conversation started:', convId);
           setActiveConversationId(convId);
-          if (setOpen) {
+          if (isMobile) {
+            setOpenMobile(true);
+          } else if (setOpen) {
             setOpen(true);
-          }
-          if (isMobile || state === 'collapsed') {
-            toggleSidebar();
           }
           setActiveTab('conversations');
         } else {
@@ -131,7 +133,7 @@ export const MessagingSidebar = () => {
       console.log('📬 MessagingSidebar: Removing event listener');
       window.removeEventListener('open-chat-sidebar' as any, handleOpenChat);
     };
-  }, [setActiveConversationId, toggleSidebar, setOpen, state, startConversation, setActiveTab, isMobile]);
+  }, [setActiveConversationId, setOpen, setOpenMobile, state, startConversation, setActiveTab, isMobile]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -149,6 +151,7 @@ export const MessagingSidebar = () => {
     }
   };
 
+  // Return null for UI when collapsed, but event listener above is always active
   if (isCollapsed) {
     return null;
   }
