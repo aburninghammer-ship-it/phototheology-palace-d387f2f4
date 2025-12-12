@@ -1234,6 +1234,45 @@ Maintain the same doctrinal standards as the initial analysis:
 
       userPrompt = message || "Please continue the analysis.";
 
+    } else if (mode === "chain-witness") {
+      // Chain Witness - Supporting Scripture Engine
+      // Returns 5-9 verses that support, echo, or reinforce the user's written thoughts
+      const depth = requestBody.chainDepth === "full" ? 9 : 5;
+      
+      systemPrompt = `You are analyzing the user's written thoughts.
+Your task is NOT to critique or explain their text.
+Your task is to identify biblical statements that support, echo, or reinforce the ideas expressed.
+
+### Rules:
+- Produce ${depth} Scripture references maximum.
+- Use MULTIPLE books (Torah, Prophets, Gospels, Epistles, Revelation when relevant).
+- Verses must form a CONCEPTUAL CHAIN, not random proof-texts.
+- Prefer verses that INTERPRET other verses.
+- Avoid controversial or disputed passages unless clearly required.
+- Do NOT explain why the verses were chosen.
+- Do NOT label themes or principles.
+- Do NOT mention systems, methods, or frameworks.
+
+### Output Format:
+Return ONLY a JSON array with objects containing:
+- "reference": the verse reference (e.g., "Proverbs 18:13")
+- "text": the full verse text (KJV)
+
+Present verses in LOGICAL PROGRESSION.
+No commentary. No headings. No explanations.
+
+If the user's thought is partially incorrect, still provide biblical verses that best align with the core intent, not the error.
+
+Example output:
+[
+  {"reference": "Proverbs 18:13", "text": "He that answereth a matter before he heareth it, it is folly and shame unto him."},
+  {"reference": "Isaiah 1:18", "text": "Come now, and let us reason together, saith the LORD..."}
+]`;
+
+      userPrompt = `Analyze this thought and return supporting Scripture as a chain of witnesses:
+
+"${message}"`;
+
     } else if (mode === "chain-reference") {
       const principleMap: Record<string, { name: string; description: string }> = {
         "parables": { 
@@ -5076,6 +5115,34 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
       
       console.log("Updated usedVerses:", newUsedVerses);
       console.log("Updated usedRooms:", newUsedRooms);
+    }
+
+    // Handle chain-witness mode - parse JSON array of verses
+    if (mode === "chain-witness") {
+      try {
+        // Clean the content - remove any markdown code blocks
+        let cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        
+        // Try to extract JSON array from the response
+        const jsonMatch = cleanContent.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          const verses = JSON.parse(jsonMatch[0]);
+          console.log("Chain witness parsed verses:", verses.length);
+          return new Response(
+            JSON.stringify({ verses }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        } else {
+          console.error("No JSON array found in chain-witness response:", cleanContent.substring(0, 500));
+          throw new Error("Failed to parse chain witness response");
+        }
+      } catch (parseError) {
+        console.error("Error parsing chain-witness JSON:", parseError);
+        return new Response(
+          JSON.stringify({ error: "Failed to parse Scripture chain" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // Handle analyze-thoughts mode - parse JSON and return structured analysis
