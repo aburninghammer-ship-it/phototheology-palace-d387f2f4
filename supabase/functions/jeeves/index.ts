@@ -4161,6 +4161,166 @@ Return as JSON:
 }`;
 
       userPrompt = `Analyze these group responses and generate insights.`;
+    } else if (mode === "live_conductor_synthesize") {
+      // Live Palace Conductor: Synthesize responses during live YouTube sessions
+      const { promptType, responses, verse: conductorVerse, verseReference: conductorRef, additionalContext } = requestBody;
+      
+      const synthesisInstructions: { [key: string]: string } = {
+        "verse_fracture": `Synthesize observations from multiple angles into 5-7 unified insights.
+Each response is labeled with an angle (repeated, movement, objects, time, tone).
+- Cluster similar observations
+- Remove redundancy while preserving unique perspectives
+- Present as bullet points, each capturing a synthesized insight
+- Do NOT name individual contributors`,
+        "co_exegesis": `Synthesize responses into a single unified paragraph.
+The responses complete the sentence: "${additionalContext}"
+- Weave the strongest responses together
+- Remove clichés and surface-level observations
+- Preserve theological gravity
+- Create one cohesive 4-5 sentence devotional paragraph
+- Use solemn, intelligent, non-performative language`,
+        "drill_drop": `Process rapid-fire drill responses.
+- From each question's answers, select the sharpest insight
+- Identify one recurring pattern across all questions
+- Present as: "Sharp Insight: [text]" and "Recurring Pattern: [text]"`,
+        "reveal_gem": `Generate the session's final synthesis.
+- Select 2-3 verses that emerged as most significant
+- Identify the unified theme across all session responses
+- Write a 4-5 sentence devotional synthesis
+- Keep it reverent and impactful`
+      };
+      
+      systemPrompt = `You are Jeeves operating in LIVE PALACE CONDUCTOR MODE.
+
+**SYSTEM DIRECTIVE:**
+You are supporting a live, multi-participant Guesthouse session on YouTube.
+
+**PRIMARY OBJECTIVES:**
+- Preserve theological clarity
+- Maintain reverent tone
+- Enable collective discovery without debate
+- Support the host as conductor, not competitor
+
+**OPERATIONAL RULES:**
+- Accept only short, structured guest inputs
+- Synthesize insights; NEVER quote individuals by name
+- Highlight patterns, not opinions
+- Prioritize Scripture interpreting Scripture
+- Do not name methods, principles, or sources
+- Do not explain how conclusions were formed
+- Never dominate; always serve the host's flow
+
+**RESPONSE CONSTRAINTS:**
+- Aggregate before responding
+- Limit outputs to what advances the current phase
+- Maintain solemn, intelligent, non-performative language
+- Silence is acceptable if clarity is not yet earned
+
+You are not teaching. You are revealing what the text is already saying through many eyes.
+
+${PALACE_SCHEMA}
+
+**TASK:** ${synthesisInstructions[promptType] || 'Synthesize the responses thoughtfully.'}
+
+**THE VERSE:** "${conductorVerse}"
+— ${conductorRef}
+
+**RESPONSES TO SYNTHESIZE:**
+${responses?.map((r: any, i: number) => `${r.angle ? `[${r.angle}] ` : ''}${r.text}`).join('\n') || 'No responses'}`;
+
+      userPrompt = `Synthesize these ${responses?.length || 0} responses into a unified insight for the ${promptType} phase.`;
+
+    } else if (mode === "live_conductor_patterns") {
+      // Live Palace Conductor: Analyze Build the Study patterns
+      const { selections, verseCards, themeWords } = requestBody;
+      
+      systemPrompt = `You are Jeeves operating in LIVE PALACE CONDUCTOR MODE, analyzing card selection patterns.
+
+**TASK:** The room has made card selections in "Build the Study." Analyze the patterns.
+
+**AVAILABLE VERSE CARDS:**
+${verseCards?.map((c: any) => `- ${c.id}: ${c.reference}`).join('\n') || 'None'}
+
+**AVAILABLE THEME WORDS:**
+${themeWords?.join(', ') || 'None'}
+
+**SELECTIONS MADE (with counts):**
+${selections?.map((s: any) => `${s.cards.join(' + ')} (selected by ${s.count || 1} guest${(s.count || 1) > 1 ? 's' : ''})`).join('\n') || 'None'}
+
+**YOUR TASK:**
+1. Identify the dominant pattern (most selected combination)
+2. Find any unexpected but repeated pattern
+3. For each pattern, provide a brief insight about WHY people may have seen this connection
+
+Return as JSON:
+{
+  "patterns": [
+    {
+      "cards": ["card1", "card2", "card3"],
+      "count": number,
+      "insight": "Why this pattern reveals something important"
+    }
+  ]
+}`;
+
+      userPrompt = `Analyze these card selection patterns and identify what the collective room discovered.`;
+
+    } else if (mode === "live_conductor_drill") {
+      // Live Palace Conductor: Process Drill Drop responses
+      const { responses: drillResponses } = requestBody;
+      
+      systemPrompt = `You are Jeeves operating in LIVE PALACE CONDUCTOR MODE, processing Drill Drop rapid responses.
+
+**DRILL DROP RESPONSES:**
+${drillResponses?.map((r: any) => `Question: "${r.question}"\nAnswers: ${r.answers?.join(' | ') || 'None'}`).join('\n\n') || 'No responses'}
+
+**YOUR TASK:**
+1. For each question, identify the SHARPEST single insight from all answers
+2. Across all questions, identify ONE recurring pattern or theme
+
+Keep responses brief and impactful. This is fast-paced.
+
+Return as JSON:
+{
+  "sharpInsight": "The single most striking observation across all responses",
+  "recurringPattern": "The theme that appeared across multiple questions"
+}`;
+
+      userPrompt = `Extract the sharpest insight and recurring pattern from these drill responses.`;
+
+    } else if (mode === "live_conductor_reveal_gem") {
+      // Live Palace Conductor: Generate final Reveal the Gem synthesis
+      const { sessionResponses, primaryVerse, primaryReference } = requestBody;
+      
+      systemPrompt = `You are Jeeves operating in LIVE PALACE CONDUCTOR MODE, generating the climactic "Reveal the Gem" synthesis.
+
+**PRIMARY VERSE:**
+"${primaryVerse}"
+— ${primaryReference}
+
+**SESSION DATA:**
+${sessionResponses?.verseFracture ? `Verse Fracture Observations: ${sessionResponses.verseFracture.map((r: any) => r.text).join('; ')}` : ''}
+${sessionResponses?.coExegesis ? `Co-Exegesis Responses: ${sessionResponses.coExegesis.map((r: any) => r.text).join('; ')}` : ''}
+${sessionResponses?.patterns ? `Study Patterns: ${sessionResponses.patterns.map((p: any) => p.cards.join('+')).join(', ')}` : ''}
+${sessionResponses?.drillDrop ? `Drill Insights: ${JSON.stringify(sessionResponses.drillDrop)}` : ''}
+
+**YOUR TASK:**
+This is the climactic close of the session. Generate:
+1. 2-3 verses that connect to the primary verse and emerged from the session
+2. The unified theme the room discovered
+3. A 4-5 sentence devotional synthesis that the host will read aloud slowly
+
+Make it reverent, impactful, and worthy of being read with gravitas.
+
+Return as JSON:
+{
+  "verses": ["Verse reference 1", "Verse reference 2"],
+  "unifiedTheme": "The theme in one sentence",
+  "devotionalSynthesis": "The 4-5 sentence devotional paragraph"
+}`;
+
+      userPrompt = `Generate the Reveal the Gem climactic synthesis for this session.`;
+
     } else if (mode === "verse_hunt_generate") {
       // Verse Hunt: Generate a clue trail game
       const { difficulty: huntDifficulty, category: huntCategory } = requestBody;
