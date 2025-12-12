@@ -248,7 +248,7 @@ export function useDevotionalPlan(planId: string) {
     enabled: !!planId && !!user?.id,
   });
 
-  // Mark a day as complete
+  // Mark a day as complete (upsert to handle re-completion)
   const completeDay = useMutation({
     mutationFn: async (params: {
       dayId: string;
@@ -257,9 +257,10 @@ export function useDevotionalPlan(planId: string) {
       timeSpent?: number;
       rating?: number;
     }) => {
+      // Use upsert to handle the unique constraint on (user_id, day_id)
       const { data, error } = await supabase
         .from("devotional_progress")
-        .insert({
+        .upsert({
           user_id: user?.id,
           plan_id: planId,
           day_id: params.dayId,
@@ -267,14 +268,23 @@ export function useDevotionalPlan(planId: string) {
           reflection_notes: params.reflectionNotes,
           time_spent_minutes: params.timeSpent,
           rating: params.rating,
+          completed_at: new Date().toISOString(),
+        }, {
+          onConflict: 'user_id,day_id',
         })
         .select()
         .single();
 
       if (error) throw error;
 
-      // Update current_day in plan
-      const completedCount = (progress?.length || 0) + 1;
+      // Recalculate completed count from actual progress
+      const { count } = await supabase
+        .from("devotional_progress")
+        .select("*", { count: "exact", head: true })
+        .eq("plan_id", planId)
+        .eq("user_id", user?.id);
+      
+      const completedCount = count || 0;
       await supabase
         .from("devotional_plans")
         .update({
@@ -291,6 +301,13 @@ export function useDevotionalPlan(planId: string) {
       toast({
         title: "Day Completed!",
         description: "Your progress has been saved.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save progress. Please try again.",
+        variant: "destructive",
       });
     },
   });
