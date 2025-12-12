@@ -19,11 +19,29 @@ import {
   Clock,
   Zap,
   Sparkles,
-  Loader2
+  Loader2,
+  Gamepad2
 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { toast } from "sonner";
-import { suggestEventFromPrompt } from "@/lib/guesthouseJeeves";
+import { suggestEventFromPrompt, createCustomChallenge } from "@/lib/guesthouseJeeves";
+
+const GAME_TYPES = [
+  { id: "custom_challenge", name: "✨ Custom Challenge", icon: "🎨", description: "Describe any challenge - Jeeves creates it!" },
+  { id: "call_the_room", name: "Call the Room", icon: "🏠", description: "Assign PT rooms to verses" },
+  { id: "verse_fracture", name: "Verse Fracture", icon: "🔧", description: "Rebuild scrambled verses" },
+  { id: "build_the_study", name: "Build the Study", icon: "🏗️", description: "Collaborative outline building" },
+  { id: "palace_pulse", name: "Palace Pulse", icon: "⚡", description: "Speed room identification" },
+  { id: "silent_coexegesis", name: "Silent Co-Exegesis", icon: "🤫", description: "Collaborative silent study" },
+  { id: "drill_drop", name: "Drill Drop", icon: "🎯", description: "Random drill challenges" },
+  { id: "reveal_the_gem", name: "Reveal the Gem", icon: "💎", description: "Find the hidden insight" },
+  { id: "verse_hunt", name: "Verse Hunt", icon: "🔍", description: "Follow clues to find the verse" },
+  { id: "symbol_match", name: "Symbol Match", icon: "🎴", description: "Match symbols to meanings" },
+  { id: "chain_chess", name: "Chain Chess", icon: "🔗", description: "Link verses by keywords" },
+  { id: "prophecy_timeline", name: "Prophecy Timeline", icon: "📅", description: "Arrange prophetic events" }
+];
 
 interface GuestHouseEvent {
   id: string;
@@ -50,8 +68,11 @@ export default function GuestHouseHost() {
     description: "",
     scheduled_at: "",
     max_guests: 50,
-    gameTypes: [] as string[]
+    gameTypes: [] as string[],
+    selectedGameType: "call_the_room",
+    customChallengeDescription: ""
   });
+  const [creatingCustomChallenge, setCreatingCustomChallenge] = useState(false);
 
   useEffect(() => {
     fetchEvents();
@@ -96,6 +117,21 @@ export default function GuestHouseHost() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      let gameConfig: Record<string, Json> = {};
+      
+      // If custom challenge, create the spec first
+      if (formData.selectedGameType === "custom_challenge" && formData.customChallengeDescription) {
+        setCreatingCustomChallenge(true);
+        try {
+          const spec = await createCustomChallenge(formData.customChallengeDescription, false);
+          if (spec) {
+            gameConfig = { customChallengeSpec: spec as unknown as Json };
+          }
+        } finally {
+          setCreatingCustomChallenge(false);
+        }
+      }
+
       const { error } = await supabase
         .from("guesthouse_events")
         .insert({
@@ -106,14 +142,15 @@ export default function GuestHouseHost() {
           max_guests: formData.max_guests,
           status: "scheduled",
           session_type: "live",
-          game_type: "call_the_room"
+          game_type: formData.selectedGameType,
+          game_config: gameConfig
         });
 
       if (error) throw error;
 
       toast.success("Event created!");
       setShowCreateForm(false);
-      setFormData({ title: "", description: "", scheduled_at: "", max_guests: 50, gameTypes: [] });
+      setFormData({ title: "", description: "", scheduled_at: "", max_guests: 50, gameTypes: [], selectedGameType: "call_the_room", customChallengeDescription: "" });
       setJeevesPrompt("");
       fetchEvents();
     } catch (error) {
@@ -308,6 +345,55 @@ export default function GuestHouseHost() {
                     </div>
                   )}
                   
+                  {/* Pre-selected Game Type */}
+                  <div className="space-y-2">
+                    <Label htmlFor="game_type" className="flex items-center gap-2">
+                      <Gamepad2 className="w-4 h-4" />
+                      Pre-selected Challenge
+                    </Label>
+                    <Select
+                      value={formData.selectedGameType}
+                      onValueChange={(value) => setFormData({ ...formData, selectedGameType: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a challenge type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {GAME_TYPES.map((game) => (
+                          <SelectItem key={game.id} value={game.id}>
+                            <span className="flex items-center gap-2">
+                              <span>{game.icon}</span>
+                              <span>{game.name}</span>
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      This challenge will auto-launch when the event goes live.
+                    </p>
+                  </div>
+
+                  {/* Custom Challenge Description */}
+                  {formData.selectedGameType === "custom_challenge" && (
+                    <div className="space-y-2 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                      <Label htmlFor="custom_challenge_desc" className="flex items-center gap-2 text-primary">
+                        <Sparkles className="w-4 h-4" />
+                        Describe Your Custom Challenge
+                      </Label>
+                      <Textarea
+                        id="custom_challenge_desc"
+                        value={formData.customChallengeDescription}
+                        onChange={(e) => setFormData({ ...formData, customChallengeDescription: e.target.value })}
+                        placeholder="e.g., 'A Chef Challenge where teams race to answer but the best answer wins, not the fastest. Jeeves grades on creativity, theological depth, and use of PT principles.'"
+                        rows={4}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Jeeves will generate the full challenge specification when you create the event.
+                      </p>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <Label htmlFor="max_guests">Max Guests</Label>
                     <Input
@@ -326,8 +412,18 @@ export default function GuestHouseHost() {
                     }}>
                       Cancel
                     </Button>
-                    <Button onClick={createEvent} disabled={!formData.title}>
-                      Create Event
+                    <Button 
+                      onClick={createEvent} 
+                      disabled={!formData.title || creatingCustomChallenge || (formData.selectedGameType === "custom_challenge" && !formData.customChallengeDescription)}
+                    >
+                      {creatingCustomChallenge ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          Creating Challenge...
+                        </>
+                      ) : (
+                        "Create Event"
+                      )}
                     </Button>
                   </div>
                 </CardContent>
