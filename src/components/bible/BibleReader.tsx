@@ -11,6 +11,7 @@ import { VerseView } from "./VerseView";
 import { StrongsVerseView } from "./StrongsVerseView";
 import { PrinciplePanel } from "./PrinciplePanel";
 import { ChainReferencePanel } from "./ChainReferencePanel";
+import { PTChainReferenceBox } from "./PTChainReferenceBox";
 import { CommentaryPanel } from "./CommentaryPanel";
 import { JeevesVerseAssistant } from "./JeevesVerseAssistant";
 import { ReadingControls } from "./ReadingControls";
@@ -457,12 +458,15 @@ export const BibleReader = () => {
         {/* Right Panel - Dynamic based on mode - Floating/Sticky */}
         <div className="lg:col-span-1 space-y-6 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto" ref={jeevesRef}>
           {chainReferenceMode ? (
-            <ChainReferencePanel
-              book={book}
-              chapter={chapter}
-              verses={chapterData.verses}
-              onHighlight={setHighlightedVerses}
-            />
+            <div className="space-y-6">
+              <PTChainReferenceBox />
+              <ChainReferencePanel
+                book={book}
+                chapter={chapter}
+                verses={chapterData.verses}
+                onHighlight={setHighlightedVerses}
+              />
+            </div>
           ) : (commentaryMode || jeevesMode) && selectedVerse ? (
             <>
               {commentaryMode && (
