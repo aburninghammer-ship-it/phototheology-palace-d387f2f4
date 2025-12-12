@@ -54,6 +54,8 @@ interface GuestHouseEvent {
   session_type: string;
   game_type: string | null;
   guest_count?: number;
+  requires_access_code: boolean;
+  access_code: string | null;
 }
 
 export default function GuestHouseHost() {
@@ -70,7 +72,8 @@ export default function GuestHouseHost() {
     max_guests: 50,
     gameTypes: [] as string[],
     selectedGameType: "call_the_room",
-    customChallengeDescription: ""
+    customChallengeDescription: "",
+    requiresAccessCode: false
   });
   const [creatingCustomChallenge, setCreatingCustomChallenge] = useState(false);
 
@@ -132,6 +135,14 @@ export default function GuestHouseHost() {
         }
       }
 
+      // Generate access code if required
+      let accessCode: string | null = null;
+      if (formData.requiresAccessCode) {
+        const { data: codeData, error: codeError } = await supabase.rpc('generate_guesthouse_access_code');
+        if (codeError) throw codeError;
+        accessCode = codeData;
+      }
+
       const { error } = await supabase
         .from("guesthouse_events")
         .insert({
@@ -143,14 +154,20 @@ export default function GuestHouseHost() {
           status: "scheduled",
           session_type: "live",
           game_type: formData.selectedGameType,
-          game_config: gameConfig
+          game_config: gameConfig,
+          requires_access_code: formData.requiresAccessCode,
+          access_code: accessCode
         });
 
       if (error) throw error;
 
-      toast.success("Event created!");
+      if (accessCode) {
+        toast.success(`Event created! Access code: ${accessCode}`);
+      } else {
+        toast.success("Event created!");
+      }
       setShowCreateForm(false);
-      setFormData({ title: "", description: "", scheduled_at: "", max_guests: 50, gameTypes: [], selectedGameType: "call_the_room", customChallengeDescription: "" });
+      setFormData({ title: "", description: "", scheduled_at: "", max_guests: 50, gameTypes: [], selectedGameType: "call_the_room", customChallengeDescription: "", requiresAccessCode: false });
       setJeevesPrompt("");
       fetchEvents();
     } catch (error) {
@@ -394,16 +411,42 @@ export default function GuestHouseHost() {
                     </div>
                   )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="max_guests">Max Guests</Label>
-                    <Input
-                      id="max_guests"
-                      type="number"
-                      value={formData.max_guests}
-                      onChange={(e) => setFormData({ ...formData, max_guests: parseInt(e.target.value) })}
-                      min={2}
-                      max={500}
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="max_guests">Max Guests</Label>
+                      <Input
+                        id="max_guests"
+                        type="number"
+                        value={formData.max_guests}
+                        onChange={(e) => setFormData({ ...formData, max_guests: parseInt(e.target.value) })}
+                        min={2}
+                        max={500}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Event locks when capacity is reached.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        🔐 Require Access Code
+                      </Label>
+                      <div className="flex items-center gap-3 pt-1">
+                        <input
+                          type="checkbox"
+                          id="requiresAccessCode"
+                          checked={formData.requiresAccessCode}
+                          onChange={(e) => setFormData({ ...formData, requiresAccessCode: e.target.checked })}
+                          className="w-5 h-5 rounded border-primary/50"
+                        />
+                        <label htmlFor="requiresAccessCode" className="text-sm">
+                          Invite-only event
+                        </label>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Guests need a code to join. Code shown after creation.
+                      </p>
+                    </div>
                   </div>
                   <div className="flex gap-2 justify-end">
                     <Button variant="outline" onClick={() => {
@@ -572,14 +615,34 @@ function EventCard({
                   {event.guest_count || 0} / {event.max_guests || "∞"}
                 </span>
               </div>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-sm text-muted-foreground">Event ID:</span>
-                <code className="px-2 py-1 bg-muted rounded font-mono text-xs">
-                  {event.id.slice(0, 8)}
-                </code>
-                <Button variant="ghost" size="icon" onClick={onCopyLink}>
-                  <Copy className="w-4 h-4" />
-                </Button>
+              <div className="flex flex-wrap items-center gap-4 mt-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Event ID:</span>
+                  <code className="px-2 py-1 bg-muted rounded font-mono text-xs">
+                    {event.id.slice(0, 8)}
+                  </code>
+                  <Button variant="ghost" size="icon" onClick={onCopyLink}>
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                </div>
+                {event.requires_access_code && event.access_code && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-amber-500 font-medium">🔐 Access Code:</span>
+                    <code className="px-2 py-1 bg-amber-500/10 text-amber-500 rounded font-mono text-sm font-bold">
+                      {event.access_code}
+                    </code>
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => {
+                        navigator.clipboard.writeText(event.access_code!);
+                        toast.success("Access code copied!");
+                      }}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
