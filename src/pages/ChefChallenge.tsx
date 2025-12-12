@@ -221,9 +221,16 @@ export default function ChefChallenge() {
         console.error("Submission error:", submitError);
         throw submitError;
       }
+
+      // Award 25 points for completing a challenge
+      await supabase.rpc("increment_user_points", { 
+        user_id: user.id, 
+        points_to_add: 25 
+      });
+
       setHasSubmitted(true);
       toast.success("Recipe Submitted!", {
-        description: "Added to your Growth Journal."
+        description: "Added to your Growth Journal. +25 points!"
       });
     } catch (error) {
       console.error("Error submitting:", error);
