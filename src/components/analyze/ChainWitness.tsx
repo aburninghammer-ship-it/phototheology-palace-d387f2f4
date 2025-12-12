@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link2, Loader2, ChevronDown, ChevronUp, BookOpen, Sparkles } from "lucide-react";
+import { Link2, Loader2, ChevronDown, ChevronUp, BookOpen, Sparkles, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -17,6 +17,8 @@ interface ChainWitnessProps {
 interface ScriptureVerse {
   reference: string;
   text: string;
+  connection?: string;
+  ptCodes?: string[];
 }
 
 export const ChainWitness = ({ userThought, disabled }: ChainWitnessProps) => {
@@ -24,6 +26,7 @@ export const ChainWitness = ({ userThought, disabled }: ChainWitnessProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [verses, setVerses] = useState<ScriptureVerse[]>([]);
   const [chainDepth, setChainDepth] = useState<"short" | "full">("short");
+  const [expandedVerse, setExpandedVerse] = useState<number | null>(null);
 
   const generateChain = async () => {
     if (!userThought.trim()) {
@@ -33,6 +36,7 @@ export const ChainWitness = ({ userThought, disabled }: ChainWitnessProps) => {
 
     setIsLoading(true);
     setIsExpanded(true);
+    setExpandedVerse(null);
 
     try {
       const { data, error } = await supabase.functions.invoke("jeeves", {
@@ -58,6 +62,10 @@ export const ChainWitness = ({ userThought, disabled }: ChainWitnessProps) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleVerseExpansion = (index: number) => {
+    setExpandedVerse(expandedVerse === index ? null : index);
   };
 
   return (
@@ -151,7 +159,7 @@ export const ChainWitness = ({ userThought, disabled }: ChainWitnessProps) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <ScrollArea className="max-h-[400px]">
+                  <ScrollArea className="max-h-[500px]">
                     <div className="space-y-4">
                       {verses.map((verse, index) => (
                         <motion.div
@@ -166,15 +174,64 @@ export const ChainWitness = ({ userThought, disabled }: ChainWitnessProps) => {
                               <BookOpen className="h-3 w-3 text-amber-400" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <Badge
-                                variant="outline"
-                                className="mb-2 bg-amber-500/10 border-amber-500/30 text-amber-300 text-xs"
-                              >
-                                {verse.reference}
-                              </Badge>
+                              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                <Badge
+                                  variant="outline"
+                                  className="bg-amber-500/10 border-amber-500/30 text-amber-300 text-xs"
+                                >
+                                  {verse.reference}
+                                </Badge>
+                                {verse.ptCodes && verse.ptCodes.length > 0 && (
+                                  <div className="flex gap-1 flex-wrap">
+                                    {verse.ptCodes.map((code, idx) => (
+                                      <Badge key={idx} variant="secondary" className="text-[10px] px-1.5 py-0">
+                                        {code}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                               <p className="text-sm text-foreground/90 leading-relaxed italic">
                                 "{verse.text}"
                               </p>
+                              
+                              {/* Connection explanation toggle */}
+                              {verse.connection && (
+                                <div className="mt-3">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => toggleVerseExpansion(index)}
+                                    className="h-7 px-2 text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                                  >
+                                    <Info className="h-3 w-3 mr-1" />
+                                    {expandedVerse === index ? "Hide Connection" : "How This Connects"}
+                                    {expandedVerse === index ? (
+                                      <ChevronUp className="h-3 w-3 ml-1" />
+                                    ) : (
+                                      <ChevronDown className="h-3 w-3 ml-1" />
+                                    )}
+                                  </Button>
+                                  
+                                  <AnimatePresence>
+                                    {expandedVerse === index && (
+                                      <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: "auto" }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="overflow-hidden"
+                                      >
+                                        <div className="mt-2 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                                          <p className="text-sm text-foreground/80 leading-relaxed">
+                                            {verse.connection}
+                                          </p>
+                                        </div>
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+                                </div>
+                              )}
                             </div>
                           </div>
                           {index < verses.length - 1 && (
