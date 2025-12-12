@@ -1359,6 +1359,63 @@ For each verse that connects to ${selectedPrinciple.name}, return a JSON object 
 Focus on quality connections. Prioritize verses with rich theological depth and clear principle alignments.
 Return as JSON array: [...]`;
 
+    } else if (mode === "pt-chain-verse") {
+      // PT Chain Verse - Find chain references for a specific verse based on chosen principle
+      const verseReference = requestBody.verseReference || "";
+      
+      if (!verseReference.trim()) {
+        return new Response(
+          JSON.stringify({ error: "Please enter a verse reference" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      console.log("PT Chain Verse mode - analyzing:", verseReference, "with principle:", principle);
+      
+      const principleMap: Record<string, { name: string; description: string }> = {
+        "parables": { name: "Parables of Jesus", description: "connections to Christ's parables and their deeper meanings" },
+        "prophecy": { name: "Prophetic Connections", description: "prophetic fulfillments, types, and future events" },
+        "life-of-christ": { name: "Life of Christ Wall", description: "connections to events in Christ's earthly ministry" },
+        "70-weeks": { name: "70 Week Prophecy", description: "connections to Daniel's 70-week prophecy and timeline" },
+        "2d": { name: "2D Christ Dimension", description: "personal Christ-centered relationship and individual salvation" },
+        "3d": { name: "3D Kingdom Dimension", description: "corporate church body, community, and kingdom expansion" },
+        "sanctuary": { name: "Sanctuary Principles", description: "connections to tabernacle/temple services, furniture, rituals" },
+        "feasts": { name: "Feast Connections", description: "connections to biblical feasts and their prophetic significance" },
+        "types": { name: "Types & Shadows", description: "Old Testament types and shadows pointing to Christ" },
+        "covenant": { name: "Covenant Themes", description: "covenant promises, conditions, and relationship dynamics" },
+        "cycles": { name: "PT Cycles", description: "connections to the 8 cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re)" },
+        "horizons": { name: "Three Heavens", description: "connections to the three heavens (1H, 2H, 3H) and Day of the Lord patterns" },
+      };
+
+      const selectedPrinciple = principleMap[principle] || principleMap["types"];
+      
+      systemPrompt = `You are Jeeves, a Phototheology Bible scholar specializing in finding ${selectedPrinciple.name}.
+Your task is to find 5-8 Scripture references that connect to the given verse through ${selectedPrinciple.description}.
+
+Return ONLY a valid JSON array with chain references. Each object must have:
+- "reference": The Bible reference (e.g., "Isaiah 53:7")
+- "principle": Specific connection name (e.g., "Lamb of God Type")
+- "ptCodes": Array of PT codes (e.g., ["@CyC", "2H", "ST"])
+- "connection": 3-5 sentence explanation using bullet points (•) for lists
+- "crossReferences": Array of related references with { "reference", "relationship", "confidence", "note" }
+- "expounded": 2-3 paragraph deeper explanation
+
+Focus on verses that genuinely connect through ${selectedPrinciple.name}. 
+Prioritize theological depth and clear principle alignments.
+Return ONLY the JSON array, no markdown.`;
+
+      userPrompt = `Find chain references for ${verseReference} using ${selectedPrinciple.name} (${selectedPrinciple.description}).
+
+Return 5-8 related Scripture passages that connect to this verse through this principle lens.
+Each connection should demonstrate how Scripture interprets Scripture through ${selectedPrinciple.name}.
+
+Include relevant PT codes like:
+- Cycles: @Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re
+- Horizons: 1H, 2H, 3H
+- Rooms: SR, IR, OR, DC, ST, CR, DR, BL, PR, etc.
+
+Return as JSON array: [...]`;
+
     } else if (mode === "commentary-revealed") {
       systemPrompt = `You are Jeeves, a theologian analyzing Bible verses to identify which principles and dimensions are REVEALED or PRESENT in the text itself.
 Focus on discovering what's already there, not applying external frameworks.
