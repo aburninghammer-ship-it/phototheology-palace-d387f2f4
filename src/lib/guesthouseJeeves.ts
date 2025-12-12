@@ -3,6 +3,9 @@ import { toast } from "sonner";
 
 interface GamePrompt {
   promptText: string;
+  challenge?: string;
+  verse?: string;
+  instructions?: string;
   options?: string[];
   correctAnswer: string;
   explanation: string;
@@ -42,6 +45,38 @@ interface VerseHuntData {
     revealed: boolean;
   }>;
   difficulty: string;
+}
+
+interface SymbolMatchData {
+  symbols: Array<{
+    id: string;
+    symbol: string;
+    meaning: string;
+    verse: string;
+  }>;
+  timeLimit: number;
+}
+
+interface ChainChessData {
+  startingVerse: string;
+  chain: Array<{
+    verse: string;
+    keyword: string;
+    hint?: string;
+  }>;
+  timeLimit: number;
+}
+
+interface ProphecyTimelineData {
+  events: Array<{
+    id: string;
+    title: string;
+    description: string;
+    verse: string;
+    year?: string;
+    order: number;
+  }>;
+  timeLimit: number;
 }
 
 export async function generateGamePrompt(
@@ -184,5 +219,119 @@ export async function generateVerseHunt(
     console.error("Error generating verse hunt:", error);
     toast.error("Failed to generate Verse Hunt game");
     return null;
+  }
+}
+
+export async function generateSymbolMatch(
+  difficulty: "easy" | "medium" | "hard" = "medium"
+): Promise<SymbolMatchData | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke("jeeves", {
+      body: {
+        mode: "guesthouse_symbol_match",
+        difficulty
+      }
+    });
+
+    if (error) throw error;
+
+    const content = data?.content || data;
+    if (typeof content === "string") {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]) as SymbolMatchData;
+      }
+    }
+    return content as SymbolMatchData;
+  } catch (error) {
+    console.error("Error generating symbol match:", error);
+    // Return fallback data
+    return {
+      symbols: [
+        { id: "1", symbol: "🐑", meaning: "Christ as the Lamb of God", verse: "John 1:29" },
+        { id: "2", symbol: "🪨", meaning: "Christ the Rock of our salvation", verse: "1 Cor 10:4" },
+        { id: "3", symbol: "💧", meaning: "Living Water / Holy Spirit", verse: "John 7:38" },
+        { id: "4", symbol: "🔥", meaning: "God's presence and purification", verse: "Exodus 3:2" },
+        { id: "5", symbol: "🌿", meaning: "Olive branch - Peace and Spirit", verse: "Romans 11:17" },
+      ],
+      timeLimit: 120
+    };
+  }
+}
+
+export async function generateChainChess(
+  startingVerse: string,
+  difficulty: "easy" | "medium" | "hard" = "medium"
+): Promise<ChainChessData | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke("jeeves", {
+      body: {
+        mode: "guesthouse_chain_chess",
+        startingVerse,
+        difficulty
+      }
+    });
+
+    if (error) throw error;
+
+    const content = data?.content || data;
+    if (typeof content === "string") {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]) as ChainChessData;
+      }
+    }
+    return content as ChainChessData;
+  } catch (error) {
+    console.error("Error generating chain chess:", error);
+    // Return fallback data
+    return {
+      startingVerse: startingVerse || "John 3:16",
+      chain: [
+        { verse: "Romans 5:8", keyword: "love", hint: "Paul also writes about God's love..." },
+        { verse: "1 John 4:8", keyword: "God is love", hint: "The apostle John defines God..." },
+        { verse: "1 Corinthians 13:4", keyword: "love is patient", hint: "Paul describes love's characteristics..." },
+      ],
+      timeLimit: 180
+    };
+  }
+}
+
+export async function generateProphecyTimeline(
+  category: "daniel" | "revelation" | "messianic" = "daniel",
+  difficulty: "easy" | "medium" | "hard" = "medium"
+): Promise<ProphecyTimelineData | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke("jeeves", {
+      body: {
+        mode: "guesthouse_prophecy_timeline",
+        category,
+        difficulty
+      }
+    });
+
+    if (error) throw error;
+
+    const content = data?.content || data;
+    if (typeof content === "string") {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]) as ProphecyTimelineData;
+      }
+    }
+    return content as ProphecyTimelineData;
+  } catch (error) {
+    console.error("Error generating prophecy timeline:", error);
+    // Return fallback data
+    return {
+      events: [
+        { id: "1", title: "Babylon", description: "Head of Gold", verse: "Daniel 2:38", year: "605 BC", order: 1 },
+        { id: "2", title: "Medo-Persia", description: "Chest of Silver", verse: "Daniel 2:39", year: "539 BC", order: 2 },
+        { id: "3", title: "Greece", description: "Belly of Bronze", verse: "Daniel 2:39", year: "331 BC", order: 3 },
+        { id: "4", title: "Rome", description: "Legs of Iron", verse: "Daniel 2:40", year: "168 BC", order: 4 },
+        { id: "5", title: "Divided Kingdoms", description: "Feet of Iron and Clay", verse: "Daniel 2:41", year: "476 AD", order: 5 },
+      ],
+      timeLimit: 150
+    };
   }
 }
