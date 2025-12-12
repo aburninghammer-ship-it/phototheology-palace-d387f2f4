@@ -199,7 +199,7 @@ export default function GuestHouseHostLive() {
         const data = await generateChainChess(customVerse, "medium");
         if (data) promptData = { ...promptData, ...data };
       } else if (gameType === "prophecy_timeline") {
-        const data = await generateProphecyTimeline("daniel", "medium");
+        const data = await generateProphecyTimeline("medium");
         if (data) promptData = { ...promptData, ...data };
       } else {
         const aiPrompt = await generateGamePrompt(gameType, customVerse || "John 3:16", "medium");

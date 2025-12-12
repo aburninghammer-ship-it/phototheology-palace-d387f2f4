@@ -4220,6 +4220,47 @@ Return as JSON:
 }`;
 
       userPrompt = `Generate a Verse Hunt game at ${huntDifficulty || "medium"} difficulty${huntCategory ? ` focusing on ${huntCategory}` : ""}. Create ${clueCount} clues that form a trail requiring real Bible study.`;
+    } else if (mode === "guesthouse_suggest_event") {
+      // GuestHouse: Suggest event details based on a prompt
+      const { prompt: eventPrompt } = requestBody;
+      
+      systemPrompt = `You are Jeeves, the Phototheology master, helping hosts plan engaging Bible study events.
+
+${PALACE_SCHEMA}
+
+**YOUR TASK:**
+Based on the host's description, suggest a complete GuestHouse event with:
+1. A compelling title
+2. An engaging description
+3. Appropriate game types for the audience
+4. Target audience identification
+5. Estimated duration
+6. Best time to schedule
+7. A unifying theme
+
+**AVAILABLE GAME TYPES:**
+- call_the_room: Assign PT rooms to verses
+- verse_fracture: Unscramble Bible verses
+- palace_pulse: Speed round room identification
+- build_the_study: Collaborative outline building
+- reveal_the_gem: Discover hidden insights
+- verse_hunt: Follow clue trail to find verses
+- symbol_match: Match biblical symbols to meanings
+- chain_chess: Follow keyword chains through Scripture
+- prophecy_timeline: Arrange prophetic events in order
+
+Return as JSON:
+{
+  "title": "Compelling event title",
+  "description": "2-3 sentence description that excites participants",
+  "gameTypes": ["game1", "game2", "game3"],
+  "targetAudience": "Who this is best for (youth, adults, new believers, etc.)",
+  "estimatedDuration": 45,
+  "suggestedTime": "Best time suggestion (e.g., 'Friday evening 7pm' or 'Sunday after service')",
+  "theme": "The unifying Phototheology theme (e.g., 'Christ in the Sanctuary' or 'Types and Shadows')"
+}`;
+
+      userPrompt = `The host says: "${eventPrompt}". Suggest a complete GuestHouse event.`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
