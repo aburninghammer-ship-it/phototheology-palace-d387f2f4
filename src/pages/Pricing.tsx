@@ -173,7 +173,7 @@ export default function Pricing() {
         "  • War Council & Battle Analysis",
         "  • Sparring Simulations & Combination Codes",
         "🤖 All 4 Specialized AI GPTs (Kid, Daniel/Rev, Apologetics, Quarterly)",
-        "📖 Bible Reader with Commentary",
+        "🎧 Audio Bible Reader/Audio Commentary",
         "📚 All Premium Courses (Daniel, Revelation, Kids)",
         "🎮 20+ Palace Games + All Kids Games",
         "🏆 Unlimited Treasure Hunts & Escape Rooms",
