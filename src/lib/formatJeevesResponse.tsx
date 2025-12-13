@@ -1,4 +1,5 @@
 import React from 'react';
+import { VersePopover } from '@/components/bible/VersePopover';
 
 /**
  * Enhanced Jeeves response formatter with beautiful styling, emojis, and proper formatting
@@ -411,13 +412,7 @@ const formatInlineText = (text: string): React.ReactNode => {
     if (verseMatch) {
       const verseText = verseMatch[1];
       parts.push(
-        <span 
-          key={`verse-${keyCounter++}`} 
-          className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary font-medium text-sm mx-1 shadow-sm"
-        >
-          <span>📖</span>
-          <span>{verseText}</span>
-        </span>
+        <VersePopover key={`verse-${keyCounter++}`} reference={verseText} />
       );
       remaining = remaining.slice(verseMatch[0].length);
       lastCharWasLetter = false;
