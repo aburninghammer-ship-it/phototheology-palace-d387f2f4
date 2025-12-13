@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { searchBible, searchBibleByWord } from "@/services/bibleApi";
 import { Verse } from "@/types/bible";
+import { highlightSearchTerm } from "@/lib/highlightSearchTerm";
 
 const BibleSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -168,7 +169,7 @@ const BibleSearch = () => {
                         {verse.book} {verse.chapter}:{verse.verse}
                       </div>
                       <div className="text-foreground">
-                        {verse.text}
+                        {searchMode === "word" ? highlightSearchTerm(verse.text, query) : verse.text}
                       </div>
                     </div>
                   </Link>
