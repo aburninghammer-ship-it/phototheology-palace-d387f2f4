@@ -14,8 +14,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BIBLE_BOOKS } from "@/types/bible";
 import { Search, BookOpen } from "lucide-react";
 import { ThemeVerseSearch } from "./ThemeVerseSearch";
+import { EventSearch } from "./EventSearch";
 import { usePreservePage } from "@/hooks/usePreservePage";
-
+import { PageLockToggle } from "@/components/preserve/PageLockToggle";
 const OLD_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(0, 39);
 const NEW_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(39);
 
@@ -28,7 +29,7 @@ export const BibleNavigation = () => {
   const [chapter, setChapter] = useState(() => getCustomState<string>('bibleNav_chapter') || "1");
   const [verse, setVerse] = useState(() => getCustomState<string>('bibleNav_verse') || "");
   const [searchQuery, setSearchQuery] = useState(() => getCustomState<string>('bibleNav_searchQuery') || "");
-  const [searchMode, setSearchMode] = useState<"reference" | "word" | "theme">(() => getCustomState<"reference" | "word" | "theme">('bibleNav_searchMode') || "reference");
+  const [searchMode, setSearchMode] = useState<"reference" | "word" | "theme" | "event">(() => getCustomState<"reference" | "word" | "theme" | "event">('bibleNav_searchMode') || "reference");
   const [searchScope, setSearchScope] = useState<"all" | "ot" | "nt">(() => getCustomState<"all" | "ot" | "nt">('bibleNav_searchScope') || "all");
 
   // Persist state changes
@@ -59,9 +60,12 @@ export const BibleNavigation = () => {
     <Card variant="glass" className="p-4 sm:p-6">
       
       <div className="relative z-10 space-y-4">
-        <div className="flex items-center gap-2 mb-2">
-          <BookOpen className="h-5 w-5 text-primary" />
-          <h3 className="font-serif text-base sm:text-lg font-semibold">Navigate Bible</h3>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary" />
+            <h3 className="font-serif text-base sm:text-lg font-semibold">Navigate Bible</h3>
+          </div>
+          <PageLockToggle />
         </div>
         
         {/* Quick Navigation */}
@@ -108,11 +112,12 @@ export const BibleNavigation = () => {
         
         {/* Search */}
         <div className="pt-3 border-t border-white/10 space-y-3">
-          <Tabs value={searchMode} onValueChange={(value) => setSearchMode(value as "reference" | "word" | "theme")}>
-            <TabsList className="grid w-full grid-cols-3 bg-white/10 backdrop-blur-md border border-white/15">
+          <Tabs value={searchMode} onValueChange={(value) => setSearchMode(value as "reference" | "word" | "theme" | "event")}>
+            <TabsList className="grid w-full grid-cols-4 bg-white/10 backdrop-blur-md border border-white/15">
               <TabsTrigger value="reference" className="text-xs sm:text-sm data-[state=active]:bg-primary/30 data-[state=active]:text-primary">Reference</TabsTrigger>
               <TabsTrigger value="word" className="text-xs sm:text-sm data-[state=active]:bg-primary/30 data-[state=active]:text-primary">Word</TabsTrigger>
               <TabsTrigger value="theme" className="text-xs sm:text-sm data-[state=active]:bg-primary/30 data-[state=active]:text-primary">Theme</TabsTrigger>
+              <TabsTrigger value="event" className="text-xs sm:text-sm data-[state=active]:bg-amber-500/30 data-[state=active]:text-amber-400">Event</TabsTrigger>
             </TabsList>
             
             <TabsContent value="reference" className="mt-3 space-y-3">
@@ -156,6 +161,10 @@ export const BibleNavigation = () => {
             
             <TabsContent value="theme" className="mt-3">
               <ThemeVerseSearch className="border-0 bg-transparent p-0" />
+            </TabsContent>
+            
+            <TabsContent value="event" className="mt-3">
+              <EventSearch className="border-0 bg-transparent p-0" />
             </TabsContent>
           </Tabs>
         </div>
