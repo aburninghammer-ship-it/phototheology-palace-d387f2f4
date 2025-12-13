@@ -8,6 +8,7 @@ import { Search, BookOpen, ExternalLink, Volume2, Loader2, Sparkles, X } from "l
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { VerseCopyMenu } from "./VerseCopyMenu";
 
 interface ThemeVerseSearchProps {
   onPlayVerses?: (verses: VerseSuggestion[]) => void;
@@ -272,14 +273,22 @@ export function ThemeVerseSearch({
                         <Badge variant="outline" className="text-xs font-mono">
                           {result.reference}
                         </Badge>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => navigateToVerse(result.reference)}
-                          className="h-6 px-2"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <VerseCopyMenu
+                            reference={result.reference}
+                            text={result.text}
+                            reason={result.reason}
+                            className="h-6 px-2"
+                          />
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => navigateToVerse(result.reference)}
+                            className="h-6 px-2"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </div>
 
                       <p className="text-xs text-foreground mb-2 leading-relaxed">
