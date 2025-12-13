@@ -177,13 +177,15 @@ const Community = () => {
 
       const { error } = await supabase
         .from("community_posts")
-        .insert([{
-          user_id: user!.id,
-          title: sanitizedTitle,
-          content: sanitizedContent,
-          category: validatedData.category,
-          tags: newTags,
-        }]);
+        .insert([
+          {
+            user_id: user!.id,
+            title: sanitizedTitle,
+            content: sanitizedContent,
+            category: validatedData.category,
+            tags: newTags,
+          },
+        ]);
 
       if (error) throw error;
 
@@ -197,8 +199,11 @@ const Community = () => {
       setNewCategory("general");
       setNewTags([]);
       setShowNewPost(false);
+
+      // Ensure the new post appears immediately even if realtime is delayed
+      fetchPosts();
     } catch (error: any) {
-      if (error.name === 'ZodError') {
+      if (error.name === "ZodError") {
         toast({
           title: "Validation Error",
           description: error.errors[0]?.message || "Invalid input",
@@ -380,7 +385,12 @@ const Community = () => {
 
     // Filter by category
     if (categoryFilter !== "all") {
-      filtered = filtered.filter(p => p.category === categoryFilter);
+      filtered = filtered.filter(
+        (p) =>
+          p.category === categoryFilter ||
+          // Support legacy posts that used singular "question" as category
+          (categoryFilter === "questions" && p.category === "question")
+      );
     }
 
     // Sort posts
@@ -464,7 +474,21 @@ const Community = () => {
                       onNavigateToPost={handleNavigateToPost}
                     />
                   )}
-                  <Button onClick={() => setShowNewPost(!showNewPost)} size="lg" className="shadow-lg">
+                  <Button
+                    onClick={() => {
+                      const next = !showNewPost;
+                      setShowNewPost(next);
+
+                      // When opening the form, align the default category with the current filter
+                      if (next) {
+                        setNewCategory(
+                          categoryFilter === "all" ? "general" : categoryFilter
+                        );
+                      }
+                    }}
+                    size="lg"
+                    className="shadow-lg"
+                  >
                     <Plus className="mr-2 h-5 w-5" />
                     New Post
                   </Button>
