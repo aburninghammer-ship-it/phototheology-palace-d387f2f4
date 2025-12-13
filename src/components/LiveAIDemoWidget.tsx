@@ -7,7 +7,7 @@ import { Sparkles, Send, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-
+import { SaveJeevesResponseButton } from "@/components/jeeves/SaveJeevesResponseButton";
 const SAMPLE_QUESTIONS = [
   "What does Genesis 22 teach about faith?",
   "How does the sanctuary point to Jesus?",
@@ -129,7 +129,17 @@ export const LiveAIDemoWidget = () => {
         {/* Response */}
         {response && (
           <div className="bg-background/50 rounded-lg p-4 border border-border">
-            <p className="text-sm font-medium mb-2 text-primary">Jeeves responds:</p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-primary">Jeeves responds:</p>
+              {user && (
+                <SaveJeevesResponseButton
+                  question={question}
+                  response={response}
+                  context="Live AI Demo"
+                  variant="small"
+                />
+              )}
+            </div>
             <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
               {response}
             </p>
