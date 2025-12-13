@@ -18,27 +18,52 @@ const BibleSearch = () => {
   const searchScope = (searchParams.get("scope") as "all" | "ot" | "nt") || "all";
   
   const [results, setResults] = useState<Verse[]>([]);
+  const [totalResults, setTotalResults] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const performSearch = async () => {
+  const performSearch = async (page: number = 1, append: boolean = false) => {
     if (!query) return;
     
-    setLoading(true);
+    if (append) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+      setResults([]);
+    }
+    
     try {
       if (searchMode === "word") {
-        const wordResults = await searchBibleByWord(query, searchScope);
-        setResults(wordResults);
+        const { verses, total, hasMore: more } = await searchBibleByWord(query, searchScope, page);
+        if (append) {
+          setResults(prev => [...prev, ...verses]);
+        } else {
+          setResults(verses);
+        }
+        setTotalResults(total);
+        setHasMore(more);
+        setCurrentPage(page);
       } else {
         const refResults = await searchBible(query, "kjv");
         setResults(refResults);
+        setTotalResults(refResults.length);
+        setHasMore(false);
       }
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
+  const loadMore = () => {
+    performSearch(currentPage + 1, true);
+  };
+
   useEffect(() => {
-    performSearch();
+    setCurrentPage(1);
+    performSearch(1, false);
   }, [query, searchMode, searchScope]);
 
   return (
@@ -72,8 +97,8 @@ const BibleSearch = () => {
             </div>
             {results.length > 0 && (
               <p className="text-sm text-muted-foreground mt-2">
-                Found {results.length} {results.length === 1 ? "verse" : "verses"}
-                {results.length === 1000 && " (showing first 1000)"}
+                Found {totalResults > results.length ? `~${totalResults}` : results.length} {results.length === 1 ? "verse" : "verses"}
+                {results.length < totalResults && ` (showing ${results.length})`}
               </p>
             )}
           </div>
@@ -149,6 +174,25 @@ const BibleSearch = () => {
                   </Link>
                 </Card>
               ))}
+              
+              {hasMore && (
+                <div className="flex justify-center pt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                  >
+                    {loadingMore ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Loading more...
+                      </>
+                    ) : (
+                      "Load More Results"
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             <Card className="p-12 text-center">
