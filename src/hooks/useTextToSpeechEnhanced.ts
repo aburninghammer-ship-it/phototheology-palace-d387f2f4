@@ -211,6 +211,9 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
       try {
         speechSynthesis.cancel();
 
+        // Capture voice at start to ensure consistency throughout playback
+        const voiceToUse = selectedBrowserVoice;
+        
         // Split long texts into chunks to prevent timeout (iOS limit ~15 seconds)
         const MAX_CHUNK_LENGTH = 200; // ~15-20 seconds of speech
         const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
@@ -241,11 +244,15 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
           }
 
           const utterance = new SpeechSynthesisUtterance(chunks[currentChunkIndex]);
+          
+          // Set consistent voice settings for all chunks
           utterance.rate = 1;
           utterance.pitch = 1;
-
-          if (selectedBrowserVoice) {
-            utterance.voice = selectedBrowserVoice;
+          utterance.volume = 1;
+          
+          // Use the captured voice to ensure consistency across all chunks
+          if (voiceToUse) {
+            utterance.voice = voiceToUse;
           }
 
           utterance.onstart = () => {
@@ -254,13 +261,13 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
               setIsPlaying(true);
               onStartRef.current?.();
             }
-            console.log(`[TTS] Playing chunk ${currentChunkIndex + 1}/${chunks.length}`);
+            console.log(`[TTS] Playing chunk ${currentChunkIndex + 1}/${chunks.length} with voice: ${voiceToUse?.name || 'default'}`);
           };
 
           utterance.onend = () => {
             currentChunkIndex++;
             // Small delay between chunks for natural pacing
-            setTimeout(speakChunk, 100);
+            setTimeout(speakChunk, 150);
           };
 
           utterance.onerror = (event) => {
