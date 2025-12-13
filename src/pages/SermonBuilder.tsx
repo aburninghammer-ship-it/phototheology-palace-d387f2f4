@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { usePreservePage } from "@/hooks/usePreservePage";
 import { Navigation } from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,8 @@ export default function SermonBuilder() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("id");
+  const { setCustomState, getCustomState } = usePreservePage();
+  const hasRestoredState = useRef(false);
   
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -87,6 +90,46 @@ export default function SermonBuilder() {
   const [userGems, setUserGems] = useState<UserGem[]>([]);
   const [loadingGems, setLoadingGems] = useState(false);
   const [gemsDialogOpen, setGemsDialogOpen] = useState(false);
+
+  // Restore preserved state on mount (only for new sermons, not when editing)
+  useEffect(() => {
+    if (!editId && !hasRestoredState.current) {
+      const savedStep = getCustomState<number>('sermon_currentStep');
+      const savedSermon = getCustomState<typeof sermon>('sermon_data');
+      const savedNewStone = getCustomState<string>('sermon_newStone');
+      const savedNewBridge = getCustomState<string>('sermon_newBridge');
+      const savedAiHelp = getCustomState<string>('sermon_aiHelp');
+      
+      if (savedStep) setCurrentStep(savedStep);
+      if (savedSermon) setSermon(savedSermon);
+      if (savedNewStone) setNewStone(savedNewStone);
+      if (savedNewBridge) setNewBridge(savedNewBridge);
+      if (savedAiHelp) setAiHelp(savedAiHelp);
+      
+      hasRestoredState.current = true;
+    }
+  }, [editId, getCustomState]);
+
+  // Persist state changes (only for new sermons)
+  useEffect(() => {
+    if (!editId) {
+      setCustomState('sermon_currentStep', currentStep);
+    }
+  }, [currentStep, editId, setCustomState]);
+
+  useEffect(() => {
+    if (!editId) {
+      setCustomState('sermon_data', sermon);
+    }
+  }, [sermon, editId, setCustomState]);
+
+  useEffect(() => {
+    if (!editId) {
+      setCustomState('sermon_newStone', newStone);
+      setCustomState('sermon_newBridge', newBridge);
+      setCustomState('sermon_aiHelp', aiHelp);
+    }
+  }, [newStone, newBridge, aiHelp, editId, setCustomState]);
 
   useEffect(() => {
     checkAuth();
