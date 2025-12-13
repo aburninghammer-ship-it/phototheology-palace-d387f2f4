@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Search, BookOpen, ExternalLink, Volume2, Loader2, Sparkles } from "lucide-react";
+import { Search, BookOpen, ExternalLink, Volume2, Loader2, Sparkles, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -32,17 +32,38 @@ export function ThemeVerseSearch({
   showAudioOption = false,
   className 
 }: ThemeVerseSearchProps) {
-  const [searchTopic, setSearchTopic] = useState("");
+  const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
+  const [customTheme, setCustomTheme] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [results, setResults] = useState<VerseSuggestion[]>([]);
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSearch = async (topic?: string) => {
-    const queryTopic = topic || searchTopic;
-    if (!queryTopic.trim()) {
-      toast.error("Please enter a theme to search");
+  const toggleTheme = (theme: string) => {
+    setSelectedThemes(prev => 
+      prev.includes(theme) 
+        ? prev.filter(t => t !== theme)
+        : [...prev, theme]
+    );
+  };
+
+  const addCustomTheme = () => {
+    const trimmed = customTheme.trim();
+    if (trimmed && !selectedThemes.map(t => t.toUpperCase()).includes(trimmed.toUpperCase())) {
+      setSelectedThemes(prev => [...prev, trimmed]);
+      setCustomTheme("");
+    }
+  };
+
+  const getSearchTopic = () => {
+    return selectedThemes.join(", ");
+  };
+
+  const handleSearch = async () => {
+    const queryTopic = getSearchTopic();
+    if (!queryTopic) {
+      toast.error("Please select at least one theme to search");
       return;
     }
 
@@ -78,7 +99,6 @@ export function ThemeVerseSearch({
     setLoadingMore(true);
 
     try {
-      // Pass existing references to exclude them from new results
       const existingRefs = results.map(r => r.reference);
       const { data, error } = await supabase.functions.invoke('suggest-verses-by-topic', {
         body: { 
@@ -90,7 +110,6 @@ export function ThemeVerseSearch({
       if (error) throw error;
 
       if (data.verses && data.verses.length > 0) {
-        // Filter out any duplicates just in case
         const newVerses = data.verses.filter(
           (v: VerseSuggestion) => !existingRefs.includes(v.reference)
         );
@@ -112,7 +131,6 @@ export function ThemeVerseSearch({
   };
 
   const navigateToVerse = (reference: string) => {
-    // Parse verse reference like "John 3:16" or "1 John 4:8"
     const match = reference.match(/^(.+?)\s+(\d+):(\d+)(?:-(\d+))?$/);
     if (match) {
       const [, book, chapter, verse] = match;
@@ -135,37 +153,78 @@ export function ThemeVerseSearch({
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Find key verses on any biblical theme (Law, Grace, Faith, Sabbath, etc.)
+        Find key verses on any biblical theme. Select multiple themes to combine them.
       </p>
 
-      {/* Popular Theme Chips */}
+      {/* Popular Theme Chips - Toggle Selection */}
       <div className="flex flex-wrap gap-1.5">
-        {POPULAR_THEMES.map((theme) => (
-          <Badge
-            key={theme}
-            variant="outline"
-            className="cursor-pointer text-xs hover:bg-primary/10 hover:border-primary transition-colors"
-            onClick={() => {
-              setSearchTopic(theme);
-              handleSearch(theme);
-            }}
-          >
-            {theme}
-          </Badge>
-        ))}
+        {POPULAR_THEMES.map((theme) => {
+          const isSelected = selectedThemes.includes(theme);
+          return (
+            <Badge
+              key={theme}
+              variant={isSelected ? "default" : "outline"}
+              className={`cursor-pointer text-xs transition-colors ${
+                isSelected 
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                  : "hover:bg-primary/10 hover:border-primary"
+              }`}
+              onClick={() => toggleTheme(theme)}
+            >
+              {theme}
+            </Badge>
+          );
+        })}
       </div>
 
-      {/* Search Input */}
+      {/* Selected Themes Display */}
+      {selectedThemes.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 p-2 rounded-md bg-muted/50 border border-border">
+          <span className="text-xs text-muted-foreground">Selected:</span>
+          {selectedThemes.map((theme) => (
+            <Badge 
+              key={theme} 
+              variant="secondary" 
+              className="text-xs flex items-center gap-1"
+            >
+              {theme}
+              <X 
+                className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                onClick={() => toggleTheme(theme)}
+              />
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {/* Custom Theme Input */}
       <div className="flex gap-2">
         <Input
-          placeholder="Enter theme (e.g., Sanctuary, Atonement)"
-          value={searchTopic}
-          onChange={(e) => setSearchTopic(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          placeholder="Add custom theme (e.g., Millennium)"
+          value={customTheme}
+          onChange={(e) => setCustomTheme(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addCustomTheme();
+            }
+          }}
           className="text-sm"
           disabled={loading}
         />
-        <Button onClick={() => handleSearch()} size="sm" disabled={loading}>
+        <Button 
+          onClick={addCustomTheme} 
+          size="sm" 
+          variant="outline"
+          disabled={loading || !customTheme.trim()}
+        >
+          Add
+        </Button>
+        <Button 
+          onClick={handleSearch} 
+          size="sm" 
+          disabled={loading || selectedThemes.length === 0}
+        >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
         </Button>
       </div>
