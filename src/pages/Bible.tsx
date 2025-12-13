@@ -9,10 +9,14 @@ import { StudyBibleDemoDialog } from "@/components/bible/StudyBibleDemoDialog";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 import { useAuth } from "@/hooks/useAuth";
 import { OfflineIndicator } from "@/components/bible/OfflineIndicator";
+import { usePreservePage } from "@/hooks/usePreservePage";
 
 const Bible = () => {
   const { user } = useAuth();
   const [demoOpen, setDemoOpen] = useState(false);
+  
+  // Enable scroll position preservation for this page
+  usePreservePage();
 
   return (
     <div className="min-h-screen gradient-subtle">

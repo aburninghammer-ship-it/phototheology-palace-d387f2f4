@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePreservePage } from "@/hooks/usePreservePage";
 import { formatDistanceToNow } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -139,11 +140,16 @@ const MyStudies = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const { setCustomState, getCustomState } = usePreservePage();
+  
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(() => getCustomState<string>('myStudies_searchQuery') || "");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [studyToDelete, setStudyToDelete] = useState<string | null>(null);
+
+  // Persist search query
+  useEffect(() => { setCustomState('myStudies_searchQuery', searchQuery); }, [searchQuery, setCustomState]);
 
   useEffect(() => {
     if (user && !authLoading) {

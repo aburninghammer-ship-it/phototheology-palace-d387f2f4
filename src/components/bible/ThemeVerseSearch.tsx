@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { VerseCopyMenu } from "./VerseCopyMenu";
+import { usePreservePage } from "@/hooks/usePreservePage";
 
 interface ThemeVerseSearchProps {
   onPlayVerses?: (verses: VerseSuggestion[]) => void;
@@ -33,13 +34,22 @@ export function ThemeVerseSearch({
   showAudioOption = false,
   className 
 }: ThemeVerseSearchProps) {
-  const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
-  const [customTheme, setCustomTheme] = useState("");
+  const navigate = useNavigate();
+  const { setCustomState, getCustomState } = usePreservePage();
+  
+  // Restore state from context or use defaults
+  const [selectedThemes, setSelectedThemes] = useState<string[]>(() => getCustomState<string[]>('themeSearch_selectedThemes') || []);
+  const [customTheme, setCustomTheme] = useState(() => getCustomState<string>('themeSearch_customTheme') || "");
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [results, setResults] = useState<VerseSuggestion[]>([]);
-  const [currentTopic, setCurrentTopic] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [results, setResults] = useState<VerseSuggestion[]>(() => getCustomState<VerseSuggestion[]>('themeSearch_results') || []);
+  const [currentTopic, setCurrentTopic] = useState<string | null>(() => getCustomState<string | null>('themeSearch_currentTopic') || null);
+
+  // Persist state changes
+  useEffect(() => { setCustomState('themeSearch_selectedThemes', selectedThemes); }, [selectedThemes, setCustomState]);
+  useEffect(() => { setCustomState('themeSearch_customTheme', customTheme); }, [customTheme, setCustomState]);
+  useEffect(() => { setCustomState('themeSearch_results', results); }, [results, setCustomState]);
+  useEffect(() => { setCustomState('themeSearch_currentTopic', currentTopic); }, [currentTopic, setCustomState]);
 
   const toggleTheme = (theme: string) => {
     setSelectedThemes(prev => 

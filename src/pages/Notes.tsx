@@ -7,10 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Cloud, CloudOff, Info } from "lucide-react";
 import { useOfflineNotes } from "@/hooks/useOfflineNotes";
+import { usePreservePage } from "@/hooks/usePreservePage";
 
 const Notes = () => {
   const { preferences } = useUserPreferences();
   const { isOnline, notes } = useOfflineNotes();
+  
+  // Enable scroll position preservation for this page
+  usePreservePage();
 
   return (
     <div className="min-h-screen bg-background">
