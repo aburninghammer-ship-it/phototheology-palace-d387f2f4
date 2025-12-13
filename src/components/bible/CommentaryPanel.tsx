@@ -61,9 +61,9 @@ const PRINCIPLE_OPTIONS = [
   // Floor 2 - Investigation (Detective Work)
   { id: "or", label: "Observation Room (OR)", color: "gradient-ocean" },
   { id: "dc", label: "Def-Com Room (DC)", color: "gradient-royal" },
-  { id: "st", label: "Symbols/Types (@T)", color: "gradient-sunset" },
-  { id: "qr", label: "Questions Room (?)", color: "gradient-warmth" },
-  { id: "qa", label: "Q&A Chains (?!)", color: "gradient-palace" },
+  { id: "st", label: "Symbols/Types Room (ST)", color: "gradient-sunset" },
+  { id: "qr", label: "Questions Room (QR)", color: "gradient-warmth" },
+  { id: "qa", label: "Q&A Chains Room (QA)", color: "gradient-palace" },
   
   // Floor 3 - Freestyle (Connections)
   { id: "nf", label: "Nature Freestyle (NF)", color: "gradient-ocean" },
