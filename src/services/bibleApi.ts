@@ -177,48 +177,42 @@ export const searchBible = async (query: string, translation: Translation = "kjv
   }
 };
 
-// Word search across the entire Bible using Supabase
+// Word search across the entire Bible using AI for accurate KJV results
 export const searchBibleByWord = async (
   searchTerm: string,
-  scope: "all" | "ot" | "nt" = "all"
-): Promise<Verse[]> => {
+  scope: "all" | "ot" | "nt" = "all",
+  page: number = 1,
+  limit: number = 50
+): Promise<{ verses: Verse[]; total: number; hasMore: boolean }> => {
   try {
-    const OLD_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(0, 39);
-    const NEW_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(39);
-    
-    let query = supabase
-      .from('bible_verses_tokenized')
-      .select('book, chapter, verse_num, text_kjv')
-      .ilike('text_kjv', `%${searchTerm}%`)
-      .order('book', { ascending: true })
-      .order('chapter', { ascending: true })
-      .order('verse_num', { ascending: true })
-      .limit(1000); // Set a reasonable limit
-    
-    // Filter by scope
-    if (scope === "ot") {
-      query = query.in('book', OLD_TESTAMENT_BOOKS);
-    } else if (scope === "nt") {
-      query = query.in('book', NEW_TESTAMENT_BOOKS);
-    }
-    
-    const { data, error } = await query;
-    
+    // Use AI-powered search for accurate KJV results
+    const { data, error } = await supabase.functions.invoke("search-bible-word", {
+      body: { searchTerm, scope, page, limit },
+    });
+
     if (error) {
-      console.error('Error searching Bible:', error);
-      return [];
+      console.error('Error calling word search function:', error);
+      return { verses: [], total: 0, hasMore: false };
     }
-    
-    // Transform to Verse format
-    return (data || []).map(row => ({
-      book: row.book,
-      chapter: row.chapter,
-      verse: row.verse_num,
-      text: row.text_kjv
-    }));
+
+    if (data?.results) {
+      const verses = data.results.map((r: any) => ({
+        book: r.book,
+        chapter: r.chapter,
+        verse: r.verse,
+        text: r.text
+      }));
+      return { 
+        verses, 
+        total: data.total_estimated || verses.length,
+        hasMore: data.has_more || false
+      };
+    }
+
+    return { verses: [], total: 0, hasMore: false };
   } catch (error) {
     console.error('Error in searchBibleByWord:', error);
-    return [];
+    return { verses: [], total: 0, hasMore: false };
   }
 };
 
