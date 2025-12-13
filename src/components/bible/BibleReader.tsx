@@ -28,6 +28,7 @@ import { ApologeticsPanel } from "./ApologeticsPanel";
 
 import { ThematicTagging } from "./ThematicTagging";
 import { ThemeCrossReference } from "./ThemeCrossReference";
+import { ThemeVerseSearch } from "./ThemeVerseSearch";
 import { MemoryToolsPanel } from "./MemoryToolsPanel";
 import { StudyModeSelector } from "./StudyModeSelector";
 
@@ -566,6 +567,9 @@ export const BibleReader = () => {
                   currentVerse={`${book} ${chapter}:${selectedVerse}`}
                 />
               )}
+              
+              {/* Theme Verse Search (All modes) */}
+              <ThemeVerseSearch />
             </>
           ) : (
             <Card className="p-6 text-center text-muted-foreground sticky top-24">
