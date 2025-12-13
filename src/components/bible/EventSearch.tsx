@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Loader2, Sparkles, BookOpen, X, History } from "lucide-react";
+import { Loader2, Sparkles, BookOpen, X, History, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { usePreservePage } from "@/hooks/usePreservePage";
@@ -68,6 +68,16 @@ export const EventSearch = ({ className }: EventSearchProps) => {
   );
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+
+  const copyVerse = (result: EventResult, idx: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const text = `${result.reference} - ${result.text}`;
+    navigator.clipboard.writeText(text);
+    setCopiedIdx(idx);
+    toast({ title: "Copied!", description: result.reference });
+    setTimeout(() => setCopiedIdx(null), 2000);
+  };
 
   // Persist state changes
   useEffect(() => { setCustomState('eventSearch_selectedEvents', selectedEvents); }, [selectedEvents, setCustomState]);
@@ -321,6 +331,18 @@ export const EventSearch = ({ className }: EventSearchProps) => {
                       <p className="text-xs text-amber-400/70 mt-1 italic">{result.summary}</p>
                     )}
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
+                    onClick={(e) => copyVerse(result, idx, e)}
+                  >
+                    {copiedIdx === idx ? (
+                      <Check className="h-3.5 w-3.5 text-green-500" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
                 </div>
               </Card>
             ))}
