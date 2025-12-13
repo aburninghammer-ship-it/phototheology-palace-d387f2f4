@@ -10,7 +10,7 @@ export const communityPostSchema = z.object({
     .trim()
     .min(10, 'Content must be at least 10 characters')
     .max(10000, 'Content must be less than 10,000 characters'),
-  category: z.enum(['general', 'testimony', 'question', 'study', 'prayer'])
+  category: z.enum(['general', 'testimony', 'question', 'questions', 'study', 'prayer'])
 });
 
 // Sermon builder schemas
