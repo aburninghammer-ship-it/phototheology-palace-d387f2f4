@@ -11,8 +11,8 @@ serve(async (req) => {
   }
 
   try {
-    const { topic } = await req.json();
-    console.log('Suggesting verses for topic:', topic);
+    const { topic, excludeVerses = [] } = await req.json();
+    console.log('Suggesting verses for topic:', topic, 'excluding:', excludeVerses.length, 'verses');
 
     if (!topic) {
       throw new Error('Topic is required');
@@ -23,12 +23,17 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
+    const excludeList = excludeVerses.length > 0 
+      ? `\n\nCRITICAL: Do NOT suggest any of these verses that were already provided: ${excludeVerses.join(', ')}. Choose DIFFERENT verses on the same topic.`
+      : '';
+
     const systemPrompt = `You are Jeeves, a Phototheology expert and Bible scholar. Your task is to suggest 5-10 key Bible verses on a given topic that would be excellent for memorization.
 
 For each verse:
 1. Choose verses that are clear, memorable, and theologically significant
 2. Provide the KJV text
 3. Include a brief reason why this verse is important for the topic
+4. ALWAYS suggest DIFFERENT verses - never repeat previously suggested verses${excludeList}
 
 Return your response in this exact JSON format:
 {
