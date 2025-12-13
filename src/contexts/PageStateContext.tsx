@@ -52,10 +52,73 @@ export const usePreservePageState = () => {
   }, [location.pathname, saveScrollPosition]);
 };
 
+const STORAGE_KEY = "pt_page_states";
+
+// Serialize Map to JSON-compatible format
+const serializePageStates = (states: Map<string, PageState>): string => {
+  const obj: Record<string, PageState> = {};
+  states.forEach((value, key) => {
+    obj[key] = value;
+  });
+  return JSON.stringify(obj);
+};
+
+// Deserialize JSON to Map
+const deserializePageStates = (json: string): Map<string, PageState> => {
+  try {
+    const obj = JSON.parse(json) as Record<string, PageState>;
+    return new Map(Object.entries(obj));
+  } catch {
+    return new Map();
+  }
+};
+
+// Load initial state from localStorage
+const loadInitialState = (): Map<string, PageState> => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return deserializePageStates(stored);
+    }
+  } catch (e) {
+    console.warn("Failed to load page states from localStorage:", e);
+  }
+  return new Map();
+};
+
 export const PageStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [pageStates, setPageStates] = useState<Map<string, PageState>>(new Map());
+  const [pageStates, setPageStates] = useState<Map<string, PageState>>(() => loadInitialState());
   const location = useLocation();
   const previousPathRef = useRef<string>("");
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced save to localStorage
+  const saveToStorage = useCallback((states: Map<string, PageState>) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, serializePageStates(states));
+      } catch (e) {
+        console.warn("Failed to save page states to localStorage:", e);
+      }
+    }, 300); // Debounce 300ms
+  }, []);
+
+  // Save to localStorage whenever pageStates changes
+  useEffect(() => {
+    saveToStorage(pageStates);
+  }, [pageStates, saveToStorage]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Save scroll position when navigating away
   useEffect(() => {
