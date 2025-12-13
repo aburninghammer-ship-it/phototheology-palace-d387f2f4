@@ -400,11 +400,25 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     }
   }, [selectedVoice, timeout]);
 
+  // Sanitize text for TTS - remove patterns that would be read literally
+  const sanitizeTextForTTS = (text: string): string => {
+    return text
+      // Remove ellipsis (... or …) - don't read as "dot dot dot"
+      .replace(/\.{2,}/g, ' ')
+      .replace(/…/g, ' ')
+      // Clean up multiple spaces
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
   const speak = useCallback(async (text: string, speakOptions?: SpeakOptions | VoiceId) => {
     if (!text.trim()) {
       toast.error('No text to speak');
       return;
     }
+
+    // Sanitize text before speaking
+    const cleanText = sanitizeTextForTTS(text);
 
     // Handle legacy call signature (voice as second param)
     const opts: SpeakOptions = typeof speakOptions === 'string'
@@ -433,16 +447,16 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
       if (shouldUseBrowser || networkStatus === 'offline') {
         // Use browser TTS
         console.log('[TTS] Using browser TTS (offline or requested)');
-        await speakWithBrowser(text);
+        await speakWithBrowser(cleanText);
       } else {
         // Try ElevenLabs first, fallback to browser on error
         try {
           console.log('[TTS] Attempting ElevenLabs TTS');
-          await speakWithElevenLabs(text, opts);
+          await speakWithElevenLabs(cleanText, opts);
         } catch (elevenLabsError) {
           console.warn('[TTS] ElevenLabs failed, falling back to browser TTS:', elevenLabsError);
           toast.info('Using offline voice mode');
-          await speakWithBrowser(text);
+          await speakWithBrowser(cleanText);
         }
       }
 
