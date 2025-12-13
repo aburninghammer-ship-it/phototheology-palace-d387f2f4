@@ -166,3 +166,6 @@ verify_jwt = false
 
 [functions.list-speechify-voices]
 verify_jwt = false
+
+[functions.suggest-verses-by-topic]
+verify_jwt = false
