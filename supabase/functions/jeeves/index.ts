@@ -251,15 +251,20 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // CRITICAL: These codes must match the official Palace Schema in palaceData.ts
+    // Valid room tags: SR, IR, 24F, BR, TR, GR (Floor 1), OR, DC, ST, QR, QA (Floor 2), etc.
+    // BR = Bible Rendered (NOT "Blazing Throne Room")
+    // ST = Symbols/Types Room (handles Types - there is NO @T room)
+    // @ prefix is for CYCLES only: @Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re
     const PRINCIPLES = [
       { code: "P‖", name: "Parallels" },
       { code: "PRm", name: "Patterns" },
-      { code: "@T", name: "Types" },
-      { code: "CR", name: "Christ-Centered" },
-      { code: "BL", name: "Sanctuary" },
-      { code: "FE", name: "Feasts" },
-      { code: "DR", name: "Dimensions" },
-      { code: "TZ", name: "Time Zones" },
+      { code: "ST", name: "Symbols/Types" },  // CORRECT: ST, not @T
+      { code: "CR", name: "Christ-Centered (Concentration Room)" },
+      { code: "BL", name: "Sanctuary (Blue Room)" },
+      { code: "FE", name: "Feasts Room" },
+      { code: "DR", name: "Dimensions Room" },
+      { code: "TZ", name: "Time Zone Room" },
     ];
 
     // Handle Find Verses action (for memory lists)
