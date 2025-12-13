@@ -122,7 +122,7 @@ export function PWAUpdatePrompt() {
   if (!offlineReady && !showReload) return null;
 
   return (
-    <div className="fixed bottom-20 md:bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-50 sm:max-w-md animate-in slide-in-from-bottom-4">
+    <div className="fixed bottom-24 md:bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-50 sm:max-w-md animate-in slide-in-from-bottom-4">
       {offlineReady && !showReload && (
         <Alert className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-primary/20">
           <Download className="h-4 w-4 text-primary" />
