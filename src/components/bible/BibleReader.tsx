@@ -253,17 +253,19 @@ export const BibleReader = () => {
 
       {/* AI Prompt Banner - Surface Jeeves */}
       {!jeevesMode && (
-        <AIPromptBanner 
-          context="bible" 
-          book={book} 
-          chapter={chapter}
-          onAskJeeves={() => {
-            setJeevesMode(true);
-            setTimeout(() => {
-              jeevesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-          }}
-        />
+        <div className="relative z-0">
+          <AIPromptBanner 
+            context="bible" 
+            book={book} 
+            chapter={chapter}
+            onAskJeeves={() => {
+              setJeevesMode(true);
+              setTimeout(() => {
+                jeevesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 100);
+            }}
+          />
+        </div>
       )}
 
       {/* Audio Controls */}
