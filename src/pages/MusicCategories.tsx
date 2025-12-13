@@ -41,36 +41,7 @@ const MUSIC_FLOORS = [
     mood: "Structured strings, reflective",
     color: "from-blue-500/20 to-cyan-500/20",
     borderColor: "border-blue-500/30",
-    tracks: [
-      {
-        id: "flight-study",
-        name: "Flight",
-        description: "Soaring orchestral, uplifting, ethereal",
-        url: "https://cdn1.suno.ai/qWAdsQQdcbYPv9kC.mp3",
-        bpm: 65
-      },
-      {
-        id: "whispers-inner-mind",
-        name: "Whispers of the Inner Mind",
-        description: "Ambient instrumental meditation - peaceful and meditative",
-        url: "https://cdn1.suno.ai/E8qISnskB0iJ5bnz.mp3",
-        bpm: 55
-      },
-      {
-        id: "suno-track-1",
-        name: "Suno Track 1",
-        description: "Orchestral ambient for focused study",
-        url: "https://cdn1.suno.ai/R81skbyKBEWVIKsg.mp3",
-        bpm: 60
-      },
-      {
-        id: "suno-track-2",
-        name: "Suno Track 2",
-        description: "Orchestral ambient for reflection",
-        url: "https://cdn1.suno.ai/elR1OG0lgKujsxyy.mp3",
-        bpm: 60
-      }
-    ]
+    tracks: []
   },
   {
     floor: 3,

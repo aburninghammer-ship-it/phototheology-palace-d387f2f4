@@ -95,6 +95,22 @@ const AMBIENT_TRACKS: Array<{
     mood: "gentle, meditative, still",
     url: "/audio/wings-of-stillness.mp3",
   },
+  {
+    id: "suno-track-1",
+    name: "Suno Track 1",
+    description: "Orchestral ambient for focused study",
+    category: "study-music",
+    mood: "orchestral, ambient, peaceful",
+    url: "https://cdn1.suno.ai/R81skbyKBEWVIKsg.mp3",
+  },
+  {
+    id: "suno-track-2",
+    name: "Suno Track 2",
+    description: "Orchestral ambient for reflection",
+    category: "study-music",
+    mood: "orchestral, ambient, reflective",
+    url: "https://cdn1.suno.ai/elR1OG0lgKujsxyy.mp3",
+  },
 ];
 
 interface AmbientMusicPlayerProps {
