@@ -4,7 +4,8 @@ import { fetchChapter, Translation } from "@/services/bibleApi";
 import { Chapter } from "@/types/bible";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot, Bookmark, Sparkles, Upload, Volume2, Headphones } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot, Bookmark, Sparkles, Upload, Volume2, Headphones, Copy, Check } from "lucide-react";
+import { toast } from "sonner";
 import { QuickAudioButton } from "@/components/audio";
 import { AudioControls } from "./AudioControls";
 import { VerseView } from "./VerseView";
@@ -38,6 +39,7 @@ import { useVerseHighlights } from "@/hooks/useVerseHighlights";
 import { useVerseNotes } from "@/hooks/useVerseNotes";
 import { useReadingStreak } from "@/hooks/useReadingStreak";
 import { AIPromptBanner } from "@/components/AIPromptBanner";
+import { CopyableVersesCard } from "./CopyableVersesCard";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -492,21 +494,13 @@ export const BibleReader = () => {
               )}
             </>
           ) : principleMode && selectedVerses.length > 0 ? (
-            <Card variant="glass" className="p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Selected Verses ({selectedVerses.length})</h3>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedVerses([])}>
-                  Clear
-                </Button>
-              </div>
-              <div className="space-y-2 max-h-[400px] overflow-auto">
-                {selectedVerses.map(v => (
-                  <div key={v} className="p-3 rounded-lg border bg-card/50 text-sm">
-                    <span className="font-semibold text-primary">{v}.</span>{" "}
-                    {chapterData.verses.find(verse => verse.verse === v)?.text}
-                  </div>
-                ))}
-              </div>
+            <CopyableVersesCard
+              book={book}
+              chapter={chapter}
+              selectedVerses={selectedVerses}
+              verses={chapterData.verses}
+              onClear={() => setSelectedVerses([])}
+            >
               {selectedVerses.length === 1 && (
                 <PrinciplePanel
                   book={book}
@@ -517,7 +511,7 @@ export const BibleReader = () => {
                   onHighlight={setHighlightedVerses}
                 />
               )}
-            </Card>
+            </CopyableVersesCard>
           ) : selectedVerse ? (
             <>
               {/* Always show Memory Tools */}
