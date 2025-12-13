@@ -18,6 +18,7 @@ import {
   ListMusic,
   Crown,
   RefreshCw,
+  Search,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SequenceBlockBuilder } from "@/components/reading-sequence/SequenceBlockBuilder";
@@ -25,6 +26,7 @@ import { SequencePlayer } from "@/components/reading-sequence/SequencePlayer";
 import { SavedSequencesList } from "@/components/reading-sequence/SavedSequencesList";
 import { PresetSequences } from "@/components/reading-sequence/PresetSequences";
 import { SampleAudioLibrary } from "@/components/reading-sequence/SampleAudioLibrary";
+import { ThemeAudioPlayer } from "@/components/audio/ThemeAudioPlayer";
 import { useReadingSequences } from "@/hooks/useReadingSequences";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -304,13 +306,22 @@ export default function ReadMeTheBible() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="glass-card grid w-full max-w-2xl grid-cols-3 p-1 bg-background/50 backdrop-blur-xl border border-white/10">
+          <TabsList className="glass-card grid w-full max-w-3xl grid-cols-4 p-1 bg-background/50 backdrop-blur-xl border border-white/10">
             <TabsTrigger 
               value="samples" 
               className="gap-2 data-[state=active]:bg-primary/20 data-[state=active]:text-primary"
             >
               <Headphones className="h-4 w-4" />
-              Free Samples
+              <span className="hidden sm:inline">Free Samples</span>
+              <span className="sm:hidden">Samples</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="themes" 
+              className="gap-2 data-[state=active]:bg-primary/20 data-[state=active]:text-primary"
+            >
+              <Search className="h-4 w-4" />
+              <span className="hidden sm:inline">Theme Audio</span>
+              <span className="sm:hidden">Themes</span>
             </TabsTrigger>
             <TabsTrigger 
               value="create" 
@@ -327,7 +338,8 @@ export default function ReadMeTheBible() {
               disabled={!hasPremiumAccess}
             >
               <ListMusic className="h-4 w-4" />
-              My Sequences
+              <span className="hidden sm:inline">My Sequences</span>
+              <span className="sm:hidden">Saved</span>
               {!hasPremiumAccess && <Crown className="h-3 w-3 ml-1 text-yellow-600" />}
               {savedSequences.length > 0 && hasPremiumAccess && (
                 <Badge variant="secondary" className="ml-1">
@@ -360,6 +372,21 @@ export default function ReadMeTheBible() {
                 </div>
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="themes" className="space-y-4">
+            <div className="glass-card p-4 rounded-xl">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="h-5 w-5 text-primary" />
+                <h3 className="font-semibold">Theme-Based Audio</h3>
+                <Badge variant="secondary" className="text-xs">AI-Powered</Badge>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                Search for key verses by biblical theme (Law, Grace, Faith, Sabbath, Death, Prophecy, etc.) 
+                and listen to them read aloud with AI-quality narration.
+              </p>
+              <ThemeAudioPlayer />
+            </div>
           </TabsContent>
 
           <TabsContent value="create" className="space-y-6">
