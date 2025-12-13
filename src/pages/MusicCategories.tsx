@@ -55,6 +55,20 @@ const MUSIC_FLOORS = [
         description: "Ambient instrumental meditation - peaceful and meditative",
         url: "https://cdn1.suno.ai/E8qISnskB0iJ5bnz.mp3",
         bpm: 55
+      },
+      {
+        id: "suno-track-1",
+        name: "Suno Track 1",
+        description: "Orchestral ambient for focused study",
+        url: "https://suno.com/s/R81skbyKBEWVIKsg",
+        bpm: 60
+      },
+      {
+        id: "suno-track-2",
+        name: "Suno Track 2",
+        description: "Orchestral ambient for reflection",
+        url: "https://suno.com/s/elR1OG0lgKujsxyy",
+        bpm: 60
       }
     ]
   },
