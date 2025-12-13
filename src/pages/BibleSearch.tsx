@@ -161,7 +161,7 @@ const BibleSearch = () => {
               {results.map((verse, index) => (
                 <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
                   <Link 
-                    to={`/bible/${verse.book}/${verse.chapter}`}
+                    to={`/bible/${encodeURIComponent(verse.book)}/${verse.chapter}`}
                     className="block"
                   >
                     <div className="flex items-start gap-4">
