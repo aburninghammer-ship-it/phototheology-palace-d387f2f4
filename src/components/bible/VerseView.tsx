@@ -16,6 +16,7 @@ import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { VerseHighlightMenu } from "./VerseHighlightMenu";
 import { VerseNoteEditor } from "./VerseNoteEditor";
+import { VerseCopyMenu } from "./VerseCopyMenu";
 import { VerseNote } from "@/hooks/useVerseNotes";
 import { cn } from "@/lib/utils";
 
@@ -253,7 +254,7 @@ export const VerseView = ({
               {verse.verse}
             </span>
             
-            {/* Highlight & Note buttons */}
+            {/* Highlight, Note & Copy buttons */}
             <div className="flex gap-0.5">
               {onHighlight && onRemoveHighlight && (
                 <VerseHighlightMenu
@@ -273,6 +274,15 @@ export const VerseView = ({
                   onDelete={onDeleteNote}
                 />
               )}
+              <VerseCopyMenu
+                reference={`${book} ${chapter}:${verse.verse}`}
+                text={verse.text}
+                book={book}
+                chapter={chapter}
+                verse={verse.verse}
+                className="h-6 w-6 p-0"
+                size="icon"
+              />
             </div>
           </div>
           
