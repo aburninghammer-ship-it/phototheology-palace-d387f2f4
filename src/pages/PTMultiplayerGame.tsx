@@ -80,7 +80,7 @@ const PRINCIPLE_EXPLANATIONS: Record<string, string> = {
   // Floor 1 - Furnishing
   "SR": "Story Room - Recall narratives in sequence",
   "IR": "Imagination Room - Step inside the story",
-  "24F": "24FPS - One image per chapter",
+  "24": "24FPS - One image per chapter",
   "BR": "Bible Rendered - Master images per 24 chapters",
   "TR": "Translation Room - Words become pictures",
   "GR": "Gems Room - Store powerful insights",
