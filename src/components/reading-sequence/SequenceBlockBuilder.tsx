@@ -68,6 +68,7 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
   const [themeLoading, setThemeLoading] = useState(false);
   const [themeVerses, setThemeVerses] = useState<ThemeVerse[]>([]);
   const [selectedThemeVerses, setSelectedThemeVerses] = useState<Set<number>>(new Set());
+  const [previouslyUsedVerses, setPreviouslyUsedVerses] = useState<Record<string, string[]>>({});
 
   // Debug: Log when block changes
   console.log("SequenceBlockBuilder render, items:", block.items.length);
@@ -233,9 +234,13 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
     setThemeVerses([]);
     setSelectedThemeVerses(new Set());
     
+    // Get previously used verses for this topic (case-insensitive)
+    const topicKey = topic.toLowerCase().trim();
+    const excludeVerses = previouslyUsedVerses[topicKey] || [];
+    
     try {
       const { data, error } = await supabase.functions.invoke('suggest-verses-by-topic', {
-        body: { topic, maxVerses: 40 }
+        body: { topic, excludeVerses, maxVerses: 40 }
       });
       
       if (error) throw error;
@@ -244,9 +249,17 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
         setThemeVerses(data.verses);
         // Select all by default
         setSelectedThemeVerses(new Set(data.verses.map((_: ThemeVerse, i: number) => i)));
-        toast.success(`Found ${data.verses.length} verses on "${topic}"`);
+        
+        // Track these verses as used for this topic
+        const newVerseRefs = data.verses.map((v: ThemeVerse) => v.reference);
+        setPreviouslyUsedVerses(prev => ({
+          ...prev,
+          [topicKey]: [...(prev[topicKey] || []), ...newVerseRefs]
+        }));
+        
+        toast.success(`Found ${data.verses.length} new verses on "${topic}"`);
       } else {
-        toast.error("No verses found. Try a different theme.");
+        toast.error("No more verses found for this theme. Try a different one.");
       }
     } catch (error) {
       console.error("Theme search error:", error);
