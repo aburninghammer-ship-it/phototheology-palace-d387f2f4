@@ -54,40 +54,11 @@ Return your response in this exact JSON format:
       },
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
+        response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Suggest 5-10 key Bible verses for memorization on the topic: "${topic}"` }
         ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "suggest_verses",
-              description: "Return verse suggestions for the given topic",
-              parameters: {
-                type: "object",
-                properties: {
-                  verses: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        reference: { type: "string" },
-                        text: { type: "string" },
-                        reason: { type: "string" }
-                      },
-                      required: ["reference", "text", "reason"],
-                      additionalProperties: false
-                    }
-                  }
-                },
-                required: ["verses"],
-                additionalProperties: false
-              }
-            }
-          }
-        ],
-        tool_choice: { type: "function", function: { name: "suggest_verses" } }
       }),
     });
 
@@ -98,14 +69,24 @@ Return your response in this exact JSON format:
     }
 
     const data = await response.json();
-    console.log('AI response received');
+    console.log('AI response received', JSON.stringify(data));
 
-    const toolCall = data.choices[0]?.message?.tool_calls?.[0];
-    if (!toolCall) {
-      throw new Error('No tool call in response');
+    let result;
+    try {
+      const content = data.choices?.[0]?.message?.content;
+      if (!content) {
+        throw new Error('No content in AI response');
+      }
+
+      result = typeof content === 'string' ? JSON.parse(content) : content;
+
+      if (!result.verses || !Array.isArray(result.verses)) {
+        throw new Error('Invalid verses format in AI response');
+      }
+    } catch (parseError) {
+      console.error('Error parsing AI response:', parseError);
+      throw new Error('Failed to parse AI response');
     }
-
-    const result = JSON.parse(toolCall.function.arguments);
     console.log(`Generated ${result.verses.length} verse suggestions`);
 
     return new Response(JSON.stringify(result), {
