@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sparkles, Send, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { SaveJeevesResponseButton } from "@/components/jeeves/SaveJeevesResponseButton";
 
 interface Message {
   role: "user" | "assistant";
@@ -111,7 +112,18 @@ Available verses: ${verses.map(v => `${v.verse_reference}: ${v.verse_text}`).joi
                     : "bg-muted"
                 }`}
               >
-                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-sm whitespace-pre-wrap flex-1">{msg.content}</p>
+                  {msg.role === "assistant" && idx > 0 && (
+                    <SaveJeevesResponseButton
+                      question={messages[idx - 1]?.content || "Memory coaching question"}
+                      response={msg.content}
+                      context={`Memory Coach - ${technique === "first-letter" ? "First Letter Technique" : "Memory Palace"}`}
+                      variant="icon"
+                      className="shrink-0"
+                    />
+                  )}
+                </div>
               </div>
             ))}
             {loading && (

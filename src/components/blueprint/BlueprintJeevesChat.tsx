@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Sparkles, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { SaveJeevesResponseButton } from "@/components/jeeves/SaveJeevesResponseButton";
 
 interface Message {
   role: "user" | "assistant";
@@ -133,6 +134,16 @@ export function BlueprintJeevesChat({ lessonId, lessonTitle, lessonContent }: Bl
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  {msg.role === "assistant" && idx > 0 && (
+                    <div className="mt-2 pt-2 border-t border-border/50">
+                      <SaveJeevesResponseButton
+                        question={messages[idx - 1]?.content || "Blueprint question"}
+                        response={msg.content}
+                        context={`Blueprint Course - ${lessonTitle}`}
+                        variant="small"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

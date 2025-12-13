@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { SaveJeevesResponseButton } from "@/components/jeeves/SaveJeevesResponseButton";
 
 interface Message {
   role: "user" | "assistant";
@@ -200,8 +201,19 @@ export const RoomInsightChat = ({
                         : "bg-secondary/50 mr-4"
                     }`}
                   >
-                    <div className="text-xs font-semibold mb-1 text-muted-foreground">
-                      {msg.role === "user" ? "You" : "Jeeves"}
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-xs font-semibold text-muted-foreground">
+                        {msg.role === "user" ? "You" : "Jeeves"}
+                      </div>
+                      {msg.role === "assistant" && idx > 0 && (
+                        <SaveJeevesResponseButton
+                          question={messages[idx - 1]?.content || "Room insight question"}
+                          response={msg.content}
+                          context={`Room Insight - ${roomName} (${roomCode}) — ${book} ${chapter}:${verse}`}
+                          variant="icon"
+                          className="h-6 w-6"
+                        />
+                      )}
                     </div>
                     {msg.images && msg.images.length > 0 && (
                       <div className="flex gap-2 mb-2 flex-wrap">
