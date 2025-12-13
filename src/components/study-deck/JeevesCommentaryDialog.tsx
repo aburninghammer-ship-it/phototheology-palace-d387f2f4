@@ -29,29 +29,29 @@ const JEEVES_COMMENTARY: Record<string, {
   "SR": {
     explanation: "The Story Room trains you to collect and memorize Bible stories in sequence, turning narratives into vivid mental movies. Each story becomes a scene etched in imagination.",
     example: "For Joseph's story: coat of many colors → pit → caravan → prison → palace. This visual sequence makes recall instant and reliable.",
-    palaceLocation: "Floor 1 - Furnishing (Width)",
+    palaceLocation: "Floor 1 - Furnishing (Memory & Visualization)",
     connections: ["IR (Imagination Room)", "24FPS", "BR (Bible Rendered)"],
     practicalTip: "Start with Genesis 1-11. Memorize 10 major stories as image sequences before moving to deeper analysis."
   },
   "OR": {
     explanation: "The Observation Room is the detective's notebook. You log details without rushing to meaning—notice phrases, repetitions, contrasts, and actions like collecting fingerprints.",
     example: "In Luke 15:20, notice: 'yet a great way off' (father watching), 'ran' (culturally shocking), 'fell on his neck' (before confession). Each detail builds the emotional portrait.",
-    palaceLocation: "Floor 2 - Investigation (Width)",
-    connections: ["DC (Def-Com)", "QR (Questions)", "@T (Symbols/Types)"],
+    palaceLocation: "Floor 2 - Investigation (Detective Work)",
+    connections: ["DC (Def-Com)", "QR (Questions)", "ST (Symbols/Types)"],
     practicalTip: "Write 30-50 observations per passage without interpreting. Train your eye to see what casual readers miss."
   },
   "DR-2D": {
     explanation: "The Christological Dimension reveals how every text points to, foreshadows, or fulfills Christ. This is the central lens of Phototheology—'These are they which testify of me' (John 5:39).",
     example: "Exodus 12:13 - The Passover lamb's blood → Christ's blood (1 Cor 5:7). Applied to doorposts → applied by faith. Timing at Passover → Jesus crucified at Passover.",
-    palaceLocation: "Floor 4 - Next Level (Depth)",
+    palaceLocation: "Floor 4 - Next Level (Christ-Centered Structure)",
     connections: ["CR (Concentration)", "BL (Blue Room)", "@CyC (Cyrus-Christ Cycle)"],
     practicalTip: "Always ask: Where is Christ in this text? Look for types, shadows, prophecies, and character parallels."
   },
   "@Mo": {
     explanation: "The Mosaic Cycle maps texts through the pattern: Fall (Egypt bondage) → Covenant (Sinai) → Sanctuary (Tabernacle) → Enemy (wilderness) → Restoration (Canaan).",
     example: "Hebrews 9:11-14 shows Christ fulfilling the Mosaic cycle: earthly priesthood → heavenly High Priest; animal blood → His own blood; yearly repetition → eternal redemption.",
-    palaceLocation: "Floor 6 - Three Heavens (Depth)",
-    connections: ["BL (Blue Room)", "Feast Room", "@CyC (transition to Christ)"],
+    palaceLocation: "Floor 6 - Horizons (Cycles & Cosmic Context)",
+    connections: ["BL (Blue Room)", "FE (Feasts Room)", "@CyC (Cyrus-Christ Cycle)"],
     practicalTip: "When studying law, priesthood, or tabernacle texts, always map to the Mosaic Cycle and trace forward to Christ's fulfillment."
   },
   // Add more as needed - this is a starter set
