@@ -40,6 +40,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUserMusic, UserTrack } from "@/hooks/useUserMusic";
+import { useLocalMusic } from "@/hooks/useLocalMusic";
 import { useAuth } from "@/hooks/useAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAudioDucking } from "@/hooks/useAudioDucking";
@@ -153,6 +154,7 @@ export function AmbientMusicPlayer({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { user } = useAuth();
   const { userTracks, uploading, uploadMusic, deleteMusic, toggleFavorite } = useUserMusic();
+  const { localTracks, uploading: localUploading, uploadLocalMusic, removeLocalTrack, toggleFavorite: toggleLocalFavorite } = useLocalMusic();
   const isMobile = useIsMobile();
   
   const [isPlaying, setIsPlaying] = useState(false);
@@ -234,9 +236,9 @@ export function AmbientMusicPlayer({
     return isAudioFile || isCdnUrl;
   }, []);
 
-  // Combine preset and user tracks - memoized to prevent unnecessary re-renders
+  // Combine preset, user tracks, and local tracks - memoized to prevent unnecessary re-renders
   const allTracks = useMemo(() => [
-    ...AMBIENT_TRACKS.map(t => ({ ...t, isUser: false })),
+    ...AMBIENT_TRACKS.map(t => ({ ...t, isUser: false, isLocal: false })),
     ...userTracks
       .filter(t => isValidAudioUrl(t.file_url)) // Filter out invalid URLs
       .map(t => ({ 
@@ -249,9 +251,23 @@ export function AmbientMusicPlayer({
         mood: t.mood || "custom",
         bpm: 60,
         isUser: true,
+        isLocal: false,
         userTrackData: t
-      }))
-  ], [userTracks, isValidAudioUrl]);
+      })),
+    ...localTracks.map(t => ({
+      id: t.id,
+      name: t.name,
+      description: t.mood || "Private local track",
+      url: t.blobUrl || "",
+      category: "local",
+      floor: 0,
+      mood: t.mood || "private",
+      bpm: 60,
+      isUser: false,
+      isLocal: true,
+      localTrackData: t
+    }))
+  ], [userTracks, localTracks, isValidAudioUrl]);
 
   const currentTrack = useMemo(() => 
     allTracks.find(t => t.id === currentTrackId) || allTracks[0],
@@ -705,20 +721,26 @@ export function AmbientMusicPlayer({
 
   const handleUpload = async () => {
     if (!uploadFile) return;
-    const result = await uploadMusic(uploadFile, uploadName);
+    // Store locally on device - completely private
+    const result = await uploadLocalMusic(uploadFile, uploadName);
     if (result) {
       setShowUpload(false);
       setUploadFile(null);
       setUploadName("");
       // Switch to the new track
-      setCurrentTrackId(`user-${result.id}`);
+      setCurrentTrackId(result.id);
     }
   };
 
   const handleDeleteTrack = (track: any) => {
-    if (track.isUser && track.userTrackData) {
-      deleteMusic(track.userTrackData);
+    if (track.isLocal && track.localTrackData) {
+      removeLocalTrack(track.localTrackData.id);
       // If currently playing this track, switch to first preset
+      if (currentTrackId === track.id) {
+        setCurrentTrackId(AMBIENT_TRACKS[0].id);
+      }
+    } else if (track.isUser && track.userTrackData) {
+      deleteMusic(track.userTrackData);
       if (currentTrackId === track.id) {
         setCurrentTrackId(AMBIENT_TRACKS[0].id);
       }
@@ -750,27 +772,24 @@ export function AmbientMusicPlayer({
             <div className="flex items-center justify-between">
               <h4 className="font-medium text-sm">Study Music</h4>
               <div className="flex items-center gap-1">
-                {user && (
-                  <>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileSelect}
-                      accept="audio/*"
-                      className="hidden"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading}
-                      title="Upload your music"
-                    >
-                      {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                    </Button>
-                  </>
-                )}
+                {/* Local upload - works without sign in, stored privately on device */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  accept="audio/*"
+                  className="hidden"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={localUploading}
+                  title="Add music (stored privately on your device)"
+                >
+                  {localUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -786,7 +805,7 @@ export function AmbientMusicPlayer({
               <div className="space-y-2 p-3 border rounded-md bg-primary/10">
                 <div className="flex items-center gap-2 pb-1">
                   <Upload className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">Upload Your Music</span>
+                  <span className="text-sm font-medium">Add Private Music</span>
                 </div>
                 <Label className="text-xs">Track Name</Label>
                 <Input 
@@ -796,12 +815,12 @@ export function AmbientMusicPlayer({
                   className="h-8 text-sm"
                 />
                 <p className="text-xs text-muted-foreground">
-                  💡 This will add "{uploadName}" to your custom music collection
+                  🔒 Stored privately on your device only - no one else can access
                 </p>
                 <div className="flex gap-2">
-                  <Button size="sm" onClick={handleUpload} disabled={uploading} className="flex-1">
-                    {uploading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />}
-                    Upload Now
+                  <Button size="sm" onClick={handleUpload} disabled={localUploading} className="flex-1">
+                    {localUploading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />}
+                    Save to Device
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => { setShowUpload(false); setUploadFile(null); }}>
                     Cancel
@@ -815,13 +834,13 @@ export function AmbientMusicPlayer({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="max-h-60">
-                {userTracks.length > 0 && (
+                {localTracks.length > 0 && (
                   <>
-                    <div className="px-2 py-1 text-xs font-medium text-muted-foreground">Your Music</div>
-                    {allTracks.filter(t => t.isUser).map(track => (
+                    <div className="px-2 py-1 text-xs font-medium text-muted-foreground">🔒 Your Private Music</div>
+                    {allTracks.filter(t => t.isLocal).map(track => (
                       <SelectItem key={track.id} value={track.id}>
                         <div className="flex items-center gap-2">
-                          <Heart className="h-3 w-3 text-primary" />
+                          <Smartphone className="h-3 w-3 text-primary" />
                           <span>{track.name}</span>
                         </div>
                       </SelectItem>
