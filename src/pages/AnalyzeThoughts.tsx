@@ -212,6 +212,7 @@ const AnalyzeThoughts = () => {
   const handleSelectFromHistory = (analysis: SavedAnalysis) => {
     setInput(analysis.input_text);
     setSelectedHistoryId(analysis.id);
+    setShowResults(true);
     
     // Reconstruct result from saved analysis
     setResult({
@@ -232,6 +233,11 @@ const AnalyzeThoughts = () => {
       furtherStudy: analysis.further_study || [],
       encouragement: analysis.encouragement || "",
     });
+    
+    // Scroll to results section after a brief delay for render
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const addSuggestion = (prompt: string) => {
