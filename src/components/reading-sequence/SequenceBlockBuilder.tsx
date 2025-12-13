@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { GripVertical, Plus, Trash2, BookOpen, ChevronDown, ChevronUp, Mic, Volume2 } from "lucide-react";
+import { GripVertical, Plus, Trash2, BookOpen, ChevronDown, ChevronUp, Mic, Volume2, Sparkles, Loader2 } from "lucide-react";
 import { BIBLE_BOOKS } from "@/types/bible";
 import { ReadingSequenceBlock, SequenceItem, CommentaryDepth, CommentaryMode } from "@/types/readingSequence";
 import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SequenceBlockBuilderProps {
   block: ReadingSequenceBlock;
@@ -38,7 +40,19 @@ const CHAPTER_COUNTS: Record<string, number> = {
   "1 John": 5, "2 John": 1, "3 John": 1, Jude: 1, Revelation: 22,
 };
 
-type SelectionMode = "single-verse" | "single" | "chapters" | "book" | "books";
+type SelectionMode = "single-verse" | "single" | "chapters" | "book" | "books" | "theme";
+
+interface ThemeVerse {
+  reference: string;
+  text: string;
+  reason: string;
+}
+
+const POPULAR_THEMES = [
+  "Law", "Grace", "Faith", "Sabbath", "Death", "Prophecy",
+  "Love", "Salvation", "Sanctuary", "Second Coming", "Resurrection",
+  "Holy Spirit", "Trinity", "Atonement", "Judgment"
+];
 
 export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBlockBuilderProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -48,6 +62,12 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
   const [newChapter, setNewChapter] = useState<number>(1);
   const [endChapter, setEndChapter] = useState<number>(1);
   const [endBook, setEndBook] = useState<string>("");
+  
+  // Theme search state
+  const [themeQuery, setThemeQuery] = useState("");
+  const [themeLoading, setThemeLoading] = useState(false);
+  const [themeVerses, setThemeVerses] = useState<ThemeVerse[]>([]);
+  const [selectedThemeVerses, setSelectedThemeVerses] = useState<Set<number>>(new Set());
 
   // Debug: Log when block changes
   console.log("SequenceBlockBuilder render, items:", block.items.length);
@@ -200,6 +220,87 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
       case "books":
         addBookRange();
         break;
+    }
+  };
+
+  // Theme search functions
+  const searchThemeVerses = async (topic: string) => {
+    if (!topic.trim()) {
+      toast.error("Please enter a theme to search");
+      return;
+    }
+    setThemeLoading(true);
+    setThemeVerses([]);
+    setSelectedThemeVerses(new Set());
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('suggest-verses-by-topic', {
+        body: { topic, maxVerses: 40 }
+      });
+      
+      if (error) throw error;
+      
+      if (data.verses && data.verses.length > 0) {
+        setThemeVerses(data.verses);
+        // Select all by default
+        setSelectedThemeVerses(new Set(data.verses.map((_: ThemeVerse, i: number) => i)));
+        toast.success(`Found ${data.verses.length} verses on "${topic}"`);
+      } else {
+        toast.error("No verses found. Try a different theme.");
+      }
+    } catch (error) {
+      console.error("Theme search error:", error);
+      toast.error("Failed to search verses");
+    } finally {
+      setThemeLoading(false);
+    }
+  };
+
+  const toggleThemeVerse = (index: number) => {
+    setSelectedThemeVerses(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
+
+  const addSelectedThemeVerses = () => {
+    if (selectedThemeVerses.size === 0) {
+      toast.error("Please select at least one verse");
+      return;
+    }
+    
+    const newItems: SequenceItem[] = [];
+    selectedThemeVerses.forEach(idx => {
+      const verse = themeVerses[idx];
+      // Parse reference like "John 3:16" or "1 John 4:8"
+      const match = verse.reference.match(/^(.+?)\s+(\d+):(\d+)(?:-(\d+))?$/);
+      if (match) {
+        const [, book, chapter, startVerse, endVerse] = match;
+        newItems.push({
+          id: crypto.randomUUID(),
+          book,
+          chapter: parseInt(chapter),
+          startVerse: parseInt(startVerse),
+          endVerse: endVerse ? parseInt(endVerse) : parseInt(startVerse),
+          order: block.items.length + newItems.length,
+        });
+      }
+    });
+    
+    if (newItems.length > 0) {
+      onChange({
+        ...block,
+        items: [...block.items, ...newItems],
+      });
+      toast.success(`Added ${newItems.length} theme verses to sequence`);
+      setThemeVerses([]);
+      setSelectedThemeVerses(new Set());
+      setThemeQuery("");
     }
   };
 
@@ -360,12 +461,16 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
               )}
               
               <Tabs value={selectionMode} onValueChange={(v) => setSelectionMode(v as SelectionMode)}>
-                <TabsList className="grid w-full grid-cols-5 h-9">
+                <TabsList className="grid w-full grid-cols-6 h-9">
                   <TabsTrigger value="single-verse" className="text-xs">Single Verse</TabsTrigger>
                   <TabsTrigger value="single" className="text-xs">Single Chapter</TabsTrigger>
                   <TabsTrigger value="chapters" className="text-xs">Chapter Range</TabsTrigger>
                   <TabsTrigger value="book" className="text-xs">Whole Book</TabsTrigger>
                   <TabsTrigger value="books" className="text-xs">Book Range</TabsTrigger>
+                  <TabsTrigger value="theme" className="text-xs gap-1">
+                    <Sparkles className="h-3 w-3" />
+                    Theme
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
 
@@ -614,6 +719,128 @@ export const SequenceBlockBuilder = ({ block, onChange, onRemove }: SequenceBloc
                     <Plus className="h-4 w-4 mr-1" />
                     Add Books
                   </Button>
+                </div>
+              )}
+
+              {/* Theme Search */}
+              {selectionMode === "theme" && (
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">
+                    Search for key verses by biblical theme. Jeeves will curate up to 40 verses for you to listen to.
+                  </p>
+                  
+                  {/* Popular Theme Chips */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {POPULAR_THEMES.map((theme) => (
+                      <Badge
+                        key={theme}
+                        variant="outline"
+                        className="cursor-pointer text-xs hover:bg-primary/10 hover:border-primary transition-colors"
+                        onClick={() => {
+                          setThemeQuery(theme);
+                          searchThemeVerses(theme);
+                        }}
+                      >
+                        {theme}
+                      </Badge>
+                    ))}
+                  </div>
+                  
+                  {/* Search Input */}
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Enter theme (e.g., Sanctuary, Atonement)"
+                      value={themeQuery}
+                      onChange={(e) => setThemeQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && searchThemeVerses(themeQuery)}
+                      className="text-sm"
+                      disabled={themeLoading}
+                    />
+                    <Button 
+                      onClick={() => searchThemeVerses(themeQuery)} 
+                      size="sm" 
+                      disabled={themeLoading || !themeQuery.trim()}
+                    >
+                      {themeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  
+                  {/* Results */}
+                  {themeLoading && (
+                    <div className="flex items-center justify-center py-6">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      <span className="ml-2 text-sm text-muted-foreground">Searching Scripture...</span>
+                    </div>
+                  )}
+                  
+                  {themeVerses.length > 0 && !themeLoading && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">
+                          {selectedThemeVerses.size} of {themeVerses.length} selected
+                        </span>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 text-xs"
+                            onClick={() => setSelectedThemeVerses(new Set(themeVerses.map((_, i) => i)))}
+                          >
+                            Select All
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 text-xs"
+                            onClick={() => setSelectedThemeVerses(new Set())}
+                          >
+                            Clear
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <ScrollArea className="h-[250px] border rounded-lg">
+                        <div className="p-2 space-y-1">
+                          {themeVerses.map((verse, idx) => (
+                            <div 
+                              key={idx}
+                              className={`p-2 rounded cursor-pointer transition-colors ${
+                                selectedThemeVerses.has(idx) 
+                                  ? 'bg-primary/20 border border-primary/30' 
+                                  : 'bg-muted/30 hover:bg-muted/50'
+                              }`}
+                              onClick={() => toggleThemeVerse(idx)}
+                            >
+                              <div className="flex items-start gap-2">
+                                <div className={`w-4 h-4 rounded border flex-shrink-0 mt-0.5 flex items-center justify-center ${
+                                  selectedThemeVerses.has(idx) ? 'bg-primary border-primary text-primary-foreground' : 'border-muted-foreground'
+                                }`}>
+                                  {selectedThemeVerses.has(idx) && <span className="text-xs">✓</span>}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <Badge variant="outline" className="text-xs font-mono mb-1">
+                                    {verse.reference}
+                                  </Badge>
+                                  <p className="text-xs text-foreground line-clamp-2">{verse.text}</p>
+                                  <p className="text-xs text-muted-foreground italic mt-1 line-clamp-1">{verse.reason}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                      
+                      <Button 
+                        onClick={addSelectedThemeVerses}
+                        disabled={selectedThemeVerses.size === 0}
+                        className="w-full"
+                        size="sm"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add {selectedThemeVerses.size} Verses to Sequence
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
