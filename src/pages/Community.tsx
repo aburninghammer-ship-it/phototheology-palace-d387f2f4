@@ -24,6 +24,7 @@ import { CommunityGuidelines } from "@/components/community/CommunityGuidelines"
 import { CommunityNotifications } from "@/components/community/CommunityNotifications";
 import { SharedContentCard } from "@/components/community/SharedContentCard";
 import { TagInput } from "@/components/community/TagInput";
+import { CommunityPostCard } from "@/components/community/CommunityPostCard";
 
 type SortOption = "latest" | "most_commented" | "needs_feedback";
 type CategoryFilter = "all" | "general" | "prayer" | "study" | "questions";
@@ -664,19 +665,22 @@ const Community = () => {
           </Card>
 
           {/* Posts List */}
-          <div className="space-y-6">
+          <div className="space-y-3">
             {filteredPosts.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="pt-12 pb-12 text-center">
                   <Sparkles className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-lg font-medium mb-2">No posts yet</p>
                   <p className="text-muted-foreground mb-4">
-                    {categoryFilter !== "all" 
+                    {categoryFilter !== "all"
                       ? `No posts in the ${categoryFilter} category yet.`
                       : "Be the first to share something with the community!"}
                   </p>
                   {categoryFilter !== "all" && (
-                    <Button variant="outline" onClick={() => setCategoryFilter("all")}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setCategoryFilter("all")}
+                    >
                       View All Posts
                     </Button>
                   )}
@@ -684,328 +688,334 @@ const Community = () => {
               </Card>
             ) : (
               filteredPosts.map((post) => {
-              const postComments = organizeComments(comments[post.id] || []);
-              const isExpanded = expandedPosts[post.id];
-              
-              return (
-                <Card key={post.id} id={`post-${post.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3 flex-1">
-                        <Avatar className="h-10 w-10 border-2 border-primary/20">
-                          <AvatarImage src={post.profiles?.avatar_url || undefined} />
-                          <AvatarFallback className="bg-primary/10">
-                            {(post.profiles?.display_name || post.profiles?.username || user?.email || 'U').charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <CardTitle className="text-xl">{post.title}</CardTitle>
-                            {postComments.length === 0 && (
-                              <Badge variant="secondary" className="flex items-center gap-1 text-xs animate-pulse">
-                                <Sparkles className="h-3 w-3" />
-                                Needs feedback
-                              </Badge>
+                const postComments = organizeComments(comments[post.id] || []);
+                const isExpanded = expandedPosts[post.id];
+
+                return (
+                  <CommunityPostCard
+                    key={post.id}
+                    post={post}
+                    commentCount={postComments.length}
+                    currentUserId={user?.id}
+                    isExpanded={isExpanded}
+                    onExpand={() =>
+                      setExpandedPosts({
+                        ...expandedPosts,
+                        [post.id]: !isExpanded,
+                      })
+                    }
+                  >
+                    {/* Comments Section */}
+                    {postComments.length > 0 && (
+                      <div className="space-y-3">
+                        {postComments.map((comment) => (
+                          <div key={comment.id} className="space-y-2">
+                            {/* Top-level Comment */}
+                            <div className="bg-accent/20 rounded-lg p-3">
+                              <div className="flex items-start gap-2">
+                                <Avatar className="h-7 w-7 border border-primary/20">
+                                  <AvatarImage
+                                    src={comment.profiles?.avatar_url || undefined}
+                                  />
+                                  <AvatarFallback className="text-xs bg-primary/10">
+                                    {(
+                                      comment.profiles?.display_name ||
+                                      comment.profiles?.username ||
+                                      "U"
+                                    )
+                                      .charAt(0)
+                                      .toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 space-y-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-semibold">
+                                      {comment.profiles?.display_name ||
+                                        comment.profiles?.username ||
+                                        "Anonymous"}
+                                    </span>
+                                    <span className="text-[10px] text-muted-foreground">
+                                      {new Date(
+                                        comment.created_at
+                                      ).toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                      })}
+                                    </span>
+                                  </div>
+                                  {editingComment === comment.id ? (
+                                    <div className="space-y-2">
+                                      <Textarea
+                                        value={editContent}
+                                        onChange={(e) =>
+                                          setEditContent(e.target.value)
+                                        }
+                                        rows={2}
+                                        className="text-xs"
+                                      />
+                                      <div className="flex gap-2">
+                                        <Button
+                                          size="sm"
+                                          onClick={() =>
+                                            saveEditComment(comment.id)
+                                          }
+                                        >
+                                          Save
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={cancelEditComment}
+                                        >
+                                          Cancel
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <p className="text-xs leading-relaxed whitespace-pre-wrap">
+                                        {comment.content}
+                                      </p>
+                                      <div className="flex items-center gap-2">
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-6 px-2 text-[10px]"
+                                          onClick={() =>
+                                            setReplyingTo({
+                                              ...replyingTo,
+                                              [post.id]: comment.id,
+                                            })
+                                          }
+                                        >
+                                          <Reply className="h-2.5 w-2.5 mr-1" />
+                                          Reply
+                                        </Button>
+                                        {comment.user_id === user?.id && (
+                                          <>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-6 px-2 text-[10px]"
+                                              onClick={() =>
+                                                startEditComment(
+                                                  comment.id,
+                                                  comment.content
+                                                )
+                                              }
+                                            >
+                                              <Pencil className="h-2.5 w-2.5 mr-1" />
+                                              Edit
+                                            </Button>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-6 px-2 text-[10px] text-destructive hover:text-destructive"
+                                              onClick={() =>
+                                                deleteComment(comment.id)
+                                              }
+                                            >
+                                              <Trash2 className="h-2.5 w-2.5 mr-1" />
+                                              Delete
+                                            </Button>
+                                          </>
+                                        )}
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Nested Replies */}
+                            {comment.replies && comment.replies.length > 0 && (
+                              <div className="ml-8 space-y-2">
+                                {comment.replies.map((reply: any) => (
+                                  <div
+                                    key={reply.id}
+                                    className="bg-accent/10 rounded-lg p-2 border-l-2 border-primary/20"
+                                  >
+                                    <div className="flex items-start gap-2">
+                                      <Avatar className="h-6 w-6">
+                                        <AvatarImage
+                                          src={
+                                            reply.profiles?.avatar_url ||
+                                            undefined
+                                          }
+                                        />
+                                        <AvatarFallback className="text-[10px] bg-primary/10">
+                                          {(
+                                            reply.profiles?.display_name ||
+                                            reply.profiles?.username ||
+                                            "U"
+                                          )
+                                            .charAt(0)
+                                            .toUpperCase()}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                      <div className="flex-1 space-y-0.5">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[10px] font-semibold">
+                                            {reply.profiles?.display_name ||
+                                              reply.profiles?.username ||
+                                              "Anonymous"}
+                                          </span>
+                                          <span className="text-[10px] text-muted-foreground">
+                                            {new Date(
+                                              reply.created_at
+                                            ).toLocaleDateString("en-US", {
+                                              month: "short",
+                                              day: "numeric",
+                                            })}
+                                          </span>
+                                        </div>
+                                        {editingComment === reply.id ? (
+                                          <div className="space-y-2">
+                                            <Textarea
+                                              value={editContent}
+                                              onChange={(e) =>
+                                                setEditContent(e.target.value)
+                                              }
+                                              rows={2}
+                                              className="text-xs"
+                                            />
+                                            <div className="flex gap-2">
+                                              <Button
+                                                size="sm"
+                                                onClick={() =>
+                                                  saveEditComment(reply.id)
+                                                }
+                                              >
+                                                Save
+                                              </Button>
+                                              <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                onClick={cancelEditComment}
+                                              >
+                                                Cancel
+                                              </Button>
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <>
+                                            <p className="text-[11px] leading-relaxed whitespace-pre-wrap">
+                                              {reply.content}
+                                            </p>
+                                            {reply.user_id === user?.id && (
+                                              <div className="flex items-center gap-2 mt-1">
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-5 px-1.5 text-[10px]"
+                                                  onClick={() =>
+                                                    startEditComment(
+                                                      reply.id,
+                                                      reply.content
+                                                    )
+                                                  }
+                                                >
+                                                  <Pencil className="h-2 w-2 mr-0.5" />
+                                                  Edit
+                                                </Button>
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-5 px-1.5 text-[10px] text-destructive hover:text-destructive"
+                                                  onClick={() =>
+                                                    deleteComment(reply.id)
+                                                  }
+                                                >
+                                                  <Trash2 className="h-2 w-2 mr-0.5" />
+                                                  Delete
+                                                </Button>
+                                              </div>
+                                            )}
+                                          </>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Reply Input for this comment */}
+                            {replyingTo[post.id] === comment.id && (
+                              <div className="ml-8 flex gap-2">
+                                <Textarea
+                                  placeholder={`Reply to ${comment.profiles?.display_name || comment.profiles?.username}...`}
+                                  value={newComment[post.id] || ""}
+                                  onChange={(e) =>
+                                    setNewComment({
+                                      ...newComment,
+                                      [post.id]: e.target.value,
+                                    })
+                                  }
+                                  rows={2}
+                                  className="flex-1 text-xs"
+                                />
+                                <div className="flex flex-col gap-1">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => addComment(post.id, comment.id)}
+                                    disabled={!newComment[post.id]?.trim()}
+                                  >
+                                    <Send className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() =>
+                                      setReplyingTo({
+                                        ...replyingTo,
+                                        [post.id]: null,
+                                      })
+                                    }
+                                  >
+                                    ✕
+                                  </Button>
+                                </div>
+                              </div>
                             )}
                           </div>
-                          <CardDescription className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium">{post.profiles?.display_name || post.profiles?.username || 'Anonymous'}</span>
-                            <span>•</span>
-                            <span>{new Date(post.created_at).toLocaleDateString('en-US', { 
-                              month: 'short', 
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}</span>
-                          </CardDescription>
-                        </div>
-                      </div>
-                      {post.category && (
-                        <Badge variant="secondary" className="capitalize">{post.category}</Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4 pt-6">
-                    {/* Tags */}
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {post.tags.map((tag: string) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            #{tag}
-                          </Badge>
                         ))}
                       </div>
                     )}
-                    
-                    {/* Shared Content Card */}
-                    {post.shared_content && (
-                      <SharedContentCard content={post.shared_content} />
+
+                    {/* Add New Comment */}
+                    {!replyingTo[post.id] && (
+                      <div className="flex gap-2 pt-2">
+                        <Avatar className="h-7 w-7">
+                          <AvatarFallback className="text-xs bg-primary/10">
+                            {(user?.email || "U").charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 flex gap-2">
+                          <Textarea
+                            placeholder="Share your thoughts..."
+                            value={newComment[post.id] || ""}
+                            onChange={(e) =>
+                              setNewComment({
+                                ...newComment,
+                                [post.id]: e.target.value,
+                              })
+                            }
+                            rows={2}
+                            className="flex-1 text-sm"
+                          />
+                          <Button
+                            onClick={() => addComment(post.id)}
+                            disabled={!newComment[post.id]?.trim()}
+                            size="sm"
+                          >
+                            <Send className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
                     )}
-                    
-                    <p className="text-base leading-relaxed whitespace-pre-wrap">{post.content}</p>
-                    
-                    <Separator />
-                    
-                    <div className="flex items-center gap-6 text-sm">
-                      <button className="flex items-center gap-2 hover:text-primary transition-colors group">
-                        <Heart className="h-4 w-4 group-hover:fill-primary" />
-                        <span className="font-medium">{post.likes}</span>
-                      </button>
-                      <button 
-                        className="flex items-center gap-2 hover:text-primary transition-colors"
-                        onClick={() => setExpandedPosts({ ...expandedPosts, [post.id]: !isExpanded })}
-                      >
-                        <MessageSquare className="h-4 w-4" />
-                        <span className="font-medium">{postComments.length} {postComments.length === 1 ? 'Comment' : 'Comments'}</span>
-                      </button>
-                    </div>
-
-                    {isExpanded && (
-                      <>
-                        <Separator />
-                        
-                        {/* Comments Section */}
-                        {postComments.length > 0 && (
-                          <div className="space-y-4">
-                            {postComments.map((comment) => (
-                              <div key={comment.id} className="space-y-3">
-                                {/* Top-level Comment */}
-                                  <div className="bg-accent/20 rounded-xl p-4 hover:bg-accent/30 transition-colors">
-                                   <div className="flex items-start gap-3">
-                                     <Avatar className="h-8 w-8 border border-primary/20">
-                                       <AvatarImage src={comment.profiles?.avatar_url || undefined} />
-                                       <AvatarFallback className="text-xs bg-primary/10">
-                                         {(comment.profiles?.display_name || comment.profiles?.username || 'U').charAt(0).toUpperCase()}
-                                       </AvatarFallback>
-                                     </Avatar>
-                                     <div className="flex-1 space-y-2">
-                                       <div className="flex items-center gap-2">
-                                         <span className="text-sm font-semibold">
-                                           {comment.profiles?.display_name || comment.profiles?.username || 'Anonymous'}
-                                         </span>
-                                         <span className="text-xs text-muted-foreground">
-                                           {new Date(comment.created_at).toLocaleDateString('en-US', { 
-                                             month: 'short', 
-                                             day: 'numeric',
-                                             hour: '2-digit',
-                                             minute: '2-digit'
-                                           })}
-                                         </span>
-                                       </div>
-                                       {editingComment === comment.id ? (
-                                         <div className="space-y-2">
-                                           <Textarea
-                                             value={editContent}
-                                             onChange={(e) => setEditContent(e.target.value)}
-                                             rows={3}
-                                             className="text-sm"
-                                           />
-                                           <div className="flex gap-2">
-                                             <Button
-                                               size="sm"
-                                               onClick={() => saveEditComment(comment.id)}
-                                             >
-                                               Save
-                                             </Button>
-                                             <Button
-                                               size="sm"
-                                               variant="ghost"
-                                               onClick={cancelEditComment}
-                                             >
-                                               Cancel
-                                             </Button>
-                                           </div>
-                                         </div>
-                                       ) : (
-                                         <>
-                                           <p className="text-sm leading-relaxed whitespace-pre-wrap">{comment.content}</p>
-                                           <div className="flex items-center gap-2">
-                                             <Button
-                                               variant="ghost"
-                                               size="sm"
-                                               className="h-7 px-2 text-xs"
-                                               onClick={() => setReplyingTo({ ...replyingTo, [post.id]: comment.id })}
-                                             >
-                                               <Reply className="h-3 w-3 mr-1" />
-                                               Reply
-                                             </Button>
-                                             {comment.user_id === user?.id && (
-                                               <>
-                                                 <Button
-                                                   variant="ghost"
-                                                   size="sm"
-                                                   className="h-7 px-2 text-xs"
-                                                   onClick={() => startEditComment(comment.id, comment.content)}
-                                                 >
-                                                   <Pencil className="h-3 w-3 mr-1" />
-                                                   Edit
-                                                 </Button>
-                                                 <Button
-                                                   variant="ghost"
-                                                   size="sm"
-                                                   className="h-7 px-2 text-xs text-destructive hover:text-destructive"
-                                                   onClick={() => deleteComment(comment.id)}
-                                                 >
-                                                   <Trash2 className="h-3 w-3 mr-1" />
-                                                   Delete
-                                                 </Button>
-                                               </>
-                                             )}
-                                           </div>
-                                         </>
-                                       )}
-                                     </div>
-                                   </div>
-                                 </div>
-
-                                {/* Nested Replies */}
-                                {comment.replies && comment.replies.length > 0 && (
-                                  <div className="ml-12 space-y-3">
-                                    {comment.replies.map((reply: any) => (
-                                       <div key={reply.id} className="bg-accent/10 rounded-lg p-3 border-l-2 border-primary/20">
-                                         <div className="flex items-start gap-2">
-                                           <Avatar className="h-7 w-7">
-                                             <AvatarImage src={reply.profiles?.avatar_url || undefined} />
-                                             <AvatarFallback className="text-xs bg-primary/10">
-                                               {(reply.profiles?.display_name || reply.profiles?.username || 'U').charAt(0).toUpperCase()}
-                                             </AvatarFallback>
-                                           </Avatar>
-                                           <div className="flex-1 space-y-1">
-                                             <div className="flex items-center gap-2">
-                                               <span className="text-xs font-semibold">
-                                                 {reply.profiles?.display_name || reply.profiles?.username || 'Anonymous'}
-                                               </span>
-                                               <span className="text-xs text-muted-foreground">
-                                                 {new Date(reply.created_at).toLocaleDateString('en-US', { 
-                                                   month: 'short', 
-                                                   day: 'numeric',
-                                                   hour: '2-digit',
-                                                   minute: '2-digit'
-                                                 })}
-                                               </span>
-                                             </div>
-                                             {editingComment === reply.id ? (
-                                               <div className="space-y-2">
-                                                 <Textarea
-                                                   value={editContent}
-                                                   onChange={(e) => setEditContent(e.target.value)}
-                                                   rows={2}
-                                                   className="text-xs"
-                                                 />
-                                                 <div className="flex gap-2">
-                                                   <Button
-                                                     size="sm"
-                                                     onClick={() => saveEditComment(reply.id)}
-                                                   >
-                                                     Save
-                                                   </Button>
-                                                   <Button
-                                                     size="sm"
-                                                     variant="ghost"
-                                                     onClick={cancelEditComment}
-                                                   >
-                                                     Cancel
-                                                   </Button>
-                                                 </div>
-                                               </div>
-                                             ) : (
-                                               <>
-                                                 <p className="text-xs leading-relaxed whitespace-pre-wrap">{reply.content}</p>
-                                                 {reply.user_id === user?.id && (
-                                                   <div className="flex items-center gap-2 mt-1">
-                                                     <Button
-                                                       variant="ghost"
-                                                       size="sm"
-                                                       className="h-6 px-2 text-xs"
-                                                       onClick={() => startEditComment(reply.id, reply.content)}
-                                                     >
-                                                       <Pencil className="h-2.5 w-2.5 mr-1" />
-                                                       Edit
-                                                     </Button>
-                                                     <Button
-                                                       variant="ghost"
-                                                       size="sm"
-                                                       className="h-6 px-2 text-xs text-destructive hover:text-destructive"
-                                                       onClick={() => deleteComment(reply.id)}
-                                                     >
-                                                       <Trash2 className="h-2.5 w-2.5 mr-1" />
-                                                       Delete
-                                                     </Button>
-                                                   </div>
-                                                 )}
-                                               </>
-                                             )}
-                                           </div>
-                                         </div>
-                                       </div>
-                                    ))}
-                                  </div>
-                                )}
-
-                                {/* Reply Input for this comment */}
-                                {replyingTo[post.id] === comment.id && (
-                                  <div className="ml-12 flex gap-2">
-                                    <Textarea
-                                      placeholder={`Reply to ${comment.profiles?.display_name || comment.profiles?.username}...`}
-                                      value={newComment[post.id] || ""}
-                                      onChange={(e) => setNewComment({ ...newComment, [post.id]: e.target.value })}
-                                      rows={2}
-                                      className="flex-1 text-sm"
-                                    />
-                                    <div className="flex flex-col gap-1">
-                                      <Button 
-                                        size="sm"
-                                        onClick={() => addComment(post.id, comment.id)}
-                                        disabled={!newComment[post.id]?.trim()}
-                                      >
-                                        <Send className="h-3 w-3" />
-                                      </Button>
-                                      <Button 
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={() => setReplyingTo({ ...replyingTo, [post.id]: null })}
-                                      >
-                                        ✕
-                                      </Button>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Add New Comment */}
-                        {!replyingTo[post.id] && (
-                          <div className="flex gap-3 pt-2">
-                            <Avatar className="h-9 w-9">
-                              <AvatarFallback className="bg-primary/10">
-                                {(user?.email || 'U').charAt(0).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 flex gap-2">
-                              <Textarea
-                                placeholder="Share your thoughts..."
-                                value={newComment[post.id] || ""}
-                                onChange={(e) => setNewComment({ ...newComment, [post.id]: e.target.value })}
-                                rows={2}
-                                className="flex-1"
-                              />
-                              <Button 
-                                onClick={() => addComment(post.id)}
-                                disabled={!newComment[post.id]?.trim()}
-                                size="sm"
-                              >
-                                <Send className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              );
+                  </CommunityPostCard>
+                );
               })
             )}
           </div>
