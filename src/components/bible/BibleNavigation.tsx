@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,18 +14,30 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BIBLE_BOOKS } from "@/types/bible";
 import { Search, BookOpen } from "lucide-react";
 import { ThemeVerseSearch } from "./ThemeVerseSearch";
+import { usePreservePage } from "@/hooks/usePreservePage";
 
 const OLD_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(0, 39);
 const NEW_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(39);
 
 export const BibleNavigation = () => {
   const navigate = useNavigate();
-  const [selectedBook, setSelectedBook] = useState("John");
-  const [chapter, setChapter] = useState("1");
-  const [verse, setVerse] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchMode, setSearchMode] = useState<"reference" | "word" | "theme">("reference");
-  const [searchScope, setSearchScope] = useState<"all" | "ot" | "nt">("all");
+  const { setCustomState, getCustomState } = usePreservePage();
+  
+  // Restore state from context or use defaults
+  const [selectedBook, setSelectedBook] = useState(() => getCustomState<string>('bibleNav_selectedBook') || "John");
+  const [chapter, setChapter] = useState(() => getCustomState<string>('bibleNav_chapter') || "1");
+  const [verse, setVerse] = useState(() => getCustomState<string>('bibleNav_verse') || "");
+  const [searchQuery, setSearchQuery] = useState(() => getCustomState<string>('bibleNav_searchQuery') || "");
+  const [searchMode, setSearchMode] = useState<"reference" | "word" | "theme">(() => getCustomState<"reference" | "word" | "theme">('bibleNav_searchMode') || "reference");
+  const [searchScope, setSearchScope] = useState<"all" | "ot" | "nt">(() => getCustomState<"all" | "ot" | "nt">('bibleNav_searchScope') || "all");
+
+  // Persist state changes
+  useEffect(() => { setCustomState('bibleNav_selectedBook', selectedBook); }, [selectedBook, setCustomState]);
+  useEffect(() => { setCustomState('bibleNav_chapter', chapter); }, [chapter, setCustomState]);
+  useEffect(() => { setCustomState('bibleNav_verse', verse); }, [verse, setCustomState]);
+  useEffect(() => { setCustomState('bibleNav_searchQuery', searchQuery); }, [searchQuery, setCustomState]);
+  useEffect(() => { setCustomState('bibleNav_searchMode', searchMode); }, [searchMode, setCustomState]);
+  useEffect(() => { setCustomState('bibleNav_searchScope', searchScope); }, [searchScope, setCustomState]);
 
   const handleNavigate = () => {
     if (selectedBook && chapter) {
