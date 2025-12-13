@@ -34,6 +34,7 @@ export function ThemeVerseSearch({
 }: ThemeVerseSearchProps) {
   const [searchTopic, setSearchTopic] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [results, setResults] = useState<VerseSuggestion[]>([]);
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -68,6 +69,45 @@ export function ThemeVerseSearch({
       setResults([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    if (!currentTopic) return;
+
+    setLoadingMore(true);
+
+    try {
+      // Pass existing references to exclude them from new results
+      const existingRefs = results.map(r => r.reference);
+      const { data, error } = await supabase.functions.invoke('suggest-verses-by-topic', {
+        body: { 
+          topic: currentTopic,
+          excludeVerses: existingRefs
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.verses && data.verses.length > 0) {
+        // Filter out any duplicates just in case
+        const newVerses = data.verses.filter(
+          (v: VerseSuggestion) => !existingRefs.includes(v.reference)
+        );
+        if (newVerses.length > 0) {
+          setResults(prev => [...prev, ...newVerses]);
+          toast.success(`Added ${newVerses.length} more verses!`);
+        } else {
+          toast.info("No additional verses found for this theme.");
+        }
+      } else {
+        toast.info("No additional verses found for this theme.");
+      }
+    } catch (error) {
+      console.error("Error loading more verses:", error);
+      toast.error("Failed to load more verses");
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -161,39 +201,61 @@ export function ThemeVerseSearch({
               <span className="ml-2 text-sm text-muted-foreground">Searching Scripture...</span>
             </div>
           ) : results.length > 0 ? (
-            <ScrollArea className="h-[350px]">
-              <div className="space-y-2 pr-4">
-                {results.map((result, index) => (
-                  <div
-                    key={index}
-                    className="p-3 rounded-lg border border-border bg-card hover:bg-accent/10 transition-all hover:shadow-md"
-                  >
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <Badge variant="outline" className="text-xs font-mono">
-                        {result.reference}
-                      </Badge>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => navigateToVerse(result.reference)}
-                        className="h-6 px-2"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
+            <>
+              <ScrollArea className="h-[350px]">
+                <div className="space-y-2 pr-4">
+                  {results.map((result, index) => (
+                    <div
+                      key={index}
+                      className="p-3 rounded-lg border border-border bg-card hover:bg-accent/10 transition-all hover:shadow-md"
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <Badge variant="outline" className="text-xs font-mono">
+                          {result.reference}
+                        </Badge>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => navigateToVerse(result.reference)}
+                          className="h-6 px-2"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                        </Button>
+                      </div>
+
+                      <p className="text-xs text-foreground mb-2 leading-relaxed">
+                        {result.text}
+                      </p>
+
+                      <p className="text-xs text-muted-foreground italic flex items-start gap-1">
+                        <BookOpen className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                        {result.reason}
+                      </p>
                     </div>
-
-                    <p className="text-xs text-foreground mb-2 leading-relaxed">
-                      {result.text}
-                    </p>
-
-                    <p className="text-xs text-muted-foreground italic flex items-start gap-1">
-                      <BookOpen className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                      {result.reason}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
+                  ))}
+                </div>
+              </ScrollArea>
+              {/* Load More Button */}
+              <Button
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+                variant="outline"
+                className="w-full mt-3"
+                size="sm"
+              >
+                {loadingMore ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate More Verses
+                  </>
+                )}
+              </Button>
+            </>
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Search className="h-12 w-12 mx-auto mb-3 opacity-50" />
