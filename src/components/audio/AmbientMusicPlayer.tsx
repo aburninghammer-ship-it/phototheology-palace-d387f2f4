@@ -47,7 +47,7 @@ import { useAudioDucking } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { subscribeToMusicVolume } from "@/hooks/useMusicVolumeControl";
 
-// Study Music Playlist - 7 tracks for Bible study and meditation
+// Study Music Playlist - 10 tracks for Bible study and meditation
 const AMBIENT_TRACKS: Array<{
   id: string;
   name: string;
@@ -105,12 +105,36 @@ const AMBIENT_TRACKS: Array<{
     url: "/audio/follow.mp3",
   },
   {
-    id: "moses-in-the-desert",
-    name: "Moses in the Desert",
-    description: "Epic wilderness journey",
+    id: "amazing-grace-epic",
+    name: "Amazing Grace (Epic Remix)",
+    description: "Epic meditative remix of the classic hymn",
     category: "study-music",
-    mood: "epic, wilderness, contemplative",
-    url: "/audio/moses-in-the-desert.mp3",
+    mood: "epic, meditative, hymn",
+    url: "/audio/amazing-grace-epic.mp3",
+  },
+  {
+    id: "when-he-cometh",
+    name: "When He Cometh",
+    description: "Reimagined classic hymn",
+    category: "study-music",
+    mood: "hopeful, gentle, hymn",
+    url: "/audio/when-he-cometh.mp3",
+  },
+  {
+    id: "white-horse",
+    name: "White Horse",
+    description: "Triumphant prophetic atmosphere",
+    category: "study-music",
+    mood: "triumphant, prophetic, epic",
+    url: "/audio/white-horse.mp3",
+  },
+  {
+    id: "eternal-echoes",
+    name: "Eternal Echoes",
+    description: "Deep contemplative ambient",
+    category: "study-music",
+    mood: "contemplative, ambient, eternal",
+    url: "/audio/eternal-echoes.mp3",
   },
 ];
 
