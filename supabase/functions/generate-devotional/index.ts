@@ -440,9 +440,8 @@ Generate all ${duration} days as a JSON array. Each day should progressively bui
     console.log("Calling AI to generate devotional...");
     console.log("CADE enabled:", !!primaryIssue);
 
-    // For large devotionals, use smaller batches to avoid timeouts
-    // Use batch size of 3 for longer devotionals to ensure quality
-    const batchSize = duration > 7 ? 3 : duration; // Generate in batches of 3 days max for longer plans
+    // Generate one day at a time for quality and faster first-content appearance
+    const batchSize = 1; // Generate day by day
     const batches = Math.ceil(duration / batchSize);
     let allDays: any[] = [];
     
