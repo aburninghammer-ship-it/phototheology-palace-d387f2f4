@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDevotionalPlan, useDevotionals } from "@/hooks/useDevotionals";
 import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
 import { cn } from "@/lib/utils";
-import { QuickAudioButton } from "@/components/audio";
+
 import {
   Tooltip,
   TooltipContent,
@@ -363,16 +363,9 @@ export default function DevotionalView() {
             <Card className="border-0 shadow-xl overflow-hidden">
               <div className={`h-2 bg-gradient-to-r ${gradient}`} />
               <CardHeader className="bg-gradient-to-br from-slate-50 to-purple-50/30 dark:from-slate-950/50 dark:to-purple-950/30 pb-2">
-                <CardTitle className="text-base flex items-center justify-between gap-2 text-slate-700 dark:text-slate-300">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="h-5 w-5" />
-                    Today's Reading
-                  </div>
-                  <QuickAudioButton 
-                    text={currentDay.devotional_text} 
-                    variant="ghost" 
-                    size="sm" 
-                  />
+                <CardTitle className="text-base flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                  <BookOpen className="h-5 w-5" />
+                  Today's Reading
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6 pb-8">
@@ -392,16 +385,9 @@ export default function DevotionalView() {
               <Card className="overflow-hidden border-0 shadow-xl">
                 <div className={`h-2 bg-gradient-to-r ${gradient}`} />
                 <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pb-2">
-                  <CardTitle className="text-base flex items-center justify-between gap-2 text-indigo-700 dark:text-indigo-300">
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="h-5 w-5" />
-                      {currentDay.scripture_reference}
-                    </div>
-                    <QuickAudioButton 
-                      text={`${currentDay.scripture_reference}. ${currentDay.scripture_text}`} 
-                      variant="ghost" 
-                      size="sm" 
-                    />
+                  <CardTitle className="text-base flex items-center gap-2 text-indigo-700 dark:text-indigo-300">
+                    <BookOpen className="h-5 w-5" />
+                    {currentDay.scripture_reference}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pt-0">
@@ -414,17 +400,9 @@ export default function DevotionalView() {
               {/* Christ Connection - Legacy format */}
               <Card className="border-0 bg-gradient-to-br from-rose-500 via-pink-500 to-purple-500 text-white shadow-2xl overflow-hidden">
                 <CardHeader className="pb-2 relative">
-                  <CardTitle className="text-lg flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <Heart className="h-6 w-6 fill-white" />
-                      Christ Connection
-                    </div>
-                    <QuickAudioButton 
-                      text={currentDay.christ_connection} 
-                      variant="ghost" 
-                      size="sm"
-                      className="text-white hover:bg-white/20"
-                    />
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Heart className="h-6 w-6 fill-white" />
+                    Christ Connection
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="relative">
