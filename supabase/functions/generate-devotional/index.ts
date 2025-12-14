@@ -477,16 +477,71 @@ IMPORTANT: Start numbering from day_number: ${startDay}`
               { role: "system", content: systemPrompt },
               { role: "user", content: batchUserPrompt },
             ],
+            tools: [
+              {
+                type: "function",
+                function: {
+                  name: "create_devotional_days",
+                  description: "Return an array of devotional day objects for the requested range.",
+                  parameters: {
+                    type: "object",
+                    properties: {
+                      days: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            day_number: { type: "integer" },
+                            title: { type: "string" },
+                            scripture_reference: { type: "string" },
+                            scripture_text: { type: "string" },
+                            room_assignment: { type: "string" },
+                            floor_number: { type: "integer" },
+                            visual_imagery: { type: "string" },
+                            memory_hook: { type: "string" },
+                            cross_references: {
+                              type: "array",
+                              items: { type: "string" },
+                            },
+                            application: { type: "string" },
+                            prayer: { type: "string" },
+                            challenge: { type: "string" },
+                            journal_prompt: { type: "string" },
+                            sanctuary_station: { type: "string" },
+                            christ_connection: { type: "string" },
+                          },
+                          required: [
+                            "day_number",
+                            "title",
+                            "scripture_reference",
+                            "scripture_text",
+                            "application",
+                            "prayer",
+                            "challenge",
+                            "journal_prompt",
+                            "christ_connection",
+                          ],
+                          additionalProperties: false,
+                        },
+                      },
+                    },
+                    required: ["days"],
+                    additionalProperties: false,
+                  },
+                },
+              },
+            ],
+            tool_choice: { type: "function", function: { name: "create_devotional_days" } },
           }),
           signal: controller.signal,
         });
-        
+
         clearTimeout(timeoutId);
 
         if (!response.ok) {
           const errorText = await response.text();
           console.error("AI API error:", response.status, errorText);
-          
+
           if (response.status === 429) {
             throw new Error("Rate limit exceeded. Please try again later.");
           }
@@ -495,80 +550,120 @@ IMPORTANT: Start numbering from day_number: ${startDay}`
           }
           throw new Error(`AI generation failed: ${response.status}`);
         }
-        
+
         const responseText = await response.text();
         console.log(`Batch ${batch + 1} response received, length: ${responseText.length}`);
-        
+
         if (!responseText || responseText.trim().length === 0) {
           throw new Error(`Empty response from AI for batch ${batch + 1}. Please try again.`);
         }
-        
+
         let data;
         try {
           data = JSON.parse(responseText);
         } catch (jsonErr) {
-          console.error(`Failed to parse AI response for batch ${batch + 1}:`, responseText.substring(0, 500));
+          console.error(
+            `Failed to parse AI response JSON for batch ${batch + 1}:`,
+            responseText.substring(0, 500),
+          );
           throw new Error(`AI returned invalid response for batch ${batch + 1}. Please try again.`);
         }
-        
-        const content = data.choices?.[0]?.message?.content;
 
-        if (!content) {
-          console.error(`No content in AI response for batch ${batch + 1}:`, JSON.stringify(data).substring(0, 500));
-          throw new Error(`No content generated for batch ${batch + 1}. Please try again.`);
-        }
-        
-        console.log(`Batch ${batch + 1} content length:`, content.length);
-        
-        // Parse batch days from content
+        // Prefer tool-calling structured output when available
         let batchDays;
         try {
-          const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-          let jsonString = jsonMatch ? jsonMatch[1] : content;
-          
-          // Escape literal newlines/tabs within JSON string values
-          let result = '';
-          let inString = false;
-          let escaped = false;
-          
-          for (let i = 0; i < jsonString.length; i++) {
-            const char = jsonString[i];
-            
-            if (escaped) {
-              result += char;
-              escaped = false;
-              continue;
+          const choice = data.choices?.[0];
+          const toolCall = choice?.message?.tool_calls?.[0];
+
+          if (toolCall?.function?.arguments) {
+            let argsObj;
+            try {
+              argsObj = JSON.parse(toolCall.function.arguments);
+            } catch (argErr) {
+              console.error(
+                `Failed to parse tool arguments JSON for batch ${batch + 1}:`,
+                toolCall.function.arguments?.substring?.(0, 500),
+              );
+              throw new Error(
+                `AI returned invalid tool arguments for batch ${batch + 1}. Please try again.`,
+              );
             }
-            
-            if (char === '\\') {
-              escaped = true;
-              result += char;
-              continue;
+
+            if (!argsObj || !Array.isArray(argsObj.days)) {
+              console.error(
+                `Tool arguments missing or invalid 'days' array for batch ${batch + 1}:`,
+                JSON.stringify(argsObj).substring(0, 500),
+              );
+              throw new Error(
+                `AI returned invalid devotional structure for batch ${batch + 1}. Please try again.`,
+              );
             }
-            
-            if (char === '"') {
-              inString = !inString;
-              result += char;
-              continue;
+
+            batchDays = argsObj.days;
+            console.log(`Batch ${batch + 1}: parsed ${batchDays.length} days via tool call`);
+          } else {
+            const content = choice?.message?.content;
+            if (!content || typeof content !== "string") {
+              console.error(
+                `No content in AI response for batch ${batch + 1}:`,
+                JSON.stringify(data).substring(0, 500),
+              );
+              throw new Error(
+                `No content generated for batch ${batch + 1}. Please try again.`,
+              );
             }
-            
-            if (inString) {
-              if (char === '\n') {
-                result += '\\n';
-              } else if (char === '\r') {
-                result += '\\r';
-              } else if (char === '\t') {
-                result += '\\t';
+
+            console.log(`Batch ${batch + 1} content length:`, content.length);
+
+            const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+            let jsonString = jsonMatch ? jsonMatch[1] : content;
+
+            // Escape literal newlines/tabs within JSON string values
+            let result = "";
+            let inString = false;
+            let escaped = false;
+
+            for (let i = 0; i < jsonString.length; i++) {
+              const char = jsonString[i];
+
+              if (escaped) {
+                result += char;
+                escaped = false;
+                continue;
+              }
+
+              if (char === "\\") {
+                escaped = true;
+                result += char;
+                continue;
+              }
+
+              if (char === '"') {
+                inString = !inString;
+                result += char;
+                continue;
+              }
+
+              if (inString) {
+                if (char === "\n") {
+                  result += "\\n";
+                } else if (char === "\r") {
+                  result += "\\r";
+                } else if (char === "\t") {
+                  result += "\\t";
+                } else {
+                  result += char;
+                }
               } else {
                 result += char;
               }
-            } else {
-              result += char;
             }
+
+            batchDays = JSON.parse(result.trim());
+            console.log(
+              `Batch ${batch + 1}: parsed ${batchDays.length} days via content fallback`,
+            );
           }
-          
-          batchDays = JSON.parse(result.trim());
-          console.log(`Batch ${batch + 1}: parsed ${batchDays.length} days`);
         } catch (parseError) {
           console.error(`JSON parse error for batch ${batch + 1}:`, parseError);
           throw new Error(`Failed to parse devotional content for batch ${batch + 1}`);
@@ -713,9 +808,9 @@ IMPORTANT: Start numbering from day_number: ${startDay}`
     if (supabaseClient && capturedPlanId) {
       await supabaseClient
         .from("devotional_plans")
-        .update({ status: "draft" })
+        .update({ status: "failed" })
         .eq("id", capturedPlanId);
-        console.log("Reset plan status to draft for retry");
+      console.log("Marked devotional plan as failed after error");
       }
     } catch (resetError) {
       console.error("Failed to reset plan status:", resetError);
