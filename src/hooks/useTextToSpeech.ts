@@ -106,6 +106,9 @@ interface SpeakOptions {
   speed?: number;
 }
 
+// Silent audio for unlocking mobile audio context
+const SILENT_AUDIO = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAbD/rU9UAAAAAAAAAAAAAAAAAAAAAP/jOMAAABQAJQCAAAhDAH+AIACQA/xQAP/zDAIAAAFPAQD/8wgD/+M4wAAAGMAlAAA';
+
 export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
   const { 
     defaultVoice = 'onyx', 
@@ -122,6 +125,7 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
   const [speed, setSpeed] = useState(1.0);
   const [wasCached, setWasCached] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUnlockedRef = useRef(false);
   
   const onEndRef = useRef(onEnd);
   const onErrorRef = useRef(onError);
@@ -147,6 +151,28 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
         audioRef.current = null;
       }
     };
+  }, []);
+
+  // Unlock audio on mobile - call this during user interaction before async work
+  const unlockAudio = useCallback(() => {
+    if (audioUnlockedRef.current) return;
+    
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.preload = 'auto';
+    }
+    
+    const audio = audioRef.current;
+    audio.src = SILENT_AUDIO;
+    audio.volume = 0.01;
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audioUnlockedRef.current = true;
+      console.log('[TTS] Audio unlocked for mobile playback');
+    }).catch(() => {
+      console.log('[TTS] Audio unlock failed - will retry on next interaction');
+    });
   }, []);
 
   const stop = useCallback(() => {
@@ -248,9 +274,31 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
       audio.src = audioUrl;
       audio.load();
       
-      await audio.play();
-      setIsPlaying(true);
-      console.log(`[TTS] Audio playback started (${provider})`);
+      try {
+        await audio.play();
+        setIsPlaying(true);
+        console.log(`[TTS] Audio playback started (${provider})`);
+      } catch (playError) {
+        // Mobile autoplay blocked - try with user interaction fallback
+        console.warn('[TTS] Play blocked, waiting for user interaction:', playError);
+        
+        const playOnInteraction = async () => {
+          try {
+            await audio.play();
+            setIsPlaying(true);
+            console.log('[TTS] Audio playing after user interaction');
+            document.body.removeEventListener('click', playOnInteraction);
+            document.body.removeEventListener('touchstart', playOnInteraction);
+          } catch (err) {
+            console.error('[TTS] Play still failed:', err);
+            onErrorRef.current?.('Tap to play audio');
+          }
+        };
+        
+        document.body.addEventListener('click', playOnInteraction, { once: true });
+        document.body.addEventListener('touchstart', playOnInteraction, { once: true });
+        toast.info('Tap anywhere to start audio');
+      }
 
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to generate speech';
@@ -266,6 +314,7 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
   return {
     speak,
     stop,
+    unlockAudio,
     isLoading,
     isPlaying,
     selectedVoice,
