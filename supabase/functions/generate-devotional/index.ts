@@ -179,6 +179,8 @@ ALWAYS:
 `;
 
 serve(async (req) => {
+  console.log("[generate-devotional] Function invoked");
+  
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -189,6 +191,14 @@ serve(async (req) => {
   let supabaseClient: any = null;
 
   try {
+    const body = await req.json();
+    console.log("[generate-devotional] Request body received:", JSON.stringify({ 
+      planId: body.planId, 
+      theme: body.theme, 
+      duration: body.duration,
+      format: body.format 
+    }));
+    
     const { 
       planId, 
       theme, 
@@ -200,7 +210,7 @@ serve(async (req) => {
       primaryIssue,
       issueDescription,
       issueSeverity
-    } = await req.json();
+    } = body;
     
     capturedPlanId = planId;
 
@@ -209,9 +219,16 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     if (!LOVABLE_API_KEY) {
+      console.error("[generate-devotional] LOVABLE_API_KEY not configured");
       throw new Error("LOVABLE_API_KEY not configured");
     }
+    
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      console.error("[generate-devotional] Supabase env vars not configured");
+      throw new Error("Supabase configuration missing");
+    }
 
+    console.log("[generate-devotional] Creating Supabase client");
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
     supabaseClient = supabase;
 

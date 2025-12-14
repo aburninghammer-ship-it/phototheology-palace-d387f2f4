@@ -14,7 +14,7 @@ export interface DevotionalPlan {
   study_style: string;
   is_public: boolean;
   share_token: string | null;
-  status: "draft" | "generating" | "active" | "completed";
+  status: "draft" | "generating" | "active" | "completed" | "failed";
   current_day: number;
   started_at: string | null;
   completed_at: string | null;
@@ -69,6 +69,33 @@ export function useDevotionals() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
+      
+      // Auto-mark stuck "generating" plans as failed (if stuck for more than 10 minutes)
+      const now = new Date();
+      const stuckPlans = (data as DevotionalPlan[])?.filter(p => {
+        if (p.status !== "generating") return false;
+        const updatedAt = new Date(p.created_at);
+        const diffMinutes = (now.getTime() - updatedAt.getTime()) / (1000 * 60);
+        return diffMinutes > 10; // Consider stuck after 10 minutes
+      });
+      
+      // Mark stuck plans as failed silently
+      if (stuckPlans && stuckPlans.length > 0) {
+        for (const plan of stuckPlans) {
+          await supabase
+            .from("devotional_plans")
+            .update({ status: "failed" })
+            .eq("id", plan.id);
+        }
+        // Return updated data
+        const { data: refreshedData } = await supabase
+          .from("devotional_plans")
+          .select("*")
+          .eq("user_id", user?.id)
+          .order("created_at", { ascending: false });
+        return refreshedData as DevotionalPlan[];
+      }
+      
       return data as DevotionalPlan[];
     },
     enabled: !!user?.id,

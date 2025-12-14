@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Loader2, Share2, Wand2, ExternalLink, Lock } from "lucide-react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Loader2, Share2, Wand2, ExternalLink, Lock, AlertCircle, RefreshCw } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { SimplifiedNav } from "@/components/SimplifiedNav";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
@@ -115,8 +115,8 @@ export default function DevotionalView() {
     );
   }
 
-  // Show generate UI for draft/generating plans
-  if (plan.status === "draft" || plan.status === "generating" || !days || days.length === 0) {
+  // Show generate UI for draft/generating/failed plans
+  if (plan.status === "draft" || plan.status === "generating" || plan.status === "failed" || !days || days.length === 0) {
     const gradient = formatGradients[plan.format] || formatGradients.standard;
     return (
       <div className="min-h-screen bg-background">
@@ -157,6 +157,28 @@ export default function DevotionalView() {
                         style={{ animationDelay: `${i * 0.2}s` }}
                       />
                     ))}
+                  </div>
+                </>
+              ) : plan.status === "failed" ? (
+                <>
+                  <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-rose-400 to-red-400 flex items-center justify-center mb-6 shadow-xl">
+                    <AlertCircle className="h-10 w-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-rose-600 to-red-600 bg-clip-text text-transparent">
+                    Generation Failed
+                  </h3>
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                    Something went wrong while generating your devotional. This can happen with longer devotionals. Click below to try again.
+                  </p>
+                  <div className="space-y-4">
+                    <Button
+                      onClick={handleGenerate}
+                      size="lg"
+                      className="bg-gradient-to-r from-rose-500 to-red-500 hover:from-rose-600 hover:to-red-600"
+                    >
+                      <RefreshCw className="h-5 w-5 mr-2" />
+                      Retry Generation
+                    </Button>
                   </div>
                 </>
               ) : (
