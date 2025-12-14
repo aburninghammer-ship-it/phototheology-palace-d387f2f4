@@ -506,6 +506,78 @@ export default function DevotionalView() {
                 </Card>
               )}
             </TabsContent>
+
+            <TabsContent value="more" className="space-y-4 mt-4">
+              {/* Cross References */}
+              {currentDay.cross_references && currentDay.cross_references.length > 0 && (
+                <Card className="border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                      <BookOpen className="h-4 w-4" />
+                      Cross References
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {currentDay.cross_references.map((ref, idx) => (
+                        <Button
+                          key={idx}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900"
+                          onClick={() => handleCrossReferenceClick(ref)}
+                        >
+                          {ref}
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Challenge */}
+              {currentDay.challenge && (
+                <Card className="border-emerald-200 dark:border-emerald-800 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                      <Sparkles className="h-4 w-4" />
+                      Today's Challenge
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-emerald-900 dark:text-emerald-100">{currentDay.challenge}</p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Prayer */}
+              {currentDay.prayer && (
+                <Card className="border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                      <Heart className="h-4 w-4" />
+                      Prayer
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-purple-900 dark:text-purple-100 italic">{currentDay.prayer}</p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Share this devotional */}
+              <Card className="border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2 text-rose-700 dark:text-rose-300">
+                    <Share2 className="h-4 w-4" />
+                    Share this Devotional
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ShareDevotionalDialog plan={plan} day={currentDay} />
+                </CardContent>
+              </Card>
+            </TabsContent>
           </Tabs>
 
           {/* Complete Button */}

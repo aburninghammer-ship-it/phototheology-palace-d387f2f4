@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Share2, Copy, Download, Check, Mail, MessageCircle, Gift } from "lucide-react";
+import { Share2, Copy, Download, Check, Mail, MessageCircle, Gift, Twitter, Facebook } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { DevotionalDay, DevotionalPlan } from "@/hooks/useDevotionals";
 import { supabase } from "@/integrations/supabase/client";
@@ -105,6 +105,20 @@ export const ShareDevotionalDialog = ({ plan, day, trigger, isPublicView }: Shar
     window.open(`sms:?body=${text}`);
   };
 
+  const handleShareViaTwitter = () => {
+    const text = encodeURIComponent(day ? `📖 ${day.title} - ${day.scripture_reference}\n\n${shareUrl}` : `📘 ${plan.title}\n\n${shareUrl}`);
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
+  };
+
+  const handleShareViaFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, "_blank");
+  };
+
+  const handleShareViaWhatsApp = () => {
+    const text = encodeURIComponent(getShareContent() + `\n\n${shareUrl}`);
+    window.open(`https://wa.me/?text=${text}`, "_blank");
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -176,6 +190,18 @@ export const ShareDevotionalDialog = ({ plan, day, trigger, isPublicView }: Shar
             <Button onClick={handleShareViaSMS} variant="outline" className="gap-2 border-emerald-300 hover:bg-emerald-50 dark:border-emerald-700 dark:hover:bg-emerald-950">
               <MessageCircle className="w-4 h-4 text-emerald-600" />
               Text
+            </Button>
+            <Button onClick={handleShareViaWhatsApp} variant="outline" className="gap-2 border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-950">
+              <MessageCircle className="w-4 h-4 text-green-600" />
+              WhatsApp
+            </Button>
+            <Button onClick={handleShareViaTwitter} variant="outline" className="gap-2 border-sky-300 hover:bg-sky-50 dark:border-sky-700 dark:hover:bg-sky-950">
+              <Twitter className="w-4 h-4 text-sky-500" />
+              Twitter/X
+            </Button>
+            <Button onClick={handleShareViaFacebook} variant="outline" className="gap-2 border-blue-300 hover:bg-blue-50 dark:border-blue-700 dark:hover:bg-blue-950 col-span-2">
+              <Facebook className="w-4 h-4 text-blue-600" />
+              Facebook
             </Button>
           </div>
 
