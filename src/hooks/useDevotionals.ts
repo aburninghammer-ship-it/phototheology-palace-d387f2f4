@@ -28,6 +28,7 @@ export interface DevotionalDay {
   title: string;
   scripture_reference: string;
   scripture_text: string | null;
+  devotional_text: string | null; // New essay-style content
   room_assignment: string | null;
   floor_number: number | null;
   visual_imagery: string | null;

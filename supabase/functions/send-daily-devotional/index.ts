@@ -52,19 +52,23 @@ async function generateDevotionalDay(
     const forPersonNote = personName ? `\nThis devotional is specifically for: ${personName}.` : "";
     const issueNote = primaryIssue ? `\nPRIMARY STRUGGLE: ${primaryIssue}${issueDescription ? ` - ${issueDescription}` : ""}` : "";
 
-    const systemPrompt = `You are a Phototheology devotional writer. Create deep, Christ-centered devotionals that:
-- Use 2-3 Scripture passages that reveal unexpected connections
-- Feel weighty and contemplative, not sentimental
-- Move from text → structure → meaning → personal confrontation
-- Avoid clichés, sermon language, and emotional filler
-- Never explain the method, let insights emerge naturally`;
+    const systemPrompt = `You are Jeeves, the Phototheology devotional writer. Write devotionals as 3-5 FLOWING PARAGRAPHS of continuous prose.
+
+FORMAT: NO bullet points. NO section headers. NO labeled parts. Just essay-style reading.
+
+SAMPLE STYLE:
+"At first glance, rest feels passive. Scripture seems to confirm it: 'Be still, and know that I am God.' Stillness sounds like absence—of effort, of struggle, of resistance. Yet when Israel was commanded to rest, it was not because nothing was happening, but because something sacred already was..."
+
+Write 500-750 words of flowing, contemplative prose that:
+- Uses 2-4 Scriptures woven naturally into the text
+- Reveals unexpected connections
+- Moves from observation → tension → illumination → call
+- Ends with stillness or resolve, not hype`;
 
     const userPrompt = `Create day ${dayNumber} of a ${plan.duration}-day devotional on the theme: "${plan.theme}"
-Format: ${plan.format}${forPersonNote}${issueNote}
+${forPersonNote}${issueNote}
 
-Generate ONLY day ${dayNumber} as a JSON array with a single object. This day should build on the journey so far while offering fresh insight.
-
-Generate as a JSON array with day_number: ${dayNumber}.`;
+Generate ONLY day ${dayNumber} as flowing paragraphs. This day should build on the journey so far while offering fresh insight.`;
 
     console.log(`Generating day ${dayNumber} for plan ${planId}...`);
 
@@ -95,22 +99,12 @@ Generate as a JSON array with day_number: ${dayNumber}.`;
                       type: "object",
                       properties: {
                         day_number: { type: "integer" },
-                        title: { type: "string" },
-                        scripture_reference: { type: "string" },
-                        scripture_text: { type: "string" },
-                        room_assignment: { type: "string" },
-                        floor_number: { type: "integer" },
-                        visual_imagery: { type: "string" },
-                        memory_hook: { type: "string" },
-                        cross_references: { type: "array", items: { type: "string" } },
-                        application: { type: "string" },
-                        prayer: { type: "string" },
-                        challenge: { type: "string" },
-                        journal_prompt: { type: "string" },
-                        sanctuary_station: { type: "string" },
-                        christ_connection: { type: "string" },
+                        title: { type: "string", description: "Evocative title (3-6 words)" },
+                        scripture_reference: { type: "string", description: "Primary passage reference" },
+                        devotional_text: { type: "string", description: "3-5 paragraph essay-style devotional (500-750 words). NO headers. NO bullet points." },
+                        memory_hook: { type: "string", description: "One-line quotable insight" },
                       },
-                      required: ["day_number", "title", "scripture_reference", "scripture_text", "application", "prayer", "christ_connection"],
+                      required: ["day_number", "title", "scripture_reference", "devotional_text", "memory_hook"],
                     },
                   },
                 },
@@ -145,7 +139,7 @@ Generate as a JSON array with day_number: ${dayNumber}.`;
 
     const day = days[0];
     
-    // Insert the generated day
+    // Insert the generated day with new essay-style format
     const { error: insertError } = await supabase
       .from('devotional_days')
       .insert({
@@ -153,18 +147,15 @@ Generate as a JSON array with day_number: ${dayNumber}.`;
         day_number: day.day_number || dayNumber,
         title: day.title,
         scripture_reference: day.scripture_reference,
-        scripture_text: day.scripture_text,
-        room_assignment: day.room_assignment,
-        floor_number: day.floor_number || 1,
-        visual_imagery: day.visual_imagery,
+        devotional_text: day.devotional_text,
         memory_hook: day.memory_hook,
-        cross_references: day.cross_references || [],
-        application: day.application,
-        prayer: day.prayer,
-        challenge: day.challenge,
-        journal_prompt: day.journal_prompt,
-        sanctuary_station: day.sanctuary_station,
-        christ_connection: day.christ_connection,
+        // Legacy fields for backwards compatibility
+        scripture_text: "",
+        christ_connection: day.devotional_text?.substring(0, 500) || "",
+        application: "",
+        prayer: "",
+        challenge: "",
+        journal_prompt: "",
       });
 
     if (insertError) {
@@ -324,7 +315,11 @@ serve(async (req) => {
 
         const userName = profile?.display_name || 'Friend';
 
-        // Send email with today's devotional
+        // Get the devotional text - use new format if available, fall back to legacy
+        const devotionalText = dayContent.devotional_text || dayContent.christ_connection || "";
+        const memoryHook = dayContent.memory_hook || "";
+
+        // Send email with today's devotional - essay style
         const emailHtml = `
           <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background: #1a1a2e; color: #ffffff; border-radius: 12px; overflow: hidden;">
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
@@ -333,38 +328,23 @@ serve(async (req) => {
             </div>
             
             <div style="padding: 30px;">
-              <h2 style="color: #a78bfa; margin: 0 0 15px 0; font-size: 22px;">${dayContent.title}</h2>
+              <h2 style="color: #a78bfa; margin: 0 0 8px 0; font-size: 22px;">${dayContent.title}</h2>
+              <p style="color: #8b5cf6; margin: 0 0 25px 0; font-size: 14px; font-style: italic;">${dayContent.scripture_reference}</p>
               
-              <div style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0;">
-                <p style="font-style: italic; color: #d4d4d8; margin: 0; font-size: 18px; line-height: 1.6;">
-                  "${dayContent.scripture_text}"
-                </p>
-                <p style="color: #a78bfa; margin: 15px 0 0 0; font-weight: bold;">— ${dayContent.scripture_reference}</p>
+              <div style="color: #e4e4e7; line-height: 1.8; font-size: 16px;">
+                ${devotionalText.split('\n\n').map((p: string) => `<p style="margin: 0 0 20px 0;">${p}</p>`).join('')}
               </div>
               
-              <div style="margin: 25px 0;">
-                <h3 style="color: #f472b6; font-size: 16px; margin: 0 0 10px 0;">✨ Christ Connection</h3>
-                <p style="color: #e4e4e7; line-height: 1.7; margin: 0;">${dayContent.christ_connection}</p>
-              </div>
-              
-              ${dayContent.application ? `
-              <div style="margin: 25px 0;">
-                <h3 style="color: #34d399; font-size: 16px; margin: 0 0 10px 0;">💡 Application</h3>
-                <p style="color: #e4e4e7; line-height: 1.7; margin: 0;">${dayContent.application}</p>
-              </div>
-              ` : ''}
-              
-              ${dayContent.prayer ? `
-              <div style="margin: 25px 0; background: rgba(52, 211, 153, 0.1); padding: 20px; border-radius: 8px;">
-                <h3 style="color: #34d399; font-size: 16px; margin: 0 0 10px 0;">🙏 Prayer</h3>
-                <p style="color: #e4e4e7; line-height: 1.7; margin: 0; font-style: italic;">${dayContent.prayer}</p>
+              ${memoryHook ? `
+              <div style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; padding: 16px 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
+                <p style="font-style: italic; color: #a78bfa; margin: 0; font-size: 15px;">"${memoryHook}"</p>
               </div>
               ` : ''}
               
               <div style="text-align: center; margin-top: 30px;">
                 <a href="https://phototheology.app/devotional/${plan.id}" 
                    style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                  📚 Read Full Devotional & Journal
+                  📚 Continue Reading & Journal
                 </a>
               </div>
             </div>

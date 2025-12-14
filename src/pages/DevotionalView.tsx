@@ -349,99 +349,70 @@ export default function DevotionalView() {
         <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
           {/* Day Header */}
           <div className="text-center space-y-3">
-            <div className="flex justify-center gap-2 flex-wrap">
-              {currentDay.room_assignment && (
-                <Badge className={`bg-gradient-to-r ${gradient} text-white border-0`}>
-                  {currentDay.room_assignment}
-                </Badge>
-              )}
-              <Badge variant="outline" className="border-purple-300 text-purple-700 dark:border-purple-700 dark:text-purple-300">
-                Floor {currentDay.floor_number}
-              </Badge>
-            </div>
+            <p className="text-sm text-muted-foreground font-medium">
+              {currentDay.scripture_reference}
+            </p>
             <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent">
               {currentDay.title}
             </h2>
           </div>
 
-          {/* Scripture Card - Vibrant */}
-          <Card className="overflow-hidden border-0 shadow-xl">
-            <div className={`h-2 bg-gradient-to-r ${gradient}`} />
-            <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pb-2">
-              <CardTitle className="text-base flex items-center justify-between gap-2 text-indigo-700 dark:text-indigo-300">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5" />
-                  {currentDay.scripture_reference}
-                </div>
-                <QuickAudioButton 
-                  text={`${currentDay.scripture_reference}. ${currentDay.scripture_text}`} 
-                  variant="ghost" 
-                  size="sm" 
-                />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pt-0">
-              <p className="text-xl italic leading-relaxed text-indigo-900 dark:text-indigo-100 font-serif">
-                "{currentDay.scripture_text}"
-              </p>
-            </CardContent>
-          </Card>
-
-          <Tabs defaultValue="devotion" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950 relative z-10">
-              <TabsTrigger value="devotion" className="cursor-pointer data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 transition-all">
-                💡 Devotion
-              </TabsTrigger>
-              <TabsTrigger value="practice" className="cursor-pointer data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 transition-all">
-                🎯 Practice
-              </TabsTrigger>
-              <TabsTrigger value="journal" className="cursor-pointer data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 transition-all">
-                📝 Journal
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="devotion" className="space-y-4 mt-4">
-              {/* Visual Imagery */}
-              {currentDay.visual_imagery && (
-                <Card className="border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 overflow-hidden">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2 text-purple-700 dark:text-purple-300">
-                      <Sparkles className="h-5 w-5 text-amber-500" />
-                      Mental Picture
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-purple-900 dark:text-purple-100 leading-relaxed">{currentDay.visual_imagery}</p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Memory Hook */}
-              {currentDay.memory_hook && (
-                <Card className="border-0 bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 text-white shadow-lg">
-                  <CardContent className="py-4">
-                    <p className="font-bold text-lg">
-                      🔗 {currentDay.memory_hook}
+          {/* Essay-style Devotional Content */}
+          {currentDay.devotional_text ? (
+            // New essay-style format - flowing paragraphs
+            <Card className="border-0 shadow-xl overflow-hidden">
+              <div className={`h-2 bg-gradient-to-r ${gradient}`} />
+              <CardHeader className="bg-gradient-to-br from-slate-50 to-purple-50/30 dark:from-slate-950/50 dark:to-purple-950/30 pb-2">
+                <CardTitle className="text-base flex items-center justify-between gap-2 text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Today's Reading
+                  </div>
+                  <QuickAudioButton 
+                    text={currentDay.devotional_text} 
+                    variant="ghost" 
+                    size="sm" 
+                  />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 pb-8">
+                <div className="prose prose-lg dark:prose-invert max-w-none">
+                  {currentDay.devotional_text.split('\n\n').map((paragraph, idx) => (
+                    <p key={idx} className="text-lg leading-relaxed text-slate-800 dark:text-slate-200 mb-6 last:mb-0 font-serif">
+                      {paragraph}
                     </p>
-                  </CardContent>
-                </Card>
-              )}
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            // Legacy format - fragmented sections
+            <>
+              {/* Scripture Card */}
+              <Card className="overflow-hidden border-0 shadow-xl">
+                <div className={`h-2 bg-gradient-to-r ${gradient}`} />
+                <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pb-2">
+                  <CardTitle className="text-base flex items-center justify-between gap-2 text-indigo-700 dark:text-indigo-300">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-5 w-5" />
+                      {currentDay.scripture_reference}
+                    </div>
+                    <QuickAudioButton 
+                      text={`${currentDay.scripture_reference}. ${currentDay.scripture_text}`} 
+                      variant="ghost" 
+                      size="sm" 
+                    />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pt-0">
+                  <p className="text-xl italic leading-relaxed text-indigo-900 dark:text-indigo-100 font-serif">
+                    "{currentDay.scripture_text}"
+                  </p>
+                </CardContent>
+              </Card>
 
-              {/* Application */}
-              {currentDay.application && (
-                <Card className="border-emerald-200 dark:border-emerald-800 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-emerald-700 dark:text-emerald-300">📌 Today's Application</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-emerald-900 dark:text-emerald-100">{currentDay.application}</p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Christ Connection - Always Prominent */}
+              {/* Christ Connection - Legacy format */}
               <Card className="border-0 bg-gradient-to-br from-rose-500 via-pink-500 to-purple-500 text-white shadow-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
                 <CardHeader className="pb-2 relative">
                   <CardTitle className="text-lg flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
@@ -460,54 +431,30 @@ export default function DevotionalView() {
                   <p className="text-lg leading-relaxed font-medium">{currentDay.christ_connection}</p>
                 </CardContent>
               </Card>
+            </>
+          )}
 
-              {/* Cross References */}
-              {currentDay.cross_references && currentDay.cross_references.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-medium mb-2 text-muted-foreground">📖 Cross References</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {currentDay.cross_references.map((ref, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleCrossReferenceClick(ref)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 text-blue-700 dark:text-blue-300 hover:from-blue-200 hover:to-cyan-200 dark:hover:from-blue-800 dark:hover:to-cyan-800 transition-all cursor-pointer active:scale-95"
-                      >
-                        {ref}
-                        <ExternalLink className="h-3 w-3 opacity-60" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </TabsContent>
+          {/* Memory Hook - Always show if present */}
+          {currentDay.memory_hook && (
+            <Card className="border-0 bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 text-white shadow-lg">
+              <CardContent className="py-4">
+                <p className="font-bold text-lg text-center italic">
+                  "{currentDay.memory_hook}"
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
-            <TabsContent value="practice" className="space-y-4 mt-4">
-              {/* Prayer */}
-              {currentDay.prayer && (
-                <Card className="border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-indigo-700 dark:text-indigo-300">🙏 Prayer</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="italic text-indigo-900 dark:text-indigo-100">{currentDay.prayer}</p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Challenge */}
-              {currentDay.challenge && (
-                <Card className="border-0 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      ⚡ Today's Challenge
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="font-medium">{currentDay.challenge}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
+          {/* Journal Section - Simplified for essay format */}
+          <Tabs defaultValue="journal" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950 relative z-10">
+              <TabsTrigger value="journal" className="cursor-pointer data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 transition-all">
+                📝 Journal
+              </TabsTrigger>
+              <TabsTrigger value="more" className="cursor-pointer data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 transition-all">
+                📖 More
+              </TabsTrigger>
+            </TabsList>
 
             <TabsContent value="journal" className="space-y-4 mt-4">
               {/* Journal Prompt */}
