@@ -836,11 +836,27 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           moveToNextChapter();
         };
         
-        audio.play().catch(() => {
-          setIsPlayingCommentary(false);
-          playingCommentaryRef.current = false;
-          setCommentaryText(null);
-          moveToNextChapter();
+        audio.play().catch((e) => {
+          console.warn("[ChapterComplete] Play blocked, waiting for user interaction:", e);
+          
+          const playOnInteraction = async () => {
+            try {
+              await audio.play();
+              document.removeEventListener('touchstart', playOnInteraction);
+              document.removeEventListener('click', playOnInteraction);
+            } catch (retryError) {
+              console.error("[ChapterComplete] Retry play failed:", retryError);
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
+              moveToNextChapter();
+            }
+          };
+          
+          document.addEventListener('touchstart', playOnInteraction, { once: true });
+          document.addEventListener('click', playOnInteraction, { once: true });
+          
+          toast.info("Tap to continue audio", { duration: 3000 });
         });
       } else if (cached?.text) {
         console.log("[ChapterComplete] Using cached chapter commentary text");
@@ -1484,11 +1500,27 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               moveToNextChapter();
             };
             
-            chapterCommentaryAudio.play().catch(() => {
-              setIsPlayingCommentary(false);
-              playingCommentaryRef.current = false;
-              setCommentaryText(null);
-              moveToNextChapter();
+            chapterCommentaryAudio.play().catch((e) => {
+              console.warn("[Chapter Commentary] Play blocked, waiting for user interaction:", e);
+              
+              const playOnInteraction = async () => {
+                try {
+                  await chapterCommentaryAudio.play();
+                  document.removeEventListener('touchstart', playOnInteraction);
+                  document.removeEventListener('click', playOnInteraction);
+                } catch (retryError) {
+                  console.error("[Chapter Commentary] Retry play failed:", retryError);
+                  setIsPlayingCommentary(false);
+                  playingCommentaryRef.current = false;
+                  setCommentaryText(null);
+                  moveToNextChapter();
+                }
+              };
+              
+              document.addEventListener('touchstart', playOnInteraction, { once: true });
+              document.addEventListener('click', playOnInteraction, { once: true });
+              
+              toast.info("Tap to continue audio", { duration: 3000 });
             });
           } else if (cached?.text) {
             // Have text but no audio
