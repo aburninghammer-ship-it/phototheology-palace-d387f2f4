@@ -5,12 +5,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, MessageSquare, Sparkles, X, BookOpen, Crown, RefreshCw } from "lucide-react";
+import { Loader2, MessageSquare, Sparkles, X, BookOpen, Crown, RefreshCw, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { RoomInsightChat } from "./RoomInsightChat";
 import { DimensionFilter } from "./DimensionFilter";
+import { ExportCommentaryDialog } from "@/components/reading-sequence/ExportCommentaryDialog";
 
 // Helper function to parse room insights from commentary
 const parseRoomInsights = (commentary: string) => {
@@ -314,9 +315,24 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
               {book} {chapter}:{verse}
             </CardDescription>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-white/10">
-            <X className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            {commentary && (
+              <ExportCommentaryDialog
+                commentaryText={commentary}
+                book={book}
+                chapter={chapter}
+                verseText={verseText}
+                trigger={
+                  <Button variant="ghost" size="sm" className="hover:bg-white/10" title="Export commentary audio">
+                    <Download className="h-4 w-4" />
+                  </Button>
+                }
+              />
+            )}
+            <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-white/10">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
