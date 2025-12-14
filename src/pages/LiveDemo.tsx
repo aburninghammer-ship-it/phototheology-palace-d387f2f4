@@ -188,6 +188,17 @@ export default function LiveDemo() {
     }
   }, [isTestingCamera]);
 
+  // Attach camera/screen stream to video element when it mounts
+  useEffect(() => {
+    if (videoRef.current) {
+      if (cameraStreamRef.current) {
+        videoRef.current.srcObject = cameraStreamRef.current;
+      } else if (screenStreamRef.current) {
+        videoRef.current.srcObject = screenStreamRef.current;
+      }
+    }
+  }, [isCameraOn, isScreenSharing]);
+
   // Host: Go live
   const handleGoLive = async () => {
     // Stop camera test if running
