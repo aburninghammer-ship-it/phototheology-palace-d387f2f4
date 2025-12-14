@@ -96,6 +96,10 @@ EXPRESSIONS TO ABSOLUTELY AVOID:
 - Overusing "your heart" (prefer: "your spirit," "within you," "deep inside")
 - Victorian-style or theatrical expressions
 - Clichéd devotional language
+- "You know this truth deep down" or "You know this deep within" (subjective presumption)
+- "You know this truth" or "You already know" (presuming the listener's knowledge)
+- "deep within your spirit" or "in your spirit" (overused spiritual cliché)
+- Any phrase that presumes what the listener knows, feels, or understands
 
 FORMATTING FOR SPOKEN DELIVERY:
 - Use natural, conversational language
