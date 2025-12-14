@@ -337,7 +337,7 @@ export default function LiveDemo() {
                   ref={videoRef}
                   autoPlay
                   playsInline
-                  muted={!isCameraOn}
+                  muted
                   className="w-full h-full object-contain"
                 />
               ) : (
