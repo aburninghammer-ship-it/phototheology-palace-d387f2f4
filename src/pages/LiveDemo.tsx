@@ -29,7 +29,10 @@ export default function LiveDemo() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [sessionTitle, setSessionTitle] = useState("Live Phototheology Demo");
+  const [isTestingCamera, setIsTestingCamera] = useState(false);
   
+  const testVideoRef = useRef<HTMLVideoElement>(null);
+  const testStreamRef = useRef<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const screenStreamRef = useRef<MediaStream | null>(null);
   const cameraStreamRef = useRef<MediaStream | null>(null);
@@ -154,8 +157,46 @@ export default function LiveDemo() {
     }
   };
 
+  // Host: Test camera before going live
+  const handleTestCamera = async () => {
+    if (isTestingCamera) {
+      // Stop test
+      if (testStreamRef.current) {
+        testStreamRef.current.getTracks().forEach(track => track.stop());
+        testStreamRef.current = null;
+      }
+      if (testVideoRef.current) {
+        testVideoRef.current.srcObject = null;
+      }
+      setIsTestingCamera(false);
+    } else {
+      // Start test
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: true
+        });
+        testStreamRef.current = stream;
+        if (testVideoRef.current) {
+          testVideoRef.current.srcObject = stream;
+        }
+        setIsTestingCamera(true);
+      } catch (error) {
+        console.error('Error testing camera:', error);
+      }
+    }
+  };
+
   // Host: Go live
   const handleGoLive = async () => {
+    // Stop camera test if running
+    if (isTestingCamera) {
+      if (testStreamRef.current) {
+        testStreamRef.current.getTracks().forEach(track => track.stop());
+        testStreamRef.current = null;
+      }
+      setIsTestingCamera(false);
+    }
     await startSession(sessionTitle, "Live demonstration of Phototheology features");
   };
 
@@ -370,6 +411,38 @@ export default function LiveDemo() {
                     placeholder="Session title..."
                     className="mb-3"
                   />
+                  
+                  {/* Camera Test Section */}
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">Test Camera & Mic</span>
+                      <Button
+                        variant={isTestingCamera ? "destructive" : "outline"}
+                        size="sm"
+                        onClick={handleTestCamera}
+                      >
+                        <Video className="w-4 h-4 mr-2" />
+                        {isTestingCamera ? "Stop Test" : "Test Camera"}
+                      </Button>
+                    </div>
+                    
+                    {isTestingCamera && (
+                      <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+                        <video
+                          ref={testVideoRef}
+                          autoPlay
+                          playsInline
+                          muted={false}
+                          className="w-full h-full object-cover mirror"
+                          style={{ transform: 'scaleX(-1)' }}
+                        />
+                        <div className="absolute bottom-2 left-2 bg-green-500/80 text-white text-xs px-2 py-1 rounded">
+                          Camera & Mic Active
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
                   <p className="text-sm text-muted-foreground">
                     When you go live, all active subscribers will be notified.
                   </p>
