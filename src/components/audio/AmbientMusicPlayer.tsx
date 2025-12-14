@@ -149,9 +149,12 @@ export function AmbientMusicPlayer({
   className,
   minimal = false 
 }: AmbientMusicPlayerProps) {
-  // Simple audio ref - no Web Audio API to avoid iOS playback issues
+  // Simple audio ref plus optional Web Audio graph for better mobile volume control
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const { user } = useAuth();
   // Removed cloud userTracks - only preset (public) and local (private) tracks
   const { localTracks, uploading: localUploading, uploadLocalMusic, removeLocalTrack, toggleFavorite: toggleLocalFavorite } = useLocalMusic();
@@ -208,12 +211,45 @@ export function AmbientMusicPlayer({
 
   useAudioDucking(handleDuckChange);
 
-  // Simple volume control - iOS ignores this but desktop browsers use it
-  // For iOS, users must use device volume controls
+  // Ensure we have a Web Audio graph for reliable volume control on mobile when supported
+  const getOrCreateAudioGraph = useCallback(async () => {
+    if (typeof window === "undefined") return null;
+    if (!audioRef.current) return null;
+
+    if (!audioContextRef.current) {
+      const Ctx = (window.AudioContext || (window as any).webkitAudioContext);
+      if (!Ctx) return null;
+      audioContextRef.current = new Ctx();
+    }
+
+    const ctx = audioContextRef.current;
+    if (ctx.state === "suspended") {
+      try {
+        await ctx.resume();
+      } catch (err) {
+        console.warn("[AmbientMusic] Failed to resume AudioContext:", err);
+      }
+    }
+
+    if (!sourceNodeRef.current && audioRef.current) {
+      const source = ctx.createMediaElementSource(audioRef.current);
+      const gain = ctx.createGain();
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      sourceNodeRef.current = source;
+      gainNodeRef.current = gain;
+    }
+
+    return { ctx, gain: gainNodeRef.current };
+  }, []);
+
+  // Volume control - prefer Web Audio gain when available, fallback to element volume
   useEffect(() => {
     const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
     
-    if (audioRef.current) {
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+    } else if (audioRef.current) {
       audioRef.current.volume = effectiveVolume;
     }
     
@@ -392,7 +428,14 @@ export function AmbientMusicPlayer({
         audioRef.current.onerror = null;
         audioRef.current = null;
       }
-      // No Web Audio API cleanup needed
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(err => {
+          console.warn('[AmbientMusic] Error closing AudioContext:', err);
+        });
+        audioContextRef.current = null;
+        gainNodeRef.current = null;
+        sourceNodeRef.current = null;
+      }
     };
   }, [playNextTrackFromState]); // Include the callback dependency
 
@@ -504,9 +547,15 @@ export function AmbientMusicPlayer({
           });
         }
         
-        // Set volume (works on desktop, iOS ignores this)
+        await getOrCreateAudioGraph();
+
+        // Set volume (gain node on supported browsers, fallback to element volume)
         const effectiveVolume = isMuted ? 0 : volume * duckMultiplier;
-        audioRef.current.volume = effectiveVolume;
+        if (gainNodeRef.current) {
+          gainNodeRef.current.gain.value = effectiveVolume;
+        } else {
+          audioRef.current.volume = effectiveVolume;
+        }
         
         console.log("Attempting to play:", currentTrack.url);
         await audioRef.current.play();
@@ -587,7 +636,9 @@ export function AmbientMusicPlayer({
     const newMuted = !isMuted;
     setIsMuted(newMuted);
     const effectiveVolume = newMuted ? 0 : volume * duckMultiplier;
-    if (audioRef.current) {
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = effectiveVolume;
+    } else if (audioRef.current) {
       audioRef.current.volume = effectiveVolume;
     }
   };
