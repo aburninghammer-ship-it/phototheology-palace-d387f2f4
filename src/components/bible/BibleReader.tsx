@@ -290,6 +290,8 @@ export const BibleReader = () => {
         {showAudioControls && (
           <AudioControls
             verses={chapterData.verses}
+            book={book}
+            chapter={chapter}
             onVerseHighlight={setAudioHighlightedVerse}
             className="flex-1"
           />

@@ -21,6 +21,7 @@ import {
   Volume2,
   Settings,
   Loader2,
+  Download,
 } from "lucide-react";
 import { Verse } from "@/types/bible";
 import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
@@ -28,9 +29,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
+import { ExportBibleAudioDialog } from "./ExportBibleAudioDialog";
 
 interface AudioControlsProps {
   verses: Verse[];
+  book?: string;
+  chapter?: number;
   onVerseHighlight?: (verseNumber: number) => void;
   className?: string;
 }
@@ -38,13 +42,14 @@ interface AudioControlsProps {
 // Tiny silent WAV as data URI to unlock iOS audio
 const SILENT_AUDIO = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
 
-export const AudioControls = ({ verses, onVerseHighlight, className }: AudioControlsProps) => {
+export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight, className }: AudioControlsProps) => {
   const [showSettings, setShowSettings] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentVerse, setCurrentVerse] = useState(1);
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>("onyx");
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   
   // Use a persistent audio element to avoid iOS autoplay restrictions
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -415,6 +420,17 @@ export const AudioControls = ({ verses, onVerseHighlight, className }: AudioCont
         </Select>
       </div>
 
+      {/* Download Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        onClick={() => setShowExportDialog(true)}
+        title="Download chapter audio"
+      >
+        <Download className="h-4 w-4" />
+      </Button>
+
       {/* Settings Popover */}
       <Popover open={showSettings} onOpenChange={setShowSettings}>
         <PopoverTrigger asChild>
@@ -475,6 +491,15 @@ export const AudioControls = ({ verses, onVerseHighlight, className }: AudioCont
           </div>
         </PopoverContent>
       </Popover>
+
+      {/* Export Dialog */}
+      <ExportBibleAudioDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        book={book}
+        chapter={chapter}
+        verses={verses}
+      />
     </div>
   );
 };
