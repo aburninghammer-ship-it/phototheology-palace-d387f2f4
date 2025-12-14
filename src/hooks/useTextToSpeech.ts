@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { getGlobalMusicVolume, subscribeToMusicVolume } from '@/hooks/useMusicVolumeControl';
 
 // TTS Providers
 export type TTSProvider = 'openai' | 'elevenlabs' | 'speechify';
@@ -124,8 +125,28 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>(defaultVoice);
   const [speed, setSpeed] = useState(1.0);
   const [wasCached, setWasCached] = useState(false);
+  const [volume, setVolume] = useState(getGlobalMusicVolume);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUnlockedRef = useRef(false);
+  const volumeRef = useRef(volume);
+  
+  // Keep volumeRef in sync
+  useEffect(() => {
+    volumeRef.current = volume;
+    // Apply to current audio if playing
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+      console.log('[TTS] Volume updated to:', volume, '%');
+    }
+  }, [volume]);
+  
+  // Subscribe to global volume changes
+  useEffect(() => {
+    const unsubscribe = subscribeToMusicVolume((newVolume) => {
+      setVolume(newVolume);
+    });
+    return unsubscribe;
+  }, []);
   
   const onEndRef = useRef(onEnd);
   const onErrorRef = useRef(onError);
@@ -272,7 +293,9 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
       };
 
       audio.src = audioUrl;
+      audio.volume = volumeRef.current / 100; // Apply volume from 0-100 scale
       audio.load();
+      console.log('[TTS] Audio volume set to:', volumeRef.current, '%');
       
       try {
         await audio.play();
