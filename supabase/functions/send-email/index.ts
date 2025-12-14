@@ -10,6 +10,7 @@ const corsHeaders = {
 type EmailType =
   | "admin-signup"
   | "daily-challenge"
+  | "devotional-ready"
   | "engagement"
   | "feedback"
   | "invitation"
@@ -221,6 +222,51 @@ const handler = async (req: Request): Promise<Response> => {
             </a>
             <hr>
             <p style="color: #666; font-size: 12px;">Questions? Contact support@phototheology.com</p>
+          `,
+        };
+        break;
+
+      case "devotional-ready":
+        emailConfig = {
+          from: "Phototheology <devotionals@phototheology.com>",
+          to: data.email,
+          subject: `🎉 Your Devotional "${data.planTitle}" is Ready!`,
+          html: `
+            <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+                <h1 style="margin: 0; font-size: 28px; color: white;">🎉 Your Devotional is Ready!</h1>
+              </div>
+              <div style="background: #1a1a2e; padding: 30px; color: #ffffff;">
+                <p style="font-size: 18px; color: #e4e4e7;">Hi ${data.name},</p>
+                <p style="color: #a1a1aa; line-height: 1.7;">
+                  Great news! Your ${data.duration}-day devotional "<strong style="color: #a78bfa;">${data.planTitle}</strong>" 
+                  on the theme of "${data.theme}" has been generated and Day 1 is now available!
+                </p>
+                
+                <div style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
+                  <h3 style="margin: 0 0 10px 0; color: #a78bfa;">📖 Day 1: ${data.firstDayTitle}</h3>
+                  <p style="margin: 0; color: #d4d4d8;">${data.firstDayScripture}</p>
+                </div>
+                
+                <p style="color: #a1a1aa; line-height: 1.7;">
+                  <strong style="color: #34d399;">How it works:</strong> A new day will unlock every 24 hours, 
+                  and you'll receive an email each morning with that day's devotional content. 
+                  This drip-release format helps you savor each day's insights without rushing ahead.
+                </p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="https://phototheology.app/devotional/${data.planId}" 
+                     style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                    Start Day 1 Now →
+                  </a>
+                </div>
+              </div>
+              <div style="background: #0f0f1a; padding: 20px; text-align: center; border-radius: 0 0 12px 12px;">
+                <p style="margin: 0; color: #71717a; font-size: 12px;">
+                  Phototheology - Master Scripture Through Visual Memory
+                </p>
+              </div>
+            </div>
           `,
         };
         break;

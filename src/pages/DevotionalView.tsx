@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Loader2, Share2, Wand2, ExternalLink } from "lucide-react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Loader2, Share2, Wand2, ExternalLink, Lock } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { SimplifiedNav } from "@/components/SimplifiedNav";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
@@ -15,6 +15,12 @@ import { useDevotionalPlan, useDevotionals } from "@/hooks/useDevotionals";
 import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
 import { cn } from "@/lib/utils";
 import { QuickAudioButton } from "@/components/audio";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const formatGradients: Record<string, string> = {
   standard: "from-blue-500 via-cyan-500 to-teal-500",
@@ -24,17 +30,44 @@ const formatGradients: Record<string, string> = {
   "verse-genetics": "from-rose-500 via-pink-500 to-purple-500",
 };
 
+// Helper to format time until unlock
+const getTimeUntilUnlock = (startedAt: string, dayNumber: number): string => {
+  const started = new Date(startedAt);
+  const unlockTime = new Date(started.getTime() + (dayNumber - 1) * 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const hoursLeft = Math.ceil((unlockTime.getTime() - now.getTime()) / (1000 * 60 * 60));
+  
+  if (hoursLeft <= 1) return "Unlocks in less than an hour";
+  if (hoursLeft < 24) return `Unlocks in ${hoursLeft} hours`;
+  const daysLeft = Math.ceil(hoursLeft / 24);
+  return `Unlocks in ${daysLeft} day${daysLeft > 1 ? 's' : ''}`;
+};
+
 export default function DevotionalView() {
   const { planId } = useParams<{ planId: string }>();
   const navigate = useNavigate();
   const { preferences } = useUserPreferences();
-  const { plan, days, completedDayIds, completeDay, planLoading, isCompleting } = useDevotionalPlan(planId || "");
+  const { plan, days, completedDayIds, completeDay, planLoading, isCompleting, isDayUnlocked, unlockedDayNumber } = useDevotionalPlan(planId || "");
   const { generateDevotional, isGenerating } = useDevotionals();
 
   const { toast } = useToast();
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [journalEntry, setJournalEntry] = useState("");
   const [rating, setRating] = useState(0);
+
+  // Auto-select the current unlocked day on load
+  useEffect(() => {
+    if (days && days.length > 0 && unlockedDayNumber) {
+      // Find the first incomplete day that's unlocked, or the latest unlocked day
+      const unlockedDays = days.filter((_, idx) => isDayUnlocked(idx + 1));
+      const firstIncomplete = unlockedDays.findIndex(d => !completedDayIds.has(d.id));
+      if (firstIncomplete >= 0) {
+        setSelectedDayIndex(firstIncomplete);
+      } else {
+        setSelectedDayIndex(Math.min(unlockedDayNumber - 1, days.length - 1));
+      }
+    }
+  }, [days, unlockedDayNumber, completedDayIds, isDayUnlocked]);
 
   const handleCrossReferenceClick = (ref: string) => {
     navigator.clipboard.writeText(ref);
@@ -224,29 +257,68 @@ export default function DevotionalView() {
         </div>
       </div>
 
-      {/* Day Progress - Colorful Pills */}
+      {/* Day Progress - Colorful Pills with Lock for Future Days */}
       <div className="bg-background/95 backdrop-blur border-b sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <ScrollArea className="w-full">
             <div className="flex gap-2 pb-2">
-              {days?.map((day, idx) => (
-                <button
-                  key={day.id}
-                  onClick={() => setSelectedDayIndex(idx)}
-                  className={cn(
-                    "w-10 h-10 rounded-full text-xs font-bold flex-shrink-0 transition-all shadow-md",
-                    idx === selectedDayIndex
-                      ? `bg-gradient-to-br ${gradient} text-white scale-110`
-                      : completedDayIds.has(day.id)
-                      ? "bg-gradient-to-br from-emerald-400 to-teal-400 text-white"
-                      : "bg-muted hover:bg-muted/80"
-                  )}
-                >
-                  {completedDayIds.has(day.id) ? <Check className="h-4 w-4 mx-auto" /> : idx + 1}
-                </button>
-              ))}
+              <TooltipProvider>
+                {days?.map((day, idx) => {
+                  const dayNumber = idx + 1;
+                  const isUnlocked = isDayUnlocked(dayNumber);
+                  const isCompleted = completedDayIds.has(day.id);
+                  const isSelected = idx === selectedDayIndex;
+
+                  const button = (
+                    <button
+                      key={day.id}
+                      onClick={() => isUnlocked && setSelectedDayIndex(idx)}
+                      disabled={!isUnlocked}
+                      className={cn(
+                        "w-10 h-10 rounded-full text-xs font-bold flex-shrink-0 transition-all shadow-md relative",
+                        isSelected
+                          ? `bg-gradient-to-br ${gradient} text-white scale-110`
+                          : isCompleted
+                          ? "bg-gradient-to-br from-emerald-400 to-teal-400 text-white"
+                          : isUnlocked
+                          ? "bg-muted hover:bg-muted/80"
+                          : "bg-muted/50 cursor-not-allowed opacity-60"
+                      )}
+                    >
+                      {isCompleted ? (
+                        <Check className="h-4 w-4 mx-auto" />
+                      ) : !isUnlocked ? (
+                        <Lock className="h-3 w-3 mx-auto text-muted-foreground" />
+                      ) : (
+                        dayNumber
+                      )}
+                    </button>
+                  );
+
+                  if (!isUnlocked && plan?.started_at) {
+                    return (
+                      <Tooltip key={day.id}>
+                        <TooltipTrigger asChild>
+                          {button}
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">{getTimeUntilUnlock(plan.started_at, dayNumber)}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  }
+
+                  return button;
+                })}
+              </TooltipProvider>
             </div>
           </ScrollArea>
+          {/* Show unlock info */}
+          {plan?.started_at && unlockedDayNumber < (days?.length || 0) && (
+            <p className="text-xs text-muted-foreground text-center mt-1">
+              Day {unlockedDayNumber + 1} unlocks tomorrow • New content daily
+            </p>
+          )}
         </div>
       </div>
 

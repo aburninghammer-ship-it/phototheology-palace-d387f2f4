@@ -1,0 +1,244 @@
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.76.0';
+import { Resend } from "https://esm.sh/resend@4.0.0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+/**
+ * Daily Devotional Sender
+ * 
+ * This function:
+ * 1. Finds all active devotional plans
+ * 2. For each plan, checks which day should be unlocked based on started_at
+ * 3. Sends email with that day's content
+ * 4. Creates in-app notification
+ * 
+ * Should be called daily via cron job at user's preferred time (default 6am)
+ */
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+
+    if (!resendApiKey) {
+      throw new Error('RESEND_API_KEY not configured');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const resend = new Resend(resendApiKey);
+
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+
+    console.log(`[${today}] Starting daily devotional delivery...`);
+
+    // Get all active devotional plans with their users
+    const { data: activePlans, error: plansError } = await supabase
+      .from('devotional_plans')
+      .select(`
+        id,
+        user_id,
+        title,
+        theme,
+        duration,
+        started_at,
+        current_day
+      `)
+      .eq('status', 'active')
+      .not('started_at', 'is', null);
+
+    if (plansError) {
+      console.error('Error fetching plans:', plansError);
+      throw plansError;
+    }
+
+    console.log(`Found ${activePlans?.length || 0} active plans`);
+
+    let emailsSent = 0;
+    let notificationsCreated = 0;
+
+    for (const plan of activePlans || []) {
+      try {
+        // Calculate which day number should be available today
+        const startedAt = new Date(plan.started_at);
+        const daysSinceStart = Math.floor((now.getTime() - startedAt.getTime()) / (1000 * 60 * 60 * 24));
+        const currentDayNumber = Math.min(daysSinceStart + 1, plan.duration);
+
+        console.log(`Plan ${plan.id}: Day ${currentDayNumber} of ${plan.duration}`);
+
+        // Skip if plan is complete
+        if (currentDayNumber > plan.duration) {
+          console.log(`Plan ${plan.id} completed, skipping`);
+          continue;
+        }
+
+        // Check if we already sent for today (prevent duplicates)
+        const { data: existingNotif } = await supabase
+          .from('notifications')
+          .select('id')
+          .eq('user_id', plan.user_id)
+          .eq('type', 'daily_devotional')
+          .gte('created_at', `${today}T00:00:00`)
+          .like('metadata->>plan_id', plan.id)
+          .limit(1);
+
+        if (existingNotif && existingNotif.length > 0) {
+          console.log(`Already sent devotional for plan ${plan.id} today, skipping`);
+          continue;
+        }
+
+        // Get today's devotional day content
+        const { data: dayContent, error: dayError } = await supabase
+          .from('devotional_days')
+          .select('*')
+          .eq('plan_id', plan.id)
+          .eq('day_number', currentDayNumber)
+          .single();
+
+        if (dayError || !dayContent) {
+          console.error(`No content for plan ${plan.id} day ${currentDayNumber}:`, dayError);
+          continue;
+        }
+
+        // Get user email
+        const { data: userData, error: userError } = await supabase.auth.admin.getUserById(plan.user_id);
+
+        if (userError || !userData?.user?.email) {
+          console.error(`No email for user ${plan.user_id}:`, userError);
+          continue;
+        }
+
+        const userEmail = userData.user.email;
+
+        // Get user profile for name
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', plan.user_id)
+          .single();
+
+        const userName = profile?.display_name || 'Friend';
+
+        // Send email with today's devotional
+        const emailHtml = `
+          <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background: #1a1a2e; color: #ffffff; border-radius: 12px; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+              <h1 style="margin: 0; font-size: 24px; color: white;">📖 ${plan.title}</h1>
+              <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">Day ${currentDayNumber} of ${plan.duration}</p>
+            </div>
+            
+            <div style="padding: 30px;">
+              <h2 style="color: #a78bfa; margin: 0 0 15px 0; font-size: 22px;">${dayContent.title}</h2>
+              
+              <div style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+                <p style="font-style: italic; color: #d4d4d8; margin: 0; font-size: 18px; line-height: 1.6;">
+                  "${dayContent.scripture_text}"
+                </p>
+                <p style="color: #a78bfa; margin: 15px 0 0 0; font-weight: bold;">— ${dayContent.scripture_reference}</p>
+              </div>
+              
+              <div style="margin: 25px 0;">
+                <h3 style="color: #f472b6; font-size: 16px; margin: 0 0 10px 0;">✨ Christ Connection</h3>
+                <p style="color: #e4e4e7; line-height: 1.7; margin: 0;">${dayContent.christ_connection}</p>
+              </div>
+              
+              ${dayContent.application ? `
+              <div style="margin: 25px 0;">
+                <h3 style="color: #34d399; font-size: 16px; margin: 0 0 10px 0;">💡 Application</h3>
+                <p style="color: #e4e4e7; line-height: 1.7; margin: 0;">${dayContent.application}</p>
+              </div>
+              ` : ''}
+              
+              ${dayContent.prayer ? `
+              <div style="margin: 25px 0; background: rgba(52, 211, 153, 0.1); padding: 20px; border-radius: 8px;">
+                <h3 style="color: #34d399; font-size: 16px; margin: 0 0 10px 0;">🙏 Prayer</h3>
+                <p style="color: #e4e4e7; line-height: 1.7; margin: 0; font-style: italic;">${dayContent.prayer}</p>
+              </div>
+              ` : ''}
+              
+              <div style="text-align: center; margin-top: 30px;">
+                <a href="https://phototheology.app/devotional/${plan.id}" 
+                   style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                  📚 Read Full Devotional & Journal
+                </a>
+              </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; text-align: center;">
+              <p style="margin: 0; color: #a1a1aa; font-size: 12px;">
+                Phototheology - Master Scripture Through Visual Memory
+              </p>
+            </div>
+          </div>
+        `;
+
+        const { error: emailError } = await resend.emails.send({
+          from: "Phototheology <daily@phototheology.com>",
+          to: userEmail,
+          subject: `📖 Day ${currentDayNumber}: ${dayContent.title} - ${plan.title}`,
+          html: emailHtml,
+        });
+
+        if (emailError) {
+          console.error(`Email error for ${userEmail}:`, emailError);
+        } else {
+          emailsSent++;
+          console.log(`Email sent to ${userEmail} for day ${currentDayNumber}`);
+        }
+
+        // Create in-app notification
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert({
+            user_id: plan.user_id,
+            type: 'daily_devotional',
+            title: `📖 Day ${currentDayNumber}: ${dayContent.title}`,
+            message: `Your devotional for today is ready! "${plan.title}"`,
+            link: `/devotional/${plan.id}`,
+            metadata: {
+              plan_id: plan.id,
+              day_number: currentDayNumber,
+              day_id: dayContent.id,
+            },
+          });
+
+        if (notifError) {
+          console.error(`Notification error for ${plan.user_id}:`, notifError);
+        } else {
+          notificationsCreated++;
+        }
+
+      } catch (planError) {
+        console.error(`Error processing plan ${plan.id}:`, planError);
+      }
+    }
+
+    console.log(`Completed: ${emailsSent} emails sent, ${notificationsCreated} notifications created`);
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        emailsSent,
+        notificationsCreated,
+        plansProcessed: activePlans?.length || 0,
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+
+  } catch (error: any) {
+    console.error("Error in send-daily-devotional:", error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});

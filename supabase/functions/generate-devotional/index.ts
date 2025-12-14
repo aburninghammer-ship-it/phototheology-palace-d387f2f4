@@ -607,10 +607,81 @@ IMPORTANT: Start numbering from day_number: ${startDay}`
     }
 
     // Update plan status to active
+    const startedAt = new Date().toISOString();
     await supabase
       .from("devotional_plans")
-      .update({ status: "active", started_at: new Date().toISOString() })
+      .update({ status: "active", started_at: startedAt })
       .eq("id", planId);
+
+    // Get user info for notification
+    const { data: planData } = await supabase
+      .from("devotional_plans")
+      .select("user_id, title")
+      .eq("id", planId)
+      .single();
+
+    if (planData) {
+      // Create persistent in-app notification that devotional is ready
+      await supabase
+        .from("notifications")
+        .insert({
+          user_id: planData.user_id,
+          type: "devotional_ready",
+          title: "🎉 Your Devotional is Ready!",
+          message: `"${planData.title}" has been generated. Day 1 is now available!`,
+          link: `/devotional/${planId}`,
+          metadata: {
+            plan_id: planId,
+            duration: days.length,
+            theme,
+          },
+        });
+      
+      console.log("Created devotional ready notification for user:", planData.user_id);
+
+      // Get user email for welcome email
+      const { data: userData } = await supabase.auth.admin.getUserById(planData.user_id);
+      
+      if (userData?.user?.email) {
+        // Get profile for name
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("display_name")
+          .eq("id", planData.user_id)
+          .single();
+
+        const userName = profile?.display_name || "Friend";
+        const firstDay = daysToInsert[0];
+
+        // Send initial email with Day 1
+        try {
+          const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+          const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+            },
+            body: JSON.stringify({
+              type: "devotional-ready",
+              data: {
+                email: userData.user.email,
+                name: userName,
+                planTitle: planData.title,
+                planId: planId,
+                duration: days.length,
+                theme,
+                firstDayTitle: firstDay.title,
+                firstDayScripture: firstDay.scripture_reference,
+              },
+            }),
+          });
+          console.log("Sent devotional ready email:", response.ok);
+        } catch (emailErr) {
+          console.error("Failed to send devotional ready email:", emailErr);
+        }
+      }
+    }
 
     return new Response(
       JSON.stringify({ success: true, daysGenerated: days.length, cadeEnabled: !!primaryIssue }),
