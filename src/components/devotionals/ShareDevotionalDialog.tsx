@@ -118,9 +118,11 @@ export const ShareDevotionalDialog = ({ plan, day, trigger, isPublicView }: Shar
   };
 
   const handleShareViaFacebook = () => {
-    // Facebook only supports URL sharing - use Copy Content for full text
-    const quote = encodeURIComponent(day ? `📖 ${day.title} - Check out the Phototheology app!` : `📘 ${plan.title}`);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${quote}`, "_blank");
+    // Use edge function URL for Facebook so crawlers get dynamic OG tags
+    const ogUrl = shareToken 
+      ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/og-devotional?token=${shareToken}`
+      : shareUrl;
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ogUrl)}`, "_blank");
   };
 
   const handleShareViaWhatsApp = () => {
