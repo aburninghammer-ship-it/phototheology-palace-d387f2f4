@@ -169,3 +169,9 @@ verify_jwt = false
 
 [functions.suggest-verses-by-topic]
 verify_jwt = false
+
+[functions.send-daily-devotional]
+verify_jwt = false
+
+[functions.send-email]
+verify_jwt = false

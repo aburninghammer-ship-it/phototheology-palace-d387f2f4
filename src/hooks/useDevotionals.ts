@@ -314,6 +314,23 @@ export function useDevotionalPlan(planId: string) {
 
   const completedDayIds = new Set(progress?.map((p) => p.day_id) || []);
 
+  // Calculate which day number is currently unlocked based on started_at
+  // Day 1 unlocks immediately, Day 2 after 24 hours, etc.
+  const getUnlockedDayNumber = (): number => {
+    if (!plan?.started_at) return 1;
+    const startedAt = new Date(plan.started_at);
+    const now = new Date();
+    const daysSinceStart = Math.floor((now.getTime() - startedAt.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.min(daysSinceStart + 1, plan.duration);
+  };
+
+  const unlockedDayNumber = getUnlockedDayNumber();
+
+  // Helper to check if a specific day is unlocked
+  const isDayUnlocked = (dayNumber: number): boolean => {
+    return dayNumber <= unlockedDayNumber;
+  };
+
   return {
     plan,
     days,
@@ -323,5 +340,7 @@ export function useDevotionalPlan(planId: string) {
     completeDay,
     completedDayIds,
     isCompleting: completeDay.isPending,
+    unlockedDayNumber,
+    isDayUnlocked,
   };
 }
