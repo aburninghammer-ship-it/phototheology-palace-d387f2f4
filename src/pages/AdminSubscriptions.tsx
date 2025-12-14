@@ -8,6 +8,7 @@ import { Loader2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RevenueDashboard } from "@/components/admin/RevenueDashboard";
+import { WinBackCampaign } from "@/components/admin/WinBackCampaign";
 
 interface SubscriptionStats {
   totalPaid: number;
@@ -227,6 +228,7 @@ export default function AdminSubscriptions() {
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="revenue">Revenue & Churn</TabsTrigger>
+          <TabsTrigger value="winback">Win-Back Campaign</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -325,6 +327,10 @@ export default function AdminSubscriptions() {
 
         <TabsContent value="revenue">
           <RevenueDashboard />
+        </TabsContent>
+
+        <TabsContent value="winback">
+          <WinBackCampaign />
         </TabsContent>
       </Tabs>
     </div>
