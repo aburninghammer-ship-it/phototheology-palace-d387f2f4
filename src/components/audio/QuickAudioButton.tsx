@@ -1,9 +1,10 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Volume2, VolumeX, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
+import { getGlobalMusicVolume, subscribeToMusicVolume } from "@/hooks/useMusicVolumeControl";
 
 const SILENT_AUDIO = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAbD/rU9UAAAAAAAAAAAAAAAAAAAAAP/jOMAAABQAJQCAAAhDAH+AIACQA/xQAP/zDAIAAAFPAQD/8wgD/+M4wAAAGMAlAAA';
 
@@ -22,8 +23,26 @@ export function QuickAudioButton({
 }: QuickAudioButtonProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [volume, setVolume] = useState(getGlobalMusicVolume);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUnlockedRef = useRef(false);
+  const volumeRef = useRef(volume);
+
+  // Keep volumeRef in sync and apply to current audio
+  useEffect(() => {
+    volumeRef.current = volume;
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  }, [volume]);
+
+  // Subscribe to global volume changes
+  useEffect(() => {
+    const unsubscribe = subscribeToMusicVolume((newVolume) => {
+      setVolume(newVolume);
+    });
+    return unsubscribe;
+  }, []);
 
   // Unlock audio for mobile before async work
   const unlockAudio = useCallback(() => {
@@ -80,6 +99,8 @@ export function QuickAudioButton({
         
         const audio = audioRef.current;
         audio.src = audioUrl;
+        audio.volume = volumeRef.current / 100; // Apply volume from 0-100 scale
+        console.log('[QuickAudio] Volume set to:', volumeRef.current, '%');
         
         audio.onended = () => {
           setIsPlaying(false);
