@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { FreeAudioButton } from "@/components/audio/FreeAudioButton";
 
 interface QuickDevotionProps {
   onClose: () => void;
@@ -118,9 +119,16 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Title */}
+              {/* Title with Audio */}
               <div className="text-center">
-                <h2 className="text-2xl font-bold">{devotion.title}</h2>
+                <div className="flex items-center justify-center gap-2">
+                  <h2 className="text-2xl font-bold">{devotion.title}</h2>
+                  <FreeAudioButton 
+                    text={`${devotion.title}. ${devotion.scripture_reference}. ${devotion.scripture_text}. Christ Connection: ${devotion.christ_connection}. Application: ${devotion.application}. Memory Hook: ${devotion.memory_hook}. Prayer: ${devotion.prayer}`}
+                    variant="ghost"
+                    size="sm"
+                  />
+                </div>
                 <p className="text-muted-foreground">Theme: {theme}</p>
               </div>
 

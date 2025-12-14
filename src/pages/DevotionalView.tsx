@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDevotionalPlan, useDevotionals } from "@/hooks/useDevotionals";
 import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
+import { FreeAudioButton } from "@/components/audio/FreeAudioButton";
 import { cn } from "@/lib/utils";
 
 import {
@@ -363,9 +364,16 @@ export default function DevotionalView() {
             <Card className="border-0 shadow-xl overflow-hidden">
               <div className={`h-2 bg-gradient-to-r ${gradient}`} />
               <CardHeader className="bg-gradient-to-br from-slate-50 to-purple-50/30 dark:from-slate-950/50 dark:to-purple-950/30 pb-2">
-                <CardTitle className="text-base flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                  <BookOpen className="h-5 w-5" />
-                  Today's Reading
+                <CardTitle className="text-base flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Today's Reading
+                  </div>
+                  <FreeAudioButton 
+                    text={currentDay.devotional_text || ''}
+                    variant="ghost"
+                    size="sm"
+                  />
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6 pb-8">
@@ -385,9 +393,16 @@ export default function DevotionalView() {
               <Card className="overflow-hidden border-0 shadow-xl">
                 <div className={`h-2 bg-gradient-to-r ${gradient}`} />
                 <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pb-2">
-                  <CardTitle className="text-base flex items-center gap-2 text-indigo-700 dark:text-indigo-300">
-                    <BookOpen className="h-5 w-5" />
-                    {currentDay.scripture_reference}
+                  <CardTitle className="text-base flex items-center justify-between text-indigo-700 dark:text-indigo-300">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-5 w-5" />
+                      {currentDay.scripture_reference}
+                    </div>
+                    <FreeAudioButton 
+                      text={`${currentDay.scripture_reference}. ${currentDay.scripture_text || ''}`}
+                      variant="ghost"
+                      size="sm"
+                    />
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 pt-0">
