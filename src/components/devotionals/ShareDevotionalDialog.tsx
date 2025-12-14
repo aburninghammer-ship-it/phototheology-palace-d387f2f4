@@ -161,14 +161,6 @@ export const ShareDevotionalDialog = ({ plan, day, trigger, isPublicView }: Shar
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Gift Banner */}
-          <div className="p-3 rounded-xl bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950 border border-purple-200 dark:border-purple-800">
-            <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300">
-              <Gift className="h-4 w-4" />
-              <span className="text-sm font-medium">Recipients get free access to Phototheology devotionals!</span>
-            </div>
-          </div>
-
           {/* Preview */}
           <div className="p-4 rounded-xl bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950 border border-purple-200 dark:border-purple-800">
             <p className="text-sm font-medium text-purple-900 dark:text-purple-100 line-clamp-3">
