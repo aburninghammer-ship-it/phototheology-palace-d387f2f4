@@ -624,6 +624,18 @@ Generate as a JSON array with day_number: 1.`;
     
     console.log("Day 1 generated successfully");
 
+    // Clear any existing devotional days for this plan so regeneration doesn't fail
+    console.log("Clearing any existing devotional days for this plan...");
+    const { error: deleteError } = await supabase
+      .from("devotional_days")
+      .delete()
+      .eq("plan_id", planId);
+
+    if (deleteError) {
+      console.error("Delete error while clearing existing days:", deleteError);
+      throw new Error("Failed to reset existing devotional days before regeneration");
+    }
+
     console.log("Inserting days into database...");
     const daysToInsert = days.map((day: any) => ({
       plan_id: planId,
