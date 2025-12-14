@@ -8,13 +8,187 @@ const corsHeaders = {
 };
 
 /**
+ * Generate a single devotional day on-demand
+ */
+async function generateDevotionalDay(
+  supabase: any,
+  planId: string,
+  dayNumber: number
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      return { success: false, error: "LOVABLE_API_KEY not configured" };
+    }
+
+    // Get plan details
+    const { data: plan, error: planError } = await supabase
+      .from('devotional_plans')
+      .select('*')
+      .eq('id', planId)
+      .single();
+
+    if (planError || !plan) {
+      return { success: false, error: "Plan not found" };
+    }
+
+    // Get personalization info if this is for a devotional profile
+    let personName = "";
+    let primaryIssue = "";
+    let issueDescription = "";
+
+    const { data: profile } = await supabase
+      .from('devotional_profiles')
+      .select('name, primary_issue, issue_description')
+      .eq('active_plan_id', planId)
+      .single();
+
+    if (profile) {
+      personName = profile.name;
+      primaryIssue = profile.primary_issue || "";
+      issueDescription = profile.issue_description || "";
+    }
+
+    const forPersonNote = personName ? `\nThis devotional is specifically for: ${personName}.` : "";
+    const issueNote = primaryIssue ? `\nPRIMARY STRUGGLE: ${primaryIssue}${issueDescription ? ` - ${issueDescription}` : ""}` : "";
+
+    const systemPrompt = `You are a Phototheology devotional writer. Create deep, Christ-centered devotionals that:
+- Use 2-3 Scripture passages that reveal unexpected connections
+- Feel weighty and contemplative, not sentimental
+- Move from text → structure → meaning → personal confrontation
+- Avoid clichés, sermon language, and emotional filler
+- Never explain the method, let insights emerge naturally`;
+
+    const userPrompt = `Create day ${dayNumber} of a ${plan.duration}-day devotional on the theme: "${plan.theme}"
+Format: ${plan.format}${forPersonNote}${issueNote}
+
+Generate ONLY day ${dayNumber} as a JSON array with a single object. This day should build on the journey so far while offering fresh insight.
+
+Generate as a JSON array with day_number: ${dayNumber}.`;
+
+    console.log(`Generating day ${dayNumber} for plan ${planId}...`);
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "create_devotional_days",
+              description: "Return an array of devotional day objects.",
+              parameters: {
+                type: "object",
+                properties: {
+                  days: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        day_number: { type: "integer" },
+                        title: { type: "string" },
+                        scripture_reference: { type: "string" },
+                        scripture_text: { type: "string" },
+                        room_assignment: { type: "string" },
+                        floor_number: { type: "integer" },
+                        visual_imagery: { type: "string" },
+                        memory_hook: { type: "string" },
+                        cross_references: { type: "array", items: { type: "string" } },
+                        application: { type: "string" },
+                        prayer: { type: "string" },
+                        challenge: { type: "string" },
+                        journal_prompt: { type: "string" },
+                        sanctuary_station: { type: "string" },
+                        christ_connection: { type: "string" },
+                      },
+                      required: ["day_number", "title", "scripture_reference", "scripture_text", "application", "prayer", "christ_connection"],
+                    },
+                  },
+                },
+                required: ["days"],
+              },
+            },
+          },
+        ],
+        tool_choice: { type: "function", function: { name: "create_devotional_days" } },
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("AI API error:", response.status, errorText);
+      return { success: false, error: `AI generation failed: ${response.status}` };
+    }
+
+    const data = await response.json();
+    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+    
+    if (!toolCall?.function?.arguments) {
+      return { success: false, error: "No tool call in response" };
+    }
+
+    const argsObj = JSON.parse(toolCall.function.arguments);
+    const days = argsObj.days;
+
+    if (!Array.isArray(days) || days.length === 0) {
+      return { success: false, error: "No days in response" };
+    }
+
+    const day = days[0];
+    
+    // Insert the generated day
+    const { error: insertError } = await supabase
+      .from('devotional_days')
+      .insert({
+        plan_id: planId,
+        day_number: day.day_number || dayNumber,
+        title: day.title,
+        scripture_reference: day.scripture_reference,
+        scripture_text: day.scripture_text,
+        room_assignment: day.room_assignment,
+        floor_number: day.floor_number || 1,
+        visual_imagery: day.visual_imagery,
+        memory_hook: day.memory_hook,
+        cross_references: day.cross_references || [],
+        application: day.application,
+        prayer: day.prayer,
+        challenge: day.challenge,
+        journal_prompt: day.journal_prompt,
+        sanctuary_station: day.sanctuary_station,
+        christ_connection: day.christ_connection,
+      });
+
+    if (insertError) {
+      console.error("Insert error:", insertError);
+      return { success: false, error: "Failed to save devotional day" };
+    }
+
+    console.log(`Day ${dayNumber} generated and saved for plan ${planId}`);
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error generating devotional day:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Daily Devotional Sender
  * 
  * This function:
  * 1. Finds all active devotional plans
  * 2. For each plan, checks which day should be unlocked based on started_at
- * 3. Sends email with that day's content
- * 4. Creates in-app notification
+ * 3. Generates the day's content if not already present
+ * 4. Sends email with that day's content
+ * 5. Creates in-app notification
  * 
  * Should be called daily via cron job at user's preferred time (default 6am)
  */
@@ -97,16 +271,38 @@ serve(async (req) => {
         }
 
         // Get today's devotional day content
-        const { data: dayContent, error: dayError } = await supabase
+        let { data: dayContent, error: dayError } = await supabase
           .from('devotional_days')
           .select('*')
           .eq('plan_id', plan.id)
           .eq('day_number', currentDayNumber)
           .single();
 
+        // If content doesn't exist yet, generate it on-demand
         if (dayError || !dayContent) {
-          console.error(`No content for plan ${plan.id} day ${currentDayNumber}:`, dayError);
-          continue;
+          console.log(`No content for plan ${plan.id} day ${currentDayNumber}, generating...`);
+          
+          const generateResult = await generateDevotionalDay(supabase, plan.id, currentDayNumber);
+          
+          if (!generateResult.success) {
+            console.error(`Failed to generate day ${currentDayNumber}:`, generateResult.error);
+            continue;
+          }
+          
+          // Fetch the newly generated content
+          const { data: newDayContent, error: newDayError } = await supabase
+            .from('devotional_days')
+            .select('*')
+            .eq('plan_id', plan.id)
+            .eq('day_number', currentDayNumber)
+            .single();
+          
+          if (newDayError || !newDayContent) {
+            console.error(`Still no content after generation for plan ${plan.id} day ${currentDayNumber}`);
+            continue;
+          }
+          
+          dayContent = newDayContent;
         }
 
         // Get user email
