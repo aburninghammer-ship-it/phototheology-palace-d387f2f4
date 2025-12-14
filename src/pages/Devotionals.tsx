@@ -54,7 +54,7 @@ export default function Devotionals() {
 
   const activePlans = plans?.filter((p) => p.status === "active") || [];
   const completedPlans = plans?.filter((p) => p.status === "completed") || [];
-  const draftPlans = plans?.filter((p) => p.status === "draft" || p.status === "generating") || [];
+  const draftPlans = plans?.filter((p) => p.status === "draft" || p.status === "generating" || p.status === "failed") || [];
 
   const handleDeleteProfile = () => {
     if (deleteProfileId) {
@@ -420,8 +420,15 @@ export default function Devotionals() {
                         <CardTitle className="text-lg">{plan.title}</CardTitle>
                         <CardDescription>{plan.theme}</CardDescription>
                       </div>
-                      <Badge variant="outline" className="border-amber-400 text-amber-700 dark:text-amber-300 animate-pulse">
-                        {plan.status === "generating" ? "✨ Generating..." : "Draft"}
+                      <Badge 
+                        variant="outline" 
+                        className={
+                          plan.status === "failed" 
+                            ? "border-destructive text-destructive" 
+                            : "border-amber-400 text-amber-700 dark:text-amber-300 animate-pulse"
+                        }
+                      >
+                        {plan.status === "generating" ? "✨ Generating..." : plan.status === "failed" ? "❌ Failed" : "Draft"}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -429,17 +436,20 @@ export default function Devotionals() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">{plan.duration} days • {formatLabels[plan.format]?.label}</span>
                       <div className="flex items-center gap-2">
-                        {plan.status === "draft" && (
+                        {(plan.status === "draft" || plan.status === "failed") && (
                           <Button
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
                               navigate(`/devotionals/${plan.id}`);
                             }}
-                            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                            className={plan.status === "failed" 
+                              ? "bg-gradient-to-r from-rose-500 to-red-500 hover:from-rose-600 hover:to-red-600"
+                              : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                            }
                           >
                             <Sparkles className="h-4 w-4 mr-1" />
-                            Generate
+                            {plan.status === "failed" ? "Retry" : "Generate"}
                           </Button>
                         )}
                         <Button
