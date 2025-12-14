@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
+import { SEO } from "@/components/SEO";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,8 +110,19 @@ export default function PublicDevotionalView() {
   const goToPrevDay = () => setSelectedDayIndex(Math.max(0, selectedDayIndex - 1));
   const goToNextDay = () => setSelectedDayIndex(Math.min(days.length - 1, selectedDayIndex + 1));
 
+  // Build SEO description from current day content
+  const seoDescription = currentDay?.devotional_text
+    ? currentDay.devotional_text.substring(0, 155) + '...'
+    : currentDay?.christ_connection
+      ? currentDay.christ_connection.substring(0, 155) + '...'
+      : `A ${plan.duration}-day devotional journey on: ${plan.theme}`;
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title={plan.title}
+        description={seoDescription}
+      />
       {/* Get Phototheology Free Banner */}
       {!user && (
         <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white py-3 px-4">
