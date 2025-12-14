@@ -1403,6 +1403,7 @@ export type Database = {
           created_at: string | null
           cross_references: string[] | null
           day_number: number
+          devotional_text: string | null
           floor_number: number | null
           id: string
           journal_prompt: string | null
@@ -1424,6 +1425,7 @@ export type Database = {
           created_at?: string | null
           cross_references?: string[] | null
           day_number: number
+          devotional_text?: string | null
           floor_number?: number | null
           id?: string
           journal_prompt?: string | null
@@ -1445,6 +1447,7 @@ export type Database = {
           created_at?: string | null
           cross_references?: string[] | null
           day_number?: number
+          devotional_text?: string | null
           floor_number?: number | null
           id?: string
           journal_prompt?: string | null

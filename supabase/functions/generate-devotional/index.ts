@@ -630,18 +630,15 @@ Generate as a JSON array with day_number: 1.`;
       day_number: day.day_number,
       title: day.title,
       scripture_reference: day.scripture_reference,
-      scripture_text: day.scripture_text,
-      room_assignment: day.room_assignment,
-      floor_number: day.floor_number || 1,
-      visual_imagery: day.visual_imagery,
+      devotional_text: day.devotional_text,
       memory_hook: day.memory_hook,
-      cross_references: day.cross_references || [],
-      application: day.application,
-      prayer: day.prayer,
-      challenge: day.challenge,
-      journal_prompt: day.journal_prompt,
-      sanctuary_station: day.sanctuary_station,
-      christ_connection: day.christ_connection,
+      // Keep legacy fields populated for backwards compatibility
+      scripture_text: "",
+      christ_connection: day.devotional_text?.substring(0, 500) || "",
+      application: "",
+      prayer: "",
+      challenge: "",
+      journal_prompt: "",
     }));
 
     const { error: insertError } = await supabase
