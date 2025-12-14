@@ -19,7 +19,7 @@ export const VerseCommentarySelector = ({
   const [commentary, setCommentary] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const { toast } = useToast();
-  const { speak, isPlaying, stop } = useTextToSpeech();
+  const { speak, isPlaying, stop, unlockAudio } = useTextToSpeech();
 
   // Fetch user's first name for personalized commentary
   useEffect(() => {
@@ -88,6 +88,9 @@ export const VerseCommentarySelector = ({
       stop();
       return;
     }
+
+    // CRITICAL: Unlock audio BEFORE any async work to preserve user gesture context on mobile
+    unlockAudio();
 
     let commentaryText = commentary;
     if (!commentaryText) {
