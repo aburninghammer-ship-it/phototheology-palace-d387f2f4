@@ -25,23 +25,37 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log(`Generating quick devotion for theme: ${theme}`);
+    console.log(`Generating Phototheology devotion for theme: ${theme}`);
 
     const systemPrompt = `You are Jeeves, a Phototheology devotional writer. Create Christ-centered, biblically grounded devotionals that are:
 - Fresh, imaginative, and spiritually piercing
 - Adventist in theology (sanctuary-shaped, Great Controversy aware)
 - Free from clichés and shallow moralism
-- Revealing hidden connections in Scripture`;
+- Revealing hidden connections in Scripture
 
-    const userPrompt = `Create a devotion on: "${theme}"
+CRITICAL: Each section must be SUBSTANTIAL - multiple sentences with deep theological insight and vivid imagery.`;
 
-Include:
-1. An evocative title
-2. A relevant Scripture (reference + full KJV text, 2-4 verses)
-3. How Christ is revealed in this text (2-3 sentences)
-4. A practical application rooted in the insight (2-3 sentences)
-5. A closing prayer (2-3 sentences)
-6. A memory hook - a vivid mental image to remember the insight`;
+    const userPrompt = `Create a rich Phototheology devotion on: "${theme}"
+
+REQUIREMENTS FOR EACH FIELD:
+1. title: An evocative, non-generic title that intrigues
+2. scripture_reference: Book Chapter:Verse(s) - e.g., "Psalm 46:10"
+3. scripture_text: The FULL KJV text of 2-4 verses
+4. christ_connection: 3-4 FULL SENTENCES explaining how Christ is specifically revealed in this text. Show the Christological depth, connect to His work, character, or mission.
+5. application: 3-4 FULL SENTENCES with practical, heart-transforming application. Not generic moralism, but rooted in the specific insight. Address real struggles with real wisdom.
+6. memory_hook: A VIVID, EXTENDED METAPHOR or mental image (3-4 sentences) that helps remember the insight. Paint a picture - use sensory details, describe a scene, make it unforgettable.
+7. prayer: 3-4 FULL SENTENCES of heartfelt, text-specific prayer. Not generic - address God with the specific truths revealed in this devotion.
+
+EXAMPLE QUALITY for application:
+"In our own workplace struggles, where injustice or inefficiency test our spirit, the call is not to passive resignation but to active, trusting rest. Rather than reacting in anger or striving to control outcomes beyond our purview, we are invited to anchor our souls in God's ultimate sovereignty, allowing His divine rhythm to guide our responses."
+
+EXAMPLE QUALITY for memory_hook:
+"Imagine a master weaver, meticulously interweaving threads of various colors and textures. From your perspective, some threads seem out of place, even chaotic. But the weaver sees the whole design, knowing that each thread, even the seemingly discordant ones, contributes to the breathtaking final tapestry. Your work situation is but a few threads in His grand design."
+
+EXAMPLE QUALITY for prayer:
+"Heavenly Father, grant us the grace to release the grip of anxiety and the urge to fix what You alone can mend. Imbue us with the quiet confidence of Christ, that we may rest in Your unfailing wisdom as we navigate the challenges of our daily work, trusting in Your perfect timing and ultimate justice. Amen."
+
+Match this level of depth and substance in EVERY field.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -60,17 +74,38 @@ Include:
             type: "function",
             function: {
               name: "create_devotion",
-              description: "Create a structured devotional",
+              description: "Create a structured Phototheology devotional with substantial, multi-sentence content in each field",
               parameters: {
                 type: "object",
                 properties: {
-                  title: { type: "string", description: "Evocative, non-generic title" },
-                  scripture_reference: { type: "string", description: "Book Chapter:Verse(s)" },
-                  scripture_text: { type: "string", description: "Full KJV text of the verses" },
-                  christ_connection: { type: "string", description: "How Christ is revealed in this text" },
-                  application: { type: "string", description: "Practical application rooted in the insight" },
-                  prayer: { type: "string", description: "A closing prayer" },
-                  memory_hook: { type: "string", description: "A vivid mental image to remember the insight" },
+                  title: { 
+                    type: "string", 
+                    description: "Evocative, non-generic title that intrigues" 
+                  },
+                  scripture_reference: { 
+                    type: "string", 
+                    description: "Book Chapter:Verse(s) format" 
+                  },
+                  scripture_text: { 
+                    type: "string", 
+                    description: "Full KJV text of 2-4 verses" 
+                  },
+                  christ_connection: { 
+                    type: "string", 
+                    description: "3-4 full sentences explaining how Christ is revealed in this text with theological depth" 
+                  },
+                  application: { 
+                    type: "string", 
+                    description: "3-4 full sentences of practical, heart-transforming application rooted in the insight" 
+                  },
+                  prayer: { 
+                    type: "string", 
+                    description: "3-4 full sentences of heartfelt, text-specific prayer" 
+                  },
+                  memory_hook: { 
+                    type: "string", 
+                    description: "3-4 sentence vivid, extended metaphor or mental image with sensory details" 
+                  },
                 },
                 required: ["title", "scripture_reference", "scripture_text", "christ_connection", "application", "prayer", "memory_hook"],
                 additionalProperties: false,
@@ -103,7 +138,7 @@ Include:
     }
 
     const data = await response.json();
-    console.log("AI response received:", JSON.stringify(data).slice(0, 500));
+    console.log("AI response received");
     
     // Extract from tool call
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
