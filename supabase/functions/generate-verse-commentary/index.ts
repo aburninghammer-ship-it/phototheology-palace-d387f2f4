@@ -6,8 +6,18 @@ const corsHeaders = {
 };
 
 type CommentaryDepth = "surface" | "intermediate" | "depth" | "deep-drill";
+type SupportedLanguage = "en" | "es";
 
-const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null) => {
+const getLanguageInstruction = (lang: SupportedLanguage): string => {
+  switch (lang) {
+    case "es":
+      return `\n\n### LANGUAGE INSTRUCTION:\nYou MUST write ALL output in Spanish (Español). Use natural, flowing Spanish appropriate for devotional content. Do not translate literally from English - write as if Spanish were your native language.`;
+    default:
+      return "";
+  }
+};
+
+const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null, language: SupportedLanguage = "en") => {
   const hasName = userName && userName.trim().length > 0;
   const nameToUse = hasName ? userName.trim() : null;
   
@@ -297,7 +307,7 @@ Instead, weave them naturally into a unified, literary, theologically rich comme
 **HARD LIMIT**: 450-650 words maximum. Quality over quantity.`,
   };
 
-  return basePrompt + depthInstructions[depth];
+  return basePrompt + depthInstructions[depth] + getLanguageInstruction(language);
 };
 
 const getMaxTokens = (depth: CommentaryDepth) => {
@@ -317,7 +327,7 @@ serve(async (req) => {
   }
 
   try {
-    const { book, chapter, verse, verseText, depth = "surface", userName } = await req.json();
+    const { book, chapter, verse, verseText, depth = "surface", userName, language = "en" } = await req.json();
 
     if (!book || !chapter || !verse || !verseText) {
       return new Response(
@@ -335,7 +345,7 @@ serve(async (req) => {
       );
     }
 
-    const systemPrompt = getSystemPrompt(depth as CommentaryDepth, userName);
+    const systemPrompt = getSystemPrompt(depth as CommentaryDepth, userName, language as SupportedLanguage);
     const userPrompt = `Provide ${depth} devotional commentary on this verse:
 
 **${book} ${chapter}:${verse}**

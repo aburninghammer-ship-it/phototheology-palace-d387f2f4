@@ -21,7 +21,7 @@ import { Crown, Zap, User as UserIcon } from "lucide-react";
 import { PathProfileSection, PathCertificatesGallery } from "@/components/path";
 import { usePath } from "@/hooks/usePath";
 import { SocialMediaConnect } from "@/components/SocialMediaConnect";
-
+import { LanguageSelector } from "@/components/settings/LanguageSelector";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -361,6 +361,17 @@ export default function Profile() {
               </CardContent>
             </Card>
           )}
+
+          {/* Language & Preferences */}
+          <Card className="glass-card">
+            <CardHeader>
+              <CardTitle>Language & Preferences</CardTitle>
+              <CardDescription>Choose your preferred language for the app and commentary</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LanguageSelector />
+            </CardContent>
+          </Card>
 
           {/* Social Media Connections */}
           <div id="social">

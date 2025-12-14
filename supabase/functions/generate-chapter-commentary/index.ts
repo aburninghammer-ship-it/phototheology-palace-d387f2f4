@@ -7,8 +7,18 @@ const corsHeaders = {
 };
 
 type CommentaryDepth = "surface" | "intermediate" | "depth";
+type SupportedLanguage = "en" | "es";
 
-const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null): string => {
+const getLanguageInstruction = (lang: SupportedLanguage): string => {
+  switch (lang) {
+    case "es":
+      return `\n\n### LANGUAGE INSTRUCTION:\nYou MUST write ALL output in Spanish (Español). Use natural, flowing Spanish appropriate for devotional content. Do not translate literally from English - write as if Spanish were your native language.`;
+    default:
+      return "";
+  }
+};
+
+const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null, language: SupportedLanguage = "en"): string => {
   const hasName = userName && userName.trim().length > 0;
   const nameToUse = hasName ? userName.trim() : null;
   
@@ -108,6 +118,7 @@ FORMATTING FOR SPOKEN DELIVERY:
 - Never use abbreviations or codes
 - ALWAYS complete thoughts fully—never end mid-sentence
 - Every paragraph must end with a complete sentence
+${getLanguageInstruction(language)}
 
 End with one penetrating theological or devotional insight that places the chapter within the grand narrative of Scripture and the believer's calling in the last days.`;
 
@@ -159,7 +170,7 @@ serve(async (req) => {
   }
 
   try {
-    const { book, chapter, chapterText, depth = "surface", userName } = await req.json();
+    const { book, chapter, chapterText, depth = "surface", userName, language = "en" } = await req.json();
 
     if (!book || !chapter) {
       throw new Error("Book and chapter are required");
@@ -198,7 +209,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = getSystemPrompt(depth as CommentaryDepth, userName);
+    const systemPrompt = getSystemPrompt(depth as CommentaryDepth, userName, language as SupportedLanguage);
     const maxTokens = getMaxTokens(depth as CommentaryDepth);
 
     const userPrompt = depth === "depth" 
