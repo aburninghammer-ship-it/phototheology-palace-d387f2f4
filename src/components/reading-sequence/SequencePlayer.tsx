@@ -753,12 +753,30 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     try {
       await audio.play();
     } catch (e) {
-      console.error("[Commentary] Play failed:", e);
-      setIsPlayingCommentary(false);
-      playingCommentaryRef.current = false;
-      setCommentaryText(null);
-      toast.error("Commentary playback failed, continuing", { duration: 2000 });
-      onComplete();
+      console.warn("[Commentary] Play blocked, waiting for user interaction:", e);
+
+      const playOnInteraction = async () => {
+        try {
+          await audio.play();
+          setIsPlayingCommentary(true);
+          playingCommentaryRef.current = true;
+          console.log("[Commentary] Audio playing after user interaction");
+          document.body.removeEventListener('click', playOnInteraction);
+          document.body.removeEventListener('touchstart', playOnInteraction);
+        } catch (err) {
+          console.error("[Commentary] Play still failed:", err);
+          audioRef.current = null;
+          setIsPlayingCommentary(false);
+          playingCommentaryRef.current = false;
+          setCommentaryText(null);
+          toast.error("Commentary playback failed, continuing", { duration: 2000 });
+          onComplete();
+        }
+      };
+
+      document.body.addEventListener('click', playOnInteraction, { once: true });
+      document.body.addEventListener('touchstart', playOnInteraction, { once: true });
+      toast.info('Tap anywhere to start commentary audio');
     }
   }, [generateTTS, isMuted, volume, currentSequence]);
 
