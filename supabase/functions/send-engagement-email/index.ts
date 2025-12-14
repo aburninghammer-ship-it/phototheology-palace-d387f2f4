@@ -78,6 +78,45 @@ const handler = async (req: Request): Promise<Response> => {
             }
           }
           break;
+        
+        case 're-engagement':
+          // Win-back: Users with expired trials or cancelled subscriptions
+          const { data: expiredUsers } = await supabase
+            .from('user_subscriptions')
+            .select('user_id')
+            .in('subscription_status', ['expired', 'cancelled'])
+            .eq('has_lifetime_access', false);
+
+          if (expiredUsers) {
+            // Also check they haven't received a win-back email in last 30 days
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            for (const { user_id } of expiredUsers) {
+              // Check if already sent win-back recently
+              const { data: recentEmail } = await supabase
+                .from('email_logs')
+                .select('id')
+                .eq('user_id', user_id)
+                .eq('status', 'sent')
+                .gte('sent_at', thirtyDaysAgo.toISOString())
+                .limit(1);
+              
+              if (!recentEmail || recentEmail.length === 0) {
+                const { data: { user } } = await supabase.auth.admin.getUserById(user_id);
+                const { data: profile } = await supabase
+                  .from('profiles')
+                  .select('display_name')
+                  .eq('id', user_id)
+                  .single();
+                
+                if (user?.email) {
+                  targetUsers.push({ email: user.email, userId: user_id, profile });
+                }
+              }
+            }
+          }
+          break;
       }
     }
 
@@ -167,6 +206,62 @@ function generateEmailContent(campaign: any, profile: any, customData: any): str
           <a href="${Deno.env.get('SUPABASE_URL')}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">
             Start Your Journey
           </a>
+        </div>
+      `;
+    
+    case 're-engagement':
+      const appUrl = Deno.env.get('FRONTEND_URL') || 'https://phototheology.app';
+      return `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0f172a; color: #f1f5f9; padding: 40px 30px;">
+          <h1 style="color: #fbbf24; margin-bottom: 10px;">We Miss You, ${displayName}! 🏛️</h1>
+          <p style="font-size: 16px; line-height: 1.6;">Your journey through the Phototheology Palace isn't over — it's just waiting for you to return.</p>
+          
+          <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 12px; padding: 25px; margin: 25px 0; border-left: 4px solid #fbbf24;">
+            <h2 style="color: #fbbf24; margin-top: 0; font-size: 20px;">🗺️ Your 7-Day Quick-Start Path</h2>
+            <p style="margin-bottom: 15px; color: #94a3b8;">Here's exactly how to use Phototheology in just 7 days:</p>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr style="border-bottom: 1px solid #475569;">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Day 1</td>
+                <td style="padding: 10px 0; color: #e2e8f0;">Complete the 24FPS Tour — Learn the image-per-chapter method</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #475569;">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Day 2</td>
+                <td style="padding: 10px 0; color: #e2e8f0;">Try the Genesis High Rise Challenge — Your first memory conquest</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #475569;">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Day 3</td>
+                <td style="padding: 10px 0; color: #e2e8f0;">Explore the Story Room — Build your biblical narrative library</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #475569;">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Day 4</td>
+                <td style="padding: 10px 0; color: #e2e8f0;">Complete a Daily Challenge — 5 minutes of focused study</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #475569;">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Day 5</td>
+                <td style="padding: 10px 0; color: #e2e8f0;">Ask Jeeves a question — Your AI study companion</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #475569;">
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Day 6</td>
+                <td style="padding: 10px 0; color: #e2e8f0;">Try an Escape Room — Biblical puzzle adventure</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #fbbf24; font-weight: bold;">Day 7</td>
+                <td style="padding: 10px 0; color: #e2e8f0;">Share a Gem with the community — Teach what you've learned</td>
+              </tr>
+            </table>
+          </div>
+          
+          <p style="font-size: 15px; color: #94a3b8; margin: 20px 0;">This path is designed to give you a taste of everything the Palace offers. No pressure, no rush — just discovery.</p>
+          
+          <a href="${appUrl}/palace/floor/1/room/24fps" style="display: inline-block; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #0f172a; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 10px;">
+            Start Day 1 Now →
+          </a>
+          
+          <p style="font-size: 13px; color: #64748b; margin-top: 30px; border-top: 1px solid #334155; padding-top: 20px;">
+            Questions? Reply to this email — we read every message.<br>
+            <span style="color: #475569;">The Phototheology Team</span>
+          </p>
         </div>
       `;
     
