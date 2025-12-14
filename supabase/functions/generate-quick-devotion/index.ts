@@ -33,29 +33,31 @@ serve(async (req) => {
 - Free from clichés and shallow moralism
 - Revealing hidden connections in Scripture
 
-CRITICAL: Each section must be SUBSTANTIAL - multiple sentences with deep theological insight and vivid imagery.`;
+CRITICAL REQUIREMENT: Each major content section (christ_connection, application, memory_hook, prayer) MUST be 3-5 FULL PARAGRAPHS. Not sentences - PARAGRAPHS. Each paragraph should be 3-4 sentences with deep theological insight and vivid imagery.`;
 
     const userPrompt = `Create a rich Phototheology devotion on: "${theme}"
 
-REQUIREMENTS FOR EACH FIELD:
+ABSOLUTE REQUIREMENT: Each content field MUST contain 3-5 PARAGRAPHS (not sentences). Separate paragraphs with blank lines.
+
+FIELD REQUIREMENTS:
 1. title: An evocative, non-generic title that intrigues
 2. scripture_reference: Book Chapter:Verse(s) - e.g., "Psalm 46:10"
-3. scripture_text: The FULL KJV text of 2-4 verses
-4. christ_connection: 3-4 FULL SENTENCES explaining how Christ is specifically revealed in this text. Show the Christological depth, connect to His work, character, or mission.
-5. application: 3-4 FULL SENTENCES with practical, heart-transforming application. Not generic moralism, but rooted in the specific insight. Address real struggles with real wisdom.
-6. memory_hook: A VIVID, EXTENDED METAPHOR or mental image (3-4 sentences) that helps remember the insight. Paint a picture - use sensory details, describe a scene, make it unforgettable.
-7. prayer: 3-4 FULL SENTENCES of heartfelt, text-specific prayer. Not generic - address God with the specific truths revealed in this devotion.
+3. scripture_text: The FULL KJV text of 3-5 verses
+4. christ_connection: 3-5 PARAGRAPHS (each 3-4 sentences) explaining how Christ is specifically revealed in this text. Show Christological depth across multiple angles - His work, character, mission, typology, and fulfillment.
+5. application: 3-5 PARAGRAPHS (each 3-4 sentences) with practical, heart-transforming application. Address different life situations, provide specific guidance, and connect to real struggles with real wisdom.
+6. memory_hook: 3-5 PARAGRAPHS (each 3-4 sentences) building an extended metaphor or mental image. Paint a vivid scene with sensory details, then draw out multiple spiritual parallels.
+7. prayer: 3-5 PARAGRAPHS (each 3-4 sentences) of heartfelt, text-specific prayer. Each paragraph should address a different aspect of the devotion's truth.
 
-EXAMPLE QUALITY for application:
-"In our own workplace struggles, where injustice or inefficiency test our spirit, the call is not to passive resignation but to active, trusting rest. Rather than reacting in anger or striving to control outcomes beyond our purview, we are invited to anchor our souls in God's ultimate sovereignty, allowing His divine rhythm to guide our responses."
+EXAMPLE of proper paragraph structure for christ_connection:
+"In this passage, we see Christ as the ultimate source of peace that transcends all earthly circumstances. The stillness He commands is not mere passivity, but the confident rest of one who knows the Father holds all things together. This is the same peace Jesus embodied when He slept through the storm on Galilee.
 
-EXAMPLE QUALITY for memory_hook:
-"Imagine a master weaver, meticulously interweaving threads of various colors and textures. From your perspective, some threads seem out of place, even chaotic. But the weaver sees the whole design, knowing that each thread, even the seemingly discordant ones, contributes to the breathtaking final tapestry. Your work situation is but a few threads in His grand design."
+Consider how the sanctuary language echoes here - the holy calm of the Most Holy Place where God's presence dwells. Christ, as our High Priest, invites us into that sacred stillness, covering us with His righteousness. The veil is torn; the way is open.
 
-EXAMPLE QUALITY for prayer:
-"Heavenly Father, grant us the grace to release the grip of anxiety and the urge to fix what You alone can mend. Imbue us with the quiet confidence of Christ, that we may rest in Your unfailing wisdom as we navigate the challenges of our daily work, trusting in Your perfect timing and ultimate justice. Amen."
+Furthermore, this text points forward to the ultimate 'stillness' of the grave that Christ entered on our behalf. He descended into death's chaos so that we might know eternal rest. His resurrection proves that no storm - not even death itself - can overcome the one who trusts in Him.
 
-Match this level of depth and substance in EVERY field.`;
+The Great Controversy theme emerges powerfully here. While Satan rages and kingdoms fall, God's throne remains unshaken. Christ's victory at Calvary ensures that those who are 'still' in Him will share in His ultimate triumph when He comes again."
+
+EVERY content field must follow this multi-paragraph pattern. Do NOT give brief responses.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -92,19 +94,19 @@ Match this level of depth and substance in EVERY field.`;
                   },
                   christ_connection: { 
                     type: "string", 
-                    description: "3-4 full sentences explaining how Christ is revealed in this text with theological depth" 
+                    description: "3-5 PARAGRAPHS (each 3-4 sentences) explaining how Christ is revealed in this text with deep theological insight from multiple angles" 
                   },
                   application: { 
                     type: "string", 
-                    description: "3-4 full sentences of practical, heart-transforming application rooted in the insight" 
+                    description: "3-5 PARAGRAPHS (each 3-4 sentences) of practical, heart-transforming application addressing different life situations" 
                   },
                   prayer: { 
                     type: "string", 
-                    description: "3-4 full sentences of heartfelt, text-specific prayer" 
+                    description: "3-5 PARAGRAPHS (each 3-4 sentences) of heartfelt, text-specific prayer addressing different aspects of the truth" 
                   },
                   memory_hook: { 
                     type: "string", 
-                    description: "3-4 sentence vivid, extended metaphor or mental image with sensory details" 
+                    description: "3-5 PARAGRAPHS (each 3-4 sentences) building an extended metaphor with vivid sensory details and spiritual parallels" 
                   },
                 },
                 required: ["title", "scripture_reference", "scripture_text", "christ_connection", "application", "prayer", "memory_hook"],
