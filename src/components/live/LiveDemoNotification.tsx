@@ -7,14 +7,14 @@ import { useNavigate } from "react-router-dom";
 import { playChallengeNotification } from "@/utils/notificationSound";
 
 export function LiveDemoNotification() {
-  const { activeSession, viewerCount, loading } = useLiveDemo();
+  const { activeSession, viewerCount, loading, isHost } = useLiveDemo();
   const [dismissed, setDismissed] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
   const navigate = useNavigate();
 
   // Play notification sound when session goes live
   useEffect(() => {
-    if (activeSession && !hasPlayed) {
+    if (activeSession && !hasPlayed && !isHost) {
       playChallengeNotification();
       setHasPlayed(true);
     }
@@ -22,9 +22,10 @@ export function LiveDemoNotification() {
       setHasPlayed(false);
       setDismissed(false);
     }
-  }, [activeSession, hasPlayed]);
+  }, [activeSession, hasPlayed, isHost]);
 
-  if (loading || !activeSession || dismissed) return null;
+  // Don't show notification for hosts - they have controls on the LiveDemo page
+  if (loading || !activeSession || dismissed || isHost) return null;
 
   return (
     <AnimatePresence>
