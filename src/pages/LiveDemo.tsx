@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Radio, Users, Mic, MicOff, Monitor, MonitorOff, ArrowLeft, MessageCircle, Send } from "lucide-react";
+import { Radio, Users, Mic, MicOff, Monitor, MonitorOff, Video, VideoOff, ArrowLeft, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,6 +24,7 @@ export default function LiveDemo() {
   const { activeSession, viewers, viewerCount, isHost, loading, startSession, endSession, joinSession, leaveSession } = useLiveDemo();
   
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [isCameraOn, setIsCameraOn] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -31,6 +32,7 @@ export default function LiveDemo() {
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const screenStreamRef = useRef<MediaStream | null>(null);
+  const cameraStreamRef = useRef<MediaStream | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
   const chatChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -93,10 +95,44 @@ export default function LiveDemo() {
       screenStreamRef.current.getTracks().forEach(track => track.stop());
       screenStreamRef.current = null;
     }
-    if (videoRef.current) {
+    if (videoRef.current && !isCameraOn) {
       videoRef.current.srcObject = null;
     }
     setIsScreenSharing(false);
+  };
+
+  // Host: Start camera sharing
+  const handleStartCamera = async () => {
+    try {
+      // Stop screen share if active
+      if (isScreenSharing) {
+        handleStopScreenShare();
+      }
+      
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false // Audio handled separately
+      });
+      
+      cameraStreamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setIsCameraOn(true);
+    } catch (error) {
+      console.error('Error starting camera:', error);
+    }
+  };
+
+  const handleStopCamera = () => {
+    if (cameraStreamRef.current) {
+      cameraStreamRef.current.getTracks().forEach(track => track.stop());
+      cameraStreamRef.current = null;
+    }
+    if (videoRef.current && !isScreenSharing) {
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraOn(false);
   };
 
   // Host: Toggle microphone
@@ -126,6 +162,7 @@ export default function LiveDemo() {
   // Host: End stream
   const handleEndStream = async () => {
     handleStopScreenShare();
+    handleStopCamera();
     if (audioStreamRef.current) {
       audioStreamRef.current.getTracks().forEach(track => track.stop());
     }
@@ -260,8 +297,18 @@ export default function LiveDemo() {
                   <Button
                     variant="outline"
                     size="icon"
+                    onClick={isCameraOn ? handleStopCamera : handleStartCamera}
+                    className={isCameraOn ? "bg-primary text-primary-foreground" : ""}
+                    title={isCameraOn ? "Stop Camera" : "Start Camera"}
+                  >
+                    {isCameraOn ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
                     onClick={isScreenSharing ? handleStopScreenShare : handleStartScreenShare}
                     className={isScreenSharing ? "bg-primary text-primary-foreground" : ""}
+                    title={isScreenSharing ? "Stop Screen Share" : "Share Screen"}
                   >
                     {isScreenSharing ? <Monitor className="w-4 h-4" /> : <MonitorOff className="w-4 h-4" />}
                   </Button>
@@ -285,12 +332,12 @@ export default function LiveDemo() {
               animate={{ opacity: 1, scale: 1 }}
               className="relative aspect-video bg-black rounded-xl overflow-hidden"
             >
-              {isScreenSharing ? (
+              {(isScreenSharing || isCameraOn) ? (
                 <video
                   ref={videoRef}
                   autoPlay
                   playsInline
-                  muted
+                  muted={!isCameraOn}
                   className="w-full h-full object-contain"
                 />
               ) : (
@@ -298,8 +345,8 @@ export default function LiveDemo() {
                   <div className="text-center text-white/60">
                     {isHost ? (
                       <>
-                        <Monitor className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                        <p>Click "Share Screen" to start sharing</p>
+                        <Video className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <p>Click the camera or screen share button to start</p>
                       </>
                     ) : (
                       <>
