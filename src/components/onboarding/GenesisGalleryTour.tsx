@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,7 @@ import { ChevronRight, ChevronLeft, Play, Sparkles, Eye, Building2 } from "lucid
 import { genesisImages } from "@/assets/24fps/genesis";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useEventTracking } from "@/hooks/useEventTracking";
 
 const TOUR_IMAGES = [
   { chapter: 1, title: "Creation", description: "Birthday Cake Earth — God creates the world in 6 days" },
@@ -26,6 +27,24 @@ export function GenesisGalleryTour({ onComplete, onSkip }: GenesisGalleryTourPro
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
   const totalSteps = TOUR_IMAGES.length + 1; // +1 for CTA step
+  const { trackEvent } = useEventTracking();
+
+  // Track tour start
+  useEffect(() => {
+    trackEvent({ eventType: "24fps_tour_started" });
+  }, []);
+
+  // Track step views
+  useEffect(() => {
+    if (step < TOUR_IMAGES.length) {
+      trackEvent({ 
+        eventType: "24fps_tour_step", 
+        eventData: { step, chapter: TOUR_IMAGES[step].chapter } 
+      });
+    } else {
+      trackEvent({ eventType: "24fps_tour_cta_shown" });
+    }
+  }, [step]);
 
   const handleNext = () => {
     if (step < totalSteps - 1) {
@@ -40,8 +59,14 @@ export function GenesisGalleryTour({ onComplete, onSkip }: GenesisGalleryTourPro
   };
 
   const handleStartChallenge = () => {
+    trackEvent({ eventType: "24fps_tour_completed", eventData: { action: "start_challenge" } });
     onComplete();
     navigate("/genesis-high-rise");
+  };
+
+  const handleSkipTour = () => {
+    trackEvent({ eventType: "24fps_tour_skipped", eventData: { step } });
+    onSkip();
   };
 
   const currentImage = TOUR_IMAGES[step];
@@ -55,7 +80,7 @@ export function GenesisGalleryTour({ onComplete, onSkip }: GenesisGalleryTourPro
               <Eye className="h-3 w-3 mr-1" />
               Genesis Gallery Tour
             </Badge>
-            <Button variant="ghost" size="sm" onClick={onSkip} className="text-muted-foreground">
+            <Button variant="ghost" size="sm" onClick={handleSkipTour} className="text-muted-foreground">
               Skip Tour
             </Button>
           </div>
