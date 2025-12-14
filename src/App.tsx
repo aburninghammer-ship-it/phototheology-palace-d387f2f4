@@ -26,6 +26,7 @@ import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { VoiceChatInviteNotification } from "@/components/voice/VoiceChatInviteNotification";
 import { PageTracker } from "@/components/PageTracker";
 import { DailyVerseNotification } from "@/components/notifications/DailyVerseNotification";
+import { LiveDemoNotification } from "@/components/live/LiveDemoNotification";
 import { DailyTipNotificationProvider } from "@/components/notifications/DailyTipNotification";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { ExitIntentPopup } from "@/components/conversion/ExitIntentPopup";
@@ -220,6 +221,7 @@ const PathWeek = lazy(() => import("./pages/PathWeek"));
 const Sessions = lazy(() => import("./pages/Sessions"));
 const Notes = lazy(() => import("./pages/Notes"));
 const DonationSuccess = lazy(() => import("./pages/DonationSuccess"));
+const LiveDemo = lazy(() => import("./pages/LiveDemo"));
 
 // GuestHouse pages (public)
 const GuestHouseLanding = lazy(() => import("./pages/guesthouse/GuestHouseLanding"));
@@ -269,6 +271,7 @@ function App() {
                         <AnnouncementBanner />
                         <VoiceChatInviteNotification />
                         <DailyVerseNotification />
+                        <LiveDemoNotification />
                         <DailyTipNotificationProvider />
                         <InstallPrompt />
                         <ExitIntentPopup />
@@ -514,6 +517,11 @@ function App() {
             <Route path="/sessions" element={
               <ProtectedRoute>
                 <Sessions />
+              </ProtectedRoute>
+            } />
+            <Route path="/live-demo" element={
+              <ProtectedRoute>
+                <LiveDemo />
               </ProtectedRoute>
             } />
             

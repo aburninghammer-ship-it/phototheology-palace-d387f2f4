@@ -3855,6 +3855,80 @@ export type Database = {
         }
         Relationships: []
       }
+      live_demo_sessions: {
+        Row: {
+          created_at: string
+          description: string | null
+          ended_at: string | null
+          host_id: string
+          id: string
+          scheduled_for: string | null
+          started_at: string | null
+          status: string
+          title: string
+          viewer_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          ended_at?: string | null
+          host_id: string
+          id?: string
+          scheduled_for?: string | null
+          started_at?: string | null
+          status?: string
+          title?: string
+          viewer_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          ended_at?: string | null
+          host_id?: string
+          id?: string
+          scheduled_for?: string | null
+          started_at?: string | null
+          status?: string
+          title?: string
+          viewer_count?: number | null
+        }
+        Relationships: []
+      }
+      live_demo_viewers: {
+        Row: {
+          display_name: string | null
+          id: string
+          joined_at: string
+          left_at: string | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          display_name?: string | null
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          display_name?: string | null
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_demo_viewers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "live_demo_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marriage_blueprint_progress: {
         Row: {
           article_id: number
