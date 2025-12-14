@@ -49,11 +49,18 @@ export const ShareDevotionalDialog = ({ plan, day, trigger, isPublicView }: Shar
     : `${window.location.origin}/devotionals/${plan.id}`;
 
   const getShareContent = () => {
-    const appInvite = "\n\n🎁 Get free access to personalized devotionals at Phototheology!";
+    const appLink = `${window.location.origin}`;
+    const appInvite = `\n\n---\n✨ Check out the Phototheology app: ${appLink}`;
+    
     if (day) {
-      return `📖 ${day.title}\n\n${day.scripture_reference}\n"${day.scripture_text}"\n\n✨ ${day.christ_connection}\n\nFrom: ${plan.title}${appInvite}`;
+      // Include full devotional content
+      const devotionalContent = day.devotional_text 
+        ? day.devotional_text 
+        : `${day.scripture_reference}\n"${day.scripture_text}"\n\n${day.christ_connection}`;
+      
+      return `📖 ${day.title}\n\n${devotionalContent}${appInvite}`;
     }
-    return `📘 ${plan.title}\n\nA ${plan.duration}-day devotional journey on: ${plan.theme}\n\nFormat: ${plan.format}\n\nJoin me on this spiritual journey!${appInvite}`;
+    return `📘 ${plan.title}\n\nA ${plan.duration}-day devotional journey on: ${plan.theme}\n\nJoin me on this spiritual journey!${appInvite}`;
   };
 
   const handleCopyLink = () => {
@@ -111,12 +118,14 @@ export const ShareDevotionalDialog = ({ plan, day, trigger, isPublicView }: Shar
   };
 
   const handleShareViaFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, "_blank");
+    // Facebook only supports URL sharing - use Copy Content for full text
+    const quote = encodeURIComponent(day ? `📖 ${day.title} - Check out the Phototheology app!` : `📘 ${plan.title}`);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${quote}`, "_blank");
   };
 
   const handleShareViaWhatsApp = () => {
-    const text = encodeURIComponent(getShareContent() + `\n\n${shareUrl}`);
-    window.open(`https://wa.me/?text=${text}`, "_blank");
+    const text = encodeURIComponent(getShareContent());
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
 
   return (
