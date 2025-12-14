@@ -21,7 +21,7 @@ interface ChatMessage {
 export default function LiveDemo() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { activeSession, viewers, viewerCount, isHost, startSession, endSession, joinSession, leaveSession } = useLiveDemo();
+  const { activeSession, viewers, viewerCount, isHost, loading, startSession, endSession, joinSession, leaveSession } = useLiveDemo();
   
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -172,6 +172,21 @@ export default function LiveDemo() {
               You need to be signed in to watch live demonstrations.
             </p>
             <Button onClick={() => navigate('/auth')}>Sign In</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-6 text-center">
+            <Radio className="w-12 h-12 mx-auto mb-4 text-muted-foreground animate-pulse" />
+            <h2 className="text-xl font-semibold mb-2">Loading...</h2>
+            <p className="text-muted-foreground">Checking for live sessions...</p>
           </CardContent>
         </Card>
       </div>
