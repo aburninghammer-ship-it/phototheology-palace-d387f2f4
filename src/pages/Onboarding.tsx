@@ -126,11 +126,11 @@ export default function Onboarding() {
       
       toast({
         title: "Welcome to Phototheology! 🎉",
-        description: "Let's start your journey in the Story Room",
+        description: "Let's start with 24FPS — SEE the Bible in images",
       });
       
-      // Navigate to Story Room for quick win
-      navigate("/palace/floor/1/room/sr");
+      // Navigate to 24FPS Room for visual first win
+      navigate("/palace/floor/1/room/24fps");
     } catch (error) {
       console.error("Error saving onboarding:", error);
       toast({
@@ -434,23 +434,23 @@ export default function Onboarding() {
                 <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center mb-4 animate-pulse">
                   <Target className="h-10 w-10 text-white" />
                 </div>
-                <h3 className="text-3xl font-bold mb-2">Your First Quick Win!</h3>
+                <h3 className="text-3xl font-bold mb-2">SEE the Bible First</h3>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                  Let's start with the <strong>Story Room</strong> on Floor 1. You'll learn to break down 
-                  any Bible story into 3-7 memorable "beats" - like movie frames.
+                  Let's start with the <strong>24FPS Room</strong> — where you learn to see each Bible chapter 
+                  as one unforgettable image. This is the foundation of Phototheology.
                 </p>
               </div>
 
               <div className="bg-muted/50 rounded-lg p-6 space-y-4">
-                <h4 className="font-semibold text-lg">What you'll do:</h4>
+                <h4 className="font-semibold text-lg">What you'll experience:</h4>
                 <div className="space-y-3">
                   <div className="flex gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <span className="text-sm font-bold text-primary">1</span>
                     </div>
                     <div>
-                      <p className="font-medium">Pick a story</p>
-                      <p className="text-sm text-muted-foreground">Choose from Joseph, David & Goliath, or Daniel in the lions' den</p>
+                      <p className="font-medium">See the Genesis Gallery</p>
+                      <p className="text-sm text-muted-foreground">50 illustrated frames — one image per chapter of Genesis</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
@@ -458,8 +458,8 @@ export default function Onboarding() {
                       <span className="text-sm font-bold text-primary">2</span>
                     </div>
                     <div>
-                      <p className="font-medium">Break it into beats</p>
-                      <p className="text-sm text-muted-foreground">Write 3-7 punchy words that capture the key moments</p>
+                      <p className="font-medium">Take the Genesis High Rise Challenge</p>
+                      <p className="text-sm text-muted-foreground">Match images to chapters — start with just 7 floors (Day 1)</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
@@ -467,8 +467,8 @@ export default function Onboarding() {
                       <span className="text-sm font-bold text-primary">3</span>
                     </div>
                     <div>
-                      <p className="font-medium">Get feedback</p>
-                      <p className="text-sm text-muted-foreground">Our AI assistant Jeeves will guide you</p>
+                      <p className="font-medium">Earn your First Win badge</p>
+                      <p className="text-sm text-muted-foreground">Complete Day 1 and unlock the Story Room</p>
                     </div>
                   </div>
                 </div>
@@ -476,8 +476,8 @@ export default function Onboarding() {
 
               <div className="bg-primary/5 border-l-4 border-primary p-4 rounded">
                 <p className="text-sm">
-                  <strong>Pro tip:</strong> This will take about 5 minutes. Once you complete it, 
-                  you'll have the foundation for memorizing any Bible story!
+                  <strong>Why start here?</strong> Once you can SEE the Bible in images, 
+                  organizing and remembering stories becomes natural. This is the Phototheology superpower.
                 </p>
               </div>
 
@@ -487,7 +487,7 @@ export default function Onboarding() {
                   Back
                 </Button>
                 <Button onClick={handleComplete} size="lg" className="shadow-lg">
-                  Start Story Room
+                  Start 24FPS Room
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>

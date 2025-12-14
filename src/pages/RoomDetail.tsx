@@ -46,6 +46,8 @@ import { useRoomTour } from "@/hooks/useRoomTour";
 import { PathRoomExercises, ReturnToPathBanner } from "@/components/path";
 import { RoomCard } from "@/components/palace/RoomCard";
 import { getCardImage } from "@/data/cardImages";
+import { GenesisGalleryTour } from "@/components/onboarding/GenesisGalleryTour";
+import { use24FPSTour } from "@/hooks/use24FPSTour";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -79,9 +81,12 @@ export default function RoomDetail() {
   const [showOnboardingGuide, setShowOnboardingGuide] = useState(true);
   const [activeTab, setActiveTab] = useState("learn");
   
-  // Check if this is the first room visit after onboarding (Story Room)
-  const isFirstRoomVisit = Number(floorNumber) === 1 && roomId === "sr" && 
-    !localStorage.getItem("onboarding_guide_sr");
+  // Check if this is the first room visit after onboarding (now 24FPS Room)
+  const isFirstRoomVisit = Number(floorNumber) === 1 && roomId === "24fps" && 
+    !localStorage.getItem("onboarding_guide_24fps");
+  
+  // 24FPS Gallery Tour for onboarding
+  const { showTour: show24FPSTour, completeTour: complete24FPSTour, skipTour: skip24FPSTour } = use24FPSTour();
   
   // Show Quick Start by default for ALL rooms that have quick starts defined
   const showQuickStart = room && QUICK_START_ROOMS.has(room.id);
@@ -181,8 +186,16 @@ export default function RoomDetail() {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Navigation />
+      {/* Genesis Gallery Tour for 24FPS onboarding */}
+      {show24FPSTour && roomId === "24fps" && (
+        <GenesisGalleryTour
+          onComplete={complete24FPSTour}
+          onSkip={skip24FPSTour}
+        />
+      )}
+      
       {/* Room Tour for first-time visitors */}
-      {showRoomTour && room && floor && (
+      {showRoomTour && room && floor && !show24FPSTour && (
         <RoomTour
           room={room}
           floorNumber={floor.number}
