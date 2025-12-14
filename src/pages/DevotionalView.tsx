@@ -435,27 +435,27 @@ export default function DevotionalView() {
             </TabsList>
 
             <TabsContent value="journal" className="space-y-4 mt-4">
-              {/* Journal Prompt */}
-              {currentDay.journal_prompt && (
-                <Card className="border-pink-200 dark:border-pink-800 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/30">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2 text-pink-700 dark:text-pink-300">
-                      <MessageSquare className="h-4 w-4" />
-                      Reflection Question
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+              {/* Journal Section - Always visible */}
+              <Card className="border-pink-200 dark:border-pink-800 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/30">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2 text-pink-700 dark:text-pink-300">
+                    <MessageSquare className="h-4 w-4" />
+                    {currentDay.journal_prompt ? "Reflection Question" : "Your Journal"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {currentDay.journal_prompt && (
                     <p className="mb-4 text-pink-900 dark:text-pink-100 font-medium">{currentDay.journal_prompt}</p>
-                    <Textarea
-                      placeholder="Write your reflection..."
-                      value={journalEntry}
-                      onChange={(e) => setJournalEntry(e.target.value)}
-                      className="min-h-[120px] border-pink-200 dark:border-pink-800 focus:ring-pink-500"
-                      disabled={isCompleted}
-                    />
-                  </CardContent>
-                </Card>
-              )}
+                  )}
+                  <Textarea
+                    placeholder={currentDay.journal_prompt ? "Write your reflection..." : "Write your thoughts, prayers, or insights from today's devotion..."}
+                    value={journalEntry}
+                    onChange={(e) => setJournalEntry(e.target.value)}
+                    className="min-h-[150px] border-pink-200 dark:border-pink-800 focus:ring-pink-500"
+                    disabled={isCompleted}
+                  />
+                </CardContent>
+              </Card>
 
               {/* Rating */}
               {!isCompleted && (
