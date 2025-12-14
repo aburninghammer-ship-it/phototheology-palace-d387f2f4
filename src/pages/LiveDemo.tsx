@@ -165,9 +165,6 @@ export default function LiveDemo() {
         testStreamRef.current.getTracks().forEach(track => track.stop());
         testStreamRef.current = null;
       }
-      if (testVideoRef.current) {
-        testVideoRef.current.srcObject = null;
-      }
       setIsTestingCamera(false);
     } else {
       // Start test
@@ -177,15 +174,19 @@ export default function LiveDemo() {
           audio: true
         });
         testStreamRef.current = stream;
-        if (testVideoRef.current) {
-          testVideoRef.current.srcObject = stream;
-        }
         setIsTestingCamera(true);
       } catch (error) {
         console.error('Error testing camera:', error);
       }
     }
   };
+
+  // Attach test stream to video element when testing starts
+  useEffect(() => {
+    if (isTestingCamera && testVideoRef.current && testStreamRef.current) {
+      testVideoRef.current.srcObject = testStreamRef.current;
+    }
+  }, [isTestingCamera]);
 
   // Host: Go live
   const handleGoLive = async () => {
