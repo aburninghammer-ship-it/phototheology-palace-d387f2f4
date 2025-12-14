@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import { useEventTracking } from "@/hooks/useEventTracking";
 
 type OnboardingStep = "welcome" | "discovery" | "role" | "tutorial" | "quick-win" | "complete";
 
@@ -48,6 +49,24 @@ export default function Onboarding() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { trackOnboardingStep, trackEvent } = useEventTracking();
+
+  // Track onboarding start
+  useEffect(() => {
+    trackEvent({ eventType: "onboarding_started" });
+  }, []);
+
+  // Track step changes
+  useEffect(() => {
+    const stepNumber = 
+      step === "welcome" ? 1 :
+      step === "discovery" ? 2 :
+      step === "role" ? 3 :
+      step === "tutorial" ? 4 + tutorialIndex :
+      step === "quick-win" ? 7 :
+      8;
+    trackOnboardingStep(stepNumber, step);
+  }, [step, tutorialIndex]);
 
   const tutorialSteps = [
     {

@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RevenueDashboard } from "@/components/admin/RevenueDashboard";
 
 interface SubscriptionStats {
   totalPaid: number;
@@ -221,97 +223,110 @@ export default function AdminSubscriptions() {
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Paid Users</CardTitle>
-            <CardDescription>Active paying subscribers</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{stats.totalPaid}</div>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="revenue">Revenue & Churn</TabsTrigger>
+        </TabsList>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Free Tier</CardTitle>
-            <CardDescription>Users on free plan</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{stats.totalFree}</div>
-          </CardContent>
-        </Card>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Total Paid Users</CardTitle>
+                <CardDescription>Active paying subscribers</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-4xl font-bold">{stats.totalPaid}</div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Trial Users</CardTitle>
-            <CardDescription>Currently in trial period</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{stats.totalTrial}</div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Free Tier</CardTitle>
+                <CardDescription>Users on free plan</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-4xl font-bold">{stats.totalFree}</div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Lifetime Access</CardTitle>
-            <CardDescription>Users with lifetime premium</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{stats.totalLifetime}</div>
-          </CardContent>
-        </Card>
-      </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Trial Users</CardTitle>
+                <CardDescription>Currently in trial period</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-4xl font-bold">{stats.totalTrial}</div>
+              </CardContent>
+            </Card>
 
-      <div className="grid gap-6 md:grid-cols-2 mb-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Individual Subscriptions by Tier</CardTitle>
-            <CardDescription>Breakdown of subscription tiers</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Essential</span>
-              <span className="text-2xl font-bold">{stats.byTier.essential}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Premium</span>
-              <span className="text-2xl font-bold">{stats.byTier.premium}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Student</span>
-              <span className="text-2xl font-bold">{stats.byTier.student}</span>
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Lifetime Access</CardTitle>
+                <CardDescription>Users with lifetime premium</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-4xl font-bold">{stats.totalLifetime}</div>
+              </CardContent>
+            </Card>
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Church Subscriptions</CardTitle>
-            <CardDescription>Active church accounts and seats</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Total Churches</span>
-              <span className="text-2xl font-bold">{stats.totalChurches}</span>
-            </div>
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tier 1 Seats (30)</span>
-                <span className="font-medium">{stats.churchSeats.tier1}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tier 2 Seats (100)</span>
-                <span className="font-medium">{stats.churchSeats.tier2}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tier 3 Seats (Unlimited)</span>
-                <span className="font-medium">{stats.churchSeats.tier3}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Individual Subscriptions by Tier</CardTitle>
+                <CardDescription>Breakdown of subscription tiers</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Essential</span>
+                  <span className="text-2xl font-bold">{stats.byTier.essential}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Premium</span>
+                  <span className="text-2xl font-bold">{stats.byTier.premium}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Student</span>
+                  <span className="text-2xl font-bold">{stats.byTier.student}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Church Subscriptions</CardTitle>
+                <CardDescription>Active church accounts and seats</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Total Churches</span>
+                  <span className="text-2xl font-bold">{stats.totalChurches}</span>
+                </div>
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Tier 1 Seats (30)</span>
+                    <span className="font-medium">{stats.churchSeats.tier1}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Tier 2 Seats (100)</span>
+                    <span className="font-medium">{stats.churchSeats.tier2}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Tier 3 Seats (Unlimited)</span>
+                    <span className="font-medium">{stats.churchSeats.tier3}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="revenue">
+          <RevenueDashboard />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
