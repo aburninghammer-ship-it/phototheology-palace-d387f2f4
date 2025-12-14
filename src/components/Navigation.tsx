@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target, StickyNote } from "lucide-react";
+import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target, StickyNote, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { EnhancedMobileDrawer } from "@/components/EnhancedMobileDrawer";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useDirectMessagesContext } from "@/contexts/DirectMessagesContext";
@@ -27,6 +28,7 @@ import {
 export const Navigation = () => {
   const { user, signOut, loading } = useAuth();
   const { activeCount } = useActiveUsers();
+  const { isAdmin } = useIsAdmin();
   const { toggleSidebar } = useSidebar();
   const { conversations } = useDirectMessagesContext();
   
@@ -81,6 +83,21 @@ export const Navigation = () => {
               <GlobalSearch />
               <PWAInstallButton />
               <ThemeToggle />
+              
+              {/* Admin-only Live Demo Link */}
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="hidden md:flex text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                >
+                  <Link to="/live-demo">
+                    <Radio className="h-4 w-4 mr-1" />
+                    <span>Live</span>
+                  </Link>
+                </Button>
+              )}
               
               {/* Live User Count - Always Visible */}
               <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
