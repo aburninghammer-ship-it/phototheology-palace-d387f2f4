@@ -25,6 +25,57 @@ import { toast } from "sonner";
 import { Verse } from "@/types/bible";
 import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 
+// Mobile-friendly download function
+const downloadAudioFile = async (blob: Blob, filename: string): Promise<boolean> => {
+  try {
+    // Check if we can use the native share API with files (mobile)
+    if (navigator.share && navigator.canShare) {
+      const file = new File([blob], filename, { type: 'audio/wav' });
+      const shareData = { files: [file], title: filename };
+      
+      if (navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        return true;
+      }
+    }
+
+    // Fallback: Create object URL and trigger download
+    const url = URL.createObjectURL(blob);
+    
+    // For iOS Safari and some mobile browsers, open in new tab
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isIOS) {
+      // iOS Safari: Open audio in new tab for user to save
+      window.open(url, '_blank');
+      toast.info("Tap and hold the audio to save it to your device", { duration: 5000 });
+      return true;
+    }
+    
+    // Standard download for desktop and Android
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    
+    // Use click() for most browsers
+    a.click();
+    
+    // Cleanup after a delay to ensure download starts
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
+    
+    return true;
+  } catch (error) {
+    console.error("Download error:", error);
+    return false;
+  }
+};
+
 // System ambient tracks
 const AMBIENT_TRACKS = [
   { id: "none", name: "No Music", url: "" },
@@ -132,18 +183,18 @@ export const ExportBibleAudioDialog = ({
       setGenerationProgress(100);
       setGenerationStatus("Download ready!");
 
-      // Download
-      const url = URL.createObjectURL(mixedBlob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${book}-${chapter}.wav`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Create filename
+      const filename = `${book}-${chapter}.wav`;
 
-      toast.success(`Downloaded ${book} ${chapter} audio!`);
-      onOpenChange(false);
+      // Try mobile-friendly download methods
+      const downloaded = await downloadAudioFile(mixedBlob, filename);
+      
+      if (downloaded) {
+        toast.success(`Downloaded ${book} ${chapter} audio!`);
+        onOpenChange(false);
+      } else {
+        toast.error("Download failed. Please try again.");
+      }
     } catch (error) {
       console.error("Export error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to export audio");
