@@ -50,17 +50,78 @@ export const ShareDevotionalDialog = ({ plan, day, trigger, isPublicView }: Shar
 
   const getShareContent = () => {
     const appLink = `${window.location.origin}`;
-    const appInvite = `\n\n---\n✨ Check out the Phototheology app: ${appLink}`;
+    const divider = "═".repeat(20);
     
     if (day) {
-      // Include full devotional content
-      const devotionalContent = day.devotional_text 
-        ? day.devotional_text 
-        : `${day.scripture_reference}\n"${day.scripture_text}"\n\n${day.christ_connection}`;
+      // Beautified devotional content with emojis and spacing
+      const parts: string[] = [];
       
-      return `📖 ${day.title}\n\n${devotionalContent}${appInvite}`;
+      // Header
+      parts.push(`✨ ${day.title} ✨`);
+      parts.push("");
+      
+      // Scripture reference
+      if (day.scripture_reference) {
+        parts.push(`📖 ${day.scripture_reference}`);
+      }
+      
+      // Scripture text
+      if (day.scripture_text) {
+        parts.push("");
+        parts.push(`"${day.scripture_text}"`);
+      }
+      
+      parts.push("");
+      parts.push(divider);
+      
+      // Main devotional content or Christ connection
+      if (day.devotional_text) {
+        parts.push("");
+        parts.push("💭 Today's Reflection:");
+        parts.push("");
+        parts.push(day.devotional_text);
+      } else if (day.christ_connection) {
+        parts.push("");
+        parts.push("✝️ Christ Connection:");
+        parts.push("");
+        parts.push(day.christ_connection);
+      }
+      
+      // Memory hook if present
+      if (day.memory_hook) {
+        parts.push("");
+        parts.push(divider);
+        parts.push("");
+        parts.push(`🧠 Remember: "${day.memory_hook}"`);
+      }
+      
+      // App invite
+      parts.push("");
+      parts.push(divider);
+      parts.push("");
+      parts.push("🌟 Get your own daily devotionals:");
+      parts.push(`📱 ${appLink}`);
+      
+      return parts.join("\n");
     }
-    return `📘 ${plan.title}\n\nA ${plan.duration}-day devotional journey on: ${plan.theme}\n\nJoin me on this spiritual journey!${appInvite}`;
+    
+    // Plan-level share (no specific day)
+    const planParts: string[] = [];
+    planParts.push(`📘 ${plan.title}`);
+    planParts.push("");
+    planParts.push(divider);
+    planParts.push("");
+    planParts.push(`🎯 Theme: ${plan.theme}`);
+    planParts.push(`📅 Duration: ${plan.duration} days`);
+    planParts.push("");
+    planParts.push("Join me on this spiritual journey!");
+    planParts.push("");
+    planParts.push(divider);
+    planParts.push("");
+    planParts.push("🌟 Get Phototheology Free:");
+    planParts.push(`📱 ${appLink}`);
+    
+    return planParts.join("\n");
   };
 
   const handleCopyLink = () => {
