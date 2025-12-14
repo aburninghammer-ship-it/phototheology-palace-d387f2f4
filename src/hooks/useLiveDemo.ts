@@ -231,16 +231,72 @@ export function useLiveDemo() {
     }
   }, [activeSession, isHost, viewers.length, toast]);
 
+  // Host: Delete a session (only ended sessions)
+  const deleteSession = useCallback(async (sessionId: string) => {
+    if (!user || !isHost) return false;
+
+    try {
+      // First delete viewers
+      await supabase
+        .from('live_demo_viewers')
+        .delete()
+        .eq('session_id', sessionId);
+
+      // Then delete the session
+      const { error } = await supabase
+        .from('live_demo_sessions')
+        .delete()
+        .eq('id', sessionId)
+        .eq('status', 'ended'); // Only allow deleting ended sessions
+
+      if (error) throw error;
+
+      toast({ title: "Session deleted" });
+      return true;
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      toast({ title: "Failed to delete session", variant: "destructive" });
+      return false;
+    }
+  }, [user, isHost, toast]);
+
+  // Get past sessions for host
+  const [pastSessions, setPastSessions] = useState<LiveDemoSession[]>([]);
+  
+  const fetchPastSessions = useCallback(async () => {
+    if (!isHost) return;
+    
+    const { data } = await supabase
+      .from('live_demo_sessions')
+      .select('*')
+      .eq('status', 'ended')
+      .order('ended_at', { ascending: false })
+      .limit(10);
+    
+    if (data) {
+      setPastSessions(data as LiveDemoSession[]);
+    }
+  }, [isHost]);
+
+  useEffect(() => {
+    if (isHost) {
+      fetchPastSessions();
+    }
+  }, [isHost, fetchPastSessions]);
+
   return {
     activeSession,
     viewers,
     viewerCount: viewers.length,
     isHost,
     loading,
+    pastSessions,
     joinSession,
     leaveSession,
     startSession,
     endSession,
+    deleteSession,
+    fetchPastSessions,
     refresh: checkActiveSession
   };
 }

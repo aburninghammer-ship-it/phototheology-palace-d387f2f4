@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Radio, Users, Mic, MicOff, Monitor, MonitorOff, Video, VideoOff, ArrowLeft, MessageCircle, Send } from "lucide-react";
+import { Radio, Users, Mic, MicOff, Monitor, MonitorOff, Video, VideoOff, ArrowLeft, MessageCircle, Send, Trash2, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,7 +21,7 @@ interface ChatMessage {
 export default function LiveDemo() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { activeSession, viewers, viewerCount, isHost, loading, startSession, endSession, joinSession, leaveSession } = useLiveDemo();
+  const { activeSession, viewers, viewerCount, isHost, loading, pastSessions, startSession, endSession, deleteSession, fetchPastSessions, joinSession, leaveSession } = useLiveDemo();
   
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
@@ -377,30 +377,70 @@ export default function LiveDemo() {
               </Card>
             )}
 
+            {/* Past Sessions (Host only, when not live) */}
+            {isHost && !activeSession && pastSessions.length > 0 && (
+              <Card>
+                <CardContent className="p-4">
+                  <h3 className="font-medium mb-3 flex items-center gap-2">
+                    <History className="w-4 h-4" />
+                    Past Sessions
+                  </h3>
+                  <div className="space-y-2">
+                    {pastSessions.map((session) => (
+                      <div
+                        key={session.id}
+                        className="flex items-center justify-between p-2 bg-muted rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium text-sm">{session.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {session.viewer_count} viewers • {new Date(session.started_at || '').toLocaleDateString()}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={async () => {
+                            const success = await deleteSession(session.id);
+                            if (success) fetchPastSessions();
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Viewers list */}
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-medium mb-3 flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  Viewers ({viewerCount})
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {viewers.slice(0, 20).map((viewer, i) => (
-                    <div
-                      key={viewer.user_id || i}
-                      className="px-3 py-1 bg-muted rounded-full text-sm"
-                    >
-                      {viewer.display_name || 'Anonymous'}
-                    </div>
-                  ))}
-                  {viewerCount > 20 && (
-                    <div className="px-3 py-1 bg-muted rounded-full text-sm text-muted-foreground">
-                      +{viewerCount - 20} more
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            {activeSession && (
+              <Card>
+                <CardContent className="p-4">
+                  <h3 className="font-medium mb-3 flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Viewers ({viewerCount})
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {viewers.slice(0, 20).map((viewer, i) => (
+                      <div
+                        key={viewer.user_id || i}
+                        className="px-3 py-1 bg-muted rounded-full text-sm"
+                      >
+                        {viewer.display_name || 'Anonymous'}
+                      </div>
+                    ))}
+                    {viewerCount > 20 && (
+                      <div className="px-3 py-1 bg-muted rounded-full text-sm text-muted-foreground">
+                        +{viewerCount - 20} more
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Chat sidebar */}
