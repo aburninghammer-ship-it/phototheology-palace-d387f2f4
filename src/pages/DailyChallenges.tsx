@@ -78,15 +78,18 @@ const DailyChallenges = () => {
     const timeSpent = Math.floor((Date.now() - startTime) / 1000); // seconds
 
     try {
+      // Use upsert to allow updating existing submissions
       const { error } = await supabase
         .from("challenge_submissions")
-        .insert({
+        .upsert({
           challenge_id: dailyChallenge.id,
           user_id: user.id,
           content: JSON.stringify(submissionData),
           submission_data: submissionData,
           principle_applied: submissionData.principle_applied,
           time_spent: timeSpent,
+        }, {
+          onConflict: 'challenge_id,user_id'
         });
 
       if (error) throw error;
