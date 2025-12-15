@@ -239,218 +239,216 @@ const Gatehouse = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-12 max-w-5xl">
-        {/* Header */}
+      <main className="container mx-auto px-4 py-12 max-w-4xl">
+        {/* The Choice - Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">
-            Two Ways to Study the Bible
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
+            The Choice
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Most people never see the difference.
+          <p className="text-xl text-muted-foreground">
+            You are standing at a threshold.
+          </p>
+          <p className="text-lg text-muted-foreground mt-2">
+            What you do next will determine how you study Scripture from this point forward.
           </p>
         </motion.div>
 
-        {/* The Two Paths - Matrix-inspired */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {/* Surface Study Path - Blue Pill */}
+        {/* The Two Paths - Glass Cards */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          {/* Surface Study Path - Blue Glass */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
             <Card 
-              className={`relative p-8 h-full cursor-pointer transition-all duration-300 overflow-hidden ${
+              className={`relative p-8 h-full cursor-pointer transition-all duration-500 overflow-hidden backdrop-blur-sm ${
                 selectedPath === 'surface' 
-                  ? 'border-2 border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.3)]' 
-                  : 'border border-blue-500/20 hover:border-blue-400/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]'
+                  ? 'border-2 border-blue-400 shadow-[0_0_40px_rgba(59,130,246,0.4),inset_0_0_30px_rgba(59,130,246,0.1)]' 
+                  : 'border border-blue-500/30 hover:border-blue-400/60 shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_35px_rgba(59,130,246,0.35)]'
               }`}
               style={{
-                background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(217 91% 20% / 0.3) 100%)',
+                background: 'linear-gradient(145deg, rgba(30,58,138,0.15) 0%, rgba(30,64,175,0.08) 50%, rgba(59,130,246,0.05) 100%)',
               }}
               onClick={() => setSelectedPath('surface')}
             >
-              {/* Glass reflection effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-blue-900/20 pointer-events-none" />
-              <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-blue-400/5 to-transparent pointer-events-none" />
+              {/* Glass reflection effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/15 via-blue-500/5 to-blue-900/20 pointer-events-none" />
+              <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-blue-300/10 via-blue-400/5 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-1/4 bg-gradient-to-t from-blue-900/20 to-transparent pointer-events-none" />
+              {/* Glow edge */}
+              <div className="absolute inset-0 rounded-lg shadow-[inset_0_1px_1px_rgba(147,197,253,0.3)] pointer-events-none" />
               
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 rounded-full bg-blue-500/20 border border-blue-400/30">
+                  <div className="p-3 rounded-full bg-blue-500/20 border border-blue-400/40 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
                     <BookOpen className="h-6 w-6 text-blue-400" />
                   </div>
-                  <h2 className="text-2xl font-serif font-semibold">Surface Study</h2>
+                  <h2 className="text-2xl font-serif font-semibold text-blue-100">Remain at the Surface</h2>
                 </div>
 
-                <ul className="space-y-3 text-muted-foreground mb-6">
-                  <li className="flex items-start gap-2">
-                    <Heart className="h-5 w-5 mt-0.5 text-blue-400/70" />
-                    <span>Read devotionals</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Heart className="h-5 w-5 mt-0.5 text-blue-400/70" />
-                    <span>Follow familiar interpretations</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Heart className="h-5 w-5 mt-0.5 text-blue-400/70" />
-                    <span>Stay in comfort</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Heart className="h-5 w-5 mt-0.5 text-blue-400/70" />
-                    <span>Consume Scripture</span>
-                  </li>
-                </ul>
-
-                <blockquote className="border-l-2 border-blue-400/30 pl-4 italic text-muted-foreground text-sm">
-                  "Ever learning, and never able to come to the knowledge of the truth"
-                  <footer className="mt-1 text-xs">— 2 Timothy 3:7</footer>
-                </blockquote>
-
-                <p className="mt-6 text-sm text-blue-300/60">
-                  This is not condemnation—just reality.
-                </p>
+                <div className="space-y-4 text-blue-200/80 text-sm leading-relaxed">
+                  <p>You may continue as you are.</p>
+                  <p>
+                    You will still read the Bible.<br />
+                    You will still find comfort.<br />
+                    You will still hear familiar truths.
+                  </p>
+                  <p className="text-blue-300/60 italic">
+                    You will stay where most remain—<br />
+                    moving verse to verse, devotion to devotion,<br />
+                    never quite seeing how it all fits together.
+                  </p>
+                  <p className="text-blue-400/70 font-medium mt-4">
+                    Nothing will change.
+                  </p>
+                </div>
               </div>
             </Card>
           </motion.div>
 
-          {/* Palace Path - Red Pill */}
+          {/* Palace Path - Red Glass */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
             <Card 
-              className={`relative p-8 h-full cursor-pointer transition-all duration-300 overflow-hidden ${
+              className={`relative p-8 h-full cursor-pointer transition-all duration-500 overflow-hidden backdrop-blur-sm ${
                 selectedPath === 'palace' 
-                  ? 'border-2 border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)]' 
-                  : 'border border-red-500/20 hover:border-red-500/50 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)]'
+                  ? 'border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.4),inset_0_0_30px_rgba(239,68,68,0.1)]' 
+                  : 'border border-red-500/30 hover:border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.2)] hover:shadow-[0_0_35px_rgba(239,68,68,0.35)]'
               }`}
               style={{
-                background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(0 70% 20% / 0.3) 100%)',
+                background: 'linear-gradient(145deg, rgba(127,29,29,0.15) 0%, rgba(153,27,27,0.08) 50%, rgba(239,68,68,0.05) 100%)',
               }}
               onClick={() => setSelectedPath('palace')}
             >
-              {/* Glass reflection effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-900/20 pointer-events-none" />
-              <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-red-400/5 to-transparent pointer-events-none" />
+              {/* Glass reflection effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-red-400/15 via-red-500/5 to-red-900/20 pointer-events-none" />
+              <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-red-300/10 via-red-400/5 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-1/4 bg-gradient-to-t from-red-900/20 to-transparent pointer-events-none" />
+              {/* Glow edge */}
+              <div className="absolute inset-0 rounded-lg shadow-[inset_0_1px_1px_rgba(252,165,165,0.3)] pointer-events-none" />
               
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 rounded-full bg-red-500/20 border border-red-400/30">
+                  <div className="p-3 rounded-full bg-red-500/20 border border-red-400/40 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
                     <Castle className="h-6 w-6 text-red-400" />
                   </div>
-                  <h2 className="text-2xl font-serif font-semibold">Enter the Palace</h2>
+                  <h2 className="text-2xl font-serif font-semibold text-red-100">Enter the Palace</h2>
                 </div>
 
-                <ul className="space-y-3 text-foreground mb-6">
-                  <li className="flex items-start gap-2">
-                    <Brain className="h-5 w-5 mt-0.5 text-red-400" />
-                    <span>Build Scripture systematically</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Brain className="h-5 w-5 mt-0.5 text-red-400" />
-                    <span>See patterns across Genesis → Revelation</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Sword className="h-5 w-5 mt-0.5 text-red-400" />
-                    <span>Train discernment</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Sword className="h-5 w-5 mt-0.5 text-red-400" />
-                    <span>Become a workman, not just a reader</span>
-                  </li>
-                </ul>
-
-                <blockquote className="border-l-2 border-red-400/50 pl-4 italic text-foreground text-sm">
-                  "Study to shew thyself approved unto God, a workman that needeth not to be ashamed"
-                  <footer className="mt-1 text-xs text-muted-foreground">— 2 Timothy 2:15</footer>
-                </blockquote>
+                <div className="space-y-4 text-red-200/80 text-sm leading-relaxed">
+                  <p>Or—you may step inside.</p>
+                  <p>
+                    Beyond this point, the Bible will no longer appear flat.<br />
+                    Patterns will emerge.<br />
+                    Connections will form.<br />
+                    What once seemed distant will begin to speak across time.
+                  </p>
+                  <p className="text-red-300/70 italic">
+                    This is not passive study.<br />
+                    This is not entertainment.<br />
+                    This is not for the hurried or the casual.
+                  </p>
+                  <p className="text-red-400 font-medium mt-4">
+                    Once you enter, you cannot unsee what you will see.
+                  </p>
+                </div>
               </div>
             </Card>
           </motion.div>
         </div>
 
-        {/* Warning Section */}
+        {/* Understanding Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mb-12"
+          className="mb-16"
         >
-          <Card className="p-6 border-red-500/30 bg-red-500/5">
-            <div className="flex items-start gap-4">
-              <AlertTriangle className="h-6 w-6 text-red-400 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Before You Enter</h3>
-                <p className="text-muted-foreground mb-4">
-                  This is not a shortcut. Not entertainment. Not passive devotion.
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  <strong className="text-foreground">The Palace requires:</strong> Thinking. Patience. Discipline. Humility.
-                </p>
-                <p className="text-xs text-muted-foreground mt-2 italic">
-                  Jesus warned first, then invited (Luke 14:28).
-                </p>
-              </div>
+          <Card className="p-8 border-muted/50 bg-card/50 backdrop-blur-sm">
+            <h3 className="text-xl font-serif font-semibold mb-6 text-center">Understand This Clearly</h3>
+            <div className="space-y-4 text-muted-foreground text-center max-w-2xl mx-auto">
+              <p>
+                Entering the Palace will change how you read.<br />
+                How you think.<br />
+                How you discern truth from error.
+              </p>
+              <p className="text-foreground/80">
+                There is no pressure to proceed.<br />
+                There is no shame in remaining where you are.
+              </p>
+              <p className="italic text-primary/80">
+                But the door will not always feel this close.
+              </p>
             </div>
           </Card>
         </motion.div>
 
-        {/* What the Palace Is */}
+        {/* The Final Choice */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mb-12"
+          className="text-center mb-12"
         >
-          <h3 className="text-2xl font-serif font-semibold mb-6 text-center">
-            What "The Palace" Actually Is
-          </h3>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {[
-              'A structured Bible study environment',
-              'Pattern recognition across Scripture',
-              'Memory architecture',
-              'Doctrinal testing',
-              'Christ-centered depth',
-              'Tools designed for builders, not spectators',
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm">
-                <ChevronRight className="h-4 w-4 text-primary" />
-                <span>{item}</span>
-              </div>
-            ))}
+          <h3 className="text-2xl font-serif font-semibold mb-8">The Choice Is Yours</h3>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={handleSurfaceChoice}
+              className="px-8 py-6 text-base border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.3)]"
+            >
+              <BookOpen className="mr-2 h-5 w-5" />
+              Remain a surface student
+            </Button>
+            
+            <span className="text-muted-foreground font-serif italic">—or—</span>
+            
+            <Button
+              size="lg"
+              onClick={handlePalaceChoice}
+              className="px-8 py-6 text-base bg-red-600 hover:bg-red-700 shadow-[0_0_20px_rgba(239,68,68,0.4)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)]"
+            >
+              <Castle className="mr-2 h-5 w-5" />
+              Enter the Palace
+            </Button>
           </div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="text-sm text-muted-foreground mt-8 italic"
+          >
+            Once you do, things will change from here on out.
+          </motion.p>
         </motion.div>
 
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-        >
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleSurfaceChoice}
-            className="px-8 border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400"
+        {/* Already entered notice */}
+        {hasEnteredPalace && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center text-sm text-muted-foreground mt-6"
           >
-            <BookOpen className="mr-2 h-5 w-5" />
-            Continue with Surface Study
-          </Button>
-          <Button
-            size="lg"
-            onClick={handlePalaceChoice}
-            className="px-8 bg-red-600 hover:bg-red-700 shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_25px_rgba(239,68,68,0.4)]"
-          >
-            <Castle className="mr-2 h-5 w-5" />
-            Enter the Palace
-          </Button>
-        </motion.div>
+            You have already entered the Palace.{' '}
+            <button 
+              onClick={() => navigate('/palace')}
+              className="text-primary hover:underline"
+            >
+              Return to your training
+            </button>
+          </motion.p>
+        )}
 
         {/* Already entered notice */}
         {hasEnteredPalace && (
