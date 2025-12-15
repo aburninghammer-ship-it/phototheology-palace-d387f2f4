@@ -27,37 +27,50 @@ serve(async (req) => {
 
     console.log(`Generating Phototheology devotion for theme: ${theme}`);
 
-    const systemPrompt = `You are Jeeves, a Phototheology devotional writer. Create Christ-centered, biblically grounded devotionals that are:
-- Fresh, imaginative, and spiritually piercing
+    const systemPrompt = `You are a master of biblical theology writing devotionals that are:
+- Theologically rich, contemplative, and structurally intelligent
+- Never sentimental or emotionally vague
+- Revealing unexpected connections between passages
+- Moving from text → structure → meaning → personal confrontation
 - Adventist in theology (sanctuary-shaped, Great Controversy aware)
-- Free from clichés and shallow moralism
-- Revealing hidden connections in Scripture
 
-CRITICAL REQUIREMENT: Each major content section (christ_connection, application, memory_hook, prayer) MUST be 3-5 FULL PARAGRAPHS. Not sentences - PARAGRAPHS. Each paragraph should be 3-4 sentences with deep theological insight and vivid imagery.`;
+DESIGN GOAL: The devotional must feel weighty, not sentimental. It must reveal unexpected connections, not obvious ones. It must leave the reader quiet, alert, and thinking. Never explain how you're making connections — let the insight emerge naturally.
 
-    const userPrompt = `Create a rich Phototheology devotion on: "${theme}"
+QUALITY CONTROL:
+- Could this exist on a generic devotional app? If yes, discard and write something deeper.
+- Does it rely on mood, warmth, or vague encouragement? If yes, discard.
+- It must make the reader see Scripture differently afterward.
+- It must feel discovered rather than manufactured.
 
-ABSOLUTE REQUIREMENT: Each content field MUST contain 3-5 PARAGRAPHS (not sentences). Separate paragraphs with blank lines.
+Avoid clichés, sermon language, and emotional filler. Favor clarity, restraint, and weight.`;
 
-FIELD REQUIREMENTS:
-1. title: An evocative, non-generic title that intrigues
-2. scripture_reference: Book Chapter:Verse(s) - e.g., "Psalm 46:10"
-3. scripture_text: The FULL KJV text of 3-5 verses
-4. christ_connection: 3-5 PARAGRAPHS (each 3-4 sentences) explaining how Christ is specifically revealed in this text. Show Christological depth across multiple angles - His work, character, mission, typology, and fulfillment.
-5. application: 3-5 PARAGRAPHS (each 3-4 sentences) with practical, heart-transforming application. Address different life situations, provide specific guidance, and connect to real struggles with real wisdom.
-6. memory_hook: 3-5 PARAGRAPHS (each 3-4 sentences) building an extended metaphor or mental image. Paint a vivid scene with sensory details, then draw out multiple spiritual parallels.
-7. prayer: 3-5 PARAGRAPHS (each 3-4 sentences) of heartfelt, text-specific prayer. Each paragraph should address a different aspect of the devotion's truth.
+    const userPrompt = `Write a 4-5 paragraph devotional on the theme: "${theme}"
 
-EXAMPLE of proper paragraph structure for christ_connection:
-"In this passage, we see Christ as the ultimate source of peace that transcends all earthly circumstances. The stillness He commands is not mere passivity, but the confident rest of one who knows the Father holds all things together. This is the same peace Jesus embodied when He slept through the storm on Galilee.
+STRUCTURE REQUIREMENTS:
+• Use 2-3 Scripture passages that at first appear unrelated, but when placed side by side reveal a coherent and illuminating truth
+• Do NOT explain the method or structure behind the connections
+• Do NOT label principles, systems, or frameworks
+• Let the insight emerge naturally through the writing
 
-Consider how the sanctuary language echoes here - the holy calm of the Most Holy Place where God's presence dwells. Christ, as our High Priest, invites us into that sacred stillness, covering us with His righteousness. The veil is torn; the way is open.
+THE DEVOTIONAL MUST:
+1. Begin with a quiet observation or tension drawn from one passage
+2. Deepen by introducing another passage that reframes the first
+3. Reveal a hidden pattern, contrast, or progression between them
+4. Lead the reader toward self-examination, not mere inspiration
+5. Conclude with a measured call — something to notice, yield, or realign
 
-Furthermore, this text points forward to the ultimate 'stillness' of the grave that Christ entered on our behalf. He descended into death's chaos so that we might know eternal rest. His resurrection proves that no storm - not even death itself - can overcome the one who trusts in Him.
+EXAMPLE OF TARGET QUALITY:
+"At first glance, rest feels passive. Scripture seems to confirm it: 'Be still, and know that I am God.' Stillness sounds like absence—of effort, of struggle, of resistance. Yet when Israel was commanded to rest, it was not because nothing was happening, but because something sacred already was. Rest, biblically, is not the pause after work; it is the environment in which God's work is recognized.
 
-The Great Controversy theme emerges powerfully here. While Satan rages and kingdoms fall, God's throne remains unshaken. Christ's victory at Calvary ensures that those who are 'still' in Him will share in His ultimate triumph when He comes again."
+Consider the wilderness, where manna fell six days a week and not on the seventh. The people did nothing to earn it on any day—but on the seventh, they were forbidden to gather what God was no longer providing. The test was not whether they could work, but whether they could trust restraint. In contrast, Jesus later says, 'My Father worketh hitherto, and I work.' The tension sharpens: God both rests and works, but never at odds with Himself. The question is not whether work is holy, but whether our work aligns with His timing.
 
-EVERY content field must follow this multi-paragraph pattern. Do NOT give brief responses.`;
+This is why Scripture treats unauthorized action so severely. The problem is rarely effort itself, but effort divorced from divine rhythm. When fire is kindled at the wrong time, or labor is performed in defiance of God's word, the act exposes something deeper—a refusal to accept that God governs provision. What looks like diligence may actually be anxiety in motion. What feels responsible may be faithlessness disguised as strength.
+
+True rest, then, is not inactivity; it is submission. It is the discipline of letting God define what is necessary now. The one who rests rightly is not lazy but aligned—moving only when heaven moves, stopping when heaven stops. This kind of rest exposes the heart, because it strips away the illusion that survival depends on constant motion.
+
+The invitation is quiet but demanding: stop doing what God has not asked you to do. Let today be measured not by output, but by obedience. There is a rest that feels dangerous to the flesh, because it requires trust. But Scripture insists—life grows best in the space where God alone sustains it."
+
+Match this level of depth, structural intelligence, and theological weight. Each paragraph must be 4-6 sentences. The full devotion must be 4-5 paragraphs.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -76,37 +89,37 @@ EVERY content field must follow this multi-paragraph pattern. Do NOT give brief 
             type: "function",
             function: {
               name: "create_devotion",
-              description: "Create a structured Phototheology devotional with substantial, multi-sentence content in each field",
+              description: "Create a structurally intelligent Phototheology devotional that reveals unexpected Scripture connections",
               parameters: {
                 type: "object",
                 properties: {
                   title: { 
                     type: "string", 
-                    description: "Evocative, non-generic title that intrigues" 
+                    description: "Evocative, non-generic title that intrigues and hints at the hidden connection" 
                   },
                   scripture_reference: { 
                     type: "string", 
-                    description: "Book Chapter:Verse(s) format" 
+                    description: "Primary Scripture reference (Book Chapter:Verse)" 
                   },
                   scripture_text: { 
                     type: "string", 
-                    description: "Full KJV text of 2-4 verses" 
+                    description: "Full KJV text of the primary passage (2-4 verses)" 
                   },
                   christ_connection: { 
                     type: "string", 
-                    description: "3-5 PARAGRAPHS (each 3-4 sentences) explaining how Christ is revealed in this text with deep theological insight from multiple angles" 
+                    description: "4-5 FULL PARAGRAPHS (each 4-6 sentences) using 2-3 Scripture passages that appear unrelated but reveal coherent truth when placed together. Begin with quiet observation, deepen with another passage, reveal hidden pattern, lead to self-examination, conclude with measured call. NO clichés or sermon language." 
                   },
                   application: { 
                     type: "string", 
-                    description: "3-5 PARAGRAPHS (each 3-4 sentences) of practical, heart-transforming application addressing different life situations" 
+                    description: "2-3 PARAGRAPHS drawing out practical self-examination from the revealed pattern. Not mere inspiration — confrontation with truth. What must the reader notice, yield, or realign?" 
                   },
                   prayer: { 
                     type: "string", 
-                    description: "3-5 PARAGRAPHS (each 3-4 sentences) of heartfelt, text-specific prayer addressing different aspects of the truth" 
+                    description: "2-3 PARAGRAPHS of measured, text-specific prayer that echoes the devotional's movement. Quiet, honest, weighty — not emotional filler." 
                   },
                   memory_hook: { 
                     type: "string", 
-                    description: "3-5 PARAGRAPHS (each 3-4 sentences) building an extended metaphor with vivid sensory details and spiritual parallels" 
+                    description: "1-2 PARAGRAPHS with a single arresting image or paradox drawn from the devotional that will stay with the reader. Not a lesson summary — a spiritual anchor." 
                   },
                 },
                 required: ["title", "scripture_reference", "scripture_text", "christ_connection", "application", "prayer", "memory_hook"],
