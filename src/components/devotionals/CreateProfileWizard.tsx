@@ -352,8 +352,8 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 pb-20 md:pb-4">
+      <Card className="w-full max-w-2xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto">
         <CardHeader className="relative border-b">
           <Button
             variant="ghost"
