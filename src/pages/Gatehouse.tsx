@@ -235,7 +235,7 @@ const Gatehouse = () => {
     );
   }
 
-  // Simplified view for returning subscribers
+  // Returning user view - full cards with "Select to Enter"
   if (hasEnteredPalace) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -255,40 +255,113 @@ const Gatehouse = () => {
             </h1>
           </motion.div>
 
-          <div className="flex flex-col sm:flex-row gap-6 items-center justify-center">
-            {/* Surface Study - Blue */}
+          {/* Full Card Layout */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl w-full">
+            {/* Surface Study Path - Blue Glass */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
+              className="relative"
             >
-              <Button
-                variant="outline"
-                size="lg"
+              <div 
+                className="absolute -inset-[2px] rounded-xl pointer-events-none"
+                style={{
+                  boxShadow: '0 0 30px rgba(59,130,246,0.4), 0 0 60px rgba(59,130,246,0.2)',
+                  animation: 'glow-pulse 2s ease-in-out infinite',
+                }}
+              />
+              <Card 
+                className="relative p-8 h-full cursor-pointer transition-all duration-500 overflow-hidden backdrop-blur-sm border border-blue-500/40 hover:border-blue-400/60"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(30,58,138,0.15) 0%, rgba(30,64,175,0.08) 50%, rgba(59,130,246,0.05) 100%)',
+                }}
                 onClick={handleSurfaceChoice}
-                className="px-8 py-6 text-base border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.3)]"
               >
-                <BookOpen className="mr-2 h-5 w-5" />
-                Remain a surface student
-              </Button>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/15 via-blue-500/5 to-blue-900/20 pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-blue-300/10 via-blue-400/5 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 rounded-lg shadow-[inset_0_1px_1px_rgba(147,197,253,0.3)] pointer-events-none" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-3 rounded-full bg-blue-500/20 border border-blue-400/40 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                      <BookOpen className="h-6 w-6 text-blue-400" />
+                    </div>
+                    <h2 className="text-2xl font-serif font-semibold text-blue-100">Remain at the Surface</h2>
+                  </div>
+
+                  <div className="space-y-4 text-blue-200/80 text-sm leading-relaxed">
+                    <p>You may continue as you are.</p>
+                    <p>
+                      You will still read the Bible.<br />
+                      You will still find comfort.<br />
+                      You will still hear familiar truths.
+                    </p>
+                    <p className="text-blue-300/60 italic">
+                      You will stay where most remain—<br />
+                      moving verse to verse, devotion to devotion,<br />
+                      never quite seeing how it all fits together.
+                    </p>
+                    <p className="text-blue-400/70 font-medium mt-4">
+                      Nothing will change.
+                    </p>
+                  </div>
+                </div>
+              </Card>
             </motion.div>
-            
-            <span className="text-muted-foreground font-serif italic">—or—</span>
-            
-            {/* Enter Palace - Red */}
+
+            {/* Palace Path - Red Glass */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
+              className="relative"
             >
-              <Button
-                size="lg"
+              <div 
+                className="absolute -inset-[2px] rounded-xl pointer-events-none"
+                style={{
+                  boxShadow: '0 0 40px rgba(239,68,68,0.6), 0 0 80px rgba(239,68,68,0.3), 0 0 120px rgba(239,68,68,0.15)',
+                  animation: 'glow-pulse 2s ease-in-out infinite',
+                }}
+              />
+              <Card 
+                className="relative p-8 h-full cursor-pointer transition-all duration-500 overflow-hidden backdrop-blur-sm border border-red-500/40 hover:border-red-500/60"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(127,29,29,0.15) 0%, rgba(153,27,27,0.08) 50%, rgba(239,68,68,0.05) 100%)',
+                }}
                 onClick={handlePalaceChoice}
-                className="px-8 py-6 text-base bg-red-600 hover:bg-red-700 shadow-[0_0_30px_rgba(239,68,68,0.5)] hover:shadow-[0_0_40px_rgba(239,68,68,0.6)]"
               >
-                <Castle className="mr-2 h-5 w-5" />
-                Enter the Palace
-              </Button>
+                <div className="absolute inset-0 bg-gradient-to-br from-red-400/15 via-red-500/5 to-red-900/20 pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-red-300/10 via-red-400/5 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 rounded-lg shadow-[inset_0_1px_1px_rgba(252,165,165,0.3)] pointer-events-none" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-3 rounded-full bg-red-500/20 border border-red-400/40 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                      <Castle className="h-6 w-6 text-red-400" />
+                    </div>
+                    <h2 className="text-2xl font-serif font-semibold text-red-100">Enter the Palace</h2>
+                  </div>
+
+                  <div className="space-y-4 text-red-200/80 text-sm leading-relaxed">
+                    <p>Or—you may step inside.</p>
+                    <p>
+                      Beyond this point, the Bible will no longer appear flat.<br />
+                      Patterns will emerge.<br />
+                      Connections will form.<br />
+                      What once seemed distant will begin to speak across time.
+                    </p>
+                    <p className="text-red-300/70 italic">
+                      This is not passive study.<br />
+                      This is not entertainment.<br />
+                      This is not for the hurried or the casual.
+                    </p>
+                    <p className="text-red-400 font-medium mt-4">
+                      Select to Enter →
+                    </p>
+                  </div>
+                </div>
+              </Card>
             </motion.div>
           </div>
 
