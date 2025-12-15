@@ -10,9 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Brain, Loader2, AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Brain, Loader2, AlertTriangle, CheckCircle2, XCircle, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSequentialMastery } from "@/hooks/useSequentialMastery";
+import { Link } from "react-router-dom";
 
 interface FloorAssessmentDialogProps {
   floorNumber: number;
@@ -89,6 +92,9 @@ export const FloorAssessmentDialog: React.FC<FloorAssessmentDialogProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
   const { toast } = useToast();
+  
+  // Check if user can master this floor (sequential mastery enforcement)
+  const { canMaster, nextFloorToMaster, loading: masteryLoading, masteryMessage } = useSequentialMastery(floorNumber);
 
   const questions = FLOOR_QUESTIONS[floorNumber] || [];
   const totalQuestions = questions.length;
@@ -174,7 +180,32 @@ export const FloorAssessmentDialog: React.FC<FloorAssessmentDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        {!result && (
+        {/* Sequential Mastery Lock */}
+        {!canMaster && !masteryLoading && (
+          <Alert className="border-amber-500/30 bg-amber-500/5">
+            <Lock className="h-4 w-4 text-amber-500" />
+            <AlertTitle className="text-amber-600 dark:text-amber-400">Sequential Mastery Required</AlertTitle>
+            <AlertDescription className="text-muted-foreground space-y-3">
+              <p>
+                Mastery must be earned floor by floor. You're welcome to explore and learn from this floor, 
+                but the assessment is only available after completing previous floors.
+              </p>
+              <p className="text-sm font-medium">{masteryMessage}</p>
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link to={`/palace/floor/${nextFloorToMaster}`}>
+                    Go to Floor {nextFloorToMaster}
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
+                  Close
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {canMaster && !result && (
           <div className="space-y-6">
             {/* Progress */}
             <div className="space-y-2">

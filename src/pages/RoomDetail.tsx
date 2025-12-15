@@ -4,6 +4,7 @@ import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Target, HelpCircle, BookOpen, AlertCircle, CheckCircle, Trophy, Lock, Dumbbell, Brain, ChevronDown, Swords, Crown, FileText, Star, Award, Sparkles, Info } from "lucide-react";
+import { SequentialMasteryNotice } from "@/components/palace/SequentialMasteryNotice";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { JeevesAssistant } from "@/components/JeevesAssistant";
@@ -221,6 +222,11 @@ export default function RoomDetail() {
             Back to Floor {floor.number}
           </Button>
         </Link>
+
+        {/* Sequential Mastery Notice - compact version for rooms */}
+        <div className="mb-4">
+          <SequentialMasteryNotice floorNumber={floor.number} variant="compact" />
+        </div>
 
         {!isUnlocked && !unlockLoading && user && (
           <Alert className="mb-6 border-destructive bg-destructive/20">
