@@ -226,7 +226,6 @@ const LiveDemo = lazy(() => import("./pages/LiveDemo"));
 // Gatehouse flow pages
 const Gatehouse = lazy(() => import("./pages/Gatehouse"));
 const Antechamber = lazy(() => import("./pages/Antechamber"));
-const SurfaceStudy = lazy(() => import("./pages/SurfaceStudy"));
 const FirstRoom = lazy(() => import("./pages/FirstRoom"));
 
 // GuestHouse pages (public)
@@ -318,9 +317,8 @@ function App() {
             <Route path="/why-phototheology" element={<WhyPhototheology />} />
             <Route path="/app-tour" element={<AppTour />} />
             
-            {/* Gatehouse Flow - Public */}
+{/* Gatehouse Flow - Public */}
             <Route path="/gatehouse" element={<Gatehouse />} />
-            <Route path="/surface-study" element={<SurfaceStudy />} />
             <Route path="/antechamber" element={<ProtectedRoute><Antechamber /></ProtectedRoute>} />
             <Route path="/palace/first-room" element={<ProtectedRoute><FirstRoom /></ProtectedRoute>} />
             <Route path="/access" element={
