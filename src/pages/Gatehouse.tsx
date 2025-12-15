@@ -235,6 +235,78 @@ const Gatehouse = () => {
     );
   }
 
+  // Simplified view for returning subscribers
+  if (hasEnteredPalace) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navigation />
+        
+        <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <p className="text-sm text-primary/80 mb-4 tracking-wide uppercase">
+              Welcome back
+            </p>
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground">
+              The Choice Is Yours
+            </h1>
+          </motion.div>
+
+          <div className="flex flex-col sm:flex-row gap-6 items-center justify-center">
+            {/* Surface Study - Blue */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleSurfaceChoice}
+                className="px-8 py-6 text-base border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.3)]"
+              >
+                <BookOpen className="mr-2 h-5 w-5" />
+                Remain a surface student
+              </Button>
+            </motion.div>
+            
+            <span className="text-muted-foreground font-serif italic">—or—</span>
+            
+            {/* Enter Palace - Red */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Button
+                size="lg"
+                onClick={handlePalaceChoice}
+                className="px-8 py-6 text-base bg-red-600 hover:bg-red-700 shadow-[0_0_30px_rgba(239,68,68,0.5)] hover:shadow-[0_0_40px_rgba(239,68,68,0.6)]"
+              >
+                <Castle className="mr-2 h-5 w-5" />
+                Enter the Palace
+              </Button>
+            </motion.div>
+          </div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-sm text-muted-foreground mt-8 italic"
+          >
+            The Palace awaits your return.
+          </motion.p>
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -246,22 +318,15 @@ const Gatehouse = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          {hasEnteredPalace && (
-            <p className="text-sm text-primary/80 mb-4 tracking-wide uppercase">
-              Welcome back
-            </p>
-          )}
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
             The Choice
           </h1>
           <p className="text-xl text-muted-foreground">
-            {hasEnteredPalace ? 'The door remains open.' : 'You are standing at a threshold.'}
+            You are standing at a threshold.
           </p>
-          {!hasEnteredPalace && (
-            <p className="text-lg text-muted-foreground mt-2">
-              What you do next will determine how you study Scripture from this point forward.
-            </p>
-          )}
+          <p className="text-lg text-muted-foreground mt-2">
+            What you do next will determine how you study Scripture from this point forward.
+          </p>
         </motion.div>
 
         {/* The Two Paths - Glass Cards */}
@@ -338,9 +403,7 @@ const Gatehouse = () => {
             <div 
               className="absolute -inset-[2px] rounded-xl pointer-events-none"
               style={{
-                boxShadow: hasEnteredPalace 
-                  ? '0 0 40px rgba(239,68,68,0.6), 0 0 80px rgba(239,68,68,0.3), 0 0 120px rgba(239,68,68,0.15)'
-                  : '0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.2)',
+                boxShadow: '0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.2)',
                 animation: 'glow-pulse 2s ease-in-out infinite',
               }}
             />
@@ -384,9 +447,7 @@ const Gatehouse = () => {
                     This is not for the hurried or the casual.
                   </p>
                   <p className="text-red-400 font-medium mt-4">
-                    {hasEnteredPalace 
-                      ? 'You know what lies beyond this door.'
-                      : 'Once you enter, you cannot unsee what you will see.'}
+                    Once you enter, you cannot unsee what you will see.
                   </p>
                 </div>
               </div>
@@ -458,28 +519,9 @@ const Gatehouse = () => {
             transition={{ delay: 0.8 }}
             className="text-sm text-muted-foreground mt-8 italic"
           >
-            {hasEnteredPalace 
-              ? 'The Palace awaits your return.'
-              : 'Once you do, things will change from here on out.'}
+            Once you do, things will change from here on out.
           </motion.p>
         </motion.div>
-
-        {/* Skip link for returning users */}
-        {hasEnteredPalace && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="text-center mt-8"
-          >
-            <button 
-              onClick={() => navigate('/palace')}
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              Skip to Palace →
-            </button>
-          </motion.div>
-        )}
       </main>
 
       <Footer />
