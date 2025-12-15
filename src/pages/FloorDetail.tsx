@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { FloorRoomCard } from "@/components/FloorRoomCard";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { motion } from "framer-motion";
+import { SequentialMasteryNotice } from "@/components/palace/SequentialMasteryNotice";
 
 export default function FloorDetail() {
   const { floorNumber } = useParams();
@@ -119,6 +120,11 @@ export default function FloorDetail() {
             <p className="text-2xl md:text-3xl mb-5 opacity-95 font-medium drop-shadow-lg">{floor.subtitle} ✨</p>
             <p className="text-lg opacity-90 leading-relaxed max-w-3xl drop-shadow-md">{floor.description}</p>
           </div>
+        </div>
+
+        {/* Sequential Mastery Notice */}
+        <div className="mb-6">
+          <SequentialMasteryNotice floorNumber={floor.number} />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
