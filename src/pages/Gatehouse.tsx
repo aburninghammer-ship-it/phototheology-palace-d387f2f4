@@ -264,12 +264,21 @@ const Gatehouse = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
+            className="relative"
           >
+            {/* Pulsating glow overlay */}
+            <div 
+              className="absolute -inset-[2px] rounded-xl pointer-events-none"
+              style={{
+                boxShadow: '0 0 30px rgba(59,130,246,0.4), 0 0 60px rgba(59,130,246,0.2)',
+                animation: 'glow-pulse 2s ease-in-out infinite',
+              }}
+            />
             <Card 
               className={`relative p-8 h-full cursor-pointer transition-all duration-500 overflow-hidden backdrop-blur-sm ${
                 selectedPath === 'surface' 
                   ? 'border-2 border-blue-400 shadow-[0_0_40px_rgba(59,130,246,0.4),inset_0_0_30px_rgba(59,130,246,0.1)]' 
-                  : 'border border-blue-500/30 hover:border-blue-400/60 shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_35px_rgba(59,130,246,0.35)]'
+                  : 'border border-blue-500/40 hover:border-blue-400/60'
               }`}
               style={{
                 background: 'linear-gradient(145deg, rgba(30,58,138,0.15) 0%, rgba(30,64,175,0.08) 50%, rgba(59,130,246,0.05) 100%)',
@@ -318,20 +327,6 @@ const Gatehouse = () => {
             transition={{ delay: 0.3 }}
             className="relative"
           >
-            {/* Animated border glow that travels around edges */}
-            <div 
-              className="absolute -inset-[2px] rounded-xl overflow-hidden pointer-events-none"
-              style={{
-                background: `conic-gradient(from var(--border-angle, 0deg), 
-                  transparent 0%, 
-                  rgba(239,68,68,0.8) 10%, 
-                  rgba(252,165,165,1) 15%, 
-                  rgba(239,68,68,0.8) 20%, 
-                  transparent 30%, 
-                  transparent 100%)`,
-                animation: 'border-rotate 4s linear infinite',
-              }}
-            />
             {/* Pulsating glow overlay */}
             <div 
               className="absolute -inset-[2px] rounded-xl pointer-events-none"
