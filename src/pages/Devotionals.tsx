@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus, GraduationCap, Home, HeartHandshake, Sun } from "lucide-react";
+import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus, GraduationCap, Home, HeartHandshake, Sun, Church } from "lucide-react";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { devotionalsSteps } from "@/config/howItWorksSteps";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
@@ -11,6 +11,7 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDevotionals } from "@/hooks/useDevotionals";
 import { useDevotionalProfiles } from "@/hooks/useDevotionalProfiles";
 import { CreateDevotionalWizard } from "@/components/devotionals/CreateDevotionalWizard";
@@ -19,6 +20,8 @@ import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalD
 import { CreateProfileWizard } from "@/components/devotionals/CreateProfileWizard";
 import { DevotionalProfileCard } from "@/components/devotionals/DevotionalProfileCard";
 import { QuickDevotion } from "@/components/devotionals/QuickDevotion";
+import { ChurchDevotionalWizard } from "@/components/devotionals/ChurchDevotionalWizard";
+import { ChurchDevotionalTab } from "@/components/devotionals/ChurchDevotionalTab";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,6 +52,8 @@ export default function Devotionals() {
   const [showFriendWizard, setShowFriendWizard] = useState(false);
   const [showProfileWizard, setShowProfileWizard] = useState(false);
   const [showQuickDevotion, setShowQuickDevotion] = useState(false);
+  const [showChurchWizard, setShowChurchWizard] = useState(false);
+  const [activeTab, setActiveTab] = useState("personal");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteProfileId, setDeleteProfileId] = useState<string | null>(null);
 
@@ -82,6 +87,10 @@ export default function Devotionals() {
     return <CreateProfileWizard onClose={() => setShowProfileWizard(false)} />;
   }
 
+  if (showChurchWizard) {
+    return <ChurchDevotionalWizard onClose={() => setShowChurchWizard(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -105,7 +114,7 @@ export default function Devotionals() {
             <HowItWorksDialog title="How to Use Devotionals" steps={devotionalsSteps} />
           </div>
 
-          <div className="grid md:grid-cols-4 gap-4 mt-8">
+          <div className="grid md:grid-cols-5 gap-4 mt-8">
             {/* Quick Daily Devotion */}
             <Card 
               className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all cursor-pointer group shadow-xl" 
@@ -117,7 +126,7 @@ export default function Devotionals() {
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-lg">Quick Devotion</h3>
-                  <p className="text-sm text-white/70">One-day themed devotion</p>
+                  <p className="text-sm text-white/70">One-day themed</p>
                 </div>
               </CardContent>
             </Card>
@@ -132,7 +141,7 @@ export default function Devotionals() {
                   <Plus className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg">Create Devotional</h3>
+                  <h3 className="font-bold text-white text-lg">Create Plan</h3>
                   <p className="text-sm text-white/70">Multi-day journey</p>
                 </div>
               </CardContent>
@@ -154,6 +163,22 @@ export default function Devotionals() {
               </CardContent>
             </Card>
 
+            {/* Church Devotionals */}
+            <Card 
+              className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all cursor-pointer group shadow-xl" 
+              onClick={() => { setActiveTab("church"); setShowChurchWizard(true); }}
+            >
+              <CardContent className="p-6 flex items-center gap-4">
+                <div className="p-4 rounded-full bg-gradient-to-br from-teal-400 to-emerald-400 shadow-lg group-hover:scale-110 transition-transform">
+                  <Church className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-lg">Church Ministry</h3>
+                  <p className="text-sm text-white/70">Daily for congregation</p>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Stats */}
             <Card className="bg-white/10 backdrop-blur-sm border-white/20 shadow-xl">
               <CardContent className="p-6 flex items-center gap-4">
@@ -161,7 +186,7 @@ export default function Devotionals() {
                   <Star className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg">5 Unique Formats</h3>
+                  <h3 className="font-bold text-white text-lg">5 Formats</h3>
                   <p className="text-sm text-white/70">24FPS, Blueprint & more</p>
                 </div>
               </CardContent>
@@ -181,6 +206,25 @@ export default function Devotionals() {
             className="mb-4"
           />
         )}
+
+        {/* Tabs for Personal vs Church */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="personal" className="flex items-center gap-2">
+              <Book className="h-4 w-4" />
+              Personal
+            </TabsTrigger>
+            <TabsTrigger value="church" className="flex items-center gap-2">
+              <Church className="h-4 w-4" />
+              Church Ministry
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="church" className="mt-6">
+            <ChurchDevotionalTab onCreateNew={() => setShowChurchWizard(true)} />
+          </TabsContent>
+
+          <TabsContent value="personal" className="mt-6 space-y-8">
         {/* Active Devotionals */}
         {activePlans.length > 0 && (
           <section>
@@ -540,6 +584,8 @@ export default function Devotionals() {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Delete Confirmation */}

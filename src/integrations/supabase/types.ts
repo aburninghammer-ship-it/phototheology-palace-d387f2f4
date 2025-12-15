@@ -820,6 +820,148 @@ export type Database = {
           },
         ]
       }
+      church_devotional_entries: {
+        Row: {
+          anchor_scripture: string
+          church_devotional_id: string
+          closing_prayer: string
+          communal_practice: string
+          created_at: string
+          day_theme: string | null
+          entry_date: string
+          id: string
+          is_published: boolean | null
+          meditation: string
+          scripture_text: string | null
+          title: string
+        }
+        Insert: {
+          anchor_scripture: string
+          church_devotional_id: string
+          closing_prayer: string
+          communal_practice: string
+          created_at?: string
+          day_theme?: string | null
+          entry_date?: string
+          id?: string
+          is_published?: boolean | null
+          meditation: string
+          scripture_text?: string | null
+          title: string
+        }
+        Update: {
+          anchor_scripture?: string
+          church_devotional_id?: string
+          closing_prayer?: string
+          communal_practice?: string
+          created_at?: string
+          day_theme?: string | null
+          entry_date?: string
+          id?: string
+          is_published?: boolean | null
+          meditation?: string
+          scripture_text?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_devotional_entries_church_devotional_id_fkey"
+            columns: ["church_devotional_id"]
+            isOneToOne: false
+            referencedRelation: "church_devotionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_devotional_templates: {
+        Row: {
+          church_devotional_id: string
+          created_at: string
+          day_of_week: string
+          id: string
+          sample_topics: string[] | null
+          theme_description: string | null
+          theme_name: string
+        }
+        Insert: {
+          church_devotional_id: string
+          created_at?: string
+          day_of_week: string
+          id?: string
+          sample_topics?: string[] | null
+          theme_description?: string | null
+          theme_name: string
+        }
+        Update: {
+          church_devotional_id?: string
+          created_at?: string
+          day_of_week?: string
+          id?: string
+          sample_topics?: string[] | null
+          theme_description?: string | null
+          theme_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_devotional_templates_church_devotional_id_fkey"
+            columns: ["church_devotional_id"]
+            isOneToOne: false
+            referencedRelation: "church_devotionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_devotionals: {
+        Row: {
+          church_id: string | null
+          church_name: string
+          created_at: string
+          day_of_week: string | null
+          id: string
+          theme_cycle: string | null
+          theological_frame: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          church_id?: string | null
+          church_name: string
+          created_at?: string
+          day_of_week?: string | null
+          id?: string
+          theme_cycle?: string | null
+          theological_frame?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          church_id?: string | null
+          church_name?: string
+          created_at?: string
+          day_of_week?: string | null
+          id?: string
+          theme_cycle?: string | null
+          theological_frame?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_devotionals_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "church_devotionals_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       church_invitations: {
         Row: {
           accepted_at: string | null
