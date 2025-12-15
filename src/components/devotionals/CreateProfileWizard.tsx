@@ -792,7 +792,7 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
           )}
 
           {/* Navigation */}
-          <div className="flex justify-between mt-8 pt-4 border-t">
+          <div className="flex justify-between mt-8 pt-4 border-t pb-20 md:pb-0">
             <Button
               variant="outline"
               onClick={() => (step > 1 ? setStep(step - 1) : onClose())}
