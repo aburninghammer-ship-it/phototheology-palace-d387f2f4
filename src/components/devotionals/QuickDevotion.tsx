@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { FreeAudioButton } from "@/components/audio/FreeAudioButton";
+import { VoiceRecorder } from "@/components/studies/VoiceRecorder";
 
 interface QuickDevotionProps {
   onClose: () => void;
@@ -86,7 +87,12 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Tell us more about what you'd like (optional)</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="description">Tell us more about what you'd like (optional)</Label>
+                  <VoiceRecorder 
+                    onTranscription={(text) => setDescription(prev => prev ? `${prev} ${text}` : text)} 
+                  />
+                </div>
                 <Textarea
                   id="description"
                   placeholder="e.g., I'm struggling with anxiety at work and need encouragement... or I want to understand how God's faithfulness applies to my current situation..."
@@ -96,7 +102,7 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
                   className="resize-none"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Share your situation, questions, or what you hope to receive from this devotion.
+                  Share your situation, questions, or what you hope to receive from this devotion. Use voice input to speak your thoughts.
                 </p>
               </div>
               <Button
