@@ -178,7 +178,7 @@ interface RoomDoorProps {
 }
 
 const RoomDoor = ({ room, floorNumber, theme, user, index }: RoomDoorProps) => {
-  const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
+  const { isUnlocked, loading, recommendationWarning } = useRoomUnlock(floorNumber, room.id);
   const navigate = useNavigate();
   
   const handleClick = (e: React.MouseEvent) => {
@@ -187,17 +187,18 @@ const RoomDoor = ({ room, floorNumber, theme, user, index }: RoomDoorProps) => {
       return;
     }
     
-    if (!isUnlocked) {
-      e.preventDefault();
-      toast.error("🔒 Room Locked", {
-        description: `Complete the previous floors to unlock Floor ${floorNumber}. Progress through each floor in order to access new rooms.`,
-        duration: 4000,
+    // Show warning toast if there's a recommendation, but still allow navigation
+    if (recommendationWarning) {
+      toast.warning("📖 Recommended Path", {
+        description: recommendationWarning,
+        duration: 3000,
       });
-      return;
     }
     
     navigate(`/palace/floor/${floorNumber}/room/${room.id}`);
   };
+
+  const hasWarning = !!recommendationWarning;
   
   return (
     <div
@@ -219,7 +220,6 @@ const RoomDoor = ({ room, floorNumber, theme, user, index }: RoomDoorProps) => {
             hover:scale-105 hover:border-white/40 
             shadow-lg hover:shadow-[0_0_30px_-10px] hover:shadow-current
             group-hover/door:bg-card/90
-            ${!isUnlocked && !loading ? 'opacity-60' : ''}
           `}
         >
           {/* Gradient overlay on hover */}
@@ -246,19 +246,19 @@ const RoomDoor = ({ room, floorNumber, theme, user, index }: RoomDoorProps) => {
             </div>
           </div>
 
-          {/* Lock/Unlock indicator with glass effect */}
+          {/* Warning/Ready indicator with glass effect */}
           <div className="absolute bottom-3 right-3">
             {loading ? (
               <div className="w-7 h-7 rounded-full bg-muted/50 backdrop-blur-sm border border-white/20 flex items-center justify-center">
                 <div className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse" />
               </div>
-            ) : isUnlocked ? (
-              <div className="w-7 h-7 rounded-full bg-emerald-500/30 backdrop-blur-sm border border-emerald-400/50 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
+            ) : hasWarning ? (
+              <div className="w-7 h-7 rounded-full bg-amber-500/30 backdrop-blur-sm border border-amber-400/50 flex items-center justify-center shadow-lg shadow-amber-500/20" title="Recommended: complete previous floors first">
+                <span className="text-xs">⚠️</span>
               </div>
             ) : (
-              <div className="w-7 h-7 rounded-full bg-amber-500/30 backdrop-blur-sm border border-amber-400/50 flex items-center justify-center shadow-lg shadow-amber-500/20">
-                <Lock className="w-4 h-4 text-amber-400" />
+              <div className="w-7 h-7 rounded-full bg-emerald-500/30 backdrop-blur-sm border border-emerald-400/50 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
               </div>
             )}
           </div>
