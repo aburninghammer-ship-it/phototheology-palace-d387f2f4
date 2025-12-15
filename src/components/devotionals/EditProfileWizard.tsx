@@ -303,8 +303,8 @@ export function EditProfileWizard({ profile, onClose, onProfileUpdated }: EditPr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 pb-20 md:pb-4">
+      <Card className="w-full max-w-2xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto">
         <CardHeader className="relative border-b">
           <Button
             variant="ghost"
@@ -690,7 +690,7 @@ export function EditProfileWizard({ profile, onClose, onProfileUpdated }: EditPr
           )}
 
           {/* Navigation */}
-          <div className="flex justify-between mt-8 pt-4 border-t">
+          <div className="flex justify-between mt-8 pt-4 border-t pb-20 md:pb-0">
             <Button
               variant="outline"
               onClick={() => (step > 1 ? setStep(step - 1) : onClose())}
