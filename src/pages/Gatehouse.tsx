@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Castle, ChevronRight, AlertTriangle, Heart, Brain, Sword, ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { BookOpen, Castle, ChevronRight, AlertTriangle, Heart, Brain, Sword, ArrowLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,15 +9,21 @@ import { useGatehouseStatus } from '@/hooks/useGatehouseStatus';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 
+type ViewState = 'choice' | 'appeal' | 'exit';
+
 const Gatehouse = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { hasEnteredPalace } = useGatehouseStatus();
   const [selectedPath, setSelectedPath] = useState<'surface' | 'palace' | null>(null);
-  const [showGracefulExit, setShowGracefulExit] = useState(false);
+  const [viewState, setViewState] = useState<ViewState>('choice');
 
   const handleSurfaceChoice = () => {
-    setShowGracefulExit(true);
+    setViewState('appeal');
+  };
+
+  const handleFinalRefuse = () => {
+    setViewState('exit');
   };
 
   const handlePalaceChoice = () => {
@@ -28,8 +34,134 @@ const Gatehouse = () => {
     }
   };
 
+  // Appeal View - Why Surface Study Falls Short
+  if (viewState === 'appeal') {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        
+        <main className="container mx-auto px-4 py-12 max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
+                Before You Go...
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Consider what surface study actually costs.
+              </p>
+            </div>
+
+            <Card className="p-8 mb-8">
+              <h2 className="text-xl font-semibold mb-6 text-center">Why Surface Study Falls Short</h2>
+              
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center">
+                    <X className="h-4 w-4 text-destructive" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">You miss the architecture</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Scripture is not random stories—it is a unified structure. Surface reading sees trees but never the forest.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center">
+                    <X className="h-4 w-4 text-destructive" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">You stay dependent</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Without tools for interpretation, you remain reliant on others to explain what God's Word means.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center">
+                    <X className="h-4 w-4 text-destructive" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">You cannot teach</h3>
+                    <p className="text-sm text-muted-foreground">
+                      "For when for the time ye ought to be teachers, ye have need that one teach you again" (Hebrews 5:12).
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center">
+                    <X className="h-4 w-4 text-destructive" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">You miss Christ</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Every chapter points to Him—but surface reading often sees only moral lessons, missing the Lamb in every shadow.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-8 mb-8 border-amber-500/30 bg-amber-500/5">
+              <h2 className="text-xl font-semibold mb-4 text-center">One More Invitation</h2>
+              <p className="text-muted-foreground mb-4 text-center">
+                What if you could learn to see what you have been missing?
+              </p>
+              <p className="text-sm text-muted-foreground text-center mb-6">
+                The Palace is not about being smarter. It is about being trained. 
+                About learning to ask the right questions. About building Scripture into your mind 
+                so deeply that you can recall, connect, and teach.
+              </p>
+              <blockquote className="border-l-2 border-amber-500/50 pl-4 italic text-muted-foreground text-center">
+                "Study to shew thyself approved unto God, a workman that needeth not to be ashamed, 
+                rightly dividing the word of truth."
+                <footer className="mt-2 text-xs not-italic">— 2 Timothy 2:15</footer>
+              </blockquote>
+            </Card>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleFinalRefuse}
+                className="px-6"
+              >
+                I understand, but this is not for me
+              </Button>
+              <Button
+                size="lg"
+                onClick={handlePalaceChoice}
+                className="px-6 bg-amber-600 hover:bg-amber-700"
+              >
+                <Castle className="mr-2 h-5 w-5" />
+                I want to learn deeper study
+              </Button>
+            </div>
+
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              <button 
+                onClick={() => setViewState('choice')}
+                className="hover:underline"
+              >
+                ← Return to choices
+              </button>
+            </p>
+          </motion.div>
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }
+
   // Graceful Exit View
-  if (showGracefulExit) {
+  if (viewState === 'exit') {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
@@ -76,11 +208,11 @@ const Gatehouse = () => {
               <Button
                 variant="outline"
                 size="lg"
-                onClick={() => setShowGracefulExit(false)}
+                onClick={() => setViewState('appeal')}
                 className="px-6"
               >
                 <ArrowLeft className="mr-2 h-5 w-5" />
-                Reconsider
+                Wait, let me reconsider
               </Button>
               <Button
                 size="lg"
