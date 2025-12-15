@@ -137,7 +137,7 @@ const Gatehouse = () => {
               <Button
                 size="lg"
                 onClick={handlePalaceChoice}
-                className="px-6 bg-amber-600 hover:bg-amber-700"
+                className="px-6 bg-red-600 hover:bg-red-700 shadow-[0_0_15px_rgba(239,68,68,0.3)]"
               >
                 <Castle className="mr-2 h-5 w-5" />
                 I want to learn deeper study
@@ -217,7 +217,7 @@ const Gatehouse = () => {
               <Button
                 size="lg"
                 onClick={handlePalaceChoice}
-                className="px-6 bg-amber-600 hover:bg-amber-700"
+                className="px-6 bg-red-600 hover:bg-red-700 shadow-[0_0_15px_rgba(239,68,68,0.3)]"
               >
                 <Castle className="mr-2 h-5 w-5" />
                 Enter the Palace Instead
@@ -254,103 +254,121 @@ const Gatehouse = () => {
           </p>
         </motion.div>
 
-        {/* The Two Paths */}
+        {/* The Two Paths - Matrix-inspired */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {/* Surface Study Path */}
+          {/* Surface Study Path - Blue Pill */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
             <Card 
-              className={`p-8 h-full cursor-pointer transition-all border-2 ${
+              className={`relative p-8 h-full cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedPath === 'surface' 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-border hover:border-muted-foreground/50'
+                  ? 'border-2 border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.3)]' 
+                  : 'border border-blue-500/20 hover:border-blue-400/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]'
               }`}
+              style={{
+                background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(217 91% 20% / 0.3) 100%)',
+              }}
               onClick={() => setSelectedPath('surface')}
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 rounded-full bg-muted">
-                  <BookOpen className="h-6 w-6 text-muted-foreground" />
+              {/* Glass reflection effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-blue-900/20 pointer-events-none" />
+              <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-blue-400/5 to-transparent pointer-events-none" />
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 rounded-full bg-blue-500/20 border border-blue-400/30">
+                    <BookOpen className="h-6 w-6 text-blue-400" />
+                  </div>
+                  <h2 className="text-2xl font-serif font-semibold">Surface Study</h2>
                 </div>
-                <h2 className="text-2xl font-serif font-semibold">Surface Study</h2>
+
+                <ul className="space-y-3 text-muted-foreground mb-6">
+                  <li className="flex items-start gap-2">
+                    <Heart className="h-5 w-5 mt-0.5 text-blue-400/70" />
+                    <span>Read devotionals</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Heart className="h-5 w-5 mt-0.5 text-blue-400/70" />
+                    <span>Follow familiar interpretations</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Heart className="h-5 w-5 mt-0.5 text-blue-400/70" />
+                    <span>Stay in comfort</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Heart className="h-5 w-5 mt-0.5 text-blue-400/70" />
+                    <span>Consume Scripture</span>
+                  </li>
+                </ul>
+
+                <blockquote className="border-l-2 border-blue-400/30 pl-4 italic text-muted-foreground text-sm">
+                  "Ever learning, and never able to come to the knowledge of the truth"
+                  <footer className="mt-1 text-xs">— 2 Timothy 3:7</footer>
+                </blockquote>
+
+                <p className="mt-6 text-sm text-blue-300/60">
+                  This is not condemnation—just reality.
+                </p>
               </div>
-
-              <ul className="space-y-3 text-muted-foreground mb-6">
-                <li className="flex items-start gap-2">
-                  <Heart className="h-5 w-5 mt-0.5 text-rose-400" />
-                  <span>Read devotionals</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Heart className="h-5 w-5 mt-0.5 text-rose-400" />
-                  <span>Follow familiar interpretations</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Heart className="h-5 w-5 mt-0.5 text-rose-400" />
-                  <span>Stay in comfort</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Heart className="h-5 w-5 mt-0.5 text-rose-400" />
-                  <span>Consume Scripture</span>
-                </li>
-              </ul>
-
-              <blockquote className="border-l-2 border-muted-foreground/30 pl-4 italic text-muted-foreground text-sm">
-                "Ever learning, and never able to come to the knowledge of the truth"
-                <footer className="mt-1 text-xs">— 2 Timothy 3:7</footer>
-              </blockquote>
-
-              <p className="mt-6 text-sm text-muted-foreground">
-                This is not condemnation—just reality.
-              </p>
             </Card>
           </motion.div>
 
-          {/* Palace Path */}
+          {/* Palace Path - Red Pill */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
             <Card 
-              className={`p-8 h-full cursor-pointer transition-all border-2 ${
+              className={`relative p-8 h-full cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedPath === 'palace' 
-                  ? 'border-amber-500 bg-amber-500/5' 
-                  : 'border-border hover:border-amber-500/50'
+                  ? 'border-2 border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)]' 
+                  : 'border border-red-500/20 hover:border-red-500/50 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)]'
               }`}
+              style={{
+                background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(0 70% 20% / 0.3) 100%)',
+              }}
               onClick={() => setSelectedPath('palace')}
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 rounded-full bg-amber-500/20">
-                  <Castle className="h-6 w-6 text-amber-500" />
+              {/* Glass reflection effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-900/20 pointer-events-none" />
+              <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-red-400/5 to-transparent pointer-events-none" />
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 rounded-full bg-red-500/20 border border-red-400/30">
+                    <Castle className="h-6 w-6 text-red-400" />
+                  </div>
+                  <h2 className="text-2xl font-serif font-semibold">Enter the Palace</h2>
                 </div>
-                <h2 className="text-2xl font-serif font-semibold">Enter the Palace</h2>
+
+                <ul className="space-y-3 text-foreground mb-6">
+                  <li className="flex items-start gap-2">
+                    <Brain className="h-5 w-5 mt-0.5 text-red-400" />
+                    <span>Build Scripture systematically</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Brain className="h-5 w-5 mt-0.5 text-red-400" />
+                    <span>See patterns across Genesis → Revelation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Sword className="h-5 w-5 mt-0.5 text-red-400" />
+                    <span>Train discernment</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Sword className="h-5 w-5 mt-0.5 text-red-400" />
+                    <span>Become a workman, not just a reader</span>
+                  </li>
+                </ul>
+
+                <blockquote className="border-l-2 border-red-400/50 pl-4 italic text-foreground text-sm">
+                  "Study to shew thyself approved unto God, a workman that needeth not to be ashamed"
+                  <footer className="mt-1 text-xs text-muted-foreground">— 2 Timothy 2:15</footer>
+                </blockquote>
               </div>
-
-              <ul className="space-y-3 text-foreground mb-6">
-                <li className="flex items-start gap-2">
-                  <Brain className="h-5 w-5 mt-0.5 text-amber-500" />
-                  <span>Build Scripture systematically</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Brain className="h-5 w-5 mt-0.5 text-amber-500" />
-                  <span>See patterns across Genesis → Revelation</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Sword className="h-5 w-5 mt-0.5 text-amber-500" />
-                  <span>Train discernment</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Sword className="h-5 w-5 mt-0.5 text-amber-500" />
-                  <span>Become a workman, not just a reader</span>
-                </li>
-              </ul>
-
-              <blockquote className="border-l-2 border-amber-500/50 pl-4 italic text-foreground text-sm">
-                "Study to shew thyself approved unto God, a workman that needeth not to be ashamed"
-                <footer className="mt-1 text-xs text-muted-foreground">— 2 Timothy 2:15</footer>
-              </blockquote>
             </Card>
           </motion.div>
         </div>
@@ -362,9 +380,9 @@ const Gatehouse = () => {
           transition={{ delay: 0.4 }}
           className="mb-12"
         >
-          <Card className="p-6 border-amber-500/30 bg-amber-500/5">
+          <Card className="p-6 border-red-500/30 bg-red-500/5">
             <div className="flex items-start gap-4">
-              <AlertTriangle className="h-6 w-6 text-amber-500 flex-shrink-0 mt-1" />
+              <AlertTriangle className="h-6 w-6 text-red-400 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="text-lg font-semibold mb-2">Before You Enter</h3>
                 <p className="text-muted-foreground mb-4">
@@ -419,7 +437,7 @@ const Gatehouse = () => {
             variant="outline"
             size="lg"
             onClick={handleSurfaceChoice}
-            className="px-8"
+            className="px-8 border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400"
           >
             <BookOpen className="mr-2 h-5 w-5" />
             Continue with Surface Study
@@ -427,7 +445,7 @@ const Gatehouse = () => {
           <Button
             size="lg"
             onClick={handlePalaceChoice}
-            className="px-8 bg-amber-600 hover:bg-amber-700"
+            className="px-8 bg-red-600 hover:bg-red-700 shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_25px_rgba(239,68,68,0.4)]"
           >
             <Castle className="mr-2 h-5 w-5" />
             Enter the Palace
