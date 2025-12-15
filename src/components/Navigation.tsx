@@ -484,6 +484,13 @@ export const Navigation = () => {
                     <span className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent font-semibold">Mastery</span>
                   </Link>
                   <Link 
+                    to="/bible-study-leader" 
+                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 hover:from-emerald-500/20 hover:to-teal-500/20"
+                  >
+                    <Users className="h-3.5 w-3.5 text-emerald-500" />
+                    <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent font-semibold">Lead Bible Study</span>
+                  </Link>
+                  <Link 
                     to="/bible-study-series" 
                     className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/20 hover:from-sky-500/20 hover:to-blue-500/20"
                   >
