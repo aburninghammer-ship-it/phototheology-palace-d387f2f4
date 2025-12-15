@@ -246,15 +246,22 @@ const Gatehouse = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
+          {hasEnteredPalace && (
+            <p className="text-sm text-primary/80 mb-4 tracking-wide uppercase">
+              Welcome back
+            </p>
+          )}
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
             The Choice
           </h1>
           <p className="text-xl text-muted-foreground">
-            You are standing at a threshold.
+            {hasEnteredPalace ? 'The door remains open.' : 'You are standing at a threshold.'}
           </p>
-          <p className="text-lg text-muted-foreground mt-2">
-            What you do next will determine how you study Scripture from this point forward.
-          </p>
+          {!hasEnteredPalace && (
+            <p className="text-lg text-muted-foreground mt-2">
+              What you do next will determine how you study Scripture from this point forward.
+            </p>
+          )}
         </motion.div>
 
         {/* The Two Paths - Glass Cards */}
@@ -327,11 +334,13 @@ const Gatehouse = () => {
             transition={{ delay: 0.3 }}
             className="relative"
           >
-            {/* Pulsating glow overlay */}
+            {/* Pulsating glow overlay - stronger for returning users */}
             <div 
               className="absolute -inset-[2px] rounded-xl pointer-events-none"
               style={{
-                boxShadow: '0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.2)',
+                boxShadow: hasEnteredPalace 
+                  ? '0 0 40px rgba(239,68,68,0.6), 0 0 80px rgba(239,68,68,0.3), 0 0 120px rgba(239,68,68,0.15)'
+                  : '0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.2)',
                 animation: 'glow-pulse 2s ease-in-out infinite',
               }}
             />
@@ -375,7 +384,9 @@ const Gatehouse = () => {
                     This is not for the hurried or the casual.
                   </p>
                   <p className="text-red-400 font-medium mt-4">
-                    Once you enter, you cannot unsee what you will see.
+                    {hasEnteredPalace 
+                      ? 'You know what lies beyond this door.'
+                      : 'Once you enter, you cannot unsee what you will see.'}
                   </p>
                 </div>
               </div>
@@ -447,42 +458,27 @@ const Gatehouse = () => {
             transition={{ delay: 0.8 }}
             className="text-sm text-muted-foreground mt-8 italic"
           >
-            Once you do, things will change from here on out.
+            {hasEnteredPalace 
+              ? 'The Palace awaits your return.'
+              : 'Once you do, things will change from here on out.'}
           </motion.p>
         </motion.div>
 
-        {/* Already entered notice */}
+        {/* Skip link for returning users */}
         {hasEnteredPalace && (
-          <motion.p
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center text-sm text-muted-foreground mt-6"
+            transition={{ delay: 0.6 }}
+            className="text-center mt-8"
           >
-            You have already entered the Palace.{' '}
             <button 
               onClick={() => navigate('/palace')}
-              className="text-primary hover:underline"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
-              Return to your training
+              Skip to Palace →
             </button>
-          </motion.p>
-        )}
-
-        {/* Already entered notice */}
-        {hasEnteredPalace && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center text-sm text-muted-foreground mt-6"
-          >
-            You have already entered the Palace.{' '}
-            <button 
-              onClick={() => navigate('/palace')}
-              className="text-primary hover:underline"
-            >
-              Return to your training
-            </button>
-          </motion.p>
+          </motion.div>
         )}
       </main>
 
