@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { theme } = await req.json();
+    const { theme, recipientName, situation, struggles, relationship } = await req.json();
 
     if (!theme) {
       return new Response(
@@ -20,21 +20,39 @@ serve(async (req) => {
       );
     }
 
+    // Build personalization context
+    const hasPersonalization = recipientName || situation || struggles;
+    const personalizationContext = hasPersonalization ? `
+PERSONALIZATION (USE THROUGHOUT):
+- Recipient's name: ${recipientName || "the reader"}
+- Their relationship to sender: ${relationship || "friend"}
+- Their current situation: ${situation || "not specified"}
+- Their struggles: ${Array.isArray(struggles) ? struggles.join(", ") : struggles || "not specified"}
+
+CRITICAL: Address ${recipientName || "the reader"} by name at least 2-3 times naturally woven into the devotional. Connect the biblical truth directly to their specific situation and struggles. Make them feel seen and known. The devotional should feel written FOR them, not just TO them.` : "";
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log(`Generating Phototheology devotion for theme: ${theme}`);
+    console.log(`Generating Phototheology devotion for theme: ${theme}, recipient: ${recipientName || 'general'}`);
 
-    const systemPrompt = `You are a master of biblical theology writing devotionals that are:
+    const systemPrompt = `You are a master of biblical theology writing PERSONALIZED devotionals that are:
 - Theologically rich, contemplative, and structurally intelligent
 - Never sentimental or emotionally vague
 - Revealing unexpected connections between passages
 - Moving from text → structure → meaning → personal confrontation
 - Adventist in theology (sanctuary-shaped, Great Controversy aware)
+- DEEPLY PERSONALIZED when recipient information is provided
 
 DESIGN GOAL: The devotional must feel weighty, not sentimental. It must reveal unexpected connections, not obvious ones. It must leave the reader quiet, alert, and thinking. Never explain how you're making connections — let the insight emerge naturally.
+
+PERSONALIZATION REQUIREMENT: When a recipient's name and situation are provided, you MUST:
+- Use their name naturally 2-3 times throughout (not forced or awkward)
+- Connect the biblical truth directly to their specific struggles and situation
+- Make the application feel like it was written specifically for their life
+- The reader should feel known and seen, not just taught
 
 QUALITY CONTROL:
 - Could this exist on a generic devotional app? If yes, discard and write something deeper.
@@ -45,6 +63,7 @@ QUALITY CONTROL:
 Avoid clichés, sermon language, and emotional filler. Favor clarity, restraint, and weight.`;
 
     const userPrompt = `Write a 4-5 paragraph devotional on the theme: "${theme}"
+${personalizationContext}
 
 STRUCTURE REQUIREMENTS:
 • Use 2-3 Scripture passages that at first appear unrelated, but when placed side by side reveal a coherent and illuminating truth
