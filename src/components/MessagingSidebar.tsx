@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { MessageCircle, Users as UsersIcon, X, BellRing } from 'lucide-react';
+import { MessageCircle, Users as UsersIcon, X, BellRing, ArrowLeft } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import {
   Tooltip,
@@ -40,6 +40,7 @@ export const MessagingSidebar = () => {
   } = useDirectMessagesContext();
 
   const [activeTab, setActiveTab] = useState<'active' | 'conversations'>('active');
+  const [mobileShowChat, setMobileShowChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeConversation = conversations.find(c => c.id === activeConversationId);
@@ -57,8 +58,18 @@ export const MessagingSidebar = () => {
       console.log('Auto-expanding sidebar due to active conversation:', activeConversationId);
       setOpen?.(true);
       setActiveTab('conversations');
+      if (isMobile) {
+        setMobileShowChat(true);
+      }
     }
-  }, [activeConversationId, isCollapsed, setOpen]);
+  }, [activeConversationId, isCollapsed, setOpen, isMobile]);
+
+  // Reset mobile view when sidebar closes
+  useEffect(() => {
+    if (isCollapsed) {
+      setMobileShowChat(false);
+    }
+  }, [isCollapsed]);
 
   // Listen for window event to force sidebar open (for deep-linked notifications)
   // IMPORTANT: This must run even when collapsed, so we can open from notifications
@@ -146,9 +157,27 @@ export const MessagingSidebar = () => {
     if (convId) {
       console.log('✅ Conversation created/found:', convId);
       setActiveConversationId(convId);
+      if (isMobile) {
+        setMobileShowChat(true);
+      }
     } else {
       console.error('❌ Failed to create/find conversation');
     }
+  };
+
+  // When a conversation is selected on mobile, show chat view
+  const handleConversationClick = (convId: string) => {
+    console.log('📱 Conversation clicked:', convId);
+    setActiveConversationId(convId);
+    if (isMobile) {
+      setMobileShowChat(true);
+    }
+  };
+
+  // Back button handler for mobile
+  const handleMobileBack = () => {
+    setMobileShowChat(false);
+    setActiveConversationId(null);
   };
 
   // Return null for UI when collapsed, but event listener above is always active
@@ -207,8 +236,8 @@ export const MessagingSidebar = () => {
 
         {/* Split Layout */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Left Panel - User List */}
-          <div className="w-full md:w-72 lg:w-80 border-r flex flex-col md:block hidden">
+          {/* Left Panel - User List - Show on mobile when not in chat view */}
+          <div className={`w-full md:w-72 lg:w-80 md:border-r flex flex-col ${isMobile && mobileShowChat ? 'hidden' : 'flex'} ${!isMobile ? '' : ''}`}>
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="flex flex-col h-full">
               <TabsList className="grid w-full grid-cols-2 m-2">
                 <TabsTrigger value="active" className="text-xs">
@@ -286,11 +315,7 @@ export const MessagingSidebar = () => {
                         return (
                           <button
                             key={conv.id}
-                            onClick={() => {
-                              console.log('📱 Conversation clicked:', conv.id);
-                              console.log('Other user:', conv.other_user.display_name);
-                              setActiveConversationId(conv.id);
-                            }}
+                            onClick={() => handleConversationClick(conv.id)}
                             className={`w-full p-2 rounded-lg hover:bg-accent transition-colors text-left ${
                               isActive ? 'bg-accent' : ''
                             }`}
@@ -330,13 +355,24 @@ export const MessagingSidebar = () => {
             </Tabs>
           </div>
 
-          {/* Right Panel - Chat Window */}
-          <div className="flex-1 flex flex-col">
+          {/* Right Panel - Chat Window - Hide on mobile when showing list */}
+          <div className={`flex-1 flex flex-col ${isMobile && !mobileShowChat ? 'hidden' : 'flex'}`}>
             {activeConversationId ? (
               activeConversation ? (
                 <>
                   {/* Chat Header */}
                   <div className="flex items-center gap-2 p-3 border-b">
+                  {/* Back button for mobile */}
+                  {isMobile && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleMobileBack}
+                      className="h-8 w-8 mr-1"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Avatar className="h-9 w-9">
                     <AvatarImage src={activeConversation.other_user.avatar_url || undefined} />
                     <AvatarFallback>
