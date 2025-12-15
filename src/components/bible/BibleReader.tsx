@@ -208,7 +208,7 @@ export const BibleReader = () => {
   return (
     <div className="space-y-6">
       {/* Chapter Header - Sticky Glass */}
-      <div className="sticky top-16 z-20 glass-card-subtle rounded-xl -mx-4 px-6 py-4 flex items-center justify-between flex-wrap gap-4">
+      <div className="sticky top-16 z-50 glass-card-subtle rounded-xl -mx-4 px-6 py-4 flex items-center justify-between flex-wrap gap-4">
         <div className="relative">
           <h1 className="font-serif text-3xl md:text-4xl font-bold bg-gradient-palace bg-clip-text text-transparent">
             {book} {chapter}
