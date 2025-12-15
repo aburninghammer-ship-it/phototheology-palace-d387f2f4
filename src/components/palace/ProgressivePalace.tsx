@@ -73,18 +73,17 @@ export const ProgressivePalace = ({ showStartHere = true }: ProgressivePalacePro
         {palaceFloors.map((floor, idx) => {
           const theme = FLOOR_THEMES[idx];
           const isExpanded = expandedFloors.includes(floor.number);
-          const isLocked = floor.number > 2 && progressPercentage < (floor.number - 2) * 12;
+          // Soft lock: show warning but allow access
+          const hasWarning = floor.number > 2 && progressPercentage < (floor.number - 2) * 12;
           
           return (
             <div key={floor.number} className="rounded-xl border border-border overflow-hidden">
               {/* Floor Header */}
               <button
-                onClick={() => !isLocked && toggleFloor(floor.number)}
-                disabled={isLocked}
+                onClick={() => toggleFloor(floor.number)}
                 className={cn(
                   "w-full flex items-center justify-between p-4 transition-all",
-                  `bg-gradient-to-r ${theme.gradient}`,
-                  isLocked && "opacity-50 cursor-not-allowed"
+                  `bg-gradient-to-r ${theme.gradient}`
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -94,21 +93,22 @@ export const ProgressivePalace = ({ showStartHere = true }: ProgressivePalacePro
                       <span className="font-bold text-white">Floor {floor.number}</span>
                       <span className="text-white/80">•</span>
                       <span className="text-white/90">{floor.name}</span>
-                      {isLocked && <Lock className="h-4 w-4 text-white/60" />}
+                      {hasWarning && (
+                        <span className="text-amber-300 text-xs" title="Recommended: complete earlier floors first">⚠️</span>
+                      )}
                     </div>
                     <span className="text-white/70 text-sm">{floor.rooms.length} rooms</span>
                   </div>
                 </div>
-                {!isLocked && (
-                  isExpanded 
-                    ? <ChevronDown className="h-5 w-5 text-white" />
-                    : <ChevronRight className="h-5 w-5 text-white" />
-                )}
+                {isExpanded 
+                  ? <ChevronDown className="h-5 w-5 text-white" />
+                  : <ChevronRight className="h-5 w-5 text-white" />
+                }
               </button>
 
               {/* Rooms Grid */}
               <AnimatePresence>
-                {isExpanded && !isLocked && (
+                {isExpanded && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
