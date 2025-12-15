@@ -50,7 +50,8 @@ serve(async (req) => {
     switch (receivedEvent.type) {
       case 'checkout.session.completed': {
         const session = receivedEvent.data.object as Stripe.Checkout.Session;
-        const metadata = session.metadata;
+        // Use mutable metadata object
+        let metadata: Record<string, string> = session.metadata ? { ...session.metadata } : {};
         const customerId = session.customer as string;
         const customerEmail = session.customer_email || session.customer_details?.email;
 
@@ -88,7 +89,8 @@ serve(async (req) => {
           break;
         }
 
-        if (!metadata || !metadata.user_id) {
+        // Check if we have user_id in metadata
+        if (!metadata.user_id) {
           // Try to find user by email if user_id not in metadata
           if (customerEmail) {
             logStep('No user_id in metadata, trying to find by email', { email: customerEmail });
@@ -99,20 +101,54 @@ serve(async (req) => {
               .single();
             
             if (userByEmail) {
-              metadata!.user_id = userByEmail.id;
+              metadata.user_id = userByEmail.id;
               logStep('Found user by email', { userId: userByEmail.id });
             } else {
-              logStep('ERROR: Could not find user by email', { email: customerEmail });
+              logStep('WARNING: Could not find user by email', { email: customerEmail });
+              
+              // Still send admin notification about the purchase even when user not found
+              try {
+                await supabase.functions.invoke('send-purchase-notification', {
+                  body: {
+                    userEmail: customerEmail,
+                    userName: session.customer_details?.name || 'Unknown User',
+                    amount: session.amount_total || 0,
+                    currency: session.currency || 'usd',
+                    product: `${metadata.tier || 'Unknown'} Subscription (USER NOT FOUND IN DB)`,
+                    subscriptionTier: metadata.tier || 'unknown',
+                  }
+                });
+                logStep('Admin notification sent for unmatched user', { email: customerEmail });
+              } catch (emailError) {
+                logStep('Failed to send admin notification', { error: emailError });
+              }
               break;
             }
           } else {
             logStep('ERROR: Missing user_id in session metadata and no email available');
+            
+            // Still try to send admin notification
+            try {
+              await supabase.functions.invoke('send-purchase-notification', {
+                body: {
+                  userEmail: 'unknown@email.com',
+                  userName: session.customer_details?.name || 'Unknown User',
+                  amount: session.amount_total || 0,
+                  currency: session.currency || 'usd',
+                  product: `${metadata.tier || 'Unknown'} Subscription (NO EMAIL OR USER_ID)`,
+                  subscriptionTier: metadata.tier || 'unknown',
+                }
+              });
+              logStep('Admin notification sent for unknown user');
+            } catch (emailError) {
+              logStep('Failed to send admin notification', { error: emailError });
+            }
             break;
           }
         }
 
         // Check if this is an INDIVIDUAL subscription (not a church)
-        const isIndividualSubscription = metadata?.is_trial === 'true' || !metadata?.church_name;
+        const isIndividualSubscription = metadata.is_trial === 'true' || !metadata.church_name;
 
         if (isIndividualSubscription) {
           logStep(`Processing individual subscription for user ${metadata.user_id}`);
@@ -428,15 +464,15 @@ serve(async (req) => {
           const { error } = await supabase
             .from('user_subscriptions')
             .update({
-              subscription_status: isActive ? 'active' : subscription.status,
+              subscription_status: subscription.status === 'trialing' ? 'trial' : (isActive ? 'active' : 'expired'),
               subscription_renewal_date: renewalDate.toISOString(),
             })
             .eq('stripe_customer_id', customerId);
 
           if (error) {
-            logStep('ERROR updating renewal date', { error });
+            logStep('ERROR updating subscription after payment success', { error });
           } else {
-            logStep(`Payment succeeded, renewal date updated for customer ${customerId}`);
+            logStep(`Subscription renewed for customer ${customerId}`);
           }
         }
         break;
@@ -450,12 +486,9 @@ serve(async (req) => {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });
-
-  } catch (error) {
-    logStep('Webhook error', { error: error instanceof Error ? error.message : String(error) });
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    );
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    logStep(`Webhook error: ${errorMessage}`);
+    return new Response(`Webhook error: ${errorMessage}`, { status: 400 });
   }
 });
