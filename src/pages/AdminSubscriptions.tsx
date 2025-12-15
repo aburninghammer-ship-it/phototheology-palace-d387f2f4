@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RevenueDashboard } from "@/components/admin/RevenueDashboard";
 import { WinBackCampaign } from "@/components/admin/WinBackCampaign";
+import { SubscriptionMismatches } from "@/components/admin/SubscriptionMismatches";
 
 interface SubscriptionStats {
   totalPaid: number;
@@ -227,6 +228,7 @@ export default function AdminSubscriptions() {
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="mismatches">Subscription Health</TabsTrigger>
           <TabsTrigger value="revenue">Revenue & Churn</TabsTrigger>
           <TabsTrigger value="winback">Win-Back Campaign</TabsTrigger>
         </TabsList>
@@ -323,6 +325,10 @@ export default function AdminSubscriptions() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="mismatches">
+          <SubscriptionMismatches />
         </TabsContent>
 
         <TabsContent value="revenue">
