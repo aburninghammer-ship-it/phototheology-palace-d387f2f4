@@ -1,0 +1,145 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+interface ChurchDevotionalRequest {
+  churchName: string;
+  theologicalFrame?: string;
+  dayTheme: string;
+  dayOfWeek: string;
+  customGuidelines?: string;
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { churchName, theologicalFrame, dayTheme, dayOfWeek, customGuidelines } = await req.json() as ChurchDevotionalRequest;
+    
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not configured');
+    }
+
+    // Map day themes to focused content
+    const dayThemeDescriptions: Record<string, string> = {
+      monday: "Identity - Who we are as the church, scattered yet united in Christ",
+      tuesday: "Righteousness - Personal holiness in private spaces, living rightly when no one is watching",
+      wednesday: "Prayer - Intercession, spiritual warfare, unity in prayer",
+      thursday: "Mission - Witness, digital evangelism, conversations that point to Christ",
+      friday: "Encouragement - Perseverance, faithfulness, endurance in the faith",
+      sabbath: "Rest & Reflection - Trust, dependence, abiding in Christ's finished work",
+      sunday: "Vision - Kingdom perspective, eternal focus, the big picture of God's plan"
+    };
+
+    const themeDescription = dayThemeDescriptions[dayOfWeek.toLowerCase()] || dayTheme;
+
+    const systemPrompt = `You are a pastoral devotional writer for ${churchName}. You write in a non-performative, spiritually grounded tone that is pastoral, prophetic, and biblically realistic.
+
+THEOLOGICAL FRAME:
+${theologicalFrame || `The church is not defined by shared space, but by shared Spirit. This is a theology of:
+- Presence without proximity
+- Faithfulness without visibility  
+- Mission without platforms
+- Discipline of righteousness without applause`}
+
+KEY BIBLICAL FOUNDATIONS (return to these):
+- "Where two or three are gathered in My name…" (Matthew 18:20)
+- "They that were scattered went everywhere preaching the word." (Acts 8:4)
+- "Though I am absent in body, yet I am with you in spirit." (Colossians 2:5)
+- "You also, as living stones, are being built up a spiritual house." (1 Peter 2:5)
+
+TODAY'S THEME: ${themeDescription}
+
+TONE REQUIREMENTS:
+- Quiet confidence
+- Biblical realism
+- Mission-first urgency
+- Think Hebrews + Acts, not Instagram devotionals
+- Avoid over-sentimentality, internet slang, or "we're special because we're different" language
+
+${customGuidelines ? `ADDITIONAL GUIDELINES:\n${customGuidelines}` : ''}
+
+OUTPUT FORMAT (JSON):
+{
+  "title": "Short, identity-shaping declarative title (not cute or vague)",
+  "anchorScripture": "Full verse reference (e.g., Matthew 18:20)",
+  "scriptureText": "Full text of the scripture verse(s)",
+  "meditation": "2-3 short paragraphs that: 1) Reframe online/scattered church as biblical, not modern 2) Call to personal holiness without external pressure 3) Link righteousness to mission, not comfort",
+  "communalPractice": "One simple, actionable practice for community engagement (e.g., 'Tag one member and pray for them today' or 'Post one sentence prayer in the comments')",
+  "closingPrayer": "4-6 lines, always plural (we, not I), focused on: faithfulness, boldness, love, endurance, obedience"
+}`;
+
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `Generate a ${dayOfWeek} devotional with the theme: "${dayTheme}". Make it powerful, grounded, and mission-focused for ${churchName}.` }
+        ],
+        temperature: 0.7,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('AI Gateway error:', response.status, errorText);
+      
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Payment required, please add funds." }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      throw new Error(`AI gateway error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
+
+    if (!content) {
+      throw new Error('No content generated');
+    }
+
+    // Parse the JSON response
+    let devotional;
+    try {
+      // Extract JSON from potential markdown code blocks
+      const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || content.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : content;
+      devotional = JSON.parse(jsonStr);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      console.log('Raw content:', content);
+      throw new Error('Failed to parse devotional content');
+    }
+
+    return new Response(JSON.stringify({ devotional }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+
+  } catch (error) {
+    console.error('Error generating church devotional:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+});
