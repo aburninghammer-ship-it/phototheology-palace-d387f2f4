@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { BookOpen, Castle, ChevronRight, AlertTriangle, Heart, Brain, Sword } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, Castle, ChevronRight, AlertTriangle, Heart, Brain, Sword, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,14 +12,12 @@ import { Footer } from '@/components/Footer';
 const Gatehouse = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { hasEnteredPalace, markSurfaceStudy } = useGatehouseStatus();
+  const { hasEnteredPalace } = useGatehouseStatus();
   const [selectedPath, setSelectedPath] = useState<'surface' | 'palace' | null>(null);
+  const [showGracefulExit, setShowGracefulExit] = useState(false);
 
-  const handleSurfaceChoice = async () => {
-    if (user) {
-      await markSurfaceStudy();
-    }
-    navigate('/surface-study');
+  const handleSurfaceChoice = () => {
+    setShowGracefulExit(true);
   };
 
   const handlePalaceChoice = () => {
@@ -29,6 +27,81 @@ const Gatehouse = () => {
       navigate('/auth?redirect=/antechamber');
     }
   };
+
+  // Graceful Exit View
+  if (showGracefulExit) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        
+        <main className="container mx-auto px-4 py-12 max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center"
+          >
+            <div className="mb-8">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
+                <BookOpen className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
+                Thank You for Considering Phototheology
+              </h1>
+            </div>
+
+            <Card className="p-8 mb-8 text-left">
+              <p className="text-lg text-muted-foreground mb-6">
+                The Bible can be studied at many levels. There is no shame in reading devotionally—
+                millions do, and God meets people where they are.
+              </p>
+              
+              <p className="text-muted-foreground mb-6">
+                But Phototheology was built for something different: <span className="text-foreground font-medium">training</span>, 
+                not just reading. Pattern-building, not just reflection. Architecture, not just inspiration.
+              </p>
+
+              <blockquote className="border-l-2 border-primary/50 pl-4 italic text-muted-foreground mb-6">
+                "For every one that useth milk is unskilful in the word of righteousness: for he is a babe. 
+                But strong meat belongeth to them that are of full age."
+                <footer className="mt-2 text-xs not-italic">— Hebrews 5:13-14</footer>
+              </blockquote>
+
+              <p className="text-muted-foreground">
+                If you ever feel the pull to go deeper—to truly <em>study</em> rather than just read—
+                the Gate remains open.
+              </p>
+            </Card>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setShowGracefulExit(false)}
+                className="px-6"
+              >
+                <ArrowLeft className="mr-2 h-5 w-5" />
+                Reconsider
+              </Button>
+              <Button
+                size="lg"
+                onClick={handlePalaceChoice}
+                className="px-6 bg-amber-600 hover:bg-amber-700"
+              >
+                <Castle className="mr-2 h-5 w-5" />
+                Enter the Palace Instead
+              </Button>
+            </div>
+
+            <p className="text-sm text-muted-foreground mt-8">
+              May the Lord bless your journey, wherever it leads.
+            </p>
+          </motion.div>
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
