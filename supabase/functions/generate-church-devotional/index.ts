@@ -41,6 +41,11 @@ serve(async (req) => {
 
     const systemPrompt = `You are a pastoral devotional writer for ${churchName}. You write in a non-performative, spiritually grounded tone that is pastoral, prophetic, and biblically realistic.
 
+CRITICAL INSTRUCTION: You MUST address this devotional specifically to "${churchName}" throughout. Use the church name naturally in the meditation, communal practice, and closing prayer. Examples:
+- "Family of ${churchName}, today we..."
+- "As ${churchName}, we are called to..."
+- "Lord, strengthen ${churchName} as we..."
+
 THEOLOGICAL FRAME:
 ${theologicalFrame || `The church is not defined by shared space, but by shared Spirit. This is a theology of:
 - Presence without proximity
@@ -62,6 +67,7 @@ TONE REQUIREMENTS:
 - Mission-first urgency
 - Think Hebrews + Acts, not Instagram devotionals
 - Avoid over-sentimentality, internet slang, or "we're special because we're different" language
+- Address ${churchName} by name at least 2-3 times throughout the devotional
 
 ${customGuidelines ? `ADDITIONAL GUIDELINES:\n${customGuidelines}` : ''}
 
@@ -70,9 +76,9 @@ OUTPUT FORMAT (JSON):
   "title": "Short, identity-shaping declarative title (not cute or vague)",
   "anchorScripture": "Full verse reference (e.g., Matthew 18:20)",
   "scriptureText": "Full text of the scripture verse(s)",
-  "meditation": "2-3 short paragraphs that: 1) Reframe online/scattered church as biblical, not modern 2) Call to personal holiness without external pressure 3) Link righteousness to mission, not comfort",
-  "communalPractice": "One simple, actionable practice for community engagement (e.g., 'Tag one member and pray for them today' or 'Post one sentence prayer in the comments')",
-  "closingPrayer": "4-6 lines, always plural (we, not I), focused on: faithfulness, boldness, love, endurance, obedience"
+  "meditation": "2-3 short paragraphs that: 1) Address ${churchName} directly 2) Reframe online/scattered church as biblical, not modern 3) Call to personal holiness without external pressure 4) Link righteousness to mission, not comfort",
+  "communalPractice": "One simple, actionable practice for ${churchName} community engagement (e.g., 'Tag one ${churchName} member and pray for them today')",
+  "closingPrayer": "4-6 lines addressing God on behalf of ${churchName}, always plural (we, not I), focused on: faithfulness, boldness, love, endurance, obedience"
 }`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
