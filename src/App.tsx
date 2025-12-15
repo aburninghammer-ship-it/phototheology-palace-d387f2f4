@@ -223,6 +223,12 @@ const Notes = lazy(() => import("./pages/Notes"));
 const DonationSuccess = lazy(() => import("./pages/DonationSuccess"));
 const LiveDemo = lazy(() => import("./pages/LiveDemo"));
 
+// Gatehouse flow pages
+const Gatehouse = lazy(() => import("./pages/Gatehouse"));
+const Antechamber = lazy(() => import("./pages/Antechamber"));
+const SurfaceStudy = lazy(() => import("./pages/SurfaceStudy"));
+const FirstRoom = lazy(() => import("./pages/FirstRoom"));
+
 // GuestHouse pages (public)
 const GuestHouseLanding = lazy(() => import("./pages/guesthouse/GuestHouseLanding"));
 const GuestHouseEvent = lazy(() => import("./pages/guesthouse/GuestHouseEvent"));
@@ -311,6 +317,12 @@ function App() {
             <Route path="/path/week" element={<ProtectedRoute><PathWeek /></ProtectedRoute>} />
             <Route path="/why-phototheology" element={<WhyPhototheology />} />
             <Route path="/app-tour" element={<AppTour />} />
+            
+            {/* Gatehouse Flow - Public */}
+            <Route path="/gatehouse" element={<Gatehouse />} />
+            <Route path="/surface-study" element={<SurfaceStudy />} />
+            <Route path="/antechamber" element={<ProtectedRoute><Antechamber /></ProtectedRoute>} />
+            <Route path="/palace/first-room" element={<ProtectedRoute><FirstRoom /></ProtectedRoute>} />
             <Route path="/access" element={
               <ProtectedRoute>
                 <AccessCode />

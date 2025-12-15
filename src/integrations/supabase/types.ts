@@ -5672,6 +5672,7 @@ export type Database = {
           focused_room_id: string | null
           focused_room_set_at: string | null
           gem_creation_streak: number | null
+          has_entered_palace: boolean | null
           has_lifetime_access: boolean
           has_seen_community_guidelines: boolean | null
           id: string
@@ -5692,6 +5693,7 @@ export type Database = {
           onboarding_completed: boolean | null
           onboarding_completed_at: string | null
           onboarding_step: number | null
+          palace_entered_at: string | null
           path_master_level: number | null
           payment_source: string | null
           points: number | null
@@ -5708,6 +5710,7 @@ export type Database = {
           subscription_renewal_date: string | null
           subscription_status: string | null
           subscription_tier: string | null
+          surface_study_only: boolean | null
           trial_ends_at: string | null
           trial_started_at: string | null
           updated_at: string | null
@@ -5730,6 +5733,7 @@ export type Database = {
           focused_room_id?: string | null
           focused_room_set_at?: string | null
           gem_creation_streak?: number | null
+          has_entered_palace?: boolean | null
           has_lifetime_access?: boolean
           has_seen_community_guidelines?: boolean | null
           id: string
@@ -5750,6 +5754,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_step?: number | null
+          palace_entered_at?: string | null
           path_master_level?: number | null
           payment_source?: string | null
           points?: number | null
@@ -5766,6 +5771,7 @@ export type Database = {
           subscription_renewal_date?: string | null
           subscription_status?: string | null
           subscription_tier?: string | null
+          surface_study_only?: boolean | null
           trial_ends_at?: string | null
           trial_started_at?: string | null
           updated_at?: string | null
@@ -5788,6 +5794,7 @@ export type Database = {
           focused_room_id?: string | null
           focused_room_set_at?: string | null
           gem_creation_streak?: number | null
+          has_entered_palace?: boolean | null
           has_lifetime_access?: boolean
           has_seen_community_guidelines?: boolean | null
           id?: string
@@ -5808,6 +5815,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_step?: number | null
+          palace_entered_at?: string | null
           path_master_level?: number | null
           payment_source?: string | null
           points?: number | null
@@ -5824,6 +5832,7 @@ export type Database = {
           subscription_renewal_date?: string | null
           subscription_status?: string | null
           subscription_tier?: string | null
+          surface_study_only?: boolean | null
           trial_ends_at?: string | null
           trial_started_at?: string | null
           updated_at?: string | null
