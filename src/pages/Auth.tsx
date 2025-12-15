@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useGatehouseStatus } from "@/hooks/useGatehouseStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,7 @@ const referralCodeSchema = z.string().trim().max(20).regex(/^[A-Z0-9]*$/).option
 
 export default function Auth() {
   const { user } = useAuth();
+  const { hasEnteredPalace, isLoading: gatehouseLoading } = useGatehouseStatus();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -36,10 +38,15 @@ export default function Auth() {
 
   // Redirect if already logged in (but NOT if in Patreon mode - let them connect)
   useEffect(() => {
-    if (user && !isPatreonMode) {
-      navigate("/dashboard");
+    if (user && !isPatreonMode && !gatehouseLoading) {
+      // If user hasn't entered the palace yet, show them the gatehouse first
+      if (!hasEnteredPalace) {
+        navigate("/gatehouse");
+      } else {
+        navigate("/dashboard");
+      }
     }
-  }, [user, navigate, isPatreonMode]);
+  }, [user, navigate, isPatreonMode, hasEnteredPalace, gatehouseLoading]);
   
   // Login form
   const [loginEmail, setLoginEmail] = useState("");
