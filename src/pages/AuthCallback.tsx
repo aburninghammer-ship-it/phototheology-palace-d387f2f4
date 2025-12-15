@@ -59,8 +59,18 @@ export default function AuthCallback() {
           // Navigate back to profile
           navigate('/profile', { replace: true });
         } else {
-          // This was a regular auth flow
-          navigate('/dashboard', { replace: true });
+          // This was a regular auth flow - check gatehouse status
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('has_entered_palace')
+            .eq('id', session.user.id)
+            .single();
+          
+          if (profile && !profile.has_entered_palace) {
+            navigate('/gatehouse', { replace: true });
+          } else {
+            navigate('/dashboard', { replace: true });
+          }
         }
       } catch (error: any) {
         console.error('OAuth callback error:', error);
