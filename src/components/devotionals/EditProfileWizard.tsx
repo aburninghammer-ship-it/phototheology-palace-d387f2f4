@@ -303,8 +303,8 @@ export function EditProfileWizard({ profile, onClose, onProfileUpdated }: EditPr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 pb-20 md:pb-4">
-      <Card className="w-full max-w-2xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 pt-16 pb-20 md:pt-4 md:pb-4">
+      <Card className="w-full max-w-2xl max-h-[80vh] md:max-h-[90vh] overflow-y-auto">
         <CardHeader className="relative border-b">
           <Button
             variant="ghost"
