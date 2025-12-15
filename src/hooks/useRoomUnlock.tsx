@@ -5,20 +5,21 @@ import { palaceFloors } from "@/data/palaceData";
 
 export const useRoomUnlock = (floorNumber: number, roomId: string) => {
   const { user } = useAuth();
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(true); // Always unlocked now (soft lock)
   const [loading, setLoading] = useState(true);
   const [missingPrerequisites, setMissingPrerequisites] = useState<string[]>([]);
+  const [recommendationWarning, setRecommendationWarning] = useState<string | null>(null);
 
   useEffect(() => {
     const checkUnlock = async () => {
       if (!user) {
-        setIsUnlocked(true); // Allow preview for non-authenticated users
+        setIsUnlocked(true);
         setLoading(false);
         return;
       }
 
       try {
-        // Check if user is admin - admins bypass all locks
+        // Check if user is admin - admins see no warnings
         const { data: roleData, error: roleError } = await supabase
           .from("user_roles")
           .select("role")
@@ -28,37 +29,26 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
 
         if (!roleError && roleData) {
           setIsUnlocked(true);
+          setRecommendationWarning(null);
           setLoading(false);
           return;
         }
 
-        // CRITICAL: Check if previous floor is completed (for floors 2-8)
-        // Only enforce this if floor progress system is being used
+        // SOFT LOCK: Check if previous floor is completed (for floors 2-8)
+        // Show warning but allow access
         if (floorNumber > 1) {
-          const { data: previousFloorProgress, error: floorError } = await supabase
+          const { data: previousFloorProgress } = await supabase
             .from("user_floor_progress")
             .select("floor_completed_at, floor_number")
             .eq("user_id", user.id)
             .eq("floor_number", floorNumber - 1)
             .maybeSingle();
 
-          if (floorError) throw floorError;
-
-          // Check if ANY floor progress exists for this user
-          const { data: anyFloorProgress } = await supabase
-            .from("user_floor_progress")
-            .select("id")
-            .eq("user_id", user.id)
-            .limit(1)
-            .maybeSingle();
-
-          // Only enforce floor completion if user has floor progress records
-          // This maintains backward compatibility for existing users
-          if (anyFloorProgress && !previousFloorProgress?.floor_completed_at) {
-            setMissingPrerequisites([`Complete all rooms on Floor ${floorNumber - 1} first`]);
-            setIsUnlocked(false);
-            setLoading(false);
-            return;
+          // If previous floor not completed, show recommendation warning
+          if (!previousFloorProgress?.floor_completed_at) {
+            setRecommendationWarning(`Recommended: Complete Floor ${floorNumber - 1} first for best learning experience`);
+          } else {
+            setRecommendationWarning(null);
           }
         }
 
@@ -84,12 +74,11 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
           completedRooms?.map(r => `${r.floor_number}-${r.room_id}`) || []
         );
 
-        // Check each prerequisite
+        // Check each prerequisite - but only for warning, not blocking
         const missing: string[] = [];
         for (const prereq of room.prerequisites) {
           const prereqKey = `${prereq.floor}-${prereq.room}`;
           if (!completedSet.has(prereqKey)) {
-            // Find the room name for display
             const prereqFloor = palaceFloors.find(f => f.number === prereq.floor);
             const prereqRoom = prereqFloor?.rooms.find(r => r.id === prereq.room);
             if (prereqRoom) {
@@ -99,10 +88,11 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
         }
 
         setMissingPrerequisites(missing);
-        setIsUnlocked(missing.length === 0);
+        // Always unlocked - soft lock only shows warnings
+        setIsUnlocked(true);
       } catch (error) {
         console.error("Error checking room unlock:", error);
-        setIsUnlocked(true); // Fail open
+        setIsUnlocked(true);
       } finally {
         setLoading(false);
       }
@@ -111,5 +101,5 @@ export const useRoomUnlock = (floorNumber: number, roomId: string) => {
     checkUnlock();
   }, [user, floorNumber, roomId]);
 
-  return { isUnlocked, loading, missingPrerequisites };
+  return { isUnlocked, loading, missingPrerequisites, recommendationWarning };
 };
