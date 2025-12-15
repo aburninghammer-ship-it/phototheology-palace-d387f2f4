@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Castle, Eye, Lightbulb, ArrowRight, Sparkles, BookOpen } from 'lucide-react';
+import { Castle, Eye, Lightbulb, ArrowRight, ArrowLeft, Sparkles, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -60,6 +60,12 @@ const FirstRoom = () => {
       setCurrentStep(currentStep + 1);
     } else {
       navigate('/palace');
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -225,7 +231,20 @@ const FirstRoom = () => {
               )}
 
               {/* Navigation */}
-              <div className="mt-8 flex justify-end">
+              <div className="mt-8 flex justify-between items-center">
+                {currentStep > 0 ? (
+                  <Button
+                    variant="ghost"
+                    onClick={handleBack}
+                    size="lg"
+                  >
+                    <ArrowLeft className="mr-2 h-5 w-5" />
+                    Back
+                  </Button>
+                ) : (
+                  <div />
+                )}
+                
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed()}
