@@ -13,11 +13,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDevotionals } from "@/hooks/useDevotionals";
-import { useDevotionalProfiles } from "@/hooks/useDevotionalProfiles";
+import { useDevotionalProfiles, DevotionalProfile } from "@/hooks/useDevotionalProfiles";
 import { CreateDevotionalWizard } from "@/components/devotionals/CreateDevotionalWizard";
 import { DevotionalForFriendWizard } from "@/components/devotionals/DevotionalForFriendWizard";
 import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
 import { CreateProfileWizard } from "@/components/devotionals/CreateProfileWizard";
+import { EditProfileWizard } from "@/components/devotionals/EditProfileWizard";
 import { DevotionalProfileCard } from "@/components/devotionals/DevotionalProfileCard";
 import { QuickDevotion } from "@/components/devotionals/QuickDevotion";
 import { ChurchDevotionalWizard } from "@/components/devotionals/ChurchDevotionalWizard";
@@ -56,6 +57,7 @@ export default function Devotionals() {
   const [activeTab, setActiveTab] = useState("personal");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteProfileId, setDeleteProfileId] = useState<string | null>(null);
+  const [editingProfile, setEditingProfile] = useState<DevotionalProfile | null>(null);
 
   const activePlans = plans?.filter((p) => p.status === "active") || [];
   const completedPlans = plans?.filter((p) => p.status === "completed") || [];
@@ -85,6 +87,16 @@ export default function Devotionals() {
 
   if (showProfileWizard) {
     return <CreateProfileWizard onClose={() => setShowProfileWizard(false)} />;
+  }
+
+  if (editingProfile) {
+    return (
+      <EditProfileWizard 
+        profile={editingProfile} 
+        onClose={() => setEditingProfile(null)} 
+        onProfileUpdated={() => setEditingProfile(null)}
+      />
+    );
   }
 
   if (showChurchWizard) {
@@ -417,6 +429,7 @@ export default function Devotionals() {
                               profile={profile}
                               onSelect={() => navigate(`/devotionals/profile/${profile.id}`)}
                               onDelete={() => setDeleteProfileId(profile.id)}
+                              onEdit={() => setEditingProfile(profile)}
                             />
                           ))}
                         </div>
