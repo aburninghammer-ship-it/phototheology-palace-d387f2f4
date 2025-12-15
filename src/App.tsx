@@ -40,8 +40,11 @@ import { usePresenceTracker } from "@/hooks/usePresenceTracker";
 import { PresenceTracker } from "@/components/PresenceTracker";
 
 // Critical pages - load immediately (landing + auth only)
-import Index from "./pages/Index";
+import Gatehouse from "./pages/Gatehouse";
 import Auth from "./pages/Auth";
+
+// Legacy landing page (lazy loaded)
+const Index = lazy(() => import("./pages/Index"));
 
 // Lazy load pricing, demo, and donation
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -223,8 +226,7 @@ const Notes = lazy(() => import("./pages/Notes"));
 const DonationSuccess = lazy(() => import("./pages/DonationSuccess"));
 const LiveDemo = lazy(() => import("./pages/LiveDemo"));
 
-// Gatehouse flow pages
-const Gatehouse = lazy(() => import("./pages/Gatehouse"));
+// Gatehouse flow pages (Gatehouse is now imported at top as critical page)
 const Antechamber = lazy(() => import("./pages/Antechamber"));
 const FirstRoom = lazy(() => import("./pages/FirstRoom"));
 
@@ -293,7 +295,8 @@ function App() {
                           <main className="flex-1 w-full overflow-x-hidden pb-mobile-nav">
                           <Suspense fallback={<LoadingScreen />}>
                             <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Gatehouse />} />
+            <Route path="/landing" element={<Index />} />
             <Route path="/genesis-challenge" element={<GenesisHighRise />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
@@ -317,7 +320,7 @@ function App() {
             <Route path="/why-phototheology" element={<WhyPhototheology />} />
             <Route path="/app-tour" element={<AppTour />} />
             
-{/* Gatehouse Flow - Public */}
+{/* Gatehouse Flow - Public (/ is the main gatehouse, /gatehouse kept for legacy links) */}
             <Route path="/gatehouse" element={<Gatehouse />} />
             <Route path="/antechamber" element={<ProtectedRoute><Antechamber /></ProtectedRoute>} />
             <Route path="/palace/first-room" element={<ProtectedRoute><FirstRoom /></ProtectedRoute>} />
