@@ -29,13 +29,16 @@ interface Church {
 
 export default function ChurchAdmin() {
   const { user } = useAuth();
-  const { subscription } = useSubscription();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
   const [church, setChurch] = useState<Church | null>(null);
   const [loading, setLoading] = useState(true);
   const [usedSeats, setUsedSeats] = useState(0);
 
   useEffect(() => {
+    // Wait for subscription to load before making any navigation decisions
+    if (subscriptionLoading) return;
+
     if (!user) {
       navigate("/auth");
       return;
@@ -48,7 +51,7 @@ export default function ChurchAdmin() {
     }
 
     loadChurchData();
-  }, [user, subscription, navigate]);
+  }, [user, subscription, subscriptionLoading, navigate]);
 
   const loadChurchData = async () => {
     try {
@@ -80,7 +83,7 @@ export default function ChurchAdmin() {
     }
   };
 
-  if (loading) {
+  if (loading || subscriptionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-dreamy">
         <div className="text-center">
