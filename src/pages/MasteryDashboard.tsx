@@ -191,43 +191,43 @@ export default function MasteryDashboard() {
                   </p>
                   <ul className="space-y-3 mb-4">
                     <li>
-                      <Link to="/mastery/floor/1" className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
+                      <Link to="/palace/floor/1" className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
                         <Sword className="h-6 w-6 text-blue-500" />
                         <span><strong className="text-blue-500">Floor 1:</strong> <span className="text-foreground">Blue Master (Furnishing)</span></span>
                       </Link>
                     </li>
                     <li>
-                      <Link to="/mastery/floor/2" className="flex items-center gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer">
+                      <Link to="/palace/floor/2" className="flex items-center gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer">
                         <Sword className="h-6 w-6 text-red-500" />
                         <span><strong className="text-red-500">Floor 2:</strong> <span className="text-foreground">Red Master (Investigation)</span></span>
                       </Link>
                     </li>
                     <li>
-                      <Link to="/mastery/floor/3" className="flex items-center gap-3 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/20 transition-colors cursor-pointer">
+                      <Link to="/palace/floor/3" className="flex items-center gap-3 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/20 transition-colors cursor-pointer">
                         <Sword className="h-6 w-6 text-yellow-600" />
                         <span><strong className="text-yellow-600 dark:text-yellow-500">Floor 3:</strong> <span className="text-foreground">Gold Master (Freestyle)</span></span>
                       </Link>
                     </li>
                     <li>
-                      <Link to="/mastery/floor/4" className="flex items-center gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-pointer">
+                      <Link to="/palace/floor/4" className="flex items-center gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-pointer">
                         <Sword className="h-6 w-6 text-purple-500" />
                         <span><strong className="text-purple-500">Floor 4:</strong> <span className="text-foreground">Purple Master (Next Level)</span></span>
                       </Link>
                     </li>
                     <li>
-                      <Link to="/mastery/floor/5" className="flex items-center gap-3 p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 hover:bg-gray-500/20 transition-colors cursor-pointer">
+                      <Link to="/palace/floor/5" className="flex items-center gap-3 p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 hover:bg-gray-500/20 transition-colors cursor-pointer">
                         <Sword className="h-6 w-6 text-gray-400" />
                         <span><strong className="text-gray-700 dark:text-gray-300">Floors 5-6:</strong> <span className="text-foreground">White Master (Vision & Three Heavens)</span></span>
                       </Link>
                     </li>
                     <li>
-                      <Link to="/mastery/floor/7" className="flex items-center gap-3 p-3 rounded-lg bg-gray-700/10 border border-gray-700/20 hover:bg-gray-700/20 transition-colors cursor-pointer">
+                      <Link to="/palace/floor/7" className="flex items-center gap-3 p-3 rounded-lg bg-gray-700/10 border border-gray-700/20 hover:bg-gray-700/20 transition-colors cursor-pointer">
                         <Sword className="h-6 w-6 text-gray-600" />
                         <span><strong className="text-gray-800 dark:text-gray-200">Floor 7:</strong> <span className="text-foreground">Black Candidate (Transformation)</span></span>
                       </Link>
                     </li>
                     <li>
-                      <Link to="/mastery/floor/8" className="flex items-center gap-3 p-3 rounded-lg bg-black/10 dark:bg-white/10 border border-black/30 dark:border-white/30 hover:bg-black/20 dark:hover:bg-white/20 transition-colors cursor-pointer">
+                      <Link to="/palace/floor/8" className="flex items-center gap-3 p-3 rounded-lg bg-black/10 dark:bg-white/10 border border-black/30 dark:border-white/30 hover:bg-black/20 dark:hover:bg-white/20 transition-colors cursor-pointer">
                         <Sword className="h-6 w-6 text-black dark:text-white" />
                         <span><strong className="text-black dark:text-white">Floor 8:</strong> <span className="text-foreground">Black Master (Reflexive Mastery)</span></span>
                       </Link>
