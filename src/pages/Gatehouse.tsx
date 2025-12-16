@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useGatehouseStatus } from '@/hooks/useGatehouseStatus';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { UserCountBadge } from '@/components/UserCountBadge';
 
 type ViewState = 'choice' | 'appeal' | 'exit';
 
@@ -365,11 +366,20 @@ const Gatehouse = () => {
             </motion.div>
           </div>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-sm text-muted-foreground mt-8 italic"
+            className="mt-8"
+          >
+            <UserCountBadge />
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-sm text-muted-foreground mt-6 italic"
           >
             The Palace awaits your return.
           </motion.p>
@@ -400,6 +410,14 @@ const Gatehouse = () => {
           <p className="text-lg text-muted-foreground mt-2">
             What you do next will determine how you study Scripture from this point forward.
           </p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-6"
+          >
+            <UserCountBadge />
+          </motion.div>
         </motion.div>
 
         {/* The Two Paths - Glass Cards */}
