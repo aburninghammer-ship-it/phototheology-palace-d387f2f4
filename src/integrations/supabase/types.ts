@@ -9424,7 +9424,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "video_admin" | "owner"
-      church_member_role: "admin" | "leader" | "member"
+      church_member_role:
+        | "admin"
+        | "leader"
+        | "member"
+        | "bible_worker"
+        | "guest"
       church_tier: "tier1" | "tier2" | "tier3"
     }
     CompositeTypes: {
@@ -9554,7 +9559,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user", "video_admin", "owner"],
-      church_member_role: ["admin", "leader", "member"],
+      church_member_role: [
+        "admin",
+        "leader",
+        "member",
+        "bible_worker",
+        "guest",
+      ],
       church_tier: ["tier1", "tier2", "tier3"],
     },
   },
