@@ -1,108 +1,77 @@
 import { useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-
-// Sample daily verses with PT insights
-const DAILY_VERSES = [
-  {
-    reference: "Ephesians 3:20-21",
-    text: "Now unto him that is able to do exceeding abundantly above all that we ask or think...",
-    insight: "CR: Christ is the channel through whom God's limitless power flows to us"
-  },
-  {
-    reference: "John 3:16",
-    text: "For God so loved the world, that he gave his only begotten Son...",
-    insight: "CR: Christ is the center - God's love flows through sacrifice"
-  },
-  {
-    reference: "Psalm 23:1",
-    text: "The LORD is my shepherd; I shall not want.",
-    insight: "BL: Sanctuary insight - Christ as our High Priest guides us"
-  },
-  {
-    reference: "Romans 8:28",
-    text: "And we know that all things work together for good...",
-    insight: "PRm: Pattern of providence - God orchestrates all circumstances"
-  },
-  {
-    reference: "Philippians 4:13",
-    text: "I can do all things through Christ which strengtheneth me.",
-    insight: "CR: Christ-centered strength - power flows from connection"
-  },
-  {
-    reference: "Isaiah 40:31",
-    text: "But they that wait upon the LORD shall renew their strength...",
-    insight: "ST: Eagle symbol - divine renewal through patient trust"
-  },
-  {
-    reference: "Jeremiah 29:11",
-    text: "For I know the thoughts that I think toward you...",
-    insight: "@Cy: Cyrusic cycle - restoration always follows exile"
-  },
-  {
-    reference: "Proverbs 3:5-6",
-    text: "Trust in the LORD with all thine heart...",
-    insight: "FRt: Fruit test - trust produces guidance and direction"
-  }
-];
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export const DailyVerseNotification = () => {
   const { user } = useAuth();
-  const lastNotificationDate = useRef<string | null>(null);
-  const preferencesRef = useRef<{ daily_verse: boolean | null } | null>(null);
+  const hasNotifiedRef = useRef(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || hasNotifiedRef.current) return;
 
-    // Fetch preferences
-    const fetchPreferences = async () => {
-      const { data } = await supabase
-        .from("notification_preferences")
-        .select("daily_verse")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      
-      preferencesRef.current = data;
-    };
+    const checkAndNotify = async () => {
+      try {
+        // Check user preferences
+        const { data: prefs } = await supabase
+          .from("notification_preferences")
+          .select("daily_verse")
+          .eq("user_id", user.id)
+          .maybeSingle();
 
-    fetchPreferences();
-  }, [user]);
+        // If user has disabled daily verse notifications, skip
+        if (prefs && prefs.daily_verse === false) {
+          console.log("Daily verse notifications disabled for user");
+          return;
+        }
 
-  useEffect(() => {
-    if (!user || !("Notification" in window) || Notification.permission !== "granted") {
-      return;
-    }
+        const today = new Date().toISOString().split('T')[0];
+        const storageKey = `daily_verse_notified_${user.id}_${today}`;
 
-    const checkAndSendNotification = () => {
-      if (!preferencesRef.current?.daily_verse) return;
+        // Check if already notified today (using localStorage)
+        if (localStorage.getItem(storageKey)) {
+          console.log("Already notified about daily verse today");
+          return;
+        }
 
-      const now = new Date();
-      const today = now.toDateString();
-      
-      // Don't send if already sent today
-      if (lastNotificationDate.current === today) return;
+        // Fetch today's verse
+        const { data: verse, error } = await supabase
+          .from("daily_verses")
+          .select("verse_reference, verse_text")
+          .eq("date", today)
+          .single();
 
-      // Check if it's morning (8 AM) within 5-minute window
-      if (now.getHours() === 8 && now.getMinutes() < 5) {
-        const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
-        const verse = DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
+        if (error || !verse) {
+          console.log("No daily verse for today:", error?.message);
+          return;
+        }
 
-        new Notification(`📖 ${verse.reference}`, {
-          body: `${verse.text}\n\n${verse.insight}`,
-          icon: "/favicon.ico",
-          tag: "daily-verse"
+        // Mark as notified
+        hasNotifiedRef.current = true;
+        localStorage.setItem(storageKey, "true");
+
+        // Show toast notification
+        toast("📖 Today's Verse", {
+          description: `${verse.verse_reference}: "${verse.verse_text.slice(0, 80)}..."`,
+          duration: 8000,
+          action: {
+            label: "View",
+            onClick: () => navigate("/daily-verse"),
+          },
         });
 
-        lastNotificationDate.current = today;
+        console.log("Daily verse notification shown:", verse.verse_reference);
+      } catch (err) {
+        console.error("Error checking daily verse:", err);
       }
     };
 
-    // Check every minute
-    const interval = setInterval(checkAndSendNotification, 60000);
-    checkAndSendNotification(); // Check immediately
+    // Small delay to let the app settle
+    const timer = setTimeout(checkAndNotify, 2000);
+    return () => clearTimeout(timer);
+  }, [user, navigate]);
 
-    return () => clearInterval(interval);
-  }, [user]);
-
-  return null; // Background component
+  return null;
 };
