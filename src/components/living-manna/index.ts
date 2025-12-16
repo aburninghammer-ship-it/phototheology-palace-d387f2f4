@@ -5,3 +5,5 @@ export { EscalationPanel } from "./EscalationPanel";
 export { MemberPathwayView } from "./MemberPathwayView";
 export { PrayerMinistryHub } from "./PrayerMinistryHub";
 export { BibleWorkerConsole } from "./BibleWorkerConsole";
+export { EvangelismCampaigns } from "./EvangelismCampaigns";
+export { MinistryLaunchTemplates } from "./MinistryLaunchTemplates";

@@ -6,12 +6,13 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Building2, Users, Mail, TrendingUp, Target } from "lucide-react";
+import { Loader2, Building2, Users, Mail, TrendingUp, Target, Sprout } from "lucide-react";
 import { ChurchOverview } from "@/components/churches/ChurchOverview";
 import { ChurchMembers } from "@/components/churches/ChurchMembers";
 import { ChurchInvitations } from "@/components/churches/ChurchInvitations";
 import { ChurchCampaigns } from "@/components/churches/ChurchCampaigns";
 import { ChurchAnalytics } from "@/components/churches/ChurchAnalytics";
+import { LeaderDashboard } from "@/components/living-manna";
 
 interface Church {
   id: string;
@@ -189,7 +190,7 @@ export default function ChurchAdmin() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto">
+          <TabsList className="grid w-full grid-cols-6 lg:w-auto">
             <TabsTrigger value="overview" className="gap-2">
               <Building2 className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -205,6 +206,10 @@ export default function ChurchAdmin() {
             <TabsTrigger value="campaigns" className="gap-2">
               <Target className="h-4 w-4" />
               <span className="hidden sm:inline">Campaigns</span>
+            </TabsTrigger>
+            <TabsTrigger value="living-manna" className="gap-2">
+              <Sprout className="h-4 w-4" />
+              <span className="hidden sm:inline">Living Manna</span>
             </TabsTrigger>
             {hasTier2Access && (
               <TabsTrigger value="analytics" className="gap-2">
@@ -241,6 +246,10 @@ export default function ChurchAdmin() {
               churchId={church.id}
               hasTier2Access={hasTier2Access}
             />
+          </TabsContent>
+
+          <TabsContent value="living-manna">
+            <LeaderDashboard churchId={church.id} />
           </TabsContent>
 
           {hasTier2Access && (
