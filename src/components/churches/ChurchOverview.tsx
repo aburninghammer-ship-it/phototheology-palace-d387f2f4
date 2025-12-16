@@ -57,17 +57,17 @@ export function ChurchOverview({ church, usedSeats, onUpdate }: ChurchOverviewPr
   const tierDetails = {
     tier1: {
       name: "Church Access",
-      price: "$199/month",
+      price: "$399/month",
       seats: "Up to 50 members",
       features: [
         "Full Phototheology platform access for all members",
-        "Church-wide study challenges",
+        "Church-wide study challenges & Living Manna space",
         "Basic member management",
       ]
     },
     tier2: {
       name: "Leadership Tools",
-      price: "$399/month",
+      price: "$899/month",
       seats: "Up to 150 members",
       features: [
         "Everything in Tier 1",
@@ -77,9 +77,9 @@ export function ChurchOverview({ church, usedSeats, onUpdate }: ChurchOverviewPr
       ]
     },
     tier3: {
-      name: "Growth & Evangelism Suite",
-      price: "$699/month",
-      seats: "Up to 300 members",
+      name: "Enterprise",
+      price: "Custom",
+      seats: "150+ members",
       features: [
         "Everything in Tier 2",
         "Ministry Launch Academy training",

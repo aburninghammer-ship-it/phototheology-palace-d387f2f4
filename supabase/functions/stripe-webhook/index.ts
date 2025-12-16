@@ -11,7 +11,7 @@ const cryptoProvider = Stripe.createSubtleCryptoProvider();
 const tierSeats = {
   tier1: 50,
   tier2: 150,
-  tier3: 300,
+  tier3: 150, // Enterprise tier - custom capacity set during onboarding
 };
 
 // Helper logging function for debugging

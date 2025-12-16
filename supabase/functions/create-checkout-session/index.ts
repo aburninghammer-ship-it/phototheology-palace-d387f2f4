@@ -19,7 +19,7 @@ interface CheckoutRequest {
 const tierPricing = {
   tier1: { priceId: "price_1SNEzoFGDAd3RU8Iwa8PSyLw", name: "Church Access", seats: 50 },
   tier2: { priceId: "price_1SNFDxFGDAd3RU8IrvW3c5eS", name: "Leadership Tools", seats: 150 },
-  tier3: { priceId: "price_1SNFFMFGDAd3RU8IoasLs7ag", name: "Growth & Evangelism Suite", seats: 500 },
+  // tier3 requires contacting us - not available for self-service checkout
 };
 
 serve(async (req) => {
@@ -65,7 +65,15 @@ serve(async (req) => {
       );
     }
 
-    const pricing = tierPricing[tier];
+    // Tier 3 requires contacting us
+    if (tier === 'tier3') {
+      return new Response(
+        JSON.stringify({ error: 'Enterprise tier requires contacting us. Please reach out for custom pricing.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const pricing = tierPricing[tier as 'tier1' | 'tier2'];
     const successUrl = `${req.headers.get('origin')}/church-signup/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${req.headers.get('origin')}/church-signup/cancelled`;
 

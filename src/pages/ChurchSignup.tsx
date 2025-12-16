@@ -19,23 +19,23 @@ type Tier = 'tier1' | 'tier2' | 'tier3';
 const tiers = {
   tier1: {
     name: "Church Access",
-    price: 199,
+    price: 399,
     seats: 50,
     icon: Users,
     popular: false,
     features: [
       "Full Phototheology platform access for all members",
-      "Church-wide study challenges",
+      "Church-wide study challenges & Living Manna space",
       "Basic member management",
       "Member invitation system",
     ]
   },
   tier2: {
     name: "Leadership Tools",
-    price: 399,
+    price: 899,
     seats: 150,
     icon: Zap,
-    popular: false,
+    popular: true,
     features: [
       "Everything in Church Access",
       "Leader teaching outlines & discussion guides",
@@ -45,13 +45,15 @@ const tiers = {
     ]
   },
   tier3: {
-    name: "Growth & Evangelism Suite",
-    price: 899,
-    seats: 500,
+    name: "Enterprise",
+    price: null, // Contact us
+    seats: 150,
     icon: TrendingUp,
-    popular: true,
+    popular: false,
+    isContactUs: true,
     features: [
       "Everything in Leadership Tools",
+      "150+ seats (custom capacity)",
       "Ministry Launch Academy training track",
       "Youth & Kids content packs",
       "Branded onboarding experience",
@@ -182,15 +184,16 @@ export default function ChurchSignup() {
         {/* Step 1: Tier Selection */}
         {step === 'tier' && (
           <div className="grid md:grid-cols-3 gap-6">
-            {(Object.entries(tiers) as [Tier, typeof tiers.tier1][]).map(([tierKey, tier]) => {
+            {(Object.entries(tiers) as [Tier, typeof tiers.tier1 & { isContactUs?: boolean }][]).map(([tierKey, tier]) => {
               const Icon = tier.icon;
+              const isContactUs = 'isContactUs' in tier && tier.isContactUs;
               return (
                 <Card 
                   key={tierKey}
                   className={`relative hover-lift cursor-pointer transition-all ${
                     tier.popular ? 'border-2 border-primary shadow-lg' : ''
                   }`}
-                  onClick={() => handleTierSelect(tierKey)}
+                  onClick={() => isContactUs ? window.open('mailto:enterprise@phototheology.com?subject=Enterprise%20Church%20Plan%20Inquiry', '_blank') : handleTierSelect(tierKey)}
                 >
                   {tier.popular && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -201,13 +204,19 @@ export default function ChurchSignup() {
                     <div className="flex items-center justify-between mb-4">
                       <Icon className="h-8 w-8 text-primary" />
                       <div className="text-right">
-                        <div className="text-3xl font-bold">${tier.price}</div>
-                        <div className="text-sm text-muted-foreground">/month</div>
+                        {isContactUs ? (
+                          <div className="text-xl font-bold">Contact Us</div>
+                        ) : (
+                          <>
+                            <div className="text-3xl font-bold">${tier.price}</div>
+                            <div className="text-sm text-muted-foreground">/month</div>
+                          </>
+                        )}
                       </div>
                     </div>
                     <CardTitle className="text-xl">{tier.name}</CardTitle>
                     <CardDescription>
-                      Up to {tier.seats} active members
+                      {isContactUs ? '150+ active members' : `Up to ${tier.seats} active members`}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -220,7 +229,7 @@ export default function ChurchSignup() {
                       ))}
                     </ul>
                     <Button className="w-full mt-6" variant={tier.popular ? "default" : "outline"}>
-                      Select {tier.name}
+                      {isContactUs ? 'Contact Sales' : `Select ${tier.name}`}
                     </Button>
                   </CardContent>
                 </Card>
