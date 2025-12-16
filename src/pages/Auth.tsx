@@ -35,18 +35,28 @@ export default function Auth() {
   const [error, setError] = useState("");
   
   const isPatreonMode = searchParams.get('patreon') === 'true';
+  const redirectParam = searchParams.get('redirect');
+  const safeRedirect = redirectParam && redirectParam.startsWith('/') && !redirectParam.startsWith('//')
+    ? redirectParam
+    : null;
 
   // Redirect if already logged in (but NOT if in Patreon mode - let them connect)
   useEffect(() => {
     if (user && !isPatreonMode && !gatehouseLoading) {
-      // If user hasn't entered the palace yet, show them the gatehouse first
+      // If we have an explicit redirect target, honor it first
+      if (safeRedirect) {
+        navigate(safeRedirect, { replace: true });
+        return;
+      }
+
+      // Otherwise, use the normal Gatehouse/Dashboard decision
       if (!hasEnteredPalace) {
         navigate("/gatehouse");
       } else {
         navigate("/dashboard");
       }
     }
-  }, [user, navigate, isPatreonMode, hasEnteredPalace, gatehouseLoading]);
+  }, [user, navigate, isPatreonMode, hasEnteredPalace, gatehouseLoading, safeRedirect]);
   
   // Login form
   const [loginEmail, setLoginEmail] = useState("");
