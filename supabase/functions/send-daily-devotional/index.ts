@@ -371,7 +371,7 @@ serve(async (req) => {
               ` : ''}
               
               <div style="text-align: center; margin-top: 30px;">
-                <a href="https://phototheology.app/devotional/${plan.id}" 
+                <a href="https://phototheology.app/devotionals/${plan.id}" 
                    style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
                   📚 Continue Reading & Journal
                 </a>
@@ -408,7 +408,7 @@ serve(async (req) => {
             type: 'daily_devotional',
             title: `📖 Day ${currentDayNumber}: ${dayContent.title}`,
             message: `Your devotional for today is ready! "${plan.title}"`,
-            link: `/devotional/${plan.id}`,
+            link: `/devotionals/${plan.id}`,
             metadata: {
               plan_id: plan.id,
               day_number: currentDayNumber,
