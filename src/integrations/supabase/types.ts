@@ -11274,6 +11274,7 @@ export type Database = {
         }
         Returns: Json
       }
+      can_access_youth_member: { Args: { _group_id: string }; Returns: boolean }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_typing_indicators: { Args: never; Returns: undefined }
       decrypt_token: { Args: { encrypted_token: string }; Returns: string }
@@ -11387,6 +11388,10 @@ export type Database = {
         }[]
       }
       get_user_church_ids: { Args: { _user_id: string }; Returns: string[] }
+      get_youth_member_church_id: {
+        Args: { _group_id: string }
+        Returns: string
+      }
       has_church_access: {
         Args: { _user_id: string }
         Returns: {
