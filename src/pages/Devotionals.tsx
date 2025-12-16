@@ -277,14 +277,20 @@ export default function Devotionals() {
                   </CardHeader>
                   <CardContent onClick={() => navigate(`/devotionals/${plan.id}`)}>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="font-medium">Day {getActualDayNumber(plan.started_at, plan.duration)} of {plan.duration}</span>
-                        <div className="h-3 w-32 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className={`h-full bg-gradient-to-r ${formatLabels[plan.format]?.gradient || "from-blue-500 to-cyan-500"} transition-all`}
-                            style={{ width: `${(getActualDayNumber(plan.started_at, plan.duration) / plan.duration) * 100}%` }}
-                          />
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span className="font-medium">Day {getActualDayNumber(plan.started_at, plan.duration)} of {plan.duration}</span>
+                          <div className="h-3 w-32 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full bg-gradient-to-r ${formatLabels[plan.format]?.gradient || "from-blue-500 to-cyan-500"} transition-all`}
+                              style={{ width: `${(getActualDayNumber(plan.started_at, plan.duration) / plan.duration) * 100}%` }}
+                            />
+                          </div>
                         </div>
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {format(new Date(), "MMM d, yyyy")}
+                        </span>
                       </div>
                       <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                     </div>
