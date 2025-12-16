@@ -55,10 +55,11 @@ export default function DevotionalView() {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [journalEntry, setJournalEntry] = useState("");
   const [rating, setRating] = useState(0);
+  const [hasInitializedDay, setHasInitializedDay] = useState(false);
 
-  // Auto-select the current unlocked day on load
+  // Auto-select the current unlocked day ONLY on initial load
   useEffect(() => {
-    if (days && days.length > 0 && unlockedDayNumber) {
+    if (!hasInitializedDay && days && days.length > 0 && unlockedDayNumber) {
       // Find the first incomplete day that's unlocked, or the latest unlocked day
       const unlockedDays = days.filter((_, idx) => isDayUnlocked(idx + 1));
       const firstIncomplete = unlockedDays.findIndex(d => !completedDayIds.has(d.id));
@@ -67,8 +68,9 @@ export default function DevotionalView() {
       } else {
         setSelectedDayIndex(Math.min(unlockedDayNumber - 1, days.length - 1));
       }
+      setHasInitializedDay(true);
     }
-  }, [days, unlockedDayNumber, completedDayIds, isDayUnlocked]);
+  }, [days, unlockedDayNumber, completedDayIds, isDayUnlocked, hasInitializedDay]);
 
   const handleCrossReferenceClick = (ref: string) => {
     navigator.clipboard.writeText(ref);
