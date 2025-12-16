@@ -80,6 +80,7 @@ export default function Pricing() {
     }
   };
 
+  // SIMPLIFIED: 5 bullets max per plan (Ascend-style clarity)
   const plans = [
     {
       id: "trial",
@@ -97,16 +98,11 @@ export default function Pricing() {
       monthlyUrl: "#",
       annualUrl: "#",
       features: [
-        "✅ All 8 Palace Floors (Complete System)",
-        "✅ Unlimited Jeeves AI Conversations",
-        "✅ All Premium Games & Courses",
-        "✅ Complete Art of War Dojo",
-        "✅ Audio Bible Reader/Commentary",
-        "✅ Treasure Hunts & Escape Rooms",
-        "✅ Bible Study Leader Tools",
-        "No restrictions for 14 days",
+        "All 8 Palace Floors unlocked",
+        "Unlimited AI conversations",
+        "All games, courses & tools",
+        "No credit card required to start",
         "Cancel anytime",
-        "Choose your plan after trial",
       ],
     },
     {
@@ -127,20 +123,11 @@ export default function Pricing() {
       monthlyUrl: "https://buy.stripe.com/4gM8wP6U37zoavefiY6EU07",
       annualUrl: "https://buy.stripe.com/4gM8wPguD4ncdHqc6M6EU0a",
       features: [
-        "Everything in Free Trial (continued)",
-        "Phototheology GPT - Main AI Assistant",
-        "The Blueprint Course (10 lessons)",
-        "90-Day Phototheology Training Course",
-        "Bible Rendered Room with visual frames",
-        "Sermon Builder with 5 Smooth Stones method",
-        "Research Mode with citations",
-        "Flashcards & Memory Tools",
-        "Bible Image Library access",
-        "Growth Journal & Spiritual Training",
-        "Art of War Dojo (3 lessons only)",
-        "2 Dojo Weapons (Sword & Shield)",
-        "1 Creature Style (Crane)",
-        "Limited Treasure Hunts & Escape Rooms",
+        "8 Palace Floors + AI Assistant",
+        "90-Day Training Course",
+        "Sermon Builder + Research Mode",
+        "Memory tools & flashcards",
+        "Basic Dojo access (3 lessons)",
       ],
     },
     {
@@ -153,8 +140,8 @@ export default function Pricing() {
       monthlySavings: null,
       annualSavings: "Save $30/year",
       period: "per month",
-      description: "Complete spiritual warfare & mastery system",
-      badge: "Most Popular - Best Value",
+      description: "Complete mastery system",
+      badge: "Most Popular",
       badgeVariant: "default" as const,
       ctaText: "Get Premium",
       ctaVariant: "default" as const,
@@ -162,26 +149,11 @@ export default function Pricing() {
       annualUrl: "https://buy.stripe.com/eVq8wPfqz06WcDm7Qw6EU0b",
       popular: true,
       features: [
-        "🔥 Everything in Essential PLUS:",
-        "⚔️ COMPLETE ART OF WAR DOJO:",
-        "  • All 30+ War Lessons (Holy War, Self-Combat, Victory)",
-        "  • 12 Supernatural Weapons (Myrrh-Power, Burning Hammer, etc.)",
-        "  • 4 Creature Styles (Crane, Mantis, Snake, Dragon)",
-        "  • 5 Spiritual Eponyms (Goliath, Judas, Peter, Jacob, Pharaoh)",
-        "  • 7-Rank Progression System (Recruit → Lion-Faced Champion)",
-        "  • 5 Time Zones of Warfare (Minute Warrior training)",
-        "  • War Council & Battle Analysis",
-        "  • Sparring Simulations & Combination Codes",
-        "🤖 All 4 Specialized AI GPTs (Kid, Daniel/Rev, Apologetics, Quarterly)",
-        "🎧 Audio Bible Reader/Audio Commentary",
-        "📚 All Premium Courses (Daniel, Revelation, Kids)",
-        "🎮 20+ Palace Games + All Kids Games",
-        "🏆 Unlimited Treasure Hunts & Escape Rooms",
-        "📡 Prophecy Watch Alerts",
-        "🛡️ Critics Analysis & Controversy Tools",
-        "📖 Power of the Lamb Devotionals",
-        "👥 Bible Study Leader Tools",
-        "⚡ Priority Support + Early Access",
+        "Everything in Essential +",
+        "Complete Art of War Dojo (30+ lessons)",
+        "All 4 specialized AI GPTs",
+        "Unlimited Treasure Hunts & Escape Rooms",
+        "Priority support + early access",
       ],
     },
     {
@@ -189,27 +161,25 @@ export default function Pricing() {
       name: "Student",
       icon: GraduationCap,
       iconColor: "text-green-600",
-      monthlyPrice: "$4.99",
-      annualPrice: "$49.99",
+      monthlyPrice: "FREE",
+      annualPrice: "FREE",
       monthlySavings: null,
-      annualSavings: "Save $10/year",
-      period: "per month",
-      description: "Full Premium access for verified students",
-      badge: ".edu Email Required",
+      annualSavings: null,
+      period: "with .edu email",
+      description: "Full Premium for students",
+      badge: ".edu Required",
       badgeVariant: "default" as const,
-      ctaText: "Verify Student Status",
+      ctaText: "Verify Student",
       ctaVariant: "default" as const,
       monthlyUrl: "/student-verify",
       annualUrl: "/student-verify",
       stripePriceId: "price_1STVXrFGDAd3RU8Ia2NbKJWo",
       features: [
-        "Everything in Premium - 100% FREE",
-        "All AI GPTs unlocked",
-        "All courses & games",
+        "Everything in Premium — FREE",
         "Valid for 1 academic year",
-        "Simple annual renewal with .edu email",
-        "Support Christian education",
-        "No credit card ever required",
+        "No credit card required",
+        "Auto-renews with .edu verification",
+        "Supporting Christian education",
       ],
     },
   ];
@@ -226,10 +196,10 @@ export default function Pricing() {
             14-Day Free Trial • Full Access
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-palace bg-clip-text text-transparent mb-4">
-            Try Everything Free for 14 Days
+            Master Bible Study for Free
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Experience the complete Phototheology Palace with no restrictions. Choose your plan when you're ready.
+          <p className="text-xl text-muted-foreground max-w-xl mx-auto">
+            14-day trial. Full access. $9-15/mo after.
           </p>
           
           {/* Billing Period Toggle - Enhanced */}

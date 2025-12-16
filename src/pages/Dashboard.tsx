@@ -35,6 +35,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { XPSystem, BadgeSystem, WeeklyLeaderboard } from "@/components/gamification";
+import { IdentityLoopWidget } from "@/components/IdentityLoopWidget";
 
 interface DashboardStats {
   dailyStreak: number;
@@ -196,6 +197,10 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Identity Loop - Prominent Stats */}
+        <div className="mb-8">
+          <IdentityLoopWidget />
+        </div>
         {/* Path Selection Banner (opt-in for existing users) */}
         <PathBanner />
 

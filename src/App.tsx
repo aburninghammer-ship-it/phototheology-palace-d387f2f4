@@ -243,7 +243,15 @@ const GuestHouseGuestLive = lazy(() => import("./pages/guesthouse/GuestHouseGues
 const queryClient = new QueryClient();
 
 function App() {
-  const [showSplash, setShowSplash] = useState(true);
+  // Skip splash for returning users (localStorage check)
+  const isReturningUser = typeof window !== 'undefined' && localStorage.getItem('hasVisited') === 'true';
+  const [showSplash, setShowSplash] = useState(!isReturningUser);
+  
+  // Mark user as visited after first splash
+  const handleSplashComplete = () => {
+    localStorage.setItem('hasVisited', 'true');
+    setShowSplash(false);
+  };
 
   return (
     <ErrorBoundary>
@@ -256,7 +264,7 @@ function App() {
           <PWAUpdatePrompt />
           <AnimatePresence mode="wait">
             {showSplash && (
-              <SplashScreen onComplete={() => setShowSplash(false)} />
+              <SplashScreen onComplete={handleSplashComplete} />
             )}
           </AnimatePresence>
           {!showSplash && (

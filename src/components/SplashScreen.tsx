@@ -34,16 +34,17 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   }, []);
 
   useEffect(() => {
+    // Speed up splash - complete in ~1.5 seconds instead of ~2.5
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(onComplete, 500);
+          setTimeout(onComplete, 200); // Faster exit
           return 100;
         }
-        return prev + 2;
+        return prev + 5; // Faster progress
       });
-    }, 30);
+    }, 25); // Faster tick
 
     return () => clearInterval(interval);
   }, [onComplete]);
