@@ -389,6 +389,18 @@ export const EnhancedMobileDrawer = () => {
                   </Link>
                 </Button>
                 <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start text-muted-foreground"
+                  onClick={handleLinkClick}
+                >
+                  <Link to="/manage-subscription">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Cancel Subscription
+                  </Link>
+                </Button>
+                <Button
                   variant="ghost"
                   size="sm"
                   className="w-full justify-start text-destructive hover:text-destructive"
