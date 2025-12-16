@@ -293,13 +293,13 @@ serve(async (req) => {
     
     let personalizationNote = "";
     if (capitalizedName) {
-      personalizationNote = `\n\nPERSONALIZATION FOR ${capitalizedName.toUpperCase()}:
-- Address them as "${capitalizedName}" (properly capitalized) - NOT lowercase
-- Use their name SPARINGLY and NATURALLY - once or twice per section maximum
-- Write as a caring pastor speaking to a friend, not as an AI inserting a name
-- Vary how you address them: "You, ${capitalizedName}..." or "Friend..." or just "you"
-- The tone should feel like a personal letter, not a mail merge
-- NEVER use awkward constructions like "He invites us, ${capitalizedName.toLowerCase()}" - instead say "He invites you, ${capitalizedName}"`;
+      personalizationNote = `\n\nCRITICAL PERSONALIZATION (NON-NEGOTIABLE):
+- This devotional is for a SPECIFIC PERSON named ${capitalizedName}
+- Use their name ${capitalizedName} 2–3 times TOTAL in the devotional (opening, mid-devotional encouragement, closing charge)
+- Refer to their situation in plain language at least once (paraphrase the provided situation details; don't be vague)
+- Sound like a caring pastor writing a personal note, not a template
+- NEVER use “Dear ${capitalizedName}” or “Dear friend”
+- Always capitalize their name correctly: ${capitalizedName}`;
     }
 
     // Build CADE context-aware section
@@ -401,7 +401,7 @@ OUTPUT FORMAT - Return a JSON array of devotional days:
   "memory_hook": "One-line quotable insight or 'strike line' that pierces the heart"
 }`;
 
-    const forPersonNote = capitalizedName ? `\nThis devotional is specifically for: ${capitalizedName}. Use their name naturally and sparingly (1-2 times per section). Always capitalize their name properly.` : "";
+    const forPersonNote = capitalizedName ? `\nThis devotional is written PERSONALLY for: ${capitalizedName}. Address ${capitalizedName} BY NAME 2-3 times total (opening, mid, closing). Always capitalize their name properly.` : "";
     const issueNote = primaryIssue ? `\nPRIMARY STRUGGLE: ${primaryIssue}${issueDescription ? ` - ${issueDescription}` : ""}` : "";
 
 const userPrompt = `Create a ${duration}-day devotional on the theme: "${theme}"

@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, ChevronRight, ChevronLeft, User, Heart, Target, Sparkles, AlertCircle } from "lucide-react";
 import { useDevotionalProfiles } from "@/hooks/useDevotionalProfiles";
 import { useDevotionals } from "@/hooks/useDevotionals";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { CADE_ISSUES, ISSUE_SEVERITY } from "@/lib/cadeIssues";
 
@@ -317,11 +318,18 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
           duration: formData.duration,
           studyStyle: tonesString,
           profileName: formData.name,
-          // CADE context
-          primaryIssue: formData.primary_issue || undefined,
-          issueDescription: formData.issue_description || undefined,
+          // CADE context (fall back to user-provided context so it can personalize)
+          primaryIssue: formData.primary_issue || (formData.struggles[0] || undefined),
+          issueDescription: (formData.issue_description || formData.current_situation) || undefined,
           issueSeverity: formData.issue_severity || undefined,
         });
+
+        // Link the plan to the profile so future days (daily generation) can personalize
+        const { error: linkErr } = await supabase
+          .from("devotional_profiles")
+          .update({ active_plan_id: plan.id })
+          .eq("id", profile.id);
+        if (linkErr) throw linkErr;
       }
 
       onProfileCreated?.(profile.id);
