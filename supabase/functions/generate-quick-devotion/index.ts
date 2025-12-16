@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { theme, recipientName, situation, struggles, relationship } = await req.json();
+    const { theme, recipientName, situation, struggles, relationship, depth = "standard", writingStyle = "mixed-audience" } = await req.json();
 
     if (!theme) {
       return new Response(
@@ -29,67 +29,113 @@ PERSONALIZATION (USE THROUGHOUT):
 - Their current situation: ${situation || "not specified"}
 - Their struggles: ${Array.isArray(struggles) ? struggles.join(", ") : struggles || "not specified"}
 
-CRITICAL: Address ${recipientName || "the reader"} by name at least 2-3 times naturally woven into the devotional. Connect the biblical truth directly to their specific situation and struggles. Make them feel seen and known. The devotional should feel written FOR them, not just TO them.` : "";
+CRITICAL: Address ${recipientName || "the reader"} by name at least 2-3 times naturally woven into the devotional. Connect the biblical truth directly to their specific situation and struggles. Make them feel seen and known.` : "";
+
+    // Depth configuration
+    const depthConfig = {
+      light: { paragraphs: "2-3", sentences: "3-4", readTime: "2-3 minutes" },
+      standard: { paragraphs: "4-5", sentences: "4-6", readTime: "4-5 minutes" },
+      deep: { paragraphs: "6-8", sentences: "5-7", readTime: "6-8 minutes" }
+    };
+    const selectedDepth = depthConfig[depth as keyof typeof depthConfig] || depthConfig.standard;
+
+    // Writing style prompts
+    const writingStylePrompts: Record<string, string> = {
+      "mixed-audience": `
+WRITING STYLE: MIXED AUDIENCE (Teens & Adults Together)
+- Write at an 8th–10th grade reading level
+- Use everyday, spoken English - no academic, poetic, or scholarly wording
+- Avoid abstract or intellectual language
+- Sound like a calm, trusted mentor speaking personally
+- Clear, honest, grounded - not preachy, not dramatic, not casual slang
+- Warm without hype - avoid religious jargon unless commonly understood
+- Introduce Scripture naturally and briefly - prefer short verses
+- Address real life: pressure, loneliness, doubt, purpose, failure, hope
+- Use examples that work for both teens and adults
+- No childish illustrations, no abstract theology
+- Speak to the heart through clarity, not complexity
+
+STRUCTURE:
+1. Start with a relatable human experience
+2. Connect it clearly to Scripture
+3. Explain the meaning in plain terms
+4. End with encouragement, hope, or a simple next step
+
+AVOID: Lofty language, church clichés, over-explaining doctrine, emotional manipulation
+
+CHECK: Would this make sense to a teenager? Would an adult feel respected? Would it sound natural read aloud?`,
+      
+      "pastoral": `
+WRITING STYLE: PASTORAL
+- Warm, shepherding tone with theological depth
+- Speak as a seasoned minister offering wisdom
+- Balance comfort with challenge
+- Use rich biblical imagery and cross-references
+- Appropriate for sermons, church settings, and mature believers
+- Draw from the full counsel of Scripture`,
+      
+      "academic": `
+WRITING STYLE: ACADEMIC
+- Theologically precise and structurally sophisticated
+- Use proper theological terminology with brief explanations
+- Make connections across biblical genres and historical contexts
+- Suitable for study groups, seminary students, teachers
+- Include original language insights where helpful
+- Maintain devotional warmth despite academic rigor`,
+      
+      "youth": `
+WRITING STYLE: YOUTH-FOCUSED
+- Write at a 6th-8th grade level
+- Use relatable, current examples (school, friendships, family, identity)
+- Short sentences, active voice
+- Conversational but not condescending
+- Address real teen struggles: belonging, purpose, peer pressure, doubt
+- Make Scripture feel relevant and alive
+- End with concrete, achievable action steps`
+    };
+    const selectedStyle = writingStylePrompts[writingStyle] || writingStylePrompts["mixed-audience"];
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log(`Generating Phototheology devotion for theme: ${theme}, recipient: ${recipientName || 'general'}`);
+    console.log(`Generating devotion - theme: ${theme}, depth: ${depth}, style: ${writingStyle}`);
 
     const systemPrompt = `You are a master of biblical theology writing PERSONALIZED devotionals that are:
-- Theologically rich, contemplative, and structurally intelligent
+- Theologically rich and structurally intelligent
 - Never sentimental or emotionally vague
 - Revealing unexpected connections between passages
-- Moving from text → structure → meaning → personal confrontation
+- Moving from text → meaning → personal application
 - Adventist in theology (sanctuary-shaped, Great Controversy aware)
 - DEEPLY PERSONALIZED when recipient information is provided
 
-DESIGN GOAL: The devotional must feel weighty, not sentimental. It must reveal unexpected connections, not obvious ones. It must leave the reader quiet, alert, and thinking. Never explain how you're making connections — let the insight emerge naturally.
+${selectedStyle}
+
+DESIGN GOAL: The devotional must leave the reader thinking and challenged. Never explain how you're making connections — let the insight emerge naturally.
 
 PERSONALIZATION REQUIREMENT: When a recipient's name and situation are provided, you MUST:
-- Use their name naturally 2-3 times throughout (not forced or awkward)
-- Connect the biblical truth directly to their specific struggles and situation
-- Make the application feel like it was written specifically for their life
-- The reader should feel known and seen, not just taught
+- Use their name naturally 2-3 times throughout
+- Connect the biblical truth directly to their specific struggles
+- Make the application feel written specifically for their life
 
 QUALITY CONTROL:
-- Could this exist on a generic devotional app? If yes, discard and write something deeper.
-- Does it rely on mood, warmth, or vague encouragement? If yes, discard.
-- It must make the reader see Scripture differently afterward.
-- It must feel discovered rather than manufactured.
+- Could this exist on a generic devotional app? If yes, write something more personal.
+- Does it rely on vague encouragement? If yes, make it more specific.
+- It must feel discovered rather than manufactured.`;
 
-Avoid clichés, sermon language, and emotional filler. Favor clarity, restraint, and weight.`;
-
-    const userPrompt = `Write a 4-5 paragraph devotional on the theme: "${theme}"
+    const userPrompt = `Write a ${selectedDepth.paragraphs} paragraph devotional on the theme: "${theme}"
 ${personalizationContext}
 
+LENGTH: ${selectedDepth.readTime} read time. Each paragraph should be ${selectedDepth.sentences} sentences.
+
 STRUCTURE REQUIREMENTS:
-• Use 2-3 Scripture passages that at first appear unrelated, but when placed side by side reveal a coherent and illuminating truth
-• Do NOT explain the method or structure behind the connections
-• Do NOT label principles, systems, or frameworks
+• Use 2-3 Scripture passages that connect meaningfully
 • Let the insight emerge naturally through the writing
-
-THE DEVOTIONAL MUST:
-1. Begin with a quiet observation or tension drawn from one passage
-2. Deepen by introducing another passage that reframes the first
-3. Reveal a hidden pattern, contrast, or progression between them
-4. Lead the reader toward self-examination, not mere inspiration
-5. Conclude with a measured call — something to notice, yield, or realign
-
-EXAMPLE OF TARGET QUALITY:
-"At first glance, rest feels passive. Scripture seems to confirm it: 'Be still, and know that I am God.' Stillness sounds like absence—of effort, of struggle, of resistance. Yet when Israel was commanded to rest, it was not because nothing was happening, but because something sacred already was. Rest, biblically, is not the pause after work; it is the environment in which God's work is recognized.
-
-Consider the wilderness, where manna fell six days a week and not on the seventh. The people did nothing to earn it on any day—but on the seventh, they were forbidden to gather what God was no longer providing. The test was not whether they could work, but whether they could trust restraint. In contrast, Jesus later says, 'My Father worketh hitherto, and I work.' The tension sharpens: God both rests and works, but never at odds with Himself. The question is not whether work is holy, but whether our work aligns with His timing.
-
-This is why Scripture treats unauthorized action so severely. The problem is rarely effort itself, but effort divorced from divine rhythm. When fire is kindled at the wrong time, or labor is performed in defiance of God's word, the act exposes something deeper—a refusal to accept that God governs provision. What looks like diligence may actually be anxiety in motion. What feels responsible may be faithlessness disguised as strength.
-
-True rest, then, is not inactivity; it is submission. It is the discipline of letting God define what is necessary now. The one who rests rightly is not lazy but aligned—moving only when heaven moves, stopping when heaven stops. This kind of rest exposes the heart, because it strips away the illusion that survival depends on constant motion.
-
-The invitation is quiet but demanding: stop doing what God has not asked you to do. Let today be measured not by output, but by obedience. There is a rest that feels dangerous to the flesh, because it requires trust. But Scripture insists—life grows best in the space where God alone sustains it."
-
-Match this level of depth, structural intelligence, and theological weight. Each paragraph must be 4-6 sentences. The full devotion must be 4-5 paragraphs.`;
+• Begin with something relatable or a tension
+• Deepen with Scripture that illuminates the theme
+• Lead toward practical self-examination
+• Conclude with a clear call to action or reflection`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -108,13 +154,13 @@ Match this level of depth, structural intelligence, and theological weight. Each
             type: "function",
             function: {
               name: "create_devotion",
-              description: "Create a structurally intelligent Phototheology devotional that reveals unexpected Scripture connections",
+              description: "Create a devotional that connects Scripture to real life",
               parameters: {
                 type: "object",
                 properties: {
                   title: { 
                     type: "string", 
-                    description: "Evocative, non-generic title that intrigues and hints at the hidden connection" 
+                    description: "Clear, engaging title that hints at the theme" 
                   },
                   scripture_reference: { 
                     type: "string", 
@@ -122,23 +168,23 @@ Match this level of depth, structural intelligence, and theological weight. Each
                   },
                   scripture_text: { 
                     type: "string", 
-                    description: "Full KJV text of the primary passage (2-4 verses)" 
+                    description: "Full text of the primary passage (2-4 verses)" 
                   },
                   christ_connection: { 
                     type: "string", 
-                    description: "4-5 FULL PARAGRAPHS (each 4-6 sentences) using 2-3 Scripture passages that appear unrelated but reveal coherent truth when placed together. Begin with quiet observation, deepen with another passage, reveal hidden pattern, lead to self-examination, conclude with measured call. NO clichés or sermon language." 
+                    description: `${selectedDepth.paragraphs} paragraphs (each ${selectedDepth.sentences} sentences) connecting Scripture passages to reveal truth. Begin with relatable experience, connect to Scripture, explain meaning plainly, lead to reflection.` 
                   },
                   application: { 
                     type: "string", 
-                    description: "2-3 PARAGRAPHS drawing out practical self-examination from the revealed pattern. Not mere inspiration — confrontation with truth. What must the reader notice, yield, or realign?" 
+                    description: "2-3 paragraphs of practical application. What should the reader notice, consider, or do differently?" 
                   },
                   prayer: { 
                     type: "string", 
-                    description: "2-3 PARAGRAPHS of measured, text-specific prayer that echoes the devotional's movement. Quiet, honest, weighty — not emotional filler." 
+                    description: "1-2 paragraphs of honest, personal prayer that connects to the devotional theme." 
                   },
                   memory_hook: { 
                     type: "string", 
-                    description: "1-2 PARAGRAPHS with a single arresting image or paradox drawn from the devotional that will stay with the reader. Not a lesson summary — a spiritual anchor." 
+                    description: "1 paragraph with a memorable image or phrase that captures the devotional's core truth." 
                   },
                 },
                 required: ["title", "scripture_reference", "scripture_text", "christ_connection", "application", "prayer", "memory_hook"],

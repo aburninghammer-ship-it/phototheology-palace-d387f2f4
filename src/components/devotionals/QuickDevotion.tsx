@@ -5,10 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { FreeAudioButton } from "@/components/audio/FreeAudioButton";
 import { VoiceRecorder } from "@/components/studies/VoiceRecorder";
+
+type DepthLevel = "light" | "standard" | "deep";
+type WritingStyle = "mixed-audience" | "academic" | "pastoral" | "youth";
 
 interface QuickDevotionProps {
   onClose: () => void;
@@ -27,6 +31,8 @@ interface DevotionContent {
 export function QuickDevotion({ onClose }: QuickDevotionProps) {
   const [theme, setTheme] = useState("");
   const [description, setDescription] = useState("");
+  const [depth, setDepth] = useState<DepthLevel>("standard");
+  const [writingStyle, setWritingStyle] = useState<WritingStyle>("mixed-audience");
   const [isGenerating, setIsGenerating] = useState(false);
   const [devotion, setDevotion] = useState<DevotionContent | null>(null);
 
@@ -44,7 +50,7 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
         : theme.trim();
       
       const { data, error } = await supabase.functions.invoke("generate-quick-devotion", {
-        body: { theme: fullTheme },
+        body: { theme: fullTheme, depth, writingStyle },
       });
 
       if (error) throw error;
@@ -104,6 +110,37 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
                 <p className="text-xs text-muted-foreground">
                   Share your situation, questions, or what you hope to receive from this devotion. Use voice input to speak your thoughts.
                 </p>
+              </div>
+
+              {/* Depth & Writing Style */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Depth</Label>
+                  <Select value={depth} onValueChange={(v) => setDepth(v as DepthLevel)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="light">Light (2-3 min read)</SelectItem>
+                      <SelectItem value="standard">Standard (4-5 min)</SelectItem>
+                      <SelectItem value="deep">Deep (6-8 min)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Writing Style</Label>
+                  <Select value={writingStyle} onValueChange={(v) => setWritingStyle(v as WritingStyle)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="mixed-audience">Mixed (Teens & Adults)</SelectItem>
+                      <SelectItem value="pastoral">Pastoral</SelectItem>
+                      <SelectItem value="academic">Academic</SelectItem>
+                      <SelectItem value="youth">Youth-focused</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <Button
                 onClick={generateDevotion}
