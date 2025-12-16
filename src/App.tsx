@@ -463,6 +463,7 @@ function App() {
           <Route path="/pt-kids-games" element={<ProtectedRoute><PTKidsGames /></ProtectedRoute>} />
           <Route path="/pt-kids-game/:gameId" element={<ProtectedRoute><PTKidsGamePlay /></ProtectedRoute>} />
           <Route path="/phototheologygpt" element={<ProtectedRoute><PhototheologyGPT /></ProtectedRoute>} />
+          <Route path="/jeeves" element={<ProtectedRoute><PhototheologyGPT /></ProtectedRoute>} />
           <Route path="/daniel-revelation-gpt" element={<ProtectedRoute><DanielRevelationGPT /></ProtectedRoute>} />
           <Route path="/apologetics-gpt" element={<ProtectedRoute><ApologeticsGPT /></ProtectedRoute>} />
           <Route path="/quarterly-study" element={<ProtectedRoute><QuarterlyStudy /></ProtectedRoute>} />
