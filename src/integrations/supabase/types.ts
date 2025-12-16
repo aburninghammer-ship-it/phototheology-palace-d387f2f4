@@ -968,6 +968,63 @@ export type Database = {
           },
         ]
       }
+      church_guest_access: {
+        Row: {
+          access_token: string
+          church_id: string
+          converted_to_member_at: string | null
+          created_at: string
+          email: string | null
+          expires_at: string
+          group_id: string | null
+          id: string
+          invited_by: string
+          is_active: boolean
+          user_id: string | null
+        }
+        Insert: {
+          access_token?: string
+          church_id: string
+          converted_to_member_at?: string | null
+          created_at?: string
+          email?: string | null
+          expires_at?: string
+          group_id?: string | null
+          id?: string
+          invited_by: string
+          is_active?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          access_token?: string
+          church_id?: string
+          converted_to_member_at?: string | null
+          created_at?: string
+          email?: string | null
+          expires_at?: string
+          group_id?: string | null
+          id?: string
+          invited_by?: string
+          is_active?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_guest_access_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "church_guest_access_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       church_invitations: {
         Row: {
           accepted_at: string | null
@@ -3948,6 +4005,69 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      leader_certifications: {
+        Row: {
+          certified_at: string | null
+          certified_by: string | null
+          church_id: string
+          created_at: string
+          id: string
+          is_certified: boolean
+          notes: string | null
+          updated_at: string
+          user_id: string
+          week1_completed_at: string | null
+          week2_completed_at: string | null
+          week3_completed_at: string | null
+          week4_completed_at: string | null
+        }
+        Insert: {
+          certified_at?: string | null
+          certified_by?: string | null
+          church_id: string
+          created_at?: string
+          id?: string
+          is_certified?: boolean
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+          week1_completed_at?: string | null
+          week2_completed_at?: string | null
+          week3_completed_at?: string | null
+          week4_completed_at?: string | null
+        }
+        Update: {
+          certified_at?: string | null
+          certified_by?: string | null
+          church_id?: string
+          created_at?: string
+          id?: string
+          is_certified?: boolean
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+          week1_completed_at?: string | null
+          week2_completed_at?: string | null
+          week3_completed_at?: string | null
+          week4_completed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_certifications_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_certifications_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       learning_predictions: {
         Row: {
