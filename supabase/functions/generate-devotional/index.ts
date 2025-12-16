@@ -696,7 +696,7 @@ Generate as a JSON array with day_number: 1.`;
           type: "devotional_ready",
           title: "🎉 Your Devotional is Ready!",
           message: `"${planData.title}" has been generated. Day 1 is now available!`,
-          link: `/devotional/${planId}`,
+          link: `/devotionals/${planId}`,
           metadata: {
             plan_id: planId,
             duration: days.length,
