@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { PWAUpdatePrompt } from "@/components/PWAUpdatePrompt";
@@ -240,6 +240,12 @@ const GuestHouseHost = lazy(() => import("./pages/guesthouse/GuestHouseHost"));
 const GuestHouseHostLive = lazy(() => import("./pages/guesthouse/GuestHouseHostLive"));
 const GuestHouseGuestLive = lazy(() => import("./pages/guesthouse/GuestHouseGuestLive"));
 
+// Simple redirect component for /devotional -> /devotionals
+const DevotionalRedirect = () => {
+  const planId = window.location.pathname.split('/devotional/')[1];
+  return <Navigate to={`/devotionals/${planId}`} replace />;
+};
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -466,6 +472,8 @@ function App() {
            <Route path="/devotionals/:planId" element={<ProtectedRoute><DevotionalView /></ProtectedRoute>} />
            <Route path="/devotionals/profile/:profileId" element={<ProtectedRoute><DevotionalProfileDetail /></ProtectedRoute>} />
            <Route path="/shared-devotional/:shareToken" element={<PublicDevotionalView />} />
+           {/* Redirect singular /devotional to plural /devotionals for notification links */}
+           <Route path="/devotional/:planId" element={<DevotionalRedirect />} />
            <Route path="/bible-study-series/discover" element={<ProtectedRoute><PublicSeriesBrowser /></ProtectedRoute>} />
            <Route path="/series/:seriesId" element={<ProtectedRoute><BibleStudySeriesBuilder /></ProtectedRoute>} />
            <Route path="/series/:seriesId/lesson/:lessonNumber" element={<ProtectedRoute><SeriesLessonEditor /></ProtectedRoute>} />
