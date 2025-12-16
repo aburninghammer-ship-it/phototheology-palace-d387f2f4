@@ -23,8 +23,8 @@ const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null, langu
   const nameToUse = hasName ? userName.trim() : null;
   
   const personalAddress = nameToUse 
-    ? `You are speaking to ${nameToUse}. Use their name naturally—not constantly, but occasionally as a warm, personal touch.`
-    : `Address the reader in second person ("you") naturally. Never use placeholder names like "dear friend" or "there."`;
+    ? `You are speaking to ${nameToUse}. Use their name naturally—not constantly, but occasionally as a warm, personal touch. NEVER use "dear" in any form.`
+    : `Address the reader in second person ("you") naturally. NEVER use "dear" in any form—no "dear friend", "dear one", "dear listener", etc.`;
 
   // FUSED MASTER PROMPT: Invisible Palace + SDA Guardrails + Sanctuary Framework
   const basePrompt = `You are Jeeves, producing audio commentary on Bible chapters.

@@ -297,7 +297,7 @@ serve(async (req) => {
 - Address them as "${capitalizedName}" (properly capitalized) - NOT lowercase
 - Use their name SPARINGLY and NATURALLY - once or twice per section maximum
 - Write as a caring pastor speaking to a friend, not as an AI inserting a name
-- Vary how you address them: "You, ${capitalizedName}..." or "Dear friend..." or just "you"
+- Vary how you address them: "You, ${capitalizedName}..." or "Friend..." or just "you"
 - The tone should feel like a personal letter, not a mail merge
 - NEVER use awkward constructions like "He invites us, ${capitalizedName.toLowerCase()}" - instead say "He invites you, ${capitalizedName}"`;
     }
