@@ -28,6 +28,21 @@ interface DevotionContent {
   memory_hook: string;
 }
 
+const REGEN_STORAGE_KEY = "devotion_regen_count";
+const MAX_REGENERATIONS = 3;
+
+function getRegenData(): { date: string; count: number } {
+  try {
+    const stored = localStorage.getItem(REGEN_STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return { date: "", count: 0 };
+}
+
+function getTodayString(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
 export function QuickDevotion({ onClose }: QuickDevotionProps) {
   const [theme, setTheme] = useState("");
   const [description, setDescription] = useState("");
@@ -35,16 +50,26 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
   const [writingStyle, setWritingStyle] = useState<WritingStyle>("mixed-audience");
   const [isGenerating, setIsGenerating] = useState(false);
   const [devotion, setDevotion] = useState<DevotionContent | null>(null);
+  const [regenCount, setRegenCount] = useState(() => {
+    const data = getRegenData();
+    return data.date === getTodayString() ? data.count : 0;
+  });
 
-  const generateDevotion = async () => {
+  const remainingRegens = MAX_REGENERATIONS - regenCount;
+
+  const generateDevotion = async (isRegeneration = false) => {
     if (!theme.trim()) {
       toast.error("Please enter a theme");
       return;
     }
 
+    if (isRegeneration && regenCount >= MAX_REGENERATIONS) {
+      toast.error(`You've used all ${MAX_REGENERATIONS} regenerations for today. Try again tomorrow!`);
+      return;
+    }
+
     setIsGenerating(true);
     try {
-      // Combine theme and description for richer context
       const fullTheme = description.trim() 
         ? `${theme.trim()} - ${description.trim()}`
         : theme.trim();
@@ -55,6 +80,16 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
 
       if (error) throw error;
       setDevotion(data);
+
+      // Track regeneration
+      if (isRegeneration) {
+        const newCount = regenCount + 1;
+        setRegenCount(newCount);
+        localStorage.setItem(REGEN_STORAGE_KEY, JSON.stringify({ 
+          date: getTodayString(), 
+          count: newCount 
+        }));
+      }
     } catch (error) {
       console.error("Error generating devotion:", error);
       toast.error("Failed to generate devotion. Please try again.");
@@ -64,8 +99,12 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
   };
 
   const handleRegenerate = () => {
+    if (regenCount >= MAX_REGENERATIONS) {
+      toast.error(`You've used all ${MAX_REGENERATIONS} regenerations for today.`);
+      return;
+    }
     setDevotion(null);
-    generateDevotion();
+    generateDevotion(true);
   };
 
   return (
@@ -143,7 +182,7 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
                 </div>
               </div>
               <Button
-                onClick={generateDevotion}
+                onClick={() => generateDevotion(false)}
                 disabled={isGenerating || !theme.trim()}
                 className="w-full"
               >
@@ -210,9 +249,14 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
 
               {/* Actions */}
               <div className="flex gap-2">
-                <Button variant="outline" onClick={handleRegenerate} className="flex-1">
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Regenerate
+                <Button 
+                  variant="outline" 
+                  onClick={handleRegenerate} 
+                  disabled={remainingRegens <= 0 || isGenerating}
+                  className="flex-1"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
+                  Regenerate ({remainingRegens} left)
                 </Button>
                 <Button onClick={onClose} className="flex-1">
                   Done
