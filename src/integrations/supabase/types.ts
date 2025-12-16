@@ -11386,6 +11386,7 @@ export type Database = {
           trial_ends_at: string
         }[]
       }
+      get_user_church_ids: { Args: { _user_id: string }; Returns: string[] }
       has_church_access: {
         Args: { _user_id: string }
         Returns: {
@@ -11424,6 +11425,10 @@ export type Database = {
         Returns: boolean
       }
       is_church_admin: {
+        Args: { _church_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_church_admin_direct: {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
       }
