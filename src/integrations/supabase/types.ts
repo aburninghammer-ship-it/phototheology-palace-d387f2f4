@@ -10505,6 +10505,698 @@ export type Database = {
         }
         Relationships: []
       }
+      youth_attendance: {
+        Row: {
+          attendance_status: string
+          created_at: string
+          group_id: string
+          id: string
+          notes: string | null
+          participation_level: string | null
+          recorded_by: string | null
+          session_date: string
+          user_id: string
+          week_number: number | null
+        }
+        Insert: {
+          attendance_status?: string
+          created_at?: string
+          group_id: string
+          id?: string
+          notes?: string | null
+          participation_level?: string | null
+          recorded_by?: string | null
+          session_date: string
+          user_id: string
+          week_number?: number | null
+        }
+        Update: {
+          attendance_status?: string
+          created_at?: string
+          group_id?: string
+          id?: string
+          notes?: string | null
+          participation_level?: string | null
+          recorded_by?: string | null
+          session_date?: string
+          user_id?: string
+          week_number?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_attendance_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_curriculum_weeks: {
+        Row: {
+          application_challenge: string | null
+          core_question: string | null
+          created_at: string
+          discussion_prompts: string[] | null
+          ew_theme: string | null
+          id: string
+          practice_activity: string | null
+          pt_focus: string | null
+          sanctuary_station: string
+          scripture_references: string[]
+          title: string
+          truth_statement: string
+          week_number: number
+        }
+        Insert: {
+          application_challenge?: string | null
+          core_question?: string | null
+          created_at?: string
+          discussion_prompts?: string[] | null
+          ew_theme?: string | null
+          id?: string
+          practice_activity?: string | null
+          pt_focus?: string | null
+          sanctuary_station: string
+          scripture_references: string[]
+          title: string
+          truth_statement: string
+          week_number: number
+        }
+        Update: {
+          application_challenge?: string | null
+          core_question?: string | null
+          created_at?: string
+          discussion_prompts?: string[] | null
+          ew_theme?: string | null
+          id?: string
+          practice_activity?: string | null
+          pt_focus?: string | null
+          sanctuary_station?: string
+          scripture_references?: string[]
+          title?: string
+          truth_statement?: string
+          week_number?: number
+        }
+        Relationships: []
+      }
+      youth_cycle_enrollments: {
+        Row: {
+          completed_at: string | null
+          current_week: number | null
+          cycle_id: string
+          group_id: string
+          id: string
+          started_at: string | null
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          current_week?: number | null
+          cycle_id: string
+          group_id: string
+          id?: string
+          started_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          current_week?: number | null
+          cycle_id?: string
+          group_id?: string
+          id?: string
+          started_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_cycle_enrollments_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "youth_study_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_cycle_enrollments_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_group_messages: {
+        Row: {
+          content: string
+          created_at: string
+          flagged_reason: string | null
+          group_id: string
+          id: string
+          is_flagged: boolean | null
+          is_visible: boolean | null
+          message_type: string | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          flagged_reason?: string | null
+          group_id: string
+          id?: string
+          is_flagged?: boolean | null
+          is_visible?: boolean | null
+          message_type?: string | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          flagged_reason?: string | null
+          group_id?: string
+          id?: string
+          is_flagged?: boolean | null
+          is_visible?: boolean | null
+          message_type?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_group_messages_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_group_progress: {
+        Row: {
+          attendance_count: number | null
+          completed_at: string | null
+          created_at: string
+          follow_up_needed: boolean | null
+          group_id: string
+          id: string
+          led_by: string | null
+          session_date: string
+          session_notes: string | null
+          week_number: number
+        }
+        Insert: {
+          attendance_count?: number | null
+          completed_at?: string | null
+          created_at?: string
+          follow_up_needed?: boolean | null
+          group_id: string
+          id?: string
+          led_by?: string | null
+          session_date: string
+          session_notes?: string | null
+          week_number: number
+        }
+        Update: {
+          attendance_count?: number | null
+          completed_at?: string | null
+          created_at?: string
+          follow_up_needed?: boolean | null
+          group_id?: string
+          id?: string
+          led_by?: string | null
+          session_date?: string
+          session_notes?: string | null
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_group_progress_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_groups: {
+        Row: {
+          age_band: string
+          church_id: string
+          created_at: string
+          current_week: number | null
+          description: string | null
+          id: string
+          is_online: boolean | null
+          max_members: number | null
+          meeting_day: string | null
+          meeting_link: string | null
+          meeting_location: string | null
+          meeting_time: string | null
+          name: string
+          start_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          age_band: string
+          church_id: string
+          created_at?: string
+          current_week?: number | null
+          description?: string | null
+          id?: string
+          is_online?: boolean | null
+          max_members?: number | null
+          meeting_day?: string | null
+          meeting_link?: string | null
+          meeting_location?: string | null
+          meeting_time?: string | null
+          name: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          age_band?: string
+          church_id?: string
+          created_at?: string
+          current_week?: number | null
+          description?: string | null
+          id?: string
+          is_online?: boolean | null
+          max_members?: number | null
+          meeting_day?: string | null
+          meeting_link?: string | null
+          meeting_location?: string | null
+          meeting_time?: string | null
+          name?: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_groups_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_groups_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_guest_invites: {
+        Row: {
+          converted_to_member_at: string | null
+          created_at: string
+          expires_at: string | null
+          group_id: string
+          guest_email: string | null
+          guest_name: string
+          guest_phone: string | null
+          id: string
+          invite_code: string | null
+          invited_by: string
+          status: string | null
+        }
+        Insert: {
+          converted_to_member_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          group_id: string
+          guest_email?: string | null
+          guest_name: string
+          guest_phone?: string | null
+          id?: string
+          invite_code?: string | null
+          invited_by: string
+          status?: string | null
+        }
+        Update: {
+          converted_to_member_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          group_id?: string
+          guest_email?: string | null
+          guest_name?: string
+          guest_phone?: string | null
+          id?: string
+          invite_code?: string | null
+          invited_by?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_guest_invites_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_leaders: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          background_check_date: string | null
+          background_check_status: string | null
+          church_id: string
+          created_at: string
+          group_id: string | null
+          id: string
+          is_active: boolean | null
+          notes: string | null
+          role: string
+          training_completed: boolean | null
+          training_completed_at: string | null
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          background_check_date?: string | null
+          background_check_status?: string | null
+          church_id: string
+          created_at?: string
+          group_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          notes?: string | null
+          role?: string
+          training_completed?: boolean | null
+          training_completed_at?: string | null
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          background_check_date?: string | null
+          background_check_status?: string | null
+          church_id?: string
+          created_at?: string
+          group_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          notes?: string | null
+          role?: string
+          training_completed?: boolean | null
+          training_completed_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_leaders_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_leaders_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_leaders_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_members: {
+        Row: {
+          age: number | null
+          attendance_count: number | null
+          group_id: string
+          id: string
+          is_active: boolean | null
+          joined_at: string
+          last_attendance: string | null
+          member_pathway: string
+          notes: string | null
+          parent_contact_email: string | null
+          parent_contact_phone: string | null
+          parental_consent: boolean | null
+          parental_consent_date: string | null
+          user_id: string
+        }
+        Insert: {
+          age?: number | null
+          attendance_count?: number | null
+          group_id: string
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string
+          last_attendance?: string | null
+          member_pathway?: string
+          notes?: string | null
+          parent_contact_email?: string | null
+          parent_contact_phone?: string | null
+          parental_consent?: boolean | null
+          parental_consent_date?: string | null
+          user_id: string
+        }
+        Update: {
+          age?: number | null
+          attendance_count?: number | null
+          group_id?: string
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string
+          last_attendance?: string | null
+          member_pathway?: string
+          notes?: string | null
+          parent_contact_email?: string | null
+          parent_contact_phone?: string | null
+          parental_consent?: boolean | null
+          parental_consent_date?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_safety_logs: {
+        Row: {
+          action_taken: string | null
+          church_id: string
+          created_at: string
+          description: string
+          group_id: string | null
+          id: string
+          log_type: string
+          reported_by: string
+          resolved: boolean | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string | null
+          subject_user_id: string | null
+        }
+        Insert: {
+          action_taken?: string | null
+          church_id: string
+          created_at?: string
+          description: string
+          group_id?: string | null
+          id?: string
+          log_type: string
+          reported_by: string
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          subject_user_id?: string | null
+        }
+        Update: {
+          action_taken?: string | null
+          church_id?: string
+          created_at?: string
+          description?: string
+          group_id?: string | null
+          id?: string
+          log_type?: string
+          reported_by?: string
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string | null
+          subject_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_safety_logs_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_safety_logs_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_safety_logs_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_study_cycles: {
+        Row: {
+          church_id: string
+          created_at: string
+          created_by: string | null
+          cycle_type: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_guest_friendly: boolean | null
+          materials_link: string | null
+          title: string
+          week_count: number | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string
+          created_by?: string | null
+          cycle_type: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_guest_friendly?: boolean | null
+          materials_link?: string | null
+          title: string
+          week_count?: number | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string
+          created_by?: string | null
+          cycle_type?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_guest_friendly?: boolean | null
+          materials_link?: string | null
+          title?: string
+          week_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_study_cycles_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_study_cycles_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      youth_transitions: {
+        Row: {
+          adult_cohort_id: string | null
+          bridge_track_completed_at: string | null
+          bridge_track_started_at: string | null
+          church_id: string
+          commissioned_at: string | null
+          created_at: string
+          from_group_id: string | null
+          id: string
+          leader_recommendation: string | null
+          leader_recommended_by: string | null
+          notes: string | null
+          transition_stage: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          adult_cohort_id?: string | null
+          bridge_track_completed_at?: string | null
+          bridge_track_started_at?: string | null
+          church_id: string
+          commissioned_at?: string | null
+          created_at?: string
+          from_group_id?: string | null
+          id?: string
+          leader_recommendation?: string | null
+          leader_recommended_by?: string | null
+          notes?: string | null
+          transition_stage?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          adult_cohort_id?: string | null
+          bridge_track_completed_at?: string | null
+          bridge_track_started_at?: string | null
+          church_id?: string
+          commissioned_at?: string | null
+          created_at?: string
+          from_group_id?: string | null
+          id?: string
+          leader_recommendation?: string | null
+          leader_recommended_by?: string | null
+          notes?: string | null
+          transition_stage?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "youth_transitions_adult_cohort_id_fkey"
+            columns: ["adult_cohort_id"]
+            isOneToOne: false
+            referencedRelation: "discipleship_cohorts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_transitions_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_transitions_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "youth_transitions_from_group_id_fkey"
+            columns: ["from_group_id"]
+            isOneToOne: false
+            referencedRelation: "youth_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       churches_public_info: {
@@ -10745,6 +11437,14 @@ export type Database = {
         Returns: boolean
       }
       is_video_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_youth_leader: {
+        Args: { _church_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_youth_overseer: {
+        Args: { _church_id: string; _user_id: string }
+        Returns: boolean
+      }
       redeem_access_code: { Args: { code_input: string }; Returns: Json }
       search_encyclopedia_articles: {
         Args: { limit_count?: number; search_query: string }
