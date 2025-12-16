@@ -43,6 +43,15 @@ const formatLabels: Record<string, { label: string; color: string; gradient: str
   "verse-genetics": { label: "Verse Genetics", color: "bg-rose-500", gradient: "from-rose-500 to-red-500" },
 };
 
+// Calculate actual day number based on started_at date
+const getActualDayNumber = (startedAt: string | null, duration: number): number => {
+  if (!startedAt) return 1;
+  const start = new Date(startedAt);
+  const now = new Date();
+  const daysSinceStart = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.min(daysSinceStart + 1, duration);
+};
+
 export default function Devotionals() {
   const { user } = useAuth();
   const { preferences } = useUserPreferences();
@@ -269,11 +278,11 @@ export default function Devotionals() {
                   <CardContent onClick={() => navigate(`/devotionals/${plan.id}`)}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="font-medium">Day {plan.current_day} of {plan.duration}</span>
+                        <span className="font-medium">Day {getActualDayNumber(plan.started_at, plan.duration)} of {plan.duration}</span>
                         <div className="h-3 w-32 bg-muted rounded-full overflow-hidden">
                           <div
                             className={`h-full bg-gradient-to-r ${formatLabels[plan.format]?.gradient || "from-blue-500 to-cyan-500"} transition-all`}
-                            style={{ width: `${(plan.current_day / plan.duration) * 100}%` }}
+                            style={{ width: `${(getActualDayNumber(plan.started_at, plan.duration) / plan.duration) * 100}%` }}
                           />
                         </div>
                       </div>
