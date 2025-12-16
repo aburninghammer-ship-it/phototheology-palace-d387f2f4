@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Building2, Users, Mail, TrendingUp, Target, Sprout } from "lucide-react";
 import { ChurchOverview } from "@/components/churches/ChurchOverview";
@@ -36,22 +37,23 @@ export default function ChurchAdmin() {
   const [usedSeats, setUsedSeats] = useState(0);
 
   useEffect(() => {
-    // Wait for subscription to load before making any navigation decisions
+    // Wait for subscription to load before making any decisions
     if (subscriptionLoading) return;
 
-    if (!user) {
-      navigate("/auth");
+    // ProtectedRoute will handle auth redirects; here we just gate church-admin capability
+    if (!user) return;
+
+    const isAdmin = subscription.church.hasChurchAccess && subscription.church.churchRole === 'admin';
+
+    if (!isAdmin) {
+      // Stop the spinner and show an access message instead of bouncing routes
+      setLoading(false);
       return;
     }
 
-    // Check if user is church admin
-    if (!subscription.church.hasChurchAccess || subscription.church.churchRole !== 'admin') {
-      navigate("/dashboard");
-      return;
-    }
-
+    setLoading(true);
     loadChurchData();
-  }, [user, subscription, subscriptionLoading, navigate]);
+  }, [user, subscription, subscriptionLoading]);
 
   const loadChurchData = async () => {
     try {
@@ -83,13 +85,92 @@ export default function ChurchAdmin() {
     }
   };
 
-  if (loading || subscriptionLoading) {
+  if (subscriptionLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-dreamy">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-foreground/80">Loading church dashboard...</p>
         </div>
+      </div>
+    );
+  }
+
+  // If user isn't a church admin, show a clear message instead of redirecting away
+  if (!subscription.church.hasChurchAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center gradient-dreamy p-4">
+        <Card className="w-full max-w-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-primary" />
+              Church Admin Access Required
+            </CardTitle>
+            <CardDescription>
+              This account isn't connected to an active church organization yet.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert>
+              <AlertDescription>
+                <span className="font-medium">What you can do next:</span>
+                <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                  <li>• Register your church and choose a plan</li>
+                  <li>• Join a church using an invitation</li>
+                </ul>
+              </AlertDescription>
+            </Alert>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Button onClick={() => navigate('/church-signup')}>
+                Register a Church
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/join-church')}>
+                Join a Church
+              </Button>
+            </div>
+
+            <div className="text-xs text-muted-foreground">
+              Debug: hasChurchAccess={String(subscription.church.hasChurchAccess)}, role={String(subscription.church.churchRole)}, churchId={String(subscription.church.churchId)}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (subscription.church.churchRole !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center gradient-dreamy p-4">
+        <Card className="w-full max-w-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary" />
+              Admin Role Required
+            </CardTitle>
+            <CardDescription>
+              You're connected to a church, but your role isn't admin.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert>
+              <AlertDescription>
+                Ask your church admin to promote your role to <span className="font-medium">admin</span>.
+              </AlertDescription>
+            </Alert>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Button onClick={() => navigate('/dashboard')}>Go to Dashboard</Button>
+              <Button variant="outline" onClick={() => navigate('/join-church')}>
+                Use a Different Invitation
+              </Button>
+            </div>
+
+            <div className="text-xs text-muted-foreground">
+              Debug: hasChurchAccess={String(subscription.church.hasChurchAccess)}, role={String(subscription.church.churchRole)}, churchId={String(subscription.church.churchId)}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }

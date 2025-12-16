@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 
@@ -10,14 +10,16 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Only redirect if we're done loading AND there's no user
     if (!loading && !user) {
-      console.log("ProtectedRoute: Redirecting to /auth (no user found)");
-      navigate("/auth", { replace: true });
+      const redirect = encodeURIComponent(`${location.pathname}${location.search}`);
+      console.log("ProtectedRoute: Redirecting to /auth (no user found)", { redirect });
+      navigate(`/auth?redirect=${redirect}`, { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, location.pathname, location.search]);
 
   // Show loading while checking auth status
   if (loading) {
