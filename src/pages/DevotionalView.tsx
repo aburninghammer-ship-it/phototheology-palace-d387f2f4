@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, BookOpen, Sparkles, Heart, MessageSquare, Star, Loader2, Share2, Wand2, ExternalLink, Lock, AlertCircle, RefreshCw } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { SimplifiedNav } from "@/components/SimplifiedNav";
@@ -14,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDevotionalPlan, useDevotionals } from "@/hooks/useDevotionals";
 import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
 import { FreeAudioButton } from "@/components/audio/FreeAudioButton";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 import {
@@ -47,6 +49,8 @@ const getTimeUntilUnlock = (startedAt: string, dayNumber: number): string => {
 export default function DevotionalView() {
   const { planId } = useParams<{ planId: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const { preferences } = useUserPreferences();
   const { plan, days, completedDayIds, completeDay, planLoading, isCompleting, isDayUnlocked, unlockedDayNumber } = useDevotionalPlan(planId || "");
   const { generateDevotional, isGenerating } = useDevotionals();
@@ -56,6 +60,7 @@ export default function DevotionalView() {
   const [journalEntry, setJournalEntry] = useState("");
   const [rating, setRating] = useState(0);
   const [hasInitializedDay, setHasInitializedDay] = useState(false);
+  const [isRegeneratingDay, setIsRegeneratingDay] = useState(false);
 
   // Auto-select the current unlocked day ONLY on initial load
   useEffect(() => {
@@ -89,6 +94,46 @@ export default function DevotionalView() {
       duration: plan.duration,
       studyStyle: plan.study_style || "balanced",
     });
+  };
+
+  const handleRegenerateDay = async () => {
+    if (!plan || !days || days.length === 0) return;
+
+    const dayNumber = selectedDayIndex + 1;
+    if (!isDayUnlocked(dayNumber)) {
+      toast({
+        title: "Day Locked",
+        description: "That day isn't unlocked yet.",
+        variant: "default",
+      });
+      return;
+    }
+
+    setIsRegeneratingDay(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("regenerate-devotional-day", {
+        body: { planId: plan.id, dayNumber },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      await queryClient.invalidateQueries({ queryKey: ["devotional-days", plan.id] });
+
+      toast({
+        title: "Devotion Regenerated",
+        description: `Day ${dayNumber} has been refreshed with profile context.`,
+      });
+    } catch (err: any) {
+      console.error("Regenerate day error:", err);
+      toast({
+        title: "Couldn't Regenerate",
+        description: err?.message || "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRegeneratingDay(false);
+    }
   };
 
   if (planLoading) {
@@ -260,6 +305,20 @@ export default function DevotionalView() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleRegenerateDay}
+                disabled={isRegeneratingDay}
+                className="text-white hover:bg-white/20 disabled:opacity-30"
+                aria-label="Regenerate this day's devotional"
+              >
+                {isRegeneratingDay ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-5 w-5" />
+                )}
+              </Button>
               {plan && currentDay && (
                 <ShareDevotionalDialog 
                   plan={plan} 
