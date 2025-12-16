@@ -8,8 +8,9 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Image, Search, Heart, Trash2, RefreshCw, Loader2, ArrowLeft, MessageCircle, Send, X, Edit, Package, Download, Share2, Globe } from "lucide-react";
+import { Image, Search, Heart, Trash2, RefreshCw, Loader2, ArrowLeft, MessageCircle, Send, X, Edit, Package, Download, Share2, Globe, FolderOpen, ChevronRight, ChevronDown } from "lucide-react";
 import { genesisImages } from "@/assets/24fps/genesis";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface BibleImage {
   id: string;
@@ -20,6 +21,8 @@ interface BibleImage {
   is_favorite: boolean;
   is_public: boolean;
   created_at: string;
+  book: string | null;
+  chapter: number | null;
 }
 
 export default function BibleImageLibrary() {
@@ -30,7 +33,8 @@ export default function BibleImageLibrary() {
   const [generating, setGenerating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "translation" | "24fps">("all");
-  const [activeTab, setActiveTab] = useState<"all" | "favorites" | "genesis-pack">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "favorites" | "by-book" | "genesis-pack">("all");
+  const [expandedBooks, setExpandedBooks] = useState<Set<string>>(new Set());
   const [jeevesOpen, setJeevesOpen] = useState(false);
   const [jeevesPrompt, setJeevesPrompt] = useState("");
   const [jeevesGenerating, setJeevesGenerating] = useState(false);
@@ -390,6 +394,46 @@ export default function BibleImageLibrary() {
     fps24: images.filter(img => img.room_type === "24fps").length,
   };
 
+  // Group images by book
+  const imagesByBook = images.reduce((acc, img) => {
+    const bookName = img.book || 'Uncategorized';
+    if (!acc[bookName]) acc[bookName] = [];
+    acc[bookName].push(img);
+    return acc;
+  }, {} as Record<string, BibleImage[]>);
+
+  // Get chapters for a book
+  const getChaptersForBook = (book: string) => {
+    const bookImages = imagesByBook[book] || [];
+    const chapters = new Map<number | null, BibleImage[]>();
+    bookImages.forEach(img => {
+      const chapter = img.chapter;
+      if (!chapters.has(chapter)) chapters.set(chapter, []);
+      chapters.get(chapter)!.push(img);
+    });
+    return Array.from(chapters.entries()).sort((a, b) => (a[0] || 999) - (b[0] || 999));
+  };
+
+  const toggleBookExpanded = (book: string) => {
+    setExpandedBooks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(book)) newSet.delete(book);
+      else newSet.add(book);
+      return newSet;
+    });
+  };
+
+  const bookOrder = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians', 'Galatians', 'Ephesians', 'Philippians', 'Colossians', '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter', '2 Peter', '1 John', '2 John', '3 John', 'Jude', 'Revelation', 'Uncategorized'];
+  
+  const sortedBooks = Object.keys(imagesByBook).sort((a, b) => {
+    const aIdx = bookOrder.indexOf(a);
+    const bIdx = bookOrder.indexOf(b);
+    if (aIdx === -1 && bIdx === -1) return a.localeCompare(b);
+    if (aIdx === -1) return 1;
+    if (bIdx === -1) return -1;
+    return aIdx - bIdx;
+  });
+
   const genesisChapterTitles = [
     "Creation", "Garden of Eden", "The Fall", "Cain and Abel", "Adam's Genealogy",
     "Noah's Ark", "The Flood", "Post-Flood Covenant", "Table of Nations", "Tower of Babel",
@@ -435,7 +479,9 @@ export default function BibleImageLibrary() {
           description: genesisChapterTitles[chapterIndex],
           verse_reference: `Genesis ${chapter}`,
           image_url: publicUrl,
-          is_favorite: false
+          is_favorite: false,
+          book: 'Genesis',
+          chapter: chapter
         });
 
       if (insertError) throw insertError;
@@ -583,13 +629,17 @@ export default function BibleImageLibrary() {
         </div>
 
         {/* Content Tabs */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "favorites" | "genesis-pack")} className="mb-6">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "favorites" | "by-book" | "genesis-pack")} className="mb-6">
           <TabsList className="bg-white/90 backdrop-blur-sm border-white/20">
             <TabsTrigger value="all">All Images ({filteredImages.length})</TabsTrigger>
+            <TabsTrigger value="by-book">
+              <FolderOpen className="w-4 h-4 mr-2" />
+              By Book ({sortedBooks.length})
+            </TabsTrigger>
             <TabsTrigger value="favorites">Favorites ({images.filter(img => img.is_favorite).length})</TabsTrigger>
             <TabsTrigger value="genesis-pack">
               <Package className="w-4 h-4 mr-2" />
-              Genesis Starter Pack
+              Genesis Pack
             </TabsTrigger>
             <Dialog>
               <DialogTrigger asChild>
@@ -813,6 +863,93 @@ export default function BibleImageLibrary() {
                     </div>
                   </Card>
                 ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="by-book" className="mt-6">
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader2 className="w-8 h-8 animate-spin text-white" />
+              </div>
+            ) : sortedBooks.length === 0 ? (
+              <div className="text-center py-16">
+                <FolderOpen className="w-24 h-24 mx-auto text-white/30 mb-4" />
+                <p className="text-white/60 text-lg">No images organized by book yet</p>
+                <p className="text-white/40 text-sm mt-2">Images with verse references will appear here</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {sortedBooks.map((book) => {
+                  const bookImages = imagesByBook[book];
+                  const isExpanded = expandedBooks.has(book);
+                  const chapters = getChaptersForBook(book);
+                  
+                  return (
+                    <Collapsible key={book} open={isExpanded} onOpenChange={() => toggleBookExpanded(book)}>
+                      <CollapsibleTrigger asChild>
+                        <Card className="bg-white/10 backdrop-blur-sm border-white/20 p-4 cursor-pointer hover:bg-white/15 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <FolderOpen className="w-5 h-5 text-amber-400" />
+                              <span className="font-semibold text-white">{book}</span>
+                              <span className="text-sm text-purple-200">({bookImages.length} images)</span>
+                            </div>
+                            {isExpanded ? (
+                              <ChevronDown className="w-5 h-5 text-white/60" />
+                            ) : (
+                              <ChevronRight className="w-5 h-5 text-white/60" />
+                            )}
+                          </div>
+                        </Card>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2 ml-6 space-y-2">
+                        {chapters.map(([chapter, chapterImages]) => (
+                          <div key={chapter ?? 'no-chapter'} className="space-y-2">
+                            <div className="text-sm font-medium text-purple-200 px-2">
+                              {chapter ? `Chapter ${chapter}` : 'No Chapter'}
+                              <span className="text-purple-300 ml-2">({chapterImages.length} images)</span>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                              {chapterImages.map((image) => (
+                                <Card key={image.id} className="bg-white/10 backdrop-blur-sm border-white/20 overflow-hidden group">
+                                  <div className="relative aspect-square">
+                                    <img
+                                      src={image.image_url}
+                                      alt={image.description}
+                                      className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        onClick={() => toggleFavorite(image.id, image.is_favorite)}
+                                        className="bg-white/20 hover:bg-white/30 h-7 w-7"
+                                      >
+                                        <Heart className={`w-4 h-4 ${image.is_favorite ? "fill-red-500 text-red-500" : "text-white"}`} />
+                                      </Button>
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        onClick={() => deleteImage(image.id)}
+                                        className="bg-white/20 hover:bg-white/30 h-7 w-7"
+                                      >
+                                        <Trash2 className="w-4 h-4 text-white" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="p-2">
+                                    <p className="text-xs text-white line-clamp-1">{image.description}</p>
+                                  </div>
+                                </Card>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  );
+                })}
               </div>
             )}
           </TabsContent>

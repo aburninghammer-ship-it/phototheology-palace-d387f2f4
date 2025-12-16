@@ -204,6 +204,8 @@ export type Database = {
       }
       bible_images: {
         Row: {
+          book: string | null
+          chapter: number | null
           created_at: string
           description: string
           id: string
@@ -216,6 +218,8 @@ export type Database = {
           verse_reference: string | null
         }
         Insert: {
+          book?: string | null
+          chapter?: number | null
           created_at?: string
           description: string
           id?: string
@@ -228,6 +232,8 @@ export type Database = {
           verse_reference?: string | null
         }
         Update: {
+          book?: string | null
+          chapter?: number | null
           created_at?: string
           description?: string
           id?: string
