@@ -1350,7 +1350,11 @@ export const getVerseWithStrongs = async (book: string, chapter: number, verse: 
       
       const words = tokens.map(token => ({
         text: token.t || token.word || '',
-        strongs: token.s || token.strongs || undefined
+        strongs: (token.s && token.s !== 'null') ? token.s : 
+                 (token.strongs && token.strongs !== 'null') ? token.strongs : undefined,
+        lemma: (token as any).h?.split(' ')[0] || undefined,
+        transliteration: (token as any).h?.split(' ')[1] || (token as any).tr || undefined,
+        part_of_speech: (token as any).pos || undefined
       }));
       
       console.log(`[Strong's] First word extracted:`, words[0]);
