@@ -246,18 +246,23 @@ serve(async (req) => {
           continue;
         }
 
-        // Check if we already sent for today (prevent duplicates)
+        // Check if we already sent for THIS DAY NUMBER today (prevent duplicates)
+        // Must check day_number in metadata to allow multiple days per calendar day
         const { data: existingNotif } = await supabase
           .from('notifications')
-          .select('id')
+          .select('id, metadata')
           .eq('user_id', plan.user_id)
           .eq('type', 'daily_devotional')
           .gte('created_at', `${today}T00:00:00`)
-          .like('metadata->>plan_id', plan.id)
-          .limit(1);
+          .limit(10);
 
-        if (existingNotif && existingNotif.length > 0) {
-          console.log(`Already sent devotional for plan ${plan.id} today, skipping`);
+        const alreadySentForThisDay = existingNotif?.some(n => {
+          const meta = n.metadata as { plan_id?: string; day_number?: number } | null;
+          return meta?.plan_id === plan.id && meta?.day_number === currentDayNumber;
+        });
+
+        if (alreadySentForThisDay) {
+          console.log(`Already sent devotional for plan ${plan.id} day ${currentDayNumber} today, skipping`);
           continue;
         }
 
