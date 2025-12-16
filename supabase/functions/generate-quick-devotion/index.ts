@@ -31,11 +31,11 @@ PERSONALIZATION (USE THROUGHOUT):
 
 CRITICAL: Address ${recipientName || "the reader"} by name at least 2-3 times naturally woven into the devotional. Connect the biblical truth directly to their specific situation and struggles. Make them feel seen and known.` : "";
 
-    // Depth configuration
+    // Depth configuration - substantive content with real depth
     const depthConfig = {
-      light: { paragraphs: "2-3", sentences: "3-4", readTime: "2-3 minutes" },
-      standard: { paragraphs: "4-5", sentences: "4-6", readTime: "4-5 minutes" },
-      deep: { paragraphs: "6-8", sentences: "5-7", readTime: "6-8 minutes" }
+      light: { paragraphs: "3-4", sentences: "5-6", readTime: "3-4 minutes", applicationParagraphs: "2-3" },
+      standard: { paragraphs: "5-7", sentences: "6-8", readTime: "6-8 minutes", applicationParagraphs: "3-4" },
+      deep: { paragraphs: "8-10", sentences: "6-8", readTime: "10-12 minutes", applicationParagraphs: "4-5" }
     };
     const selectedDepth = depthConfig[depth as keyof typeof depthConfig] || depthConfig.standard;
 
@@ -43,27 +43,46 @@ CRITICAL: Address ${recipientName || "the reader"} by name at least 2-3 times na
     const writingStylePrompts: Record<string, string> = {
       "mixed-audience": `
 WRITING STYLE: MIXED AUDIENCE (Teens & Adults Together)
-- Write at an 8th–10th grade reading level
-- Use everyday, spoken English - no academic, poetic, or scholarly wording
-- Avoid abstract or intellectual language
-- Sound like a calm, trusted mentor speaking personally
-- Clear, honest, grounded - not preachy, not dramatic, not casual slang
-- Warm without hype - avoid religious jargon unless commonly understood
-- Introduce Scripture naturally and briefly - prefer short verses
-- Address real life: pressure, loneliness, doubt, purpose, failure, hope
-- Use examples that work for both teens and adults
-- No childish illustrations, no abstract theology
-- Speak to the heart through clarity, not complexity
+
+CORE VOICE:
+- Write at an 8th–10th grade reading level using everyday spoken English
+- Sound like a calm, trusted mentor speaking personally - clear, honest, grounded
+- Warm without being preachy, dramatic, or using casual slang
+- NO lofty, poetic, flowery, or scholarly wording - if it sounds like a sermon manuscript, rewrite it
+- NO phrases like "tapestry being woven," "hidden chamber of creation," "predates knowledge"
+- Use CONCRETE language, not abstract theological concepts
+
+SUBSTANCE REQUIREMENTS:
+- Go DEEP into the meaning without going high in vocabulary
+- Explain WHY the Scripture matters, not just WHAT it says
+- Show the reader something they haven't noticed before
+- Connect dots between the ancient text and today's struggles
+- Be specific: name real emotions, real situations, real decisions
+- Give the reader something to wrestle with, not just feel good about
+
+SCRIPTURE USE:
+- Quote Scripture naturally, then UNPACK it thoroughly
+- Don't just reference passages - explain what the words actually meant to original hearers
+- Show how the truth plays out in everyday life with specific examples
+- Use 2-3 passages that build on each other
+
+CONTENT DEPTH:
+- Address real life: pressure, loneliness, doubt, purpose, failure, hope, identity, relationships
+- Use examples that work for both teens and adults - no childish illustrations
+- Each paragraph should advance the thought, not repeat it with different words
+- Build an argument or narrative arc, not just scattered observations
 
 STRUCTURE:
-1. Start with a relatable human experience
+1. Start with a relatable human experience or tension
 2. Connect it clearly to Scripture
-3. Explain the meaning in plain terms
-4. End with encouragement, hope, or a simple next step
+3. Explain the meaning in plain, substantive terms with examples
+4. Deepen the insight by connecting to other passages or principles
+5. Lead toward honest self-examination
+6. End with encouragement, hope, and a concrete next step
 
-AVOID: Lofty language, church clichés, over-explaining doctrine, emotional manipulation
+AVOID: Lofty language, church clichés, vague encouragement, emotional manipulation, abstract theology, repetitive filler
 
-CHECK: Would this make sense to a teenager? Would an adult feel respected? Would it sound natural read aloud?`,
+FINAL CHECK: Would a teenager understand this? Would an adult feel challenged? Does every sentence add something new?`,
       
       "pastoral": `
 WRITING STYLE: PASTORAL
@@ -124,18 +143,28 @@ QUALITY CONTROL:
 - Does it rely on vague encouragement? If yes, make it more specific.
 - It must feel discovered rather than manufactured.`;
 
-    const userPrompt = `Write a ${selectedDepth.paragraphs} paragraph devotional on the theme: "${theme}"
+    const userPrompt = `Write a SUBSTANTIVE ${selectedDepth.paragraphs} paragraph devotional on the theme: "${theme}"
 ${personalizationContext}
 
-LENGTH: ${selectedDepth.readTime} read time. Each paragraph should be ${selectedDepth.sentences} sentences.
+LENGTH: ${selectedDepth.readTime} read time. Each paragraph should be ${selectedDepth.sentences} MEANINGFUL sentences - no filler.
+
+CRITICAL - SUBSTANCE OVER STYLE:
+• Every paragraph must teach something specific - no vague spiritual sentiments
+• Explain the MEANING behind the Scripture, not just quote it
+• Use CONCRETE language - name specific emotions, situations, decisions
+• NO flowery phrases like "tapestry being woven" or "hidden chamber" - write plainly
+• Build each paragraph on the previous - create a logical progression
+• Give the reader something to wrestle with intellectually and spiritually
 
 STRUCTURE REQUIREMENTS:
-• Use 2-3 Scripture passages that connect meaningfully
-• Let the insight emerge naturally through the writing
-• Begin with something relatable or a tension
-• Deepen with Scripture that illuminates the theme
-• Lead toward practical self-examination
-• Conclude with a clear call to action or reflection`;
+• Use 2-3 Scripture passages that BUILD on each other
+• Begin with a relatable tension or question the reader has felt
+• Unpack Scripture thoroughly - what did these words mean to original hearers?
+• Show how the truth applies with SPECIFIC real-life examples
+• Lead toward honest self-examination with probing questions
+• Conclude with concrete hope and a specific action step
+
+The devotional should feel like a conversation with a wise friend who respects your intelligence.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -172,19 +201,19 @@ STRUCTURE REQUIREMENTS:
                   },
                   christ_connection: { 
                     type: "string", 
-                    description: `${selectedDepth.paragraphs} paragraphs (each ${selectedDepth.sentences} sentences) connecting Scripture passages to reveal truth. Begin with relatable experience, connect to Scripture, explain meaning plainly, lead to reflection.` 
+                    description: `${selectedDepth.paragraphs} SUBSTANTIVE paragraphs (each ${selectedDepth.sentences} sentences). Start with relatable human tension. Quote and THOROUGHLY unpack Scripture - explain what words meant originally and how they apply today. Use concrete examples. Build logical progression. No flowery language - write plainly but deeply. Each paragraph must teach something specific.` 
                   },
                   application: { 
                     type: "string", 
-                    description: "2-3 paragraphs of practical application. What should the reader notice, consider, or do differently?" 
+                    description: `${selectedDepth.applicationParagraphs} paragraphs of SPECIFIC practical application. Name concrete situations where this truth matters. Include probing self-examination questions. What should the reader notice in their own life? What specific decisions or responses does this call for?` 
                   },
                   prayer: { 
                     type: "string", 
-                    description: "1-2 paragraphs of honest, personal prayer that connects to the devotional theme." 
+                    description: "2-3 paragraphs of honest, specific prayer. Not generic - connect directly to the struggles and hopes addressed in the devotional. Pray for specific changes, specific grace, specific responses." 
                   },
                   memory_hook: { 
                     type: "string", 
-                    description: "1 paragraph with a memorable image or phrase that captures the devotional's core truth." 
+                    description: "A memorable, concrete image or phrase (1-2 sentences) that captures the core truth. Something the reader can recall when facing the situation addressed." 
                   },
                 },
                 required: ["title", "scripture_reference", "scripture_text", "christ_connection", "application", "prayer", "memory_hook"],
