@@ -39,19 +39,33 @@ async function generateDevotionalDay(
 
     const { data: profile } = await supabase
       .from('devotional_profiles')
-      .select('name, primary_issue, issue_description')
+      .select('name, primary_issue, current_situation, issue_description_encrypted')
       .eq('active_plan_id', planId)
-      .single();
+      .maybeSingle();
 
     if (profile) {
       personName = profile.name;
       primaryIssue = profile.primary_issue || "";
-      issueDescription = profile.issue_description || "";
+
+      // Prefer decrypted issue_description; fall back to current_situation
+      if (profile.issue_description_encrypted) {
+        const { data: decrypted, error: decErr } = await supabase.rpc('decrypt_token', {
+          encrypted_token: profile.issue_description_encrypted,
+        });
+        if (!decErr && typeof decrypted === 'string') {
+          issueDescription = decrypted;
+        }
+      }
+
+      if (!issueDescription) {
+        issueDescription = profile.current_situation || "";
+      }
     }
 
     const forPersonNote = personName ? `\nThis devotional is written PERSONALLY for: ${personName}. Address ${personName} BY NAME at least 2-3 times throughout the devotional.` : "";
-    const issueNote = primaryIssue ? `\nPRIMARY STRUGGLE: ${primaryIssue}${issueDescription ? ` - ${issueDescription}` : ""}` : "";
-
+    const issueNote = primaryIssue
+      ? `\nPRIMARY STRUGGLE: ${primaryIssue}${issueDescription ? ` - ${issueDescription}` : ""}`
+      : (issueDescription ? `\nSITUATION DETAILS: ${issueDescription}` : "");
     const systemPrompt = `You are Jeeves, the Phototheology devotional writer. Write devotionals as 3-5 FLOWING PARAGRAPHS of continuous prose.
 
 FORMAT: NO bullet points. NO section headers. NO labeled parts. Just essay-style reading.
