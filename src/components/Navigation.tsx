@@ -575,6 +575,12 @@ export const Navigation = () => {
                           Subscription
                         </Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/manage-subscription" className="text-muted-foreground">
+                          <CreditCard className="h-4 w-4 mr-2" />
+                          Cancel Subscription
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => signOut()}>
                         <LogOut className="h-4 w-4 mr-2" />
