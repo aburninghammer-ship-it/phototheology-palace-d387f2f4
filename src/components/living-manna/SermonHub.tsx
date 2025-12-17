@@ -103,34 +103,34 @@ export function SermonHub({ churchId }: SermonHubProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+          <h2 className="text-2xl font-bold flex items-center gap-2 text-foreground">
             <Video className="h-6 w-6 text-primary" />
             Sermon Hub
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-foreground/70">
             Weekly messages with clear Scripture focus and Phototheology framing
           </p>
         </div>
       </div>
 
-      {/* YouTube Channel Link */}
-      <Card variant="glass" className="border-red-500/30">
+      {/* YouTube Channel Embed */}
+      <Card variant="glass" className="border-red-500/30 bg-card/80">
         <CardContent className="py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
                 <Youtube className="h-6 w-6 text-red-500" />
               </div>
               <div>
-                <h3 className="font-semibold">Living Manna YouTube Channel</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-foreground">Living Manna YouTube Channel</h3>
+                <p className="text-sm text-foreground/70">
                   {youtubeSettings.channel_name || "Watch live services and past sermons"}
                 </p>
               </div>
             </div>
             <Button 
               variant="outline" 
-              className="border-red-500/30 text-red-500 hover:bg-red-500/10"
+              className="border-red-500/30 text-red-400 hover:bg-red-500/10"
               onClick={() => {
                 const url = youtubeSettings.channel_url || 'https://youtube.com/@LivingMannaChurch';
                 window.open(url, '_blank');
@@ -141,13 +141,23 @@ export function SermonHub({ churchId }: SermonHubProps) {
               <ExternalLink className="h-4 w-4 ml-2" />
             </Button>
           </div>
+          {/* YouTube Embed */}
+          <div className="aspect-video rounded-lg overflow-hidden bg-black/50">
+            <iframe
+              src="https://www.youtube.com/embed?listType=user_uploads&list=@livingmanna"
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="Living Manna YouTube Channel"
+            />
+          </div>
         </CardContent>
       </Card>
 
       {/* Search */}
       {sermons.length > 0 && (
         <div className="relative w-full max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50" />
           <Input
             placeholder="Search sermons..."
             value={searchQuery}
@@ -159,13 +169,13 @@ export function SermonHub({ churchId }: SermonHubProps) {
 
       {/* Sermons Grid */}
       {filteredSermons.length === 0 ? (
-        <Card variant="glass">
+        <Card variant="glass" className="bg-card/80">
           <CardContent className="py-12 text-center">
-            <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
+            <Video className="h-12 w-12 text-foreground/40 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2 text-foreground">
               {sermons.length === 0 ? "Sermons Coming Soon" : "No Matching Sermons"}
             </h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-foreground/70 mb-4">
               {sermons.length === 0 
                 ? "Check out the YouTube channel for the latest messages."
                 : "Try a different search term."}
@@ -193,7 +203,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
               <Card 
                 key={sermon.id} 
                 variant="glass" 
-                className="overflow-hidden hover:border-primary/30 transition-colors cursor-pointer"
+                className="overflow-hidden hover:border-primary/30 transition-colors cursor-pointer bg-card/80"
                 onClick={() => window.open(sermon.youtube_url, '_blank')}
               >
                 {/* Thumbnail */}
@@ -206,7 +216,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Video className="h-12 w-12 text-muted-foreground" />
+                      <Video className="h-12 w-12 text-foreground/40" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
@@ -222,7 +232,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
                 </div>
 
                 <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                  <div className="flex items-center gap-2 text-sm text-foreground/70 mb-2">
                     <Calendar className="h-3 w-3" />
                     {new Date(sermon.sermon_date).toLocaleDateString('en-US', {
                       month: 'short',
@@ -236,7 +246,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
                       </>
                     )}
                   </div>
-                  <CardTitle className="text-lg line-clamp-2">{sermon.title}</CardTitle>
+                  <CardTitle className="text-lg line-clamp-2 text-foreground">{sermon.title}</CardTitle>
                 </CardHeader>
 
                 <CardContent>
@@ -246,7 +256,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
                     </Badge>
                   )}
                   {sermon.pt_framing && (
-                    <p className="text-xs text-muted-foreground mt-2">
+                    <p className="text-xs text-foreground/60 mt-2">
                       PT Focus: {sermon.pt_framing}
                     </p>
                   )}
@@ -258,30 +268,30 @@ export function SermonHub({ churchId }: SermonHubProps) {
       )}
 
       {/* Info Card */}
-      <Card variant="glass">
+      <Card variant="glass" className="bg-card/80">
         <CardHeader>
-          <CardTitle className="text-lg">Weekly Flow</CardTitle>
+          <CardTitle className="text-lg text-foreground">Weekly Flow</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
               <div className="text-2xl mb-2">📺</div>
-              <h4 className="font-medium">Sabbath Sermon</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-medium text-foreground">Sabbath Sermon</h4>
+              <p className="text-sm text-foreground/70">
                 Clear Scripture focus with explicit PT framing
               </p>
             </div>
             <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
               <div className="text-2xl mb-2">📋</div>
-              <h4 className="font-medium">Central Study</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-medium text-foreground">Central Study</h4>
+              <p className="text-sm text-foreground/70">
                 Released immediately after for all groups
               </p>
             </div>
             <div className="text-center p-4 rounded-lg bg-primary/5 border border-primary/20">
               <div className="text-2xl mb-2">🔥</div>
-              <h4 className="font-medium">Small Groups</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-medium text-foreground">Small Groups</h4>
+              <p className="text-sm text-foreground/70">
                 Leaders facilitate, not improvise
               </p>
             </div>
