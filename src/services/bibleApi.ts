@@ -91,9 +91,10 @@ export const fetchChapter = async (book: string, chapter: number, translation: T
 
 const fetchChapterFromAPI = async (book: string, chapter: number, translation: Translation = "kjv"): Promise<Chapter> => {
   try {
+    // Use proper URL encoding with + between book and chapter
     const response = await fetch(
-      `${BIBLE_API_BASE}/${book}${chapter}?translation=${translation}`,
-      { signal: AbortSignal.timeout(5000) }
+      `${BIBLE_API_BASE}/${encodeURIComponent(book)}+${chapter}?translation=${translation}`,
+      { signal: AbortSignal.timeout(8000) }
     );
     
     if (!response.ok) {
