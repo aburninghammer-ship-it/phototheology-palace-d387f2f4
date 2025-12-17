@@ -8100,6 +8100,265 @@ export type Database = {
         }
         Relationships: []
       }
+      sanctuary_journey_escalations: {
+        Row: {
+          ai_detected_reason: string | null
+          assigned_to: string | null
+          created_at: string | null
+          escalation_type: string
+          id: string
+          progress_id: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          session_id: string | null
+          status: string | null
+          user_message: string | null
+        }
+        Insert: {
+          ai_detected_reason?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          escalation_type: string
+          id?: string
+          progress_id?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          session_id?: string | null
+          status?: string | null
+          user_message?: string | null
+        }
+        Update: {
+          ai_detected_reason?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          escalation_type?: string
+          id?: string
+          progress_id?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          session_id?: string | null
+          status?: string | null
+          user_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sanctuary_journey_escalations_progress_id_fkey"
+            columns: ["progress_id"]
+            isOneToOne: false
+            referencedRelation: "sanctuary_journey_progress"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sanctuary_journey_escalations_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sanctuary_journey_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sanctuary_journey_progress: {
+        Row: {
+          completed_at: string | null
+          current_session: number | null
+          id: string
+          journey_mode: string | null
+          series_id: string | null
+          small_group_id: string | null
+          sponsor_user_id: string | null
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          current_session?: number | null
+          id?: string
+          journey_mode?: string | null
+          series_id?: string | null
+          small_group_id?: string | null
+          sponsor_user_id?: string | null
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          current_session?: number | null
+          id?: string
+          journey_mode?: string | null
+          series_id?: string | null
+          small_group_id?: string | null
+          sponsor_user_id?: string | null
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sanctuary_journey_progress_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "sanctuary_journey_series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sanctuary_journey_series: {
+        Row: {
+          church_id: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          title: string
+          total_sessions: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          church_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          total_sessions?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          church_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          total_sessions?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sanctuary_journey_series_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sanctuary_journey_series_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sanctuary_journey_session_completions: {
+        Row: {
+          ai_conversation_history: Json | null
+          completed_at: string | null
+          id: string
+          progress_id: string | null
+          reflection_response: string | null
+          session_id: string | null
+          time_spent_seconds: number | null
+        }
+        Insert: {
+          ai_conversation_history?: Json | null
+          completed_at?: string | null
+          id?: string
+          progress_id?: string | null
+          reflection_response?: string | null
+          session_id?: string | null
+          time_spent_seconds?: number | null
+        }
+        Update: {
+          ai_conversation_history?: Json | null
+          completed_at?: string | null
+          id?: string
+          progress_id?: string | null
+          reflection_response?: string | null
+          session_id?: string | null
+          time_spent_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sanctuary_journey_session_completions_progress_id_fkey"
+            columns: ["progress_id"]
+            isOneToOne: false
+            referencedRelation: "sanctuary_journey_progress"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sanctuary_journey_session_completions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sanctuary_journey_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sanctuary_journey_sessions: {
+        Row: {
+          checkpoint_options: Json | null
+          core_truth: string
+          created_at: string | null
+          guided_insight: string
+          id: string
+          is_checkpoint: boolean | null
+          phase: string
+          prayer_prompt: string
+          primary_scriptures: string[]
+          reflection_question: string
+          sanctuary_frame: string
+          series_id: string | null
+          session_number: number
+          title: string
+        }
+        Insert: {
+          checkpoint_options?: Json | null
+          core_truth: string
+          created_at?: string | null
+          guided_insight: string
+          id?: string
+          is_checkpoint?: boolean | null
+          phase: string
+          prayer_prompt: string
+          primary_scriptures: string[]
+          reflection_question: string
+          sanctuary_frame: string
+          series_id?: string | null
+          session_number: number
+          title: string
+        }
+        Update: {
+          checkpoint_options?: Json | null
+          core_truth?: string
+          created_at?: string | null
+          guided_insight?: string
+          id?: string
+          is_checkpoint?: boolean | null
+          phase?: string
+          prayer_prompt?: string
+          primary_scriptures?: string[]
+          reflection_question?: string
+          sanctuary_frame?: string
+          series_id?: string | null
+          session_number?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sanctuary_journey_sessions_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "sanctuary_journey_series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sequence_items: {
         Row: {
           book: string
