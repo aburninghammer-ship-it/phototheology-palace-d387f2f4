@@ -205,70 +205,73 @@ export const BibleReader = () => {
     large: "text-lg",
   }[preferences.bible_font_size];
 
-  return (
-    <div className="space-y-6">
-      {/* Chapter Header - Sticky Glass */}
-      <div className="sticky top-16 z-50 isolate glass-card-subtle rounded-xl -mx-4 px-6 py-4 flex items-center justify-between flex-wrap gap-4 backdrop-blur-xl">
-        <div className="relative">
-          <h1 className="font-serif text-3xl md:text-4xl font-bold bg-gradient-palace bg-clip-text text-transparent">
-            {book} {chapter}
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {chapterData.verses.length} verses
-          </p>
-        </div>
-        
-        <div className="relative z-10 flex gap-2 flex-wrap items-center">
-          <ReadingStreakBadge compact />
-          <ReadingControls />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => addBookmark(book, chapter)}
-            disabled={isBookmarked(book, chapter)}
-            className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"
-          >
-            <Bookmark className="h-4 w-4 mr-2" />
-            {isBookmarked(book, chapter) ? "Bookmarked" : "Bookmark"}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigateChapter("prev")}
-            disabled={chapter <= 1}
-            className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"
-          >
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigateChapter("next")}
-            className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"
-          >
-            Next
-            <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
-        </div>
-      </div>
+    return (
+      <div className="space-y-6">
+        {/* Sticky Header + AI Prompt Banner */}
+        <div className="sticky top-16 z-50 space-y-3">
+          {/* Chapter Header - Glass */}
+          <div className="isolate glass-card-subtle rounded-xl -mx-4 px-6 py-4 flex items-center justify-between flex-wrap gap-4 backdrop-blur-xl">
+            <div className="relative">
+              <h1 className="font-serif text-3xl md:text-4xl font-bold bg-gradient-palace bg-clip-text text-transparent">
+                {book} {chapter}
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                {chapterData.verses.length} verses
+              </p>
+            </div>
 
-      {/* AI Prompt Banner - Surface Jeeves */}
-      {!jeevesMode && (
-        <div className="relative z-0 mt-6">
-          <AIPromptBanner
-            context="bible" 
-            book={book} 
-            chapter={chapter}
-            onAskJeeves={() => {
-              setJeevesMode(true);
-              setTimeout(() => {
-                jeevesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }, 100);
-            }}
-          />
+            <div className="relative z-10 flex gap-2 flex-wrap items-center">
+              <ReadingStreakBadge compact />
+              <ReadingControls />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => addBookmark(book, chapter)}
+                disabled={isBookmarked(book, chapter)}
+                className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"
+              >
+                <Bookmark className="h-4 w-4 mr-2" />
+                {isBookmarked(book, chapter) ? "Bookmarked" : "Bookmark"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigateChapter("prev")}
+                disabled={chapter <= 1}
+                className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigateChapter("next")}
+                className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+
+          {/* AI Prompt Banner - Surface Jeeves */}
+          {!jeevesMode && (
+            <div className="relative">
+              <AIPromptBanner
+                context="bible"
+                book={book}
+                chapter={chapter}
+                onAskJeeves={() => {
+                  setJeevesMode(true);
+                  setTimeout(() => {
+                    jeevesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }, 100);
+                }}
+              />
+            </div>
+          )}
         </div>
-      )}
 
       {/* Audio Controls */}
       <div className="flex items-center gap-2 flex-wrap">
