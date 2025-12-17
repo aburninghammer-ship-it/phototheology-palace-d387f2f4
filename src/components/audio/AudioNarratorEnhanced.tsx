@@ -76,7 +76,7 @@ export const AudioNarratorEnhanced = ({
     onEnd: () => {
       notifyTTSStopped();
     },
-    timeout: 15000, // 15 second timeout
+    timeout: 45000, // 45 second timeout - commentary can be long
   });
 
   // Auto-play on mount if requested and online
