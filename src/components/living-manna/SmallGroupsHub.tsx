@@ -3,14 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { 
   Users, Search, Calendar, Clock, MapPin, 
-  Flame, Plus, UserPlus, MessageSquare, Video
+  Flame, UserPlus, MessageSquare, Video
 } from "lucide-react";
 
 interface SmallGroupsHubProps {
@@ -46,26 +44,26 @@ export function SmallGroupsHub({ churchId }: SmallGroupsHubProps) {
 
   const loadGroups = async () => {
     try {
-      // Load all open groups
-      const { data: allGroups, error } = await supabase
-        .from('small_groups')
+      // Load all open groups - using any for new tables
+      const { data: allGroups, error } = await (supabase
+        .from('small_groups' as any)
         .select(`
           *,
           profiles:leader_id (display_name, avatar_url)
         `)
         .eq('church_id', churchId)
         .eq('is_active', true)
-        .order('name');
+        .order('name') as any);
 
       if (error) throw error;
 
       // Get member counts
       const groupsWithCounts = await Promise.all(
         (allGroups || []).map(async (group: any) => {
-          const { count } = await supabase
-            .from('small_group_members')
+          const { count } = await (supabase
+            .from('small_group_members' as any)
             .select('*', { count: 'exact', head: true })
-            .eq('group_id', group.id);
+            .eq('group_id', group.id) as any);
 
           return {
             ...group,
@@ -77,17 +75,17 @@ export function SmallGroupsHub({ churchId }: SmallGroupsHubProps) {
 
       // Filter my groups vs available groups
       if (user) {
-        const { data: myMemberships } = await supabase
-          .from('small_group_members')
+        const { data: myMemberships } = await (supabase
+          .from('small_group_members' as any)
           .select('group_id')
-          .eq('user_id', user.id);
+          .eq('user_id', user.id) as any);
 
-        const myGroupIds = new Set(myMemberships?.map(m => m.group_id) || []);
+        const myGroupIds = new Set((myMemberships || []).map((m: any) => m.group_id));
         
-        setMyGroups(groupsWithCounts.filter(g => myGroupIds.has(g.id)));
-        setGroups(groupsWithCounts.filter(g => !myGroupIds.has(g.id) && g.is_open));
+        setMyGroups(groupsWithCounts.filter((g: any) => myGroupIds.has(g.id)));
+        setGroups(groupsWithCounts.filter((g: any) => !myGroupIds.has(g.id) && g.is_open));
       } else {
-        setGroups(groupsWithCounts.filter(g => g.is_open));
+        setGroups(groupsWithCounts.filter((g: any) => g.is_open));
       }
     } catch (error) {
       console.error('Error loading groups:', error);
@@ -103,13 +101,13 @@ export function SmallGroupsHub({ churchId }: SmallGroupsHubProps) {
     }
 
     try {
-      const { error } = await supabase
-        .from('small_group_members')
+      const { error } = await (supabase
+        .from('small_group_members' as any)
         .insert({
           group_id: groupId,
           user_id: user.id,
           role: 'member'
-        });
+        }) as any);
 
       if (error) throw error;
 

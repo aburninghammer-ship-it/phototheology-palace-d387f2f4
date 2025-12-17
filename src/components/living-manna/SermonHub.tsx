@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ExternalLink, Youtube, Video, Search, Calendar, Clock, Play } from "lucide-react";
+import { ExternalLink, Youtube, Video, Search, Calendar, Play } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface SermonHubProps {
@@ -44,14 +44,15 @@ export function SermonHub({ churchId }: SermonHubProps) {
 
   const loadSermons = async () => {
     try {
-      const { data } = await supabase
-        .from('church_sermons')
+      // Using any for new table
+      const { data } = await (supabase
+        .from('church_sermons' as any)
         .select('*')
         .eq('church_id', churchId)
         .order('sermon_date', { ascending: false })
-        .limit(20);
+        .limit(20) as any);
 
-      setSermons(data || []);
+      setSermons((data || []) as Sermon[]);
     } catch (error) {
       console.error('Error loading sermons:', error);
     } finally {
@@ -65,12 +66,12 @@ export function SermonHub({ churchId }: SermonHubProps) {
         .from('churches')
         .select('youtube_channel_url, youtube_channel_name')
         .eq('id', churchId)
-        .single();
+        .maybeSingle();
 
       if (data) {
         setYoutubeSettings({
-          channel_url: data.youtube_channel_url,
-          channel_name: data.youtube_channel_name
+          channel_url: (data as any).youtube_channel_url,
+          channel_name: (data as any).youtube_channel_name
         });
       }
     } catch (error) {

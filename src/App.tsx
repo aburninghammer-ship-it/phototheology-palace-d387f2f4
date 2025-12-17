@@ -185,6 +185,7 @@ const SeriesLessonEditor = lazy(() => import("./pages/SeriesLessonEditor"));
 const SeriesPresenter = lazy(() => import("./pages/SeriesPresenter"));
 const AppUpdateIdeas = lazy(() => import("./pages/AppUpdateIdeas"));
 const ChurchAdmin = lazy(() => import("./pages/ChurchAdmin"));
+const LivingManna = lazy(() => import("./pages/LivingManna"));
 const JoinChurch = lazy(() => import("./pages/JoinChurch"));
 const ChurchSignup = lazy(() => import("./pages/ChurchSignup"));
 const ChurchSignupSuccess = lazy(() => import("./pages/ChurchSignupSuccess"));
@@ -501,6 +502,7 @@ function App() {
             <Route path="/my-progress" element={<ProtectedRoute><UserAnalytics /></ProtectedRoute>} />
             <Route path="/streaks" element={<ProtectedRoute><Streaks /></ProtectedRoute>} />
             <Route path="/church-admin" element={<ProtectedRoute><ChurchAdmin /></ProtectedRoute>} />
+            <Route path="/living-manna" element={<ProtectedRoute><LivingManna /></ProtectedRoute>} />
             <Route path="/join-church" element={<ProtectedRoute><JoinChurch /></ProtectedRoute>} />
             <Route path="/church-signup" element={<ChurchSignup />} />
             <Route path="/church-signup/success" element={<ChurchSignupSuccess />} />

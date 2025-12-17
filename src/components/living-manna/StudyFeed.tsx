@@ -3,13 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { 
-  BookOpen, Calendar, Share2, Download, ChevronRight, 
-  MessageSquare, CheckCircle, Users, ExternalLink, Copy
+  BookOpen, Calendar, Share2, 
+  MessageSquare, CheckCircle, Users, Copy
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -34,7 +33,6 @@ interface CentralStudy {
 }
 
 export function StudyFeed({ churchId }: StudyFeedProps) {
-  const { user } = useAuth();
   const [currentStudy, setCurrentStudy] = useState<CentralStudy | null>(null);
   const [pastStudies, setPastStudies] = useState<CentralStudy[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,28 +45,30 @@ export function StudyFeed({ churchId }: StudyFeedProps) {
 
   const loadStudies = async () => {
     try {
-      // Load current/active study
-      const { data: active } = await supabase
-        .from('church_central_studies')
+      // Load current/active study - using any for new table
+      const { data: active } = await (supabase
+        .from('church_central_studies' as any)
         .select('*')
         .eq('church_id', churchId)
         .eq('status', 'active')
         .order('week_start', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle() as any);
 
-      setCurrentStudy(active);
+      if (active) {
+        setCurrentStudy(active as CentralStudy);
+      }
 
       // Load past studies
-      const { data: past } = await supabase
-        .from('church_central_studies')
+      const { data: past } = await (supabase
+        .from('church_central_studies' as any)
         .select('*')
         .eq('church_id', churchId)
         .eq('status', 'completed')
         .order('week_start', { ascending: false })
-        .limit(12);
+        .limit(12) as any);
 
-      setPastStudies(past || []);
+      setPastStudies((past || []) as CentralStudy[]);
     } catch (error) {
       console.error('Error loading studies:', error);
     } finally {
@@ -91,7 +91,7 @@ export function StudyFeed({ churchId }: StudyFeedProps) {
   const shareToFriend = (platform: string) => {
     if (!selectedStudy) return;
     const link = `${window.location.origin}/study/${selectedStudy.share_token || selectedStudy.id}`;
-    const text = `Check out this Bible study: "${selectedStudy.title}" - We're studying ${selectedStudy.key_passages.join(', ')} this week!`;
+    const text = `Check out this Bible study: "${selectedStudy.title}" - We're studying ${selectedStudy.key_passages?.join(', ') || 'Scripture'} this week!`;
 
     switch (platform) {
       case 'whatsapp':
@@ -133,7 +133,7 @@ export function StudyFeed({ churchId }: StudyFeedProps) {
             Key Passages
           </h4>
           <div className="flex flex-wrap gap-2">
-            {study.key_passages.map((passage, i) => (
+            {(study.key_passages || []).map((passage, i) => (
               <Badge key={i} variant="outline">{passage}</Badge>
             ))}
           </div>
@@ -146,13 +146,13 @@ export function StudyFeed({ churchId }: StudyFeedProps) {
             Discussion Questions
           </h4>
           <ul className="space-y-2 text-sm">
-            {study.guided_questions.slice(0, 3).map((q, i) => (
+            {(study.guided_questions || []).slice(0, 3).map((q, i) => (
               <li key={i} className="flex items-start gap-2">
                 <span className="text-primary font-medium">{i + 1}.</span>
                 <span className="text-muted-foreground">{q}</span>
               </li>
             ))}
-            {study.guided_questions.length > 3 && (
+            {(study.guided_questions || []).length > 3 && (
               <li className="text-xs text-muted-foreground">
                 +{study.guided_questions.length - 3} more questions...
               </li>
@@ -161,24 +161,30 @@ export function StudyFeed({ churchId }: StudyFeedProps) {
         </div>
 
         {/* Christ Synthesis */}
-        <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-          <h4 className="font-medium text-sm mb-1">Christ-Centered Truth</h4>
-          <p className="text-sm text-muted-foreground">{study.christ_synthesis}</p>
-        </div>
+        {study.christ_synthesis && (
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <h4 className="font-medium text-sm mb-1">Christ-Centered Truth</h4>
+            <p className="text-sm text-muted-foreground">{study.christ_synthesis}</p>
+          </div>
+        )}
 
         {/* Action & Prayer */}
         <div className="grid gap-3 md:grid-cols-2">
-          <div className="p-3 rounded-lg bg-muted/50">
-            <h4 className="font-medium text-sm mb-1 flex items-center gap-1">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              Action Challenge
-            </h4>
-            <p className="text-sm text-muted-foreground">{study.action_challenge}</p>
-          </div>
-          <div className="p-3 rounded-lg bg-muted/50">
-            <h4 className="font-medium text-sm mb-1">🙏 Prayer Focus</h4>
-            <p className="text-sm text-muted-foreground">{study.prayer_focus}</p>
-          </div>
+          {study.action_challenge && (
+            <div className="p-3 rounded-lg bg-muted/50">
+              <h4 className="font-medium text-sm mb-1 flex items-center gap-1">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                Action Challenge
+              </h4>
+              <p className="text-sm text-muted-foreground">{study.action_challenge}</p>
+            </div>
+          )}
+          {study.prayer_focus && (
+            <div className="p-3 rounded-lg bg-muted/50">
+              <h4 className="font-medium text-sm mb-1">🙏 Prayer Focus</h4>
+              <p className="text-sm text-muted-foreground">{study.prayer_focus}</p>
+            </div>
+          )}
         </div>
 
         {/* Actions */}

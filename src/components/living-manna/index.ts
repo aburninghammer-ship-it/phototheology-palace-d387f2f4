@@ -7,3 +7,7 @@ export { PrayerMinistryHub } from "./PrayerMinistryHub";
 export { BibleWorkerConsole } from "./BibleWorkerConsole";
 export { EvangelismCampaigns } from "./EvangelismCampaigns";
 export { MinistryLaunchTemplates } from "./MinistryLaunchTemplates";
+export { SmallGroupsHub } from "./SmallGroupsHub";
+export { StudyFeed } from "./StudyFeed";
+export { SermonHub } from "./SermonHub";
+export { MemberHome } from "./MemberHome";
