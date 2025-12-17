@@ -136,11 +136,11 @@ export function CohortManagement({ churchId }: CohortManagementProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active": return "bg-green-500";
-      case "forming": return "bg-blue-500";
-      case "completed": return "bg-gray-500";
-      case "paused": return "bg-amber-500";
-      default: return "bg-gray-500";
+      case "active": return "bg-green-500/20 text-green-400 border border-green-500/30";
+      case "forming": return "bg-blue-500/20 text-blue-400 border border-blue-500/30";
+      case "completed": return "bg-muted text-muted-foreground";
+      case "paused": return "bg-amber-500/20 text-amber-400 border border-amber-500/30";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
@@ -264,21 +264,21 @@ export function CohortManagement({ churchId }: CohortManagementProps) {
       {loading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map(i => (
-            <Card key={i} className="animate-pulse">
+            <Card key={i} variant="glass" className="animate-pulse">
               <CardHeader className="space-y-2">
-                <div className="h-4 bg-muted rounded w-3/4" />
-                <div className="h-3 bg-muted rounded w-1/2" />
+                <div className="h-4 bg-muted/50 rounded w-3/4" />
+                <div className="h-3 bg-muted/50 rounded w-1/2" />
               </CardHeader>
               <CardContent>
-                <div className="h-20 bg-muted rounded" />
+                <div className="h-20 bg-muted/50 rounded" />
               </CardContent>
             </Card>
           ))}
         </div>
       ) : cohorts.length === 0 ? (
-        <Card className="border-dashed">
+        <Card variant="glass" className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Users className="h-12 w-12 text-muted-foreground mb-4" />
+            <Users className="h-12 w-12 text-primary mb-4" />
             <h3 className="font-semibold text-lg mb-2">No Cohorts Yet</h3>
             <p className="text-muted-foreground text-center mb-4">
               Start your first discipleship cohort and begin the 12-week sanctuary journey
@@ -292,7 +292,7 @@ export function CohortManagement({ churchId }: CohortManagementProps) {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {cohorts.map(cohort => (
-            <Card key={cohort.id} className="group hover:shadow-md transition-shadow">
+            <Card key={cohort.id} variant="glass" className="group hover:shadow-lg transition-shadow">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">

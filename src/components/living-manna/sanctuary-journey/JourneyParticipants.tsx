@@ -66,9 +66,9 @@ export function JourneyParticipants({ seriesId }: JourneyParticipantsProps) {
   };
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
-    paused: "bg-amber-100 text-amber-800",
-    completed: "bg-blue-100 text-blue-800"
+    active: "bg-green-500/20 text-green-400 border border-green-500/30",
+    paused: "bg-amber-500/20 text-amber-400 border border-amber-500/30",
+    completed: "bg-primary/20 text-primary border border-primary/30"
   };
 
   const modeLabels: Record<string, string> = {
@@ -87,9 +87,9 @@ export function JourneyParticipants({ seriesId }: JourneyParticipantsProps) {
 
   if (participants.length === 0) {
     return (
-      <Card>
+      <Card variant="glass">
         <CardContent className="py-12 text-center">
-          <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <User className="h-12 w-12 mx-auto text-primary mb-4" />
           <h3 className="text-lg font-semibold mb-2">No Participants Yet</h3>
           <p className="text-muted-foreground">
             Share the Sanctuary Journey with members to get started.
@@ -103,7 +103,7 @@ export function JourneyParticipants({ seriesId }: JourneyParticipantsProps) {
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {participants.map((participant) => (
-          <Card key={participant.id}>
+          <Card key={participant.id} variant="glass">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
                 <Avatar>

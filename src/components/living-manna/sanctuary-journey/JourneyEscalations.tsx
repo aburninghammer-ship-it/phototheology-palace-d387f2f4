@@ -166,19 +166,19 @@ export function JourneyEscalations({ seriesId, onUpdate }: JourneyEscalationsPro
   };
 
   const typeColors: Record<string, string> = {
-    baptism_interest: "bg-blue-100 text-blue-800",
-    doctrinal_question: "bg-purple-100 text-purple-800",
-    emotional_distress: "bg-red-100 text-red-800",
-    lifestyle_conflict: "bg-amber-100 text-amber-800",
-    prayer_request: "bg-pink-100 text-pink-800",
-    group_connection: "bg-green-100 text-green-800"
+    baptism_interest: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
+    doctrinal_question: "bg-purple-500/20 text-purple-400 border border-purple-500/30",
+    emotional_distress: "bg-red-500/20 text-red-400 border border-red-500/30",
+    lifestyle_conflict: "bg-amber-500/20 text-amber-400 border border-amber-500/30",
+    prayer_request: "bg-pink-500/20 text-pink-400 border border-pink-500/30",
+    group_connection: "bg-green-500/20 text-green-400 border border-green-500/30"
   };
 
   const statusColors: Record<string, string> = {
-    pending: "bg-amber-100 text-amber-800",
-    assigned: "bg-blue-100 text-blue-800",
-    in_progress: "bg-purple-100 text-purple-800",
-    resolved: "bg-green-100 text-green-800"
+    pending: "bg-amber-500/20 text-amber-400 border border-amber-500/30",
+    assigned: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
+    in_progress: "bg-purple-500/20 text-purple-400 border border-purple-500/30",
+    resolved: "bg-green-500/20 text-green-400 border border-green-500/30"
   };
 
   if (loading) {
@@ -191,7 +191,7 @@ export function JourneyEscalations({ seriesId, onUpdate }: JourneyEscalationsPro
 
   if (escalations.length === 0) {
     return (
-      <Card>
+      <Card variant="glass">
         <CardContent className="py-12 text-center">
           <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-4" />
           <h3 className="text-lg font-semibold mb-2">No Escalations</h3>
@@ -209,7 +209,7 @@ export function JourneyEscalations({ seriesId, onUpdate }: JourneyEscalationsPro
         {escalations.map((escalation) => {
           const Icon = typeIcons[escalation.escalation_type] || AlertTriangle;
           return (
-            <Card key={escalation.id} className={escalation.status === "pending" ? "border-amber-500/50" : ""}>
+            <Card key={escalation.id} variant="glass" className={escalation.status === "pending" ? "border-amber-500/50" : ""}>
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
                   <Avatar>
