@@ -190,6 +190,23 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
     }
   };
 
+  const handleRoleChange = async (invitationId: string, newRole: 'member' | 'leader') => {
+    try {
+      const { error } = await supabase
+        .from('church_invitations')
+        .update({ role: newRole })
+        .eq('id', invitationId);
+
+      if (error) throw error;
+
+      toast.success(`Role updated to ${newRole}`);
+      loadInvitations();
+    } catch (error) {
+      console.error('Error updating role:', error);
+      toast.error("Failed to update role");
+    }
+  };
+
   const getStatusBadge = (status: string, expiresAt: string) => {
     const expired = new Date(expiresAt) < new Date();
     
@@ -310,7 +327,24 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
                 {invitations.map((invitation) => (
                   <TableRow key={invitation.id} className="border-border/30 hover:bg-primary/5">
                     <TableCell className="font-medium text-foreground">{invitation.invited_email}</TableCell>
-                    <TableCell className="capitalize text-foreground/80">{invitation.role}</TableCell>
+                    <TableCell>
+                      {invitation.status === 'pending' ? (
+                        <Select
+                          value={invitation.role}
+                          onValueChange={(newRole) => handleRoleChange(invitation.id, newRole as 'member' | 'leader')}
+                        >
+                          <SelectTrigger className="w-24 h-8 bg-background/50 text-foreground/80">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="member">Member</SelectItem>
+                            <SelectItem value="leader">Leader</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <span className="capitalize text-foreground/80">{invitation.role}</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <code className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
