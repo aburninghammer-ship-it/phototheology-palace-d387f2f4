@@ -178,3 +178,6 @@ verify_jwt = false
 
 [functions.send-church-invitation]
 verify_jwt = true
+
+[functions.send-pending-church-invitations]
+verify_jwt = false
