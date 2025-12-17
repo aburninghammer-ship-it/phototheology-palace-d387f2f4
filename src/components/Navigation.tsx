@@ -99,6 +99,21 @@ export const Navigation = () => {
                 </Button>
               )}
               
+              {/* Church Admin Link - for logged-in users */}
+              {user && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="hidden md:flex text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10"
+                >
+                  <Link to="/church-admin">
+                    <Building2 className="h-4 w-4 mr-1" />
+                    <span>Church</span>
+                  </Link>
+                </Button>
+              )}
+              
               {/* Live User Count - Always Visible */}
               <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="relative">
