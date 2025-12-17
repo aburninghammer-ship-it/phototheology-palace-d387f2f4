@@ -16,3 +16,5 @@ export { DiscipleshipPackages } from "./DiscipleshipPackages";
 export { LeaderOnboarding } from "./LeaderOnboarding";
 export { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
 export { TruthSeries } from "./TruthSeries";
+export { ChurchCommunity } from "./ChurchCommunity";
+export { ChurchMessaging } from "./ChurchMessaging";

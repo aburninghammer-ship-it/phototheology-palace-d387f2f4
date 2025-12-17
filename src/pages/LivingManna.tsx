@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight, GraduationCap, Shield, Calendar } from "lucide-react";
+import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight, GraduationCap, Shield, Calendar, MessageCircle, MessagesSquare } from "lucide-react";
 import { SmallGroupsHub } from "@/components/living-manna/SmallGroupsHub";
 import { StudyFeed } from "@/components/living-manna/StudyFeed";
 import { SermonHub } from "@/components/living-manna/SermonHub";
@@ -16,6 +16,9 @@ import { MemberHome } from "@/components/living-manna/MemberHome";
 import { StudyCycles } from "@/components/living-manna/StudyCycles";
 import { DiscipleshipPackages } from "@/components/living-manna/DiscipleshipPackages";
 import { LeaderOnboarding } from "@/components/living-manna/LeaderOnboarding";
+import { ChurchCommunity } from "@/components/living-manna/ChurchCommunity";
+import { ChurchMessaging } from "@/components/living-manna/ChurchMessaging";
+import { DirectMessagesProvider } from "@/contexts/DirectMessagesContext";
 
 export default function LivingManna() {
   const { user } = useAuth();
@@ -119,92 +122,110 @@ export default function LivingManna() {
   }
 
   return (
-    <div className="min-h-screen gradient-dreamy p-4 md:p-8">
-      <div className="container mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mb-8 glass-card p-6 rounded-2xl">
-          <div className="flex items-center gap-3 mb-2">
-            <Flame className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold text-foreground">{churchName}</h1>
+    <DirectMessagesProvider>
+      <div className="min-h-screen gradient-dreamy p-4 md:p-8">
+        <div className="container mx-auto max-w-7xl">
+          {/* Header */}
+          <div className="mb-8 glass-card p-6 rounded-2xl">
+            <div className="flex items-center gap-3 mb-2">
+              <Flame className="h-8 w-8 text-primary" />
+              <h1 className="text-4xl font-bold text-foreground">{churchName}</h1>
+            </div>
+            <p className="text-foreground/80 font-medium">
+              Your discipleship home — study, fellowship, and grow together
+            </p>
+            {(subscription.church.churchRole === 'admin' || subscription.church.churchRole === 'leader') && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-3 bg-white/20 border-white/30 hover:bg-white/30"
+                onClick={() => navigate('/church-admin')}
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Leader Dashboard
+              </Button>
+            )}
           </div>
-          <p className="text-foreground/80 font-medium">
-            Your discipleship home — study, fellowship, and grow together
-          </p>
-          {(subscription.church.churchRole === 'admin' || subscription.church.churchRole === 'leader') && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mt-3 bg-white/20 border-white/30 hover:bg-white/30"
-              onClick={() => navigate('/church-admin')}
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Leader Dashboard
-            </Button>
-          )}
+
+          {/* Main Content Tabs */}
+          <Tabs defaultValue="home" className="space-y-6">
+            <TabsList className="glass-card flex-wrap h-auto gap-1 p-1">
+              <TabsTrigger value="home" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Home className="h-4 w-4" />
+                Home
+              </TabsTrigger>
+              <TabsTrigger value="community" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <MessagesSquare className="h-4 w-4" />
+                Community
+              </TabsTrigger>
+              <TabsTrigger value="messages" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <MessageCircle className="h-4 w-4" />
+                Messages
+              </TabsTrigger>
+              <TabsTrigger value="small-groups" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Users className="h-4 w-4" />
+                Small Groups
+              </TabsTrigger>
+              <TabsTrigger value="studies" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <BookOpen className="h-4 w-4" />
+                Study Feed
+              </TabsTrigger>
+              <TabsTrigger value="cycles" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Calendar className="h-4 w-4" />
+                6-Week Cycles
+              </TabsTrigger>
+              <TabsTrigger value="discipleship" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <GraduationCap className="h-4 w-4" />
+                Discipleship
+              </TabsTrigger>
+              <TabsTrigger value="leader-training" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Shield className="h-4 w-4" />
+                Leader Training
+              </TabsTrigger>
+              <TabsTrigger value="sermons" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Video className="h-4 w-4" />
+                Sermons
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="home">
+              <MemberHome churchId={subscription.church.churchId!} />
+            </TabsContent>
+
+            <TabsContent value="community">
+              <ChurchCommunity churchId={subscription.church.churchId!} />
+            </TabsContent>
+
+            <TabsContent value="messages">
+              <ChurchMessaging churchId={subscription.church.churchId!} />
+            </TabsContent>
+
+            <TabsContent value="small-groups">
+              <SmallGroupsHub churchId={subscription.church.churchId!} />
+            </TabsContent>
+
+            <TabsContent value="studies">
+              <StudyFeed churchId={subscription.church.churchId!} />
+            </TabsContent>
+
+            <TabsContent value="cycles">
+              <StudyCycles churchId={subscription.church.churchId!} />
+            </TabsContent>
+
+            <TabsContent value="discipleship">
+              <DiscipleshipPackages churchId={subscription.church.churchId!} />
+            </TabsContent>
+
+            <TabsContent value="leader-training">
+              <LeaderOnboarding churchId={subscription.church.churchId!} />
+            </TabsContent>
+
+            <TabsContent value="sermons">
+              <SermonHub churchId={subscription.church.churchId!} />
+            </TabsContent>
+          </Tabs>
         </div>
-
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="home" className="space-y-6">
-          <TabsList className="glass-card flex-wrap h-auto gap-1 p-1">
-            <TabsTrigger value="home" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Home className="h-4 w-4" />
-              Home
-            </TabsTrigger>
-            <TabsTrigger value="small-groups" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Users className="h-4 w-4" />
-              Small Groups
-            </TabsTrigger>
-            <TabsTrigger value="studies" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <BookOpen className="h-4 w-4" />
-              Study Feed
-            </TabsTrigger>
-            <TabsTrigger value="cycles" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Calendar className="h-4 w-4" />
-              6-Week Cycles
-            </TabsTrigger>
-            <TabsTrigger value="discipleship" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <GraduationCap className="h-4 w-4" />
-              Discipleship
-            </TabsTrigger>
-            <TabsTrigger value="leader-training" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Shield className="h-4 w-4" />
-              Leader Training
-            </TabsTrigger>
-            <TabsTrigger value="sermons" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Video className="h-4 w-4" />
-              Sermons
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="home">
-            <MemberHome churchId={subscription.church.churchId!} />
-          </TabsContent>
-
-          <TabsContent value="small-groups">
-            <SmallGroupsHub churchId={subscription.church.churchId!} />
-          </TabsContent>
-
-          <TabsContent value="studies">
-            <StudyFeed churchId={subscription.church.churchId!} />
-          </TabsContent>
-
-          <TabsContent value="cycles">
-            <StudyCycles churchId={subscription.church.churchId!} />
-          </TabsContent>
-
-          <TabsContent value="discipleship">
-            <DiscipleshipPackages churchId={subscription.church.churchId!} />
-          </TabsContent>
-
-          <TabsContent value="leader-training">
-            <LeaderOnboarding churchId={subscription.church.churchId!} />
-          </TabsContent>
-
-          <TabsContent value="sermons">
-            <SermonHub churchId={subscription.church.churchId!} />
-          </TabsContent>
-        </Tabs>
       </div>
-    </div>
+    </DirectMessagesProvider>
   );
 }
