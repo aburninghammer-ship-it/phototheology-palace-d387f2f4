@@ -23,8 +23,10 @@ export interface StudyContext {
 }
 
 /**
- * Hook to fetch user studies relevant to a given book/chapter/verse
- * for incorporation into Jeeves commentary
+ * Hook to fetch admin studies relevant to a given book/chapter/verse
+ * for incorporation into Jeeves commentary.
+ * IMPORTANT: Only admin users can have their studies affect commentary.
+ * Regular users will receive standard commentary without personalization.
  */
 export const useUserStudiesContext = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +40,19 @@ export const useUserStudiesContext = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
+        return { userStudies: [], deckStudies: [] };
+      }
+
+      // Check if user is admin - only admins can have their studies affect commentary
+      const { data: adminCheck } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (!adminCheck) {
+        // Non-admin users get standard commentary without personalization
+        console.log("[Studies Context] Non-admin user, returning empty studies");
         return { userStudies: [], deckStudies: [] };
       }
 
