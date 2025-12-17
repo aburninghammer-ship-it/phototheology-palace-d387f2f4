@@ -38,7 +38,9 @@ function normalizeBookName(book: string): string {
 // Primary API: bible-api.com
 async function fetchFromBibleApi(book: string, chapter: number, version: string): Promise<Response> {
   const normalizedBook = normalizeBookName(book);
-  const url = `https://bible-api.com/${encodeURIComponent(normalizedBook)}+${chapter}?translation=${version}`;
+  // In URL paths, "+" is literal; bible-api.com expects a space between book and chapter.
+  const reference = `${normalizedBook} ${chapter}`;
+  const url = `https://bible-api.com/${encodeURIComponent(reference)}?translation=${version}`;
   console.log(`[Primary API] Fetching: ${url}`);
   return fetch(url, {
     headers: { 'Accept': 'application/json' }
