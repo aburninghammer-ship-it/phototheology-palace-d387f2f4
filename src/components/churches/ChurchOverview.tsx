@@ -95,23 +95,23 @@ export function ChurchOverview({ church, usedSeats, onUpdate }: ChurchOverviewPr
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       {/* Current Plan */}
-      <Card>
+      <Card variant="glass">
         <CardHeader>
-          <CardTitle>Current Plan</CardTitle>
-          <CardDescription>Your church subscription details</CardDescription>
+          <CardTitle className="text-foreground">Current Plan</CardTitle>
+          <CardDescription className="text-foreground/70">Your church subscription details</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <h3 className="font-semibold text-lg mb-2">{currentTier.name}</h3>
+            <h3 className="font-semibold text-lg mb-2 text-foreground">{currentTier.name}</h3>
             <p className="text-2xl font-bold text-primary mb-2">{currentTier.price}</p>
-            <p className="text-sm text-muted-foreground mb-4">{currentTier.seats}</p>
+            <p className="text-sm text-foreground/70 mb-4">{currentTier.seats}</p>
           </div>
 
           <div className="space-y-2">
-            <p className="text-sm font-medium">Included Features:</p>
+            <p className="text-sm font-medium text-foreground">Included Features:</p>
             <ul className="space-y-1">
               {currentTier.features.map((feature, index) => (
-                <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+                <li key={index} className="text-sm text-foreground/70 flex items-start gap-2">
                   <span className="text-primary">•</span>
                   <span>{feature}</span>
                 </li>
@@ -119,12 +119,12 @@ export function ChurchOverview({ church, usedSeats, onUpdate }: ChurchOverviewPr
             </ul>
           </div>
 
-          <div className="pt-4 border-t">
+          <div className="pt-4 border-t border-border/50">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-muted-foreground">Seats Used</span>
-              <span className="font-semibold">{usedSeats} / {church.max_seats}</span>
+              <span className="text-sm text-foreground/70">Seats Used</span>
+              <span className="font-semibold text-foreground">{usedSeats} / {church.max_seats}</span>
             </div>
-            <div className="w-full bg-secondary rounded-full h-2">
+            <div className="w-full bg-background/50 rounded-full h-2">
               <div 
                 className="bg-primary h-2 rounded-full transition-all"
                 style={{ width: `${(usedSeats / church.max_seats) * 100}%` }}
@@ -140,68 +140,71 @@ export function ChurchOverview({ church, usedSeats, onUpdate }: ChurchOverviewPr
       </Card>
 
       {/* Church Information */}
-      <Card>
+      <Card variant="glass">
         <CardHeader>
-          <CardTitle>Church Information</CardTitle>
-          <CardDescription>Update your church details</CardDescription>
+          <CardTitle className="text-foreground">Church Information</CardTitle>
+          <CardDescription className="text-foreground/70">Update your church details</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="church-name">Church Name</Label>
+            <Label htmlFor="church-name" className="text-foreground/80">Church Name</Label>
             <Input 
               id="church-name"
               value={church.name}
               disabled
-              className="bg-muted"
+              className="bg-background/30 border-border/50"
             />
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-foreground/60 mt-1">
               Contact support to change church name
             </p>
           </div>
 
           <div>
-            <Label htmlFor="branded-name">Display Name (Optional)</Label>
+            <Label htmlFor="branded-name" className="text-foreground/80">Display Name (Optional)</Label>
             <Input 
               id="branded-name"
               value={brandedName}
               onChange={(e) => setBrandedName(e.target.value)}
-              placeholder="e.g., Grace Community Phototheology"
+              placeholder="e.g., Living Manna Online Church"
+              className="bg-background/50 border-border/50"
             />
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-foreground/60 mt-1">
               Custom name shown to members during onboarding
             </p>
           </div>
 
           <div>
-            <Label htmlFor="contact-person">Contact Person</Label>
+            <Label htmlFor="contact-person" className="text-foreground/80">Contact Person</Label>
             <Input 
               id="contact-person"
               value={contactPerson}
               onChange={(e) => setContactPerson(e.target.value)}
               placeholder="Pastor John Smith"
+              className="bg-background/50 border-border/50"
             />
           </div>
 
           <div>
-            <Label htmlFor="contact-phone">Contact Phone</Label>
+            <Label htmlFor="contact-phone" className="text-foreground/80">Contact Phone</Label>
             <Input 
               id="contact-phone"
               value={contactPhone}
               onChange={(e) => setContactPhone(e.target.value)}
               placeholder="(555) 123-4567"
               type="tel"
+              className="bg-background/50 border-border/50"
             />
           </div>
 
           <div>
-            <Label htmlFor="billing-email">Billing Email</Label>
+            <Label htmlFor="billing-email" className="text-foreground/80">Billing Email</Label>
             <Input 
               id="billing-email"
               value={church.billing_email}
               disabled
-              className="bg-muted"
+              className="bg-background/30 border-border/50"
             />
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-foreground/60 mt-1">
               Contact support to change billing email
             </p>
           </div>

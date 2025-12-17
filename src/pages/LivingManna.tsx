@@ -122,19 +122,19 @@ export default function LivingManna() {
     <div className="min-h-screen gradient-dreamy p-4 md:p-8">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 glass-card p-6 rounded-2xl">
           <div className="flex items-center gap-3 mb-2">
             <Flame className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold">{churchName}</h1>
+            <h1 className="text-4xl font-bold text-foreground">{churchName}</h1>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-foreground/80 font-medium">
             Your discipleship home — study, fellowship, and grow together
           </p>
-          {subscription.church.churchRole === 'admin' && (
+          {(subscription.church.churchRole === 'admin' || subscription.church.churchRole === 'leader') && (
             <Button 
               variant="outline" 
               size="sm" 
-              className="mt-3"
+              className="mt-3 bg-white/20 border-white/30 hover:bg-white/30"
               onClick={() => navigate('/church-admin')}
             >
               <Users className="h-4 w-4 mr-2" />
@@ -145,32 +145,32 @@ export default function LivingManna() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="home" className="space-y-6">
-          <TabsList className="flex-wrap h-auto gap-1">
-            <TabsTrigger value="home" className="gap-2">
+          <TabsList className="glass-card flex-wrap h-auto gap-1 p-1">
+            <TabsTrigger value="home" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Home className="h-4 w-4" />
               Home
             </TabsTrigger>
-            <TabsTrigger value="small-groups" className="gap-2">
+            <TabsTrigger value="small-groups" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
               Small Groups
             </TabsTrigger>
-            <TabsTrigger value="studies" className="gap-2">
+            <TabsTrigger value="studies" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <BookOpen className="h-4 w-4" />
               Study Feed
             </TabsTrigger>
-            <TabsTrigger value="cycles" className="gap-2">
+            <TabsTrigger value="cycles" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Calendar className="h-4 w-4" />
               6-Week Cycles
             </TabsTrigger>
-            <TabsTrigger value="discipleship" className="gap-2">
+            <TabsTrigger value="discipleship" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <GraduationCap className="h-4 w-4" />
               Discipleship
             </TabsTrigger>
-            <TabsTrigger value="leader-training" className="gap-2">
+            <TabsTrigger value="leader-training" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Shield className="h-4 w-4" />
               Leader Training
             </TabsTrigger>
-            <TabsTrigger value="sermons" className="gap-2">
+            <TabsTrigger value="sermons" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Video className="h-4 w-4" />
               Sermons
             </TabsTrigger>

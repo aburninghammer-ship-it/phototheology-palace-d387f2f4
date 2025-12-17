@@ -195,22 +195,22 @@ export default function ChurchAdmin() {
     <div className="min-h-screen gradient-dreamy p-4 md:p-8">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 glass-card p-6 rounded-2xl">
           <div className="flex items-center gap-3 mb-2">
             <Building2 className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold">{church.name}</h1>
+            <h1 className="text-4xl font-bold text-foreground">Living Manna Online Church</h1>
           </div>
-          <p className="text-muted-foreground">Church Administration Dashboard</p>
+          <p className="text-foreground/80 font-medium">Church Administration Dashboard</p>
         </div>
 
         {/* Quick Stats */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Card>
+          <Card variant="glass">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Tier</CardTitle>
+              <CardTitle className="text-sm font-medium text-primary">Tier</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-foreground">
                 {church.tier === 'tier1' && 'Church Access'}
                 {church.tier === 'tier2' && 'Leadership Tools'}
                 {church.tier === 'tier3' && 'Growth Suite'}
@@ -218,37 +218,37 @@ export default function ChurchAdmin() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card variant="glass">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Seats</CardTitle>
+              <CardTitle className="text-sm font-medium text-primary">Seats</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-foreground">
                 {usedSeats} / {church.max_seats}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-foreground/70 mt-1">
                 {availableSeats} available
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card variant="glass">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Status</CardTitle>
+              <CardTitle className="text-sm font-medium text-primary">Status</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold capitalize">
+              <div className="text-2xl font-bold capitalize text-foreground">
                 {church.subscription_status}
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card variant="glass">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Billing</CardTitle>
+              <CardTitle className="text-sm font-medium text-primary">Billing</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-sm font-medium truncate">
+              <div className="text-sm font-medium truncate text-foreground">
                 {church.billing_email}
               </div>
             </CardContent>
@@ -274,29 +274,29 @@ export default function ChurchAdmin() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 lg:w-auto">
-            <TabsTrigger value="overview" className="gap-2">
+          <TabsList className="glass-card grid w-full grid-cols-6 lg:w-auto p-1">
+            <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Building2 className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="members" className="gap-2">
+            <TabsTrigger value="members" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Members</span>
             </TabsTrigger>
-            <TabsTrigger value="invitations" className="gap-2">
+            <TabsTrigger value="invitations" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Mail className="h-4 w-4" />
               <span className="hidden sm:inline">Invitations</span>
             </TabsTrigger>
-            <TabsTrigger value="campaigns" className="gap-2">
+            <TabsTrigger value="campaigns" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Target className="h-4 w-4" />
               <span className="hidden sm:inline">Campaigns</span>
             </TabsTrigger>
-            <TabsTrigger value="living-manna" className="gap-2">
+            <TabsTrigger value="living-manna" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Sprout className="h-4 w-4" />
               <span className="hidden sm:inline">Living Manna</span>
             </TabsTrigger>
             {hasTier2Access && (
-              <TabsTrigger value="analytics" className="gap-2">
+              <TabsTrigger value="analytics" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <TrendingUp className="h-4 w-4" />
                 <span className="hidden sm:inline">Analytics</span>
               </TabsTrigger>
