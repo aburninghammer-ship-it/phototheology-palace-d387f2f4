@@ -353,9 +353,9 @@ export function SanctuaryJourneyDashboard({ churchId }: SanctuaryJourneyDashboar
 
   if (!series) {
     return (
-      <Card>
+      <Card variant="glass">
         <CardContent className="py-12 text-center">
-          <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <BookOpen className="h-12 w-12 mx-auto text-primary mb-4" />
           <h3 className="text-lg font-semibold mb-2">No Sanctuary Journey Configured</h3>
           <p className="text-muted-foreground mb-4">
             The Sanctuary Journey evangelistic series hasn't been set up for this church yet.
@@ -403,7 +403,7 @@ export function SanctuaryJourneyDashboard({ churchId }: SanctuaryJourneyDashboar
 
       {/* User Progress Card (if enrolled) */}
       {userProgress && (
-        <Card className="bg-primary/5 border-primary/20">
+        <Card variant="glass" className="border-primary/30">
           <CardContent className="py-4">
             <div className="flex items-center justify-between mb-2">
               <span className="font-medium">Your Progress</span>
@@ -426,7 +426,7 @@ export function SanctuaryJourneyDashboard({ churchId }: SanctuaryJourneyDashboar
 
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card>
+        <Card variant="glass">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Total Participants</CardTitle>
           </CardHeader>
@@ -435,30 +435,30 @@ export function SanctuaryJourneyDashboard({ churchId }: SanctuaryJourneyDashboar
             <p className="text-xs text-muted-foreground">Enrolled in journey</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card variant="glass">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Active Journeys</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.activeJourneys}</div>
+            <div className="text-2xl font-bold text-green-500">{stats.activeJourneys}</div>
             <p className="text-xs text-muted-foreground">Currently in progress</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card variant="glass">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Completed</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.completedJourneys}</div>
+            <div className="text-2xl font-bold text-primary">{stats.completedJourneys}</div>
             <p className="text-xs text-muted-foreground">Finished all sessions</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card variant="glass">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Pending Escalations</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-amber-600">{stats.pendingEscalations}</div>
+            <div className="text-2xl font-bold text-amber-500">{stats.pendingEscalations}</div>
             <p className="text-xs text-muted-foreground">Need follow-up</p>
           </CardContent>
         </Card>
@@ -466,7 +466,7 @@ export function SanctuaryJourneyDashboard({ churchId }: SanctuaryJourneyDashboar
 
       {/* Pending Escalations Alert */}
       {stats.pendingEscalations > 0 && (
-        <Card className="border-amber-500/50 bg-amber-500/5">
+        <Card variant="glass" className="border-amber-500/50">
           <CardContent className="flex items-center justify-between py-4">
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 text-amber-500" />
@@ -539,10 +539,10 @@ function SessionPreview({ seriesId }: { seriesId: string }) {
   };
 
   const phaseColors: Record<string, string> = {
-    gospel_foundation: "bg-green-100 text-green-800",
-    daily_walk: "bg-blue-100 text-blue-800",
-    most_holy_place: "bg-purple-100 text-purple-800",
-    end_time_message: "bg-amber-100 text-amber-800"
+    gospel_foundation: "bg-green-500/20 text-green-400 border border-green-500/30",
+    daily_walk: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
+    most_holy_place: "bg-purple-500/20 text-purple-400 border border-purple-500/30",
+    end_time_message: "bg-amber-500/20 text-amber-400 border border-amber-500/30"
   };
 
   const phaseLabels: Record<string, string> = {
@@ -559,7 +559,7 @@ function SessionPreview({ seriesId }: { seriesId: string }) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {sessions.map((session) => (
-        <Card key={session.id} className={session.is_checkpoint ? "ring-2 ring-primary/50" : ""}>
+        <Card key={session.id} variant="glass" className={session.is_checkpoint ? "ring-2 ring-primary/50" : ""}>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <Badge variant="outline">Session {session.session_number}</Badge>
