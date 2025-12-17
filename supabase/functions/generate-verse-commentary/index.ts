@@ -31,19 +31,29 @@ Address the reader in second person ("you") naturally. Do not use any placeholde
 
 ${personalAddressSection}
 
-### EXPRESSIONS TO ABSOLUTELY AVOID (NEVER USE THESE):
+### EXPRESSIONS TO ABSOLUTELY AVOID (CRITICAL - AUTOMATIC REJECTION IF USED):
 - "Ah" or "Ah," as sentence starters
 - "my dear friend" or "dear friend" or "my dear student"
-- "This isn't just a..." or "This is not just a..." (overused AI pattern - NEVER use this phrase)
+- "This isn't just..." or "This is not just..." or "not just a..." or "more than just..." (BANNED - overused AI pattern)
 - "But here's the thing" or "Here's the thing"
 - "Let's dive in" or "Let's dive into" or "dive deep"
 - "Let me paint a picture" or "Picture this"
 - "You see," as a sentence starter
 - "Think about it" or "Think about this"
-- "your heart" (overused - find better phrases like "your spirit," "your soul," "within you," "deep inside," "your inner life")
-- "speaks to your heart" (use instead: "resonates with you," "calls out to you," "stirs something within you")
+- "your heart" (overused - use "your spirit," "your soul," "within you," "deep inside")
+- "speaks to your heart" (use: "resonates with you," "calls out to you," "stirs something within")
+- "powerful" as an adjective (overused - find specific descriptors)
+- "beautiful" as a generic intensifier
+- "journey" when referring to spiritual growth
+- "unpack" as a verb
 - Any overly formal or theatrical expressions
-- Clichéd devotional language that sounds forced or artificial
+
+### PROPHECY REQUIREMENT (WHEN DISCUSSING TEN HORNS, BEASTS, OR PROPHETIC SYMBOLS):
+When commenting on Daniel 7, Daniel 8, or Revelation passages about the ten horns, you MUST name the specific Germanic tribes:
+- Heruli, Vandals, Ostrogoths (three uprooted for opposing papal supremacy)
+- Franks (Catholic supremacy), Anglo-Saxons (Protestantism/America), Alemanni (Germany/rationalism)
+- Visigoths (Spain/Inquisition), Suevi (Portugal), Lombards (Italy), Burgundians (Switzerland)
+Show how these tribes evolved into modern nations and their role in end-time prophecy.
 
 ### DEVOTIONAL IMPERATIVE:
 Your commentary must never be merely academic. Every verse—even seemingly benign ones—carries significance when we dig deeper (the "Fragments" rule). Your goal is TRANSFORMATION, not just information.
@@ -403,24 +413,48 @@ Give commentary appropriate for audio narration that TRANSFORMS, not just inform
     const data = await response.json();
     let commentary = data.choices?.[0]?.message?.content?.trim() || null;
 
-    // Clean commentary for TTS - remove symbols that sound awkward when read aloud
+    // Clean commentary for TTS - remove symbols and filter clichés
     if (commentary) {
       commentary = commentary
+        // HARD FILTER: Remove clichés that slip through prompt instructions
+        .replace(/This isn't just/gi, 'This is')
+        .replace(/This is not just/gi, 'This is')
+        .replace(/not just a/gi, 'a')
+        .replace(/more than just/gi, 'more than')
+        .replace(/Here's the thing/gi, '')
+        .replace(/But here's the thing/gi, '')
+        .replace(/Let's dive/gi, 'Let us explore')
+        .replace(/dive deep/gi, 'explore deeply')
+        // Remove markdown symbols
         .replace(/\*\*/g, '')           // Bold markers
         .replace(/\*/g, '')             // Italics/asterisks
         .replace(/__/g, '')             // Underline
         .replace(/_([^_]+)_/g, '$1')    // Underscore emphasis
         .replace(/#+\s*/g, '')          // Headers
         .replace(/`/g, '')              // Code ticks
-        .replace(/\([^)]*\)/g, '')      // Remove (parentheses)
-        .replace(/\[[^\]]*\]/g, '')     // Remove [brackets]
-        .replace(/—/g, ', ')            // Em dash to comma
-        .replace(/–/g, ', ')            // En dash to comma
-        .replace(/\.\.\./g, '.')        // Ellipsis
-        .replace(/…/g, '.')             // Unicode ellipsis
-        .replace(/"/g, '').replace(/"/g, '') // Curly quotes
-        .replace(/'/g, "'").replace(/'/g, "'") // Normalize apostrophes
-        .replace(/\s+/g, ' ')           // Multiple spaces
+        // Expand abbreviations to prevent "dot" in TTS
+        .replace(/\bRev\.\s*/gi, 'Revelation ')
+        .replace(/\bGen\.\s*/gi, 'Genesis ')
+        .replace(/\bDan\.\s*/gi, 'Daniel ')
+        .replace(/\bIsa\.\s*/gi, 'Isaiah ')
+        .replace(/\bMatt\.\s*/gi, 'Matthew ')
+        .replace(/\bv\.\s*(\d)/gi, 'verse $1')
+        .replace(/\bvv\.\s*/gi, 'verses ')
+        .replace(/\bch\.\s*/gi, 'chapter ')
+        .replace(/\bcf\.\s*/gi, 'compare ')
+        .replace(/\bA\.D\.\s*/gi, 'A D ')
+        .replace(/\bB\.C\.\s*/gi, 'B C ')
+        // Remove parenthetical and bracket references
+        .replace(/\([^)]*\)/g, '')
+        .replace(/\[[^\]]*\]/g, '')
+        // Clean punctuation
+        .replace(/—/g, ', ')
+        .replace(/–/g, ', ')
+        .replace(/\.\.\./g, '.')
+        .replace(/…/g, '.')
+        .replace(/"/g, '').replace(/"/g, '')
+        .replace(/'/g, "'").replace(/'/g, "'")
+        .replace(/\s+/g, ' ')
         .replace(/\s+\./g, '.')
         .replace(/\s+,/g, ',')
         .replace(/,\s*,/g, ',')
