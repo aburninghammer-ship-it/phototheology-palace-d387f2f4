@@ -41,21 +41,21 @@ export function MemberHome({ churchId }: MemberHomeProps) {
     if (!user) return;
     
     try {
-      // Load user's small groups
-      const { data: groups } = await supabase
-        .from('small_groups')
+      // Load user's small groups - using any due to new table
+      const { data: groups } = await (supabase
+        .from('small_groups' as any)
         .select('id')
         .eq('church_id', churchId)
-        .eq('is_active', true);
+        .eq('is_active', true) as any);
 
-      // Load active study
-      const { data: studies } = await supabase
-        .from('church_central_studies')
+      // Load active study - using any due to new table
+      const { data: studies } = await (supabase
+        .from('church_central_studies' as any)
         .select('title')
         .eq('church_id', churchId)
         .eq('status', 'active')
         .order('week_start', { ascending: false })
-        .limit(1);
+        .limit(1) as any);
 
       setStats({
         activeGroups: groups?.length || 0,

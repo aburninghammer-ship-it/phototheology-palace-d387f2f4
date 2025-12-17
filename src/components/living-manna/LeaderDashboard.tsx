@@ -8,13 +8,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   Users, Calendar, AlertTriangle, TrendingUp, 
-  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen 
+  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink
 } from "lucide-react";
 import { CohortManagement } from "./CohortManagement";
 import { AttendanceTracker } from "./AttendanceTracker";
 import { EscalationPanel } from "./EscalationPanel";
 import { MemberPathwayView } from "./MemberPathwayView";
 import { SanctuaryJourneyDashboard } from "./sanctuary-journey";
+import { SmallGroupsHub } from "./SmallGroupsHub";
+import { StudyFeed } from "./StudyFeed";
+import { SermonHub } from "./SermonHub";
 interface LeaderDashboardProps {
   churchId: string;
 }
@@ -127,15 +130,24 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Leader Dashboard</h2>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Flame className="h-6 w-6 text-primary" />
+            Living Manna Online Church
+          </h2>
           <p className="text-muted-foreground">
-            Manage your discipleship cohorts and track member progress
+            Leader Dashboard — Manage discipleship, small groups, and member progress
           </p>
         </div>
-        <Button>
-          <UserPlus className="h-4 w-4 mr-2" />
-          New Cohort
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => window.open('/living-manna', '_blank')}>
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Member View
+          </Button>
+          <Button>
+            <UserPlus className="h-4 w-4 mr-2" />
+            New Cohort
+          </Button>
+        </div>
       </div>
 
       {/* Stats Overview */}
@@ -191,12 +203,21 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
       )}
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="sanctuary-journey" className="space-y-4">
+      <Tabs defaultValue="small-groups" className="space-y-4">
         <TabsList className="flex-wrap">
-          <TabsTrigger value="sanctuary-journey" className="gap-2">
-            <BookOpen className="h-4 w-4" />
-            Sanctuary Journey
+          <TabsTrigger value="small-groups" className="gap-2">
+            <Flame className="h-4 w-4" />
+            Small Groups
           </TabsTrigger>
+          <TabsTrigger value="studies" className="gap-2">
+            <BookOpen className="h-4 w-4" />
+            Central Studies
+          </TabsTrigger>
+          <TabsTrigger value="sermons" className="gap-2">
+            <Video className="h-4 w-4" />
+            Sermons
+          </TabsTrigger>
+          <TabsTrigger value="sanctuary-journey">Sanctuary Journey</TabsTrigger>
           <TabsTrigger value="cohorts">Cohorts</TabsTrigger>
           <TabsTrigger value="attendance">Attendance</TabsTrigger>
           <TabsTrigger value="pathway">Member Pathway</TabsTrigger>
@@ -209,6 +230,18 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
             )}
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="small-groups">
+          <SmallGroupsHub churchId={churchId} />
+        </TabsContent>
+
+        <TabsContent value="studies">
+          <StudyFeed churchId={churchId} />
+        </TabsContent>
+
+        <TabsContent value="sermons">
+          <SermonHub churchId={churchId} />
+        </TabsContent>
 
         <TabsContent value="sanctuary-journey">
           <SanctuaryJourneyDashboard churchId={churchId} />
