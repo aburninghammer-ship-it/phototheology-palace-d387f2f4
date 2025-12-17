@@ -1,34 +1,210 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Lock } from "lucide-react";
+import { Users, Target, Star, BookOpen, TrendingUp, UserCheck } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface ChurchAnalyticsProps {
   churchId: string;
   hasTier3Access: boolean;
 }
 
-export function ChurchAnalytics({ churchId, hasTier3Access }: ChurchAnalyticsProps) {
-  // TODO: Implement actual analytics when ready
+interface MetricCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  value: string;
+  subValue?: string;
+  progress?: number;
+}
+
+function MetricCard({ title, description, icon, value, subValue, progress }: MetricCardProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Church Analytics</CardTitle>
-        <CardDescription>Track engagement and identify emerging leaders</CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <div className="text-muted-foreground">{icon}</div>
       </CardHeader>
       <CardContent>
-        <Alert>
-          <AlertDescription>
-            Analytics dashboard coming soon. You'll be able to see:
-            <ul className="mt-2 space-y-1 ml-4">
-              <li>• Member engagement metrics</li>
-              <li>• Campaign participation rates</li>
-              <li>• Emerging teachers and evangelists</li>
-              <li>• Study completion statistics</li>
-              {hasTier3Access && <li>• Ministry readiness indicators</li>}
-            </ul>
-          </AlertDescription>
-        </Alert>
+        <div className="text-2xl font-bold text-muted-foreground">{value}</div>
+        {subValue && <p className="text-xs text-muted-foreground mt-1">{subValue}</p>}
+        {progress !== undefined && (
+          <Progress value={progress} className="mt-2 h-1" />
+        )}
+        <p className="text-xs text-muted-foreground mt-2">{description}</p>
       </CardContent>
     </Card>
+  );
+}
+
+export function ChurchAnalytics({ churchId, hasTier3Access }: ChurchAnalyticsProps) {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold">Church Analytics</h2>
+        <p className="text-muted-foreground">Track engagement and identify emerging leaders</p>
+      </div>
+
+      {/* Member Engagement */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <Users className="h-5 w-5" />
+          Member Engagement
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <MetricCard
+            title="Active Members"
+            description="Members active in the last 7 days"
+            icon={<UserCheck className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+            progress={0}
+          />
+          <MetricCard
+            title="Weekly Logins"
+            description="Average logins per member"
+            icon={<TrendingUp className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+          />
+          <MetricCard
+            title="Retention Rate"
+            description="Members returning weekly"
+            icon={<Users className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+            progress={0}
+          />
+        </div>
+      </div>
+
+      {/* Campaign Participation */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <Target className="h-5 w-5" />
+          Campaign Participation
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <MetricCard
+            title="Active Campaigns"
+            description="Currently running campaigns"
+            icon={<Target className="h-4 w-4" />}
+            value="--"
+            subValue="No campaigns yet"
+          />
+          <MetricCard
+            title="Participation Rate"
+            description="Members engaging with campaigns"
+            icon={<Users className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+            progress={0}
+          />
+          <MetricCard
+            title="Completion Rate"
+            description="Campaign challenges completed"
+            icon={<TrendingUp className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+            progress={0}
+          />
+        </div>
+      </div>
+
+      {/* Emerging Leaders */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <Star className="h-5 w-5" />
+          Emerging Teachers & Evangelists
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <MetricCard
+            title="Top Contributors"
+            description="Most active in discussions"
+            icon={<Star className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+          />
+          <MetricCard
+            title="Study Leaders"
+            description="Members leading studies"
+            icon={<BookOpen className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+          />
+          <MetricCard
+            title="Mentorship Activity"
+            description="Active mentor-mentee pairs"
+            icon={<Users className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+          />
+        </div>
+      </div>
+
+      {/* Study Completion */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <BookOpen className="h-5 w-5" />
+          Study Completion Statistics
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <MetricCard
+            title="Studies Started"
+            description="Total studies initiated"
+            icon={<BookOpen className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+          />
+          <MetricCard
+            title="Completion Rate"
+            description="Studies completed vs started"
+            icon={<TrendingUp className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+            progress={0}
+          />
+          <MetricCard
+            title="Avg. Study Time"
+            description="Minutes per session"
+            icon={<Target className="h-4 w-4" />}
+            value="--"
+            subValue="No data yet"
+          />
+        </div>
+      </div>
+
+      {/* Ministry Readiness - Tier 3 only */}
+      {hasTier3Access && (
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <UserCheck className="h-5 w-5" />
+            Ministry Readiness Indicators
+          </h3>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <MetricCard
+              title="Ready for Ministry"
+              description="Members meeting readiness criteria"
+              icon={<UserCheck className="h-4 w-4" />}
+              value="--"
+              subValue="No data yet"
+            />
+            <MetricCard
+              title="Training Progress"
+              description="Avg. training completion"
+              icon={<TrendingUp className="h-4 w-4" />}
+              value="--"
+              subValue="No data yet"
+              progress={0}
+            />
+            <MetricCard
+              title="Ministry Assignments"
+              description="Active ministry roles filled"
+              icon={<Target className="h-4 w-4" />}
+              value="--"
+              subValue="No data yet"
+            />
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
