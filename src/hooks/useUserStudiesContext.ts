@@ -43,16 +43,17 @@ export const useUserStudiesContext = () => {
         return { userStudies: [], deckStudies: [] };
       }
 
-      // Check if user is admin - only admins can have their studies affect commentary
-      const { data: adminCheck } = await supabase
-        .from('admin_users')
+      // Check if user is the palace owner - ONLY the owner can have studies affect commentary
+      const { data: ownerCheck } = await supabase
+        .from('user_roles')
         .select('id')
         .eq('user_id', user.id)
+        .eq('role', 'owner')
         .maybeSingle();
       
-      if (!adminCheck) {
-        // Non-admin users get standard commentary without personalization
-        console.log("[Studies Context] Non-admin user, returning empty studies");
+      if (!ownerCheck) {
+        // Non-owner users get standard commentary without personalization
+        console.log("[Studies Context] Non-owner user, returning empty studies");
         return { userStudies: [], deckStudies: [] };
       }
 
