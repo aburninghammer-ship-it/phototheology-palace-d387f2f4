@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Mail, Copy, Trash2, UserPlus } from "lucide-react";
+import { Loader2, Mail, Copy, Trash2, UserPlus, Link2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -167,6 +167,12 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
     toast.success("Invitation code copied to clipboard");
   };
 
+  const handleCopyInviteLink = (code: string) => {
+    const link = `${window.location.origin}/join-church?code=${code}`;
+    navigator.clipboard.writeText(link);
+    toast.success("Invitation link copied to clipboard");
+  };
+
   const handleDeleteInvitation = async (id: string) => {
     try {
       const { error } = await supabase
@@ -311,8 +317,18 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
                           variant="ghost"
                           size="sm"
                           onClick={() => handleCopyInviteCode(invitation.invitation_code)}
+                          title="Copy code"
                         >
                           <Copy className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleCopyInviteLink(invitation.invitation_code)}
+                          title="Copy invitation link"
+                          className="text-primary"
+                        >
+                          <Link2 className="h-3 w-3" />
                         </Button>
                       </div>
                     </TableCell>
