@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   Users, Calendar, AlertTriangle, TrendingUp, 
-  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink
+  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink, GraduationCap
 } from "lucide-react";
 import { CohortManagement } from "./CohortManagement";
 import { AttendanceTracker } from "./AttendanceTracker";
@@ -19,6 +19,7 @@ import { SmallGroupsHub } from "./SmallGroupsHub";
 import { StudyFeed } from "./StudyFeed";
 import { SermonHub } from "./SermonHub";
 import { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
+import { TruthSeries } from "./TruthSeries";
 interface LeaderDashboardProps {
   churchId: string;
 }
@@ -106,18 +107,18 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
     description: string;
     trend?: "up" | "down" | "neutral";
   }) => (
-    <Card variant="glass">
+    <Card variant="glass" className="bg-card/80">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-foreground">{title}</CardTitle>
         <Icon className="h-4 w-4 text-primary" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{description}</p>
+        <div className="text-2xl font-bold text-foreground">{value}</div>
+        <p className="text-xs text-foreground/70">{description}</p>
         {trend && (
           <div className={`flex items-center text-xs mt-1 ${
-            trend === "up" ? "text-green-500" : 
-            trend === "down" ? "text-red-500" : "text-muted-foreground"
+            trend === "up" ? "text-green-400" : 
+            trend === "down" ? "text-red-400" : "text-foreground/60"
           }`}>
             <TrendingUp className={`h-3 w-3 mr-1 ${trend === "down" ? "rotate-180" : ""}`} />
             {trend === "up" ? "Improving" : trend === "down" ? "Needs attention" : "Stable"}
@@ -210,6 +211,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
             <Flame className="h-4 w-4" />
             Small Groups
           </TabsTrigger>
+          <TabsTrigger value="truth-series" className="gap-2">
+            <GraduationCap className="h-4 w-4" />
+            Truth Series
+          </TabsTrigger>
           <TabsTrigger value="studies" className="gap-2">
             <BookOpen className="h-4 w-4" />
             Central Studies
@@ -234,6 +239,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
 
         <TabsContent value="small-groups">
           <SmallGroupsHub churchId={churchId} />
+        </TabsContent>
+
+        <TabsContent value="truth-series">
+          <TruthSeries churchId={churchId} />
         </TabsContent>
 
         <TabsContent value="studies">

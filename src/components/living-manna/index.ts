@@ -15,3 +15,4 @@ export { StudyCycles } from "./StudyCycles";
 export { DiscipleshipPackages } from "./DiscipleshipPackages";
 export { LeaderOnboarding } from "./LeaderOnboarding";
 export { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
+export { TruthSeries } from "./TruthSeries";
