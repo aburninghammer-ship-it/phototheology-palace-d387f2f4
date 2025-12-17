@@ -293,18 +293,30 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     });
   }, [selectedBrowserVoice]);
 
-  // ElevenLabs TTS with timeout
+  // OpenAI TTS with timeout
   const speakWithElevenLabs = useCallback(async (text: string, speakOptions?: SpeakOptions) => {
     const opts: SpeakOptions = speakOptions || {};
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-      setNetworkStatus('slow');
-    }, timeout);
+    // Calculate dynamic timeout based on text length (longer texts need more time)
+    const baseTimeout = Math.max(timeout, 15000); // At least 15 seconds
+    const textLengthBonus = Math.min(text.length * 10, 30000); // Up to 30 extra seconds for long texts
+    const dynamicTimeout = baseTimeout + textLengthBonus;
+    
+    console.log(`[TTS] Starting with ${dynamicTimeout}ms timeout for ${text.length} chars`);
+
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let timedOut = false;
+    
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => {
+        timedOut = true;
+        setNetworkStatus('slow');
+        reject(new Error('Network timeout - connection too slow'));
+      }, dynamicTimeout);
+    });
 
     try {
-      const { data, error } = await supabase.functions.invoke('text-to-speech', {
+      const invokePromise = supabase.functions.invoke('text-to-speech', {
         body: {
           text: text.trim(),
           voice: opts.voice || selectedVoice,
@@ -316,7 +328,14 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
         }
       });
 
-      clearTimeout(timeoutId);
+      // Race between invoke and timeout
+      const { data, error } = await Promise.race([invokePromise, timeoutPromise]) as Awaited<typeof invokePromise>;
+
+      if (timeoutId) clearTimeout(timeoutId);
+      
+      if (timedOut) {
+        throw new Error('Network timeout - connection too slow');
+      }
 
       if (error) {
         throw new Error(error.message || 'Failed to generate speech');
@@ -390,11 +409,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
       onStartRef.current?.();
 
     } catch (error) {
-      clearTimeout(timeoutId);
-
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error('Network timeout - connection too slow');
-      }
+      if (timeoutId) clearTimeout(timeoutId);
 
       throw error;
     }
