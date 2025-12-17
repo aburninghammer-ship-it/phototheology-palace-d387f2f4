@@ -255,7 +255,7 @@ export const BibleReader = () => {
 
       {/* AI Prompt Banner - Surface Jeeves */}
       {!jeevesMode && (
-        <div className="relative z-0 mt-2">
+        <div className="relative z-0 mt-6">
           <AIPromptBanner
             context="bible" 
             book={book} 
