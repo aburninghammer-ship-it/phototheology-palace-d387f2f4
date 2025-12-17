@@ -175,7 +175,7 @@ serve(async (req) => {
   }
 
   try {
-    const { book, chapter, chapterText, depth = "surface", userName, language = "en" } = await req.json();
+    const { book, chapter, chapterText, depth = "surface", userName, language = "en", userStudiesContext } = await req.json();
 
     if (!book || !chapter) {
       throw new Error("Book and chapter are required");
@@ -188,8 +188,11 @@ serve(async (req) => {
     const normalizedBook = normalizeBookName(book);
     const chapterNum = parseInt(chapter);
     
-    // Check cache first (only for depth commentary which is most expensive)
-    if (supabaseUrl && supabaseServiceKey && depth === "depth") {
+    // Skip cache if user has study context - personalized commentary should be fresh
+    const hasUserStudies = userStudiesContext && userStudiesContext.length > 0;
+    
+    // Check cache first (only for depth commentary which is most expensive, and only if no user studies)
+    if (supabaseUrl && supabaseServiceKey && depth === "depth" && !hasUserStudies) {
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
       
       const { data: cached, error: cacheError } = await supabase
@@ -214,6 +217,11 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Build user studies section if provided
+    const userStudiesSection = userStudiesContext 
+      ? `\n\n${userStudiesContext}\n`
+      : "";
+
     const systemPrompt = getSystemPrompt(depth as CommentaryDepth, userName, language as SupportedLanguage);
     const maxTokens = getMaxTokens(depth as CommentaryDepth);
 
@@ -221,15 +229,17 @@ serve(async (req) => {
       ? `The reader just finished ${book} chapter ${chapter}. 
 
 ${chapterText ? `Here's the chapter content:\n${chapterText}\n\n` : ""}
-
+${userStudiesSection}
 Please provide a comprehensive, scholarly verse-by-verse commentary applying the full Phototheology Palace framework.
 CRITICAL: Start at verse 1 and move sequentially through the chapter (1, 2, 3, 4, ...). Do NOT skip any verses, especially verses 1-3. If you group verses, clearly label the group (for example, "verses 1-3" or "verses 4-5") and ensure every verse in the chapter is covered.
-Cover every verse with at least one clear sentence of commentary. Make it thorough enough for serious Bible students while keeping it accessible for spoken delivery.`
+Cover every verse with at least one clear sentence of commentary. Make it thorough enough for serious Bible students while keeping it accessible for spoken delivery.
+${hasUserStudies ? "BUILD UPON the user's previous study insights where relevant—acknowledge and extend their discoveries." : ""}`
       : `The reader just finished ${book} chapter ${chapter}. 
 
 ${chapterText ? `Here's the chapter content:\n${chapterText}\n\n` : ""}
-
-Please provide a ${depth === "intermediate" ? "thorough" : "brief"}, Christ-centered commentary applying Phototheology principles naturally. Remember to keep it conversational and suitable for spoken audio delivery.`;
+${userStudiesSection}
+Please provide a ${depth === "intermediate" ? "thorough" : "brief"}, Christ-centered commentary applying Phototheology principles naturally. Remember to keep it conversational and suitable for spoken audio delivery.
+${hasUserStudies ? "BUILD UPON the user's previous study insights where relevant—acknowledge and extend their discoveries." : ""}`;
 
     console.log(`Generating ${depth} commentary for ${book} ${chapter}`);
 
