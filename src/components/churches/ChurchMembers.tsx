@@ -174,56 +174,56 @@ export function ChurchMembers({ churchId, onMemberChange }: ChurchMembersProps) 
 
   return (
     <>
-      <Card>
+      <Card variant="glass">
         <CardHeader>
-          <CardTitle>Church Members</CardTitle>
-          <CardDescription>Manage your church members and their roles</CardDescription>
+          <CardTitle className="text-foreground">Church Members</CardTitle>
+          <CardDescription className="text-foreground/70">Manage your church members and their roles</CardDescription>
         </CardHeader>
         <CardContent>
           {/* Search */}
           <div className="mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-foreground/50" />
               <Input
                 placeholder="Search members..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-background/50 border-border/50"
               />
             </div>
           </div>
 
           {/* Members Table */}
-          <div className="rounded-md border">
+          <div className="rounded-xl border border-border/50 bg-background/30 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Member</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Joined</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-border/50 hover:bg-transparent">
+                  <TableHead className="text-primary font-semibold">Member</TableHead>
+                  <TableHead className="text-primary font-semibold">Role</TableHead>
+                  <TableHead className="text-primary font-semibold">Joined</TableHead>
+                  <TableHead className="text-right text-primary font-semibold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredMembers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={4} className="text-center py-8 text-foreground/60">
                       No members found
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredMembers.map((member) => (
-                    <TableRow key={member.id}>
+                    <TableRow key={member.id} className="border-border/30 hover:bg-primary/5">
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
                             <span className="text-sm font-semibold text-primary">
                               {member.profiles.display_name.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <p className="font-medium">{member.profiles.display_name}</p>
-                            <p className="text-sm text-muted-foreground">@{member.profiles.username}</p>
+                            <p className="font-medium text-foreground">{member.profiles.display_name}</p>
+                            <p className="text-sm text-foreground/60">@{member.profiles.username}</p>
                           </div>
                         </div>
                       </TableCell>
@@ -232,17 +232,32 @@ export function ChurchMembers({ churchId, onMemberChange }: ChurchMembersProps) 
                           value={member.role}
                           onValueChange={(value: 'admin' | 'leader' | 'member') => handleRoleChange(member.id, value)}
                         >
-                          <SelectTrigger className="w-[130px]">
+                          <SelectTrigger className="w-[140px] bg-background/50 border-border/50">
                             <SelectValue>{getRoleBadge(member.role)}</SelectValue>
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="member">Member</SelectItem>
-                            <SelectItem value="leader">Leader</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="member">
+                              <div className="flex items-center gap-2">
+                                <UsersIcon className="h-3 w-3" />
+                                Member
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="leader">
+                              <div className="flex items-center gap-2">
+                                <UserCog className="h-3 w-3" />
+                                Leader
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="admin">
+                              <div className="flex items-center gap-2">
+                                <Shield className="h-3 w-3" />
+                                Admin
+                              </div>
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-foreground/80">
                         {new Date(member.joined_at).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-right">
@@ -261,7 +276,7 @@ export function ChurchMembers({ churchId, onMemberChange }: ChurchMembersProps) 
             </Table>
           </div>
 
-          <div className="mt-4 text-sm text-muted-foreground">
+          <div className="mt-4 text-sm text-foreground/70 font-medium">
             Total Members: {members.length}
           </div>
         </CardContent>

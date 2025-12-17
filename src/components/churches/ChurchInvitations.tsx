@@ -215,21 +215,23 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
   }
 
   return (
-    <Card>
+    <Card variant="glass">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Church Invitations</CardTitle>
-            <CardDescription>Invite new members to join your church</CardDescription>
+            <CardTitle className="text-foreground">Pending Invitations</CardTitle>
+            <CardDescription className="text-foreground/70">
+              These users have been invited but haven't signed up yet. Share the code with them.
+            </CardDescription>
           </div>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
-              <Button disabled={availableSeats <= 0}>
+              <Button disabled={availableSeats <= 0} className="bg-primary hover:bg-primary/90">
                 <UserPlus className="h-4 w-4 mr-2" />
                 Create Invitation
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="glass-card">
               <DialogHeader>
                 <DialogTitle>Create New Invitation</DialogTitle>
                 <DialogDescription>
@@ -245,12 +247,13 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
                     placeholder="member@example.com"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
+                    className="bg-background/50"
                   />
                 </div>
                 <div>
                   <Label htmlFor="invite-role">Role</Label>
                   <Select value={inviteRole} onValueChange={(value: any) => setInviteRole(value)}>
-                    <SelectTrigger id="invite-role">
+                    <SelectTrigger id="invite-role" className="bg-background/50">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -284,33 +287,33 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
       <CardContent>
         {invitations.length === 0 ? (
           <div className="text-center py-12">
-            <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground mb-4">No invitations yet</p>
-            <p className="text-sm text-muted-foreground">
+            <Mail className="h-12 w-12 text-foreground/40 mx-auto mb-4" />
+            <p className="text-foreground/60 mb-4">No invitations yet</p>
+            <p className="text-sm text-foreground/50">
               Create an invitation to invite members to your church
             </p>
           </div>
         ) : (
-          <div className="rounded-md border">
+          <div className="rounded-xl border border-border/50 bg-background/30 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Invitation Code</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Expires</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-border/50 hover:bg-transparent">
+                  <TableHead className="text-primary font-semibold">Email</TableHead>
+                  <TableHead className="text-primary font-semibold">Role</TableHead>
+                  <TableHead className="text-primary font-semibold">Invitation Code</TableHead>
+                  <TableHead className="text-primary font-semibold">Status</TableHead>
+                  <TableHead className="text-primary font-semibold">Expires</TableHead>
+                  <TableHead className="text-right text-primary font-semibold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {invitations.map((invitation) => (
-                  <TableRow key={invitation.id}>
-                    <TableCell className="font-medium">{invitation.invited_email}</TableCell>
-                    <TableCell className="capitalize">{invitation.role}</TableCell>
+                  <TableRow key={invitation.id} className="border-border/30 hover:bg-primary/5">
+                    <TableCell className="font-medium text-foreground">{invitation.invited_email}</TableCell>
+                    <TableCell className="capitalize text-foreground/80">{invitation.role}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                        <code className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
                           {invitation.invitation_code}
                         </code>
                         <Button
@@ -318,6 +321,7 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
                           size="sm"
                           onClick={() => handleCopyInviteCode(invitation.invitation_code)}
                           title="Copy code"
+                          className="h-7 w-7 p-0"
                         >
                           <Copy className="h-3 w-3" />
                         </Button>
@@ -326,7 +330,7 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
                           size="sm"
                           onClick={() => handleCopyInviteLink(invitation.invitation_code)}
                           title="Copy invitation link"
-                          className="text-primary"
+                          className="h-7 w-7 p-0 text-primary"
                         >
                           <Link2 className="h-3 w-3" />
                         </Button>
@@ -335,7 +339,7 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
                     <TableCell>
                       {getStatusBadge(invitation.status, invitation.expires_at)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-foreground/70">
                       {new Date(invitation.expires_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
