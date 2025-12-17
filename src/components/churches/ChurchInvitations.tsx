@@ -91,7 +91,8 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
     setCreating(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!user || !session) {
         toast.error("You must be logged in to create invitations");
         return;
       }
@@ -102,6 +103,13 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
       // Set expiration to 30 days from now
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 30);
+
+      // Get church name for the email
+      const { data: churchData } = await supabase
+        .from('churches')
+        .select('name')
+        .eq('id', churchId)
+        .single();
 
       const { error } = await supabase
         .from('church_invitations')
@@ -116,7 +124,28 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
 
       if (error) throw error;
 
-      toast.success("Invitation created successfully");
+      // Send email invitation
+      const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-church-invitation', {
+        body: {
+          recipientEmail: inviteEmail,
+          churchName: churchData?.name || 'Your Church',
+          churchId,
+          invitationCode,
+          role: inviteRole,
+          expiresAt: expiresAt.toISOString(),
+        },
+      });
+
+      if (emailError) {
+        console.error('Email send error:', emailError);
+        toast.warning("Invitation created but email could not be sent. Share the code manually.");
+      } else if (emailResult?.success) {
+        toast.success("Invitation created and email sent!");
+      } else {
+        console.error('Email send failed:', emailResult?.error);
+        toast.warning("Invitation created but email failed. Share the code manually.");
+      }
+
       setInviteEmail("");
       setInviteRole("member");
       setShowCreateDialog(false);
