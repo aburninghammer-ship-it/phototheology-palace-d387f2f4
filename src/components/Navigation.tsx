@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target, StickyNote, Radio } from "lucide-react";
+import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target, StickyNote, Radio, Church } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useChurchMembership } from "@/hooks/useChurchMembership";
 import { EnhancedMobileDrawer } from "@/components/EnhancedMobileDrawer";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useDirectMessagesContext } from "@/contexts/DirectMessagesContext";
@@ -29,6 +30,7 @@ export const Navigation = () => {
   const { user, signOut, loading } = useAuth();
   const { activeCount } = useActiveUsers();
   const { isAdmin } = useIsAdmin();
+  const { isMember: isChurchMember, churchId } = useChurchMembership();
   const { toggleSidebar } = useSidebar();
   const { conversations } = useDirectMessagesContext();
   
@@ -311,6 +313,15 @@ export const Navigation = () => {
                     <Building2 className="h-3.5 w-3.5 text-amber-500" />
                     <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent font-semibold">Palace</span>
                   </Link>
+                  {isChurchMember && churchId && (
+                    <Link 
+                      to={`/living-manna?church=${churchId}`}
+                      className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/20 hover:from-emerald-500/20 hover:to-green-500/20"
+                    >
+                      <Church className="h-3.5 w-3.5 text-emerald-500" />
+                      <span className="bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent font-semibold">My Church Space</span>
+                    </Link>
+                  )}
                   <Link 
                     to="/bible" 
                     className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 hover:from-blue-500/20 hover:to-cyan-500/20"

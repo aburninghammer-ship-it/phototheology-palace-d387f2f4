@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useChurchMembership } from "@/hooks/useChurchMembership";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight, GraduationCap, Shield, Calendar, MessageCircle, MessagesSquare } from "lucide-react";
+import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight, GraduationCap, Shield, Calendar, MessageCircle, MessagesSquare, AlertTriangle } from "lucide-react";
 import { SmallGroupsHub } from "@/components/living-manna/SmallGroupsHub";
 import { StudyFeed } from "@/components/living-manna/StudyFeed";
 import { SermonHub } from "@/components/living-manna/SermonHub";
@@ -23,27 +24,36 @@ import { DirectMessagesProvider } from "@/contexts/DirectMessagesContext";
 export default function LivingManna() {
   const { user } = useAuth();
   const { subscription, loading: subscriptionLoading } = useSubscription();
+  const { isMember, churchId: memberChurchId, isLoading: membershipLoading } = useChurchMembership();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [churchName, setChurchName] = useState<string>("Living Manna Online Church");
   const [loading, setLoading] = useState(true);
 
+  // Get church ID from URL or from membership
+  const urlChurchId = searchParams.get('church');
+  const effectiveChurchId = urlChurchId || memberChurchId || subscription.church.churchId;
+
   useEffect(() => {
-    if (subscriptionLoading) return;
+    if (subscriptionLoading || membershipLoading) return;
     if (!user) return;
 
-    if (subscription.church.hasChurchAccess && subscription.church.churchId) {
-      loadChurchInfo();
+    // Check if user has access to this church
+    const hasAccess = subscription.church.hasChurchAccess || isMember;
+    
+    if (hasAccess && effectiveChurchId) {
+      loadChurchInfo(effectiveChurchId);
     } else {
       setLoading(false);
     }
-  }, [user, subscription, subscriptionLoading]);
+  }, [user, subscription, subscriptionLoading, isMember, membershipLoading, effectiveChurchId]);
 
-  const loadChurchInfo = async () => {
+  const loadChurchInfo = async (churchId: string) => {
     try {
       const { data } = await supabase
         .from('churches')
         .select('name, branded_name')
-        .eq('id', subscription.church.churchId!)
+        .eq('id', churchId)
         .single();
 
       if (data) {
@@ -56,7 +66,7 @@ export default function LivingManna() {
     }
   };
 
-  if (subscriptionLoading || loading) {
+  if (subscriptionLoading || loading || membershipLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-dreamy">
         <div className="text-center">
@@ -67,8 +77,11 @@ export default function LivingManna() {
     );
   }
 
+  // Check if user has church access
+  const hasChurchAccess = subscription.church.hasChurchAccess || isMember;
+
   // If user doesn't have church access, show join options
-  if (!subscription.church.hasChurchAccess) {
+  if (!hasChurchAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-dreamy p-4">
         <Card variant="glass" className="w-full max-w-lg">
@@ -189,39 +202,39 @@ export default function LivingManna() {
             </TabsList>
 
             <TabsContent value="home">
-              <MemberHome churchId={subscription.church.churchId!} />
+              <MemberHome churchId={effectiveChurchId!} />
             </TabsContent>
 
             <TabsContent value="community">
-              <ChurchCommunity churchId={subscription.church.churchId!} />
+              <ChurchCommunity churchId={effectiveChurchId!} />
             </TabsContent>
 
             <TabsContent value="messages">
-              <ChurchMessaging churchId={subscription.church.churchId!} />
+              <ChurchMessaging churchId={effectiveChurchId!} />
             </TabsContent>
 
             <TabsContent value="small-groups">
-              <SmallGroupsHub churchId={subscription.church.churchId!} />
+              <SmallGroupsHub churchId={effectiveChurchId!} />
             </TabsContent>
 
             <TabsContent value="studies">
-              <StudyFeed churchId={subscription.church.churchId!} />
+              <StudyFeed churchId={effectiveChurchId!} />
             </TabsContent>
 
             <TabsContent value="cycles">
-              <StudyCycles churchId={subscription.church.churchId!} />
+              <StudyCycles churchId={effectiveChurchId!} />
             </TabsContent>
 
             <TabsContent value="discipleship">
-              <DiscipleshipPackages churchId={subscription.church.churchId!} />
+              <DiscipleshipPackages churchId={effectiveChurchId!} />
             </TabsContent>
 
             <TabsContent value="leader-training">
-              <LeaderOnboarding churchId={subscription.church.churchId!} />
+              <LeaderOnboarding churchId={effectiveChurchId!} />
             </TabsContent>
 
             <TabsContent value="sermons">
-              <SermonHub churchId={subscription.church.churchId!} />
+              <SermonHub churchId={effectiveChurchId!} />
             </TabsContent>
           </Tabs>
         </div>
