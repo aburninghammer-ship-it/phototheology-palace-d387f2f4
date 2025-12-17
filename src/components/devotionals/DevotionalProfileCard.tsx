@@ -67,13 +67,14 @@ export function DevotionalProfileCard({
   onDelete,
   onEdit,
 }: DevotionalProfileCardProps) {
-  const { plan, days, completedDayIds } = useDevotionalPlan(profile.active_plan_id || "");
+  const { plan, days, completedDayIds, unlockedDayNumber } = useDevotionalPlan(profile.active_plan_id || "");
 
   const progress = plan && days
     ? Math.round((completedDayIds.size / days.length) * 100)
     : 0;
 
-  const currentDay = days?.find((d) => !completedDayIds.has(d.id));
+  // Show the currently unlocked day (based on calendar date), not just first incomplete
+  const currentDay = days?.find((d) => d.day_number === unlockedDayNumber);
 
   return (
     <Card

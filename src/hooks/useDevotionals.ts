@@ -343,13 +343,23 @@ export function useDevotionalPlan(planId: string) {
   const completedDayIds = new Set(progress?.map((p) => p.day_id) || []);
 
   // Calculate which day number is currently unlocked based on started_at
-  // Day 1 unlocks immediately, Day 2 after 24 hours, etc.
+  // Day 1 unlocks on start date, Day 2 on the NEXT calendar day, etc.
   const getUnlockedDayNumber = (): number => {
     if (!plan?.started_at) return 1;
+    
+    // Get started date (just the date part, no time)
     const startedAt = new Date(plan.started_at);
+    const startDate = new Date(startedAt.getFullYear(), startedAt.getMonth(), startedAt.getDate());
+    
+    // Get today's date (just the date part, no time)
     const now = new Date();
-    const daysSinceStart = Math.floor((now.getTime() - startedAt.getTime()) / (1000 * 60 * 60 * 24));
-    return Math.min(daysSinceStart + 1, plan.duration);
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    // Calculate calendar days since start (0 on start day, 1 on next day, etc.)
+    const daysSinceStart = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Day number = days since start + 1 (Day 1 on start date, Day 2 on next calendar day)
+    return Math.min(Math.max(daysSinceStart + 1, 1), plan.duration);
   };
 
   const unlockedDayNumber = getUnlockedDayNumber();
