@@ -415,9 +415,31 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     }
   }, [selectedVoice, timeout]);
 
-  // Sanitize text for TTS - remove patterns that would be read literally
+  // Sanitize text for TTS - expand abbreviations and remove patterns that would be read literally
   const sanitizeTextForTTS = (text: string): string => {
     return text
+      // EXPAND ABBREVIATIONS - prevent "dot" being spoken
+      .replace(/\bRev\.\s*/gi, 'Revelation ')
+      .replace(/\bGen\.\s*/gi, 'Genesis ')
+      .replace(/\bExod\.\s*/gi, 'Exodus ')
+      .replace(/\bLev\.\s*/gi, 'Leviticus ')
+      .replace(/\bDeut\.\s*/gi, 'Deuteronomy ')
+      .replace(/\bDan\.\s*/gi, 'Daniel ')
+      .replace(/\bIsa\.\s*/gi, 'Isaiah ')
+      .replace(/\bJer\.\s*/gi, 'Jeremiah ')
+      .replace(/\bEzek\.\s*/gi, 'Ezekiel ')
+      .replace(/\bMatt\.\s*/gi, 'Matthew ')
+      .replace(/\bRom\.\s*/gi, 'Romans ')
+      .replace(/\bCor\.\s*/gi, 'Corinthians ')
+      .replace(/\bHeb\.\s*/gi, 'Hebrews ')
+      .replace(/\bv\.\s*(\d)/gi, 'verse $1')
+      .replace(/\bvv\.\s*/gi, 'verses ')
+      .replace(/\bch\.\s*/gi, 'chapter ')
+      .replace(/\bcf\.\s*/gi, 'compare ')
+      .replace(/\be\.g\.\s*/gi, 'for example ')
+      .replace(/\bi\.e\.\s*/gi, 'that is ')
+      .replace(/\bA\.D\.\s*/gi, 'A D ')
+      .replace(/\bB\.C\.\s*/gi, 'B C ')
       // Remove ellipsis (... or …) - don't read as "dot dot dot"
       .replace(/\.{2,}/g, ' ')
       .replace(/…/g, ' ')

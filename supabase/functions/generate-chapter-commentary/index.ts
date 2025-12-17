@@ -84,10 +84,10 @@ THREE HEAVENS (Day-of-the-LORD Framework):
 
 The tone should be reverent, vivid, intelligent, and deeply insightful—showing layered understanding without ever appearing mechanical or academic. Reveal patterns, tensions, resolutions, and mission-driven implications with clarity and beauty.
 
-EXPRESSIONS TO ABSOLUTELY AVOID:
+EXPRESSIONS TO ABSOLUTELY AVOID (CRITICAL - AUTOMATIC REJECTION IF USED):
 - "Ah" or "Ah," as sentence starters
 - "my dear friend," "dear friend," "my dear student"
-- "This isn't just a..." or "This is not just a..." (overused AI pattern)
+- "This isn't just..." or "This is not just..." or "not just a..." or "more than just..." (BANNED - overused AI cliché)
 - "But here's the thing" or "Here's the thing"
 - "Let's dive in" or "Let's dive into" or "dive deep"
 - "Let me paint a picture" or "Picture this"
@@ -99,17 +99,22 @@ EXPRESSIONS TO ABSOLUTELY AVOID:
 - "The bottom line is"
 - "What's fascinating is" or "What's remarkable is"
 - "Here's the beautiful thing" or "The beautiful thing is"
-- "Unpack" as a verb (e.g., "Let's unpack this")
+- "Unpack" as a verb
 - "Journey" when referring to spiritual growth
 - "Powerful" as an overused adjective
 - "Speaks to" (e.g., "This speaks to the importance of")
 - Overusing "your heart" (prefer: "your spirit," "within you," "deep inside")
 - Victorian-style or theatrical expressions
 - Clichéd devotional language
-- "You know this truth deep down" or "You know this deep within" (subjective presumption)
 - "You know this truth" or "You already know" (presuming the listener's knowledge)
-- "deep within your spirit" or "in your spirit" (overused spiritual cliché)
 - Any phrase that presumes what the listener knows, feels, or understands
+
+PROPHECY REQUIREMENT (WHEN DISCUSSING TEN HORNS, BEASTS, OR PROPHETIC SYMBOLS):
+When the chapter involves Daniel 7, Daniel 8, or Revelation prophecies about the ten horns, you MUST name the specific Germanic tribes:
+- Heruli, Vandals, Ostrogoths (three uprooted for opposing papal supremacy)
+- Franks (Catholic supremacy), Anglo-Saxons (Protestantism/America), Alemanni (Germany/rationalism)
+- Visigoths (Spain/Inquisition), Suevi (Portugal), Lombards (Italy), Burgundians (Switzerland)
+Show how these tribes evolved into modern nations and their end-time prophetic significance.
 
 FORMATTING FOR SPOKEN DELIVERY:
 - Use natural, conversational language
@@ -258,23 +263,47 @@ Please provide a ${depth === "intermediate" ? "thorough" : "brief"}, Christ-cent
       throw new Error("No commentary generated");
     }
 
-    // Clean commentary for TTS - remove symbols that sound awkward when read aloud
+    // Clean commentary for TTS - remove symbols, filter clichés, expand abbreviations
     commentary = commentary
-      .replace(/\*\*/g, '')           // Bold markers
-      .replace(/\*/g, '')             // Italics/asterisks
-      .replace(/__/g, '')             // Underline
-      .replace(/_([^_]+)_/g, '$1')    // Underscore emphasis
-      .replace(/#+\s*/g, '')          // Headers
-      .replace(/`/g, '')              // Code ticks
-      .replace(/\([^)]*\)/g, '')      // Remove (parentheses)
-      .replace(/\[[^\]]*\]/g, '')     // Remove [brackets]
-      .replace(/—/g, ', ')            // Em dash to comma
-      .replace(/–/g, ', ')            // En dash to comma
-      .replace(/\.\.\./g, '.')        // Ellipsis
-      .replace(/…/g, '.')             // Unicode ellipsis
-      .replace(/"/g, '').replace(/"/g, '') // Curly quotes
-      .replace(/'/g, "'").replace(/'/g, "'") // Normalize apostrophes
-      .replace(/\s+/g, ' ')           // Multiple spaces
+      // HARD FILTER: Remove clichés that slip through prompt instructions
+      .replace(/This isn't just/gi, 'This is')
+      .replace(/This is not just/gi, 'This is')
+      .replace(/not just a/gi, 'a')
+      .replace(/more than just/gi, 'more than')
+      .replace(/Here's the thing/gi, '')
+      .replace(/But here's the thing/gi, '')
+      .replace(/Let's dive/gi, 'Let us explore')
+      .replace(/dive deep/gi, 'explore deeply')
+      // Remove markdown symbols
+      .replace(/\*\*/g, '')
+      .replace(/\*/g, '')
+      .replace(/__/g, '')
+      .replace(/_([^_]+)_/g, '$1')
+      .replace(/#+\s*/g, '')
+      .replace(/`/g, '')
+      // Expand abbreviations to prevent "dot" in TTS
+      .replace(/\bRev\.\s*/gi, 'Revelation ')
+      .replace(/\bGen\.\s*/gi, 'Genesis ')
+      .replace(/\bDan\.\s*/gi, 'Daniel ')
+      .replace(/\bIsa\.\s*/gi, 'Isaiah ')
+      .replace(/\bMatt\.\s*/gi, 'Matthew ')
+      .replace(/\bv\.\s*(\d)/gi, 'verse $1')
+      .replace(/\bvv\.\s*/gi, 'verses ')
+      .replace(/\bch\.\s*/gi, 'chapter ')
+      .replace(/\bcf\.\s*/gi, 'compare ')
+      .replace(/\bA\.D\.\s*/gi, 'A D ')
+      .replace(/\bB\.C\.\s*/gi, 'B C ')
+      // Remove parenthetical and bracket references
+      .replace(/\([^)]*\)/g, '')
+      .replace(/\[[^\]]*\]/g, '')
+      // Clean punctuation
+      .replace(/—/g, ', ')
+      .replace(/–/g, ', ')
+      .replace(/\.\.\./g, '.')
+      .replace(/…/g, '.')
+      .replace(/"/g, '').replace(/"/g, '')
+      .replace(/'/g, "'").replace(/'/g, "'")
+      .replace(/\s+/g, ' ')
       .replace(/\s+\./g, '.')
       .replace(/\s+,/g, ',')
       .replace(/,\s*,/g, ',')
