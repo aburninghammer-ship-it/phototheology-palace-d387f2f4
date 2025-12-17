@@ -8,13 +8,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   Users, Calendar, AlertTriangle, TrendingUp, 
-  CheckCircle, Clock, UserPlus, MessageSquare 
+  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen 
 } from "lucide-react";
 import { CohortManagement } from "./CohortManagement";
 import { AttendanceTracker } from "./AttendanceTracker";
 import { EscalationPanel } from "./EscalationPanel";
 import { MemberPathwayView } from "./MemberPathwayView";
-
+import { SanctuaryJourneyDashboard } from "./sanctuary-journey";
 interface LeaderDashboardProps {
   churchId: string;
 }
@@ -191,8 +191,12 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
       )}
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="cohorts" className="space-y-4">
-        <TabsList>
+      <Tabs defaultValue="sanctuary-journey" className="space-y-4">
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="sanctuary-journey" className="gap-2">
+            <BookOpen className="h-4 w-4" />
+            Sanctuary Journey
+          </TabsTrigger>
           <TabsTrigger value="cohorts">Cohorts</TabsTrigger>
           <TabsTrigger value="attendance">Attendance</TabsTrigger>
           <TabsTrigger value="pathway">Member Pathway</TabsTrigger>
@@ -205,6 +209,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
             )}
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="sanctuary-journey">
+          <SanctuaryJourneyDashboard churchId={churchId} />
+        </TabsContent>
 
         <TabsContent value="cohorts">
           <CohortManagement churchId={churchId} />
