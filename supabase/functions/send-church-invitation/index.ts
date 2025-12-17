@@ -159,7 +159,7 @@ serve(async (req) => {
     console.log('send-church-invitation: Sending email via Resend...');
 
     const { data: emailData, error: resendError } = await resend.emails.send({
-      from: "Phototheology <onboarding@resend.dev>",
+      from: "Living Manna <noreply@livingmanna.church>",
       to: [recipientEmail],
       subject: `🙏 You're Invited to Join ${churchName} on Phototheology!`,
       html: emailHtml,
