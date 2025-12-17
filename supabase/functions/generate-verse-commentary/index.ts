@@ -337,7 +337,7 @@ serve(async (req) => {
   }
 
   try {
-    const { book, chapter, verse, verseText, depth = "surface", userName, language = "en" } = await req.json();
+    const { book, chapter, verse, verseText, depth = "surface", userName, language = "en", userStudiesContext } = await req.json();
 
     if (!book || !chapter || !verse || !verseText) {
       return new Response(
@@ -355,18 +355,24 @@ serve(async (req) => {
       );
     }
 
+    // Build user studies section if provided
+    const userStudiesSection = userStudiesContext 
+      ? `\n\n${userStudiesContext}\n`
+      : "";
+
     const systemPrompt = getSystemPrompt(depth as CommentaryDepth, userName, language as SupportedLanguage);
     const userPrompt = `Provide ${depth} devotional commentary on this verse:
 
 **${book} ${chapter}:${verse}**
 "${verseText}"
-
+${userStudiesSection}
 DEVOTIONAL GUIDANCE:
 - Speak to the HEART first, then the head
 - Remember the Fragments rule: even simple-seeming verses often carry profound significance when we dig deeper
 - If this verse doesn't warrant deep explanation, summarize warmly—but don't dismiss it without checking for hidden treasure
 - Use "you" and "your" to speak directly to the listener
 - End by drawing the listener closer to Christ
+${userStudiesContext ? "- BUILD UPON the user's previous study insights where relevant—acknowledge and extend their discoveries" : ""}
 
 Give commentary appropriate for audio narration that TRANSFORMS, not just informs. Do not include verse reference in your response—just the commentary. Apply Phototheology principles naturally without explicitly naming the rooms.`;
 

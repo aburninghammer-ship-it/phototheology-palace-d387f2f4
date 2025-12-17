@@ -52,6 +52,7 @@ import {
   getCachedVerseCommentary,
   cacheVerseCommentary 
 } from "@/services/offlineCommentaryCache";
+import { useUserStudiesContext } from "@/hooks/useUserStudiesContext";
 
 interface SequencePlayerProps {
   sequences: ReadingSequenceBlock[];
@@ -161,6 +162,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     };
     fetchUserName();
   }, []);
+
+  // Hook for fetching user's relevant studies to incorporate into commentary
+  const { fetchRelevantStudies, formatStudiesForPrompt } = useUserStudiesContext();
   const isGeneratingRef = useRef(false); // Prevent concurrent TTS requests
   const isFetchingChapterRef = useRef(false); // Prevent concurrent chapter fetches
   const lastFetchedRef = useRef<string | null>(null); // Track last fetched chapter
@@ -330,6 +334,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
       console.log("[Commentary] Generating", depth, "chapter commentary for", book, chapter);
       
+      // Fetch user's relevant studies to incorporate
+      const studiesContext = await fetchRelevantStudies(book, chapter);
+      const userStudiesContext = formatStudiesForPrompt(studiesContext);
+      
       // Add timeout to edge function call - longer for depth commentary which generates more text
       const timeoutMs = depth === "depth" ? 60000 : depth === "intermediate" ? 40000 : 25000;
       const controller = new AbortController();
@@ -337,7 +345,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       
       try {
         const { data, error } = await supabase.functions.invoke("generate-chapter-commentary", {
-          body: { book, chapter, chapterText, depth, userName },
+          body: { book, chapter, chapterText, depth, userName, userStudiesContext },
         });
         
         clearTimeout(timeoutId);
@@ -364,7 +372,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       console.error("[Commentary] Error generating chapter commentary:", e);
       return null;
     }
-  }, []);
+  }, [fetchRelevantStudies, formatStudiesForPrompt, userName]);
 
   // Generate verse commentary using Jeeves (with offline cache AND database cache)
   const generateVerseCommentary = useCallback(async (book: string, chapter: number, verse: number, verseText: string, depth: string = "surface") => {
@@ -401,6 +409,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
       console.log("[Verse Commentary] Generating", depth, "commentary for", book, chapter + ":" + verse);
       
+      // Fetch user's relevant studies to incorporate
+      const studiesContext = await fetchRelevantStudies(book, chapter, verse);
+      const userStudiesContext = formatStudiesForPrompt(studiesContext);
+      
       // Add timeout to edge function call - longer for deep-drill
       const timeoutMs = depth === "deep-drill" ? 30000 : 15000; // 30s for deep-drill, 15s for others
       const controller = new AbortController();
@@ -408,7 +420,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       
       try {
         const { data, error } = await supabase.functions.invoke("generate-verse-commentary", {
-          body: { book, chapter, verse, verseText, depth, userName },
+          body: { book, chapter, verse, verseText, depth, userName, userStudiesContext },
         });
         
         clearTimeout(timeoutId);
