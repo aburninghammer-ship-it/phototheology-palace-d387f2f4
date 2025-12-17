@@ -91,55 +91,53 @@ export const fetchChapter = async (book: string, chapter: number, translation: T
 
 const fetchChapterFromAPI = async (book: string, chapter: number, translation: Translation = "kjv"): Promise<Chapter> => {
   try {
-    // Use proper URL encoding with + between book and chapter
-    const response = await fetch(
-      `${BIBLE_API_BASE}/${encodeURIComponent(book)}+${chapter}?translation=${translation}`,
-      { signal: AbortSignal.timeout(8000) }
-    );
-    
-    if (!response.ok) {
-      throw new Error("API request failed");
+    // Use our backend proxy (retries + fallbacks) for reliability
+    const { data, error } = await supabase.functions.invoke("bible-api", {
+      body: { book, chapter, version: translation },
+    });
+
+    if (error) throw error;
+    if (!data?.verses || !Array.isArray(data.verses) || data.verses.length === 0) {
+      throw new Error("No verses returned");
     }
-    
-    const data = await response.json();
-    
+
     const verses: Verse[] = data.verses.map((v: any) => ({
-      book: data.reference.split(" ")[0],
-      chapter: v.chapter,
+      book: v.book ?? book,
+      chapter: v.chapter ?? chapter,
       verse: v.verse,
-      text: v.text
+      text: v.text,
     }));
-    
+
     const chapterData: Chapter = {
-      book: data.reference.split(" ")[0],
+      book: verses[0]?.book ?? book,
       chapter,
-      verses
+      verses,
     };
-    
+
     // Cache the fetched chapter
     cacheChapter(book, chapter, translation, chapterData);
-    
+
     // Pre-cache surrounding chapters in background
     preCacheSurrounding(book, chapter, translation, fetchChapterFromAPI);
-    
+
     return chapterData;
   } catch (error) {
     console.error("Error fetching chapter:", error);
-    
+
     // Get the correct verse count from metadata if available
     const bookMeta = BIBLE_BOOKS.find(b => b === book || b.toLowerCase() === book.toLowerCase());
-    
+
     // Default verse counts for common chapters (approximate)
     // This provides better fallback than fixed 20 verses
     let verseCount = 31; // Default
-    
+
     // Try to estimate based on typical verse counts
     if (chapter === 1) verseCount = 31;
     else if (chapter <= 10) verseCount = 35;
     else if (chapter <= 50) verseCount = 30;
     else if (chapter <= 100) verseCount = 20;
     else verseCount = 15; // Psalms have varying lengths
-    
+
     // Return placeholder verses with estimated count
     return {
       book,
@@ -148,8 +146,8 @@ const fetchChapterFromAPI = async (book: string, chapter: number, translation: T
         book,
         chapter,
         verse: i + 1,
-        text: `${book} ${chapter}:${i + 1} - Verse text temporarily unavailable. The Bible API service may be experiencing issues. Please try refreshing the page in a moment.`
-      }))
+        text: `${book} ${chapter}:${i + 1} - Verse text temporarily unavailable. The Bible API service may be experiencing issues. Please try refreshing the page in a moment.`,
+      })),
     };
   }
 };
@@ -157,7 +155,7 @@ const fetchChapterFromAPI = async (book: string, chapter: number, translation: T
 export const searchBible = async (query: string, translation: Translation = "kjv"): Promise<Verse[]> => {
   try {
     const response = await fetch(
-      `${BIBLE_API_BASE}/${query}?translation=${translation}`,
+      `${BIBLE_API_BASE}/${encodeURIComponent(query)}?translation=${translation}`,
       { signal: AbortSignal.timeout(5000) }
     );
     const data = await response.json();
