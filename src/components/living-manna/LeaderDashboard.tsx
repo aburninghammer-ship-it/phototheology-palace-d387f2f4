@@ -18,6 +18,7 @@ import { SanctuaryJourneyDashboard } from "./sanctuary-journey";
 import { SmallGroupsHub } from "./SmallGroupsHub";
 import { StudyFeed } from "./StudyFeed";
 import { SermonHub } from "./SermonHub";
+import { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
 interface LeaderDashboardProps {
   churchId: string;
 }
@@ -236,7 +237,7 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
         </TabsContent>
 
         <TabsContent value="studies">
-          <StudyFeed churchId={churchId} />
+          <CentralStudyAdmin churchId={churchId} />
         </TabsContent>
 
         <TabsContent value="sermons">

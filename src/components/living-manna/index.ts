@@ -11,3 +11,7 @@ export { SmallGroupsHub } from "./SmallGroupsHub";
 export { StudyFeed } from "./StudyFeed";
 export { SermonHub } from "./SermonHub";
 export { MemberHome } from "./MemberHome";
+export { StudyCycles } from "./StudyCycles";
+export { DiscipleshipPackages } from "./DiscipleshipPackages";
+export { LeaderOnboarding } from "./LeaderOnboarding";
+export { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
