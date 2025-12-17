@@ -2750,6 +2750,60 @@ export type Database = {
           },
         ]
       }
+      discipleship_packages: {
+        Row: {
+          church_id: string | null
+          completion_benefits: string[] | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          package_type: string
+          title: string
+          updated_at: string | null
+          week_content: Json
+        }
+        Insert: {
+          church_id?: string | null
+          completion_benefits?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          package_type?: string
+          title: string
+          updated_at?: string | null
+          week_content?: Json
+        }
+        Update: {
+          church_id?: string | null
+          completion_benefits?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          package_type?: string
+          title?: string
+          updated_at?: string | null
+          week_content?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discipleship_packages_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discipleship_packages_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       discipleship_programs: {
         Row: {
           church_id: string | null
@@ -5043,6 +5097,112 @@ export type Database = {
           },
         ]
       }
+      leader_onboarding_progress: {
+        Row: {
+          church_id: string | null
+          completed_at: string | null
+          completed_weeks: number[] | null
+          created_at: string | null
+          current_week: number | null
+          id: string
+          is_certified: boolean | null
+          started_at: string | null
+          track_id: string | null
+          user_id: string
+        }
+        Insert: {
+          church_id?: string | null
+          completed_at?: string | null
+          completed_weeks?: number[] | null
+          created_at?: string | null
+          current_week?: number | null
+          id?: string
+          is_certified?: boolean | null
+          started_at?: string | null
+          track_id?: string | null
+          user_id: string
+        }
+        Update: {
+          church_id?: string | null
+          completed_at?: string | null
+          completed_weeks?: number[] | null
+          created_at?: string | null
+          current_week?: number | null
+          id?: string
+          is_certified?: boolean | null
+          started_at?: string | null
+          track_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_onboarding_progress_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_onboarding_progress_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_onboarding_progress_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "leader_onboarding_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_onboarding_tracks: {
+        Row: {
+          church_id: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          title: string
+          updated_at: string | null
+          week_content: Json
+        }
+        Insert: {
+          church_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          updated_at?: string | null
+          week_content?: Json
+        }
+        Update: {
+          church_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          updated_at?: string | null
+          week_content?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_onboarding_tracks_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_onboarding_tracks_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_predictions: {
         Row: {
           actual_outcome: string | null
@@ -6166,6 +6326,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      package_progress: {
+        Row: {
+          completed_at: string | null
+          completed_weeks: number[] | null
+          created_at: string | null
+          current_week: number | null
+          id: string
+          package_id: string | null
+          started_at: string | null
+          unlocked_benefits: string[] | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_weeks?: number[] | null
+          created_at?: string | null
+          current_week?: number | null
+          id?: string
+          package_id?: string | null
+          started_at?: string | null
+          unlocked_benefits?: string[] | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          completed_weeks?: number[] | null
+          created_at?: string | null
+          current_week?: number | null
+          id?: string
+          package_id?: string | null
+          started_at?: string | null
+          unlocked_benefits?: string[] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_progress_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "discipleship_packages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       page_views: {
         Row: {

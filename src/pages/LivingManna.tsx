@@ -8,11 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight } from "lucide-react";
+import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight, GraduationCap, Shield, Calendar } from "lucide-react";
 import { SmallGroupsHub } from "@/components/living-manna/SmallGroupsHub";
 import { StudyFeed } from "@/components/living-manna/StudyFeed";
 import { SermonHub } from "@/components/living-manna/SermonHub";
 import { MemberHome } from "@/components/living-manna/MemberHome";
+import { StudyCycles } from "@/components/living-manna/StudyCycles";
+import { DiscipleshipPackages } from "@/components/living-manna/DiscipleshipPackages";
+import { LeaderOnboarding } from "@/components/living-manna/LeaderOnboarding";
 
 export default function LivingManna() {
   const { user } = useAuth();
@@ -142,7 +145,7 @@ export default function LivingManna() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="home" className="space-y-6">
-          <TabsList className="flex-wrap">
+          <TabsList className="flex-wrap h-auto gap-1">
             <TabsTrigger value="home" className="gap-2">
               <Home className="h-4 w-4" />
               Home
@@ -154,6 +157,18 @@ export default function LivingManna() {
             <TabsTrigger value="studies" className="gap-2">
               <BookOpen className="h-4 w-4" />
               Study Feed
+            </TabsTrigger>
+            <TabsTrigger value="cycles" className="gap-2">
+              <Calendar className="h-4 w-4" />
+              6-Week Cycles
+            </TabsTrigger>
+            <TabsTrigger value="discipleship" className="gap-2">
+              <GraduationCap className="h-4 w-4" />
+              Discipleship
+            </TabsTrigger>
+            <TabsTrigger value="leader-training" className="gap-2">
+              <Shield className="h-4 w-4" />
+              Leader Training
             </TabsTrigger>
             <TabsTrigger value="sermons" className="gap-2">
               <Video className="h-4 w-4" />
@@ -171,6 +186,18 @@ export default function LivingManna() {
 
           <TabsContent value="studies">
             <StudyFeed churchId={subscription.church.churchId!} />
+          </TabsContent>
+
+          <TabsContent value="cycles">
+            <StudyCycles churchId={subscription.church.churchId!} />
+          </TabsContent>
+
+          <TabsContent value="discipleship">
+            <DiscipleshipPackages churchId={subscription.church.churchId!} />
+          </TabsContent>
+
+          <TabsContent value="leader-training">
+            <LeaderOnboarding churchId={subscription.church.churchId!} />
           </TabsContent>
 
           <TabsContent value="sermons">
