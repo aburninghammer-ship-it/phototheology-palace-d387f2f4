@@ -98,8 +98,9 @@ export default function BlueprintGrief() {
                   {GRIEF_BLUEPRINT_INTRO.description}
                 </p>
                 <p className="mt-4 text-lg font-semibold italic text-primary">
-                  "{GRIEF_BLUEPRINT_INTRO.quote}"
+                  "{GRIEF_BLUEPRINT_INTRO.quote.text}"
                 </p>
+                <p className="text-sm text-muted-foreground mt-1">— {GRIEF_BLUEPRINT_INTRO.quote.source}</p>
               </div>
             </section>
 
