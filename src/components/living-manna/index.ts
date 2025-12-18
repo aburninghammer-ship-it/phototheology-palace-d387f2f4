@@ -18,6 +18,7 @@ export { MemberHome } from "./MemberHome";
 export { StudyCycles } from "./StudyCycles";
 export { DiscipleshipPackages } from "./DiscipleshipPackages";
 export { LeaderOnboarding } from "./LeaderOnboarding";
+export { LeaderTrainingCourse } from "./LeaderTrainingCourse";
 export { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
 export { TruthSeries } from "./TruthSeries";
 export { ChurchCommunity } from "./ChurchCommunity";
