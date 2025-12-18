@@ -173,7 +173,7 @@ serve(async (req) => {
 
     const { data: emailData, error: resendError } = await withTimeout(
       resend.emails.send({
-        from: "Living Manna <noreply@livingmanna.church>",
+        from: "Phototheology <onboarding@resend.dev>",
         to: [recipientEmail],
         subject: `🙏 You're Invited to Join ${churchName} on Phototheology!`,
         html: emailHtml,
