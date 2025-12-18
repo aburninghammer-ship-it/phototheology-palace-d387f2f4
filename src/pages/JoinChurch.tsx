@@ -49,9 +49,9 @@ export default function JoinChurch() {
       setSuccess(true);
       toast.success(result.message || "Successfully joined church!");
       
-      // Redirect to dashboard after a short delay
+      // Redirect to Living Manna church space after a short delay
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/living-manna");
       }, 2000);
     } catch (error: any) {
       console.error('Error accepting invitation:', error);
