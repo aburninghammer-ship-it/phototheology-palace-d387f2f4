@@ -8,15 +8,17 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2, MessageSquare, Send, Heart, Plus } from "lucide-react";
+import { Loader2, MessageSquare, Send, Heart, Plus, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { formatDistanceToNow } from "date-fns";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ChurchPost {
   id: string;
   title: string;
   content: string;
   user_id: string;
+  church_id: string;
   created_at: string;
   category: string | null;
   likes: number;
@@ -25,11 +27,21 @@ interface ChurchPost {
     display_name: string | null;
     avatar_url: string | null;
   };
+  comment_count?: number;
 }
 
 interface ChurchCommunityProps {
   churchId: string;
 }
+
+const POST_CATEGORIES = [
+  { value: 'general', label: 'General' },
+  { value: 'testimony', label: 'Testimony' },
+  { value: 'prayer', label: 'Prayer Request' },
+  { value: 'encouragement', label: 'Encouragement' },
+  { value: 'study', label: 'Bible Study' },
+  { value: 'announcement', label: 'Announcement' },
+];
 
 export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
   const { user } = useAuth();
@@ -38,7 +50,9 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
+  const [newCategory, setNewCategory] = useState("general");
   const [creating, setCreating] = useState(false);
+  const [liking, setLiking] = useState<string | null>(null);
 
   useEffect(() => {
     loadPosts();
@@ -46,32 +60,18 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
 
   const loadPosts = async () => {
     try {
-      // Get church members
-      const { data: members } = await supabase
-        .from('church_members')
-        .select('user_id')
-        .eq('church_id', churchId);
-
-      if (!members || members.length === 0) {
-        setPosts([]);
-        return;
-      }
-
-      const memberIds = members.map(m => m.user_id);
-
-      // Get posts from church members only
       const { data, error } = await supabase
-        .from('community_posts')
+        .from('church_community_posts')
         .select(`
           *,
           profiles:user_id(username, display_name, avatar_url)
         `)
-        .in('user_id', memberIds)
+        .eq('church_id', churchId)
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (error) throw error;
-      setPosts(data || []);
+      setPosts((data as ChurchPost[]) || []);
     } catch (error) {
       console.error('Error loading posts:', error);
       toast.error("Failed to load community posts");
@@ -89,12 +89,13 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
     setCreating(true);
     try {
       const { error } = await supabase
-        .from('community_posts')
+        .from('church_community_posts')
         .insert({
           user_id: user!.id,
+          church_id: churchId,
           title: newTitle.trim(),
           content: newContent.trim(),
-          category: 'church-fellowship',
+          category: newCategory,
         });
 
       if (error) throw error;
@@ -102,6 +103,7 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
       toast.success("Post shared with your church community!");
       setNewTitle("");
       setNewContent("");
+      setNewCategory("general");
       setShowCreateDialog(false);
       loadPosts();
     } catch (error) {
@@ -109,6 +111,40 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
       toast.error("Failed to create post");
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleLike = async (postId: string) => {
+    setLiking(postId);
+    try {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+
+      const { error } = await supabase
+        .from('church_community_posts')
+        .update({ likes: (post.likes || 0) + 1 })
+        .eq('id', postId);
+
+      if (error) throw error;
+
+      setPosts(prev => prev.map(p => 
+        p.id === postId ? { ...p, likes: (p.likes || 0) + 1 } : p
+      ));
+    } catch (error) {
+      console.error('Error liking post:', error);
+    } finally {
+      setLiking(null);
+    }
+  };
+
+  const getCategoryColor = (category: string | null) => {
+    switch (category) {
+      case 'testimony': return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+      case 'prayer': return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+      case 'encouragement': return 'bg-green-500/20 text-green-300 border-green-500/30';
+      case 'study': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+      case 'announcement': return 'bg-red-500/20 text-red-300 border-red-500/30';
+      default: return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -126,11 +162,16 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
       <Card variant="glass">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-foreground">Church Community</CardTitle>
-              <p className="text-foreground/70 text-sm mt-1">
-                Share thoughts, prayers, and encouragements with your church family
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/20">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-foreground">Church Community</CardTitle>
+                <p className="text-foreground/70 text-sm mt-1">
+                  Share with your church family — members and guests only
+                </p>
+              </div>
             </div>
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
@@ -150,6 +191,18 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
                     onChange={(e) => setNewTitle(e.target.value)}
                     className="bg-background/50"
                   />
+                  <Select value={newCategory} onValueChange={setNewCategory}>
+                    <SelectTrigger className="bg-background/50">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {POST_CATEGORIES.map(cat => (
+                        <SelectItem key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <Textarea
                     placeholder="What's on your heart?"
                     value={newContent}
@@ -203,9 +256,11 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
                       <span className="font-medium text-foreground">
                         {post.profiles?.display_name || post.profiles?.username || 'Anonymous'}
                       </span>
-                      <Badge variant="outline" className="text-xs">
-                        Church Family
-                      </Badge>
+                      {post.category && (
+                        <Badge variant="outline" className={`text-xs ${getCategoryColor(post.category)}`}>
+                          {POST_CATEGORIES.find(c => c.value === post.category)?.label || post.category}
+                        </Badge>
+                      )}
                       <span className="text-xs text-foreground/50">
                         {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                       </span>
@@ -213,8 +268,14 @@ export function ChurchCommunity({ churchId }: ChurchCommunityProps) {
                     <h3 className="font-semibold text-foreground mt-2">{post.title}</h3>
                     <p className="text-foreground/80 mt-1 whitespace-pre-wrap">{post.content}</p>
                     <div className="flex items-center gap-4 mt-3">
-                      <Button variant="ghost" size="sm" className="gap-1 text-foreground/60 hover:text-primary">
-                        <Heart className="h-4 w-4" />
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="gap-1 text-foreground/60 hover:text-primary"
+                        onClick={() => handleLike(post.id)}
+                        disabled={liking === post.id}
+                      >
+                        <Heart className={`h-4 w-4 ${liking === post.id ? 'animate-pulse' : ''}`} />
                         {post.likes || 0}
                       </Button>
                       <Button variant="ghost" size="sm" className="gap-1 text-foreground/60 hover:text-primary">
