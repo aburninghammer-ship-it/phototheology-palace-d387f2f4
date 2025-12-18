@@ -147,7 +147,7 @@ export default function LivingManna() {
             <p className="text-foreground/80 font-medium">
               Your discipleship home — study, fellowship, and grow together
             </p>
-            {(subscription.church.churchRole === 'admin' || subscription.church.churchRole === 'leader') && (
+            {subscription.church.churchRole === 'admin' && (
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -155,7 +155,7 @@ export default function LivingManna() {
                 onClick={() => navigate('/church-admin')}
               >
                 <Users className="h-4 w-4 mr-2" />
-                Leader Dashboard
+                Church Admin
               </Button>
             )}
           </div>
