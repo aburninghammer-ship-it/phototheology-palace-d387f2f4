@@ -7,7 +7,7 @@ import { useChurchMembership } from "@/hooks/useChurchMembership";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Home, Users, BookOpen, Heart, Flame, ArrowRight, MessagesSquare, Sprout, Sun, Moon, Sparkles } from "lucide-react";
+import { Loader2, Home, Users, BookOpen, Heart, Flame, ArrowRight, MessagesSquare, Sprout, Sun, Moon, Sparkles, ArrowLeft, BookMarked } from "lucide-react";
 import { useTheme } from "next-themes";
 import { SmallGroupsHub } from "@/components/living-manna/SmallGroupsHub";
 import { MemberHome } from "@/components/living-manna/MemberHome";
@@ -15,21 +15,33 @@ import { LearnTab } from "@/components/living-manna/LearnTab";
 import { ConnectTab } from "@/components/living-manna/ConnectTab";
 import { GrowTab } from "@/components/living-manna/GrowTab";
 import { YouthSpace } from "@/components/living-manna/YouthSpace";
+import { PersonalDevotionalDiary } from "@/components/living-manna/PersonalDevotionalDiary";
 import { DirectMessagesProvider } from "@/contexts/DirectMessagesContext";
-
+import { useIsMobile } from "@/hooks/use-mobile";
 export default function LivingManna() {
   const { user } = useAuth();
   const { subscription, loading: subscriptionLoading } = useSubscription();
   const { isMember, churchId: memberChurchId, isLoading: membershipLoading } = useChurchMembership();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [churchName, setChurchName] = useState<string>("Living Manna Online Church");
   const [loading, setLoading] = useState(true);
   const { theme, setTheme } = useTheme();
+  const isMobile = useIsMobile();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'home');
 
   // Get church ID from URL or from membership
   const urlChurchId = searchParams.get('church');
   const effectiveChurchId = urlChurchId || memberChurchId || subscription.church.churchId;
+
+  // Handle tab changes
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setSearchParams(prev => {
+      prev.set('tab', tab);
+      return prev;
+    });
+  };
 
   useEffect(() => {
     if (subscriptionLoading || membershipLoading) return;
@@ -133,75 +145,115 @@ export default function LivingManna() {
 
   return (
     <DirectMessagesProvider>
-      <div className="min-h-screen gradient-dreamy p-4 md:p-8">
-        <div className="container mx-auto max-w-7xl">
-          {/* Header */}
-          <Card variant="glass" className="mb-6 p-4 md:p-6">
+      <div className="min-h-screen gradient-dreamy pb-20 md:pb-8">
+        {/* Mobile Header */}
+        {isMobile && (
+          <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border px-4 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Flame className="h-7 w-7 md:h-8 md:w-8 text-primary" />
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">{churchName}</h1>
-                  <p className="text-sm text-muted-foreground hidden sm:block">
-                    Your discipleship home
-                  </p>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/dashboard')}
+                className="h-9 w-9"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div className="flex items-center gap-2 flex-1 justify-center">
+                <Flame className="h-5 w-5 text-primary" />
+                <h1 className="text-lg font-bold truncate">{churchName}</h1>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="h-9 w-9"
+              >
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <div className="container mx-auto max-w-7xl p-4 md:p-8">
+          {/* Desktop Header */}
+          {!isMobile && (
+            <Card variant="glass" className="mb-6 p-4 md:p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Flame className="h-8 w-8 text-primary" />
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-foreground">{churchName}</h1>
+                    <p className="text-sm text-muted-foreground">
+                      Your discipleship home
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {subscription.church.churchRole === 'admin' && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => navigate('/church-admin')}
+                    >
+                      <Users className="h-4 w-4 mr-2" />
+                      Admin
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  >
+                    {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                  </Button>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {subscription.church.churchRole === 'admin' && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => navigate('/church-admin')}
-                    className="hidden sm:flex"
-                  >
-                    <Users className="h-4 w-4 mr-2" />
-                    Admin
-                  </Button>
-                )}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                >
-                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                </Button>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          )}
 
-          {/* Main Content - Simplified 5 Tabs */}
-          <Card variant="glass" className="p-4 md:p-6">
-            <Tabs defaultValue="home" className="space-y-6">
-              <TabsList className="bg-card/50 backdrop-blur grid grid-cols-3 sm:grid-cols-6 w-full h-auto gap-1 p-1 border border-border/50 rounded-lg">
-                <TabsTrigger value="home" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Home className="h-4 w-4" />
-                  <span className="text-xs sm:text-sm">Home</span>
-                </TabsTrigger>
-                <TabsTrigger value="groups" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Users className="h-4 w-4" />
-                  <span className="text-xs sm:text-sm">Groups</span>
-                </TabsTrigger>
-                <TabsTrigger value="learn" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <BookOpen className="h-4 w-4" />
-                  <span className="text-xs sm:text-sm">Learn</span>
-                </TabsTrigger>
-                <TabsTrigger value="connect" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <MessagesSquare className="h-4 w-4" />
-                  <span className="text-xs sm:text-sm">Connect</span>
-                </TabsTrigger>
-                <TabsTrigger value="youth" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Sparkles className="h-4 w-4" />
-                  <span className="text-xs sm:text-sm">Youth</span>
-                </TabsTrigger>
-                <TabsTrigger value="grow" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Sprout className="h-4 w-4" />
-                  <span className="text-xs sm:text-sm">Grow</span>
-                </TabsTrigger>
-              </TabsList>
+          {/* Main Content */}
+          <Card variant="glass" className="p-3 md:p-6">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 md:space-y-6">
+              {/* Mobile Tab List - Scrollable */}
+              <div className="overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0">
+                <TabsList className="bg-card/50 backdrop-blur inline-flex md:grid md:grid-cols-7 w-auto md:w-full h-auto gap-1 p-1 border border-border/50 rounded-lg min-w-max md:min-w-0">
+                  <TabsTrigger value="home" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
+                    <Home className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Home</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="diary" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
+                    <BookMarked className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Diary</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="groups" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
+                    <Users className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Groups</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="learn" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
+                    <BookOpen className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Learn</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="connect" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
+                    <MessagesSquare className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Connect</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="youth" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
+                    <Sparkles className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Youth</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="grow" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
+                    <Sprout className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Grow</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
               <TabsContent value="home">
                 <MemberHome churchId={effectiveChurchId!} churchName={churchName} />
+              </TabsContent>
+
+              <TabsContent value="diary">
+                <PersonalDevotionalDiary />
               </TabsContent>
 
               <TabsContent value="groups">

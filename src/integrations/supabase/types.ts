@@ -6859,6 +6859,45 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_devotional_diary: {
+        Row: {
+          created_at: string
+          entry_date: string
+          gratitude_notes: string | null
+          id: string
+          prayer_points: string[] | null
+          reflection: string
+          scripture_reference: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_date?: string
+          gratitude_notes?: string | null
+          id?: string
+          prayer_points?: string[] | null
+          reflection: string
+          scripture_reference?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entry_date?: string
+          gratitude_notes?: string | null
+          id?: string
+          prayer_points?: string[] | null
+          reflection?: string
+          scripture_reference?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       personalized_drills: {
         Row: {
           addresses_weakness: boolean | null

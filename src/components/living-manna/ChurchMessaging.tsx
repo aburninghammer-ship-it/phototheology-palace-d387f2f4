@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2, MessageCircle, Send, Search, Users } from "lucide-react";
+import { Loader2, MessageCircle, Send, Search, Users, ArrowLeft } from "lucide-react";
 import { useDirectMessagesContext } from "@/contexts/DirectMessagesContext";
 
 interface ChurchMember {
@@ -125,9 +125,9 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
   }
 
   return (
-    <div className="grid lg:grid-cols-3 gap-6">
-      {/* Members List */}
-      <Card variant="glass" className="lg:col-span-1">
+    <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-6">
+      {/* Members List - Full width on mobile when no conversation selected */}
+      <Card variant="glass" className={`lg:col-span-1 ${activeConversationId && 'hidden lg:block'}`}>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
             <Users className="h-5 w-5" />
@@ -144,7 +144,7 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <ScrollArea className="h-[400px]">
+          <ScrollArea className="h-[350px] lg:h-[400px]">
             <div className="p-2 space-y-1">
               {filteredMembers.length === 0 ? (
                 <p className="text-center text-foreground/50 py-8 text-sm">
@@ -160,7 +160,7 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
                     }`}
                     disabled={startingConversation}
                   >
-                    <Avatar className="h-10 w-10">
+                    <Avatar className="h-10 w-10 shrink-0">
                       <AvatarImage src={member.profile?.avatar_url || undefined} />
                       <AvatarFallback>
                         {(member.profile?.display_name || member.profile?.username || 'U').charAt(0).toUpperCase()}
@@ -174,7 +174,7 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
                         {member.role}
                       </Badge>
                     </div>
-                    <MessageCircle className="h-4 w-4 text-primary" />
+                    <MessageCircle className="h-4 w-4 text-primary shrink-0" />
                   </button>
                 ))
               )}
@@ -183,19 +183,31 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
         </CardContent>
       </Card>
 
-      {/* Chat Area */}
-      <Card variant="glass" className="lg:col-span-2">
+      {/* Chat Area - Full width on mobile */}
+      <Card variant="glass" className={`lg:col-span-2 ${!activeConversationId && 'hidden lg:block'}`}>
         <CardHeader className="pb-3 border-b border-border/30">
           {selectedMember ? (
             <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
+              {/* Mobile back button */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="lg:hidden h-9 w-9 shrink-0"
+                onClick={() => {
+                  setActiveConversationId(null);
+                  setSelectedMember(null);
+                }}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <Avatar className="h-10 w-10 shrink-0">
                 <AvatarImage src={selectedMember.profile?.avatar_url || undefined} />
                 <AvatarFallback>
                   {(selectedMember.profile?.display_name || selectedMember.profile?.username || 'U').charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <CardTitle className="text-lg text-foreground">
+              <div className="min-w-0 flex-1">
+                <CardTitle className="text-lg text-foreground truncate">
                   {selectedMember.profile?.display_name || selectedMember.profile?.username}
                 </CardTitle>
                 <p className="text-sm text-foreground/60 capitalize">{selectedMember.role}</p>
@@ -207,7 +219,7 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
             </CardTitle>
           )}
         </CardHeader>
-        <CardContent className="p-0 flex flex-col h-[400px]">
+        <CardContent className="p-0 flex flex-col h-[350px] lg:h-[400px]">
           {activeConversationId ? (
             <>
               <ScrollArea className="flex-1 p-4">
@@ -218,13 +230,13 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
                       className={`flex ${msg.sender_id === user?.id ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
-                        className={`max-w-[70%] px-4 py-2 rounded-2xl ${
+                        className={`max-w-[80%] lg:max-w-[70%] px-4 py-2 rounded-2xl ${
                           msg.sender_id === user?.id
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
-                        <p className="text-sm">{msg.content}</p>
+                        <p className="text-sm break-words">{msg.content}</p>
                       </div>
                     </div>
                   ))}
@@ -242,9 +254,14 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                    className="bg-background/50"
+                    className="bg-background/50 flex-1"
                   />
-                  <Button onClick={handleSendMessage} disabled={isLoading || !messageInput.trim()}>
+                  <Button 
+                    onClick={handleSendMessage} 
+                    disabled={isLoading || !messageInput.trim()}
+                    size="icon"
+                    className="shrink-0"
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
@@ -252,7 +269,7 @@ export function ChurchMessaging({ churchId }: ChurchMessagingProps) {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
+              <div className="text-center px-4">
                 <MessageCircle className="h-12 w-12 text-foreground/30 mx-auto mb-4" />
                 <p className="text-foreground/60">Select a church member</p>
                 <p className="text-sm text-foreground/40">to start a private conversation</p>
