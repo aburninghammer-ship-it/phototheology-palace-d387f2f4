@@ -16,6 +16,7 @@ import { ConnectTab } from "@/components/living-manna/ConnectTab";
 import { GrowTab } from "@/components/living-manna/GrowTab";
 import { YouthSpace } from "@/components/living-manna/YouthSpace";
 import { PersonalDevotionalDiary } from "@/components/living-manna/PersonalDevotionalDiary";
+import { ExploitsHub } from "@/components/living-manna/ExploitsHub";
 import { DirectMessagesProvider } from "@/contexts/DirectMessagesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 export default function LivingManna() {
@@ -216,7 +217,7 @@ export default function LivingManna() {
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 md:space-y-6">
               {/* Mobile Tab List - Scrollable */}
               <div className="overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0">
-                <TabsList className="bg-card/50 backdrop-blur inline-flex md:grid md:grid-cols-7 w-auto md:w-full h-auto gap-1 p-1 border border-border/50 rounded-lg min-w-max md:min-w-0">
+                <TabsList className="bg-card/50 backdrop-blur inline-flex md:grid md:grid-cols-8 w-auto md:w-full h-auto gap-1 p-1 border border-border/50 rounded-lg min-w-max md:min-w-0">
                   <TabsTrigger value="home" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
                     <Home className="h-4 w-4" />
                     <span className="text-xs sm:text-sm">Home</span>
@@ -232,6 +233,10 @@ export default function LivingManna() {
                   <TabsTrigger value="learn" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
                     <BookOpen className="h-4 w-4" />
                     <span className="text-xs sm:text-sm">Learn</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="exploits" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
+                    <Zap className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Exploits</span>
                   </TabsTrigger>
                   <TabsTrigger value="connect" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground min-w-[60px]">
                     <MessagesSquare className="h-4 w-4" />
@@ -262,6 +267,10 @@ export default function LivingManna() {
 
               <TabsContent value="learn">
                 <LearnTab churchId={effectiveChurchId!} />
+              </TabsContent>
+
+              <TabsContent value="exploits">
+                <ExploitsHub churchId={effectiveChurchId!} />
               </TabsContent>
 
               <TabsContent value="connect">
