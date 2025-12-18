@@ -194,7 +194,7 @@ async function generateAndCacheAudio(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini-tts',
+        model: 'tts-1',
         input: commentary,
         voice: voice,
         speed: 1.0,
