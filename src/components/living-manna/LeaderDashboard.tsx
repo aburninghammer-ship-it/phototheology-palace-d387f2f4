@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   Users, Calendar, AlertTriangle, TrendingUp, 
-  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink, GraduationCap
+  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink, GraduationCap, Settings
 } from "lucide-react";
 import { CohortManagement } from "./CohortManagement";
 import { AttendanceTracker } from "./AttendanceTracker";
@@ -20,6 +20,7 @@ import { StudyFeed } from "./StudyFeed";
 import { SermonHub } from "./SermonHub";
 import { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
 import { TruthSeries } from "./TruthSeries";
+import { ChurchSettings } from "./admin/ChurchSettings";
 interface LeaderDashboardProps {
   churchId: string;
 }
@@ -235,6 +236,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
               </Badge>
             )}
           </TabsTrigger>
+          <TabsTrigger value="settings" className="gap-2">
+            <Settings className="h-4 w-4" />
+            Settings
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="small-groups">
@@ -271,6 +276,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
 
         <TabsContent value="escalations">
           <EscalationPanel churchId={churchId} onUpdate={loadDashboardStats} />
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <ChurchSettings churchId={churchId} />
         </TabsContent>
       </Tabs>
     </div>
