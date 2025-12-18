@@ -7,20 +7,13 @@ import { useChurchMembership } from "@/hooks/useChurchMembership";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight, GraduationCap, Shield, Calendar, MessageCircle, MessagesSquare, AlertTriangle, Sun, Moon } from "lucide-react";
+import { Loader2, Home, Users, BookOpen, Heart, Flame, ArrowRight, MessagesSquare, Sprout, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { SmallGroupsHub } from "@/components/living-manna/SmallGroupsHub";
-import { StudyFeed } from "@/components/living-manna/StudyFeed";
-import { SermonHub } from "@/components/living-manna/SermonHub";
 import { MemberHome } from "@/components/living-manna/MemberHome";
-import { StudyCycles } from "@/components/living-manna/StudyCycles";
-import { DiscipleshipPackages } from "@/components/living-manna/DiscipleshipPackages";
-import { LeaderOnboarding } from "@/components/living-manna/LeaderOnboarding";
-import { ChurchCommunity } from "@/components/living-manna/ChurchCommunity";
-import { ChurchMessaging } from "@/components/living-manna/ChurchMessaging";
-import { TruthSeries } from "@/components/living-manna/TruthSeries";
+import { LearnTab } from "@/components/living-manna/LearnTab";
+import { ConnectTab } from "@/components/living-manna/ConnectTab";
+import { GrowTab } from "@/components/living-manna/GrowTab";
 import { DirectMessagesProvider } from "@/contexts/DirectMessagesContext";
 
 export default function LivingManna() {
@@ -31,6 +24,7 @@ export default function LivingManna() {
   const navigate = useNavigate();
   const [churchName, setChurchName] = useState<string>("Living Manna Online Church");
   const [loading, setLoading] = useState(true);
+  const { theme, setTheme } = useTheme();
 
   // Get church ID from URL or from membership
   const urlChurchId = searchParams.get('church');
@@ -136,128 +130,89 @@ export default function LivingManna() {
     );
   }
 
-  const { theme, setTheme } = useTheme();
-
   return (
     <DirectMessagesProvider>
       <div className="min-h-screen gradient-dreamy p-4 md:p-8">
         <div className="container mx-auto max-w-7xl">
           {/* Header */}
-          <Card variant="glass" className="mb-8 p-6">
-            <div className="flex items-center justify-between mb-2">
+          <Card variant="glass" className="mb-6 p-4 md:p-6">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Flame className="h-8 w-8 text-primary" />
-                <h1 className="text-4xl font-bold text-foreground">{churchName}</h1>
+                <Flame className="h-7 w-7 md:h-8 md:w-8 text-primary" />
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">{churchName}</h1>
+                  <p className="text-sm text-muted-foreground hidden sm:block">
+                    Your discipleship home
+                  </p>
+                </div>
               </div>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="ml-4"
-              >
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
+              <div className="flex items-center gap-2">
+                {subscription.church.churchRole === 'admin' && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => navigate('/church-admin')}
+                    className="hidden sm:flex"
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Admin
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                >
+                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Button>
+              </div>
             </div>
-            <p className="text-muted-foreground font-medium">
-              Your discipleship home — study, fellowship, and grow together
-            </p>
-            {subscription.church.churchRole === 'admin' && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-3"
-                onClick={() => navigate('/church-admin')}
-              >
-                <Users className="h-4 w-4 mr-2" />
-                Church Admin
-              </Button>
-            )}
           </Card>
 
-          {/* Main Content Tabs */}
-          <Card variant="glass" className="p-6">
+          {/* Main Content - Simplified 5 Tabs */}
+          <Card variant="glass" className="p-4 md:p-6">
             <Tabs defaultValue="home" className="space-y-6">
-              <TabsList className="bg-card/50 backdrop-blur flex-wrap h-auto gap-1 p-1 border border-border/50 rounded-lg">
-              <TabsTrigger value="home" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Home className="h-4 w-4" />
-                Home
-              </TabsTrigger>
-              <TabsTrigger value="community" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <MessagesSquare className="h-4 w-4" />
-                Community
-              </TabsTrigger>
-              <TabsTrigger value="messages" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <MessageCircle className="h-4 w-4" />
-                Messages
-              </TabsTrigger>
-              <TabsTrigger value="small-groups" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Users className="h-4 w-4" />
-                Small Groups
-              </TabsTrigger>
-              <TabsTrigger value="studies" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <BookOpen className="h-4 w-4" />
-                Study Feed
-              </TabsTrigger>
-              <TabsTrigger value="cycles" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Calendar className="h-4 w-4" />
-                6-Week Cycles
-              </TabsTrigger>
-              <TabsTrigger value="discipleship" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <GraduationCap className="h-4 w-4" />
-                Discipleship
-              </TabsTrigger>
-              <TabsTrigger value="leader-training" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Shield className="h-4 w-4" />
-                Leader Training
-              </TabsTrigger>
-              <TabsTrigger value="sermons" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Video className="h-4 w-4" />
-                Sermons
-              </TabsTrigger>
-              <TabsTrigger value="truth-series" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Flame className="h-4 w-4" />
-                Truth Series
-              </TabsTrigger>
-            </TabsList>
+              <TabsList className="bg-card/50 backdrop-blur grid grid-cols-5 w-full h-auto gap-1 p-1 border border-border/50 rounded-lg">
+                <TabsTrigger value="home" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Home className="h-4 w-4" />
+                  <span className="text-xs sm:text-sm">Home</span>
+                </TabsTrigger>
+                <TabsTrigger value="groups" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Users className="h-4 w-4" />
+                  <span className="text-xs sm:text-sm">Groups</span>
+                </TabsTrigger>
+                <TabsTrigger value="learn" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <BookOpen className="h-4 w-4" />
+                  <span className="text-xs sm:text-sm">Learn</span>
+                </TabsTrigger>
+                <TabsTrigger value="connect" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <MessagesSquare className="h-4 w-4" />
+                  <span className="text-xs sm:text-sm">Connect</span>
+                </TabsTrigger>
+                <TabsTrigger value="grow" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Sprout className="h-4 w-4" />
+                  <span className="text-xs sm:text-sm">Grow</span>
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="home">
-              <MemberHome churchId={effectiveChurchId!} />
-            </TabsContent>
-
-            <TabsContent value="community">
-              <ChurchCommunity churchId={effectiveChurchId!} />
-            </TabsContent>
-
-            <TabsContent value="messages">
-              <ChurchMessaging churchId={effectiveChurchId!} />
-            </TabsContent>
-
-            <TabsContent value="small-groups">
-              <SmallGroupsHub churchId={effectiveChurchId!} />
-            </TabsContent>
-
-            <TabsContent value="studies">
-              <StudyFeed churchId={effectiveChurchId!} />
-            </TabsContent>
-
-            <TabsContent value="cycles">
-              <StudyCycles churchId={effectiveChurchId!} />
-            </TabsContent>
-
-            <TabsContent value="discipleship">
-              <DiscipleshipPackages churchId={effectiveChurchId!} />
-            </TabsContent>
-
-            <TabsContent value="leader-training">
-              <LeaderOnboarding churchId={effectiveChurchId!} />
-            </TabsContent>
-
-              <TabsContent value="sermons">
-                <SermonHub churchId={effectiveChurchId!} />
+              <TabsContent value="home">
+                <MemberHome churchId={effectiveChurchId!} />
               </TabsContent>
 
-              <TabsContent value="truth-series">
-                <TruthSeries churchId={effectiveChurchId!} />
+              <TabsContent value="groups">
+                <SmallGroupsHub churchId={effectiveChurchId!} />
+              </TabsContent>
+
+              <TabsContent value="learn">
+                <LearnTab churchId={effectiveChurchId!} />
+              </TabsContent>
+
+              <TabsContent value="connect">
+                <ConnectTab churchId={effectiveChurchId!} />
+              </TabsContent>
+
+              <TabsContent value="grow">
+                <GrowTab churchId={effectiveChurchId!} />
               </TabsContent>
             </Tabs>
           </Card>

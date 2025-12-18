@@ -18,3 +18,6 @@ export { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
 export { TruthSeries } from "./TruthSeries";
 export { ChurchCommunity } from "./ChurchCommunity";
 export { ChurchMessaging } from "./ChurchMessaging";
+export { LearnTab } from "./LearnTab";
+export { ConnectTab } from "./ConnectTab";
+export { GrowTab } from "./GrowTab";
