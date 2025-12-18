@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { SabbathRhythmStrip } from "./SabbathRhythmStrip";
 import { 
   Users, BookOpen, Video, Calendar, ArrowRight, 
   Flame, Heart, Star, Clock, CheckCircle2
@@ -124,6 +125,9 @@ export function MemberHome({ churchId }: MemberHomeProps) {
 
   return (
     <div className="space-y-6">
+      {/* Sabbath Rhythm Strip */}
+      <SabbathRhythmStrip />
+      
       {/* Welcome Section */}
       <Card variant="glass">
         <CardHeader>
