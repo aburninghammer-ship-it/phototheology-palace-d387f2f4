@@ -76,7 +76,7 @@ export function ChurchSettings({ churchId }: ChurchSettingsProps) {
 
   return (
     <div className="space-y-6">
-      <Card variant="glass">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Youtube className="h-5 w-5 text-red-500" />
