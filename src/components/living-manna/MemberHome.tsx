@@ -13,6 +13,7 @@ import { PrayerEntry } from "./PrayerEntry";
 import { DailyDevotion } from "./DailyDevotion";
 import { AnnouncementsBanner } from "./AnnouncementsBanner";
 import { NotificationAlerts } from "./NotificationAlerts";
+import { PublicAnnouncementsBoard } from "./PublicAnnouncementsBoard";
 import { PersonalDevotionalDiary } from "./PersonalDevotionalDiary";
 import {
   BookOpen, ArrowRight, Flame, Users, Star, ExternalLink
@@ -84,10 +85,13 @@ export function MemberHome({ churchId, churchName = "Living Manna" }: MemberHome
 
   return (
     <div className="space-y-6">
-      {/* Notification Alerts */}
+      {/* Public Announcements Board - Church-wide updates */}
+      <PublicAnnouncementsBoard churchId={churchId} />
+
+      {/* Personal Notifications - User-specific */}
       <NotificationAlerts churchId={churchId} />
 
-      {/* Announcements Banner */}
+      {/* Announcements Banner - Legacy support */}
       <AnnouncementsBanner churchId={churchId} />
 
       {/* Sabbath Rhythm - Always visible, contextual */}

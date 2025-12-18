@@ -18,9 +18,24 @@ interface NotificationAlertsProps {
   compact?: boolean;
 }
 
+// Personal notification types (not public announcements)
+const PERSONAL_NOTIFICATION_TYPES = [
+  'message', 'direct_message', 'prayer', 'achievement', 
+  'challenge', 'study', 'devotional', 'comment', 'reply',
+  'partnership', 'group_invite', 'mention'
+];
+
 export function NotificationAlerts({ churchId, compact = false }: NotificationAlertsProps) {
   const { user } = useAuth();
-  const { notifications, unreadCount, loading, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications: allNotifications, unreadCount: totalUnread, loading, markAsRead, markAllAsRead } = useNotifications();
+  
+  // Filter to only personal notifications (not public announcements)
+  const notifications = allNotifications.filter(n => 
+    PERSONAL_NOTIFICATION_TYPES.includes(n.type) || 
+    !['announcement', 'church_announcement', 'gem_release', 'new_study', 'quarterly_update', 'event', 'church_reminder', 'feature_release'].includes(n.type)
+  );
+  const unreadCount = notifications.filter(n => !n.is_read).length;
+  
   const [expanded, setExpanded] = useState(false);
 
   const getNotificationIcon = (type: string) => {
