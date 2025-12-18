@@ -35,6 +35,7 @@ export default function ChurchAdmin() {
   const { user } = useAuth();
   const { subscription, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [church, setChurch] = useState<Church | null>(null);
   const [loading, setLoading] = useState(true);
   const [usedSeats, setUsedSeats] = useState(0);
@@ -193,8 +194,6 @@ export default function ChurchAdmin() {
   const availableSeats = church.max_seats - usedSeats;
   const hasTier2Access = church.tier === 'tier2' || church.tier === 'tier3';
   const hasTier3Access = church.tier === 'tier3';
-
-  const { theme, setTheme } = useTheme();
 
   return (
     <div className="min-h-screen gradient-dreamy p-4 md:p-8">
