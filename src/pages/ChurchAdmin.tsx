@@ -7,7 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Building2, Users, Mail, TrendingUp, Target, Sprout } from "lucide-react";
+import { Loader2, Building2, Users, Mail, TrendingUp, Target, Sprout, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import { ChurchOverview } from "@/components/churches/ChurchOverview";
 import { ChurchMembers } from "@/components/churches/ChurchMembers";
 import { ChurchInvitations } from "@/components/churches/ChurchInvitations";
@@ -191,21 +192,32 @@ export default function ChurchAdmin() {
   const hasTier2Access = church.tier === 'tier2' || church.tier === 'tier3';
   const hasTier3Access = church.tier === 'tier3';
 
+  const { theme, setTheme } = useTheme();
+
   return (
-    <div className="min-h-screen gradient-dreamy p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-8 glass-card p-6 rounded-2xl">
-          <div className="flex items-center gap-3 mb-2">
-            <Building2 className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold text-foreground">Living Manna Online Church</h1>
+        <div className="mb-8 bg-card border border-border p-6 rounded-2xl shadow-lg">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <Building2 className="h-8 w-8 text-primary" />
+              <h1 className="text-4xl font-bold text-foreground">Living Manna Online Church</h1>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
           </div>
-          <p className="text-foreground/80 font-medium">Church Administration Dashboard</p>
+          <p className="text-muted-foreground font-medium">Church Administration Dashboard</p>
         </div>
 
         {/* Quick Stats */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Card variant="glass">
+          <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-primary">Tier</CardTitle>
             </CardHeader>
@@ -218,7 +230,7 @@ export default function ChurchAdmin() {
             </CardContent>
           </Card>
 
-          <Card variant="glass">
+          <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-primary">Seats</CardTitle>
             </CardHeader>
@@ -226,13 +238,13 @@ export default function ChurchAdmin() {
               <div className="text-2xl font-bold text-foreground">
                 {usedSeats} / {church.max_seats}
               </div>
-              <p className="text-xs text-foreground/70 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {availableSeats} available
               </p>
             </CardContent>
           </Card>
 
-          <Card variant="glass">
+          <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-primary">Status</CardTitle>
             </CardHeader>
@@ -243,7 +255,7 @@ export default function ChurchAdmin() {
             </CardContent>
           </Card>
 
-          <Card variant="glass">
+          <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-primary">Billing</CardTitle>
             </CardHeader>
@@ -274,7 +286,7 @@ export default function ChurchAdmin() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="glass-card grid w-full grid-cols-6 lg:w-auto p-1">
+          <TabsList className="bg-muted border border-border rounded-lg grid w-full grid-cols-6 lg:w-auto p-1">
             <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Building2 className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>

@@ -108,7 +108,7 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
     description: string;
     trend?: "up" | "down" | "neutral";
   }) => (
-    <Card variant="glass" className="bg-card/80">
+    <Card className="bg-card border border-border">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-foreground">{title}</CardTitle>
         <Icon className="h-4 w-4 text-primary" />
@@ -187,7 +187,7 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
 
       {/* Quick Actions */}
       {stats.openEscalations > 0 && (
-        <Card variant="glass" className="border-amber-500/50">
+        <Card className="border-amber-500/50 bg-card">
           <CardContent className="flex items-center justify-between py-4">
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 text-amber-500" />

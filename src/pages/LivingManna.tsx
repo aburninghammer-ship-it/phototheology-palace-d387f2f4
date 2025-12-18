@@ -9,7 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight, GraduationCap, Shield, Calendar, MessageCircle, MessagesSquare, AlertTriangle } from "lucide-react";
+import { Loader2, Home, Users, BookOpen, Video, Heart, Flame, ExternalLink, ArrowRight, GraduationCap, Shield, Calendar, MessageCircle, MessagesSquare, AlertTriangle, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import { SmallGroupsHub } from "@/components/living-manna/SmallGroupsHub";
 import { StudyFeed } from "@/components/living-manna/StudyFeed";
 import { SermonHub } from "@/components/living-manna/SermonHub";
@@ -134,24 +135,36 @@ export default function LivingManna() {
     );
   }
 
+  const { theme, setTheme } = useTheme();
+
   return (
     <DirectMessagesProvider>
-      <div className="min-h-screen gradient-dreamy p-4 md:p-8">
+      <div className="min-h-screen bg-background p-4 md:p-8">
         <div className="container mx-auto max-w-7xl">
           {/* Header */}
-          <div className="mb-8 glass-card p-6 rounded-2xl">
-            <div className="flex items-center gap-3 mb-2">
-              <Flame className="h-8 w-8 text-primary" />
-              <h1 className="text-4xl font-bold text-foreground">{churchName}</h1>
+          <div className="mb-8 bg-card border border-border p-6 rounded-2xl shadow-lg">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <Flame className="h-8 w-8 text-primary" />
+                <h1 className="text-4xl font-bold text-foreground">{churchName}</h1>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="ml-4"
+              >
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
             </div>
-            <p className="text-foreground/80 font-medium">
+            <p className="text-muted-foreground font-medium">
               Your discipleship home — study, fellowship, and grow together
             </p>
             {subscription.church.churchRole === 'admin' && (
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="mt-3 bg-white/20 border-white/30 hover:bg-white/30"
+                className="mt-3"
                 onClick={() => navigate('/church-admin')}
               >
                 <Users className="h-4 w-4 mr-2" />
@@ -162,7 +175,7 @@ export default function LivingManna() {
 
           {/* Main Content Tabs */}
           <Tabs defaultValue="home" className="space-y-6">
-            <TabsList className="glass-card flex-wrap h-auto gap-1 p-1">
+            <TabsList className="bg-muted flex-wrap h-auto gap-1 p-1 border border-border rounded-lg">
               <TabsTrigger value="home" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <Home className="h-4 w-4" />
                 Home
