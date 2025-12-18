@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   Users, Calendar, AlertTriangle, TrendingUp, 
-  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink, GraduationCap, Settings, Bell
+  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink, GraduationCap, Settings, Bell, Shield
 } from "lucide-react";
 import { CohortManagement } from "./CohortManagement";
 import { AttendanceTracker } from "./AttendanceTracker";
@@ -16,12 +16,15 @@ import { EscalationPanel } from "./EscalationPanel";
 import { MemberPathwayView } from "./MemberPathwayView";
 import { SanctuaryJourneyDashboard } from "./sanctuary-journey";
 import { SmallGroupsHub } from "./SmallGroupsHub";
+import { SmallGroupStudyGenerator } from "./SmallGroupStudyGenerator";
+import { MinistryLeadershipManager } from "./MinistryLeadershipManager";
 import { StudyFeed } from "./StudyFeed";
 import { SermonHub } from "./SermonHub";
 import { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
 import { TruthSeries } from "./TruthSeries";
 import { ChurchSettings } from "./admin/ChurchSettings";
 import { AnnouncementsAdmin } from "./admin/AnnouncementsAdmin";
+
 interface LeaderDashboardProps {
   churchId: string;
 }
@@ -213,6 +216,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
             <Flame className="h-4 w-4" />
             Small Groups
           </TabsTrigger>
+          <TabsTrigger value="generate-study" className="gap-2">
+            <BookOpen className="h-4 w-4" />
+            Generate Study
+          </TabsTrigger>
           <TabsTrigger value="truth-series" className="gap-2">
             <GraduationCap className="h-4 w-4" />
             Truth Series
@@ -237,6 +244,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
               </Badge>
             )}
           </TabsTrigger>
+          <TabsTrigger value="leadership" className="gap-2">
+            <Shield className="h-4 w-4" />
+            Leadership
+          </TabsTrigger>
           <TabsTrigger value="announcements" className="gap-2">
             <Bell className="h-4 w-4" />
             Announcements
@@ -249,6 +260,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
 
         <TabsContent value="small-groups">
           <SmallGroupsHub churchId={churchId} />
+        </TabsContent>
+
+        <TabsContent value="generate-study">
+          <SmallGroupStudyGenerator churchId={churchId} />
         </TabsContent>
 
         <TabsContent value="truth-series">
@@ -281,6 +296,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
 
         <TabsContent value="escalations">
           <EscalationPanel churchId={churchId} onUpdate={loadDashboardStats} />
+        </TabsContent>
+
+        <TabsContent value="leadership">
+          <MinistryLeadershipManager churchId={churchId} />
         </TabsContent>
 
         <TabsContent value="announcements">

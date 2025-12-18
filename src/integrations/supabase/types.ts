@@ -6259,6 +6259,64 @@ export type Database = {
           },
         ]
       }
+      ministry_leaders: {
+        Row: {
+          assigned_by: string | null
+          assigned_group_id: string | null
+          church_id: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          role: Database["public"]["Enums"]["ministry_role"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          assigned_group_id?: string | null
+          church_id: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          role: Database["public"]["Enums"]["ministry_role"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          assigned_by?: string | null
+          assigned_group_id?: string | null
+          church_id?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          role?: Database["public"]["Enums"]["ministry_role"]
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ministry_leaders_assigned_group_id_fkey"
+            columns: ["assigned_group_id"]
+            isOneToOne: false
+            referencedRelation: "small_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_leaders_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_leaders_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ministry_templates: {
         Row: {
           budget_estimate: number | null
@@ -9376,6 +9434,85 @@ export type Database = {
           },
         ]
       }
+      small_group_studies: {
+        Row: {
+          action_challenge: string | null
+          christ_synthesis: string | null
+          church_id: string
+          created_at: string | null
+          created_by: string
+          description: string | null
+          discussion_questions: string[] | null
+          group_id: string
+          id: string
+          key_passages: string[] | null
+          scheduled_for: string | null
+          status: string | null
+          study_content: Json | null
+          title: string
+          updated_at: string | null
+          week_number: number | null
+        }
+        Insert: {
+          action_challenge?: string | null
+          christ_synthesis?: string | null
+          church_id: string
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          discussion_questions?: string[] | null
+          group_id: string
+          id?: string
+          key_passages?: string[] | null
+          scheduled_for?: string | null
+          status?: string | null
+          study_content?: Json | null
+          title: string
+          updated_at?: string | null
+          week_number?: number | null
+        }
+        Update: {
+          action_challenge?: string | null
+          christ_synthesis?: string | null
+          church_id?: string
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          discussion_questions?: string[] | null
+          group_id?: string
+          id?: string
+          key_passages?: string[] | null
+          scheduled_for?: string | null
+          status?: string | null
+          study_content?: Json | null
+          title?: string
+          updated_at?: string | null
+          week_number?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "small_group_studies_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "small_group_studies_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "small_group_studies_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "small_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       small_groups: {
         Row: {
           church_id: string
@@ -12393,6 +12530,14 @@ export type Database = {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
       }
+      has_ministry_role: {
+        Args: {
+          _church_id: string
+          _role: Database["public"]["Enums"]["ministry_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -12429,9 +12574,17 @@ export type Database = {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
       }
+      is_ministry_leader: {
+        Args: { _church_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_palace_owner: { Args: { _user_id: string }; Returns: boolean }
       is_player_in_game: {
         Args: { _game_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_site_admin: {
+        Args: { _church_id: string; _user_id: string }
         Returns: boolean
       }
       is_study_owner: {
@@ -12471,6 +12624,13 @@ export type Database = {
         | "bible_worker"
         | "guest"
       church_tier: "tier1" | "tier2" | "tier3"
+      ministry_role:
+        | "site_admin"
+        | "small_group_leader"
+        | "evangelism_lead"
+        | "prayer_lead"
+        | "sabbath_school_lead"
+        | "youth_lead"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -12607,6 +12767,14 @@ export const Constants = {
         "guest",
       ],
       church_tier: ["tier1", "tier2", "tier3"],
+      ministry_role: [
+        "site_admin",
+        "small_group_leader",
+        "evangelism_lead",
+        "prayer_lead",
+        "sabbath_school_lead",
+        "youth_lead",
+      ],
     },
   },
 } as const
