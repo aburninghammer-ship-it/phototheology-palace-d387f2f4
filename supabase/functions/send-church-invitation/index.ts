@@ -7,6 +7,18 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const withTimeout = async <T,>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  label: string
+): Promise<T> => {
+  const timeout = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs);
+  });
+
+  return (await Promise.race([promise, timeout])) as T;
+};
+
 interface ChurchInvitationRequest {
   recipientEmail: string;
   recipientName?: string;
@@ -157,13 +169,24 @@ serve(async (req) => {
 
     console.log('send-church-invitation: Sending email via Resend...');
 
-    const { data: emailData, error: resendError } = await resend.emails.send({
-      from: "Living Manna <noreply@livingmanna.church>",
-      to: [recipientEmail],
-      subject: `🙏 You're Invited to Join ${churchName} on Phototheology!`,
-      html: emailHtml,
-    });
+    const sendStartedAt = Date.now();
 
+    const { data: emailData, error: resendError } = await withTimeout(
+      resend.emails.send({
+        from: "Living Manna <noreply@livingmanna.church>",
+        to: [recipientEmail],
+        subject: `🙏 You're Invited to Join ${churchName} on Phototheology!`,
+        html: emailHtml,
+      }),
+      15000,
+      'Resend email send'
+    );
+
+    console.log(
+      'send-church-invitation: Resend finished in',
+      Date.now() - sendStartedAt,
+      'ms'
+    );
     if (resendError) {
       console.error('Resend email error:', resendError);
       return new Response(
