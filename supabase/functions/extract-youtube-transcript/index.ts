@@ -18,7 +18,22 @@ function extractVideoId(url: string): string | null {
   return null;
 }
 
-async function fetchYouTubeTranscript(videoId: string): Promise<string> {
+function extractChannelFromUrl(url: string): string | null {
+  const patterns = [
+    /youtube\.com\/@([^\/\?]+)/i,
+    /youtube\.com\/channel\/([^\/\?]+)/i,
+    /youtube\.com\/c\/([^\/\?]+)/i,
+    /youtube\.com\/user\/([^\/\?]+)/i,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1].toLowerCase();
+  }
+  return null;
+}
+
+async function fetchYouTubeTranscript(videoId: string, churchChannelUrl?: string): Promise<{ transcript: string; channelId?: string }> {
   // Fetch the YouTube page to get caption track info
   const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
   const response = await fetch(watchUrl, {
@@ -32,6 +47,52 @@ async function fetchYouTubeTranscript(videoId: string): Promise<string> {
   }
   
   const html = await response.text();
+  
+  // Validate channel if church channel URL is provided
+  if (churchChannelUrl) {
+    const churchChannelId = extractChannelFromUrl(churchChannelUrl);
+    
+    if (churchChannelId) {
+      // Look for channel info in the page
+      const channelPatterns = [
+        /"ownerChannelName":"([^"]+)"/,
+        /"channelId":"([^"]+)"/,
+        /@([a-zA-Z0-9_-]+)/,
+        /\/channel\/([^"\/]+)/,
+        /"author":"([^"]+)"/
+      ];
+      
+      let foundChannelId: string | null = null;
+      for (const pattern of channelPatterns) {
+        const match = html.match(pattern);
+        if (match) {
+          foundChannelId = match[1].toLowerCase();
+          break;
+        }
+      }
+      
+      // Also check for the channel handle in the page
+      const handleMatch = html.match(/"vanityChannelUrl":"https?:\/\/www\.youtube\.com\/@([^"]+)"/);
+      const channelNameMatch = html.match(/"ownerChannelName":"([^"]+)"/);
+      
+      // Get all possible identifiers from the video page
+      const videoChannelIdentifiers: string[] = [];
+      if (foundChannelId) videoChannelIdentifiers.push(foundChannelId);
+      if (handleMatch) videoChannelIdentifiers.push(handleMatch[1].toLowerCase());
+      if (channelNameMatch) videoChannelIdentifiers.push(channelNameMatch[1].toLowerCase().replace(/\s+/g, ''));
+      
+      // Check if any identifier matches the church channel
+      const churchIdentifier = churchChannelId.toLowerCase();
+      const isFromChurchChannel = videoChannelIdentifiers.some(id => 
+        id.includes(churchIdentifier) || churchIdentifier.includes(id)
+      );
+      
+      if (!isFromChurchChannel && videoChannelIdentifiers.length > 0) {
+        console.log(`Channel validation failed. Church: ${churchChannelId}, Video: ${videoChannelIdentifiers.join(', ')}`);
+        throw new Error('This video is not from your church\'s YouTube channel. Only videos from your registered channel can be used.');
+      }
+    }
+  }
   
   // Extract caption track URL from the page
   const captionMatch = html.match(/"captionTracks":\s*\[(.*?)\]/);
@@ -77,7 +138,7 @@ async function fetchYouTubeTranscript(videoId: string): Promise<string> {
     }
   }
   
-  return segments.join(' ');
+  return { transcript: segments.join(' ') };
 }
 
 serve(async (req) => {
@@ -86,7 +147,7 @@ serve(async (req) => {
   }
 
   try {
-    const { youtubeUrl } = await req.json();
+    const { youtubeUrl, churchChannelUrl } = await req.json();
     
     if (!youtubeUrl) {
       return new Response(
@@ -104,23 +165,26 @@ serve(async (req) => {
     }
     
     console.log(`Extracting transcript for video: ${videoId}`);
+    if (churchChannelUrl) {
+      console.log(`Validating against church channel: ${churchChannelUrl}`);
+    }
     
-    const transcript = await fetchYouTubeTranscript(videoId);
+    const result = await fetchYouTubeTranscript(videoId, churchChannelUrl);
     
-    if (!transcript || transcript.length < 100) {
+    if (!result.transcript || result.transcript.length < 100) {
       return new Response(
         JSON.stringify({ error: 'Could not extract sufficient transcript from this video' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     
-    console.log(`Extracted transcript length: ${transcript.length} characters`);
+    console.log(`Extracted transcript length: ${result.transcript.length} characters`);
     
     return new Response(
       JSON.stringify({ 
-        transcript,
+        transcript: result.transcript,
         videoId,
-        characterCount: transcript.length
+        characterCount: result.transcript.length
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

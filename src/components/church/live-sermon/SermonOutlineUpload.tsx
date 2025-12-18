@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, X, Upload, BookOpen, Lightbulb, Youtube, FileText, Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Plus, X, Upload, BookOpen, Lightbulb, Youtube, FileText, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -64,6 +65,59 @@ export function SermonOutlineUpload({ churchId, onSessionCreated }: SermonOutlin
   ]);
   const [newPassage, setNewPassage] = useState<Record<string, string>>({});
   const [isCreating, setIsCreating] = useState(false);
+  
+  // Church YouTube channel info
+  const [churchYouTubeUrl, setChurchYouTubeUrl] = useState<string | null>(null);
+  const [churchYouTubeName, setChurchYouTubeName] = useState<string | null>(null);
+  const [isLoadingChannel, setIsLoadingChannel] = useState(true);
+
+  // Load church YouTube channel info
+  useEffect(() => {
+    const loadChurchChannel = async () => {
+      setIsLoadingChannel(true);
+      const { data } = await supabase
+        .from('churches')
+        .select('youtube_channel_url, youtube_channel_name')
+        .eq('id', churchId)
+        .single();
+      
+      setChurchYouTubeUrl(data?.youtube_channel_url || null);
+      setChurchYouTubeName(data?.youtube_channel_name || null);
+      setIsLoadingChannel(false);
+    };
+    loadChurchChannel();
+  }, [churchId]);
+
+  // Check if URL is from church's YouTube channel
+  const isFromChurchChannel = (url: string): boolean => {
+    if (!churchYouTubeUrl || !url) return false;
+    
+    // Extract channel identifier from church URL
+    const getChannelId = (channelUrl: string): string | null => {
+      const patterns = [
+        /youtube\.com\/@([^\/\?]+)/i,
+        /youtube\.com\/channel\/([^\/\?]+)/i,
+        /youtube\.com\/c\/([^\/\?]+)/i,
+        /youtube\.com\/user\/([^\/\?]+)/i,
+      ];
+      for (const pattern of patterns) {
+        const match = channelUrl.match(pattern);
+        if (match) return match[1].toLowerCase();
+      }
+      return null;
+    };
+    
+    const churchChannelId = getChannelId(churchYouTubeUrl);
+    if (!churchChannelId) return false;
+    
+    // For video URLs, check if the URL contains the channel reference
+    // This is a simplified check - the edge function will do full validation
+    const urlLower = url.toLowerCase();
+    return urlLower.includes(churchChannelId) || 
+           urlLower.includes(churchYouTubeUrl.toLowerCase().split('/').pop() || '');
+  };
+
+  const hasYouTubeChannel = !!churchYouTubeUrl;
 
   const addPoint = () => {
     setPoints([...points, { id: crypto.randomUUID(), text: "", passages: [], suggestedRooms: [] }]);
@@ -118,10 +172,19 @@ export function SermonOutlineUpload({ churchId, onSessionCreated }: SermonOutlin
       return;
     }
 
+    // Validate it's from the church's channel
+    if (!hasYouTubeChannel) {
+      toast.error("No YouTube channel configured for this church. Please set it up in church settings first.");
+      return;
+    }
+
     setIsExtractingTranscript(true);
     try {
       const { data, error } = await supabase.functions.invoke("extract-youtube-transcript", {
-        body: { youtubeUrl: youtubeVideoUrl.trim() }
+        body: { 
+          youtubeUrl: youtubeVideoUrl.trim(),
+          churchChannelUrl: churchYouTubeUrl 
+        }
       });
 
       if (error) throw error;
@@ -237,6 +300,28 @@ export function SermonOutlineUpload({ churchId, onSessionCreated }: SermonOutlin
           </TabsList>
 
           <TabsContent value="youtube" className="space-y-4 mt-4">
+            {/* Channel Status */}
+            {isLoadingChannel ? (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Loading channel info...
+              </div>
+            ) : hasYouTubeChannel ? (
+              <Alert className="border-primary/30 bg-primary/5">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <AlertDescription>
+                  Videos must be from your church's channel: <strong>{churchYouTubeName || churchYouTubeUrl}</strong>
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  No YouTube channel configured. Please set your church's YouTube channel in church settings to enable this feature.
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="youtube-video">YouTube Video URL</Label>
               <div className="flex gap-2">
@@ -244,12 +329,13 @@ export function SermonOutlineUpload({ churchId, onSessionCreated }: SermonOutlin
                   id="youtube-video"
                   value={youtubeVideoUrl}
                   onChange={(e) => setYoutubeVideoUrl(e.target.value)}
-                  placeholder="https://youtube.com/watch?v=... or https://youtu.be/..."
+                  placeholder={hasYouTubeChannel ? "Paste a video URL from your church's channel..." : "Configure YouTube channel first"}
                   className="flex-1"
+                  disabled={!hasYouTubeChannel}
                 />
                 <Button 
                   onClick={extractTranscript}
-                  disabled={isExtractingTranscript || !youtubeVideoUrl.trim()}
+                  disabled={isExtractingTranscript || !youtubeVideoUrl.trim() || !hasYouTubeChannel}
                 >
                   {isExtractingTranscript ? (
                     <>
@@ -261,9 +347,11 @@ export function SermonOutlineUpload({ churchId, onSessionCreated }: SermonOutlin
                   )}
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Works with videos that have captions/subtitles enabled
-              </p>
+              {hasYouTubeChannel && (
+                <p className="text-xs text-muted-foreground">
+                  Only videos from {churchYouTubeName || "your church's channel"} can be used
+                </p>
+              )}
             </div>
 
             {extractedTranscript && (
