@@ -104,8 +104,9 @@ export default function BlueprintMarriage() {
                     {MARRIAGE_BLUEPRINT_INTRO.description}
                   </p>
                   <p className="mt-4 text-lg font-semibold italic text-primary">
-                    "{MARRIAGE_BLUEPRINT_INTRO.quote}"
+                    "{MARRIAGE_BLUEPRINT_INTRO.quote.text}"
                   </p>
+                  <p className="text-sm text-muted-foreground mt-1">— {MARRIAGE_BLUEPRINT_INTRO.quote.source}</p>
                 </CardContent>
               </Card>
             </section>

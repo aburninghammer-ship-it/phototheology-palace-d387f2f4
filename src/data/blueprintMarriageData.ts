@@ -5,6 +5,8 @@ export interface SanctuaryArticle {
   sanctuaryMeaning: string;
   marriagePrinciple: string;
   detailedTeaching: string;
+  hardTruth: string;
+  diagnosticQuestions: string[];
   reflectionQuestions: string[];
   coupleExercises: string[];
   scriptureReferences: string[];
@@ -15,29 +17,45 @@ export const SANCTUARY_MARRIAGE_ARTICLES: SanctuaryArticle[] = [
   {
     id: 1,
     name: "Altar of Sacrifice",
-    principle: "Surrendered Dating",
-    sanctuaryMeaning: "Death to self, consecration, surrender.",
-    marriagePrinciple: "Kill the things that would sabotage your future marriage.",
-    detailedTeaching: `Before dating begins, something must die:
+    principle: "Surrender Before Attraction",
+    sanctuaryMeaning: "Outer Court | Where relationships either begin correctly or collapse later",
+    marriagePrinciple: "Before God ever joins two people, He confronts the self. The altar is where self-centered desire dies, loneliness is surrendered, and identity is placed in God—not a partner.",
+    detailedTeaching: `**What the Altar teaches about relationships**
+
+Before God ever joins two people, He confronts the self.
+
+**The altar is where:**
+
+• Self-centered desire dies
+• Loneliness is surrendered
+• Lust is distinguished from love
+• Identity is placed in God, not a partner
+
+**Relationship Application:**
+
+• **Singleness is not a waiting room**—it is a refining fire
+• **Dating without surrender produces idolatry**
+• **Attraction without sacrifice becomes consumption**
+
+At the altar you sacrifice:
 • Unrealistic expectations
 • Lust-driven motives
 • Flesh-driven impulses
 • Past baggage you haven't surrendered
-• Narcissistic tendencies
 • Fear of commitment
 • Dating just to date
 • Seeking validation instead of covenant
 
-This is where you ask:
-• Am I dating for fun or for purpose?
-• Am I emotionally whole enough to date?
-• Have I sacrificed past soul-ties, trauma, or unhealed wounds?
-• Do I need inner healing before attaching myself to someone else?
-
-Dating begins with surrender.
+**Dating begins with surrender.
 Surrender prepares the heart for covenant.
-
-No altar = no survival.`,
+No altar = no survival.**`,
+    hardTruth: "If a person cannot surrender their appetites to God, they will not suddenly surrender them in marriage.",
+    diagnosticQuestions: [
+      "Am I dating to be completed, or to give?",
+      "Do I want this person—or do I want relief from loneliness?",
+      "Can I distinguish between attraction and idolatry?",
+      "Is my identity secure in God, or am I looking for someone to define me?"
+    ],
     reflectionQuestions: [
       "What unrealistic expectations am I carrying into dating?",
       "Am I dating for purpose or just for validation?",
@@ -46,28 +64,36 @@ No altar = no survival.`,
       "What flesh-driven motives need to die on this altar?"
     ],
     coupleExercises: [
+      "Establish non-negotiables before dating—write them down and commit to them.",
+      "Surrender timelines, pressure, and fear to God in prayer.",
+      "Kill fantasy early—fantasy is covenant poison. Name your fantasies and release them.",
       "Write down 3 things you need to 'sacrifice' before entering or continuing this relationship.",
-      "Have an honest conversation: What are we each bringing to this relationship that needs healing?",
-      "Pray individually: Ask God to reveal what needs to die before you can build something healthy.",
-      "Create a 'dating covenant': Define together what surrendered, purposeful dating looks like for you both."
+      "Pray individually: Ask God to reveal what needs to die before you can build something healthy."
     ],
     scriptureReferences: [
-      "Genesis 22:2 - Abraham's willingness to sacrifice Isaac",
-      "Romans 12:1 - Present your bodies a living sacrifice",
-      "Matthew 16:24 - Take up your cross and follow Me",
-      "Galatians 5:24 - Those who are Christ's have crucified the flesh"
+      "Romans 12:1 — 'Present your bodies a living sacrifice…'",
+      "Matthew 6:33 — 'Seek first the Kingdom…'",
+      "Genesis 2:18 — God provides companionship after purpose",
+      "Song of Solomon 8:4 — 'Do not stir up love before its time'",
+      "Galatians 5:24 — 'Those who are Christ's have crucified the flesh'"
     ],
-    prayerPrompt: "Lord, I surrender everything that would sabotage covenant love. Kill my selfish motives, unrealistic expectations, and unhealed wounds. Prepare my heart for covenant by teaching me to die to myself. Amen."
+    prayerPrompt: "Lord, I surrender everything that would sabotage covenant love. Kill my selfish motives, unrealistic expectations, and unhealed wounds. Let my identity rest in You—not in a relationship. Prepare my heart for covenant by teaching me to die to myself. Amen."
   },
   {
     id: 2,
     name: "The Laver",
-    principle: "Reflection, Character Check, & Clean Dating",
-    sanctuaryMeaning: "Washing, purification, self-examination.",
-    marriagePrinciple: "Get clean before you get close.",
-    detailedTeaching: `Dating requires cleansing:
+    principle: "Cleansing, Healing, and Self-Examination",
+    sanctuaryMeaning: "Outer Court | Where emotional health is addressed",
+    marriagePrinciple: "The laver reflects your face. This is where patterns, baggage, and wounds are confronted. Marriage does not heal trauma—it exposes it.",
+    detailedTeaching: `**What the Laver teaches about relationships**
 
-1. Self-Washing:
+The laver reflects your face.
+This is where patterns, baggage, and wounds are confronted.
+
+**Marriage does not heal trauma—it exposes it.**
+
+**1. Self-Washing:**
+
 • Emotional hygiene
 • Therapy if needed
 • Learning communication skills
@@ -76,22 +102,33 @@ No altar = no survival.`,
 
 A person who refuses the laver brings dirt into the relationship.
 
-2. Relationship-Washing:
+**2. Relationship-Washing:**
+
 This is where two people look honestly at:
-• Character
-• Patterns
+• Character and patterns
 • Emotional health
 • Anger issues
 • Boundaries
 • Compatibility
 • Spiritual maturity
 
-Dating is not blind chemistry—
-it is sober clarity.
+**Relationship Application:**
 
+• Healing from past relationships
+• Breaking cycles (abandonment, control, jealousy)
+• Learning healthy communication and boundaries
+
+Dating is not blind chemistry—it is sober clarity.
 The laver is where you wash away illusions and see the truth.
 
-No laver = deception, fantasy, and hidden danger.`,
+**No laver = deception, fantasy, and hidden danger.**`,
+    hardTruth: "Unwashed wounds bleed on innocent people.",
+    diagnosticQuestions: [
+      "What patterns repeat in my relationships?",
+      "Am I expecting someone else to fix what God is asking me to face?",
+      "What am I bringing into this relationship that needs healing?",
+      "Am I seeing this person clearly, or through fantasy?"
+    ],
     reflectionQuestions: [
       "What emotional 'dirt' am I carrying that I need to wash before dating?",
       "Have I done the work of therapy, healing, and self-awareness?",
@@ -100,49 +137,68 @@ No laver = deception, fantasy, and hidden danger.`,
       "What character traits do I need to honestly assess in myself and this person?"
     ],
     coupleExercises: [
-      "Each person: Spend 10 minutes in honest self-reflection. Write down 3 areas where you need personal growth.",
+      "Complete an emotional inventory before commitment—what patterns do you see?",
+      "Pursue premarital counseling before engagement.",
+      "Establish accountability and spiritual mentorship.",
       "Have a 'clean conversation': What are the difficult truths we need to address about our compatibility?",
-      "Create a character assessment: Rate yourself and each other on key traits (honesty, patience, emotional health, spiritual maturity).",
-      "Practice washing away illusions: Name one fantasy or unrealistic expectation you've had about this relationship."
+      "Create a character assessment: Rate yourself and each other on key traits (honesty, patience, emotional health, spiritual maturity)."
     ],
     scriptureReferences: [
-      "Exodus 30:17-21 - The laver instructions for priests",
-      "Ephesians 5:26 - Cleansed with the washing of water by the word",
-      "Psalm 139:23-24 - Search me, O God, and know my heart",
-      "James 1:23-25 - Looking into the mirror of God's Word"
+      "Exodus 30:17–21 — 'No service without washing'",
+      "Lamentations 3:40 — 'Let us search and try our ways…'",
+      "2 Corinthians 7:1 — 'Cleanse ourselves'",
+      "Psalm 51:10 — 'Create in me a clean heart…'",
+      "Psalm 139:23-24 — 'Search me, O God, and know my heart'"
     ],
-    prayerPrompt: "Lord, wash me clean before I get close to someone else. Show me my blind spots, my triggers, my unhealed places. Give us both clarity to see each other honestly—not through fantasy, but through Your truth. Amen."
+    prayerPrompt: "Lord, wash me clean before I get close to someone else. Show me my blind spots, my triggers, my unhealed places. Give us both clarity to see each other honestly—not through fantasy, but through Your truth. Help me stop expecting a relationship to heal what only You can fix. Amen."
   },
   {
     id: 3,
     name: "Table of Shewbread",
-    principle: "Friendship, Consistency & Nurturing Connection",
-    sanctuaryMeaning: "Nourishment, fellowship, consistent provision.",
-    marriagePrinciple: "Build friendship first. Feed the relationship slowly and consistently.",
-    detailedTeaching: `The shewbread teaches:
-• Stability
-• Predictability
-• Nurturing conversations
-• Sharing life
-• Developing emotional intimacy
-• Learning each other's rhythms
+    principle: "Provision, Friendship, and Daily Life",
+    sanctuaryMeaning: "Holy Place | Where love becomes practical",
+    marriagePrinciple: "Love is sustained by daily provision, not dramatic moments. The bread was consistent, shared, and replaced weekly. This is friendship, rhythm, and faithfulness.",
+    detailedTeaching: `**What the Table teaches about relationships**
+
+Love is sustained by daily provision, not dramatic moments.
+
+The bread was:
+• **Consistent**
+• **Shared**
+• **Replaced weekly**
+
+This is friendship, rhythm, and faithfulness.
+
+**Relationship Application:**
+
+• **Compatibility in values, faith, and lifestyle**
+• **Learning to do life together** (money, time, service)
+• **Friendship before romance**
 
 This is the "friendship phase" of dating—
 the most ignored and most necessary part.
 
-Questions from the Table:
+**Questions from the Table:**
+
 • Can we talk for hours?
 • Do we enjoy each other's presence?
 • Are we spiritually aligned?
 • Do we nourish each other or drain each other?
 • Are we consistent, or is this a roller coaster?
 
-Bread before wine.
+**Bread before wine.
 Friendship before romance.
-Stability before passion.
+Stability before passion.**
 
 If you feed a relationship steadily, trust grows.
 If you feed it junk (rush, feelings only, chaos), it starves.`,
+    hardTruth: "Chemistry fades. Character feeds.",
+    diagnosticQuestions: [
+      "Can we pray together comfortably?",
+      "Do we resolve conflict with respect?",
+      "Does this relationship nourish or exhaust me?",
+      "Are we building friendship or just riding feelings?"
+    ],
     reflectionQuestions: [
       "Can we have deep, meaningful conversations for hours?",
       "Do we genuinely enjoy each other's company without physical attraction?",
@@ -151,35 +207,53 @@ If you feed it junk (rush, feelings only, chaos), it starves.`,
       "Are we building a stable foundation or riding an emotional roller coaster?"
     ],
     coupleExercises: [
-      "Have a 'friendship date': Do something together that focuses on conversation and shared experience (no physical intimacy).",
-      "Share your life stories: Each person takes 30 minutes to share their background, dreams, and values.",
-      "Create a shared ritual: Establish one weekly consistent activity (coffee, walk, prayer time) that nourishes your connection.",
-      "Assessment: Rate your relationship on stability (1-10). Discuss what would make it more consistent and nourishing."
+      "Date in community, not secrecy—let others see your relationship.",
+      "Observe daily habits, not just special moments.",
+      "Test consistency over time—don't rush to conclusions.",
+      "Have a 'friendship date': Do something together that focuses on conversation and shared experience.",
+      "Create a shared ritual: Establish one weekly consistent activity (coffee, walk, prayer time) that nourishes your connection."
     ],
     scriptureReferences: [
-      "Leviticus 24:5-9 - The continual showbread instructions",
-      "Proverbs 17:17 - A friend loves at all times",
-      "Ecclesiastes 4:9-12 - Two are better than one",
-      "John 15:13-15 - Jesus calls His disciples friends"
+      "John 6:35 — 'I am the bread of life'",
+      "Amos 3:3 — 'Can two walk together, except they be agreed?'",
+      "Proverbs 27:17 — 'Iron sharpeneth iron'",
+      "Ecclesiastes 9:9 — 'Enjoy life together'",
+      "Proverbs 17:17 — 'A friend loves at all times'"
     ],
-    prayerPrompt: "Lord, help us build a friendship that goes deeper than attraction. Teach us to nourish each other consistently with conversation, time, and shared life. Let stability form the foundation of what we're building. Amen."
+    prayerPrompt: "Lord, help us build a friendship that goes deeper than attraction. Teach us to nourish each other consistently with conversation, time, and shared life. Let stability form the foundation of what we're building. Guard us from rushing past friendship. Amen."
   },
   {
     id: 4,
     name: "Golden Candlestick",
-    principle: "Clarity, Discernment & Holy Attraction",
-    sanctuaryMeaning: "Illumination, revelation, Holy Spirit light, clarity.",
-    marriagePrinciple: "See clearly. Discern the person. Let God illuminate the relationship.",
-    detailedTeaching: `At this stage God gives light:
-• Discernment
-• Red flags
+    principle: "Vision, Direction, and Spiritual Leadership",
+    sanctuaryMeaning: "Holy Place | Where purpose is clarified",
+    marriagePrinciple: "Marriage is not just about love—it is about mission. The light reveals direction, calling, and spiritual alignment.",
+    detailedTeaching: `**What the Candlestick teaches about relationships**
+
+Marriage is not just about love—it is about mission.
+
+**The light reveals:**
+• Direction
+• Calling
+• Spiritual alignment
+
+**Relationship Application:**
+
+• **Shared vision for life and service**
+• **Understanding gender roles biblically** (not culturally)
+• **Spiritual leadership rooted in humility**
+
+At this stage God gives light:
+• Discernment and clarity
+• Red flags revealed
 • Character revelation
 • Spiritual compatibility
 • Purpose alignment
 • Emotional maturity
 • Long-term vision
 
-The candlestick stage asks:
+**The candlestick stage asks:**
+
 • Where is this relationship going?
 • Are we progressing toward covenant or drifting?
 • Is this person walking in the Spirit?
@@ -187,11 +261,17 @@ The candlestick stage asks:
 
 This is where romantic attraction is tested by spiritual light.
 
-Emotions can blind you,
-but the candlestick exposes everything.
+Emotions can blind you, but the candlestick exposes everything.
 
-If God's Spirit dims your peace, don't ignore it.
-If God's Spirit brightens your peace, move forward.`,
+**If God's Spirit dims your peace, don't ignore it.
+If God's Spirit brightens your peace, move forward.**`,
+    hardTruth: "Two sincere Christians can still be unequally yoked if their visions differ.",
+    diagnosticQuestions: [
+      "Where are we going spiritually—together?",
+      "Does this relationship pull me closer to Christ or subtly replace Him?",
+      "Are we aligned on calling, children, ministry, money, and Sabbath?",
+      "Is God's Spirit giving me peace or warning me?"
+    ],
     reflectionQuestions: [
       "Is God's Spirit giving me peace or warning me about this relationship?",
       "What red flags have been illuminated that I've been ignoring?",
@@ -200,59 +280,79 @@ If God's Spirit brightens your peace, move forward.`,
       "Where is this relationship actually going—toward covenant or just drifting?"
     ],
     coupleExercises: [
-      "Separately, pray and ask God: 'Is this the person You have for me?' Write down what you sense.",
+      "Discuss calling, children, ministry, money, and Sabbath—get specific.",
+      "Pray for clarity, not emotional confirmation.",
+      "Let light expose incompatibility early—don't ignore it.",
       "Have a 'vision conversation': Where do each of you see this relationship going in 6 months, 1 year, 5 years?",
-      "Character assessment: List 5 character traits you see in each other. Are they aligned with what God desires?",
       "Create a spiritual alignment check: Discuss your beliefs, values, and spiritual practices. Are you walking in the same direction?"
     ],
     scriptureReferences: [
-      "Exodus 27:20-21 - Oil for the light to burn continually",
-      "Psalm 119:105 - Your word is a lamp to my feet and a light to my path",
-      "Proverbs 3:5-6 - Trust in the LORD and He will direct your paths",
-      "1 Corinthians 7:39 - Marry only in the Lord"
+      "John 8:12 — 'I am the light of the world'",
+      "Proverbs 29:18 — 'Without vision, people perish'",
+      "Ephesians 5:21–33 — 'Mutual submission under Christ'",
+      "Joshua 24:15 — 'As for me and my house…'",
+      "Psalm 119:105 — 'Thy word is a lamp unto my feet'"
     ],
-    prayerPrompt: "Lord, turn on the light. Show me clearly who this person really is. Illuminate any red flags, reveal their character, and give me discernment. If this is Your will, brighten my peace. If not, dim the flame. Amen."
+    prayerPrompt: "Lord, turn on the light. Show me clearly who this person really is. Illuminate any red flags, reveal their character, and give me discernment. If our visions are aligned, brighten my peace. If they're not, dim the flame. Help us see where we're going—together or apart. Amen."
   },
   {
     id: 5,
     name: "Altar of Incense",
-    principle: "Prayer, Emotional Intimacy & Unity",
-    sanctuaryMeaning: "Intercession, aroma, relational closeness, atmosphere.",
-    marriagePrinciple: "Build spiritual intimacy and emotional closeness without violating boundaries.",
-    detailedTeaching: `Before a couple enters the Most Holy Place (marriage),
-they must learn the altar of incense:
+    principle: "Prayer, Communication, and Intimacy",
+    sanctuaryMeaning: "Holy Place | Where love deepens",
+    marriagePrinciple: "True intimacy is spiritual before it is physical. Incense represents prayer, vulnerability, and ongoing communion.",
+    detailedTeaching: `**What the Incense teaches about relationships**
 
-1. Pray Together
-Not flesh-driven prayer—
-but covenant-forming prayer.
+True intimacy is spiritual before it is physical.
+
+**Incense represents:**
+• Prayer
+• Vulnerability
+• Ongoing communion
+
+**Relationship Application:**
+
+• **Praying together consistently**
+• **Learning to speak and listen with grace**
+• **Emotional intimacy guarded until covenant**
+
+**1. Pray Together**
+
+Not flesh-driven prayer—but covenant-forming prayer.
 • Pray about your future
 • Pray for each other's weaknesses
 • Pray over fears
 • Pray for clarity
 • Pray for holiness
 
-2. Build Emotional Intimacy
+**2. Build Emotional Intimacy**
+
 This is where you learn each other's:
-• Dreams
-• Wounds
-• Fears
-• Family patterns
+• Dreams and wounds
+• Fears and family patterns
 • Love languages
 • Emotional needs
 
-3. Protect Physical Boundaries
+**3. Protect Physical Boundaries**
+
 Incense is aroma, not fire.
 
 This is where couples learn:
-Emotional closeness without violating holiness.
-Spiritual intimacy without premature physical intimacy.
+**Emotional closeness without violating holiness.
+Spiritual intimacy without premature physical intimacy.**
 
-Too many couples get to the altar of incense
-and light the wrong fire.
+Too many couples get to the altar of incense and light the wrong fire.
 
-That fire belongs ONLY in the Most Holy Place—marriage.
+**That fire belongs ONLY in the Most Holy Place—marriage.**
 
 The incense stage prepares the atmosphere for covenant.`,
+    hardTruth: "Physical intimacy before spiritual intimacy creates confusion, not closeness.",
+    diagnosticQuestions: [
+      "Can we pray honestly together?",
+      "Do we bring problems to God or only to each other?",
+      "Are we protecting the fire that belongs only in marriage?",
+      "Is our intimacy building toward covenant or bypassing it?"
+    ],
     reflectionQuestions: [
       "Are we praying together regularly about our future?",
       "Have we built deep emotional intimacy without crossing physical boundaries?",
@@ -261,74 +361,88 @@ The incense stage prepares the atmosphere for covenant.`,
       "Is the atmosphere of our relationship holy, or are we compromising purity?"
     ],
     coupleExercises: [
-      "Commit to praying together 3 times this week about your relationship and future.",
+      "Establish prayer as a couple—commit to praying together regularly.",
+      "Set physical boundaries that protect clarity—write them down.",
+      "Use prayer to resolve conflict, not weaponize Scripture.",
       "Share vulnerably: Each person shares one wound from their past and one dream for the future.",
-      "Set clear physical boundaries: Write them down and commit to accountability.",
-      "Create an 'incense moment': Light a candle, pray together, and discuss how you're preparing for covenant (not just wedding)."
+      "Create an 'incense moment': Light a candle, pray together, and discuss how you're preparing for covenant."
     ],
     scriptureReferences: [
-      "Exodus 30:1-10 - The golden altar of incense",
-      "Psalm 141:2 - Let my prayer be set before You as incense",
-      "1 Thessalonians 4:3-5 - God's will is your sanctification; abstain from sexual immorality",
-      "Hebrews 13:4 - Marriage is honorable and the bed undefiled"
+      "Psalm 141:2 — 'Let my prayer be set forth… as incense'",
+      "Philippians 4:6–7 — 'Peace guards hearts and minds'",
+      "1 Peter 3:7 — 'Prayers hindered by relational disorder'",
+      "Hebrews 13:4 — 'Honor the marriage bed'",
+      "1 Thessalonians 4:3-5 — 'God's will is your sanctification'"
     ],
-    prayerPrompt: "Lord, teach us to build spiritual and emotional intimacy without violating Your boundaries. Help us pray together, know each other deeply, and protect the fire that belongs in marriage alone. Prepare us for covenant. Amen."
+    prayerPrompt: "Lord, teach us to build spiritual and emotional intimacy without violating Your boundaries. Help us pray together, know each other deeply, and protect the fire that belongs in marriage alone. Let our communion with You deepen our communion with each other. Amen."
   },
   {
     id: 6,
     name: "Ark of the Covenant",
-    principle: "Covenant Marriage (The Most Holy Place)",
-    sanctuaryMeaning: "God's throne, covenant law, glory, permanence, unity.",
-    marriagePrinciple: "Marriage is the Most Holy Place—entered with honor, reverence, covenant, and lifelong unity.",
-    detailedTeaching: `Marriage is not the wedding ceremony.
-It is the ark:
+    principle: "Marriage, Law, and Rest",
+    sanctuaryMeaning: "Most Holy Place | Where covenant is sealed",
+    marriagePrinciple: "Marriage is not a contract—it is a covenant before God. Inside the Ark: the Law (boundaries and faithfulness), the Manna (God's provision), the Rod (God's authority and order).",
+    detailedTeaching: `**What the Ark teaches about marriage**
 
-Inside the Ark (Your Marriage):
+Marriage is not a contract—it is a covenant before God.
 
-1. The Law — Covenant Boundaries
+**Inside the Ark:**
+• **The Law** — boundaries and faithfulness
+• **The Manna** — God's provision
+• **The Rod** — God's authority and order
+
+**1. The Law — Covenant Boundaries**
+
 Healthy marriage requires:
-• Faithfulness
-• Honesty
+• Faithfulness and honesty
 • Shared values
 • Mutual submission
-• Holiness
-• Accountability
+• Holiness and accountability
 • Clear roles & responsibilities
 
-The law doesn't restrict love—
-it protects it.
+The law doesn't restrict love—it protects it.
 
-2. The Manna — Daily Provision
-Marriage is not dramatic passion.
-It is daily provision:
+**2. The Manna — Daily Provision**
+
+Marriage is not dramatic passion. It is daily provision:
 • Daily kindness
 • Daily communication
 • Daily emotional nourishment
 • Daily forgiveness
 
-3. Aaron's Rod — Growth & Resurrection
-The rod budded inside the ark—
-symbolizing that marriage brings:
-• New life
-• New intimacy
-• Growth
-• Miracles
+**3. Aaron's Rod — Growth & Resurrection**
+
+The rod budded inside the ark—symbolizing that marriage brings:
+• New life and intimacy
+• Growth and miracles
 • Restoration even after conflict
 
-4. The Mercy Seat — Forgiveness & Unconditional Love
+**4. The Mercy Seat — Forgiveness & Unconditional Love**
+
 Every lasting marriage rests on:
-• Mercy
-• Grace
-• Compassion
-• Patience
+• Mercy and grace
+• Compassion and patience
 • Covering each other
 • Choosing forgiveness over revenge
 
-Above the law is mercy.
+**Above the law is mercy.
 Above your spouse's mistakes is mercy.
-Above your covenant is mercy.
+Above your covenant is mercy.**
 
-Mercy is the glory that fills the marriage.`,
+Mercy is the glory that fills the marriage.
+
+**Relationship Application:**
+
+• **Lifelong commitment**
+• **Faithfulness when feelings fluctuate**
+• **Sabbath rest as marital protection**`,
+    hardTruth: "Marriage is not sustained by romance, but by covenant faithfulness.",
+    diagnosticQuestions: [
+      "Are we building on covenant or convenience?",
+      "Do we practice daily provision—kindness, communication, forgiveness?",
+      "Is our marriage anchored in identity, not just feeling?",
+      "Are we resting together, or is busyness destroying our connection?"
+    ],
     reflectionQuestions: [
       "Are we building our marriage on God's law (boundaries) or just feelings?",
       "Do we practice daily provision—kindness, communication, forgiveness?",
@@ -337,91 +451,104 @@ Mercy is the glory that fills the marriage.`,
       "Is God's glory dwelling in our home, or have we made marriage about us instead of Him?"
     ],
     coupleExercises: [
+      "Honor Sabbath rest as a couple—protect time for each other.",
+      "Protect the marriage from overwork and intrusion.",
+      "Anchor identity in covenant, not conflict.",
       "Write your marriage 'law': 3-5 non-negotiable boundaries/values you both commit to.",
-      "Practice daily provision: Each day this week, give one act of kindness, one word of affirmation, and one moment of forgiveness.",
-      "Identify one 'dead' area of your marriage and pray Aaron's-rod prayers: 'Lord, resurrect this.'",
-      "Mercy practice: Each spouse confesses one way they've been keeping score. Extend mercy to each other."
+      "Practice daily provision: Each day this week, give one act of kindness, one word of affirmation, and one moment of forgiveness."
     ],
     scriptureReferences: [
-      "Exodus 25:10-22 - The ark of the covenant instructions",
-      "Hebrews 9:4 - What was inside the ark: law, manna, Aaron's rod",
-      "Numbers 17:8 - Aaron's rod budded overnight",
-      "Ephesians 5:25-33 - Husbands love your wives as Christ loved the church",
-      "Colossians 3:12-14 - Put on love, which binds everything together"
+      "Genesis 2:24 — 'One flesh'",
+      "Malachi 2:14–16 — 'Covenant, not convenience'",
+      "Hebrews 13:5 — 'God's abiding presence'",
+      "Ecclesiastes 4:12 — 'Threefold cord'",
+      "Ephesians 5:25-33 — 'Husbands love your wives as Christ loved the church'"
     ],
-    prayerPrompt: "Father, we enter the Most Holy Place of marriage with reverence. Help us keep Your law, extend mercy daily, trust Your provision, and believe You can resurrect what feels dead. Fill our marriage with Your glory. Amen."
+    prayerPrompt: "Father, we enter the Most Holy Place of marriage with reverence. Help us keep Your law, extend mercy daily, trust Your provision, and believe You can resurrect what feels dead. Fill our marriage with Your glory. Anchor us in covenant, not convenience. Amen."
   }
 ];
 
 export const MARRIAGE_BLUEPRINT_INTRO = {
-  title: "The Sanctuary Blueprint for Dating, Courtship & Marriage",
-  subtitle: "Marriage = The Most Holy Place. Dating = The journey through the sanctuary that prepares you to enter sacred covenant.",
-  sanctuaryExplanation: `## Understanding the Hebrew Sanctuary
+  title: "The Sanctuary Pathway to Covenant",
+  subtitle: "A Biblical Blueprint for Dating, Courtship, and Marriage",
+  quote: {
+    text: "Dating begins with surrender. Surrender prepares the heart for covenant. No altar = no survival.",
+    source: "Sanctuary Principle"
+  },
+  description: `Just as Israel approached God progressively,
+couples must approach marriage in order—with reverence, discernment, and maturity.
 
-In the Old Testament, God gave Moses a detailed pattern for the sanctuary (Exodus 25:8-9)—a sacred tent where God's presence would dwell among His people. This wasn't just a building; it was a divine blueprint showing humanity how to approach a holy God and walk through life transformation.
+Skipping parts of the sanctuary always leads to disaster.
+Following the pattern always leads to covenant glory.
+
+"Except the LORD build the house, they labour in vain that build it."
+— Psalm 127:1`,
+  sanctuaryExplanation: `## Understanding the Sanctuary Pathway to Covenant
+
+In the Old Testament, God gave Moses a detailed pattern for the sanctuary (Exodus 25:8-9)—a sacred tent where God's presence would dwell among His people. This wasn't just a building; it was a divine blueprint showing humanity how to approach a holy God and walk through life's most sacred relationships.
 
 ### The Six Articles of Furniture
 
 The sanctuary contained six primary articles of furniture, arranged in a specific progressive order from the outer court to the Most Holy Place:
 
 🔥 **1. Altar of Sacrifice** (Outer Court)  
-Where animals were sacrificed as substitutes for sin; represents death to the old self and complete surrender.  
-📖 *Scriptural Foundation:* Leviticus 1-7; Hebrews 10:1-10  
-🔗 [Learn more about the Altar of Sacrifice](https://www.biblegateway.com/passage/?search=Exodus+27%3A1-8&version=KJV)
+Surrender before attraction. Where self-centered desire dies and identity is placed in God.  
+📖 *Key Scripture:* Romans 12:1 — "Present your bodies a living sacrifice…"
 
 💧 **2. The Laver** (Outer Court)  
-A bronze basin filled with water for ceremonial washing; symbolizes cleansing, self-reflection, and preparation for service.  
-📖 *Scriptural Foundation:* Exodus 30:17-21; Ephesians 5:26  
-🔗 [Explore the Laver's significance](https://www.biblegateway.com/passage/?search=Exodus+30%3A17-21&version=KJV)
+Cleansing, healing, and self-examination. Where patterns, baggage, and wounds are confronted.  
+📖 *Key Scripture:* Psalm 51:10 — "Create in me a clean heart…"
 
 🍞 **3. Table of Shewbread** (Holy Place)  
-Twelve loaves of bread representing the twelve tribes; signifies God's daily provision, consistency, and fellowship.  
-📖 *Scriptural Foundation:* Leviticus 24:5-9; John 6:35  
-🔗 [Discover the Bread of Presence](https://www.biblegateway.com/passage/?search=Leviticus+24%3A5-9&version=KJV)
+Provision, friendship, and daily life. Where love becomes practical through consistency.  
+📖 *Key Scripture:* Amos 3:3 — "Can two walk together, except they be agreed?"
 
-🕯️ **4. Golden Candlestick/Menorah** (Holy Place)  
-Seven-branched lampstand that burned continually; represents the Holy Spirit's light, revelation, and guidance.  
-📖 *Scriptural Foundation:* Exodus 25:31-40; John 8:12; Revelation 1:20  
-🔗 [Study the Golden Lampstand](https://www.biblegateway.com/passage/?search=Exodus+25%3A31-40&version=KJV)
+🕯️ **4. Golden Candlestick** (Holy Place)  
+Vision, direction, and spiritual leadership. Where purpose is clarified.  
+📖 *Key Scripture:* Proverbs 29:18 — "Without vision, people perish"
 
 🌸 **5. Altar of Incense** (Holy Place)  
-Golden altar where fragrant incense burned continually; symbolizes prayer, worship, and intimate communion with God.  
-📖 *Scriptural Foundation:* Exodus 30:1-10; Psalm 141:2; Revelation 5:8  
-🔗 [Understand the Altar of Incense](https://www.biblegateway.com/passage/?search=Exodus+30%3A1-10&version=KJV)
+Prayer, communication, and intimacy. Where love deepens spiritually before physically.  
+📖 *Key Scripture:* Psalm 141:2 — "Let my prayer be set forth… as incense"
 
 ⚡ **6. Ark of the Covenant** (Most Holy Place)  
-God's throne on earth containing the Law, Manna, and Aaron's Rod; represents God's presence, covenant, mercy, and ultimate restoration.  
-📖 *Scriptural Foundation:* Exodus 25:10-22; Hebrews 9:1-5  
-🔗 [Discover the Ark of the Covenant](https://www.biblegateway.com/passage/?search=Exodus+25%3A10-22&version=KJV)
+Marriage, law, and rest. Where covenant is sealed before God.  
+📖 *Key Scripture:* Genesis 2:24 — "Therefore shall a man leave… and they shall be one flesh"
 
 ---
 
-### God's Way is for EVERY Area of Life
+### The Sanctuary Flow for Dating → Marriage
 
-Here's the revelation: The sanctuary pattern wasn't just for worship services. It's God's master blueprint for how He works in every dimension of human life. The same God who designed the path to His presence also designed the path to freedom, healing, relationships, and restoration.
+**Surrender → Healing → Friendship → Vision → Prayer → Covenant**
 
-The sanctuary principles apply to:
-• Breaking strongholds and addictions
-• Navigating grief and loss
-• Building healthy relationships and marriages
-• Personal transformation and sanctification
-• Emotional healing and mental renewal
-• Spiritual warfare and victory
+Or more specifically:
 
-**Practical Application for Life**
+• **Altar:** I surrender my desires to God
+• **Laver:** I allow God to heal and cleanse me
+• **Table:** I learn to walk daily with another
+• **Candlestick:** We discern direction and calling
+• **Incense:** We deepen intimacy through prayer
+• **Ark:** We enter covenant before God
 
-When you understand the sanctuary pattern, you unlock God's methodology for life change. Just as the Israelite couldn't skip the altar and jump straight into God's presence, we cannot skip the necessary steps in our own journey toward freedom, healing, or covenant relationships.
+---
 
-The sanctuary teaches us that transformation is:
-• **Progressive** - Each step prepares you for the next
-• **Ordered** - Sequence matters; you can't skip stages
-• **Architectural** - Built with intention, not left to chance
-• **Christ-Centered** - Every piece points to Jesus, our ultimate High Priest
+### Why Order Matters
 
-This blueprint reveals that God's way is not random or chaotic. He has a pattern, a process, and a path. Whether you're fighting sin, grieving loss, or building a marriage—the sanctuary shows you the way.`,
-  description: `Just as Israel approached God progressively, couples must approach marriage in order, with reverence, discernment, and maturity.
+The sanctuary principles for relationships follow a progressive order. Each station builds upon the previous one:
 
-Skipping parts of the sanctuary always leads to disaster.
-Following the pattern always leads to covenant glory.`,
-  quote: "Dating begins with surrender. Surrender prepares the heart for covenant. No altar = no survival."
+**Skip the Altar** → You date from need, not calling—relationships become idols
+
+**Skip the Laver** → Unwashed wounds bleed on innocent people
+
+**Skip the Table** → You build on chemistry instead of friendship—it won't last
+
+**Skip the Candlestick** → You marry someone whose vision differs from yours
+
+**Skip the Incense** → You have physical intimacy without spiritual intimacy—confusion
+
+**Skip the Ark** → Marriage becomes a contract instead of a covenant
+
+God does not rush people into covenant. He prepares them.
+
+**The sanctuary proves that love is built, not fallen into.**`
 };
