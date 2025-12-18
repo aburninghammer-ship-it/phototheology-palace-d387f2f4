@@ -184,3 +184,6 @@ verify_jwt = false
 
 [functions.sanctuary-journey-guide]
 verify_jwt = false
+
+[functions.fetch-quarterly]
+verify_jwt = false

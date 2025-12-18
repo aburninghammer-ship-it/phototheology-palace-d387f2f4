@@ -21,6 +21,31 @@ export interface Quarterly {
 }
 
 /**
+ * Fetches the current quarterly from Seventh Day Press via edge function
+ */
+async function fetchSeventhDayPressQuarterly(): Promise<{ pdfUrl: string; title: string; topic: string } | null> {
+  try {
+    const { data, error } = await supabase.functions.invoke('fetch-quarterly', {
+      body: {}
+    });
+    
+    if (error || !data?.success) {
+      console.warn('Failed to fetch from Seventh Day Press:', error || data?.error);
+      return null;
+    }
+    
+    return {
+      pdfUrl: data.quarterly.pdfUrl,
+      title: data.quarterly.title,
+      topic: data.quarterly.topic
+    };
+  } catch (e) {
+    console.warn('Error calling fetch-quarterly:', e);
+    return null;
+  }
+}
+
+/**
  * Fetches the current lesson quarterly using alternative API
  */
 export async function getCurrentQuarterly(language: string = "en"): Promise<Quarterly | null> {
@@ -30,7 +55,10 @@ export async function getCurrentQuarterly(language: string = "en"): Promise<Quar
     const year = now.getFullYear();
     const quarter = Math.ceil((now.getMonth() + 1) / 3);
     
-    // Try the working API endpoint
+    // First, try to get from Seventh Day Press
+    const sdpQuarterly = await fetchSeventhDayPressQuarterly();
+    
+    // Try the working API endpoint for lesson details
     try {
       const response = await fetch(
         `https://sabbathschool.duresa.com.et/api/v1/languages/${language}/quarters`,
@@ -61,7 +89,7 @@ export async function getCurrentQuarterly(language: string = "en"): Promise<Quar
           
           return {
             id: currentQuarter.id,
-            title: currentQuarter.title || 'Current Quarterly',
+            title: sdpQuarterly?.title || currentQuarter.title || 'Current Quarterly',
             description: currentQuarter.description || '',
             introduction: currentQuarter.introduction || '',
             lessons: lessons.map((lesson: any, index: number) => ({
@@ -70,7 +98,7 @@ export async function getCurrentQuarterly(language: string = "en"): Promise<Quar
               start_date: lesson.start_date,
               end_date: lesson.end_date,
               index: index + 1,
-              full_read: lesson.full_read || '',
+              full_read: sdpQuarterly?.pdfUrl || lesson.full_read || '',
               bible_verses: lesson.bible_reading?.split(',').map((v: string) => v.trim()) || [],
             })),
             quarter: `Q${quarter} ${year}`,
@@ -99,9 +127,12 @@ export async function getCurrentQuarterly(language: string = "en"): Promise<Quar
       { id: "13", title: "The Parable of Ten Virgins", dates: "Dec 20–Dec 27", bible_verses: ["Matthew 25:1-13"], aid: "Christ's Object Lessons p. 405-421" },
     ];
 
+    // Use SDP PDF URL if available, otherwise local fallback
+    const pdfUrl = sdpQuarterly?.pdfUrl || '/quarterlies/Q4-2025-Christ-Object-Lessons.pdf';
+    
     return {
       id: `2025-04-${language}`,
-      title: "Christ's Object Lessons",
+      title: sdpQuarterly?.title || "Christ's Object Lessons",
       description: "A study of the parables of Jesus as explored in Ellen G. White's classic book 'Christ's Object Lessons'. Each lesson examines a parable, revealing deeper spiritual truths and practical applications.",
       introduction: "The parables of our Saviour form the subject matter of this quarterly. The student who desires to have a thorough understanding of these studies will find the book 'Christ's Object Lessons' indispensable.",
       lessons: lessonData.map((lesson, index) => ({
@@ -110,11 +141,11 @@ export async function getCurrentQuarterly(language: string = "en"): Promise<Quar
         start_date: lesson.dates.split('–')[0] + `, 2025`,
         end_date: lesson.dates.split('–')[1] + `, 2025`,
         index: index + 1,
-        full_read: '/quarterlies/Q4-2025-Christ-Object-Lessons.pdf',
+        full_read: pdfUrl,
         bible_verses: lesson.bible_verses,
       })),
       quarter: `Q4 2025`,
-      cover_image: '/quarterlies/Q4-2025-Christ-Object-Lessons.pdf',
+      cover_image: pdfUrl,
     };
   } catch (error) {
     console.error('Error fetching quarterly:', error);
