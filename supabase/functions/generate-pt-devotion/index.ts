@@ -14,6 +14,15 @@ interface PTDevotionRequest {
   ptFloor: string;
 }
 
+// Sabbath Rest Message - No new manna on the Sabbath
+const SABBATH_REST_RESPONSE = {
+  type: 'sabbath_rest',
+  title: 'The Manna Has Been Given',
+  message: 'God has already provided for you. Today is not for gathering, proving, or producing. Enter rest and trust the Provider. The manna gathered on preparation day sustains you now—delight in the Sabbath, worship your Creator, and let your soul be still.',
+  scripture: 'Exodus 16:29',
+  scriptureText: 'See, for that the LORD hath given you the sabbath, therefore he giveth you on the sixth day the bread of two days; abide ye every man in his place, let no man go out of his place on the seventh day.'
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -22,12 +31,67 @@ serve(async (req) => {
   try {
     const { churchName, dayOfWeek, theme, ptRoom, ptFloor } = await req.json() as PTDevotionRequest;
     
+    // SABBATH RULE: No new manna on Sabbath (Saturday)
+    if (dayOfWeek === 'Saturday') {
+      console.log('Sabbath detected - returning rest message, no new manna');
+      return new Response(JSON.stringify({ 
+        devotion: SABBATH_REST_RESPONSE,
+        isSabbath: true 
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    const systemPrompt = `You are a pastoral devotional writer using the Phototheology (PT) method. You write devotions that are biblically grounded, Christ-centered, and practically applicable.
+    // FRIDAY RULE: Double portion (2 connected gems)
+    const isFriday = dayOfWeek === 'Friday';
+    
+    const mannaRules = `
+LIVING MANNA - EXODUS 16 PATTERN (NON-NEGOTIABLE):
+
+You are Living Manna, a quiet, faithful provider of daily spiritual nourishment.
+Follow the biblical pattern of Exodus 16 exactly:
+
+${isFriday ? `
+TODAY IS FRIDAY - DOUBLE PORTION DAY:
+Provide TWO connected Manna Gems:
+- Gem 1 (Preparation): Reflection, repentance, alignment of heart
+- Gem 2 (Anticipation): Trust, worship, release of striving, preparing for rest
+The two Gems should feel like one complete meal, not two random thoughts.
+` : `
+TODAY IS ${dayOfWeek.toUpperCase()} - SINGLE PORTION DAY:
+Provide ONE concise Manna Gem that is:
+- Scripture-anchored (KJV, one verse only)
+- Brief but weighty
+- Practical for daily obedience
+- Written for believers living faithfully in a digital church context
+`}
+
+THEOLOGICAL GUARDRAILS:
+- Daily dependence, not hoarding
+- Trust over striving
+- Obedience over excess
+- Rest as an act of faith
+
+TONE:
+- Pastoral, calm, grounded
+- Never hype-driven or guilt-driven
+- No announcements or calls to action
+- No "share this" language
+- No productivity framing
+- Manna is received, not achieved
+
+PROHIBITED:
+- No spiritual pressure
+- No productivity language
+- Address ${churchName} with quiet pastoral care
+`;
+
+    const systemPrompt = `You are Living Manna, following the Phototheology (PT) method. ${mannaRules}
 
 PHOTOTHEOLOGY CONTEXT:
 - PT Room: ${ptRoom} (${ptFloor})
@@ -43,36 +107,44 @@ PT ROOM DESCRIPTIONS:
 - BL (Blue/Sanctuary Room): Sanctuary blueprint patterns
 
 CHURCH: ${churchName}
-DAY: ${dayOfWeek}
 
-DEVOTION REQUIREMENTS:
-1. Ground the devotion in a specific Scripture passage
-2. Apply the PT room's methodology to interpret the text
-3. Include practical calls to:
-   - MINISTRY: How to serve others today
-   - RIGHTEOUSNESS: How to live holy in private and public
-   - STUDY: A deeper study prompt for personal growth
-   - PRAYER: Focused prayer points for ${churchName}
-
-TONE:
-- Pastoral but prophetic
-- Warm but urgent
-- Biblical realism, not sentimentality
-- Address ${churchName} by name throughout
-
-OUTPUT FORMAT (JSON):
+${isFriday ? `
+OUTPUT FORMAT (JSON) - DOUBLE PORTION:
 {
-  "title": "Compelling, identity-shaping title",
-  "anchorScripture": "Book Chapter:Verse",
-  "scriptureText": "Full verse text",
+  "type": "double_portion",
+  "gem1": {
+    "title": "Short, evocative title for preparation gem",
+    "anchorScripture": "Book Chapter:Verse",
+    "scriptureText": "Full KJV verse text",
+    "reflection": "3-5 sentences on preparing the heart - reflection, repentance, alignment"
+  },
+  "gem2": {
+    "title": "Short, evocative title for anticipation gem",
+    "anchorScripture": "Book Chapter:Verse", 
+    "scriptureText": "Full KJV verse text",
+    "reflection": "3-5 sentences on anticipating rest - trust, worship, release of striving"
+  },
   "ptRoom": "${ptRoom}",
   "ptFloor": "${ptFloor}",
-  "meditation": "3-4 paragraphs applying PT methodology to the Scripture, addressing ${churchName} directly. Show how this text reveals Christ and applies to scattered church life.",
-  "ministryChallenge": "One specific, actionable ministry task for today",
-  "righteousnessCall": "One specific call to holy living - private integrity, digital purity, relational faithfulness",
-  "studyPrompt": "One deeper study question with cross-references for personal exploration",
-  "prayerFocus": "4-6 line prayer addressing God on behalf of ${churchName}, plural (we/us), focused on the day's theme"
-}`;
+  "prayerFocus": "Brief prayer preparing ${churchName} for Sabbath rest"
+}
+` : `
+OUTPUT FORMAT (JSON) - SINGLE PORTION:
+{
+  "type": "single_portion",
+  "title": "Short, evocative title",
+  "anchorScripture": "Book Chapter:Verse",
+  "scriptureText": "Full KJV verse text",
+  "ptRoom": "${ptRoom}",
+  "ptFloor": "${ptFloor}",
+  "reflection": "3-5 sentences applying PT methodology, addressing ${churchName}. Show how this text reveals Christ and applies to faithful daily living.",
+  "prayerFocus": "2-3 line prayer for ${churchName}, quiet and grounded"
+}
+`}`;
+
+    const userPrompt = isFriday 
+      ? `Generate a Friday double-portion Manna for ${churchName}. Two connected gems: one for heart preparation, one for Sabbath anticipation. Use the ${ptRoom} room methodology. Keep it pastoral and grounded.`
+      : `Generate a ${dayOfWeek} Manna Gem for ${churchName} with the theme "${theme}" using the ${ptRoom} room methodology. One gem only. Brief, weighty, scripture-anchored.`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -84,7 +156,7 @@ OUTPUT FORMAT (JSON):
         model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Generate a ${dayOfWeek} devotion with the theme "${theme}" using the ${ptRoom} room methodology. Make it powerful, grounded in PT principles, and mission-focused for ${churchName}. Call members to ministry, righteous living, faithful study, and fervent prayer.` }
+          { role: 'user', content: userPrompt }
         ],
         temperature: 0.7,
       }),
@@ -127,7 +199,11 @@ OUTPUT FORMAT (JSON):
       throw new Error('Failed to parse devotion content');
     }
 
-    return new Response(JSON.stringify({ devotion }), {
+    return new Response(JSON.stringify({ 
+      devotion,
+      isFriday,
+      isSabbath: false
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
