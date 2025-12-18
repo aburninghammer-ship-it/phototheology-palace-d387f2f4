@@ -30,7 +30,7 @@ export const Navigation = () => {
   const { user, signOut, loading } = useAuth();
   const { activeCount } = useActiveUsers();
   const { isAdmin } = useIsAdmin();
-  const { isMember: isChurchMember, churchId } = useChurchMembership();
+  const { isMember: isChurchMember, churchId, role: churchRole } = useChurchMembership();
   const { toggleSidebar } = useSidebar();
   const { conversations } = useDirectMessagesContext();
   
@@ -101,8 +101,8 @@ export const Navigation = () => {
                 </Button>
               )}
               
-              {/* Church Admin Link - for logged-in users */}
-              {user && (
+              {/* Church Admin Link - only for church admins */}
+              {user && churchRole === 'admin' && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -111,7 +111,7 @@ export const Navigation = () => {
                 >
                   <Link to="/church-admin">
                     <Building2 className="h-4 w-4 mr-1" />
-                    <span>Church</span>
+                    <span>Church Admin</span>
                   </Link>
                 </Button>
               )}
