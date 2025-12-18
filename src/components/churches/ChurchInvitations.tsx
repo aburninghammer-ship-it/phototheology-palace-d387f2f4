@@ -128,27 +128,49 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
 
       if (error) throw error;
 
-      // Send email invitation
-      const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-church-invitation', {
-        body: {
-          recipientEmail: inviteEmail,
-          churchName: churchData?.name || 'Your Church',
-          churchId,
-          invitationCode,
-          role: inviteRole,
-          expiresAt: expiresAt.toISOString(),
-        },
-      });
+      toast.success("Invitation created! Sending email…");
 
-      if (emailError) {
-        console.error('Email send error:', emailError);
-        toast.warning("Invitation created but email could not be sent. Share the code manually.");
-      } else if (emailResult?.success) {
-        toast.success("Invitation created and email sent!");
-      } else {
-        console.error('Email send failed:', emailResult?.error);
-        toast.warning("Invitation created but email failed. Share the code manually.");
-      }
+      // Send email invitation (non-blocking so the UI never gets stuck)
+      void (async () => {
+        try {
+          const { data: emailResult, error: emailError } = await supabase.functions.invoke(
+            "send-church-invitation",
+            {
+              body: {
+                recipientEmail: inviteEmail,
+                churchName: churchData?.name || "Your Church",
+                churchId,
+                invitationCode,
+                role: inviteRole,
+                expiresAt: expiresAt.toISOString(),
+              },
+            }
+          );
+
+          if (emailError) {
+            console.error("Email send error:", emailError);
+            toast.warning(
+              "Invitation created but email could not be sent. Share the link or code manually."
+            );
+            return;
+          }
+
+          if (emailResult?.success) {
+            toast.success("Invitation email sent!");
+            return;
+          }
+
+          console.error("Email send failed:", emailResult?.error);
+          toast.warning(
+            "Invitation created but email failed. Share the link or code manually."
+          );
+        } catch (err) {
+          console.error("Email send crashed:", err);
+          toast.warning(
+            "Invitation created but email could not be sent. Share the link or code manually."
+          );
+        }
+      })();
 
       setInviteEmail("");
       setInviteRole("member");
