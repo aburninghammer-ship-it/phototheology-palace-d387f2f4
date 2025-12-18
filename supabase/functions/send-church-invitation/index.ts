@@ -89,8 +89,7 @@ serve(async (req) => {
       );
     }
 
-    const origin = req.headers.get('origin') || 'https://phototheology.lovable.app';
-    const joinLink = `${origin}/join-church?code=${invitationCode}`;
+    const joinLink = `https://phototheology.com/join-church?code=${invitationCode}`;
     const expiresDate = new Date(expiresAt).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
