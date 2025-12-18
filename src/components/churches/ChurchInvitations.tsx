@@ -78,6 +78,8 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
   };
 
   const handleCreateInvitation = async () => {
+    console.log('handleCreateInvitation called with email:', inviteEmail);
+    
     if (!inviteEmail) {
       toast.error("Please enter an email address");
       return;
@@ -88,10 +90,12 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
       return;
     }
 
+    console.log('Creating invitation...');
     setCreating(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('User:', user?.id, 'Session:', !!session);
       if (!user || !session) {
         toast.error("You must be logged in to create invitations");
         return;
