@@ -11964,6 +11964,51 @@ export type Database = {
           },
         ]
       }
+      youth_safety_profiles: {
+        Row: {
+          age_verified: boolean | null
+          consent_date: string | null
+          created_at: string
+          date_of_birth: string | null
+          id: string
+          is_minor: boolean | null
+          parent_email: string | null
+          parent_name: string | null
+          parent_phone: string | null
+          parental_consent_given: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_verified?: boolean | null
+          consent_date?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          id?: string
+          is_minor?: boolean | null
+          parent_email?: string | null
+          parent_name?: string | null
+          parent_phone?: string | null
+          parental_consent_given?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_verified?: boolean | null
+          consent_date?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          id?: string
+          is_minor?: boolean | null
+          parent_email?: string | null
+          parent_name?: string | null
+          parent_phone?: string | null
+          parental_consent_given?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       youth_study_cycles: {
         Row: {
           church_id: string

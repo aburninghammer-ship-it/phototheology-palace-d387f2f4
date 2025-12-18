@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { YouthSafetyGate } from "./YouthSafetyGate";
 import { 
   Loader2, Users, BookOpen, Calendar, Star, 
   Sparkles, Clock, MapPin, Video, CheckCircle2,
@@ -162,6 +163,7 @@ export function YouthSpace({ churchId }: YouthSpaceProps) {
   }
 
   return (
+    <YouthSafetyGate churchId={churchId}>
     <div className="space-y-6">
       {/* Header */}
       <Card variant="glass" className="overflow-hidden">
@@ -486,5 +488,6 @@ export function YouthSpace({ churchId }: YouthSpaceProps) {
         )}
       </Tabs>
     </div>
+    </YouthSafetyGate>
   );
 }
