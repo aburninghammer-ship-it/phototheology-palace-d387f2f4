@@ -1,5 +1,6 @@
 export interface MentalHealthArticle {
   id: number;
+  week: string;
   name: string;
   sanctuaryMeaning: string;
   mentalHealthPrinciple: string;
@@ -15,390 +16,446 @@ export interface MentalHealthArticle {
 export const MENTAL_HEALTH_ARTICLES: MentalHealthArticle[] = [
   {
     id: 1,
-    name: "The Altar of Sacrifice",
-    sanctuaryMeaning: "Surrender, letting go, death of what destroys.",
-    mentalHealthPrinciple: "Lay destructive thoughts, toxic relationships, and emotional burdens on God's altar.",
-    teaching: `The altar teaches a hard truth: You cannot heal while holding onto what is harming you.
+    week: "Week 1",
+    name: "📐 The Pattern",
+    sanctuaryMeaning: "Orientation Week — Understanding the sanctuary as God's mental-health blueprint.",
+    mentalHealthPrinciple: "God heals progressively, not instantaneously. Mental health is architectural repair, not symptom control.",
+    teaching: `**WHY GOD HEALS IN ORDER**
 
-This is where you offer:
-• Self-condemnation
-• Shame
-• Trauma-based beliefs
-• Toxic self-talk
-• Unhealthy coping mechanisms
-• Addictions
-• Relational entanglements draining your peace
-• Patterns you inherited but no longer want
+God heals progressively, not instantaneously. Understanding this pattern is the foundation for lasting mental health transformation.
 
-1 Peter 5:7 says: "Casting all your cares upon Him…"
+**Why Skipping Steps Leads to Relapse:**
+Most mental health approaches attack symptoms instead of addressing the proper order. You can't jump straight to peace without first walking through surrender, cleansing, nourishment, insight, and regulation.
 
-Casting = throwing onto the altar. This is where healing starts: Something must die so you can live.`,
-    biblicalFoundation: "The altar was the first step in approaching God—nothing entered the sanctuary without first passing through sacrifice. Similarly, emotional healing cannot begin while clinging to destructive patterns. The Bible consistently calls believers to 'cast' their burdens (1 Peter 5:7), to 'lay aside every weight' (Hebrews 12:1), and to surrender what harms us so God can transform us.",
+**Mental Health as Architectural Repair:**
+Your mind isn't broken—it needs rebuilding according to God's blueprint. The sanctuary pattern shows us exactly how God constructs wholeness.
+
+**The Order Matters:**
+• Pain → Cleansing → Nourishment → Insight → Regulation → Rest
+
+This is how God heals the mind. Skip order, and people burn out. Follow order, and healing becomes a byproduct of obedience.
+
+**This Week's Focus:**
+Write your current mental struggles without trying to fix them yet. Simply name them. Commit to the full 8-week process without shortcuts.`,
+    biblicalFoundation: `Exodus 25:8–9 — "And let them make me a sanctuary; that I may dwell among them. According to all that I shew thee, after the pattern..."
+
+Hebrews 8:5 — The earthly sanctuary was a "copy and shadow of the heavenly things."
+
+Romans 12:2 — "Be ye transformed by the renewing of your mind."
+
+God gave Moses a detailed pattern because order matters. The sanctuary wasn't random furniture arranged haphazardly—it was a divine blueprint showing humanity how to approach wholeness step by step.
+
+Zion = the sanctuary = the mind restored. When the psalmist speaks of blessing "out of Zion" (Psalm 128:5), he speaks of restoration flowing from God's ordered dwelling place.`,
     practicalSteps: [
-      "Write down 3 toxic thoughts or patterns you're holding onto",
-      "Pray specifically, naming each burden and releasing it to God",
-      "Identify one unhealthy relationship or habit to set boundaries around",
-      "Practice daily surrender through journaling or verbal prayer",
-      "Seek counseling or support for deep-rooted trauma",
-      "Replace self-condemnation with Scripture-based identity statements"
+      "Write your current mental struggles without attempting to fix them",
+      "Commit to the full 8-week process without shortcuts",
+      "Tell one person you're beginning this journey",
+      "Set aside 20-30 minutes daily for this study",
+      "Create a journal specifically for this 8-week process"
     ],
     reflectionQuestions: [
-      "What am I holding onto that God is asking me to release?",
-      "Which toxic patterns am I afraid to let die?",
-      "What would my life look like if I truly surrendered my emotional burdens?",
-      "Am I trying to heal while still feeding what hurts me?"
+      "Where have you tried to 'jump straight to peace' without doing the work?",
+      "Which step do you usually avoid or skip?",
+      "Have you treated mental health as symptom control rather than architectural repair?",
+      "Are you willing to trust God's order even when it feels slow?"
     ],
-    weeklyChallenge: "Choose one destructive thought pattern or toxic habit. Every time it surfaces this week, immediately 'cast it' through prayer—verbally or written—and replace it with one truth from Scripture.",
+    weeklyChallenge: "This week, simply observe your mental patterns without fixing them. Journal what you notice about your thoughts, triggers, and reactions. Don't judge or correct—just observe. This is your baseline.",
     scriptureReferences: [
-      "1 Peter 5:7 - Cast all your cares upon Him",
-      "Hebrews 12:1 - Lay aside every weight",
-      "Romans 12:1 - Present your bodies a living sacrifice",
-      "Psalm 55:22 - Cast your burden on the LORD"
+      "Exodus 25:8–9 — Make me a sanctuary according to the pattern",
+      "Hebrews 8:5 — A copy and shadow of heavenly things",
+      "Romans 12:2 — Transformed by renewing of your mind"
     ],
-    prayerPrompt: "Lord, I lay on Your altar the burdens I've been carrying: [name them]. I release shame, toxic thoughts, and destructive patterns. Let something in me die so I can truly live. Amen."
+    prayerPrompt: "Lord, I commit to Your order, not my shortcuts. Teach me to trust Your pattern for healing. Help me follow the process without jumping ahead. I surrender my timeline to Yours. Amen."
   },
   {
     id: 2,
-    name: "The Laver",
-    sanctuaryMeaning: "Washing, reflection, purity, preparation.",
-    mentalHealthPrinciple: "Cleanse the mind through self-awareness, mindfulness, and truthful reflection.",
-    teaching: `The laver was made from mirrors (Exodus 38:8). It forced the priest to look at himself.
+    week: "Week 2",
+    name: "🔥 The Altar",
+    sanctuaryMeaning: "Altar of Sacrifice — Grief, Surrender, and Naming Pain.",
+    mentalHealthPrinciple: "Unexpressed grief fuels anxiety and depression. Lament is not weakness—it's worship.",
+    teaching: `**GRIEF, SURRENDER, AND NAMING PAIN**
 
-Mental health requires the same courage. This is where you:
-• See the truth about your reactions
-• Recognize trauma triggers
-• Become aware of emotional patterns
-• Cleanse the mind through Scripture
-• Engage in therapy or counseling
-• Practice grounding techniques
-• Develop emotional regulation
-• Acknowledge hidden wounds
+This is where hidden pain comes into the open. The altar is where we stop emotional suppression and bring our raw grief to God.
 
-This is Philippians 2:5: "Let this mind be in you…"
+**Unexpressed Grief Fuels Anxiety and Depression:**
+Pain that stays hidden doesn't disappear—it drives symptoms. Anxiety is often grief in disguise. Depression is often loss without lament.
 
-Healing requires washing—daily. The unwashed mind becomes the anxious mind. The washed mind becomes the renewed mind.`,
-    biblicalFoundation: "Priests could not serve without washing at the laver—it was mandatory purification. The laver's mirrors forced honest self-examination. Likewise, Romans 12:2 calls us to be 'transformed by the renewing of your mind.' This isn't surface-level positivity; it's deep, honest examination followed by spiritual cleansing through truth.",
+**Lament Is Not Weakness—It's Worship:**
+The Psalms are filled with lament. David cried out, questioned, wept, and complained. This was not weakness—it was honest relationship with God. Lament says: "I trust You enough to tell You the truth."
+
+**Jesus Meets Us Before Improvement:**
+Matthew 11:28-30 — Jesus invites the weary and heavy-laden BEFORE they're fixed. He doesn't wait for you to get better. He meets you at the altar.
+
+**What Goes on the Altar:**
+• Losses you've never grieved
+• Disappointments you've stuffed down
+• Fears you've never named
+• Anger you've never expressed safely
+• Trauma you've minimized`,
+    biblicalFoundation: `Psalm 51:17 — "The sacrifices of God are a broken spirit: a broken and a contrite heart, O God, thou wilt not despise."
+
+Matthew 11:28–30 — "Come unto me, all ye that labour and are heavy laden, and I will give you rest."
+
+Lamentations 3:31–33 — "For the Lord will not cast off for ever: But though he cause grief, yet will he have compassion..."
+
+The altar was the FIRST step in approaching God. Nothing entered the sanctuary without sacrifice first. Your grief, your pain, your losses—these are the sacrifices God receives. He doesn't despise your brokenness; He honors it.`,
     practicalSteps: [
-      "Practice daily self-awareness: journal your emotional reactions",
-      "Identify 2-3 trauma triggers and name them",
-      "Memorize one renewing Scripture and repeat it when triggered",
-      "Seek therapy or Christian counseling for deeper work",
-      "Practice grounding: 5-4-3-2-1 sensory technique when anxious",
-      "Read Scripture as emotional 'washing'—let truth cleanse lies"
+      "Begin a lament journal: write losses, disappointments, fears without censoring",
+      "Practice verbal surrender prayer daily—speak your pain aloud to God",
+      "Stop self-shaming language ('I shouldn't feel this way')",
+      "Name one loss you've never fully grieved",
+      "Let yourself cry if tears come—don't suppress them"
     ],
     reflectionQuestions: [
-      "What emotional patterns keep repeating in my life?",
-      "Am I avoiding looking honestly at my wounds?",
-      "What lies am I believing about myself that need washing away?",
-      "How often do I let God's Word renew my mind versus just reading it?"
+      "What have you never allowed yourself to grieve?",
+      "What part of control is hardest to surrender?",
+      "Do you believe Jesus meets you before you're fixed?",
+      "What pain have you been suppressing that needs the altar?"
     ],
-    weeklyChallenge: "Each morning this week, stand before a mirror and speak one truth from Scripture over yourself. Write down any emotional triggers that surface during the day and bring them to God in prayer that evening.",
+    weeklyChallenge: "Write a lament letter to God this week. Include: one major loss you've minimized, one disappointment you've stuffed, one fear you've never spoken. Don't fix it—just name it. End with: 'I lay this on Your altar.'",
     scriptureReferences: [
-      "Exodus 38:8 - The laver made from mirrors",
-      "Philippians 2:5 - Let this mind be in you",
-      "Romans 12:2 - Be transformed by renewing your mind",
-      "Ephesians 5:26 - Washing with the water of the Word"
+      "Psalm 51:17 — A broken spirit God will not despise",
+      "Matthew 11:28–30 — Come unto me, all ye that labour",
+      "Lamentations 3:31–33 — Though He causes grief, He will have compassion"
     ],
-    prayerPrompt: "Father, give me courage to see myself honestly. Wash my mind with Your truth. Expose the lies I believe and cleanse my thoughts. Renew me daily. Amen."
+    prayerPrompt: "Lord, I bring my hidden grief to Your altar. I've carried losses I've never named. I surrender disappointments, fears, and anger I've suppressed. Receive my brokenness as worship. Meet me before I'm fixed. Amen."
   },
   {
     id: 3,
-    name: "The Table of Shewbread",
-    sanctuaryMeaning: "Continual provision; daily bread; sustaining nourishment.",
-    mentalHealthPrinciple: "Feed your mind with what it needs—not what your emotions crave.",
-    teaching: `Mental health is profoundly tied to what the mind "eats."
+    week: "Week 3",
+    name: "💧 The Laver",
+    sanctuaryMeaning: "Washing & Reflection — Cleansing the Thought Life.",
+    mentalHealthPrinciple: "Thoughts are habits, not facts. Self-examination ≠ self-condemnation. God cleanses patterns, not personalities.",
+    teaching: `**CLEANSING THE THOUGHT LIFE**
 
-The shewbread was: Measured, Intentional, Consistent, Holy, Always fresh.
+The laver is where we identify and replace destructive thought patterns. This is cognitive renewal through divine washing.
 
-Your thought-diet must be the same. This table asks: What are you feeding your mind?
+**Thoughts Are Habits, Not Facts:**
+Your recurring negative thoughts feel true, but they're often just familiar. Anxiety lies. Depression distorts. Trauma rewires. Just because you think it doesn't mean it's true.
 
-Healthy mental food:
-• Scripture
-• Gratitude
-• Mentally nourishing friendships
-• Therapy
-• Positive input
-• Truth-based frameworks
-• Realistic hope
-• Encouraging content
+**Self-Examination ≠ Self-Condemnation:**
+Looking honestly at your thought patterns is not the same as beating yourself up. The laver was for cleansing, not punishment. Examine without condemning.
 
-Unhealthy mental food:
-• Doom-scrolling
-• Constant bad news
-• Toxic social media
-• Drama
-• Conspiracy fixation
-• Negative self-interpretation
-• Violent / hopeless entertainment
+**God Cleanses Patterns, Not Personalities:**
+God isn't trying to erase who you are. He's washing away the lies, distortions, and destructive patterns that don't belong. Your personality remains; the contamination goes.
 
-Jesus said: "Man shall not live by bread alone, but by every word…" (Matt 4:4)
+**What Needs Cleansing:**
+• Recurring negative thoughts
+• Lies you believe about yourself
+• Toxic thought patterns inherited from family
+• Fear-based thinking
+• Media inputs that poison the mind`,
+    biblicalFoundation: `2 Corinthians 10:5 — "Casting down imaginations, and every high thing that exalteth itself against the knowledge of God, and bringing into captivity every thought..."
 
-If depression is a famine, the Word is bread. Feed what heals; starve what harms.`,
-    biblicalFoundation: "The shewbread was 'bread of presence'—always before God, never absent. It symbolized God's continual provision. Jesus declared Himself 'the bread of life' (John 6:35). Just as physical bread sustains the body, spiritual and mental nourishment sustains the soul. Psalm 1 contrasts the blessed person who meditates on God's Word versus those who follow destructive counsel.",
+Ephesians 5:26 — "That he might sanctify and cleanse it with the washing of water by the word."
+
+Psalm 119:9 — "Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word."
+
+The laver was made from bronze mirrors (Exodus 38:8)—tools of self-examination became tools of cleansing. You must see the contamination before it can be washed away. God's Word is the water that cleanses.`,
     practicalSteps: [
-      "Audit your daily media diet: what are you consuming?",
-      "Set a daily Scripture reading time as 'mental nutrition'",
-      "Unfollow 3 social media accounts that drain your peace",
-      "Start a gratitude journal—write 3 things daily",
-      "Replace one hour of screen time with reading or prayer",
-      "Surround yourself with mentally healthy friendships"
+      "Identify 3 recurring negative thoughts you think most often",
+      "Write truth-based replacements from Scripture for each one",
+      "Reduce media input by 30-50% this week",
+      "Ask: 'Who taught me this thought—God or experience?'",
+      "Practice catching lies in real-time and replacing them immediately"
     ],
     reflectionQuestions: [
-      "Am I feeding my anxiety or starving it with my media choices?",
-      "What would change if I treated Scripture like daily bread?",
-      "Which relationships or content sources drain my mental health?",
-      "Am I emotionally binge-eating (social media, news) instead of nourishing myself?"
+      "Which thoughts repeat the most in your mind?",
+      "Who taught you those thoughts—God or painful experience?",
+      "Can you distinguish between self-examination and self-condemnation?",
+      "What media inputs are contaminating your thought life?"
     ],
-    weeklyChallenge: "Do a 7-day 'mental nutrition fast': eliminate one toxic input (social media, news, negative content) and replace it with Scripture, gratitude, or encouraging content. Track how your mood shifts.",
+    weeklyChallenge: "Track your 3 most recurring negative thoughts this week. For each one, find a Scripture that speaks truth against the lie. When the thought surfaces, immediately speak the truth out loud. Journal the shift.",
     scriptureReferences: [
-      "Matthew 4:4 - Man shall not live by bread alone",
-      "John 6:35 - I am the bread of life",
-      "Psalm 1:1-3 - Blessed is the one who meditates on God's Word",
-      "Philippians 4:8 - Think on these things"
+      "2 Corinthians 10:5 — Bringing every thought into captivity",
+      "Ephesians 5:26 — Washing of water by the word",
+      "Psalm 119:9 — Cleanse your way by God's word"
     ],
-    prayerPrompt: "Jesus, You are the bread of life. Help me feed my mind with what heals, not what harms. Let Your Word become my daily nourishment. Starve my anxieties; feed my faith. Amen."
+    prayerPrompt: "Father, wash my thought life clean. Show me the lies I've been believing. Replace destructive patterns with Your truth. Help me examine myself without condemning myself. Cleanse my mind. Amen."
   },
   {
     id: 4,
-    name: "The Golden Candlestick",
-    sanctuaryMeaning: "Light of the Spirit; clarity; continual burning.",
-    mentalHealthPrinciple: "Keep the inner light burning—through hope, physical movement, and spiritual illumination.",
-    teaching: `The menorah wasn't optional; it was the only light source in the Holy Place. When it went out, everything dimmed.
+    week: "Week 4",
+    name: "🍞 The Table",
+    sanctuaryMeaning: "Bread of Presence — Nourishment, Routine, and Community.",
+    mentalHealthPrinciple: "The mind needs daily emotional nutrition. Isolation intensifies mental illness. Consistency heals faster than intensity.",
+    teaching: `**NOURISHMENT, ROUTINE, AND COMMUNITY**
 
-This parallels mental health:
-• Depression = darkness
-• Anxiety = confusion
-• Trauma = flickering flame
-• Hopelessness = extinguished wick
+The table of shewbread teaches us about stabilizing the mind through proper nourishment and connection.
 
-To keep the mind's flame alive you must:
+**The Mind Needs Daily Emotional Nutrition:**
+You cannot starve your soul and expect your mind to thrive. The table had 12 loaves—always present, always fresh. Your mind needs daily input of truth, hope, connection, and grace.
 
-Spiritually:
-• Stay close to God's presence
-• Saturate the mind with truth
-• Invite the Holy Spirit to illuminate dark places
+**Isolation Intensifies Mental Illness:**
+Ecclesiastes 4:9-12 teaches that two are better than one. Isolation is a breeding ground for distorted thinking. Community corrects perception.
 
-Mentally:
-• Practice hopeful thinking
-• Visualize a future
-• Write plans and goals
+**Consistency Heals Faster Than Intensity:**
+The shewbread was replaced weekly in a steady rhythm. It wasn't occasional feasting—it was consistent provision. Mental health improves through daily rhythms, not dramatic interventions.
 
-Physically (VERY biblical):
-• Movement increases endorphins and serotonin
-• Exercise
-• Sunlight
-• Fresh air
-• Breathing techniques
+**What the Table Provides:**
+• Simple daily rhythms (wake, eat, connect)
+• Safe relational connection
+• Emotional nourishment through presence
+• Structure that creates stability`,
+    biblicalFoundation: `John 6:35 — "Jesus said unto them, I am the bread of life: he that cometh to me shall never hunger..."
 
-Light is both spiritual and biological. Mental flame dies without daily oil.`,
-    biblicalFoundation: "Jesus said, 'I am the light of the world' (John 8:12). The candlestick represented the Holy Spirit's continual presence—priests tended it morning and evening. When light fades, confusion and fear increase. Scientifically, light (sunlight) affects serotonin and mood. Biblically, light represents truth, hope, and divine presence. To maintain mental health, we must tend the flame—spiritually and physically.",
+Ecclesiastes 4:9–12 — "Two are better than one... if they fall, the one will lift up his fellow..."
+
+Matthew 4:4 — "Man shall not live by bread alone, but by every word that proceedeth out of the mouth of God."
+
+The shewbread was called "bread of the Presence"—it represented continual communion with God. The 12 loaves represented all of Israel—community. Mental health requires both: daily communion with God AND connection with others.`,
     practicalSteps: [
-      "Get 10-15 minutes of morning sunlight daily",
-      "Move your body: walk, stretch, or exercise 20 minutes/day",
-      "Practice deep breathing: 4-7-8 technique when anxious",
-      "Write down 3 hopeful goals for the next 6 months",
-      "Pray specifically for the Holy Spirit to bring light to dark thoughts",
-      "Create a daily 'tending the flame' routine: prayer, movement, hope"
+      "Establish simple daily rhythms: consistent wake time, meal times, connection time",
+      "Identify one safe relational connection—reach out this week",
+      "Replace emotional starvation with intentional presence",
+      "Create a morning routine that nourishes before the day demands",
+      "Share one honest struggle with a trusted person"
     ],
     reflectionQuestions: [
-      "Is my inner light flickering or burning steady?",
-      "When did I last do something physically active to boost my mood?",
-      "Am I inviting the Holy Spirit into my darkness or trying to manage it alone?",
-      "What would 'tending the flame' look like in my daily life?"
+      "Where are you undernourished emotionally?",
+      "What rhythms would bring stability to your mental life?",
+      "Are you isolating or connecting?",
+      "Who is your 'safe person' for honest conversation?"
     ],
-    weeklyChallenge: "Tend the flame daily: each morning, spend 10 minutes outside (sun, movement, prayer). Each evening, journal one thing that brought light/hope. Track your mood by week's end.",
+    weeklyChallenge: "This week, establish ONE simple daily rhythm (same wake time, same prayer time, or same check-in with a friend). Also, reach out to one safe person and share something honest about your mental health journey.",
     scriptureReferences: [
-      "John 8:12 - I am the light of the world",
-      "Psalm 119:105 - Your word is a lamp to my feet",
-      "Matthew 5:14 - You are the light of the world",
-      "Exodus 27:20 - Keep the lamps burning continually"
+      "John 6:35 — I am the bread of life",
+      "Ecclesiastes 4:9–12 — Two are better than one",
+      "Matthew 4:4 — Man shall not live by bread alone"
     ],
-    prayerPrompt: "Lord, You are the light that never goes out. Tend the flame in me. Illuminate my darkness. Give me strength to move, hope to visualize a future, and faith to stay close to You. Amen."
+    prayerPrompt: "Lord, You are the bread of life. Nourish my starving soul. Help me establish rhythms that bring stability. Lead me out of isolation into safe community. Feed me daily. Amen."
   },
   {
     id: 5,
-    name: "The Altar of Incense",
-    sanctuaryMeaning: "Fragrance, intercession, atmosphere, closeness to God.",
-    mentalHealthPrinciple: "Turn your emotional chaos into prayer, reflection, and regulated breathing.",
-    teaching: `Incense rises upward, symbolizing the emotional release heavenward. Prayer is not magic—it is emotional regulation.
+    week: "Week 5",
+    name: "🕯️ The Candlestick",
+    sanctuaryMeaning: "Illumination — Insight, Meaning, and Trauma Awareness.",
+    mentalHealthPrinciple: "Understanding pain reduces shame. Trauma responses are adaptations, not failures. Light reveals patterns, not guilt.",
+    teaching: `**INSIGHT, MEANING, AND TRAUMA AWARENESS**
 
-Studies show prayer and meditation:
-• Lower cortisol
-• Reduce anxiety
-• Decrease heart rate
-• Improve emotional stability
-• Increase resilience
+The candlestick brings illumination—replacing confusion with understanding.
 
-This altar becomes:
+**Understanding Pain Reduces Shame:**
+When you understand WHY you react certain ways, shame decreases. The candlestick doesn't condemn—it illuminates. Knowledge brings compassion for yourself.
 
-Emotional Processing:
-• Journaling
-• Naming your feelings
-• Letting tears rise like incense
-• Talking to God honestly
+**Trauma Responses Are Adaptations, Not Failures:**
+Your fight/flight/freeze responses were survival mechanisms. They helped you survive. Now they may be overactivated, but they're not character flaws—they're adaptations that need updating.
 
-Regulating the Nervous System:
-• Slow breathing
-• Quiet meditation
-• Scripture-based reflection
-• Grounding through prayer
-• Intercession for yourself
+**Light Reveals Patterns, Not Guilt:**
+The candlestick's purpose was illumination for service, not exposure for punishment. When you see your patterns clearly, you can address them—without shame.
 
-Yes—biblical. David often prayed: "Strengthen me." "Heal my soul." "Revive me."
+**What the Light Reveals:**
+• Your specific triggers
+• Your stress responses (fight/flight/freeze/fawn)
+• Patterns you've repeated
+• Connections between past and present reactions`,
+    biblicalFoundation: `John 8:12 — "I am the light of the world: he that followeth me shall not walk in darkness, but shall have the light of life."
 
-Incense changes the air. Prayer changes the mental atmosphere.`,
-    biblicalFoundation: "The incense altar stood directly before the veil—closest to God's presence. Incense represented prayers ascending (Psalm 141:2, Revelation 5:8). The act of offering incense was meditative, repetitive, calming. Modern neuroscience confirms: prayer and meditation activate the parasympathetic nervous system, lowering stress hormones. David's emotional honesty in Psalms models prayer as processing—not pretending.",
+Psalm 119:105 — "Thy word is a lamp unto my feet, and a light unto my path."
+
+Proverbs 20:27 — "The spirit of man is the candle of the LORD, searching all the inward parts of the belly."
+
+God's Spirit searches the inner parts—not to condemn, but to illuminate. Jesus is the light that dispels darkness. Understanding yourself is not self-obsession; it's stewardship of what God has entrusted to you.`,
     practicalSteps: [
-      "Practice breath prayer: inhale 'Lord Jesus,' exhale 'have mercy'",
-      "Journal your emotions honestly—let them 'rise like incense'",
-      "Use the Psalms as emotional templates (lament, praise, confession)",
-      "Set aside 10 minutes daily for silent prayer/meditation",
-      "Name your feelings aloud to God—don't hide them",
-      "Pray for yourself as you would intercede for a friend"
+      "Identify your top 3 triggers and what responses they activate",
+      "Learn your stress patterns: fight, flight, freeze, or fawn?",
+      "Journal insights without judgment—observe, don't condemn",
+      "Research how trauma affects the brain—knowledge reduces shame",
+      "Ask: 'What was this response protecting me from?'"
     ],
     reflectionQuestions: [
-      "Do I bring my emotions to God or hide them?",
-      "When did I last sit in silence and let God calm my chaos?",
-      "Am I using prayer as emotional regulation or just asking for things?",
-      "What would change if I prayed for my own mental health daily?"
+      "What patterns are you beginning to notice about yourself?",
+      "How does understanding change self-blame?",
+      "Can you see your trauma responses as adaptations rather than failures?",
+      "What triggers activate your strongest reactions?"
     ],
-    weeklyChallenge: "Each day this week, practice 'incense prayer': write or speak your rawest emotion to God, then sit in silence for 5 minutes. Let the atmosphere shift. Notice how you feel after.",
+    weeklyChallenge: "This week, become a curious observer of yourself. When you feel triggered, pause and note: What happened? What did I feel? How did I respond? Don't judge—just illuminate. By week's end, identify one pattern.",
     scriptureReferences: [
-      "Psalm 141:2 - Let my prayer be set before You as incense",
-      "Revelation 5:8 - Bowls full of incense, which are the prayers of saints",
-      "Philippians 4:6-7 - Be anxious for nothing, but in prayer…",
-      "Psalm 62:8 - Pour out your heart before Him"
+      "John 8:12 — I am the light of the world",
+      "Psalm 119:105 — Thy word is a lamp unto my feet",
+      "Proverbs 20:27 — The spirit of man is the candle of the LORD"
     ],
-    prayerPrompt: "Father, I pour out my chaos before You. Receive my emotions like incense. Calm my nervous system. Regulate my heart. Change the atmosphere in my mind. I trust You hear me. Amen."
+    prayerPrompt: "Lord, shine Your light on my patterns. Help me understand without condemning myself. Show me how my responses developed and how they can be healed. Illuminate, don't shame. Amen."
   },
   {
     id: 6,
-    name: "The Ark of the Covenant",
-    sanctuaryMeaning: "God's throne, His law, His presence, His covenant identity.",
-    mentalHealthPrinciple: "Root your sense of identity in God, establish boundaries, and rest under the mercy seat.",
-    teaching: `The ark carries all the elements needed for psychological stability:
+    week: "Week 6",
+    name: "🌸 The Incense Altar",
+    sanctuaryMeaning: "Emotional Regulation — Regulation, Breath, and Prayer.",
+    mentalHealthPrinciple: "Anxiety is physiological before it is spiritual. Prayer regulates when it slows us down. God speaks in stillness, not panic.",
+    teaching: `**REGULATION, BREATH, AND PRAYER**
 
-1. God's Law — Boundaries
-Healthy mental health requires:
-• Emotional boundaries
-• Relationship boundaries
-• Work boundaries
-• Time boundaries
-• Digital boundaries
-• Sleep boundaries
+The altar of incense teaches emotional regulation—calming the nervous system so truth can land.
 
-Boundaries protect peace.
+**Anxiety Is Physiological Before It Is Spiritual:**
+Before anxiety is a spiritual problem, it's a body problem. Your nervous system is dysregulated. Breathing, slowing down, and calming the body must happen before spiritual truth can penetrate.
 
-2. The Manna — Daily Trust
-Anxious minds jump to the future. God heals anxiety through manna:
-• One day at a time
-• Daily provision
-• Daily grace
-• Daily victory
+**Prayer Regulates When It Slows Us Down:**
+Prayer isn't magic—it's regulation. When we slow our breath, speak to God, and pause our racing thoughts, we activate the parasympathetic nervous system. Prayer changes our physiology.
 
-You do not have tomorrow's strength today. You only have today's manna.
+**God Speaks in Stillness, Not Panic:**
+1 Kings 19:11-12 — God wasn't in the wind, earthquake, or fire. He was in the "still small voice." A panicked mind can't hear. Stillness is required.
 
-3. Aaron's Rod — Proof You Can Grow Again
-The rod budded overnight from a dead stick. This is God's message to trauma survivors: You can grow again. Your emotions can come back to life. Your joy can bud again.
+**Incense Only Rises When Fire and Air Meet:**
+This teaches us that emotional regulation combines inner fire (the Holy Spirit's work) with breath (our physiological calming). Both are necessary.`,
+    biblicalFoundation: `Philippians 4:6–7 — "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God... shall keep your hearts and minds."
 
-4. The Mercy Seat — God's Presence Covers Everything
-Over the law, over the manna, over the rod—was mercy.
+Psalm 46:10 — "Be still, and know that I am God."
 
-This is mental health's greatest truth: God's mercy covers your story, your trauma, your mistakes, your setbacks, your darkest valleys.
+Revelation 8:3–4 — The prayers of the saints rise like incense before God's throne.
 
-The mind heals under mercy—not pressure, not perfectionism, not shame, not comparison. Mercy is mental medicine.`,
-    biblicalFoundation: "The ark was the throne of God—His dwelling place among His people. Inside were reminders of boundaries (law), provision (manna), and resurrection (Aaron's rod). Above it all was the mercy seat, where God's presence rested. This teaches us: mental health requires structure (boundaries), daily trust (one day at a time), hope for renewal (you can grow again), and above all—mercy. God's unchanging law provides safety and order, but His mercy provides healing and rest.",
+The incense altar stood closest to the Most Holy Place—nearest to God's presence. This teaches us: regulated calm is the posture that brings us nearest to God. Panic pushes us away; stillness draws us near.`,
     practicalSteps: [
-      "Identify one area needing better boundaries—set a clear limit",
-      "Practice daily trust: say 'Today's strength for today's challenges' each morning",
-      "Write down one area where you see new growth after trauma",
-      "Create a 'mercy seat moment' daily: sit quietly and receive God's kindness",
-      "Stop beating yourself up for setbacks—practice self-compassion",
-      "Affirm your identity in Christ—not in performance or past"
+      "Practice daily slow breathing: 5 seconds in, 7 seconds out, for 5 minutes",
+      "Use short repeated prayers as grounding ('Lord, have mercy')",
+      "Schedule quiet time without performance expectations",
+      "Learn your stress response and practice opposite action",
+      "When anxious, regulate your body BEFORE trying to think differently"
     ],
     reflectionQuestions: [
-      "Where am I lacking boundaries, and how is it affecting my peace?",
-      "Am I borrowing tomorrow's anxiety instead of trusting today's provision?",
-      "Do I believe I can grow again after what I've been through?",
-      "Am I living under mercy or under constant self-condemnation?"
+      "How do you respond to stress—fight, flight, freeze?",
+      "What helps your body calm most effectively?",
+      "Do you try to think your way out of anxiety before calming your body?",
+      "Can you sit in stillness, or does it feel threatening?"
     ],
-    weeklyChallenge: "This week, establish one new boundary (relational, digital, or time). Each morning, speak: 'I trust God for today only.' Each evening, sit in 'mercy seat rest'—receive God's kindness over your day.",
+    weeklyChallenge: "Practice the 'incense rhythm' daily: 5 minutes of slow breathing + a short repeated prayer + 5 minutes of silence. Track your anxiety levels before and after. Notice how regulation changes your capacity to receive truth.",
     scriptureReferences: [
-      "Exodus 25:22 - I will meet with you above the mercy seat",
-      "Matthew 6:34 - Do not worry about tomorrow",
-      "Hebrews 4:16 - Come boldly to the throne of grace",
-      "Numbers 17:8 - Aaron's rod budded and bore fruit"
+      "Philippians 4:6–7 — Be anxious for nothing, but in prayer...",
+      "Psalm 46:10 — Be still and know that I am God",
+      "Revelation 8:3–4 — Prayers rising like incense"
     ],
-    prayerPrompt: "Lord, You sit enthroned above mercy. Help me set healthy boundaries. Teach me to trust You one day at a time. Remind me I can grow again. Cover me with Your mercy—not my performance. Amen."
+    prayerPrompt: "Father, calm my nervous system. Teach me to be still. Help me regulate my body so my mind can receive Your truth. Let my prayers rise like incense—slow, steady, accepted. Speak to me in stillness. Amen."
+  },
+  {
+    id: 7,
+    week: "Week 7",
+    name: "⚡ The Ark",
+    sanctuaryMeaning: "Most Holy Place — Identity, Law, and Mental Rest.",
+    mentalHealthPrinciple: "Mental peace comes from ordered identity. Sabbath is neurological, not optional. You are not what you produce.",
+    teaching: `**IDENTITY, LAW, AND MENTAL REST**
+
+The Ark of the Covenant represents the culmination—anchoring identity and reclaiming rest.
+
+**Mental Peace Comes From Ordered Identity:**
+Inside the ark was God's law—fixed, unchanging, reliable. Your identity needs the same anchor. When identity is rooted in Christ rather than performance, mental peace follows.
+
+**Sabbath Is Neurological, Not Optional:**
+The Sabbath command isn't arbitrary—it's how God designed the brain. Rest is not laziness; it's neurological necessity. A mind that never rests will never heal.
+
+**You Are Not What You Produce:**
+The mercy seat covered the ark. Your value isn't measured by output. You are covered by mercy, not evaluated by productivity.
+
+**Inside the Ark:**
+• The Law = boundaries, order, structure
+• The Manna = daily trust, not future anxiety
+• Aaron's Rod = proof you can grow again after death
+
+**Above the Ark:**
+• The Mercy Seat = God's presence covering everything`,
+    biblicalFoundation: `Exodus 33:14 — "My presence shall go with thee, and I will give thee rest."
+
+Hebrews 4:9–11 — "There remaineth therefore a rest to the people of God. For he that is entered into his rest, he also hath ceased from his own works..."
+
+Isaiah 26:3 — "Thou wilt keep him in perfect peace, whose mind is stayed on thee."
+
+The Most Holy Place was entered only once a year by the high priest. It was the place of ultimate intimacy, ultimate rest, ultimate identity. This is where mental health culminates—not in striving, but in resting under God's mercy.`,
+    practicalSteps: [
+      "Practice a weekly mental Sabbath: no striving, no fixing, no performance",
+      "Define identity statements rooted in Christ, not productivity",
+      "Set firm emotional boundaries that protect your peace",
+      "Say daily: 'I am not what I produce. I am covered by mercy.'",
+      "Rest without guilt—this is obedience, not laziness"
+    ],
+    reflectionQuestions: [
+      "Where do you derive worth from—Christ or production?",
+      "What does true rest look like for you?",
+      "Can you rest without guilt?",
+      "What boundaries do you need to set to protect mental peace?"
+    ],
+    weeklyChallenge: "Take one full mental Sabbath day this week: no striving, no fixing yourself, no productivity pressure. Practice receiving mercy instead of earning approval. At day's end, journal what rest felt like.",
+    scriptureReferences: [
+      "Exodus 33:14 — My presence shall go with thee and give thee rest",
+      "Hebrews 4:9–11 — There remaineth a rest for the people of God",
+      "Isaiah 26:3 — Perfect peace when the mind is stayed on God"
+    ],
+    prayerPrompt: "Lord, I rest under Your mercy seat. My identity is in You, not my production. Teach me to Sabbath—neurologically, emotionally, spiritually. I cease striving. I rest in Your presence. Amen."
+  },
+  {
+    id: 8,
+    week: "Week 8",
+    name: "🧠 Living From the Sanctuary",
+    sanctuaryMeaning: "Integration & Continuation — Living daily from the sanctuary pattern.",
+    mentalHealthPrinciple: "Healing is maintained through rhythm. The sanctuary becomes a lifestyle. Christ ministers continually for the mind.",
+    teaching: `**INTEGRATION & CONTINUATION**
+
+This final week integrates everything into a sustainable lifestyle. The sanctuary pattern becomes how you live, not just what you learned.
+
+**Healing Is Maintained Through Rhythm:**
+One-time interventions don't create lasting change. The sanctuary services happened daily, weekly, yearly. Mental health is maintained through ongoing rhythms, not occasional intensity.
+
+**The Sanctuary Becomes a Lifestyle:**
+This isn't an 8-week program you complete and forget. This is a pattern for living. The altar, laver, table, candlestick, incense, and ark become your daily architecture.
+
+**Christ Ministers Continually for the Mind:**
+Hebrews 7:25 — Christ "ever liveth to make intercession." He doesn't stop ministering for your mental health. Your job is to remain in the pattern where He works.
+
+**Your Personal Sanctuary Rhythm:**
+• Daily: surrender (altar), cleansing (laver), nourishment (table), movement/light (candlestick), regulation (incense)
+• Weekly: Sabbath rest (ark)
+• Ongoing: community, accountability, honesty about regression`,
+    biblicalFoundation: `Hebrews 10:19–22 — "Having therefore, brethren, boldness to enter into the holiest by the blood of Jesus... let us draw near with a true heart..."
+
+Psalm 84:1–4 — "How amiable are thy tabernacles, O LORD of hosts! My soul longeth, yea, even fainteth for the courts of the LORD..."
+
+John 15:4–5 — "Abide in me, and I in you. As the branch cannot bear fruit of itself, except it abide in the vine; no more can ye, except ye abide in me."
+
+Abiding is the key. The sanctuary wasn't visited once—it was the center of ongoing life. Your mental health is maintained by remaining in the pattern, not by completing a course.`,
+    practicalSteps: [
+      "Build a personal 'sanctuary rhythm' for daily and weekly practice",
+      "Identify warning signs of regression—know your red flags",
+      "Commit to ongoing community and accountability",
+      "Schedule quarterly check-ins on your mental health",
+      "Share what you've learned with someone who needs it"
+    ],
+    reflectionQuestions: [
+      "Which article impacted you most over these 8 weeks?",
+      "How will you maintain this order long-term?",
+      "What are your warning signs that you're drifting from the pattern?",
+      "Who will hold you accountable to continue?"
+    ],
+    weeklyChallenge: "Create your written 'Sanctuary Rhythm'—a daily and weekly plan that incorporates all 6 articles. Share it with one accountability partner. Commit to practicing it for the next 90 days.",
+    scriptureReferences: [
+      "Hebrews 10:19–22 — Boldness to enter the holiest",
+      "Psalm 84:1–4 — My soul longs for the courts of the LORD",
+      "John 15:4–5 — Abide in me"
+    ],
+    prayerPrompt: "Lord, let the sanctuary become my lifestyle, not just my lesson. Help me maintain these rhythms. Keep me abiding in You. Thank You for ministering continually for my mind. I commit to the pattern. Amen."
   }
 ];
 
 export const MENTAL_HEALTH_INTRO = {
-  title: "The Sanctuary Blueprint for Mental Health & Emotional Healing",
-  subtitle: "How the Six Articles of Furniture Reveal God's System for Restoring the Mind to Peace",
-  sanctuaryExplanation: `## Understanding the Hebrew Sanctuary
+  title: "The Sanctuary of the Mind",
+  subtitle: "An 8-Week Biblical Journey Toward Mental & Emotional Healing",
+  sanctuaryExplanation: `**"The Lord shall bless thee out of Zion: and thou shalt see the good of Jerusalem all the days of thy life."**
+— Psalm 128:5
+*(Zion = the sanctuary = the mind restored)*
 
-In the Old Testament, God gave Moses a detailed pattern for the sanctuary (Exodus 25:8-9)—a sacred tent where God's presence would dwell among His people. This wasn't just a building; it was a divine blueprint showing humanity how to approach a holy God and walk through life transformation.
+## THE SANCTUARY FLOW (MEMORABLE PATTERN)
 
-### The Six Articles of Furniture
+**Pain → Cleansing → Nourishment → Insight → Regulation → Rest**
 
-The sanctuary contained six primary articles of furniture, arranged in a specific progressive order from the outer court to the Most Holy Place:
+This is how God heals the mind.
 
-🔥 **1. Altar of Sacrifice** (Outer Court)  
-Where animals were sacrificed as substitutes for sin; represents death to the old self and complete surrender.  
-📖 *Scriptural Foundation:* Leviticus 1-7; Hebrews 10:1-10  
-🔗 [Learn more about the Altar of Sacrifice](https://www.biblegateway.com/passage/?search=Exodus+27%3A1-8&version=KJV)
+### The 8-Week Journey:
 
-💧 **2. The Laver** (Outer Court)  
-A bronze basin filled with water for ceremonial washing; symbolizes cleansing, self-reflection, and preparation for service.  
-📖 *Scriptural Foundation:* Exodus 30:17-21; Ephesians 5:26  
-🔗 [Explore the Laver's significance](https://www.biblegateway.com/passage/?search=Exodus+30%3A17-21&version=KJV)
-
-🍞 **3. Table of Shewbread** (Holy Place)  
-Twelve loaves of bread representing the twelve tribes; signifies God's daily provision, consistency, and fellowship.  
-📖 *Scriptural Foundation:* Leviticus 24:5-9; John 6:35  
-🔗 [Discover the Bread of Presence](https://www.biblegateway.com/passage/?search=Leviticus+24%3A5-9&version=KJV)
-
-🕯️ **4. Golden Candlestick/Menorah** (Holy Place)  
-Seven-branched lampstand that burned continually; represents the Holy Spirit's light, revelation, and guidance.  
-📖 *Scriptural Foundation:* Exodus 25:31-40; John 8:12; Revelation 1:20  
-🔗 [Study the Golden Lampstand](https://www.biblegateway.com/passage/?search=Exodus+25%3A31-40&version=KJV)
-
-🌸 **5. Altar of Incense** (Holy Place)  
-Golden altar where fragrant incense burned continually; symbolizes prayer, worship, and intimate communion with God.  
-📖 *Scriptural Foundation:* Exodus 30:1-10; Psalm 141:2; Revelation 5:8  
-🔗 [Understand the Altar of Incense](https://www.biblegateway.com/passage/?search=Exodus+30%3A1-10&version=KJV)
-
-⚡ **6. Ark of the Covenant** (Most Holy Place)  
-God's throne on earth containing the Law, Manna, and Aaron's Rod; represents God's presence, covenant, mercy, and ultimate restoration.  
-📖 *Scriptural Foundation:* Exodus 25:10-22; Hebrews 9:1-5  
-🔗 [Discover the Ark of the Covenant](https://www.biblegateway.com/passage/?search=Exodus+25%3A10-22&version=KJV)
-
----
-
-### God's Way is for EVERY Area of Life
-
-Here's the revelation: The sanctuary pattern wasn't just for worship services. It's God's master blueprint for how He works in every dimension of human life. The same God who designed the path to His presence also designed the path to freedom, healing, relationships, and restoration.
-
-The sanctuary principles apply to:
-• Breaking strongholds and addictions
-• Navigating grief and loss
-• Building healthy relationships and marriages
-• Personal transformation and sanctification
-• Emotional healing and mental renewal
-• Spiritual warfare and victory
-
-**Practical Application for Life**
-
-When you understand the sanctuary pattern, you unlock God's methodology for life change. Just as the Israelite couldn't skip the altar and jump straight into God's presence, we cannot skip the necessary steps in our own journey toward freedom, healing, or covenant relationships.
-
-The sanctuary teaches us that transformation is:
-• **Progressive** - Each step prepares you for the next
-• **Ordered** - Sequence matters; you can't skip stages
-• **Architectural** - Built with intention, not left to chance
-• **Christ-Centered** - Every piece points to Jesus, our ultimate High Priest
-
-This blueprint reveals that God's way is not random or chaotic. He has a pattern, a process, and a path. Whether you're fighting sin, grieving loss, or building a marriage—the sanctuary shows you the way.`,
-  description: "The sanctuary is not merely a doctrine—it is Heaven's therapeutic model. The same way God brings the sinner back to Himself, He brings the mind back to stability. Mental health is at-one-ment of thoughts, emotions, identity, and purpose.",
-  quote: "\"The mind heals under mercy—not pressure, not perfectionism, not shame, not comparison. Mercy is mental medicine.\""
+📐 **Week 1: The Pattern** — Understanding why God heals in order
+🔥 **Week 2: The Altar** — Grief, surrender, naming pain
+💧 **Week 3: The Laver** — Cleansing the thought life
+🍞 **Week 4: The Table** — Nourishment, routine, community
+🕯️ **Week 5: The Candlestick** — Insight, meaning, trauma awareness
+🌸 **Week 6: The Incense Altar** — Regulation, breath, prayer
+⚡ **Week 7: The Ark** — Identity, law, mental rest
+🧠 **Week 8: Integration** — Living from the sanctuary pattern`,
+  description: "Weight loss fails when people attack results instead of order. The same is true for mental health. God never reforms Israel's habits without first reforming the altar, laver, table, light, air, and rest. This 8-week journey follows God's sanctuary pattern for healing the mind—not symptom control, but architectural repair.",
+  quote: "Know ye not that your body is the temple of the Holy Ghost… therefore glorify God in your body. — 1 Corinthians 6:19–20"
 };

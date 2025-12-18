@@ -106,7 +106,7 @@ export default function BlueprintMentalHealth() {
               items={MENTAL_HEALTH_ARTICLES.map(article => ({
                 id: article.id,
                 name: article.name,
-                step: `Step ${article.id}`
+                step: article.week
               }))}
               completedItems={completedArticles}
               onItemClick={setSelectedArticle}
@@ -124,7 +124,7 @@ export default function BlueprintMentalHealth() {
                 Back to Overview
               </Button>
               <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary">Article {currentArticle?.id} of 6</Badge>
+                <Badge variant="secondary">{currentArticle?.week} of 8</Badge>
                 {completedArticles.includes(currentArticle?.id || 0) && (
                   <Badge className="bg-green-500">Completed</Badge>
                 )}
