@@ -387,7 +387,7 @@ serve(async (req) => {
         `;
 
         const { error: emailError } = await resend.emails.send({
-          from: "Phototheology <daily@phototheology.com>",
+          from: "Phototheology Devotionals <noreply@livingmanna.church>",
           to: userEmail,
           subject: `📖 Day ${currentDayNumber}: ${dayContent.title} - ${plan.title}`,
           html: emailHtml,
