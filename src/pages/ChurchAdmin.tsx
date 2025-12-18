@@ -7,13 +7,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Building2, Users, Mail, TrendingUp, Target, Sprout, Sun, Moon } from "lucide-react";
+import { Loader2, Building2, Users, Mail, TrendingUp, Target, Sprout, Sun, Moon, Settings } from "lucide-react";
 import { useTheme } from "next-themes";
 import { ChurchOverview } from "@/components/churches/ChurchOverview";
 import { ChurchMembers } from "@/components/churches/ChurchMembers";
 import { ChurchInvitations } from "@/components/churches/ChurchInvitations";
 import { ChurchCampaigns } from "@/components/churches/ChurchCampaigns";
 import { ChurchAnalytics } from "@/components/churches/ChurchAnalytics";
+import { ChurchSettings } from "@/components/living-manna/admin/ChurchSettings";
 import { LeaderDashboard } from "@/components/living-manna";
 
 interface Church {
@@ -287,34 +288,38 @@ export default function ChurchAdmin() {
         {/* Main Content Tabs */}
         <Card variant="glass" className="p-6">
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="bg-card/50 backdrop-blur border border-border/50 rounded-lg grid w-full grid-cols-6 lg:w-auto p-1">
+            <TabsList className="bg-card/50 backdrop-blur border border-border/50 rounded-lg flex-wrap h-auto gap-1 p-1">
               <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Building2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Overview</span>
-            </TabsTrigger>
-            <TabsTrigger value="members" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Members</span>
-            </TabsTrigger>
-            <TabsTrigger value="invitations" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Mail className="h-4 w-4" />
-              <span className="hidden sm:inline">Invitations</span>
-            </TabsTrigger>
-            <TabsTrigger value="campaigns" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Target className="h-4 w-4" />
-              <span className="hidden sm:inline">Campaigns</span>
-            </TabsTrigger>
-            <TabsTrigger value="living-manna" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Sprout className="h-4 w-4" />
-              <span className="hidden sm:inline">Living Manna</span>
-            </TabsTrigger>
-            {hasTier2Access && (
-              <TabsTrigger value="analytics" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <TrendingUp className="h-4 w-4" />
-                <span className="hidden sm:inline">Analytics</span>
+                <Building2 className="h-4 w-4" />
+                <span className="hidden sm:inline">Overview</span>
               </TabsTrigger>
-            )}
-          </TabsList>
+              <TabsTrigger value="settings" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Settings className="h-4 w-4" />
+                Settings
+              </TabsTrigger>
+              <TabsTrigger value="members" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Users className="h-4 w-4" />
+                <span className="hidden sm:inline">Members</span>
+              </TabsTrigger>
+              <TabsTrigger value="invitations" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Mail className="h-4 w-4" />
+                <span className="hidden sm:inline">Invitations</span>
+              </TabsTrigger>
+              <TabsTrigger value="campaigns" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Target className="h-4 w-4" />
+                <span className="hidden sm:inline">Campaigns</span>
+              </TabsTrigger>
+              <TabsTrigger value="living-manna" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Sprout className="h-4 w-4" />
+                <span className="hidden sm:inline">Living Manna</span>
+              </TabsTrigger>
+              {hasTier2Access && (
+                <TabsTrigger value="analytics" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <TrendingUp className="h-4 w-4" />
+                  <span className="hidden sm:inline">Analytics</span>
+                </TabsTrigger>
+              )}
+            </TabsList>
 
           <TabsContent value="overview">
             <ChurchOverview 
@@ -322,6 +327,10 @@ export default function ChurchAdmin() {
               usedSeats={usedSeats}
               onUpdate={loadChurchData}
             />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <ChurchSettings churchId={church.id} />
           </TabsContent>
 
           <TabsContent value="members">
