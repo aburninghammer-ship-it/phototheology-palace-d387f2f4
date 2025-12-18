@@ -201,7 +201,7 @@ export default function LivingManna() {
               </TabsList>
 
               <TabsContent value="home">
-                <MemberHome churchId={effectiveChurchId!} />
+                <MemberHome churchId={effectiveChurchId!} churchName={churchName} />
               </TabsContent>
 
               <TabsContent value="groups">

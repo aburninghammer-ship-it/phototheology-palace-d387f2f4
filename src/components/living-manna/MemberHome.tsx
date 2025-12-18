@@ -10,12 +10,14 @@ import { ActivityPulse } from "./ActivityPulse";
 import { AlwaysOnStudy } from "./AlwaysOnStudy";
 import { FeaturedSermon } from "./FeaturedSermon";
 import { PrayerEntry } from "./PrayerEntry";
+import { DailyDevotion } from "./DailyDevotion";
 import { 
   BookOpen, ArrowRight, Flame, Users, Star, ExternalLink
 } from "lucide-react";
 
 interface MemberHomeProps {
   churchId: string;
+  churchName?: string;
 }
 
 interface QuickStats {
@@ -24,7 +26,7 @@ interface QuickStats {
   myGroupName: string | null;
 }
 
-export function MemberHome({ churchId }: MemberHomeProps) {
+export function MemberHome({ churchId, churchName = "Living Manna" }: MemberHomeProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState<QuickStats>({
@@ -81,6 +83,9 @@ export function MemberHome({ churchId }: MemberHomeProps) {
     <div className="space-y-6">
       {/* Sabbath Rhythm - Always visible, contextual */}
       <SabbathRhythmStrip />
+
+      {/* Daily PT Devotion */}
+      <DailyDevotion churchId={churchId} churchName={churchName} />
       
       {/* Activity Pulse - Shows community is alive */}
       <ActivityPulse churchId={churchId} />
