@@ -169,13 +169,105 @@ const normalizeBookName = (book: string): string => {
   return book.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
 };
 
+// Generate TTS audio for commentary (fire and forget for caching)
+async function generateAndCacheAudio(
+  supabase: any,
+  normalizedBook: string,
+  chapterNum: number,
+  commentary: string,
+  voice: string = 'echo'
+): Promise<string | null> {
+  try {
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!OPENAI_API_KEY) {
+      console.log("[Commentary Audio] No OpenAI key, skipping audio generation");
+      return null;
+    }
+
+    console.log(`[Commentary Audio] Generating audio for ${normalizedBook} ${chapterNum} (${commentary.length} chars)`);
+
+    // Generate TTS with OpenAI
+    const response = await fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini-tts',
+        input: commentary,
+        voice: voice,
+        speed: 1.0,
+        response_format: 'mp3',
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[Commentary Audio] OpenAI error: ${response.status} - ${errorText}`);
+      return null;
+    }
+
+    const audioBuffer = await response.arrayBuffer();
+    const storagePath = `commentary/${normalizedBook}/${chapterNum}/${voice}.mp3`;
+
+    // Upload to storage
+    const { error: uploadError } = await supabase.storage
+      .from('bible-audio')
+      .upload(storagePath, audioBuffer, {
+        contentType: 'audio/mpeg',
+        upsert: true
+      });
+
+    if (uploadError) {
+      console.error('[Commentary Audio] Storage upload error:', uploadError);
+      return null;
+    }
+
+    // Update cache record with audio path
+    const { error: updateError } = await supabase
+      .from("chapter_commentary_cache")
+      .update({ 
+        audio_storage_path: storagePath,
+        voice_id: voice 
+      })
+      .eq("book", normalizedBook)
+      .eq("chapter", chapterNum);
+
+    if (updateError) {
+      console.error('[Commentary Audio] Failed to update cache with audio path:', updateError);
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('bible-audio')
+      .getPublicUrl(storagePath);
+
+    console.log(`[Commentary Audio] Cached audio for ${normalizedBook} ${chapterNum}`);
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('[Commentary Audio] Error generating audio:', error);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { book, chapter, chapterText, depth = "surface", userName, language = "en", userStudiesContext } = await req.json();
+    const { 
+      book, 
+      chapter, 
+      chapterText, 
+      depth = "surface", 
+      userName, 
+      language = "en", 
+      userStudiesContext,
+      generateAudio = true, // New param to request audio generation
+      voice = 'echo' // Default voice for commentary
+    } = await req.json();
 
     if (!book || !chapter) {
       throw new Error("Book and chapter are required");
@@ -197,15 +289,39 @@ serve(async (req) => {
       
       const { data: cached, error: cacheError } = await supabase
         .from("chapter_commentary_cache")
-        .select("commentary_text")
+        .select("commentary_text, audio_storage_path, voice_id")
         .eq("book", normalizedBook)
         .eq("chapter", chapterNum)
         .single();
 
       if (!cacheError && cached?.commentary_text) {
         console.log(`Cache HIT for ${book} ${chapter} (depth commentary)`);
+        
+        let audioUrl = null;
+        
+        // Check if we have cached audio
+        if (cached.audio_storage_path) {
+          const { data: urlData } = supabase.storage
+            .from('bible-audio')
+            .getPublicUrl(cached.audio_storage_path);
+          audioUrl = urlData.publicUrl;
+          console.log(`[Commentary] Serving cached audio from ${cached.audio_storage_path}`);
+        } else if (generateAudio) {
+          // Generate and cache audio in background (don't wait)
+          generateAndCacheAudio(supabase, normalizedBook, chapterNum, cached.commentary_text, voice)
+            .then(url => {
+              if (url) console.log(`[Commentary] Background audio generation complete`);
+            })
+            .catch(err => console.error('[Commentary] Background audio error:', err));
+        }
+        
         return new Response(
-          JSON.stringify({ commentary: cached.commentary_text, cached: true }),
+          JSON.stringify({ 
+            commentary: cached.commentary_text, 
+            cached: true,
+            audioUrl,
+            audioCached: !!cached.audio_storage_path
+          }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -322,6 +438,8 @@ ${hasUserStudies ? "BUILD UPON the user's previous study insights where relevant
 
     console.log(`${depth} commentary generated successfully for ${book} ${chapter} (${commentary.length} chars)`);
 
+    let audioUrl = null;
+
     // Cache depth commentary for future use
     if (supabaseUrl && supabaseServiceKey && depth === "depth") {
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -338,11 +456,20 @@ ${hasUserStudies ? "BUILD UPON the user's previous study insights where relevant
         console.error("Failed to cache commentary:", insertError);
       } else {
         console.log(`Cached commentary for ${book} ${chapter}`);
+        
+        // Generate and cache audio (don't wait - return commentary immediately)
+        if (generateAudio) {
+          generateAndCacheAudio(supabase, normalizedBook, chapterNum, commentary, voice)
+            .then(url => {
+              if (url) console.log(`[Commentary] Audio cached for ${book} ${chapter}`);
+            })
+            .catch(err => console.error('[Commentary] Audio generation error:', err));
+        }
       }
     }
 
     return new Response(
-      JSON.stringify({ commentary, cached: false }),
+      JSON.stringify({ commentary, cached: false, audioUrl: null, audioCached: false }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

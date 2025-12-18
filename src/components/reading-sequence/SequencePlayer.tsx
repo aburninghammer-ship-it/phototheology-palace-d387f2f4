@@ -317,13 +317,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, [isPlaying, isPaused, musicVolume]);
 
   // Generate chapter commentary using Jeeves (with offline cache)
-  const generateCommentary = useCallback(async (book: string, chapter: number, chapterText?: string, depth: string = "surface") => {
+  // Returns { text, audioUrl } or null
+  const generateCommentary = useCallback(async (book: string, chapter: number, chapterText?: string, depth: string = "surface", voice: string = "echo"): Promise<{ text: string; audioUrl?: string } | null> => {
     try {
       // Check offline cache first
       const cached = getCachedChapterCommentary(book, chapter, depth);
       if (cached) {
         console.log("[Commentary] Using cached chapter commentary for", book, chapter);
-        return cached;
+        return { text: cached };
       }
 
       // If offline and no cache, return null
@@ -345,7 +346,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       
       try {
         const { data, error } = await supabase.functions.invoke("generate-chapter-commentary", {
-          body: { book, chapter, chapterText, depth, userName, userStudiesContext },
+          body: { book, chapter, chapterText, depth, userName, userStudiesContext, generateAudio: true, voice },
         });
         
         clearTimeout(timeoutId);
@@ -356,14 +357,15 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         }
         
         const commentary = data?.commentary as string | null;
+        const audioUrl = data?.audioUrl as string | undefined;
         
         // Cache the commentary for offline use
         if (commentary) {
           cacheChapterCommentary(book, chapter, depth, commentary);
         }
         
-        console.log("[Commentary] Generated chapter commentary length:", commentary?.length || 0);
-        return commentary;
+        console.log("[Commentary] Generated chapter commentary length:", commentary?.length || 0, "audioUrl:", !!audioUrl);
+        return commentary ? { text: commentary, audioUrl } : null;
       } catch (invokeError) {
         clearTimeout(timeoutId);
         throw invokeError;
@@ -879,10 +881,38 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         setIsLoading(true);
         const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
         
-        generateCommentary(content.book, content.chapter, chapterText, commentaryDepth)
-          .then(commentary => {
-            if (commentary && continuePlayingRef.current) {
-              playCommentary(commentary, commentaryVoice, moveToNextChapter);
+        generateCommentary(content.book, content.chapter, chapterText, commentaryDepth, commentaryVoice)
+          .then(result => {
+            if (result?.text && continuePlayingRef.current) {
+              // If we got a cached audio URL, use it directly
+              if (result.audioUrl) {
+                commentaryCache.current.set(`chapter-${content.book}-${content.chapter}-${commentaryVoice}`, { text: result.text, audioUrl: result.audioUrl });
+                setCommentaryText(result.text);
+                setIsPlayingCommentary(true);
+                playingCommentaryRef.current = true;
+                setIsLoading(false);
+                
+                const audio = new Audio(result.audioUrl);
+                audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
+                audioRef.current = audio;
+                audio.onended = () => {
+                  audioRef.current = null;
+                  setIsPlayingCommentary(false);
+                  playingCommentaryRef.current = false;
+                  setCommentaryText(null);
+                  moveToNextChapter();
+                };
+                audio.onerror = () => {
+                  audioRef.current = null;
+                  setIsPlayingCommentary(false);
+                  playingCommentaryRef.current = false;
+                  setCommentaryText(null);
+                  moveToNextChapter();
+                };
+                audio.play().catch(() => moveToNextChapter());
+              } else {
+                playCommentary(result.text, commentaryVoice, moveToNextChapter);
+              }
             } else {
               setIsLoading(false);
               moveToNextChapter();
@@ -978,12 +1008,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log("[Prefetch Chapter Commentary] Starting for", book, chapter);
     
     try {
-      const commentary = await generateCommentary(book, chapter, chapterText, depth);
+      const result = await generateCommentary(book, chapter, chapterText, depth, commentaryVoice);
       
-      if (commentary) {
-        const audioUrl = await generateTTS(commentary, commentaryVoice);
-        commentaryCache.current.set(cacheKey, { text: commentary, audioUrl: audioUrl || undefined });
-        console.log("[Prefetch Chapter Commentary] Cached for", book, chapter);
+      if (result?.text) {
+        // If audioUrl came from server cache, use it; otherwise generate TTS
+        const audioUrl = result.audioUrl || await generateTTS(result.text, commentaryVoice);
+        commentaryCache.current.set(cacheKey, { text: result.text, audioUrl: audioUrl || undefined });
+        console.log("[Prefetch Chapter Commentary] Cached for", book, chapter, "hasAudioUrl:", !!result.audioUrl);
       }
     } catch (e) {
       console.error("[Prefetch Chapter Commentary] Error:", e);
@@ -1066,19 +1097,49 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       if (commentaryMode === "chapter") {
         // Play chapter commentary
         const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
-        const commentary = await generateCommentary(content.book, content.chapter, chapterText, commentaryDepth);
+        const result = await generateCommentary(content.book, content.chapter, chapterText, commentaryDepth, commentaryVoice);
         
         setIsLoading(false);
         
-        if (commentary && continuePlayingRef.current) {
-          playCommentary(commentary, commentaryVoice, () => {
-            // Move to next chapter after commentary
-            if (continuePlayingRef.current) {
+        if (result?.text && continuePlayingRef.current) {
+          // Use cached audio URL if available
+          if (result.audioUrl) {
+            setCommentaryText(result.text);
+            setIsPlayingCommentary(true);
+            playingCommentaryRef.current = true;
+            
+            const audio = new Audio(result.audioUrl);
+            audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
+            audioRef.current = audio;
+            audio.onended = () => {
+              audioRef.current = null;
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
+              if (continuePlayingRef.current) {
+                moveToNextChapter();
+              } else {
+                setIsPlaying(false);
+              }
+            };
+            audio.onerror = () => {
+              audioRef.current = null;
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
               moveToNextChapter();
-            } else {
-              setIsPlaying(false);
-            }
-          });
+            };
+            audio.play().catch(() => moveToNextChapter());
+          } else {
+            playCommentary(result.text, commentaryVoice, () => {
+              // Move to next chapter after commentary
+              if (continuePlayingRef.current) {
+                moveToNextChapter();
+              } else {
+                setIsPlaying(false);
+              }
+            });
+          }
         } else {
           // No commentary available or stopped, clean up and move to next
           if (continuePlayingRef.current) {
@@ -1544,10 +1605,36 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             setIsLoading(true);
             const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
             
-            generateCommentary(content.book, content.chapter, chapterText, commentaryDepth)
-              .then(commentary => {
-                if (commentary && continuePlayingRef.current) {
-                  playCommentary(commentary, commentaryVoice, moveToNextChapter);
+            generateCommentary(content.book, content.chapter, chapterText, commentaryDepth, commentaryVoice)
+              .then(result => {
+                if (result?.text && continuePlayingRef.current) {
+                  if (result.audioUrl) {
+                    setCommentaryText(result.text);
+                    setIsPlayingCommentary(true);
+                    playingCommentaryRef.current = true;
+                    setIsLoading(false);
+                    
+                    const audio = new Audio(result.audioUrl);
+                    audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
+                    audioRef.current = audio;
+                    audio.onended = () => {
+                      audioRef.current = null;
+                      setIsPlayingCommentary(false);
+                      playingCommentaryRef.current = false;
+                      setCommentaryText(null);
+                      moveToNextChapter();
+                    };
+                    audio.onerror = () => {
+                      audioRef.current = null;
+                      setIsPlayingCommentary(false);
+                      playingCommentaryRef.current = false;
+                      setCommentaryText(null);
+                      moveToNextChapter();
+                    };
+                    audio.play().catch(() => moveToNextChapter());
+                  } else {
+                    playCommentary(result.text, commentaryVoice, moveToNextChapter);
+                  }
                 } else {
                   setIsLoading(false);
                   moveToNextChapter();
