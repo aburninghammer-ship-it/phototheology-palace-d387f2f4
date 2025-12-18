@@ -1,4 +1,4 @@
-import { ArrowLeft, Home, Bell, Menu } from "lucide-react";
+import { ArrowLeft, Home, Bell, Menu, Globe } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ interface MobileNavHeaderProps {
   showBack?: boolean;
   showHome?: boolean;
   showNotifications?: boolean;
+  showPublicLink?: boolean;
   onMenuClick?: () => void;
   className?: string;
 }
@@ -19,6 +20,7 @@ export function MobileNavHeader({
   showBack = true,
   showHome = true,
   showNotifications = true,
+  showPublicLink = true,
   onMenuClick,
   className
 }: MobileNavHeaderProps) {
@@ -39,6 +41,10 @@ export function MobileNavHeader({
 
   const handleHome = () => {
     navigate('/living-manna');
+  };
+
+  const handlePublicSpace = () => {
+    navigate('/');
   };
 
   return (
@@ -80,6 +86,17 @@ export function MobileNavHeader({
 
         {/* Right side - Actions */}
         <div className="flex items-center gap-1">
+          {showPublicLink && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handlePublicSpace}
+              className="h-9 w-9 shrink-0"
+              title="Go to public site"
+            >
+              <Globe className="h-5 w-5" />
+            </Button>
+          )}
           {showHome && !isHomePage && (
             <Button
               variant="ghost"
