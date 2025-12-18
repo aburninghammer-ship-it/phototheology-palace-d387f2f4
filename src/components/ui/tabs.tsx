@@ -55,19 +55,28 @@ const TabsList = React.forwardRef<
   };
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex items-center gap-1">
       {showLeftArrow && (
         <Button
-          variant="ghost"
+          type="button"
+          variant="outline"
           size="icon"
-          className="absolute left-0 z-10 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm shadow-md hover:bg-background"
-          onClick={() => scroll('left')}
+          className="shrink-0 h-8 w-8 rounded-full bg-background shadow-md hover:bg-muted z-20"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            scroll('left');
+          }}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
       )}
       
-      <div ref={scrollContainerRef} className="overflow-x-auto">
+      <div 
+        ref={scrollContainerRef} 
+        className="overflow-x-auto flex-1 scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
         <TabsPrimitive.List
           ref={ref}
           className={cn(
@@ -80,10 +89,15 @@ const TabsList = React.forwardRef<
 
       {showRightArrow && (
         <Button
-          variant="ghost"
+          type="button"
+          variant="outline"
           size="icon"
-          className="absolute right-0 z-10 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm shadow-md hover:bg-background"
-          onClick={() => scroll('right')}
+          className="shrink-0 h-8 w-8 rounded-full bg-background shadow-md hover:bg-muted z-20"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            scroll('right');
+          }}
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
