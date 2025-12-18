@@ -68,17 +68,52 @@ export function TruthSeries({ churchId }: TruthSeriesProps) {
     try {
       const { data, error } = await callJeeves({
         mode: "truth-series-study",
-        message: `Please conduct a Bible study on "${topic.title}" (${topic.summary}). 
+        message: `Please conduct a Phototheology Bible study on "${topic.title}" (${topic.summary}). 
         
-        This is for seekers exploring Adventist beliefs. Use the Phototheology approach:
-        1. Start with a warm welcome and prayer focus
-        2. Present the core Scripture passages (cite at least 3 key texts)
-        3. Explain the teaching clearly using Christ-centered interpretation
-        4. Show how this truth connects to the sanctuary and the great controversy
-        5. Include practical application for daily life
-        6. End with discussion questions and a memory verse
-        
-        Make it conversational, warm, and focused on Jesus. Avoid jargon.`,
+You are teaching seekers exploring biblical truth. Use the FULL Phototheology Palace approach:
+
+## STRUCTURE YOUR STUDY USING THE PALACE FLOORS:
+
+### 1st Floor - Story Room (SR):
+- Open with a vivid Bible story that illustrates this truth
+- Help them SEE and FEEL the scene (Imagination Room)
+
+### 2nd Floor - Investigation (OR, DC, ST):
+- Present 3-5 key Scripture passages with careful observation
+- Define key Greek/Hebrew words where relevant
+- Identify types and symbols that point to Christ
+
+### 3rd Floor - Freestyle (NF, PF):
+- Connect to nature illustrations (how does creation teach this?)
+- Personal life application (how does this truth meet us today?)
+
+### 4th Floor - Christ-Centered Depth (CR, DR):
+- CONCENTRATION: How does this truth reveal Jesus Christ?
+- DIMENSIONS: Explore literal, Christ, personal, church, and heavenly meanings
+- PATTERNS: Show how this fits the repeat-and-enlarge pattern across Scripture
+
+### 5th Floor - Sanctuary Connection (BL):
+- Connect this truth to the sanctuary furniture or service
+- How does the sanctuary blueprint illuminate this teaching?
+
+### 6th Floor - Cycles & Heavens:
+- Place this truth in the great controversy narrative
+- Which cycle does it fit? (@Ad, @Mo, @CyC, @Sp, @Re)
+
+### 7th Floor - Fire Room (FRm):
+- End with emotional weight - let the truth BURN
+- Include a prayer that makes this personal
+
+## TONE:
+- Warm, conversational, Christ-exalting
+- Avoid jargon - explain terms simply
+- Use imagery and word pictures
+- Let Scripture speak - cite passages fully
+
+End with:
+- 3 discussion questions
+- A memory verse
+- A practical "Take Home Challenge"`,
       }, "truth-series");
 
       if (error) throw error;
@@ -99,10 +134,16 @@ export function TruthSeries({ churchId }: TruthSeriesProps) {
     try {
       const { data, error } = await callJeeves({
         mode: "truth-series-followup",
-        message: `The seeker is studying "${selectedTopic.title}" and has this question: "${followUpQuestion}"
+        message: `The seeker is studying "${selectedTopic.title}" and asks: "${followUpQuestion}"
         
-        Please answer using the Phototheology approach - Christ-centered, Scripture-based, warm and encouraging. 
-        Reference relevant Bible passages. Keep it conversational.`,
+Answer using the Phototheology approach:
+- Christ-centered (Concentration Room): How does this connect to Jesus?
+- Scripture-saturated: Reference multiple Bible passages
+- Sanctuary-aware: Connect to the blueprint when relevant
+- Story-driven: Use Bible narratives to illustrate
+- Warm and encouraging - they are learning, not being tested
+
+Use imagery and word pictures. Make truth vivid and memorable.`,
       }, "truth-series-followup");
 
       if (error) throw error;
