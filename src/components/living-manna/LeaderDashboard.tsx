@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { 
   Users, Calendar, AlertTriangle, TrendingUp, 
-  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink, GraduationCap, Settings, Bell, Shield
+  CheckCircle, Clock, UserPlus, MessageSquare, BookOpen, Flame, Video, ExternalLink, GraduationCap, Settings, Bell, Shield, Mail
 } from "lucide-react";
 import { CohortManagement } from "./CohortManagement";
 import { AttendanceTracker } from "./AttendanceTracker";
@@ -24,6 +24,7 @@ import { CentralStudyAdmin } from "./admin/CentralStudyAdmin";
 import { TruthSeries } from "./TruthSeries";
 import { ChurchSettings } from "./admin/ChurchSettings";
 import { AnnouncementsAdmin } from "./admin/AnnouncementsAdmin";
+import { ChurchInvitations } from "@/components/churches/ChurchInvitations";
 
 interface LeaderDashboardProps {
   churchId: string;
@@ -252,6 +253,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
             <Bell className="h-4 w-4" />
             Announcements
           </TabsTrigger>
+          <TabsTrigger value="invitations" className="gap-2">
+            <Mail className="h-4 w-4" />
+            Invitations
+          </TabsTrigger>
           <TabsTrigger value="settings" className="gap-2">
             <Settings className="h-4 w-4" />
             Settings
@@ -304,6 +309,10 @@ export function LeaderDashboard({ churchId }: LeaderDashboardProps) {
 
         <TabsContent value="announcements">
           <AnnouncementsAdmin churchId={churchId} />
+        </TabsContent>
+
+        <TabsContent value="invitations">
+          <ChurchInvitations churchId={churchId} availableSeats={100} />
         </TabsContent>
 
         <TabsContent value="settings">
