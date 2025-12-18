@@ -5533,6 +5533,72 @@ export type Database = {
           },
         ]
       }
+      live_sermon_sessions: {
+        Row: {
+          church_id: string
+          created_at: string
+          ended_at: string | null
+          id: string
+          key_passages: string[] | null
+          pastor_id: string
+          pt_rooms_focus: string[] | null
+          sermon_date: string
+          sermon_outline: Json | null
+          started_at: string | null
+          status: string
+          title: string
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          key_passages?: string[] | null
+          pastor_id: string
+          pt_rooms_focus?: string[] | null
+          sermon_date?: string
+          sermon_outline?: Json | null
+          started_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          key_passages?: string[] | null
+          pastor_id?: string
+          pt_rooms_focus?: string[] | null
+          sermon_date?: string
+          sermon_outline?: Json | null
+          started_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_sermon_sessions_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "live_sermon_sessions_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marriage_blueprint_progress: {
         Row: {
           article_id: number
@@ -9058,6 +9124,59 @@ export type Database = {
             columns: ["sequence_id"]
             isOneToOne: false
             referencedRelation: "reading_sequences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sermon_study_cards: {
+        Row: {
+          card_type: string
+          created_at: string
+          cross_references: string[] | null
+          display_order: number
+          floor_number: number | null
+          id: string
+          pt_rooms: string[] | null
+          reflection_question: string | null
+          sanctuary_connection: string | null
+          sermon_point: string
+          session_id: string
+          timestamp_seconds: number | null
+        }
+        Insert: {
+          card_type: string
+          created_at?: string
+          cross_references?: string[] | null
+          display_order?: number
+          floor_number?: number | null
+          id?: string
+          pt_rooms?: string[] | null
+          reflection_question?: string | null
+          sanctuary_connection?: string | null
+          sermon_point: string
+          session_id: string
+          timestamp_seconds?: number | null
+        }
+        Update: {
+          card_type?: string
+          created_at?: string
+          cross_references?: string[] | null
+          display_order?: number
+          floor_number?: number | null
+          id?: string
+          pt_rooms?: string[] | null
+          reflection_question?: string | null
+          sanctuary_connection?: string | null
+          sermon_point?: string
+          session_id?: string
+          timestamp_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sermon_study_cards_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "live_sermon_sessions"
             referencedColumns: ["id"]
           },
         ]

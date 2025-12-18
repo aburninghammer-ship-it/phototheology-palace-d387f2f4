@@ -187,3 +187,6 @@ verify_jwt = false
 
 [functions.fetch-quarterly]
 verify_jwt = false
+
+[functions.generate-sermon-cards]
+verify_jwt = true
