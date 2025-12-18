@@ -20,6 +20,7 @@ import { DiscipleshipPackages } from "@/components/living-manna/DiscipleshipPack
 import { LeaderOnboarding } from "@/components/living-manna/LeaderOnboarding";
 import { ChurchCommunity } from "@/components/living-manna/ChurchCommunity";
 import { ChurchMessaging } from "@/components/living-manna/ChurchMessaging";
+import { TruthSeries } from "@/components/living-manna/TruthSeries";
 import { DirectMessagesProvider } from "@/contexts/DirectMessagesContext";
 
 export default function LivingManna() {
@@ -213,6 +214,10 @@ export default function LivingManna() {
                 <Video className="h-4 w-4" />
                 Sermons
               </TabsTrigger>
+              <TabsTrigger value="truth-series" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Flame className="h-4 w-4" />
+                Truth Series
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="home">
@@ -249,6 +254,10 @@ export default function LivingManna() {
 
               <TabsContent value="sermons">
                 <SermonHub churchId={effectiveChurchId!} />
+              </TabsContent>
+
+              <TabsContent value="truth-series">
+                <TruthSeries churchId={effectiveChurchId!} />
               </TabsContent>
             </Tabs>
           </Card>

@@ -11,6 +11,7 @@ import { ActivityPulse } from "./ActivityPulse";
 import { AlwaysOnStudy } from "./AlwaysOnStudy";
 import { FeaturedSermon } from "./FeaturedSermon";
 import { PrayerEntry } from "./PrayerEntry";
+import { TruthSeriesCard } from "./TruthSeriesCard";
 import { 
   Users, BookOpen, Video, Calendar, ArrowRight, 
   Flame, Heart, Star, Clock, CheckCircle2
@@ -140,6 +141,9 @@ export function MemberHome({ churchId }: MemberHomeProps) {
       
       {/* Prayer Entry - Pray With Living Manna */}
       <PrayerEntry churchId={churchId} />
+
+      {/* Truth Series - Evangelistic Studies for Seekers */}
+      <TruthSeriesCard />
       
       {/* Welcome Section */}
       <Card variant="glass">
