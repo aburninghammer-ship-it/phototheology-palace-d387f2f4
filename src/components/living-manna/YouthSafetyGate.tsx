@@ -55,16 +55,16 @@ export function YouthSafetyGate({ churchId, children }: YouthSafetyGateProps) {
   const checkSafetyProfile = async () => {
     try {
       const { data, error } = await supabase
-        .from('youth_safety_profiles')
+        .from('youth_safety_profiles' as any)
         .select('*')
         .eq('user_id', user!.id)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
       
-      setSafetyProfile(data);
+      setSafetyProfile(data as unknown as SafetyProfile | null);
       
-      if (!data || !data.age_verified) {
+      if (!data || !(data as any).age_verified) {
         setShowConsentForm(true);
       }
     } catch (error) {
@@ -126,14 +126,14 @@ export function YouthSafetyGate({ churchId, children }: YouthSafetyGateProps) {
       };
 
       const { data, error } = await supabase
-        .from('youth_safety_profiles')
+        .from('youth_safety_profiles' as any)
         .upsert(profileData, { onConflict: 'user_id' })
         .select()
         .single();
 
       if (error) throw error;
 
-      setSafetyProfile(data);
+      setSafetyProfile(data as unknown as SafetyProfile);
       setShowConsentForm(false);
       toast.success("Safety profile verified!");
     } catch (error: any) {

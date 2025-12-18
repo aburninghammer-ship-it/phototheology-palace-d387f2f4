@@ -12,6 +12,7 @@ import { FeaturedSermon } from "./FeaturedSermon";
 import { PrayerEntry } from "./PrayerEntry";
 import { DailyDevotion } from "./DailyDevotion";
 import { AnnouncementsBanner } from "./AnnouncementsBanner";
+import { NotificationAlerts } from "./NotificationAlerts";
 import {
   BookOpen, ArrowRight, Flame, Users, Star, ExternalLink
 } from "lucide-react";
@@ -82,6 +83,9 @@ export function MemberHome({ churchId, churchName = "Living Manna" }: MemberHome
 
   return (
     <div className="space-y-6">
+      {/* Notification Alerts */}
+      <NotificationAlerts churchId={churchId} />
+
       {/* Announcements Banner */}
       <AnnouncementsBanner churchId={churchId} />
 
