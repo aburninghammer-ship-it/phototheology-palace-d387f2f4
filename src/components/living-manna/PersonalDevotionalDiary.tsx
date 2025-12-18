@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { format, startOfWeek, endOfWeek, isToday, parseISO } from "date-fns";
 import { 
   BookOpen, Plus, Calendar, ChevronLeft, ChevronRight, 
-  Loader2, Save, Trash2, Edit2, X, Check, BookMarked
+  Loader2, Save, Trash2, Edit2, X, BookMarked
 } from "lucide-react";
 
 interface DiaryEntry {
@@ -62,19 +62,19 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
       const weekStart = format(startOfWeek(selectedDate), 'yyyy-MM-dd');
       const weekEnd = format(endOfWeek(selectedDate), 'yyyy-MM-dd');
 
-      const { data, error } = await supabase
-        .from('personal_devotional_diary')
+      const { data, error } = await (supabase
+        .from('personal_devotional_diary' as any)
         .select('*')
         .eq('user_id', user.id)
         .gte('entry_date', weekStart)
         .lte('entry_date', weekEnd)
-        .order('entry_date', { ascending: false });
+        .order('entry_date', { ascending: false }) as any);
 
       if (error) throw error;
-      setEntries(data || []);
+      setEntries((data || []) as DiaryEntry[]);
 
       // Check for today's entry
-      const todayEntry = (data || []).find(e => 
+      const todayEntry = ((data || []) as DiaryEntry[]).find(e => 
         e.entry_date === format(new Date(), 'yyyy-MM-dd')
       );
       setCurrentEntry(todayEntry || null);
@@ -115,16 +115,16 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
       };
 
       if (currentEntry) {
-        const { error } = await supabase
-          .from('personal_devotional_diary')
+        const { error } = await (supabase
+          .from('personal_devotional_diary' as any)
           .update(entryData)
-          .eq('id', currentEntry.id);
+          .eq('id', currentEntry.id) as any);
         if (error) throw error;
         toast.success("Diary entry updated");
       } else {
-        const { error } = await supabase
-          .from('personal_devotional_diary')
-          .insert(entryData);
+        const { error } = await (supabase
+          .from('personal_devotional_diary' as any)
+          .insert(entryData) as any);
         if (error) throw error;
         toast.success("Diary entry saved");
       }
@@ -144,10 +144,10 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
     if (!confirm("Delete this diary entry?")) return;
     
     try {
-      const { error } = await supabase
-        .from('personal_devotional_diary')
+      const { error } = await (supabase
+        .from('personal_devotional_diary' as any)
         .delete()
-        .eq('id', id);
+        .eq('id', id) as any);
       if (error) throw error;
       toast.success("Entry deleted");
       fetchEntries();
@@ -249,7 +249,7 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
       {/* Header */}
       <Card variant="glass">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <BookMarked className="h-6 w-6 text-primary" />
               <div>
@@ -259,9 +259,9 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
                 </CardDescription>
               </div>
             </div>
-            <Button onClick={startNewEntry}>
+            <Button onClick={startNewEntry} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">New Entry</span>
+              New Entry
             </Button>
           </div>
         </CardHeader>
@@ -274,7 +274,7 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
             <Button variant="ghost" size="icon" onClick={() => navigateWeek('prev')}>
               <ChevronLeft className="h-5 w-5" />
             </Button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-sm sm:text-base">
               <Calendar className="h-4 w-4 text-primary" />
               <span className="font-medium">
                 {format(startOfWeek(selectedDate), 'MMM d')} - {format(endOfWeek(selectedDate), 'MMM d, yyyy')}
@@ -294,7 +294,7 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
             <CardTitle className="text-base">This Week's Entries</CardTitle>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[400px]">
+            <ScrollArea className="h-[300px] lg:h-[400px]">
               {entries.length === 0 ? (
                 <div className="text-center py-8">
                   <BookOpen className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
@@ -317,7 +317,7 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
                             {isToday(parseISO(entry.entry_date)) && (
                               <Badge variant="secondary" className="text-xs">Today</Badge>
                             )}
@@ -392,7 +392,7 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
                 </Button>
               </div>
             ) : (
-              <ScrollArea className="h-[400px] pr-4">
+              <ScrollArea className="h-[300px] lg:h-[400px] pr-4">
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium mb-1 block">Title</label>
@@ -423,7 +423,7 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
                       value={formData.reflection}
                       onChange={(e) => setFormData(prev => ({ ...prev, reflection: e.target.value }))}
                       disabled={!isEditing}
-                      className="min-h-[120px] bg-background/50"
+                      className="min-h-[100px] lg:min-h-[120px] bg-background/50"
                     />
                   </div>
 
@@ -434,7 +434,7 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
                       value={formData.prayer_points}
                       onChange={(e) => setFormData(prev => ({ ...prev, prayer_points: e.target.value }))}
                       disabled={!isEditing}
-                      className="min-h-[80px] bg-background/50"
+                      className="min-h-[60px] lg:min-h-[80px] bg-background/50"
                     />
                   </div>
 
@@ -445,7 +445,7 @@ export function PersonalDevotionalDiary({ compact = false }: PersonalDevotionalD
                       value={formData.gratitude_notes}
                       onChange={(e) => setFormData(prev => ({ ...prev, gratitude_notes: e.target.value }))}
                       disabled={!isEditing}
-                      className="min-h-[60px] bg-background/50"
+                      className="min-h-[50px] lg:min-h-[60px] bg-background/50"
                     />
                   </div>
 

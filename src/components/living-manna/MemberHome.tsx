@@ -13,6 +13,7 @@ import { PrayerEntry } from "./PrayerEntry";
 import { DailyDevotion } from "./DailyDevotion";
 import { AnnouncementsBanner } from "./AnnouncementsBanner";
 import { NotificationAlerts } from "./NotificationAlerts";
+import { PersonalDevotionalDiary } from "./PersonalDevotionalDiary";
 import {
   BookOpen, ArrowRight, Flame, Users, Star, ExternalLink
 } from "lucide-react";
@@ -94,6 +95,9 @@ export function MemberHome({ churchId, churchName = "Living Manna" }: MemberHome
 
       {/* Daily PT Devotion */}
       <DailyDevotion churchId={churchId} churchName={churchName} />
+
+      {/* Personal Devotional Diary - Quick Access */}
+      <PersonalDevotionalDiary compact />
       
       {/* Activity Pulse - Shows community is alive */}
       <ActivityPulse churchId={churchId} />

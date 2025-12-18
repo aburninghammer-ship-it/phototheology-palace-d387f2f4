@@ -26,3 +26,5 @@ export { GrowTab } from "./GrowTab";
 export { DailyDevotion } from "./DailyDevotion";
 export { AnnouncementsBanner } from "./AnnouncementsBanner";
 export { NotificationAlerts } from "./NotificationAlerts";
+export { PersonalDevotionalDiary } from "./PersonalDevotionalDiary";
+export { MobileNavHeader } from "./MobileNavHeader";
