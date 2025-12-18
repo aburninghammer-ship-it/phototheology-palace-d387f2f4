@@ -157,34 +157,34 @@ export const StrongsVerseView = ({
                 <p className="text-muted-foreground animate-pulse">{verse.text}</p>
               ) : strongsData?.words ? (
                 <span>
-                  {strongsData.words.map((word, idx) => (
-                    <span key={idx} className="relative group/word">
-                      <button
-                        className="hover:text-primary transition-colors hover:underline decoration-dotted"
-                        onClick={(e) => handleWordAnalysis(word.text, e)}
-                        title="Click for AI Hebrew/Greek analysis"
-                      >
-                        {word.text}
-                      </button>
-                      {word.strongs && (
-                        <span 
-                          className="inline-flex items-center gap-0.5 ml-0.5"
+                  {strongsData.words.map((word, idx) => {
+                    // Extract just the base Strong's number (e.g., "G2424G" -> "2424")
+                    const strongsNum = word.strongs 
+                      ? word.strongs.replace(/^[GH]0*/, '').replace(/[GH]$/, '')
+                      : null;
+                    
+                    return (
+                      <span key={idx} className="relative group/word inline">
+                        <button
+                          className="hover:text-primary transition-colors hover:underline decoration-dotted"
+                          onClick={(e) => handleWordAnalysis(word.text, e)}
+                          title="Click for AI Hebrew/Greek analysis"
                         >
+                          {word.text}
+                        </button>
+                        {strongsNum && (
                           <sup 
-                            className="text-xs text-primary/70 hover:text-primary cursor-pointer font-semibold transition-colors"
+                            className="text-[10px] text-amber-600 dark:text-amber-400 hover:text-amber-500 cursor-pointer font-bold ml-0.5 transition-colors"
                             onClick={(e) => handleWordAnalysis(word.text, e)}
-                            title={`Click for AI analysis (${word.strongs})`}
+                            title={`Strong's ${word.strongs} - Click for AI analysis`}
                           >
-                            {word.strongs.replace(/[GH]/, "")}
+                            {strongsNum}
                           </sup>
-                          <Sparkles 
-                            className="w-3 h-3 opacity-0 group-hover/word:opacity-100 transition-opacity text-amber-500"
-                          />
-                        </span>
-                      )}
-                      {idx < strongsData.words.length - 1 && " "}
-                    </span>
-                  ))}
+                        )}
+                        {idx < strongsData.words.length - 1 && " "}
+                      </span>
+                    );
+                  })}
                 </span>
               ) : (
                 <div>
