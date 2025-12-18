@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -142,6 +142,8 @@ const AnalyzeThoughts = () => {
   const [showResults, setShowResults] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['narrative', 'scores']));
   const [loadedStudyTitle, setLoadedStudyTitle] = useState<string | null>(null);
+  const [isImportingFile, setIsImportingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const { history, isLoading: historyLoading, saveAnalysis, deleteAnalysis, refetch } = useThoughtAnalysisHistory();
   const { recentStudies, recentNotes, fetchRecentStudies, fetchRecentNotes, isLoading: studiesLoading } = useRecentStudies();
@@ -167,6 +169,68 @@ const AnalyzeThoughts = () => {
     setResult(null);
     setSelectedHistoryId(undefined);
     toast.success(`Loaded note for analysis`);
+  };
+
+  const handleImportFile = async (file: File) => {
+    try {
+      setIsImportingFile(true);
+
+      const maxBytes = 20 * 1024 * 1024;
+      if (file.size > maxBytes) {
+        toast.error("File too large (max 20MB)");
+        return;
+      }
+
+      const ext = file.name.toLowerCase().split('.').pop();
+      const buffer = await file.arrayBuffer();
+
+      if (ext === 'pdf') {
+        const pdfjsLib: any = await import('pdfjs-dist');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+          'pdfjs-dist/build/pdf.worker.min.mjs',
+          import.meta.url
+        ).toString();
+
+        const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(buffer) });
+        const pdf = await loadingTask.promise;
+
+        let text = '';
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const content = await page.getTextContent();
+          const pageText = (content.items || []).map((it: any) => it.str).join(' ');
+          text += pageText + "\n\n";
+        }
+
+        const cleaned = text.trim();
+        setInput(cleaned);
+        setLoadedStudyTitle(file.name);
+        setResult(null);
+        setSelectedHistoryId(undefined);
+        toast.success("PDF imported");
+        return;
+      }
+
+      if (ext === 'docx') {
+        const mammoth: any = await import('mammoth');
+        const { value } = await mammoth.extractRawText({ arrayBuffer: buffer });
+        const cleaned = (value || '').trim();
+        setInput(cleaned);
+        setLoadedStudyTitle(file.name);
+        setResult(null);
+        setSelectedHistoryId(undefined);
+        toast.success("Word document imported");
+        return;
+      }
+
+      toast.error("Supported files: PDF, DOCX");
+    } catch (e) {
+      console.error('[AnalyzeThoughts] File import error:', e);
+      toast.error("Couldn't import that file");
+    } finally {
+      setIsImportingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const toggleSection = (section: string) => {
@@ -396,13 +460,13 @@ const AnalyzeThoughts = () => {
               <CardDescription>Enter a biblical concept, interpretation, or theological idea</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5 pt-6">
-              {/* Load Study/Note Button */}
-              <div className="flex items-center gap-2 pb-2 border-b border-border/30">
+              {/* Load Study/Note + Import File */}
+              <div className="flex items-center gap-2 pb-2 border-b border-border/30 flex-wrap">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="bg-sky-500/10 border-sky-500/30 hover:bg-sky-500/20">
                       <FileText className="h-4 w-4 mr-2 text-sky-400" />
-                      Load Study or Note to Analyze
+                      Load Study or Note
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
@@ -432,6 +496,37 @@ const AnalyzeThoughts = () => {
                     )}
                   </DropdownMenuContent>
                 </DropdownMenu>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void handleImportFile(f);
+                  }}
+                />
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isImportingFile || isAnalyzing}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {isImportingFile ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Importing...
+                    </>
+                  ) : (
+                    <>
+                      <FolderOpen className="h-4 w-4 mr-2" />
+                      Import PDF/DOCX
+                    </>
+                  )}
+                </Button>
+
                 {loadedStudyTitle && (
                   <Badge variant="outline" className="text-xs bg-sky-500/10 border-sky-500/30">
                     <BookOpen className="h-3 w-3 mr-1" />

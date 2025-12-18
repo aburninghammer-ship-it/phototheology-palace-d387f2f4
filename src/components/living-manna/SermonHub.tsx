@@ -90,6 +90,27 @@ export function SermonHub({ churchId }: SermonHubProps) {
     return match ? match[1] : null;
   };
 
+  const getChannelEmbedSrc = () => {
+    const url = youtubeSettings.channel_url;
+    if (!url) return null;
+
+    // If a playlist is provided, embed the playlist directly
+    const playlistMatch = url.match(/[?&]list=([\w-]+)/);
+    if (playlistMatch?.[1]) {
+      return `https://www.youtube.com/embed/videoseries?list=${playlistMatch[1]}`;
+    }
+
+    // If a channel id is provided, embed the uploads playlist (UU + channelId without UC)
+    const channelMatch = url.match(/youtube\.com\/(?:channel|c)\/(UC[\w-]+)/);
+    const channelId = channelMatch?.[1];
+    if (channelId) {
+      const uploadsPlaylistId = `UU${channelId.slice(2)}`;
+      return `https://www.youtube.com/embed/videoseries?list=${uploadsPlaylistId}`;
+    }
+
+    return null;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -143,13 +164,26 @@ export function SermonHub({ churchId }: SermonHubProps) {
           </div>
           {/* YouTube Embed */}
           <div className="aspect-video rounded-lg overflow-hidden bg-black/50">
-            <iframe
-              src="https://www.youtube.com/embed?listType=user_uploads&list=@livingmanna"
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title="Living Manna YouTube Channel"
-            />
+            {getChannelEmbedSrc() ? (
+              <iframe
+                src={getChannelEmbedSrc()!}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Living Manna YouTube Channel"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center p-6 text-center">
+                <div className="max-w-md">
+                  <p className="text-sm text-foreground/80">
+                    Channel preview can’t be embedded yet. Use “Open Channel” to watch on YouTube.
+                  </p>
+                  <p className="text-xs text-foreground/60 mt-2">
+                    (To enable embedding, set the church’s YouTube link to a “/channel/UC…” URL or a playlist link.)
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
