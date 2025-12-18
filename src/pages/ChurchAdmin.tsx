@@ -195,10 +195,10 @@ export default function ChurchAdmin() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen gradient-dreamy p-4 md:p-8">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-8 bg-card border border-border p-6 rounded-2xl shadow-lg">
+        <Card variant="glass" className="mb-8 p-6">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <Building2 className="h-8 w-8 text-primary" />
@@ -213,11 +213,11 @@ export default function ChurchAdmin() {
             </Button>
           </div>
           <p className="text-muted-foreground font-medium">Church Administration Dashboard</p>
-        </div>
+        </Card>
 
         {/* Quick Stats */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Card>
+          <Card variant="glass">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-primary">Tier</CardTitle>
             </CardHeader>
@@ -230,7 +230,7 @@ export default function ChurchAdmin() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card variant="glass">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-primary">Seats</CardTitle>
             </CardHeader>
@@ -244,7 +244,7 @@ export default function ChurchAdmin() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card variant="glass">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-primary">Status</CardTitle>
             </CardHeader>
@@ -255,7 +255,7 @@ export default function ChurchAdmin() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card variant="glass">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-primary">Billing</CardTitle>
             </CardHeader>
@@ -285,9 +285,10 @@ export default function ChurchAdmin() {
         )}
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="bg-muted border border-border rounded-lg grid w-full grid-cols-6 lg:w-auto p-1">
-            <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <Card variant="glass" className="p-6">
+          <Tabs defaultValue="overview" className="space-y-6">
+            <TabsList className="bg-card/50 backdrop-blur border border-border/50 rounded-lg grid w-full grid-cols-6 lg:w-auto p-1">
+              <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Building2 className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
@@ -348,15 +349,16 @@ export default function ChurchAdmin() {
             <LeaderDashboard churchId={church.id} />
           </TabsContent>
 
-          {hasTier2Access && (
-            <TabsContent value="analytics">
-              <ChurchAnalytics 
-                churchId={church.id}
-                hasTier3Access={hasTier3Access}
-              />
-            </TabsContent>
-          )}
-        </Tabs>
+            {hasTier2Access && (
+              <TabsContent value="analytics">
+                <ChurchAnalytics 
+                  churchId={church.id}
+                  hasTier3Access={hasTier3Access}
+                />
+              </TabsContent>
+            )}
+          </Tabs>
+        </Card>
       </div>
     </div>
   );

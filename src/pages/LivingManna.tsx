@@ -139,10 +139,10 @@ export default function LivingManna() {
 
   return (
     <DirectMessagesProvider>
-      <div className="min-h-screen bg-background p-4 md:p-8">
+      <div className="min-h-screen gradient-dreamy p-4 md:p-8">
         <div className="container mx-auto max-w-7xl">
           {/* Header */}
-          <div className="mb-8 bg-card border border-border p-6 rounded-2xl shadow-lg">
+          <Card variant="glass" className="mb-8 p-6">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
                 <Flame className="h-8 w-8 text-primary" />
@@ -171,11 +171,12 @@ export default function LivingManna() {
                 Church Admin
               </Button>
             )}
-          </div>
+          </Card>
 
           {/* Main Content Tabs */}
-          <Tabs defaultValue="home" className="space-y-6">
-            <TabsList className="bg-muted flex-wrap h-auto gap-1 p-1 border border-border rounded-lg">
+          <Card variant="glass" className="p-6">
+            <Tabs defaultValue="home" className="space-y-6">
+              <TabsList className="bg-card/50 backdrop-blur flex-wrap h-auto gap-1 p-1 border border-border/50 rounded-lg">
               <TabsTrigger value="home" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <Home className="h-4 w-4" />
                 Home
@@ -246,10 +247,11 @@ export default function LivingManna() {
               <LeaderOnboarding churchId={effectiveChurchId!} />
             </TabsContent>
 
-            <TabsContent value="sermons">
-              <SermonHub churchId={effectiveChurchId!} />
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="sermons">
+                <SermonHub churchId={effectiveChurchId!} />
+              </TabsContent>
+            </Tabs>
+          </Card>
         </div>
       </div>
     </DirectMessagesProvider>
