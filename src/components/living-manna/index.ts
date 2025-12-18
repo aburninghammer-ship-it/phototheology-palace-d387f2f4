@@ -8,6 +8,7 @@ export { BibleWorkerConsole } from "./BibleWorkerConsole";
 export { EvangelismCampaigns } from "./EvangelismCampaigns";
 export { MinistryLaunchTemplates } from "./MinistryLaunchTemplates";
 export { SmallGroupsHub } from "./SmallGroupsHub";
+export { YouthSpace } from "./YouthSpace";
 export { StudyFeed } from "./StudyFeed";
 export { SermonHub } from "./SermonHub";
 export { MemberHome } from "./MemberHome";
