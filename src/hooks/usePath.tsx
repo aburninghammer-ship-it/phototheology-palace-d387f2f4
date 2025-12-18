@@ -62,7 +62,7 @@ export const PATH_INFO = {
     borderColor: "border-purple-500/30",
     description: "Grow through prayer, meditation, and reflection",
     teachingStyle: "Let's sit with this...",
-    approach: "Lectio Divina, journaling, heart questions",
+    approach: "Prayerful reading, journaling, heart questions",
     strengths: ["Deep reflection", "Prayer integration", "Personal application"],
   },
   warrior: {

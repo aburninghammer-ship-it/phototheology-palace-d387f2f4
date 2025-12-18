@@ -104,9 +104,9 @@ export const getPathDrillVariants = (baseDrill: string, pathType: PathType): Pat
         icon: Heart,
       },
       observation: {
-        title: "Lectio Divina",
-        description: "Divine reading with prayerful meditation",
-        instructions: "Read slowly. When a phrase captures your attention, stop and pray over it. Let God speak through the text.",
+        title: "Prayerful Reading",
+        description: "Meditative study with prayerful attention",
+        instructions: "Read slowly. When a phrase captures your attention, stop and pray over it. Let God speak through His Word.",
         icon: Heart,
       },
       memory: {
