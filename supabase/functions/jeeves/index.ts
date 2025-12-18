@@ -1199,10 +1199,10 @@ Your goal: Leave them more excited about Scripture than when they started.`;
       const originalThought = ctx.originalThought || "";
       const previousAnalysis = ctx.previousAnalysis || {};
       const conversationHistory = ctx.conversationHistory || [];
+      const userStudyContext = ctx.userStudyContext || null;
       
-      systemPrompt = `You are Jeeves, continuing a follow-up conversation about a biblical thought analysis.
-
-=== CONTEXT ===
+      // Build context section including user studies if available
+      let contextSection = `=== CONTEXT ===
 The student previously shared this thought for analysis:
 "${originalThought}"
 
@@ -1210,7 +1210,22 @@ Your previous analysis gave them:
 - Overall Score: ${previousAnalysis.score || 'N/A'}/100
 - Strengths: ${(previousAnalysis.strengths || []).join(', ') || 'N/A'}
 - Growth Areas: ${(previousAnalysis.growthAreas || []).join(', ') || 'N/A'}
-- Relevant Palace Rooms: ${(previousAnalysis.palaceRooms || []).map((r: any) => r.code).join(', ') || 'N/A'}
+- Relevant Palace Rooms: ${(previousAnalysis.palaceRooms || []).map((r: any) => r.code).join(', ') || 'N/A'}`;
+
+      // Add user study context if provided
+      if (userStudyContext) {
+        contextSection += `
+
+=== USER'S LOADED STUDY FOR REFERENCE ===
+The student has loaded one of their studies for you to reference in this conversation:
+${userStudyContext}
+
+IMPORTANT: When answering, you can reference and build upon insights from this study. Connect their questions to what they've already explored. Help them see deeper connections.`;
+      }
+      
+      systemPrompt = `You are Jeeves, continuing a follow-up conversation about a biblical thought analysis.
+
+${contextSection}
 
 === YOUR ROLE ===
 Now the student is asking follow-up questions to deepen their understanding. Your job is to:
@@ -1221,6 +1236,7 @@ Now the student is asking follow-up questions to deepen their understanding. You
 5. Be warm, pastoral, and encouraging
 6. Help them see Christ in their insights
 7. Guide them toward deeper understanding without being preachy
+${userStudyContext ? '8. Reference their loaded study where relevant to create continuity in their learning journey' : ''}
 
 === RESPONSE STYLE ===
 - Use natural, conversational language

@@ -7,12 +7,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   MessageCircle, Send, Loader2, Sparkles, ThumbsUp, ThumbsDown, 
-  Lightbulb, ChevronDown, ChevronUp, BookOpen
+  Lightbulb, ChevronDown, ChevronUp, BookOpen, Save, FileText
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { StyledMarkdown } from "@/components/ui/styled-markdown";
 import { QuickAudioButton } from "@/components/audio";
+import { useRecentStudies, RecentStudy } from "@/hooks/useRecentStudies";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 
 interface Message {
   role: "user" | "assistant";
@@ -45,13 +54,86 @@ export const FollowUpChat = ({ originalThought, analysisResult }: FollowUpChatPr
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSavingConversation, setIsSavingConversation] = useState(false);
+  const [studyContext, setStudyContext] = useState<RecentStudy | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  const { recentStudies, fetchRecentStudies, formatStudyForContext, isLoading: studiesLoading } = useRecentStudies();
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Fetch studies when expanded
+  useEffect(() => {
+    if (isExpanded && recentStudies.length === 0) {
+      fetchRecentStudies();
+    }
+  }, [isExpanded, recentStudies.length, fetchRecentStudies]);
+
+  const loadStudyContext = (study: RecentStudy) => {
+    setStudyContext(study);
+    toast.success(`Loaded "${study.title}" as context for Jeeves`);
+  };
+
+  const clearStudyContext = () => {
+    setStudyContext(null);
+    toast.success("Study context cleared");
+  };
+
+  const saveFullConversation = async () => {
+    if (messages.length === 0) {
+      toast.error("No conversation to save");
+      return;
+    }
+    
+    setIsSavingConversation(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Please log in to save");
+        return;
+      }
+
+      // Format the full conversation
+      const conversationContent = [
+        `# Thought Analysis Conversation`,
+        `**Date:** ${new Date().toLocaleDateString()}`,
+        ``,
+        `## Original Thought`,
+        originalThought,
+        ``,
+        `## Analysis Summary`,
+        `**Score:** ${analysisResult.overallScore}/100`,
+        ``,
+        analysisResult.summary,
+        ``,
+        `## Conversation`,
+        ...messages.map(msg => 
+          msg.role === "user" 
+            ? `### You:\n${msg.content}` 
+            : `### Jeeves:\n${msg.content}`
+        )
+      ].join('\n\n');
+
+      const { error } = await supabase.from('user_studies').insert({
+        user_id: user.id,
+        title: `Thought Analysis — ${new Date().toLocaleDateString()}`,
+        content: conversationContent,
+        tags: ['thought-analysis', 'jeeves-conversation'],
+      });
+
+      if (error) throw error;
+      toast.success("Full conversation saved to My Studies!");
+    } catch (error) {
+      console.error("Error saving conversation:", error);
+      toast.error("Failed to save conversation");
+    } finally {
+      setIsSavingConversation(false);
+    }
+  };
 
   const sendMessage = async (messageText?: string) => {
     const text = messageText || input.trim();
@@ -63,7 +145,7 @@ export const FollowUpChat = ({ originalThought, analysisResult }: FollowUpChatPr
     setIsLoading(true);
 
     try {
-      console.log("Sending follow-up message:", { text, originalThought: originalThought.substring(0, 50) });
+      console.log("Sending follow-up message:", { text, originalThought: originalThought.substring(0, 50), hasStudyContext: !!studyContext });
       
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
@@ -79,6 +161,8 @@ export const FollowUpChat = ({ originalThought, analysisResult }: FollowUpChatPr
               palaceRooms: analysisResult.palaceRooms,
             },
             conversationHistory: messages.slice(-6), // Last 6 messages for context
+            // Include study context if loaded
+            userStudyContext: studyContext ? formatStudyForContext(studyContext) : null,
           },
         },
       });
@@ -196,6 +280,75 @@ export const FollowUpChat = ({ originalThought, analysisResult }: FollowUpChatPr
               transition={{ duration: 0.3 }}
             >
               <CardContent className="pt-4 space-y-4">
+                {/* Study Context & Save Actions */}
+                <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-border/30">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="text-xs bg-purple-500/10 border-purple-500/30 hover:bg-purple-500/20">
+                        <FileText className="h-3 w-3 mr-1" />
+                        {studyContext ? `Context: ${studyContext.title.substring(0, 20)}...` : "Load Study Context"}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-64">
+                      <DropdownMenuLabel>Load a study for Jeeves to reference</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {studiesLoading ? (
+                        <DropdownMenuItem disabled>
+                          <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                          Loading studies...
+                        </DropdownMenuItem>
+                      ) : recentStudies.length === 0 ? (
+                        <DropdownMenuItem disabled>No studies found</DropdownMenuItem>
+                      ) : (
+                        recentStudies.slice(0, 5).map((study) => (
+                          <DropdownMenuItem 
+                            key={study.id} 
+                            onClick={() => loadStudyContext(study)}
+                            className="flex flex-col items-start"
+                          >
+                            <span className="font-medium truncate w-full">{study.title}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {study.tags?.slice(0, 2).join(', ') || 'No tags'}
+                            </span>
+                          </DropdownMenuItem>
+                        ))
+                      )}
+                      {studyContext && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={clearStudyContext} className="text-red-400">
+                            Clear context
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {messages.length > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={saveFullConversation}
+                      disabled={isSavingConversation}
+                      className="text-xs bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400"
+                    >
+                      {isSavingConversation ? (
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      ) : (
+                        <Save className="h-3 w-3 mr-1" />
+                      )}
+                      Save Full Conversation
+                    </Button>
+                  )}
+
+                  {studyContext && (
+                    <Badge variant="outline" className="text-xs bg-purple-500/10 border-purple-500/30">
+                      <BookOpen className="h-3 w-3 mr-1" />
+                      Jeeves has context
+                    </Badge>
+                  )}
+                </div>
+
                 {/* Suggested Questions */}
                 {messages.length === 0 && (
                   <div className="space-y-2">

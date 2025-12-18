@@ -10,7 +10,7 @@ import {
   Lightbulb, Send, BookOpen, Target, TrendingUp, Sparkles, Building2, Link2, Loader2,
   ChevronDown, AlertTriangle, CheckCircle2, BookMarked, Layers, Shield, GraduationCap,
   Church, Cross, Moon, Scale, Compass, Save, Download, Copy, Gem, FolderOpen, MessageSquare,
-  Zap, ArrowRight
+  Zap, ArrowRight, FileText
 } from "lucide-react";
 import { ExportToStudyButton } from "@/components/ExportToStudyButton";
 import { QuickShareButton } from "@/components/social/QuickShareButton";
@@ -23,6 +23,15 @@ import { SavedAnalysesList } from "@/components/analyze/SavedAnalysesList";
 import { QuickAudioButton } from "@/components/audio";
 import { FollowUpChat } from "@/components/analyze/FollowUpChat";
 import { ChainWitness } from "@/components/analyze/ChainWitness";
+import { useRecentStudies } from "@/hooks/useRecentStudies";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 
 interface StrengthItem {
   point: string;
@@ -132,8 +141,33 @@ const AnalyzeThoughts = () => {
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | undefined>();
   const [showResults, setShowResults] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['narrative', 'scores']));
+  const [loadedStudyTitle, setLoadedStudyTitle] = useState<string | null>(null);
 
   const { history, isLoading: historyLoading, saveAnalysis, deleteAnalysis, refetch } = useThoughtAnalysisHistory();
+  const { recentStudies, recentNotes, fetchRecentStudies, fetchRecentNotes, isLoading: studiesLoading } = useRecentStudies();
+
+  // Fetch studies on mount
+  useEffect(() => {
+    fetchRecentStudies();
+    fetchRecentNotes();
+  }, [fetchRecentStudies, fetchRecentNotes]);
+
+  const loadStudyToAnalyze = (study: { title: string; content: string }) => {
+    setInput(study.content);
+    setLoadedStudyTitle(study.title);
+    setResult(null);
+    setSelectedHistoryId(undefined);
+    toast.success(`Loaded "${study.title}" for analysis`);
+  };
+
+  const loadNoteToAnalyze = (note: { book: string; chapter: number; verse: number; content: string }) => {
+    const title = `Note on ${note.book} ${note.chapter}:${note.verse}`;
+    setInput(note.content);
+    setLoadedStudyTitle(title);
+    setResult(null);
+    setSelectedHistoryId(undefined);
+    toast.success(`Loaded note for analysis`);
+  };
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => {
@@ -362,11 +396,55 @@ const AnalyzeThoughts = () => {
               <CardDescription>Enter a biblical concept, interpretation, or theological idea</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5 pt-6">
+              {/* Load Study/Note Button */}
+              <div className="flex items-center gap-2 pb-2 border-b border-border/30">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="bg-sky-500/10 border-sky-500/30 hover:bg-sky-500/20">
+                      <FileText className="h-4 w-4 mr-2 text-sky-400" />
+                      Load Study or Note to Analyze
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-72">
+                    <DropdownMenuLabel>Recent Studies</DropdownMenuLabel>
+                    {studiesLoading ? (
+                      <DropdownMenuItem disabled><Loader2 className="h-3 w-3 mr-2 animate-spin" />Loading...</DropdownMenuItem>
+                    ) : recentStudies.length === 0 ? (
+                      <DropdownMenuItem disabled>No studies found</DropdownMenuItem>
+                    ) : (
+                      recentStudies.slice(0, 5).map((study) => (
+                        <DropdownMenuItem key={study.id} onClick={() => loadStudyToAnalyze(study)} className="flex flex-col items-start">
+                          <span className="font-medium truncate w-full">{study.title}</span>
+                          <span className="text-xs text-muted-foreground">{study.tags?.slice(0, 2).join(', ') || 'No tags'}</span>
+                        </DropdownMenuItem>
+                      ))
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel>Recent Verse Notes</DropdownMenuLabel>
+                    {recentNotes.length === 0 ? (
+                      <DropdownMenuItem disabled>No notes found</DropdownMenuItem>
+                    ) : (
+                      recentNotes.slice(0, 5).map((note) => (
+                        <DropdownMenuItem key={note.id} onClick={() => loadNoteToAnalyze(note)}>
+                          {note.book} {note.chapter}:{note.verse}
+                        </DropdownMenuItem>
+                      ))
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {loadedStudyTitle && (
+                  <Badge variant="outline" className="text-xs bg-sky-500/10 border-sky-500/30">
+                    <BookOpen className="h-3 w-3 mr-1" />
+                    {loadedStudyTitle.substring(0, 30)}{loadedStudyTitle.length > 30 ? '...' : ''}
+                  </Badge>
+                )}
+              </div>
+
               <div className="relative">
                 <Textarea
                   placeholder="Example: I believe the sanctuary in Hebrews represents Christ's mediatorial work in heaven..."
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  onChange={(e) => { setInput(e.target.value); setLoadedStudyTitle(null); }}
                   className="min-h-[150px] bg-background/50 border-purple-500/20 focus:border-purple-500/50 pr-12"
                 />
                 <div className="absolute bottom-3 right-3 flex items-center gap-2">
