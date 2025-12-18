@@ -23,3 +23,4 @@ export { LearnTab } from "./LearnTab";
 export { ConnectTab } from "./ConnectTab";
 export { GrowTab } from "./GrowTab";
 export { DailyDevotion } from "./DailyDevotion";
+export { AnnouncementsBanner } from "./AnnouncementsBanner";

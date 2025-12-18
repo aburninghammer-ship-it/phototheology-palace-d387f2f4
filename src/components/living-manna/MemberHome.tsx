@@ -11,7 +11,8 @@ import { AlwaysOnStudy } from "./AlwaysOnStudy";
 import { FeaturedSermon } from "./FeaturedSermon";
 import { PrayerEntry } from "./PrayerEntry";
 import { DailyDevotion } from "./DailyDevotion";
-import { 
+import { AnnouncementsBanner } from "./AnnouncementsBanner";
+import {
   BookOpen, ArrowRight, Flame, Users, Star, ExternalLink
 } from "lucide-react";
 
@@ -81,6 +82,9 @@ export function MemberHome({ churchId, churchName = "Living Manna" }: MemberHome
 
   return (
     <div className="space-y-6">
+      {/* Announcements Banner */}
+      <AnnouncementsBanner churchId={churchId} />
+
       {/* Sabbath Rhythm - Always visible, contextual */}
       <SabbathRhythmStrip />
 
