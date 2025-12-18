@@ -5297,6 +5297,7 @@ export type Database = {
         Row: {
           church_id: string | null
           completed_at: string | null
+          completed_days: number[] | null
           completed_weeks: number[] | null
           created_at: string | null
           current_week: number | null
@@ -5309,6 +5310,7 @@ export type Database = {
         Insert: {
           church_id?: string | null
           completed_at?: string | null
+          completed_days?: number[] | null
           completed_weeks?: number[] | null
           created_at?: string | null
           current_week?: number | null
@@ -5321,6 +5323,7 @@ export type Database = {
         Update: {
           church_id?: string | null
           completed_at?: string | null
+          completed_days?: number[] | null
           completed_weeks?: number[] | null
           created_at?: string | null
           current_week?: number | null
