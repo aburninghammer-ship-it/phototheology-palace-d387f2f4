@@ -55,7 +55,7 @@ const TabsList = React.forwardRef<
   };
 
   return (
-    <div className="relative flex items-center gap-1">
+    <div className="relative flex items-center gap-1 w-full min-w-0">
       {showLeftArrow && (
         <Button
           type="button"
@@ -74,7 +74,7 @@ const TabsList = React.forwardRef<
       
       <div 
         ref={scrollContainerRef} 
-        className="overflow-x-auto flex-1 scrollbar-hide"
+        className="overflow-x-auto flex-1 min-w-0 scrollbar-hide touch-pan-x"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <TabsPrimitive.List
