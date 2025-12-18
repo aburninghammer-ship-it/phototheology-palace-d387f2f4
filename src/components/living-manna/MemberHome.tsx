@@ -8,6 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SabbathRhythmStrip } from "./SabbathRhythmStrip";
 import { ActivityPulse } from "./ActivityPulse";
+import { AlwaysOnStudy } from "./AlwaysOnStudy";
+import { FeaturedSermon } from "./FeaturedSermon";
+import { PrayerEntry } from "./PrayerEntry";
 import { 
   Users, BookOpen, Video, Calendar, ArrowRight, 
   Flame, Heart, Star, Clock, CheckCircle2
@@ -131,6 +134,12 @@ export function MemberHome({ churchId }: MemberHomeProps) {
       
       {/* Activity Pulse - Real data signs of life */}
       <ActivityPulse churchId={churchId} />
+
+      {/* Featured Sermon - One video, featured prominently */}
+      <FeaturedSermon churchId={churchId} />
+      
+      {/* Prayer Entry - Pray With Living Manna */}
+      <PrayerEntry churchId={churchId} />
       
       {/* Welcome Section */}
       <Card variant="glass">
@@ -208,6 +217,9 @@ export function MemberHome({ churchId }: MemberHomeProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Always-On Study Fallback - Shows when no active study */}
+      <AlwaysOnStudy activeStudyTitle={stats.currentStudy} />
 
       {/* 12-Week Discipleship Paths */}
       <div>
