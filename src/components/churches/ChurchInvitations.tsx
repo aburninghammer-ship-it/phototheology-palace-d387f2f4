@@ -274,9 +274,11 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
                 Create Invitation
               </Button>
             </DialogTrigger>
-            <DialogContent className="glass-card p-0 max-h-[85vh] flex flex-col">
+            <DialogContent
+              className="glass-card p-0 flex flex-col max-h-[90vh] w-[calc(100vw-1.5rem)] sm:w-full sm:max-w-lg top-auto bottom-4 translate-y-0 sm:top-[50%] sm:bottom-auto sm:translate-y-[-50%]"
+            >
               <form
-                className="flex flex-col max-h-[85vh]"
+                className="flex flex-col max-h-[90vh]"
                 onSubmit={(e) => {
                   e.preventDefault();
                   handleCreateInvitation();
