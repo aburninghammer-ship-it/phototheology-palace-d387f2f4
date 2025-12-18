@@ -153,7 +153,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
               variant="outline" 
               className="border-red-500/30 text-red-400 hover:bg-red-500/10"
               onClick={() => {
-                const url = youtubeSettings.channel_url || 'https://youtube.com/@LivingMannaChurch';
+                const url = youtubeSettings.channel_url || 'https://www.youtube.com/@mylivingmanna';
                 window.open(url, '_blank');
               }}
             >
@@ -217,7 +217,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
             <Button 
               variant="outline"
               onClick={() => {
-                const url = youtubeSettings.channel_url || 'https://youtube.com/@LivingMannaChurch';
+                const url = youtubeSettings.channel_url || 'https://www.youtube.com/@mylivingmanna';
                 window.open(url, '_blank');
               }}
             >
