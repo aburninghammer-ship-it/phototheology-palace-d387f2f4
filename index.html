@@ -38,106 +38,10 @@
     <meta name="twitter:description" content="The complete Bible learning suite. Master Scripture through the 8-floor Palace method — store God's Word as images, patterns, and structures." />
     <meta name="twitter:image" content="https://thephototheologyapp.com/phototheology-hero.png" />
     <meta name="twitter:image:alt" content="Phototheology Palace Method" />
-    <!-- Early tracking script - fires before React loads to capture true bounces -->
-    <script>
-      (function() {
-        try {
-          var sessionId = sessionStorage.getItem('pt_session_id');
-          if (!sessionId) {
-            sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            sessionStorage.setItem('pt_session_id', sessionId);
-          }
-          var landingData = {
-            session_id: sessionId,
-            landing_page: window.location.pathname,
-            referrer: document.referrer || 'direct',
-            timestamp: new Date().toISOString(),
-            user_agent: navigator.userAgent,
-            screen_width: screen.width,
-            is_mobile: /Mobi|Android/i.test(navigator.userAgent)
-          };
-          sessionStorage.setItem('pt_landing_data', JSON.stringify(landingData));
-          // Fire beacon to track landing (lightweight, non-blocking)
-          if (navigator.sendBeacon) {
-            navigator.sendBeacon(
-              'https://tdjtumtdkjicnhlpqqzd.supabase.co/functions/v1/track-landing',
-              JSON.stringify(landingData)
-            );
-          }
-        } catch(e) {}
-      })();
-    </script>
   </head>
 
   <body>
-    <!-- Critical CSS for instant render before React loads -->
-    <style>
-      #root-loader {
-        position: fixed;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(217 33% 17%) 100%);
-        z-index: 9999;
-        transition: opacity 0.3s ease-out;
-      }
-      #root-loader.fade-out {
-        opacity: 0;
-        pointer-events: none;
-      }
-      .loader-title {
-        font-family: 'Cinzel', serif;
-        font-size: clamp(1.5rem, 5vw, 2.5rem);
-        font-weight: 700;
-        background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 1rem;
-        text-align: center;
-        padding: 0 1rem;
-      }
-      .loader-subtitle {
-        font-family: system-ui, sans-serif;
-        font-size: 1rem;
-        color: rgba(255,255,255,0.7);
-        margin-bottom: 2rem;
-      }
-      .loader-spinner {
-        width: 48px;
-        height: 48px;
-        border: 3px solid rgba(255,255,255,0.1);
-        border-top-color: #60a5fa;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    </style>
-    
-    <div id="root-loader">
-      <div class="loader-title">Phototheology Bible Suite</div>
-      <div class="loader-subtitle">Preparing your study...</div>
-      <div class="loader-spinner"></div>
-    </div>
-    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <script>
-      // Remove loader once React mounts
-      window.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-          var loader = document.getElementById('root-loader');
-          if (loader) {
-            loader.classList.add('fade-out');
-            setTimeout(function() { loader.remove(); }, 300);
-          }
-        }, 100);
-      });
-    </script>
   </body>
 </html>

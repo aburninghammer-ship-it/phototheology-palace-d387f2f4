@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Sparkles, CheckCircle2, Play } from "lucide-react";
+import { ChevronRight, Sparkles, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import heroCardsDisplay from "@/assets/branding/hero-cards-display.png";
 import { UserCountBadge } from "@/components/UserCountBadge";
-import { useGuestMode } from "@/hooks/useGuestMode";
 const socialProof = [
   "Thousands taught over 20 years",
   "Discover Christ in every chapter", 
@@ -14,19 +13,12 @@ const socialProof = [
 
 export const PunchyHero = () => {
   const navigate = useNavigate();
-  const { setGuestMode, trackFeatureUsed } = useGuestMode();
 
   const scrollToDemo = () => {
     const demoSection = document.getElementById("interactive-demo");
     if (demoSection) {
       demoSection.scrollIntoView({ behavior: "smooth" });
     }
-  };
-
-  const startGuestExplore = () => {
-    setGuestMode(true);
-    trackFeatureUsed("Palace Explorer");
-    navigate("/palace");
   };
 
   return (
@@ -188,28 +180,16 @@ export const PunchyHero = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex flex-col items-center justify-center gap-4 px-4"
         >
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
-            <Button
-              size="lg"
-              onClick={scrollToDemo}
-              className="text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-14 py-6 sm:py-7 md:py-8 gradient-palace shadow-2xl hover:shadow-primary/30 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-sm"
-            >
-              Try a 5-Minute Study
-              <ChevronRight className="ml-2 h-6 w-6 sm:h-7 sm:w-7" />
-            </Button>
-            
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={startGuestExplore}
-              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 border-primary/50 hover:bg-primary/10 w-full sm:w-auto max-w-sm"
-            >
-              <Play className="mr-2 h-5 w-5" />
-              Explore the Palace
-            </Button>
-          </div>
+          <Button
+            size="lg"
+            onClick={scrollToDemo}
+            className="text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-14 py-6 sm:py-7 md:py-8 gradient-palace shadow-2xl hover:shadow-primary/30 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-sm"
+          >
+            Try a 5-Minute Study
+            <ChevronRight className="ml-2 h-6 w-6 sm:h-7 sm:w-7" />
+          </Button>
           
-          <p className="text-sm text-muted-foreground mt-3">
+          <p className="text-sm text-muted-foreground">
             No signup required • See how it works instantly
           </p>
         </motion.div>

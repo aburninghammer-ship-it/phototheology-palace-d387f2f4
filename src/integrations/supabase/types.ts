@@ -3234,45 +3234,6 @@ export type Database = {
         }
         Relationships: []
       }
-      early_landings: {
-        Row: {
-          converted: boolean | null
-          converted_at: string | null
-          created_at: string
-          id: string
-          is_mobile: boolean | null
-          landing_page: string
-          referrer: string | null
-          screen_width: number | null
-          session_id: string
-          user_agent: string | null
-        }
-        Insert: {
-          converted?: boolean | null
-          converted_at?: string | null
-          created_at?: string
-          id?: string
-          is_mobile?: boolean | null
-          landing_page: string
-          referrer?: string | null
-          screen_width?: number | null
-          session_id: string
-          user_agent?: string | null
-        }
-        Update: {
-          converted?: boolean | null
-          converted_at?: string | null
-          created_at?: string
-          id?: string
-          is_mobile?: boolean | null
-          landing_page?: string
-          referrer?: string | null
-          screen_width?: number | null
-          session_id?: string
-          user_agent?: string | null
-        }
-        Relationships: []
-      }
       email_campaigns: {
         Row: {
           created_at: string | null
