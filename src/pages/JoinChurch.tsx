@@ -36,7 +36,8 @@ export default function JoinChurch() {
 
     if (!user) {
       toast.error("You must be logged in to join a church");
-      navigate("/auth");
+      // Preserve the invitation code in the redirect so they can return after login
+      navigate(`/auth?redirect=/join-church?code=${encodeURIComponent(invitationCode.trim())}`);
       return;
     }
 
