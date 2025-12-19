@@ -46,7 +46,7 @@ serve(async (req) => {
     console.log(`Found ${invitations?.length || 0} pending invitations`);
 
     const results = [];
-    const origin = 'https://phototheology.lovable.app';
+    const origin = (Deno.env.get('PUBLIC_APP_URL') || 'https://thephototheologyapp.com').replace(/\/$/, '');
 
     for (const invitation of invitations || []) {
       const churchName = (invitation.churches as any)?.name || 'Living Manna';

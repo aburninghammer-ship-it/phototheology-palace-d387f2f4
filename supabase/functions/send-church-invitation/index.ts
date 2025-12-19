@@ -101,13 +101,15 @@ serve(async (req) => {
       );
     }
 
-    const joinLink = `https://phototheology.com/join-church?code=${invitationCode}`;
+    const appBaseUrl = (Deno.env.get('PUBLIC_APP_URL') || req.headers.get('origin') || 'https://thephototheologyapp.com').replace(/\/$/, '');
+    const joinLink = `${appBaseUrl}/join-church?code=${invitationCode}`;
     const expiresDate = new Date(expiresAt).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
+
 
     const emailHtml = `
       <!DOCTYPE html>
