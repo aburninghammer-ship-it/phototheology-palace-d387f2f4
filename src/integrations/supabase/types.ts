@@ -7689,17 +7689,25 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           chain_chess_streak: number | null
+          change_phase: string | null
           cohort_date: string | null
           created_at: string | null
           current_floor: number | null
           daily_study_streak: number | null
+          days_active: number | null
           display_name: string | null
           equations_streak: number | null
           first_meaningful_action_at: string | null
+          first_win_achieved_at: string | null
+          first_win_type: string | null
           focused_room_floor: number | null
           focused_room_id: string | null
           focused_room_set_at: string | null
           gem_creation_streak: number | null
+          guided_path_completed_at: string | null
+          guided_path_step: number | null
+          has_achieved_first_win: boolean | null
+          has_completed_orientation: boolean | null
           has_entered_palace: boolean | null
           has_lifetime_access: boolean
           has_seen_community_guidelines: boolean | null
@@ -7707,6 +7715,7 @@ export type Database = {
           is_kid_mode: boolean | null
           is_recurring: boolean | null
           is_student: boolean | null
+          last_activity_date: string | null
           last_seen: string | null
           learning_style: string | null
           level: number | null
@@ -7721,6 +7730,7 @@ export type Database = {
           onboarding_completed: boolean | null
           onboarding_completed_at: string | null
           onboarding_step: number | null
+          orientation_completed_at: string | null
           palace_entered_at: string | null
           path_master_level: number | null
           payment_source: string | null
@@ -7739,6 +7749,9 @@ export type Database = {
           subscription_status: string | null
           subscription_tier: string | null
           surface_study_only: boolean | null
+          total_gems_saved: number | null
+          total_sessions_completed: number | null
+          total_studies_saved: number | null
           trial_ends_at: string | null
           trial_started_at: string | null
           updated_at: string | null
@@ -7750,17 +7763,25 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           chain_chess_streak?: number | null
+          change_phase?: string | null
           cohort_date?: string | null
           created_at?: string | null
           current_floor?: number | null
           daily_study_streak?: number | null
+          days_active?: number | null
           display_name?: string | null
           equations_streak?: number | null
           first_meaningful_action_at?: string | null
+          first_win_achieved_at?: string | null
+          first_win_type?: string | null
           focused_room_floor?: number | null
           focused_room_id?: string | null
           focused_room_set_at?: string | null
           gem_creation_streak?: number | null
+          guided_path_completed_at?: string | null
+          guided_path_step?: number | null
+          has_achieved_first_win?: boolean | null
+          has_completed_orientation?: boolean | null
           has_entered_palace?: boolean | null
           has_lifetime_access?: boolean
           has_seen_community_guidelines?: boolean | null
@@ -7768,6 +7789,7 @@ export type Database = {
           is_kid_mode?: boolean | null
           is_recurring?: boolean | null
           is_student?: boolean | null
+          last_activity_date?: string | null
           last_seen?: string | null
           learning_style?: string | null
           level?: number | null
@@ -7782,6 +7804,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_step?: number | null
+          orientation_completed_at?: string | null
           palace_entered_at?: string | null
           path_master_level?: number | null
           payment_source?: string | null
@@ -7800,6 +7823,9 @@ export type Database = {
           subscription_status?: string | null
           subscription_tier?: string | null
           surface_study_only?: boolean | null
+          total_gems_saved?: number | null
+          total_sessions_completed?: number | null
+          total_studies_saved?: number | null
           trial_ends_at?: string | null
           trial_started_at?: string | null
           updated_at?: string | null
@@ -7811,17 +7837,25 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           chain_chess_streak?: number | null
+          change_phase?: string | null
           cohort_date?: string | null
           created_at?: string | null
           current_floor?: number | null
           daily_study_streak?: number | null
+          days_active?: number | null
           display_name?: string | null
           equations_streak?: number | null
           first_meaningful_action_at?: string | null
+          first_win_achieved_at?: string | null
+          first_win_type?: string | null
           focused_room_floor?: number | null
           focused_room_id?: string | null
           focused_room_set_at?: string | null
           gem_creation_streak?: number | null
+          guided_path_completed_at?: string | null
+          guided_path_step?: number | null
+          has_achieved_first_win?: boolean | null
+          has_completed_orientation?: boolean | null
           has_entered_palace?: boolean | null
           has_lifetime_access?: boolean
           has_seen_community_guidelines?: boolean | null
@@ -7829,6 +7863,7 @@ export type Database = {
           is_kid_mode?: boolean | null
           is_recurring?: boolean | null
           is_student?: boolean | null
+          last_activity_date?: string | null
           last_seen?: string | null
           learning_style?: string | null
           level?: number | null
@@ -7843,6 +7878,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_step?: number | null
+          orientation_completed_at?: string | null
           palace_entered_at?: string | null
           path_master_level?: number | null
           payment_source?: string | null
@@ -7861,6 +7897,9 @@ export type Database = {
           subscription_status?: string | null
           subscription_tier?: string | null
           surface_study_only?: boolean | null
+          total_gems_saved?: number | null
+          total_sessions_completed?: number | null
+          total_studies_saved?: number | null
           trial_ends_at?: string | null
           trial_started_at?: string | null
           updated_at?: string | null
