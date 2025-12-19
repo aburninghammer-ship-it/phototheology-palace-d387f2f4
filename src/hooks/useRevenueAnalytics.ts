@@ -13,6 +13,15 @@ interface RevenueMetrics {
   averageRevenuePerUser: number;
 }
 
+interface TrialMetrics {
+  totalTrials: number;
+  trialsExpiringSoon: number; // Next 3 days
+  trialsExpiredUnconverted: number;
+  avgTrialAge: number;
+  trialsBySource: { source: string; count: number }[];
+  trialConversionByDay: { day: number; converted: number; total: number }[];
+}
+
 interface CohortData {
   cohortDate: string;
   totalUsers: number;
@@ -37,6 +46,7 @@ const PRICE_TO_MRR: Record<string, number> = {
 export function useRevenueAnalytics() {
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState<RevenueMetrics | null>(null);
+  const [trialMetrics, setTrialMetrics] = useState<TrialMetrics | null>(null);
   const [cohorts, setCohorts] = useState<CohortData[]>([]);
   const [onboardingFunnel, setOnboardingFunnel] = useState<OnboardingFunnel[]>([]);
   const [monthlyTrend, setMonthlyTrend] = useState<{ month: string; mrr: number; subscribers: number }[]>([]);
@@ -50,6 +60,7 @@ export function useRevenueAnalytics() {
     try {
       await Promise.all([
         fetchRevenueMetrics(),
+        fetchTrialMetrics(),
         fetchCohortData(),
         fetchOnboardingFunnel(),
         fetchMonthlyTrend(),
@@ -57,6 +68,75 @@ export function useRevenueAnalytics() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchTrialMetrics = async () => {
+    const now = new Date();
+    const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+
+    // Get all trial users with their trial end dates
+    const { data: trialUsers } = await supabase
+      .from('user_subscriptions')
+      .select('user_id, trial_ends_at, created_at')
+      .eq('subscription_status', 'trial');
+
+    // Get converted users (were trial, now active with stripe)
+    const { data: convertedUsers } = await supabase
+      .from('user_subscriptions')
+      .select('user_id, trial_ends_at, created_at, stripe_subscription_id, updated_at')
+      .eq('subscription_status', 'active')
+      .not('stripe_subscription_id', 'is', null);
+
+    // Get expired trials that never converted
+    const { data: expiredTrials } = await supabase
+      .from('user_subscriptions')
+      .select('user_id, trial_ends_at')
+      .eq('subscription_status', 'trial')
+      .lt('trial_ends_at', now.toISOString());
+
+    const totalTrials = trialUsers?.length || 0;
+    
+    // Trials expiring in next 3 days
+    const trialsExpiringSoon = trialUsers?.filter(t => {
+      if (!t.trial_ends_at) return false;
+      const endDate = new Date(t.trial_ends_at);
+      return endDate > now && endDate <= threeDaysFromNow;
+    }).length || 0;
+
+    // Calculate average trial age (using created_at as trial start)
+    const trialAges = trialUsers?.map(t => {
+      const start = new Date(t.created_at);
+      return Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    }) || [];
+    const avgTrialAge = trialAges.length > 0 
+      ? Math.round(trialAges.reduce((a, b) => a + b, 0) / trialAges.length) 
+      : 0;
+
+    // Calculate conversion by trial day (using created_at as start, updated_at as conversion)
+    const conversionByDay: { day: number; converted: number; total: number }[] = [];
+    for (let day = 1; day <= 14; day++) {
+      const convertedOnDay = convertedUsers?.filter(u => {
+        const trialStart = new Date(u.created_at);
+        const conversionDate = new Date(u.updated_at || u.created_at);
+        const dayDiff = Math.floor((conversionDate.getTime() - trialStart.getTime()) / (1000 * 60 * 60 * 24));
+        return dayDiff === day || (day === 14 && dayDiff >= 14);
+      }).length || 0;
+
+      conversionByDay.push({
+        day,
+        converted: convertedOnDay,
+        total: totalTrials + (convertedUsers?.length || 0),
+      });
+    }
+
+    setTrialMetrics({
+      totalTrials,
+      trialsExpiringSoon,
+      trialsExpiredUnconverted: expiredTrials?.length || 0,
+      avgTrialAge,
+      trialsBySource: [], // Could track referral sources
+      trialConversionByDay: conversionByDay,
+    });
   };
 
   const fetchRevenueMetrics = async () => {
@@ -235,6 +315,7 @@ export function useRevenueAnalytics() {
   return {
     loading,
     metrics,
+    trialMetrics,
     cohorts,
     onboardingFunnel,
     monthlyTrend,
