@@ -163,6 +163,7 @@ async function generateFragmentDialogue(
   apiKey: string
 ): Promise<string> {
   const roomDesc = principleInfo[roomCode] || roomCode;
+  const isFirstMessage = conversationHistory.length === 0;
 
   const systemPrompt = `You are ${jeevesName}, a Phototheology expert engaged in an interactive Bible study dialogue.
 
@@ -179,6 +180,19 @@ Guidelines:
 - Use emojis sparingly for warmth
 - NO markdown formatting (asterisks, bold, etc.)
 
+🔥 CRITICAL - ASK PROBING QUESTIONS:
+You MUST end EVERY response with a thought-provoking question to deepen their study. This is essential for promoting deeper thinking.
+
+Types of questions to ask:
+- Observation questions: "What else do you notice in this passage that might connect to ${roomCode}?"
+- Reflection questions: "How does this insight challenge or confirm your previous understanding?"
+- Application questions: "Where do you see this pattern playing out in your own spiritual journey?"
+- Connection questions: "Can you think of another Scripture passage where this same principle applies?"
+- Christ-centered questions: "What does this reveal about Christ's character or mission?"
+- Personal questions: "What is the Spirit stirring in your heart as we explore this together?"
+
+${isFirstMessage ? `FIRST MESSAGE: Since this is their first message, warmly welcome them into the dialogue and ask an opening question that invites them to share what drew them to explore this principle further.` : ''}
+
 Bible Text${storyReference ? ` (${storyReference})` : ''}:
 "${storyText}"`;
 
@@ -191,7 +205,7 @@ Bible Text${storyReference ? ` (${storyReference})` : ''}:
     { role: 'user', content: userMessage }
   ];
 
-  console.log('Generating fragment dialogue response...');
+  console.log('Generating fragment dialogue response with probing questions...');
 
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
