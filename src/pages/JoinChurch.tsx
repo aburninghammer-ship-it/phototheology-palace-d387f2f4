@@ -52,9 +52,27 @@ export default function JoinChurch() {
       const result = data as { success: boolean; error?: string; message?: string; church_id?: string };
 
       if (!result.success) {
+        // Workaround: if someone clicks a valid invite twice, the code is "used" but
+        // they may already be connected to the church.
+        if (result.error?.toLowerCase().includes("already used")) {
+          const { data: accessRows, error: accessError } = await supabase.rpc('has_church_access', {
+            _user_id: user.id,
+          });
+
+          const hasAccess = Array.isArray(accessRows) ? Boolean(accessRows[0]?.has_access) : false;
+
+          if (!accessError && hasAccess) {
+            setSuccess(true);
+            toast.success("You're already in this church. Redirecting...");
+            setTimeout(() => navigate("/living-manna"), 1000);
+            return;
+          }
+        }
+
         toast.error(result.error || "Failed to accept invitation");
         return;
       }
+
 
       setSuccess(true);
       toast.success(result.message || "Successfully joined church!");
