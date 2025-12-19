@@ -13,6 +13,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export type ChangePhase = 'orientation' | 'first_win' | 'reinforcement' | 'commitment';
 
+// Date when Change Manager was deployed - users created before this are "existing users"
+const CHANGE_MANAGER_LAUNCH_DATE = new Date('2024-12-19T00:00:00Z');
+
 export interface ChangeSpineStatus {
   // Core tracking
   phase: ChangePhase;
@@ -33,6 +36,9 @@ export interface ChangeSpineStatus {
   // Trial status
   trialDaysRemaining: number;
   isPaid: boolean;
+  
+  // New user detection
+  isNewUser: boolean;
   
   // Loading state
   isLoading: boolean;
@@ -64,6 +70,7 @@ export const useChangeSpine = (): ChangeSpineStatus => {
       const { data: profile, error } = await supabase
         .from('profiles')
         .select(`
+          created_at,
           has_completed_orientation,
           orientation_completed_at,
           has_achieved_first_win,
@@ -112,6 +119,16 @@ export const useChangeSpine = (): ChangeSpineStatus => {
     if (data.subscription_status === 'active') return true;
     if (data.subscription_tier && ['premium', 'essential', 'patron', 'student'].includes(data.subscription_tier)) return true;
     return false;
+  }, [data]);
+
+  // Check if this is a new user (created after Change Manager launch)
+  const isNewUser = useCallback((): boolean => {
+    if (!data) return false;
+    const profile = data as any;
+    if (!profile.created_at) return true; // Assume new if no created_at
+    
+    const userCreatedAt = new Date(profile.created_at);
+    return userCreatedAt >= CHANGE_MANAGER_LAUNCH_DATE;
   }, [data]);
 
   // Determine current phase based on status
@@ -182,6 +199,8 @@ export const useChangeSpine = (): ChangeSpineStatus => {
   // Handle case where data is not yet loaded
   const profile = data as any;
 
+  const newUserStatus = isNewUser();
+
   return {
     phase: determinePhase(),
     hasCompletedOrientation: profile?.has_completed_orientation || false,
@@ -199,6 +218,8 @@ export const useChangeSpine = (): ChangeSpineStatus => {
     trialDaysRemaining: calculateTrialDays(),
     isPaid: isPaid(),
     
+    isNewUser: newUserStatus,
+    
     isLoading,
     
     markOrientationComplete,
@@ -207,15 +228,23 @@ export const useChangeSpine = (): ChangeSpineStatus => {
   };
 };
 
-// Export for decision-making in routing
+// Export for decision-making in routing - only applies to new users
 export const shouldRedirectToOrientation = (status: ChangeSpineStatus): boolean => {
+  if (!status.isNewUser) return false; // Skip for existing users
   return !status.isLoading && !status.hasCompletedOrientation && status.phase === 'orientation';
 };
 
 export const shouldShowFirstWinPrompt = (status: ChangeSpineStatus): boolean => {
+  if (!status.isNewUser) return false; // Skip for existing users
   return !status.isLoading && status.hasCompletedOrientation && !status.hasAchievedFirstWin;
 };
 
 export const shouldEscalateUpgrade = (status: ChangeSpineStatus): boolean => {
   return !status.isLoading && status.trialDaysRemaining <= 3 && !status.isPaid;
+};
+
+// Check if guided path should be shown (only for new users who haven't completed first win)
+export const shouldShowGuidedPath = (status: ChangeSpineStatus): boolean => {
+  if (!status.isNewUser) return false; // Skip for existing users
+  return !status.isLoading && !status.hasAchievedFirstWin;
 };

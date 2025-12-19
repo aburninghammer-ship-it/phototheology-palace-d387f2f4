@@ -46,6 +46,9 @@ export const ChangeManagerProvider = ({ children }: ChangeManagerProviderProps) 
     // Skip if loading or no user
     if (changeSpine.isLoading || !user) return;
 
+    // Skip all change management for existing users
+    if (!changeSpine.isNewUser) return;
+
     const currentPath = location.pathname;
     
     // Check if current route is exempt
@@ -90,9 +93,9 @@ export const useChangeManager = () => {
   return {
     ...changeSpine,
     
-    // Convenience methods for components
-    shouldShowGuidedPath: !changeSpine.hasAchievedFirstWin && !changeSpine.isLoading,
-    shouldPromptFirstWin: changeSpine.hasCompletedOrientation && !changeSpine.hasAchievedFirstWin,
+    // Convenience methods for components - only apply to new users
+    shouldShowGuidedPath: changeSpine.isNewUser && !changeSpine.hasAchievedFirstWin && !changeSpine.isLoading,
+    shouldPromptFirstWin: changeSpine.isNewUser && changeSpine.hasCompletedOrientation && !changeSpine.hasAchievedFirstWin,
     shouldEscalateUpgrade: shouldEscalateUpgrade(changeSpine),
     
     // Get identity messaging
