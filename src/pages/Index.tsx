@@ -10,22 +10,67 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { PWAInstallButton } from "@/components/PWAInstallButton";
-import { StreamlinedTestimonials } from "@/components/StreamlinedTestimonials";
-import { FinalCTA } from "@/components/FinalCTA";
 import { PunchyHero } from "@/components/PunchyHero";
-import { ExplainerVideo } from "@/components/ExplainerVideo";
-import { InteractiveWalkthrough } from "@/components/InteractiveWalkthrough";
-import { TransparencySection } from "@/components/TransparencySection";
-import { ExitIntentPopup } from "@/components/retention/ExitIntentPopup";
-import { SessionTracker } from "@/components/analytics/SessionTracker";
-import { FourPathsShowcase } from "@/components/FourPathsShowcase";
-import { MobileStickyCtaBar } from "@/components/MobileStickyCtaBar";
-import { LandingPathFilter } from "@/components/landing/LandingPathFilter";
+import { QuickTestimonialBanner } from "@/components/landing/QuickTestimonialBanner";
+import { LandingPageSkeleton, TestimonialsSkeleton } from "@/components/landing/LandingPageSkeleton";
+import { useSyncEarlyTracking } from "@/hooks/useSyncEarlyTracking";
+
+// Lazy load heavy below-the-fold components
+const StreamlinedTestimonials = lazy(() => 
+  import("@/components/StreamlinedTestimonials").then(m => ({ default: m.StreamlinedTestimonials }))
+);
+const FinalCTA = lazy(() => 
+  import("@/components/FinalCTA").then(m => ({ default: m.FinalCTA }))
+);
+const ExplainerVideo = lazy(() => 
+  import("@/components/ExplainerVideo").then(m => ({ default: m.ExplainerVideo }))
+);
+const InteractiveWalkthrough = lazy(() => 
+  import("@/components/InteractiveWalkthrough").then(m => ({ default: m.InteractiveWalkthrough }))
+);
+const TransparencySection = lazy(() => 
+  import("@/components/TransparencySection").then(m => ({ default: m.TransparencySection }))
+);
+const FourPathsShowcase = lazy(() => 
+  import("@/components/FourPathsShowcase").then(m => ({ default: m.FourPathsShowcase }))
+);
+const LandingPathFilter = lazy(() => 
+  import("@/components/landing/LandingPathFilter").then(m => ({ default: m.LandingPathFilter }))
+);
+const MobileStickyCtaBar = lazy(() => 
+  import("@/components/MobileStickyCtaBar").then(m => ({ default: m.MobileStickyCtaBar }))
+);
+
+// Defer non-critical analytics until after load
+const SessionTracker = lazy(() => 
+  import("@/components/analytics/SessionTracker").then(m => ({ default: m.SessionTracker }))
+);
+const ExitIntentPopup = lazy(() => 
+  import("@/components/retention/ExitIntentPopup").then(m => ({ default: m.ExitIntentPopup }))
+);
+
+// Simple section skeleton
+const SectionSkeleton = () => (
+  <div className="py-16 px-4">
+    <div className="max-w-6xl mx-auto animate-pulse">
+      <div className="h-8 bg-muted rounded w-1/3 mx-auto mb-4" />
+      <div className="h-4 bg-muted rounded w-1/2 mx-auto mb-8" />
+      <div className="grid md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-48 bg-muted rounded-lg" />
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 const Index = () => {
   const navigate = useNavigate();
+  
+  // Sync early tracking data captured before React mounted
+  useSyncEarlyTracking();
   const { user } = useAuth();
   const { preferences } = useUserPreferences();
   const [showInstallBanner, setShowInstallBanner] = useState(false);
@@ -54,8 +99,12 @@ const Index = () => {
         description="Master Bible study through the 8-floor Palace method. Store Scripture as images, patterns, and structures with Christ-centered interpretation."
       />
       {preferences.navigation_style === "simplified" ? <SimplifiedNav /> : <Navigation />}
-      <SessionTracker />
-      <ExitIntentPopup />
+      
+      {/* Deferred analytics - load after paint */}
+      <Suspense fallback={null}>
+        <SessionTracker />
+        <ExitIntentPopup />
+      </Suspense>
       
       {/* Install App Banner */}
       {showInstallBanner && (
@@ -85,34 +134,54 @@ const Index = () => {
         </div>
       )}
 
-      {/* 1. Hero - The 10-second hook */}
+      {/* Quick testimonial banner - immediate social proof */}
+      <QuickTestimonialBanner />
+
+      {/* 1. Hero - The 10-second hook - NOT lazy loaded */}
       <PunchyHero />
 
-      {/* 1.5 Path Filter - "Is This for Me?" - BEFORE auth */}
-      <LandingPathFilter />
+      {/* Below-the-fold: Lazy loaded with suspense */}
+      <Suspense fallback={<SectionSkeleton />}>
+        {/* 1.5 Path Filter - "Is This for Me?" - BEFORE auth */}
+        <LandingPathFilter />
+      </Suspense>
 
-      {/* 2. Explainer Video */}
-      <ExplainerVideo />
+      <Suspense fallback={<SectionSkeleton />}>
+        {/* 2. Explainer Video */}
+        <ExplainerVideo />
+      </Suspense>
 
-      {/* 3. Interactive Demo - Try it yourself */}
-      <InteractiveWalkthrough />
+      <Suspense fallback={<SectionSkeleton />}>
+        {/* 3. Interactive Demo - Try it yourself */}
+        <InteractiveWalkthrough />
+      </Suspense>
 
-      {/* 4. Four Paths - What you can do */}
-      <FourPathsShowcase />
+      <Suspense fallback={<SectionSkeleton />}>
+        {/* 4. Four Paths - What you can do */}
+        <FourPathsShowcase />
+      </Suspense>
 
-      {/* 5. Transparency - Pricing + FAQ */}
-      <TransparencySection />
+      <Suspense fallback={<SectionSkeleton />}>
+        {/* 5. Transparency - Pricing + FAQ */}
+        <TransparencySection />
+      </Suspense>
 
-      {/* 6. Social Proof */}
-      <StreamlinedTestimonials />
+      <Suspense fallback={<TestimonialsSkeleton />}>
+        {/* 6. Social Proof */}
+        <StreamlinedTestimonials />
+      </Suspense>
 
-      {/* 7. Final CTA */}
-      <FinalCTA />
+      <Suspense fallback={<SectionSkeleton />}>
+        {/* 7. Final CTA */}
+        <FinalCTA />
+      </Suspense>
 
       <Footer />
       
-      {/* Mobile Sticky CTA Bar */}
-      <MobileStickyCtaBar />
+      {/* Mobile Sticky CTA Bar - deferred */}
+      <Suspense fallback={null}>
+        <MobileStickyCtaBar />
+      </Suspense>
     </div>
   );
 };

@@ -9,6 +9,67 @@
     <title>Phototheology Bible Learning Suite</title>
     <meta name="description" content="The complete Bible learning suite. Master Scripture through the 8-floor Palace method — store God's Word as images, patterns, and structures with Christ-centered interpretation." />
     <meta name="author" content="Phototheology" />
+    
+    <!-- EARLY TRACKING: Fire before React mounts to capture true bounces -->
+    <script>
+      (function() {
+        try {
+          var startTime = Date.now();
+          var sessionId = sessionStorage.getItem('pt_session_id');
+          if (!sessionId) {
+            sessionId = 'ses_' + Math.random().toString(36).substr(2, 9) + '_' + startTime;
+            sessionStorage.setItem('pt_session_id', sessionId);
+          }
+          
+          // Record page hit immediately
+          var hitData = {
+            timestamp: startTime,
+            session_id: sessionId,
+            page: window.location.pathname,
+            referrer: document.referrer || 'direct',
+            user_agent: navigator.userAgent,
+            screen: window.screen.width + 'x' + window.screen.height,
+            viewport: window.innerWidth + 'x' + window.innerHeight,
+            is_mobile: /Mobile|Android|iPhone/i.test(navigator.userAgent)
+          };
+          
+          // Store for later sync with Supabase
+          var hits = JSON.parse(sessionStorage.getItem('pt_early_hits') || '[]');
+          hits.push(hitData);
+          sessionStorage.setItem('pt_early_hits', JSON.stringify(hits));
+          
+          // Track time on page for bounce detection
+          window.__ptStartTime = startTime;
+          window.__ptSessionId = sessionId;
+          
+          // Send beacon on page unload to capture bounces
+          window.addEventListener('pagehide', function() {
+            var timeOnPage = Date.now() - window.__ptStartTime;
+            var bounceData = {
+              session_id: window.__ptSessionId,
+              page: window.location.pathname,
+              time_on_page_ms: timeOnPage,
+              is_bounce: timeOnPage < 10000, // Less than 10 seconds = bounce
+              timestamp: Date.now()
+            };
+            
+            var bounces = JSON.parse(sessionStorage.getItem('pt_bounces') || '[]');
+            bounces.push(bounceData);
+            sessionStorage.setItem('pt_bounces', JSON.stringify(bounces));
+            
+            // Try to send via beacon
+            if (navigator.sendBeacon) {
+              navigator.sendBeacon('/api/track-bounce', JSON.stringify(bounceData));
+            }
+          });
+          
+          console.debug('[PT Early Tracking] Initialized', hitData);
+        } catch (e) {
+          console.debug('[PT Early Tracking] Error:', e);
+        }
+      })();
+    </script>
+    
     <!-- Preconnect to critical origins for faster resource loading -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,6 +99,43 @@
     <meta name="twitter:description" content="The complete Bible learning suite. Master Scripture through the 8-floor Palace method — store God's Word as images, patterns, and structures." />
     <meta name="twitter:image" content="https://thephototheologyapp.com/phototheology-hero.png" />
     <meta name="twitter:image:alt" content="Phototheology Palace Method" />
+    
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+      /* Prevent layout shift while fonts load */
+      body { font-family: Inter, system-ui, sans-serif; }
+      
+      /* Loading skeleton styles - inline for instant display */
+      .pt-skeleton {
+        background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--muted-foreground)/0.1) 50%, hsl(var(--muted)) 75%);
+        background-size: 200% 100%;
+        animation: pt-shimmer 1.5s infinite;
+      }
+      @keyframes pt-shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+      
+      /* Initial loading state */
+      #root:empty {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #root:empty::after {
+        content: '';
+        width: 40px;
+        height: 40px;
+        border: 3px solid hsl(var(--primary)/0.2);
+        border-top-color: hsl(var(--primary));
+        border-radius: 50%;
+        animation: pt-spin 0.8s linear infinite;
+      }
+      @keyframes pt-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
 
   <body>
