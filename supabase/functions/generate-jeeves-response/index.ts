@@ -152,17 +152,110 @@ Apply the selected PT principles from all 6 floors, ensuring each insight connec
   return content;
 }
 
+// Generate fragment dialogue response for interactive conversation
+async function generateFragmentDialogue(
+  storyText: string,
+  storyReference: string,
+  roomCode: string,
+  userMessage: string,
+  conversationHistory: Array<{ role: string; content: string }>,
+  jeevesName: string,
+  apiKey: string
+): Promise<string> {
+  const roomDesc = principleInfo[roomCode] || roomCode;
+
+  const systemPrompt = `You are ${jeevesName}, a Phototheology expert engaged in an interactive Bible study dialogue.
+
+You are currently discussing the ${roomCode} (${roomDesc}) principle as applied to a specific Bible text. The user is exploring this principle with you - they may ask questions, share their own thoughts, challenge your insights, or seek deeper understanding.
+
+Guidelines:
+- Stay focused on this specific principle (${roomCode}) and how it illuminates the text
+- Engage warmly and conversationally, like a mentor in dialogue
+- If they share a thought, affirm what's good and gently correct or expand what needs it
+- If they ask a question, answer thoroughly but concisely
+- If they challenge your insight, engage thoughtfully - you may adjust or defend your position
+- Connect back to Christ when natural
+- Keep responses focused (2-4 short paragraphs max)
+- Use emojis sparingly for warmth
+- NO markdown formatting (asterisks, bold, etc.)
+
+Bible Text${storyReference ? ` (${storyReference})` : ''}:
+"${storyText}"`;
+
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    ...conversationHistory.map(m => ({
+      role: m.role as 'user' | 'assistant',
+      content: m.content
+    })),
+    { role: 'user', content: userMessage }
+  ];
+
+  console.log('Generating fragment dialogue response...');
+
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'google/gemini-2.5-flash',
+      messages,
+      temperature: 0.8,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('AI API error:', response.status, errorText);
+    throw new Error(`AI API error: ${response.status}`);
+  }
+
+  const aiData = await response.json();
+  const content = aiData.choices[0]?.message?.content;
+
+  if (!content) {
+    throw new Error('No content in AI response');
+  }
+
+  console.log('✅ Generated fragment dialogue response successfully');
+  return content;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { cardCode, storyText, storyReference, opponentName, jeevesName, mode } = await req.json();
+    const { cardCode, storyText, storyReference, opponentName, jeevesName, mode, userMessage, conversationHistory } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
+    }
+
+    // Handle "fragment-dialogue" mode - interactive conversation about a specific principle
+    if (mode === 'fragment-dialogue') {
+      if (!storyText || !cardCode || !userMessage) {
+        throw new Error('Missing required fields for fragment dialogue');
+      }
+      
+      const dialogueResponse = await generateFragmentDialogue(
+        storyText,
+        storyReference || '',
+        cardCode,
+        userMessage,
+        conversationHistory || [],
+        jeevesName || 'Jeeves',
+        LOVABLE_API_KEY
+      );
+      
+      return new Response(
+        JSON.stringify({ response: dialogueResponse }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Handle "gather fragments" mode - one principle from every floor
