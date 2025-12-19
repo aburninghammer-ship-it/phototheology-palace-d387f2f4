@@ -194,8 +194,9 @@ export function ChurchInvitations({ churchId, availableSeats }: ChurchInvitation
   };
 
   const handleCopyInviteLink = (code: string) => {
-    const link = `https://phototheology.com/join-church?code=${code}`;
-    navigator.clipboard.writeText(link);
+    const url = new URL("/join-church", window.location.origin);
+    url.searchParams.set("code", code);
+    navigator.clipboard.writeText(url.toString());
     toast.success("Invitation link copied to clipboard");
   };
 
