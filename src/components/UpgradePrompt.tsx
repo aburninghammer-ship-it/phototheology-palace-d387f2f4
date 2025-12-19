@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Crown, Lock, Sparkles, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEventTracking } from "@/hooks/useEventTracking";
 
 interface UpgradePromptProps {
   feature: string;
@@ -20,6 +22,17 @@ export const UpgradePrompt = ({
   showTrialOption = true,
 }: UpgradePromptProps) => {
   const navigate = useNavigate();
+  const { trackPaywallHit, trackUpgradeClick } = useEventTracking();
+
+  // Track paywall hit on mount
+  useEffect(() => {
+    trackPaywallHit(feature, `upgrade_prompt_${variant}`);
+  }, [feature, variant, trackPaywallHit]);
+
+  const handleUpgrade = () => {
+    trackUpgradeClick(`upgrade_prompt_${variant}`, feature);
+    navigate("/pricing");
+  };
 
   if (variant === "minimal") {
     return (
@@ -27,7 +40,7 @@ export const UpgradePrompt = ({
         <Lock className="h-4 w-4 text-primary" />
         <span className="text-sm text-muted-foreground flex-1">{feature} requires Premium</span>
         <Button 
-          onClick={() => navigate("/pricing")}
+          onClick={handleUpgrade}
           size="sm"
           variant="ghost"
           className="text-primary hover:text-primary"
@@ -54,7 +67,7 @@ export const UpgradePrompt = ({
           </div>
         </div>
         <Button 
-          onClick={() => navigate("/pricing")}
+          onClick={handleUpgrade}
           className="gradient-palace shrink-0"
         >
           <Sparkles className="mr-2 h-4 w-4" />
@@ -79,7 +92,7 @@ export const UpgradePrompt = ({
         
         <div className="flex flex-col gap-2">
           <Button 
-            onClick={() => navigate("/pricing")}
+            onClick={handleUpgrade}
             className="gradient-palace"
           >
             <Crown className="mr-2 h-4 w-4" />

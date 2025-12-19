@@ -18,6 +18,17 @@ interface TrackEventParams {
   pagePath?: string;
 }
 
+// First win action types for tracking
+export type FirstWinAction = 
+  | "completed_guided_tour"
+  | "saved_study"
+  | "saved_gem"
+  | "completed_challenge"
+  | "completed_game"
+  | "generated_ai_content"
+  | "finished_chapter_commentary"
+  | "earned_achievement";
+
 export function useEventTracking() {
   const { user } = useAuth();
 
@@ -117,6 +128,74 @@ export function useEventTracking() {
     [trackEvent]
   );
 
+  // === FUNNEL TRACKING EVENTS ===
+  
+  // Track when user starts their first study session
+  const trackFirstStudySession = useCallback(
+    (sessionType: string, details?: Record<string, unknown>) => {
+      trackEvent({
+        eventType: "first_study_session",
+        eventData: { session_type: sessionType, ...details },
+      });
+    },
+    [trackEvent]
+  );
+
+  // Track when user completes a "first win" action
+  const trackFirstWin = useCallback(
+    (action: FirstWinAction, details?: Record<string, unknown>) => {
+      trackEvent({
+        eventType: "first_win_completed",
+        eventData: { action, ...details },
+      });
+    },
+    [trackEvent]
+  );
+
+  // Track when user hits a paywall/upgrade prompt
+  const trackPaywallHit = useCallback(
+    (feature: string, context: string, details?: Record<string, unknown>) => {
+      trackEvent({
+        eventType: "paywall_hit",
+        eventData: { feature, context, ...details },
+      });
+    },
+    [trackEvent]
+  );
+
+  // Track when user clicks upgrade button
+  const trackUpgradeClick = useCallback(
+    (source: string, feature?: string) => {
+      trackEvent({
+        eventType: "upgrade_clicked",
+        eventData: { source, feature },
+      });
+    },
+    [trackEvent]
+  );
+
+  // Track successful purchase
+  const trackPurchaseCompleted = useCallback(
+    (planType: string, amount?: number) => {
+      trackEvent({
+        eventType: "purchase_completed",
+        eventData: { plan_type: planType, amount },
+      });
+    },
+    [trackEvent]
+  );
+
+  // Track value moment (when user experiences value)
+  const trackValueMoment = useCallback(
+    (momentType: string, details?: Record<string, unknown>) => {
+      trackEvent({
+        eventType: "value_moment",
+        eventData: { moment_type: momentType, ...details },
+      });
+    },
+    [trackEvent]
+  );
+
   return {
     trackEvent,
     trackButtonClick,
@@ -128,5 +207,12 @@ export function useEventTracking() {
     trackFeatureUsed,
     trackVideoPlay,
     trackScrollDepth,
+    // Funnel tracking
+    trackFirstStudySession,
+    trackFirstWin,
+    trackPaywallHit,
+    trackUpgradeClick,
+    trackPurchaseCompleted,
+    trackValueMoment,
   };
 }
