@@ -101,8 +101,22 @@ serve(async (req) => {
       );
     }
 
-    const appBaseUrl = (Deno.env.get('PUBLIC_APP_URL') || req.headers.get('origin') || 'https://thephototheologyapp.com').replace(/\/$/, '');
-    const joinLink = `${appBaseUrl}/join-church?code=${invitationCode}`;
+     const getBaseUrlFromRequest = (r: Request): string | null => {
+       const origin = r.headers.get('origin');
+       if (origin) return origin;
+       const referer = r.headers.get('referer');
+       if (referer) {
+         try {
+           return new URL(referer).origin;
+         } catch {
+           // ignore
+         }
+       }
+       return null;
+     };
+
+     const appBaseUrl = (getBaseUrlFromRequest(req) || Deno.env.get('PUBLIC_APP_URL') || 'https://thephototheologyapp.com').replace(/\/$/, '');
+     const joinLink = `${appBaseUrl}/join-church?code=${invitationCode}`;
     const expiresDate = new Date(expiresAt).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',

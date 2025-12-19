@@ -516,7 +516,7 @@ function App() {
             <Route path="/streaks" element={<ProtectedRoute><Streaks /></ProtectedRoute>} />
             <Route path="/church-admin" element={<ProtectedRoute><ChurchAdmin /></ProtectedRoute>} />
             <Route path="/living-manna" element={<ProtectedRoute><LivingManna /></ProtectedRoute>} />
-            <Route path="/join-church" element={<ProtectedRoute><JoinChurch /></ProtectedRoute>} />
+            <Route path="/join-church" element={<JoinChurch />} />
             <Route path="/church-signup" element={<ChurchSignup />} />
             <Route path="/church-signup/success" element={<ChurchSignupSuccess />} />
             <Route path="/church-signup/cancelled" element={<ChurchSignupCancelled />} />
