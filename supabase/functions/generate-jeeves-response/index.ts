@@ -5,61 +5,193 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// All PT room codes organized by floor
+const ALL_ROOMS = {
+  floor1: ["SR", "IR", "24", "BR", "TR", "GR"],
+  floor2: ["OR", "DC", "ST", "QR", "QA"],
+  floor3: ["NF", "PF", "BF", "HF", "LR"],
+  floor4: ["CR", "DR", "C6", "TRm", "TZ", "PRm", "P‖", "FRt"],
+  floor5: ["BL", "PR", "3A"],
+  floor6: ["@Ad", "@No", "@Ab", "@Mo", "@Cy", "@CyC", "@Sp", "@Re", "1H", "2H", "3H"],
+};
+
+// Principle descriptions for context
+const principleInfo: Record<string, string> = {
+  "SR": "Story Room - Store Bible stories as vivid mental movies",
+  "IR": "Imagination Room - Step inside stories with sanctified imagination",
+  "24": "24FPS Room - Break Scripture into frames, one image per chapter",
+  "BR": "Bible Rendered Room - Map entire Bible with master images",
+  "TR": "Translation Room - Convert abstract texts into concrete images",
+  "GR": "Gems Room - Collect striking insights and discoveries",
+  "OR": "Observation Room - Notice details without interpretation",
+  "DC": "Def-Com Room - Test words under microscope (Greek/Hebrew)",
+  "ST": "Symbols/Types Room - Recognize God's universal language",
+  "QR": "Questions Room - Ask relentless questions until truth emerges",
+  "QA": "Q&A Room - Cross-examine witnesses, Scripture answers Scripture",
+  "NF": "Nature Freestyle - See lessons in creation",
+  "PF": "Personal Freestyle - Turn your life into object lessons",
+  "BF": "Bible Freestyle - Connect verses spontaneously",
+  "HF": "History Freestyle - Let Bible interpret the world",
+  "LR": "Listening Room - Turn conversations into connections",
+  "CR": "Concentration Room - Every text must reveal Christ",
+  "DR": "Dimensions Room - View through 5 dimensions",
+  "C6": "Connect 6 Room - Connect across 6 genres",
+  "TRm": "Theme Room - Anchor on great walls of salvation",
+  "TZ": "Time Zone Room - Locate across 6 time zones",
+  "PRm": "Patterns Room - Recognize recurring motifs",
+  "P‖": "Parallels Room - See mirrored actions across time",
+  "FRt": "Fruit Room - Test if study produces Christlike character",
+  "BL": "Blue Room (Sanctuary) - The architectural blueprint of salvation",
+  "PR": "Prophecy Room - Line up the stars of Daniel and Revelation",
+  "3A": "Three Angels' Room - The final gospel syllabus of Rev 14",
+  "@Ad": "Adamic Cycle - Eden to exile, seed promise",
+  "@No": "Noahic Cycle - Flood, ark, rainbow covenant",
+  "@Ab": "Abrahamic Cycle - Call, covenant people",
+  "@Mo": "Mosaic Cycle - Exodus, sanctuary, law",
+  "@Cy": "Cyrusic Cycle - Exile to return and rebuild",
+  "@CyC": "Cyrus-Christ Cycle - Type to antitype Deliverer",
+  "@Sp": "Holy Spirit Cycle - Church age, Pentecost",
+  "@Re": "Remnant Cycle - End-time witness to Second Coming",
+  "1H": "First Heaven - Destruction/Restoration (586 BC)",
+  "2H": "Second Heaven - New Covenant order (70 AD)",
+  "3H": "Third Heaven - Final New Creation",
+};
+
+// Simple hash function for text to ensure consistent but varied selection
+function hashText(text: string): number {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    const char = text.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+// Select one room from each floor based on text hash to ensure variety
+function selectRoomsFromAllFloors(text: string): string[] {
+  const hash = hashText(text);
+  const selectedRooms: string[] = [];
+  
+  Object.values(ALL_ROOMS).forEach((floorRooms, floorIndex) => {
+    // Use different parts of the hash for each floor
+    const roomIndex = (hash + floorIndex * 7 + text.length) % floorRooms.length;
+    selectedRooms.push(floorRooms[roomIndex]);
+  });
+  
+  return selectedRooms;
+}
+
+// Generate gather fragments response with interconnected insights
+async function generateGatherFragments(
+  storyText: string,
+  storyReference: string,
+  selectedRooms: string[],
+  jeevesName: string,
+  apiKey: string
+): Promise<string> {
+  const roomDescriptions = selectedRooms
+    .map(code => `${code}: ${principleInfo[code] || code}`)
+    .join('\n');
+
+  const systemPrompt = `You are ${jeevesName}, a Phototheology master conducting a comprehensive Palace analysis.
+
+Your task: Apply one principle from each of the 6 Palace floors to illuminate the given Bible text. Each insight must:
+1. Be grounded in that specific room's methodology
+2. Connect meaningfully to insights from other rooms - show how they weave together
+3. Build toward a unified Christ-centered understanding
+
+The selected rooms for this analysis are:
+${roomDescriptions}
+
+CRITICAL FORMATTING RULES:
+- Format each room's insight with the room code as a header (e.g., "📖 SR - Story Room:")
+- Make each insight 2-3 sentences, substantive but focused
+- After all 6 room insights, provide a "🔗 UNIFIED THREAD" section (2-3 sentences) showing how all insights connect
+- Use emojis for visual interest but keep them minimal
+- NO markdown asterisks or bold formatting
+- Write with warmth and scholarly depth`;
+
+  const userPrompt = `Bible Text${storyReference ? ` (${storyReference})` : ''}:
+${storyText}
+
+Apply the selected PT principles from all 6 floors, ensuring each insight connects to the others and reveals Christ.`;
+
+  console.log('Generating gather-fragments with rooms:', selectedRooms);
+
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'google/gemini-2.5-flash',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      temperature: 0.8,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('AI API error:', response.status, errorText);
+    throw new Error(`AI API error: ${response.status}`);
+  }
+
+  const aiData = await response.json();
+  const content = aiData.choices[0]?.message?.content;
+
+  if (!content) {
+    throw new Error('No content in AI response');
+  }
+
+  console.log('✅ Generated gather-fragments response successfully');
+  return content;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { cardCode, storyText, storyReference, opponentName, jeevesName } = await req.json();
-
-    if (!cardCode || !storyText) {
-      throw new Error('Missing required fields: cardCode and storyText');
-    }
+    const { cardCode, storyText, storyReference, opponentName, jeevesName, mode } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    // Principle descriptions for context
-    const principleInfo: Record<string, string> = {
-      "SR": "Story Room - Store Bible stories as vivid mental movies",
-      "IR": "Imagination Room - Step inside stories with sanctified imagination",
-      "24": "24FPS Room - Break Scripture into frames, one image per chapter",
-      "BR": "Bible Rendered Room - Map entire Bible with master images",
-      "TR": "Translation Room - Convert abstract texts into concrete images",
-      "GR": "Gems Room - Collect striking insights and discoveries",
-      "OR": "Observation Room - Notice details without interpretation",
-      "DC": "Def-Com Room - Test words under microscope (Greek/Hebrew)",
-      "ST": "Symbols/Types Room - Recognize God's universal language",
-      "QR": "Questions Room - Ask relentless questions until truth emerges",
-      "QA": "Q&A Room - Cross-examine witnesses, Scripture answers Scripture",
-      "NF": "Nature Freestyle - See lessons in creation",
-      "PF": "Personal Freestyle - Turn your life into object lessons",
-      "BF": "Bible Freestyle - Connect verses spontaneously",
-      "HF": "History Freestyle - Let Bible interpret the world",
-      "LR": "Listening Room - Turn conversations into connections",
-      "CR": "Concentration Room - Every text must reveal Christ",
-      "DR": "Dimensions Room - View through 5 dimensions",
-      "C6": "Connect 6 Room - Connect across 6 genres",
-      "TRm": "Theme Room - Anchor on great walls of salvation",
-      "TZ": "Time Zone Room - Locate across 6 time zones",
-      "PRm": "Patterns Room - Recognize recurring motifs",
-      "P‖": "Parallels Room - See mirrored actions across time",
-      "FRt": "Fruit Room - Test if study produces Christlike character",
-      "@Ad": "Adamic Cycle - Eden to exile, seed promise",
-      "@No": "Noahic Cycle - Flood, ark, rainbow covenant",
-      "@Ab": "Abrahamic Cycle - Call, covenant people",
-      "@Mo": "Mosaic Cycle - Exodus, sanctuary, law",
-      "@Cy": "Cyrusic Cycle - Exile to return and rebuild",
-      "@CyC": "Cyrus-Christ Cycle - Type to antitype Deliverer",
-      "@Sp": "Holy Spirit Cycle - Church age, Pentecost",
-      "@Re": "Remnant Cycle - End-time witness to Second Coming",
-      "1H": "First Heaven - Destruction/Restoration (586 BC)",
-      "2H": "Second Heaven - New Covenant order (70 AD)",
-      "3H": "Third Heaven - Final New Creation",
-    };
+    // Handle "gather fragments" mode - one principle from every floor
+    if (mode === 'gather-fragments') {
+      if (!storyText) {
+        throw new Error('Missing required field: storyText');
+      }
+      
+      const selectedRooms = selectRoomsFromAllFloors(storyText);
+      console.log('Selected rooms for gather-fragments:', selectedRooms);
+      
+      const fragmentsResponse = await generateGatherFragments(
+        storyText,
+        storyReference || '',
+        selectedRooms,
+        jeevesName || 'Jeeves',
+        LOVABLE_API_KEY
+      );
+      
+      return new Response(
+        JSON.stringify({ response: fragmentsResponse, selectedRooms }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Standard single-card mode
+    if (!cardCode || !storyText) {
+      throw new Error('Missing required fields: cardCode and storyText');
+    }
 
     const principleDesc = principleInfo[cardCode] || cardCode;
     const referenceText = storyReference ? ` (${storyReference})` : '';
