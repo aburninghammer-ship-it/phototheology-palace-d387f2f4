@@ -15,13 +15,15 @@ interface GuidedPathChecklistProps {
 export const GuidedPathChecklist = ({ className, minimized = false }: GuidedPathChecklistProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const changeSpine = useChangeSpine();
   const { 
     hasCompletedOrientation, 
     hasAchievedFirstWin, 
     guidedPathStep, 
     guidedPathCompleted,
-    isLoading 
-  } = useChangeSpine();
+    isLoading,
+    isNewUser
+  } = changeSpine;
   
   const [isExpanded, setIsExpanded] = useState(!minimized);
   const [dismissed, setDismissed] = useState(false);
@@ -33,6 +35,11 @@ export const GuidedPathChecklist = ({ className, minimized = false }: GuidedPath
       setDismissed(true);
     }
   }, [hasAchievedFirstWin]);
+
+  // Don't show for existing users (only new users)
+  if (!isNewUser) {
+    return null;
+  }
 
   // Don't show if completed first win and dismissed, or still loading
   if (isLoading || (guidedPathCompleted && dismissed)) {
