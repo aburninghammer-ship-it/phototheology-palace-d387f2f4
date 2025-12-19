@@ -23,6 +23,7 @@ import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "next-themes";
 import { UserPreferencesProvider } from "@/hooks/useUserPreferences";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
+import { TrialUpgradePrompt } from "@/components/TrialUpgradePrompt";
 import { VoiceChatInviteNotification } from "@/components/voice/VoiceChatInviteNotification";
 import { PageTracker } from "@/components/PageTracker";
 import { DailyVerseNotification } from "@/components/notifications/DailyVerseNotification";
@@ -291,6 +292,7 @@ function App() {
                         <DonationBanner />
                         <FontSizeControl />
                         <AnnouncementBanner />
+                        <TrialUpgradePrompt variant="banner" />
                         <VoiceChatInviteNotification />
                         <DailyVerseNotification />
                         <LiveDemoNotification />
