@@ -151,7 +151,9 @@ export default function Auth() {
       localStorage.removeItem('rememberedPassword');
 
       toast.success("Welcome back!");
-      navigate("/dashboard");
+      // Don't navigate here; once auth state updates, the effect above will route
+      // to either the requested redirect target or the normal Gatehouse/Dashboard flow.
+
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
       console.error("Login error:", err);
@@ -265,7 +267,12 @@ export default function Auth() {
         }
         
         toast.success("Account created! Welcome to Phototheology!");
-        navigate("/onboarding");
+        if (safeRedirect) {
+          navigate(safeRedirect, { replace: true });
+        } else {
+          navigate("/onboarding");
+        }
+
       } else if (data.user && !data.session) {
         toast.success("Account created! Please check your email to verify your account.");
       } else {
