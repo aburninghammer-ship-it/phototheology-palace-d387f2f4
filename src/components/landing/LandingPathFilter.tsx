@@ -18,9 +18,11 @@ export function LandingPathFilter() {
       // Small delay for visual feedback before navigation
       setTimeout(() => {
         if (user) {
+          // Authenticated users go directly to the Palace
           navigate("/palace");
         } else {
-          navigate("/interactive-demo");
+          // New visitors go to auth to sign up first
+          navigate("/auth");
         }
       }, 300);
     }
