@@ -1,4 +1,4 @@
-import { Moon, Sun, Check } from "lucide-react";
+import { Moon, Sun, Monitor, Check } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,7 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" className="shrink-0">
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
@@ -34,6 +34,13 @@ export function ThemeToggle() {
             Dark
           </span>
           {theme === "dark" && <Check className="h-4 w-4" />}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")} className="flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <Monitor className="h-4 w-4" />
+            System
+          </span>
+          {theme === "system" && <Check className="h-4 w-4" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
