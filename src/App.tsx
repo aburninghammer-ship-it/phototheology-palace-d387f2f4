@@ -40,7 +40,8 @@ import { DonationBanner } from "@/components/DonationBanner";
 import { FontSizeControl } from "@/components/FontSizeControl";
 import { usePresenceTracker } from "@/hooks/usePresenceTracker";
 import { PresenceTracker } from "@/components/PresenceTracker";
-import { ChangeManagerProvider, GuidedPathChecklist } from "@/components/change-manager";
+import { ChangeManagerProvider, GuidedPathChecklist, ChangeSpineUpgradePrompt, IdentityMessage } from "@/components/change-manager";
+import { GuidedPathTracker } from "@/hooks/useGuidedPathTracker";
 
 // Critical pages - load immediately (landing + auth only)
 import Gatehouse from "./pages/Gatehouse";
@@ -285,6 +286,7 @@ function App() {
               <SessionModeProvider>
               <PageTracker />
               <PresenceTracker />
+              <GuidedPathTracker />
               <LiveNotificationsProvider>
                 <AchievementProvider>
                   <DirectMessagesProvider>
@@ -296,6 +298,7 @@ function App() {
                         <FontSizeControl />
                         <AnnouncementBanner />
                         <TrialUpgradePrompt variant="banner" />
+                        <ChangeSpineUpgradePrompt />
                         <TrialUrgencyMessage />
                         <VoiceChatInviteNotification />
                         <DailyVerseNotification />
