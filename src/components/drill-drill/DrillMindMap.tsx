@@ -11,6 +11,7 @@ import { DrillSession } from "@/pages/DrillDrill";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
+import { FragmentDialogue } from "./FragmentDialogue";
 
 interface DrillMindMapProps {
   session: DrillSession;
@@ -240,10 +241,21 @@ export const DrillMindMap = ({ session, onSave, onRefresh }: DrillMindMapProps) 
                             )}
                           </div>
                           {resp.jeevesResponse && resp.jeevesResponse !== "Skipped" && (
-                            <div className="bg-background/50 rounded-lg p-4 text-sm">
-                              <div className="prose prose-sm dark:prose-invert max-w-none">
-                                <ReactMarkdown>{resp.jeevesResponse}</ReactMarkdown>
+                            <div className="space-y-3">
+                              <div className="bg-background/50 rounded-lg p-4 text-sm">
+                                <div className="prose prose-sm dark:prose-invert max-w-none">
+                                  <ReactMarkdown>{resp.jeevesResponse}</ReactMarkdown>
+                                </div>
                               </div>
+                              
+                              {/* Interactive Dialogue */}
+                              <FragmentDialogue
+                                roomCode={resp.roomTag}
+                                roomName={resp.roomName}
+                                initialInsight={resp.jeevesResponse}
+                                verseText={session.verseText || ""}
+                                verseReference={session.verse}
+                              />
                             </div>
                           )}
                         </div>
