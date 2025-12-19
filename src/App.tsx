@@ -24,6 +24,7 @@ import { ThemeProvider } from "next-themes";
 import { UserPreferencesProvider } from "@/hooks/useUserPreferences";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { TrialUpgradePrompt } from "@/components/TrialUpgradePrompt";
+import { TrialUrgencyMessage } from "@/components/TrialUrgencyMessage";
 import { VoiceChatInviteNotification } from "@/components/voice/VoiceChatInviteNotification";
 import { PageTracker } from "@/components/PageTracker";
 import { DailyVerseNotification } from "@/components/notifications/DailyVerseNotification";
@@ -293,6 +294,7 @@ function App() {
                         <FontSizeControl />
                         <AnnouncementBanner />
                         <TrialUpgradePrompt variant="banner" />
+                        <TrialUrgencyMessage />
                         <VoiceChatInviteNotification />
                         <DailyVerseNotification />
                         <LiveDemoNotification />
