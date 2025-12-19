@@ -242,21 +242,57 @@ Please:
 
     console.log("Drill-drill request:", { mode, verse, roomCount: rooms?.length || 1 });
 
+    // Build the request body
+    const requestBody: any = {
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      temperature: 0.7,
+      max_tokens: mode === "auto" ? 12000 : 2000,
+    };
+
+    // Use tool calling for auto mode to ensure structured output
+    if (mode === "auto" && rooms) {
+      requestBody.tools = [
+        {
+          type: "function",
+          function: {
+            name: "submit_drill_responses",
+            description: "Submit the analysis responses for each room in the drill",
+            parameters: {
+              type: "object",
+              properties: {
+                responses: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      roomId: { type: "string", description: "The room ID (e.g., 'sr', 'ir', 'or')" },
+                      response: { type: "string", description: "The analysis response for this room" }
+                    },
+                    required: ["roomId", "response"],
+                    additionalProperties: false
+                  }
+                }
+              },
+              required: ["responses"],
+              additionalProperties: false
+            }
+          }
+        }
+      ];
+      requestBody.tool_choice = { type: "function", function: { name: "submit_drill_responses" } };
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-        temperature: 0.7,
-        max_tokens: mode === "auto" ? 8000 : 2000,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -279,31 +315,71 @@ Please:
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || "";
-
+    
     // Parse response based on mode
     if (mode === "auto") {
-      try {
-        // Try to extract JSON from the response
-        const jsonMatch = content.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
+      // Check for tool call response first
+      const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+      if (toolCall?.function?.arguments) {
+        try {
+          const parsed = JSON.parse(toolCall.function.arguments);
+          console.log("Parsed tool call response with", parsed.responses?.length, "rooms");
           return new Response(
             JSON.stringify(parsed),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
+        } catch (e) {
+          console.error("Failed to parse tool call arguments:", e);
         }
-      } catch (e) {
-        console.error("Failed to parse auto-drill JSON:", e);
+      }
+
+      // Fallback to content parsing
+      const content = data.choices?.[0]?.message?.content || "";
+      if (content) {
+        try {
+          // Try to extract JSON from the response
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            console.log("Parsed content JSON with", parsed.responses?.length, "rooms");
+            return new Response(
+              JSON.stringify(parsed),
+              { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+          }
+        } catch (e) {
+          console.error("Failed to parse content JSON:", e);
+        }
+
+        // Last fallback: create responses from content for each room
+        console.log("Using content fallback for all rooms");
+        const fallbackResponses = rooms.map((r: any) => ({
+          roomId: r.id,
+          response: `Analysis pending - please try "New Combination" to regenerate.`
+        }));
+        
+        return new Response(
+          JSON.stringify({ 
+            responses: fallbackResponses,
+            rawContent: content
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
       
-      // Fallback: return raw content
+      // Complete fallback
       return new Response(
-        JSON.stringify({ responses: [{ roomId: "all", response: content }] }),
+        JSON.stringify({ 
+          responses: rooms.map((r: any) => ({
+            roomId: r.id,
+            response: "Analysis failed to generate. Please try again."
+          }))
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    const content = data.choices?.[0]?.message?.content || "";
     return new Response(
       JSON.stringify({ response: content }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
