@@ -213,7 +213,7 @@ async function generateOpenAI(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini-tts',
+      model: 'tts-1',
       input: text,
       voice: selectedVoice,
       speed: Math.max(0.25, Math.min(4.0, speed)),
