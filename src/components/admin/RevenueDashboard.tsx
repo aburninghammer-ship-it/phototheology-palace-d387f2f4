@@ -2,12 +2,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useRevenueAnalytics } from "@/hooks/useRevenueAnalytics";
-import { Loader2, TrendingUp, TrendingDown, DollarSign, Users, RefreshCw, ArrowDownRight, Target, Percent } from "lucide-react";
+import { Loader2, TrendingUp, TrendingDown, DollarSign, Users, RefreshCw, ArrowDownRight, Target, Percent, Clock, AlertTriangle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts';
 
 export function RevenueDashboard() {
-  const { loading, metrics, cohorts, onboardingFunnel, refetch } = useRevenueAnalytics();
+  const { loading, metrics, trialMetrics, cohorts, onboardingFunnel, refetch } = useRevenueAnalytics();
 
   if (loading) {
     return (
@@ -25,7 +25,7 @@ export function RevenueDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Revenue Dashboard</h2>
-          <p className="text-muted-foreground">MRR, Churn, and Cohort Analysis</p>
+          <p className="text-muted-foreground">MRR, Churn, Trial Analytics & Cohort Analysis</p>
         </div>
         <Button variant="outline" onClick={refetch} size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />
@@ -95,6 +95,108 @@ export function RevenueDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Trial Analytics Section */}
+      {trialMetrics && (
+        <>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="border-blue-500/20 bg-blue-500/5">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Active Trials
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-blue-600">{trialMetrics.totalTrials}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Avg age: {trialMetrics.avgTrialAge} days
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className={trialMetrics.trialsExpiringSoon > 10 ? "border-orange-500/20 bg-orange-500/5" : ""}>
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  Expiring Soon (3 days)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className={`text-3xl font-bold ${trialMetrics.trialsExpiringSoon > 10 ? "text-orange-500" : ""}`}>
+                  {trialMetrics.trialsExpiringSoon}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Need conversion nudge
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-red-500/20 bg-red-500/5">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Expired (Unconverted)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-red-500">{trialMetrics.trialsExpiredUnconverted}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Lost opportunities
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Conversion Potential
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">
+                  ${((trialMetrics.totalTrials * 0.1) * 12.47).toFixed(0)}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Est. MRR at 10% conversion
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Trial Conversion Timeline */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Trial Conversion by Day</CardTitle>
+              <CardDescription>When do trials convert to paid?</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={trialMetrics.trialConversionByDay}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis 
+                      dataKey="day" 
+                      tickFormatter={(d) => `Day ${d}`}
+                      fontSize={12}
+                    />
+                    <YAxis fontSize={12} />
+                    <Tooltip 
+                      formatter={(value: number) => [value, 'Conversions']}
+                      labelFormatter={(label) => `Day ${label} of trial`}
+                    />
+                    <Bar dataKey="converted" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 text-sm text-muted-foreground text-center">
+                Most conversions typically happen on Day 1 (immediate) or Day 13-14 (before expiry)
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
 
       {/* Cohort Analysis */}
       <Card>
