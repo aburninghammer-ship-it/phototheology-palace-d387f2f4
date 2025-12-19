@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -113,7 +114,19 @@ export default function JoinChurch() {
   }
 
   return (
-    <div className="min-h-screen gradient-dreamy flex items-center justify-center p-4">
+    <>
+      <Helmet>
+        <title>Join Your Church | Phototheology</title>
+        <meta name="description" content="Join your church's Phototheology community. Enter your invitation code to access Living Manna and connect with your congregation." />
+        <meta property="og:title" content="You're Invited to Join Phototheology" />
+        <meta property="og:description" content="Your church has invited you to join their Phototheology community. Accept your invitation to start your journey." />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://phototheology.app/og-invite.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="You're Invited to Join Phototheology" />
+        <meta name="twitter:description" content="Your church has invited you to join their Phototheology community." />
+      </Helmet>
+      <div className="min-h-screen gradient-dreamy flex items-center justify-center p-4">
       <Card className="max-w-md w-full">
         <CardHeader className="text-center">
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
@@ -174,5 +187,6 @@ export default function JoinChurch() {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 }
