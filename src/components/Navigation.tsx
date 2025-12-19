@@ -303,9 +303,9 @@ export const Navigation = () => {
           
           {/* Horizontal Tab Navigation - Second row, only for authenticated users */}
           {user && (
-            <div className="border-t border-border/40">
+          <div className="border-t border-border/40">
               <div className="max-w-7xl mx-auto overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-muted/30 [&::-webkit-scrollbar-thumb]:bg-primary/60 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-primary/80">
-                <div className="flex items-center gap-1 py-2 px-2">
+                <div className="flex items-center gap-1 py-2 px-2 flex-nowrap min-w-max">
                   <Link 
                     to="/palace" 
                     className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 hover:from-amber-500/20 hover:to-orange-500/20"
