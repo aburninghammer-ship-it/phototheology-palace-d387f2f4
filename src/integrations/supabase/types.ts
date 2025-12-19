@@ -3350,6 +3350,90 @@ export type Database = {
           },
         ]
       }
+      email_send_log: {
+        Row: {
+          day_number: number
+          email_subject: string
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          sent_at: string
+          sequence_type: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          day_number: number
+          email_subject: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          sent_at?: string
+          sequence_type: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          day_number?: number
+          email_subject?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          sent_at?: string
+          sequence_type?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_sequence_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          current_day: number
+          id: string
+          is_active: boolean
+          is_completed: boolean
+          last_email_sent_at: string | null
+          metadata: Json | null
+          next_email_due_at: string | null
+          sequence_type: string
+          started_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          current_day?: number
+          id?: string
+          is_active?: boolean
+          is_completed?: boolean
+          last_email_sent_at?: string | null
+          metadata?: Json | null
+          next_email_due_at?: string | null
+          sequence_type?: string
+          started_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          current_day?: number
+          id?: string
+          is_active?: boolean
+          is_completed?: boolean
+          last_email_sent_at?: string | null
+          metadata?: Json | null
+          next_email_due_at?: string | null
+          sequence_type?: string
+          started_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       encyclopedia_articles: {
         Row: {
           adventist_apologetics_chains: Json | null
