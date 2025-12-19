@@ -40,6 +40,7 @@ import { DonationBanner } from "@/components/DonationBanner";
 import { FontSizeControl } from "@/components/FontSizeControl";
 import { usePresenceTracker } from "@/hooks/usePresenceTracker";
 import { PresenceTracker } from "@/components/PresenceTracker";
+import { ChangeManagerProvider, GuidedPathChecklist } from "@/components/change-manager";
 
 // Critical pages - load immediately (landing + auth only)
 import Gatehouse from "./pages/Gatehouse";
@@ -289,6 +290,7 @@ function App() {
                   <DirectMessagesProvider>
                     <UserPreferencesProvider>
                     <SidebarProvider defaultOpen={false}>
+                    <ChangeManagerProvider>
                       <div className="min-h-screen flex flex-col w-full">
                         <DonationBanner />
                         <FontSizeControl />
@@ -309,6 +311,8 @@ function App() {
                         <div className="fixed bottom-32 sm:bottom-28 right-4 z-[60]">
                           <AmbientMusicPlayer minimal />
                         </div>
+                        {/* Change Manager Guided Path Checklist */}
+                        <GuidedPathChecklist />
                         <div className="flex flex-1 w-full">
                           <MessagingSidebar />
                           <main className="flex-1 w-full overflow-x-hidden pb-mobile-nav">
@@ -358,6 +362,8 @@ function App() {
             <Route path="/palace/floor/:floorNumber" element={<ProtectedRoute><FloorDetail /></ProtectedRoute>} />
             <Route path="/palace/floor/:floorNumber/room/:roomId" element={<ProtectedRoute><RoomDetail /></ProtectedRoute>} />
             <Route path="/card-deck" element={<ProtectedRoute><CardDeck /></ProtectedRoute>} />
+            <Route path="/jeeves" element={<ProtectedRoute><CardDeck /></ProtectedRoute>} />
+            <Route path="/gems-room" element={<Navigate to="/palace/floor/1/room/gems-room" replace />} />
             <Route path="/pt-multiplayer" element={<ProtectedRoute><PTMultiplayerLobby /></ProtectedRoute>} />
             <Route path="/pt-multiplayer/:gameId" element={<ProtectedRoute><PTMultiplayerGame /></ProtectedRoute>} />
             <Route path="/analyze-thoughts" element={<ProtectedRoute><AnalyzeThoughts /></ProtectedRoute>} />
@@ -581,6 +587,7 @@ function App() {
                   </div>
                   <MobileBottomNav />
                 </div>
+              </ChangeManagerProvider>
               </SidebarProvider>
               </UserPreferencesProvider>
             </DirectMessagesProvider>

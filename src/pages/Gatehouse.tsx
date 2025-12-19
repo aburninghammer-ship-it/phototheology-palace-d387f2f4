@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useGatehouseStatus } from '@/hooks/useGatehouseStatus';
+import { useChangeSpine } from '@/hooks/useChangeSpine';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { UserCountBadge } from '@/components/UserCountBadge';
@@ -16,6 +17,7 @@ const Gatehouse = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { hasEnteredPalace, isLoading } = useGatehouseStatus();
+  const { markOrientationComplete, advanceGuidedPath } = useChangeSpine();
   const [selectedPath, setSelectedPath] = useState<'surface' | 'palace' | null>(null);
   const [viewState, setViewState] = useState<ViewState>('choice');
 
@@ -43,7 +45,11 @@ const Gatehouse = () => {
     setViewState('exit');
   };
 
-  const handlePalaceChoice = () => {
+  const handlePalaceChoice = async () => {
+    // Mark orientation complete in Change Spine when entering palace
+    await markOrientationComplete();
+    await advanceGuidedPath(); // Advance from step 0 to step 1
+    
     if (user) {
       navigate('/antechamber');
     } else {
