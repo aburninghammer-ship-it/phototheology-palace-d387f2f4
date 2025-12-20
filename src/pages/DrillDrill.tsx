@@ -16,6 +16,8 @@ import { palaceFloors } from "@/data/palaceData";
 import { DrillMindMap } from "@/components/drill-drill/DrillMindMap";
 import { DrillChat } from "@/components/drill-drill/DrillChat";
 import { SavedDrills } from "@/components/drill-drill/SavedDrills";
+import { useSparks } from "@/hooks/useSparks";
+import { SparkContainer, SparkSettings } from "@/components/sparks";
 
 export type DrillMode = "guided" | "self" | "auto";
 export type DifficultyLevel = "beginner" | "intermediate" | "pro";
@@ -54,6 +56,35 @@ const DrillDrill = () => {
   const [session, setSession] = useState<DrillSession | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("drill");
+
+  // Sparks integration
+  const {
+    sparks,
+    preferences: sparkPreferences,
+    generateSpark,
+    openSpark,
+    saveSpark,
+    dismissSpark,
+    exploreSpark,
+    updatePreferences: updateSparkPreferences
+  } = useSparks({
+    surface: 'study',
+    contextType: 'study',
+    contextId: session?.id || 'gather-fragments',
+    maxSparks: 3,
+    debounceMs: 60000
+  });
+
+  // Trigger spark generation when drill completes
+  useEffect(() => {
+    if (session?.completedAt && session.responses.length > 0) {
+      const completedResponses = session.responses.filter(r => r.completed && r.jeevesResponse);
+      if (completedResponses.length >= 3) {
+        const sparkContent = completedResponses.slice(0, 5).map(r => `${r.roomName}: ${r.jeevesResponse?.slice(0, 100)}`).join('\n');
+        generateSpark(sparkContent, session.verse);
+      }
+    }
+  }, [session?.completedAt]);
 
   // Get all rooms from all floors (excluding Floor 8 which has no rooms)
   const allRooms = palaceFloors
@@ -201,6 +232,29 @@ const DrillDrill = () => {
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background">
       <Navigation />
+
+      {/* Sparks Container */}
+      {sparks.length > 0 && (
+        <div className="fixed top-20 right-4 z-50">
+          <SparkContainer
+            sparks={sparks}
+            onOpen={openSpark}
+            onSave={saveSpark}
+            onDismiss={dismissSpark}
+            onExplore={exploreSpark}
+            position="floating"
+          />
+        </div>
+      )}
+
+      {/* Spark Settings */}
+      <div className="fixed bottom-4 right-4 z-40">
+        <SparkSettings
+          preferences={sparkPreferences}
+          onUpdate={updateSparkPreferences}
+        />
+      </div>
+
       <main className="container mx-auto px-4 py-8 pt-24">
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Header */}
