@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ExternalLink, Youtube, Video, Search, Calendar, Play } from "lucide-react";
+import { ExternalLink, Youtube, Video, Search, Calendar, Play, Radio } from "lucide-react";
+import { LiveJeevesCommentary } from "@/components/church/live-sermon/LiveJeevesCommentary";
 import { supabase } from "@/integrations/supabase/client";
 
 interface SermonHubProps {
@@ -188,7 +189,25 @@ export function SermonHub({ churchId }: SermonHubProps) {
         </CardContent>
       </Card>
 
-      {/* Search */}
+      {/* Live Jeeves Commentary */}
+      <Card variant="glass" className="bg-card/80 border-primary/30">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Radio className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-lg text-foreground">Live Jeeves Commentary</CardTitle>
+              <CardDescription>
+                Get real-time Phototheology insights during the sermon
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <LiveJeevesCommentary />
+        </CardContent>
+      </Card>
       {sermons.length > 0 && (
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50" />
