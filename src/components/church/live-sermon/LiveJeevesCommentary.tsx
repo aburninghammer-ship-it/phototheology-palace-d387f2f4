@@ -24,8 +24,8 @@ interface Commentary {
 }
 
 interface LiveJeevesCommentaryProps {
-  sessionId: string;
-  isLive: boolean;
+  sessionId?: string;
+  isLive?: boolean;
 }
 
 const PT_ROOM_LABELS: Record<string, string> = {
@@ -61,7 +61,7 @@ const PT_ROOM_LABELS: Record<string, string> = {
   SRm: "Speed Room",
 };
 
-export function LiveJeevesCommentary({ sessionId, isLive }: LiveJeevesCommentaryProps) {
+export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCommentaryProps) {
   const [inputText, setInputText] = useState("");
   const [commentaries, setCommentaries] = useState<Commentary[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
