@@ -471,9 +471,9 @@ export const palaceFloors: Floor[] = [
         coreQuestion: "How are these two verses related? Every verse is connected—find the family link!",
         estimatedTime: "quick",
         quickMode: [
-          "Pick any two verses (random or intentional)",
-          "Ask: How are they family?",
-          "Identify the connection type (sibling, cousin, distant)",
+          "Pick two seemingly UNRELATED verses",
+          "Ask: How are they family? (The connection exists—find it!)",
+          "Identify the hidden link (typology, theme, pattern, Christ)",
           "Articulate the shared theological DNA"
         ],
         method: "🧬 VERSE GENETICS METHODOLOGY:\n\nCORE TRUTH: Every verse in Scripture is related to every other verse. The Bible is one unified story with Christ at the center. Your job is to FIND the connection, not to wonder IF one exists.\n\n1️⃣ SELECT TWO VERSES (any two—the more random, the better the training)\n   • Start with verses you know, then push into unfamiliar territory\n   • Challenge yourself: Can you connect Genesis 1:1 to Revelation 22:21? Of course—they're family!\n\n2️⃣ CLASSIFY THE RELATIONSHIP:\n   • SIBLINGS: Nearly identical concept, direct parallels, one quoting or fulfilling the other\n   • COUSINS: Shared theme from different angles, complementary truths\n   • DISTANT RELATIVES: Connected through patterns, typology, or Christ-centered threads\n\n3️⃣ ARTICULATE THE CONNECTION:\n   • Name the shared theological DNA (theme, symbol, doctrine, promise, warning)\n   • Show how Christ bridges both verses\n   • Explain why they belong in the same family\n\n4️⃣ PRACTICE SPEED:\n   • Time yourself: Can you explain the connection in 60 seconds?\n   • The goal is REFLEXIVE thinking—your brain should automatically see links\n\n🔑 KEY PRINCIPLES:\n• There are NO unrelated verses—if you can't find the connection, you need more training\n• Word links ARE valid when the concepts also align (don't dismiss them!)\n• Distant connections are still connections—the whole Bible is one book\n• The more you practice, the faster you see the web\n• Every connection reveals Christ as the thread holding all Scripture together",
