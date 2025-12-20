@@ -202,31 +202,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
       )}
 
       {/* Sermons Grid */}
-      {filteredSermons.length === 0 ? (
-        <Card variant="glass" className="bg-card/80">
-          <CardContent className="py-12 text-center">
-            <Video className="h-12 w-12 text-foreground/40 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2 text-foreground">
-              {sermons.length === 0 ? "Sermons Coming Soon" : "No Matching Sermons"}
-            </h3>
-            <p className="text-foreground/70 mb-4">
-              {sermons.length === 0 
-                ? "Check out the YouTube channel for the latest messages."
-                : "Try a different search term."}
-            </p>
-            <Button 
-              variant="outline"
-              onClick={() => {
-                const url = youtubeSettings.channel_url || 'https://www.youtube.com/@mylivingmanna';
-                window.open(url, '_blank');
-              }}
-            >
-              <Youtube className="h-4 w-4 mr-2" />
-              Visit YouTube Channel
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
+      {filteredSermons.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredSermons.map((sermon) => {
             const videoId = extractVideoId(sermon.youtube_url);
