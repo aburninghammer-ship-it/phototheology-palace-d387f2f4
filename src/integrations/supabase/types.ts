@@ -8182,6 +8182,68 @@ export type Database = {
         }
         Relationships: []
       }
+      pt_knowledge_bank: {
+        Row: {
+          approved_at: string
+          approved_by: string
+          categories: Json | null
+          created_at: string
+          deeper_insights: Json | null
+          id: string
+          input_text: string
+          key_insights: Json | null
+          palace_rooms: Json | null
+          scripture_connections: Json | null
+          source_analysis_id: string | null
+          summary: string | null
+          tags: string[] | null
+          typology_layers: Json | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string
+          approved_by: string
+          categories?: Json | null
+          created_at?: string
+          deeper_insights?: Json | null
+          id?: string
+          input_text: string
+          key_insights?: Json | null
+          palace_rooms?: Json | null
+          scripture_connections?: Json | null
+          source_analysis_id?: string | null
+          summary?: string | null
+          tags?: string[] | null
+          typology_layers?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string
+          approved_by?: string
+          categories?: Json | null
+          created_at?: string
+          deeper_insights?: Json | null
+          id?: string
+          input_text?: string
+          key_insights?: Json | null
+          palace_rooms?: Json | null
+          scripture_connections?: Json | null
+          source_analysis_id?: string | null
+          summary?: string | null
+          tags?: string[] | null
+          typology_layers?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pt_knowledge_bank_source_analysis_id_fkey"
+            columns: ["source_analysis_id"]
+            isOneToOne: false
+            referencedRelation: "thought_analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pt_mastery: {
         Row: {
           created_at: string | null

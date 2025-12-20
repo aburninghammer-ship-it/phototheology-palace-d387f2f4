@@ -10,7 +10,7 @@ import {
   Lightbulb, Send, BookOpen, Target, TrendingUp, Sparkles, Building2, Link2, Loader2,
   ChevronDown, AlertTriangle, CheckCircle2, BookMarked, Layers, Shield, GraduationCap,
   Church, Cross, Moon, Scale, Compass, Save, Download, Copy, Gem, FolderOpen, MessageSquare,
-  Zap, ArrowRight, FileText
+  Zap, ArrowRight, FileText, Brain
 } from "lucide-react";
 import { ExportToStudyButton } from "@/components/ExportToStudyButton";
 import { QuickShareButton } from "@/components/social/QuickShareButton";
@@ -22,6 +22,7 @@ import { VoiceInput } from "@/components/analyze/VoiceInput";
 import { SavedAnalysesList } from "@/components/analyze/SavedAnalysesList";
 import { QuickAudioButton } from "@/components/audio";
 import { FollowUpChat } from "@/components/analyze/FollowUpChat";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { ChainWitness } from "@/components/analyze/ChainWitness";
 import { useRecentStudies } from "@/hooks/useRecentStudies";
 import {
@@ -143,7 +144,9 @@ const AnalyzeThoughts = () => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['narrative', 'scores']));
   const [loadedStudyTitle, setLoadedStudyTitle] = useState<string | null>(null);
   const [isImportingFile, setIsImportingFile] = useState(false);
+  const [isAddingToKnowledgeBank, setIsAddingToKnowledgeBank] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { isAdmin } = useIsAdmin();
 
   const { history, isLoading: historyLoading, saveAnalysis, deleteAnalysis, refetch } = useThoughtAnalysisHistory();
   const { recentStudies, recentNotes, fetchRecentStudies, fetchRecentNotes, isLoading: studiesLoading } = useRecentStudies();
@@ -399,6 +402,53 @@ const AnalyzeThoughts = () => {
     toast.success("Copied!");
   };
 
+  const handleAddToKnowledgeBank = async () => {
+    if (!result || !input) return;
+    setIsAddingToKnowledgeBank(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { toast.error("Please log in"); return; }
+
+      // Extract key insights from various parts of the analysis
+      const keyInsights = [
+        ...(result.strengths || []).map(s => typeof s === 'string' ? s : s.point),
+        ...(result.deeperInsights || []).map(d => d.discovery),
+      ].filter(Boolean);
+
+      // Extract tags from palace rooms, scripture connections, etc.
+      const tags = [
+        ...(result.palaceRooms || []).map(r => r.code),
+        ...(result.scriptureConnections || []).map(s => s.reference.split(' ')[0]),
+        result.alignmentCheck?.status || 'aligned',
+      ].filter(Boolean);
+
+      // Use type assertion since the types may not have regenerated yet
+      const { error } = await (supabase.from('pt_knowledge_bank') as any).insert({
+        source_analysis_id: selectedHistoryId || null,
+        input_text: input,
+        summary: result.summary,
+        key_insights: keyInsights,
+        palace_rooms: result.palaceRooms || [],
+        scripture_connections: result.scriptureConnections || [],
+        typology_layers: result.typologyLayers || [],
+        deeper_insights: result.deeperInsights || [],
+        categories: result.categories,
+        tags: tags,
+        approved_by: user.id,
+      });
+
+      if (error) throw error;
+      toast.success("Added to Jeeves Knowledge Bank! 🧠", {
+        description: "This insight will help Jeeves provide better PT guidance in the future."
+      });
+    } catch (error) {
+      console.error("Error adding to knowledge bank:", error);
+      toast.error("Failed to add to knowledge bank");
+    } finally {
+      setIsAddingToKnowledgeBank(false);
+    }
+  };
+
   const getAlignmentBadge = (status: string) => {
     switch (status) {
       case "aligned": return <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30"><CheckCircle2 className="h-3 w-3 mr-1" />Aligned</Badge>;
@@ -632,6 +682,22 @@ const AnalyzeThoughts = () => {
                   variant="outline"
                   size="sm"
                 />
+                {/* Creator-only: Add to Jeeves Knowledge Bank */}
+                {isAdmin && (
+                  <Button 
+                    onClick={handleAddToKnowledgeBank} 
+                    disabled={isAddingToKnowledgeBank} 
+                    variant="outline" 
+                    className="bg-gradient-to-r from-amber-500/20 to-purple-500/20 border-amber-500/30 text-amber-300 hover:text-amber-200"
+                  >
+                    {isAddingToKnowledgeBank ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Brain className="h-4 w-4 mr-2" />
+                    )}
+                    Add to Jeeves Knowledge Bank
+                  </Button>
+                )}
               </motion.div>
 
               {/* Narrative Analysis - The Main Teaching Moment */}
