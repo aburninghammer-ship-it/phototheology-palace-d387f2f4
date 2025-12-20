@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Sparkles, Swords, Trophy, Star, BookOpen, Brain, User, Dna, RefreshCw, Save } from "lucide-react";
+import { Loader2, Sparkles, Swords, Trophy, Star, BookOpen, Brain, User, Dna, RefreshCw, Save, HelpCircle, Eye } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
@@ -19,8 +19,9 @@ interface BibleFreestyleGameProps {
 interface ChallengeData {
   verse1: { reference: string; text: string };
   verse2: { reference: string; text: string };
-  difficulty: number;
+  difficulty: "beginner" | "intermediate" | "difficult";
   hint?: string;
+  geneticLink?: string;
 }
 
 interface EvaluationResult {
@@ -62,6 +63,9 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
   const [currentRound, setCurrentRound] = useState(1);
   const [totalScore, setTotalScore] = useState(0);
   const [showHint, setShowHint] = useState(false);
+  const [hintCount, setHintCount] = useState(0);
+  const [showGeneticLink, setShowGeneticLink] = useState(false);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<"beginner" | "intermediate" | "difficult">("beginner");
   
   // Solo mode state
   const [soloVerse1, setSoloVerse1] = useState("");
@@ -143,20 +147,21 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
     });
   };
 
-  const generateChallenge = async (difficulty?: number) => {
+  const generateChallenge = async (difficulty: "beginner" | "intermediate" | "difficult") => {
     setIsGeneratingChallenge(true);
     setChallenge(null);
     setUserAnswer("");
     setEvaluation(null);
     setShowHint(false);
-    
-    const difficultyLevel = difficulty ?? Math.min(currentRound, 5);
+    setHintCount(0);
+    setShowGeneticLink(false);
+    setSelectedDifficulty(difficulty);
     
     try {
       const { data, error } = await supabase.functions.invoke("bible-freestyle", {
         body: { 
           mode: "generate_challenge",
-          difficulty: difficultyLevel
+          difficulty: difficulty
         }
       });
       
@@ -166,8 +171,9 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
         setChallenge({
           verse1: data.verse1,
           verse2: data.verse2,
-          difficulty: difficultyLevel,
-          hint: data.hint
+          difficulty: difficulty,
+          hint: data.hint,
+          geneticLink: data.connection
         });
       }
     } catch (error) {
@@ -179,6 +185,17 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
       });
     } finally {
       setIsGeneratingChallenge(false);
+    }
+  };
+
+  const requestHint = () => {
+    if (hintCount === 0) {
+      setShowHint(true);
+      setHintCount(1);
+      toast({
+        title: "Hint Revealed",
+        description: "A hint has been provided. -15 points penalty applied.",
+      });
     }
   };
 
@@ -201,18 +218,31 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
       if (error) throw error;
       
       if (data.score !== undefined) {
-        setEvaluation(data);
-        setTotalScore(prev => prev + data.score);
+        // Apply hint penalty
+        const hintPenalty = hintCount * 15;
+        const finalScore = Math.max(0, data.score - hintPenalty);
         
-        if (data.score >= 80) {
+        setEvaluation({
+          ...data,
+          score: finalScore
+        });
+        setTotalScore(prev => prev + finalScore);
+        
+        if (finalScore >= 70) {
           toast({
             title: "🏆 Excellent Connection!",
-            description: `Round ${currentRound}: ${data.score} points! You found a master-level connection!`
+            description: `Round ${currentRound}: ${finalScore} points! You found a strong genetic link!`
           });
-        } else if (data.score >= 60) {
+        } else if (finalScore >= 50) {
           toast({
-            title: "⭐ Good Work!",
-            description: `Round ${currentRound}: ${data.score} points! Keep strengthening your verse genetics!`
+            title: "⭐ Decent Effort",
+            description: `Round ${currentRound}: ${finalScore} points. You're on the right track.`
+          });
+        } else {
+          toast({
+            title: "📖 Keep Studying",
+            description: `Round ${currentRound}: ${finalScore} points. Ask Jeeves to reveal the Genetic Link.`,
+            variant: "destructive"
           });
         }
       }
@@ -230,7 +260,7 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
 
   const nextRound = () => {
     setCurrentRound(prev => prev + 1);
-    generateChallenge(Math.min(currentRound + 1, 5));
+    generateChallenge(selectedDifficulty);
   };
 
   const resetGame = () => {
@@ -239,6 +269,13 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
     setChallenge(null);
     setUserAnswer("");
     setEvaluation(null);
+    setShowHint(false);
+    setHintCount(0);
+    setShowGeneticLink(false);
+  };
+
+  const revealGeneticLink = () => {
+    setShowGeneticLink(true);
   };
 
   const saveSoloConnection = () => {
@@ -268,14 +305,19 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
     setSoloNotes("");
   };
 
-  const getDifficultyLabel = (level: number) => {
-    const labels = ["Beginner", "Easy", "Medium", "Hard", "Master"];
-    return labels[Math.min(level - 1, 4)];
+  const getDifficultyLabel = (level: "beginner" | "intermediate" | "difficult") => {
+    const labels = { beginner: "Beginner", intermediate: "Intermediate", difficult: "Difficult" };
+    return labels[level];
   };
 
-  const getDifficultyColor = (level: number) => {
-    const colors = ["text-green-500", "text-blue-500", "text-amber-500", "text-orange-500", "text-red-500"];
-    return colors[Math.min(level - 1, 4)];
+  const getDifficultyColor = (level: "beginner" | "intermediate" | "difficult") => {
+    const colors = { beginner: "text-green-500", intermediate: "text-amber-500", difficult: "text-red-500" };
+    return colors[level];
+  };
+
+  const getDifficultyBg = (level: "beginner" | "intermediate" | "difficult") => {
+    const bgs = { beginner: "bg-green-500/10 border-green-500/30", intermediate: "bg-amber-500/10 border-amber-500/30", difficult: "bg-red-500/10 border-red-500/30" };
+    return bgs[level];
   };
 
   const getScoreColor = (score: number) => {
@@ -440,9 +482,9 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
             {!challenge ? (
               <div className="text-center py-8">
                 <div className="text-6xl mb-4">🧬</div>
-                <h3 className="text-xl font-bold mb-2">Ready for Verse Genetics?</h3>
-                <p className="text-muted-foreground mb-4">
-                  Jeeves will give you two verses. Your mission: discover their connection!
+                <h3 className="text-xl font-bold mb-2">Verse Genetics Challenge</h3>
+                <p className="text-muted-foreground mb-6">
+                  Jeeves will give you two seemingly unrelated verses. Find their hidden genetic link!
                 </p>
                 
                 {currentRound > 1 && (
@@ -453,28 +495,47 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
                   </div>
                 )}
                 
-                <div className="flex flex-col gap-3">
-                  <Button 
-                    onClick={() => generateChallenge(1)} 
-                    disabled={isGeneratingChallenge}
-                    size="lg"
-                    className="gap-2"
-                  >
-                    {isGeneratingChallenge ? (
-                      <>
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                        Selecting verses...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-5 w-5" />
-                        {currentRound === 1 ? "Start Challenge" : "Continue Game"}
-                      </>
-                    )}
-                  </Button>
+                <div className="space-y-4">
+                  <p className="text-sm font-medium text-muted-foreground">Select Difficulty:</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <Button 
+                      onClick={() => generateChallenge("beginner")} 
+                      disabled={isGeneratingChallenge}
+                      variant="outline"
+                      className={`flex-col h-auto py-4 ${getDifficultyBg("beginner")}`}
+                    >
+                      <span className="text-lg font-bold text-green-500">Beginner</span>
+                      <span className="text-xs text-muted-foreground">Clearer connections</span>
+                    </Button>
+                    <Button 
+                      onClick={() => generateChallenge("intermediate")} 
+                      disabled={isGeneratingChallenge}
+                      variant="outline"
+                      className={`flex-col h-auto py-4 ${getDifficultyBg("intermediate")}`}
+                    >
+                      <span className="text-lg font-bold text-amber-500">Intermediate</span>
+                      <span className="text-xs text-muted-foreground">Subtle patterns</span>
+                    </Button>
+                    <Button 
+                      onClick={() => generateChallenge("difficult")} 
+                      disabled={isGeneratingChallenge}
+                      variant="outline"
+                      className={`flex-col h-auto py-4 ${getDifficultyBg("difficult")}`}
+                    >
+                      <span className="text-lg font-bold text-red-500">Difficult</span>
+                      <span className="text-xs text-muted-foreground">Deep typology</span>
+                    </Button>
+                  </div>
+                  
+                  {isGeneratingChallenge && (
+                    <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Jeeves is selecting challenging verses...
+                    </div>
+                  )}
                   
                   {currentRound > 1 && (
-                    <Button variant="outline" onClick={resetGame}>
+                    <Button variant="ghost" onClick={resetGame} className="mt-2">
                       Reset Game
                     </Button>
                   )}
@@ -513,21 +574,27 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
                   </div>
                 </div>
 
-                {/* Hint Toggle */}
-                {challenge.hint && !showHint && !evaluation && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setShowHint(true)}
-                    className="text-muted-foreground"
-                  >
-                    💡 Need a hint? (-10 points)
-                  </Button>
+                {/* Help Button - Only hints, not answer */}
+                {!evaluation && (
+                  <div className="flex gap-2">
+                    {challenge.hint && !showHint && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={requestHint}
+                        className="text-muted-foreground gap-2"
+                      >
+                        <HelpCircle className="h-4 w-4" />
+                        Need Help? (-15 points)
+                      </Button>
+                    )}
+                  </div>
                 )}
                 
-                {showHint && challenge.hint && (
+                {showHint && challenge.hint && !evaluation && (
                   <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
-                    <p className="text-sm italic">💡 {challenge.hint}</p>
+                    <p className="text-sm italic">💡 <strong>Hint:</strong> {challenge.hint}</p>
+                    <p className="text-xs text-muted-foreground mt-1">This is just a hint—you still need to find the connection!</p>
                   </div>
                 )}
 
@@ -535,7 +602,7 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
                 {!evaluation ? (
                   <div className="space-y-3">
                     <Textarea
-                      placeholder="What's the connection between these verses? How are they related? Are they siblings, cousins, or distant relatives in the verse family?"
+                      placeholder="What's the hidden genetic link between these verses? Dig deep—look for typology, patterns, Christ-centered themes, or shared theological DNA. Don't expect obvious connections!"
                       value={userAnswer}
                       onChange={(e) => setUserAnswer(e.target.value)}
                       className="min-h-[120px]"
@@ -548,7 +615,7 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
                       {isEvaluating ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          Evaluating...
+                          Jeeves is evaluating...
                         </>
                       ) : (
                         <>
@@ -563,10 +630,13 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
                   <div className="space-y-4">
                     <div className="text-center p-6 bg-background/50 rounded-xl border">
                       <div className={`text-5xl font-black mb-2 ${getScoreColor(evaluation.score)}`}>
-                        {showHint ? Math.max(0, evaluation.score - 10) : evaluation.score}/100
+                        {evaluation.score}/100
                       </div>
-                      <div className="text-muted-foreground">
-                        {showHint && <span className="text-sm">(Hint used: -10)</span>}
+                      <div className="text-muted-foreground text-sm">
+                        {hintCount > 0 && <span>(Hint penalty: -{hintCount * 15} applied)</span>}
+                        {evaluation.score >= 70 && " 🏆 Strong work!"}
+                        {evaluation.score >= 50 && evaluation.score < 70 && " ⭐ Getting there..."}
+                        {evaluation.score < 50 && " 📖 Keep studying!"}
                       </div>
                     </div>
 
@@ -592,14 +662,38 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
 
                     <div className="p-4 bg-primary/5 rounded-lg space-y-3">
                       <div>
-                        <h5 className="font-semibold mb-1">Your Answer:</h5>
+                        <h5 className="font-semibold mb-1">Jeeves&apos; Feedback:</h5>
                         <p className="text-sm text-muted-foreground">{evaluation.feedback}</p>
                       </div>
-                      <div>
-                        <h5 className="font-semibold mb-1">Master Connection:</h5>
-                        <p className="text-sm">{evaluation.correctConnection}</p>
-                      </div>
-                      {evaluation.relatedVerses && evaluation.relatedVerses.length > 0 && (
+                      
+                      {/* Only show Genetic Link if score is high OR user explicitly reveals it */}
+                      {evaluation.score >= 70 ? (
+                        <div>
+                          <h5 className="font-semibold mb-1 text-green-600">🧬 The Genetic Link:</h5>
+                          <p className="text-sm">{evaluation.correctConnection}</p>
+                        </div>
+                      ) : !showGeneticLink ? (
+                        <div className="pt-2">
+                          <Button 
+                            variant="outline" 
+                            onClick={revealGeneticLink}
+                            className="w-full gap-2 border-dashed"
+                          >
+                            <Eye className="h-4 w-4" />
+                            Reveal the Genetic Link (I give up)
+                          </Button>
+                          <p className="text-xs text-muted-foreground text-center mt-2">
+                            Try another round first, or reveal the answer to learn
+                          </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <h5 className="font-semibold mb-1 text-amber-600">🧬 The Genetic Link (Revealed):</h5>
+                          <p className="text-sm">{evaluation.correctConnection}</p>
+                        </div>
+                      )}
+                      
+                      {evaluation.relatedVerses && evaluation.relatedVerses.length > 0 && showGeneticLink && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           <span className="text-xs text-muted-foreground">More family:</span>
                           {evaluation.relatedVerses.map((verse, i) => (
@@ -612,7 +706,7 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
                     <div className="flex gap-2">
                       <Button onClick={nextRound} className="flex-1 gap-2">
                         <Sparkles className="h-4 w-4" />
-                        Next Round (Harder!)
+                        Next Round
                       </Button>
                       <Button variant="outline" onClick={resetGame}>
                         Start Over
