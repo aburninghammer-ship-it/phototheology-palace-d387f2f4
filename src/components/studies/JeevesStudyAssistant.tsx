@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { trackJeevesInteraction } from "@/hooks/useAnalyticsTracking";
+import { getFirstName } from "@/utils/userNameUtils";
 
 interface Message {
   role: "user" | "assistant";
@@ -50,7 +51,7 @@ export const JeevesStudyAssistant = ({ studyContext, studyId, onContentUpdate }:
         .eq('id', user.id)
         .single() : { data: null };
 
-      const userName = profile?.display_name || null;
+      const userName = getFirstName(profile?.display_name);
 
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {

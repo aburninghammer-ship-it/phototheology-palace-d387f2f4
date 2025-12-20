@@ -7,6 +7,7 @@ import { Sparkles, Send, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SaveJeevesResponseButton } from "@/components/jeeves/SaveJeevesResponseButton";
+import { getFirstName } from "@/utils/userNameUtils";
 
 interface Message {
   role: "user" | "assistant";
@@ -47,7 +48,7 @@ export function JeevesMemoryCoach({ verses, technique }: JeevesMemoryCoachProps)
         .eq('id', user.id)
         .single() : { data: null };
 
-      const userName = profile?.display_name || "friend";
+      const userName = getFirstName(profile?.display_name);
 
       const systemPrompt = technique === "first-letter"
         ? `You are Jeeves, ${userName}'s memory coach specializing in the First Letter technique. Help ${userName} memorize Bible verses by:
