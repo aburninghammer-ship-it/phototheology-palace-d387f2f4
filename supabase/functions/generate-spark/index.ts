@@ -18,6 +18,37 @@ function hashContent(content: string): string {
 }
 
 // Generate a discovery spark based on user content
+async function fetchKjvTextFromBibleApi(reference: string): Promise<string | null> {
+  try {
+    const url = `https://bible-api.com/${encodeURIComponent(reference)}?translation=kjv`;
+    const resp = await fetch(url);
+
+    if (!resp.ok) {
+      console.warn('Bible API error:', resp.status, reference);
+      return null;
+    }
+
+    const data = await resp.json();
+
+    if (Array.isArray(data?.verses) && data.verses.length > 0) {
+      return data.verses
+        .map((v: any) => (typeof v?.text === 'string' ? v.text.trim() : ''))
+        .filter(Boolean)
+        .join(' ');
+    }
+
+    if (typeof data?.text === 'string' && data.text.trim()) {
+      return data.text.trim();
+    }
+
+    return null;
+  } catch (err) {
+    console.warn('Bible API fetch failed for', reference, err);
+    return null;
+  }
+}
+
+// Generate a discovery spark based on user content
 async function generateSpark(
   content: string,
   verseReference: string | undefined,
@@ -75,6 +106,7 @@ RULES:
 - Insight should be substantive but focused (3-6 sentences)
 - Include 2-4 related Scripture targets for exploration
 - Be Christ-centered when natural
+- IMPORTANT: If you mention Scripture wording, it MUST be KJV and exact. If you are not 100% sure of the exact KJV wording, do NOT quote it—only cite the reference.
 - No markdown formatting
 - Use warm, scholarly tone
 
@@ -156,40 +188,25 @@ async function generateExploreContent(
   spark: { title: string; insight: string; spark_type: string; targets: string[] },
   apiKey: string
 ): Promise<string> {
-  
+
+  const targets = Array.isArray(spark.targets) ? spark.targets.slice(0, 6) : [];
+  const kjvPackets = await Promise.all(
+    targets.map(async (ref) => ({ ref, text: await fetchKjvTextFromBibleApi(ref) }))
+  );
+
+  const kjvQuotesBlock = kjvPackets
+    .filter((p) => p.text)
+    .map((p) => `- ${p.ref}: "${(p.text as string).replace(/\s+/g, ' ').trim()}"`)
+    .join('\n');
+
+  const kjvRules = `CRITICAL KJV RULES:\n- Every Scripture quotation MUST be KJV and MUST match EXACTLY.\n- Use ONLY the KJV quotes provided below verbatim (copy/paste).\n- If a reference is not listed below, DO NOT quote it—only cite the reference.\n\nKJV QUOTES (verbatim):\n${kjvQuotesBlock || '(none available; cite references only)'}`;
+
   const modePrompts = {
-    trace: `Based on this spark insight:
-"${spark.insight}"
+    trace: `Based on this spark insight:\n"${spark.insight}"\n\nProvide a brief guided trace through these related passages: ${targets.join(', ')}\n\n${kjvRules}\n\nFor each passage:\n1. Give the reference\n2. Include the exact KJV quote (if provided above)\n3. Show how it connects to the original insight\n4. Build toward a unified understanding\n\nKeep it concise (200-300 words). Use warm, scholarly tone. No markdown.`,
 
-Provide a brief guided trace through these related passages: ${spark.targets.join(', ')}
+    apply: `Based on this spark insight:\n"${spark.insight}"\n\n${kjvRules}\n\nGenerate a personal application reflection prompt that helps the reader:\n1. Consider how this truth applies to their life\n2. Identify a specific area for growth\n3. Propose one concrete action step\n\nKeep it conversational and encouraging (150-200 words). No markdown.`,
 
-For each passage:
-1. Quote the key verse
-2. Show how it connects to the original insight
-3. Build toward a unified understanding
-
-Keep it concise (200-300 words). Use warm, scholarly tone. No markdown.`,
-
-    apply: `Based on this spark insight:
-"${spark.insight}"
-
-Generate a personal application reflection prompt that helps the reader:
-1. Consider how this truth applies to their life
-2. Identify a specific area for growth
-3. Propose one concrete action step
-
-Keep it conversational and encouraging (150-200 words). No markdown.`,
-
-    build: `Based on this spark insight:
-"${spark.insight}"
-
-Create a brief structured mini-study outline:
-1. Central Truth (1-2 sentences)
-2. Key Passages (list 3-4 with brief notes)
-3. Christ Connection (how this points to Jesus)
-4. Personal Challenge (one action item)
-
-Keep it concise and actionable (200-250 words). No markdown.`
+    build: `Based on this spark insight:\n"${spark.insight}"\n\n${kjvRules}\n\nCreate a brief structured mini-study outline:\n1. Central Truth (1-2 sentences)\n2. Key Passages (list 3-4 with brief notes; cite references; only quote if provided above)\n3. Christ Connection (how this points to Jesus)\n4. Personal Challenge (one action item)\n\nKeep it concise and actionable (200-250 words). No markdown.`
   };
 
   const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

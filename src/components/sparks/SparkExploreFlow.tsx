@@ -144,7 +144,7 @@ export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExplor
           onClick={e => e.stopPropagation()}
           className="w-full md:w-auto"
         >
-          <Card className="w-full max-w-lg max-h-[85vh] md:max-h-[80vh] overflow-hidden rounded-t-2xl md:rounded-xl mx-auto">
+          <Card className="w-full max-w-lg h-[85vh] md:h-[80vh] overflow-hidden rounded-t-2xl md:rounded-xl mx-auto flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between pb-2 sticky top-0 bg-card z-10">
               <CardTitle className="text-lg">
                 {mode ? `Explore: ${mode.charAt(0).toUpperCase() + mode.slice(1)}` : 'Explore This Spark'}
@@ -154,8 +154,8 @@ export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExplor
               </Button>
             </CardHeader>
             
-            <CardContent className="pb-6 overflow-y-auto">
-              <ScrollArea className="max-h-[calc(85vh-120px)] md:max-h-[60vh]">
+            <CardContent className="pb-6 flex-1 min-h-0">
+              <ScrollArea className="h-full">
                 {!mode ? (
                   <div className="space-y-4">
                     <div className="p-3 bg-muted/50 rounded-lg">
