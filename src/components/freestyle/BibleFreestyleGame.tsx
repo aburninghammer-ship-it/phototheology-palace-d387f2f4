@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Sparkles, Swords, Trophy, Star, BookOpen, Brain, User, Dna } from "lucide-react";
+import { Loader2, Sparkles, Swords, Trophy, Star, BookOpen, Brain, User, Dna, RefreshCw, Save } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 
@@ -45,6 +45,13 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
   const [testVerse2, setTestVerse2] = useState("");
   const [jeevesConnection, setJeevesConnection] = useState("");
   const [isTestingJeeves, setIsTestingJeeves] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [savedTestConnections, setSavedTestConnections] = useState<Array<{
+    verse1: string;
+    verse2: string;
+    connection: string;
+    timestamp: Date;
+  }>>([]);
   
   // Challenge mode state
   const [challenge, setChallenge] = useState<ChallengeData | null>(null);
@@ -67,7 +74,7 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
     timestamp: Date;
   }>>([]);
 
-  const testJeeves = async () => {
+  const testJeeves = async (refresh = false) => {
     if (!testVerse1.trim() || !testVerse2.trim()) {
       toast({
         title: "Two verses required",
@@ -77,15 +84,20 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
       return;
     }
     
-    setIsTestingJeeves(true);
-    setJeevesConnection("");
+    if (refresh) {
+      setIsRefreshing(true);
+    } else {
+      setIsTestingJeeves(true);
+      setJeevesConnection("");
+    }
     
     try {
       const { data, error } = await supabase.functions.invoke("bible-freestyle", {
         body: { 
           mode: "test_jeeves",
           verse1: testVerse1.trim(),
-          verse2: testVerse2.trim()
+          verse2: testVerse2.trim(),
+          refresh: refresh
         }
       });
       
@@ -93,6 +105,12 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
       
       if (data.connection) {
         setJeevesConnection(data.connection);
+        if (refresh) {
+          toast({
+            title: "Fresh Perspective!",
+            description: "Jeeves found a new way to connect these verses."
+          });
+        }
       }
     } catch (error) {
       console.error("Error testing Jeeves:", error);
@@ -103,7 +121,26 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
       });
     } finally {
       setIsTestingJeeves(false);
+      setIsRefreshing(false);
     }
+  };
+
+  const saveTestConnection = () => {
+    if (!testVerse1.trim() || !testVerse2.trim() || !jeevesConnection) {
+      return;
+    }
+    
+    setSavedTestConnections(prev => [...prev, {
+      verse1: testVerse1.trim(),
+      verse2: testVerse2.trim(),
+      connection: jeevesConnection,
+      timestamp: new Date()
+    }]);
+    
+    toast({
+      title: "Connection Saved!",
+      description: "This verse genetics analysis has been added to your collection."
+    });
   };
 
   const generateChallenge = async (difficulty?: number) => {
@@ -308,7 +345,7 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
             </div>
 
             <Button 
-              onClick={testJeeves}
+              onClick={() => testJeeves()}
               disabled={!testVerse1.trim() || !testVerse2.trim() || isTestingJeeves}
               className="w-full gap-2"
             >
@@ -334,6 +371,34 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
                 <div className="prose prose-sm dark:prose-invert max-w-none">
                   {formatJeevesResponse(jeevesConnection)}
                 </div>
+                <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                  <Button 
+                    variant="secondary"
+                    onClick={() => testJeeves(true)}
+                    disabled={isRefreshing}
+                    className="flex-1 gap-2"
+                  >
+                    {isRefreshing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Refreshing...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4" />
+                        Refresh Drill (New Principles)
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="default"
+                    onClick={saveTestConnection}
+                    className="flex-1 gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    Save This Connection
+                  </Button>
+                </div>
                 <Button 
                   variant="outline" 
                   onClick={() => {
@@ -341,10 +406,31 @@ export const BibleFreestyleGame = ({ roomId, roomName }: BibleFreestyleGameProps
                     setTestVerse2("");
                     setJeevesConnection("");
                   }}
-                  className="mt-4 w-full"
+                  className="mt-2 w-full"
                 >
                   Try Another Pair
                 </Button>
+              </div>
+            )}
+
+            {savedTestConnections.length > 0 && (
+              <div className="space-y-3 mt-6">
+                <h4 className="font-semibold">📚 Saved Connections ({savedTestConnections.length})</h4>
+                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                  {savedTestConnections.map((conn, i) => (
+                    <div key={i} className="p-3 bg-muted/30 rounded-lg border">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="outline" className="text-xs">{conn.verse1}</Badge>
+                        <span className="text-muted-foreground">↔</span>
+                        <Badge variant="outline" className="text-xs">{conn.verse2}</Badge>
+                        <span className="text-xs text-muted-foreground ml-auto">
+                          {conn.timestamp.toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-3">{conn.connection}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </TabsContent>
