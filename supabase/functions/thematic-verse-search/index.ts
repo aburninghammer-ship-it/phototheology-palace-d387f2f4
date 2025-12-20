@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { thematicQuery, maxResults = 50 } = await req.json();
+    const { thematicQuery, maxResults = 50, scope = "all", scopeBooks = [] } = await req.json();
     
     if (!thematicQuery || thematicQuery.trim().length < 10) {
       return new Response(
@@ -25,12 +25,17 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Build scope instruction
+    const scopeInstruction = scope === "all" 
+      ? "SEARCH THE ENTIRE BIBLE - Genesis through Revelation"
+      : `SEARCH ONLY THESE BOOKS: ${scopeBooks.join(", ")}. Do NOT include verses from books outside this list.`;
+
     const systemPrompt = `You are Jeeves, a Phototheology-trained Bible research assistant with EXHAUSTIVE knowledge of Scripture. Your task is to find ALL relevant KJV Bible verses that match a user's thematic search.
 
 CRITICAL RULES:
 1. ONLY use King James Version (KJV) text - this is mandatory
 2. BE EXHAUSTIVE - find as many relevant verses as possible (aim for ${maxResults} or more)
-3. SEARCH THE ENTIRE BIBLE - Genesis through Revelation
+3. ${scopeInstruction}
 4. Include verses that are directly related AND verses that connect thematically, typologically, or prophetically
 5. For each verse, explain briefly why it's relevant to the search theme
 6. Group verses by sub-theme when multiple themes are in the query
