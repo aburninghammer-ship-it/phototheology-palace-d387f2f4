@@ -172,6 +172,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 2 — CLEANSED TO SERVE
   {
+    id: "cycle-2-cleansed-to-serve",
     sequenceNumber: 2,
     title: "Cleansed to Serve",
     description: "Character transformation through the laver - breaking cycles of repeated defeat and walking in victory.",
@@ -308,6 +309,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 3 — ILLUMINATED BY TRUTH
   {
+    id: "cycle-3-illuminated-by-truth",
     sequenceNumber: 3,
     title: "Illuminated by Truth",
     description: "Scripture mastery and discernment through the candlestick - becoming light bearers in a dark world.",
@@ -444,6 +446,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 4 — LIVING BY EVERY WORD
   {
+    id: "cycle-4-living-by-every-word",
     sequenceNumber: 4,
     title: "Living by Every Word",
     description: "Christ our sustenance through the Table of Showbread - daily dependence and feeding others spiritually.",
@@ -580,6 +583,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 5 — THE ALTAR OF PRAYER
   {
+    id: "cycle-5-altar-of-prayer",
     sequenceNumber: 5,
     title: "The Altar of Prayer",
     description: "Intercession and spiritual warfare at the Altar of Incense - becoming prayer warriors, not just prayer requesters.",
@@ -716,6 +720,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 6 — LAW, MERCY, AND THE HEART
   {
+    id: "cycle-6-law-mercy-heart",
     sequenceNumber: 6,
     title: "Law, Mercy, and the Heart",
     description: "Understanding God's moral government through the Ark of the Covenant - obedience from love, not legalism.",
@@ -852,6 +857,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 7 — THE DAY OF ATONEMENT PEOPLE
   {
+    id: "cycle-7-day-of-atonement",
     sequenceNumber: 7,
     title: "The Day of Atonement People",
     description: "Understanding judgment, repentance, and sealing in the Most Holy Place - becoming a prepared people.",
@@ -988,6 +994,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 8 — THE THREE ANGELS' MESSAGES
   {
+    id: "cycle-8-three-angels-messages",
     sequenceNumber: 8,
     title: "The Three Angels' Messages",
     description: "Final gospel proclamation across the full sanctuary cycle - living and sharing the everlasting gospel.",
@@ -1124,6 +1131,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 9 — FOLLOWING THE LAMB
   {
+    id: "cycle-9-following-the-lamb",
     sequenceNumber: 9,
     title: "Following the Lamb",
     description: "Christ-centered discipleship finding Christ in every sanctuary article - full surrender and cross-bearing.",
@@ -1260,6 +1268,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 10 — MISSION IN A DIGITAL BABYLON
   {
+    id: "cycle-10-digital-babylon",
     sequenceNumber: 10,
     title: "Mission in a Digital Babylon",
     description: "Evangelism and cultural engagement with the light going outward - reaching the world through digital mission.",
@@ -1396,6 +1405,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 11 — HOUSE FIRES & SPIRITUAL FAMILIES
   {
+    id: "cycle-11-house-fires",
     sequenceNumber: 11,
     title: "House Fires & Spiritual Families",
     description: "Community and multiplication with God dwelling among His people - building and multiplying spiritual families.",
@@ -1532,6 +1542,7 @@ export const LIVING_MANNA_CYCLES: StudyCycle[] = [
 
   // CYCLE 12 — STANDING IN THE TIME OF THE END
   {
+    id: "cycle-12-standing-in-the-end",
     sequenceNumber: 12,
     title: "Standing in the Time of the End",
     description: "End-time resilience and victory with glory filling the temple - the final victory of Christ and His people.",
