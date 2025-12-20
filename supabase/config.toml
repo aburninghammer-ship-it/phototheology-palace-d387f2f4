@@ -208,3 +208,6 @@ verify_jwt = false
 
 [functions.generate-amplified-study]
 verify_jwt = false
+
+[functions.live-sermon-commentary]
+verify_jwt = false
