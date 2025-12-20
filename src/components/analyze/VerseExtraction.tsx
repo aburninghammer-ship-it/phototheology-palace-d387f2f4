@@ -147,16 +147,12 @@ export const VerseExtraction = ({
     toast.success("Verses exported!");
   };
 
-  if (extractedVerses.length === 0) {
-    return null;
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2 bg-amber-500/10 border-amber-500/30 text-amber-400">
           <FileText className="h-4 w-4" />
-          <span>Extract Verses ({extractedVerses.length})</span>
+          <span>Extract Verses {extractedVerses.length > 0 && `(${extractedVerses.length})`}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[80vh]">
@@ -179,6 +175,15 @@ export const VerseExtraction = ({
         </div>
 
         <ScrollArea className="h-[50vh] pr-4">
+          {extractedVerses.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
+              <BookOpen className="h-12 w-12 mb-4 opacity-30" />
+              <p className="font-medium">No verses detected yet</p>
+              <p className="text-sm mt-1">
+                Scripture references will appear here as they're mentioned in your analysis
+              </p>
+            </div>
+          ) : (
           <div className="space-y-4">
             {/* Group by source */}
             {Object.entries(
@@ -227,6 +232,7 @@ export const VerseExtraction = ({
               </CardContent>
             </Card>
           </div>
+          )}
         </ScrollArea>
       </DialogContent>
     </Dialog>
