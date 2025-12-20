@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,16 +21,38 @@ interface JeevesStudyAssistantProps {
   studyContext?: string;
   studyId?: string;
   onContentUpdate?: (content: string, tags: string[]) => void;
+  initialConversation?: Message[];
+  onConversationChange?: (messages: Message[]) => void;
 }
 
-export const JeevesStudyAssistant = ({ studyContext, studyId, onContentUpdate }: JeevesStudyAssistantProps) => {
+export const JeevesStudyAssistant = ({ 
+  studyContext, 
+  studyId, 
+  onContentUpdate,
+  initialConversation,
+  onConversationChange
+}: JeevesStudyAssistantProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(initialConversation || []);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [researchMode, setResearchMode] = useState(false);
   const [savingMessageIndex, setSavingMessageIndex] = useState<number | null>(null);
   const { toast } = useToast();
+
+  // Sync with initial conversation when it loads
+  useEffect(() => {
+    if (initialConversation && initialConversation.length > 0 && messages.length === 0) {
+      setMessages(initialConversation);
+    }
+  }, [initialConversation]);
+
+  // Notify parent when messages change
+  useEffect(() => {
+    if (onConversationChange && messages.length > 0) {
+      onConversationChange(messages);
+    }
+  }, [messages, onConversationChange]);
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;

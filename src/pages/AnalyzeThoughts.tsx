@@ -140,6 +140,8 @@ const AnalyzeThoughts = () => {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | undefined>();
+  const [currentAnalysisId, setCurrentAnalysisId] = useState<string | undefined>();
+  const [followUpConversation, setFollowUpConversation] = useState<Array<{role: "user" | "assistant"; content: string}>>([]);
   const [showResults, setShowResults] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['narrative', 'scores']));
   const [loadedStudyTitle, setLoadedStudyTitle] = useState<string | null>(null);
@@ -353,8 +355,12 @@ const AnalyzeThoughts = () => {
 
       setResult(analysisResult);
       
-      // Auto-save to history
-      await saveAnalysis(input, analysisResult);
+      // Auto-save to history and get the saved ID
+      const savedAnalysis = await saveAnalysis(input, analysisResult);
+      if (savedAnalysis?.id) {
+        setCurrentAnalysisId(savedAnalysis.id);
+        setFollowUpConversation([]); // Reset conversation for new analysis
+      }
       
       // Clear draft after successful analysis
       localStorage.removeItem('analyze-thoughts-draft');
@@ -372,7 +378,16 @@ const AnalyzeThoughts = () => {
   const handleSelectFromHistory = (analysis: SavedAnalysis) => {
     setInput(analysis.input_text);
     setSelectedHistoryId(analysis.id);
+    setCurrentAnalysisId(analysis.id);
     setShowResults(true);
+    
+    // Load the saved follow-up conversation if it exists
+    const savedConvo = (analysis as any).followup_conversation;
+    if (savedConvo && Array.isArray(savedConvo)) {
+      setFollowUpConversation(savedConvo);
+    } else {
+      setFollowUpConversation([]);
+    }
     
     // Reconstruct result from saved analysis
     setResult({
@@ -1154,6 +1169,9 @@ const AnalyzeThoughts = () => {
                   palaceRooms: result.palaceRooms,
                   encouragement: result.encouragement,
                 }}
+                analysisId={currentAnalysisId}
+                initialConversation={followUpConversation}
+                onConversationChange={setFollowUpConversation}
               />
             </motion.div>
           )}
