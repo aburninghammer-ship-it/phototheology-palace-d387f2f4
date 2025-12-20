@@ -9,6 +9,12 @@ export interface DeeperInsight {
   reference?: string;
 }
 
+export interface FollowUpMessage {
+  role: "user" | "assistant";
+  content: string;
+  helpful?: boolean | null;
+}
+
 export interface SavedAnalysis {
   id: string;
   input_text: string;
@@ -25,6 +31,7 @@ export interface SavedAnalysis {
   alignment_check: { status: string; notes: string } | null;
   further_study: string[] | null;
   encouragement: string | null;
+  followup_conversation: FollowUpMessage[] | null;
   created_at: string;
 }
 
@@ -56,6 +63,7 @@ export const useThoughtAnalysisHistory = () => {
         typology_layers: item.typology_layers as Array<{ symbol: string; meaning: string; reference: string }> | null,
         deeper_insights: (item.deeper_insights as unknown) as DeeperInsight[] | null,
         alignment_check: item.alignment_check as { status: string; notes: string } | null,
+        followup_conversation: (item.followup_conversation as unknown) as FollowUpMessage[] | null,
       }));
       
       setHistory(typedData);
