@@ -196,3 +196,6 @@ verify_jwt = true
 
 [functions.daily-email-orchestrator]
 verify_jwt = false
+
+[functions.generate-spark]
+verify_jwt = false

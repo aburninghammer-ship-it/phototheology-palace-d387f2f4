@@ -9986,6 +9986,134 @@ export type Database = {
         }
         Relationships: []
       }
+      spark_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          spark_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          spark_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          spark_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spark_events_spark_id_fkey"
+            columns: ["spark_id"]
+            isOneToOne: false
+            referencedRelation: "sparks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spark_preferences: {
+        Row: {
+          auto_open: boolean
+          created_at: string
+          id: string
+          intensity: string
+          mode: string
+          only_after_save: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_open?: boolean
+          created_at?: string
+          id?: string
+          intensity?: string
+          mode?: string
+          only_after_save?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_open?: boolean
+          created_at?: string
+          id?: string
+          intensity?: string
+          mode?: string
+          only_after_save?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sparks: {
+        Row: {
+          confidence: number | null
+          content_hash: string | null
+          context_id: string
+          context_type: string
+          created_at: string
+          dismissed_at: string | null
+          explore_action: Json | null
+          id: string
+          insight: string
+          novelty_score: number | null
+          opened_at: string | null
+          recognition: string
+          saved_at: string | null
+          spark_type: string
+          surface: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          content_hash?: string | null
+          context_id: string
+          context_type: string
+          created_at?: string
+          dismissed_at?: string | null
+          explore_action?: Json | null
+          id?: string
+          insight: string
+          novelty_score?: number | null
+          opened_at?: string | null
+          recognition: string
+          saved_at?: string | null
+          spark_type: string
+          surface: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          confidence?: number | null
+          content_hash?: string | null
+          context_id?: string
+          context_type?: string
+          created_at?: string
+          dismissed_at?: string | null
+          explore_action?: Json | null
+          id?: string
+          insight?: string
+          novelty_score?: number | null
+          opened_at?: string | null
+          recognition?: string
+          saved_at?: string | null
+          spark_type?: string
+          surface?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       special_access_codes: {
         Row: {
           access_duration_months: number | null
