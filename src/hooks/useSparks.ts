@@ -90,19 +90,25 @@ export function useSparks({
 
   // Fetch existing sparks for context
   const fetchSparks = useCallback(async () => {
-    if (!user?.id || !contextId) return;
+    if (!user?.id) return;
     
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('sparks')
         .select('*')
         .eq('user_id', user.id)
         .eq('context_type', contextType)
-        .eq('context_id', contextId)
         .is('dismissed_at', null)
         .order('created_at', { ascending: false })
         .limit(maxSparks);
+      
+      // Only filter by contextId if it's not a wildcard
+      if (contextId && contextId !== '*') {
+        query = query.eq('context_id', contextId);
+      }
+      
+      const { data, error } = await query;
       
       if (error) throw error;
       setSparks((data as unknown as Spark[]) || []);
