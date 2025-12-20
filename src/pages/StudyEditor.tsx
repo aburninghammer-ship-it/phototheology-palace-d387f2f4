@@ -13,8 +13,10 @@ import {
   Loader2,
   Download,
   Volume2,
-  Sparkles
+  Sparkles,
+  Brain
 } from "lucide-react";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { QuickAudioButton } from "@/components/audio";
 import {
   DropdownMenu,
@@ -57,6 +59,7 @@ const StudyEditor = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isAdmin } = useIsAdmin();
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -70,6 +73,7 @@ const StudyEditor = () => {
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [isFormatting, setIsFormatting] = useState(false);
   const [studyOwnerId, setStudyOwnerId] = useState<string>("");
+  const [isAddingToKnowledgeBank, setIsAddingToKnowledgeBank] = useState(false);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Collaborative features
@@ -388,6 +392,80 @@ const StudyEditor = () => {
     setHasChanges(true);
   };
 
+  const handleAddToKnowledgeBank = async () => {
+    if (!isAdmin || !content.trim()) return;
+    
+    setIsAddingToKnowledgeBank(true);
+    try {
+      // Extract insights from the study content
+      const palaceRoomPatterns = [
+        { pattern: /\b(story room|SR)\b/i, code: "SR" },
+        { pattern: /\b(imagination room|IR)\b/i, code: "IR" },
+        { pattern: /\b(24fps|24FPS)\b/i, code: "24" },
+        { pattern: /\b(observation|OR)\b/i, code: "OR" },
+        { pattern: /\b(def-com|DC)\b/i, code: "DC" },
+        { pattern: /\b(symbols?\/types?|ST)\b/i, code: "ST" },
+        { pattern: /\b(concentration|CR)\b/i, code: "CR" },
+        { pattern: /\b(dimensions?|DR|5D)\b/i, code: "DR" },
+        { pattern: /\b(connect.?6|C6)\b/i, code: "C6" },
+        { pattern: /\b(patterns?|PRm)\b/i, code: "PRm" },
+        { pattern: /\b(parallels?|P‖)\b/i, code: "P‖" },
+        { pattern: /\b(sanctuary|blue room|BL)\b/i, code: "BL" },
+        { pattern: /\b(prophecy room|PR)\b/i, code: "PR" },
+        { pattern: /\b(three angels|3A)\b/i, code: "3A" },
+      ];
+      
+      const detectedRooms: string[] = [];
+      palaceRoomPatterns.forEach(({ pattern, code }) => {
+        if (pattern.test(content) && !detectedRooms.includes(code)) {
+          detectedRooms.push(code);
+        }
+      });
+
+      // Extract verse references
+      const versePattern = /\b([1-3]?\s?[A-Za-z]+)\s+(\d+):(\d+)(?:-(\d+))?\b/g;
+      const scriptureConnections = [...new Set(content.match(versePattern) || [])];
+
+      // Create a summary from title and first portion of content
+      const cleanContent = content.replace(/<[^>]*>/g, '').replace(/#+\s/g, '').trim();
+      const summary = cleanContent.slice(0, 300) + (cleanContent.length > 300 ? '...' : '');
+
+      // Use the study tags plus some auto-detected ones
+      const combinedTags = [...new Set([...tags, ...detectedRooms.map(r => `room:${r}`)])];
+
+      const { error } = await (supabase.from('pt_knowledge_bank') as any).insert({
+        source_analysis_id: id,
+        input_text: content,
+        summary: summary,
+        key_insights: [],
+        palace_rooms: detectedRooms,
+        scripture_connections: scriptureConnections,
+        typology_layers: [],
+        deeper_insights: null,
+        categories: ['user_study'],
+        tags: combinedTags,
+        approved_by: user?.id,
+        approved_at: new Date().toISOString(),
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Added to Knowledge Bank",
+        description: "This study will now inform Jeeves' future responses and analysis.",
+      });
+    } catch (error) {
+      console.error("Error adding to knowledge bank:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add to knowledge bank",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingToKnowledgeBank(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -458,6 +536,29 @@ const StudyEditor = () => {
             </DropdownMenu>
             
             <ShareStudyDialog title={title} content={content} />
+            
+            {/* Admin-only: Add to Knowledge Bank */}
+            {isAdmin && (
+              <Button
+                variant="outline"
+                onClick={handleAddToKnowledgeBank}
+                disabled={isAddingToKnowledgeBank || !content.trim()}
+                className="gap-2 bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-700 dark:text-amber-400"
+                title="Add this study to Jeeves' knowledge bank for future PT applications"
+              >
+                {isAddingToKnowledgeBank ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <Brain className="w-4 h-4" />
+                    Add to Knowledge Bank
+                  </>
+                )}
+              </Button>
+            )}
             {canEdit && (
               <>
                 <Button
