@@ -2110,6 +2110,8 @@ Make it scholarly yet accessible, warm and illuminating.`;
 
 TASK: Provide comprehensive ${language} linguistic analysis of this word in its biblical context.
 
+CRITICAL: ALWAYS use the King James Version (KJV) for ALL Scripture quotations. NEVER use modern translations like NIV, ESV, NASB, etc.
+
 IMPORTANT: This is ${book}, which is in the ${isOldTestament ? 'Old' : 'New'} Testament, so analyze the ${language} text.
 
 WORD DETAILS:
@@ -2120,7 +2122,7 @@ WORD DETAILS:
 
 VERSE CONTEXT:
 - Reference: ${book} ${chapter}:${verse}
-- English Text: "${verseText}"
+- KJV Text: "${verseText}"
 
 CRITICAL FORMATTING REQUIREMENTS:
 - Use clear paragraph breaks (double newlines)
@@ -2130,6 +2132,7 @@ CRITICAL FORMATTING REQUIREMENTS:
 - Include pronunciation help where helpful
 - Keep each section concise but rich (2-4 sentences)
 - Tone: Conversational and warm ("Ah, my friend" not "My dear student")
+- ALL Bible quotations MUST be from the KJV
 
 ANALYSIS STRUCTURE (provide all 5 sections):
 
@@ -2143,12 +2146,12 @@ Define the primary meaning and semantic range. What are the main ways this ${lan
 How does this ${language} word function specifically in THIS verse? Why did the author choose THIS word?
 
 🔍 **Cross-References**
-Mention 2-3 other key passages where this ${language} word appears. What patterns emerge?
+Mention 2-3 other key KJV passages where this ${language} word appears. What patterns emerge? Quote them in KJV.
 
 ✨ **Theological Significance**
-What does this ${language} word reveal about God, salvation, or covenant? How does understanding the original ${language} language enrich the English translation?
+What does this ${language} word reveal about God, salvation, or covenant? How does understanding the original ${language} language enrich the KJV translation?
 
-Keep it warm and conversational. Help your friend see the treasure in the original ${language} language.`;
+Keep it warm and conversational. Help your friend see the treasure in the original ${language} language. Remember: KJV ONLY for all Scripture.`;
       
       userPrompt = `Ah, my friend, let's explore the ${language} word ${strongsNumber} (${originalWord}) in ${book} ${chapter}:${verse}. Show me what treasures this ${language} word holds!`;
     
