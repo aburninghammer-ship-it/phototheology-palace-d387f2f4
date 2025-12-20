@@ -68,19 +68,19 @@ Format your response with clear sections and make it engaging and educational.`;
     }
     else if (mode === "generate_challenge") {
       // Generate two verses for the user to connect
-      const difficultyLevel = difficulty || 1;
+      const difficultyLevel = difficulty || "beginner";
       
-      const difficultyGuide = {
-        1: "Choose two verses with an OBVIOUS thematic connection (e.g., both about God's love, both about salvation). Use well-known verses.",
-        2: "Choose verses with a CLEAR typological connection (e.g., OT type and NT antitype). One can be less familiar.",
-        3: "Choose verses with a MODERATE connection requiring some thought (parallel structure, related imagery, connected doctrine). Mix of familiar and less common.",
-        4: "Choose verses with a SUBTLE connection (verbal links, numerical patterns, chiastic parallels). Can include less familiar passages.",
-        5: "Choose verses with a DEEP, MASTERFUL connection that requires advanced Bible knowledge (sanctuary typology, prophetic chains, hidden patterns)."
+      const difficultyGuide: Record<string, string> = {
+        "beginner": "Choose two verses that have a HIDDEN but FINDABLE connection. They should NOT be obviously related on the surface. The connection should require some thought but be discoverable—perhaps through a shared theme viewed from different angles, or a typological link that isn't immediately apparent. Avoid verses that are commonly paired together.",
+        "intermediate": "Choose two verses that seem COMPLETELY UNRELATED at first glance but have a SUBTLE, DEEP connection. Think sanctuary typology, numerical patterns, verbal links in the original languages, or chiastic structures. The connection should require real Bible knowledge to discover. One verse should be from an unexpected book.",
+        "difficult": "Choose two verses that would stump most Bible scholars. They should appear to have NOTHING in common but share a PROFOUND theological or typological connection that requires mastery-level understanding. Think hidden Christ-centered threads, obscure prophetic parallels, or sanctuary furniture connections across vastly different contexts. Make the user WORK for this one."
       };
 
-      userPrompt = `Generate a Verse Genetics challenge at difficulty level ${difficultyLevel}/5.
+      userPrompt = `Generate a Verse Genetics challenge at ${difficultyLevel.toUpperCase()} difficulty.
 
-DIFFICULTY GUIDE: ${difficultyGuide[difficultyLevel as keyof typeof difficultyGuide]}
+CRITICAL RULE: The verses must NOT seem obviously related. The whole point is to find HIDDEN connections between seemingly unrelated texts. Do NOT choose verses that are commonly paired or share obvious themes on the surface.
+
+DIFFICULTY GUIDE: ${difficultyGuide[difficultyLevel]}
 
 You must return a JSON object with this exact structure:
 {
@@ -92,43 +92,50 @@ You must return a JSON object with this exact structure:
     "reference": "Book Chapter:Verse", 
     "text": "The verse text (KJV preferred)"
   },
-  "hint": "A subtle hint about the type of connection without giving away the answer",
-  "connection": "The full explanation of their genetic connection (keep this for evaluation)"
+  "hint": "A subtle hint about the TYPE of connection (typology? verbal link? sanctuary? pattern?) without revealing the actual connection",
+  "connection": "The full, rich explanation of their genetic connection—this is the answer the user is trying to discover. Include Christ-centered interpretation."
 }
 
-Make sure the verses have a real, meaningful connection that demonstrates verse genetics.`;
+Remember: The verses should seem unrelated at first. The challenge is finding the hidden link.`;
 
       responseFormat = {
         type: "json_object"
       };
     }
     else if (mode === "evaluate_answer") {
-      // Evaluate user's connection answer
-      userPrompt = `Evaluate this Verse Genetics answer:
+      // Evaluate user's connection answer - BE STRICT
+      const difficultyLevel = difficulty || "beginner";
+      
+      userPrompt = `Evaluate this Verse Genetics answer STRICTLY. Do not be generous—the user needs honest feedback to grow.
 
 VERSE 1: ${verse1.reference} - "${verse1.text}"
 VERSE 2: ${verse2.reference} - "${verse2.text}"
-DIFFICULTY: ${difficulty}/5
+DIFFICULTY: ${difficultyLevel}
 
 USER'S ANSWER: "${userAnswer}"
 
-Score the answer (0-100) based on:
-- ACCURACY (0-25): Did they identify a real, valid connection?
-- DEPTH (0-25): How thorough and insightful is the connection?
-- CREATIVITY (0-25): Did they find unique or multiple angles?
-- CHRIST-CENTEREDNESS (0-25): Did they connect it to Christ?
+Score the answer STRICTLY (0-100) based on:
+- ACCURACY (0-25): Did they identify the ACTUAL deep connection, not just surface similarities? Dock points for vague or incorrect connections.
+- DEPTH (0-25): Did they go beyond the obvious? Did they show understanding of typology, patterns, or theological threads? Generic answers score low.
+- CREATIVITY (0-25): Did they find unique angles or multiple layers of connection? Reward unexpected but valid insights.
+- CHRIST-CENTEREDNESS (0-25): Did they connect it to Christ? The best connections always run through Jesus. Dock heavily if Christ is absent.
+
+SCORING GUIDE:
+- 70-100: Excellent—found the real genetic link with depth and Christ-focus
+- 50-69: Decent—got part of it but missed depth or key elements  
+- Below 50: Needs work—missed the connection or gave a superficial answer
 
 Return a JSON object:
 {
-  "score": <total 0-100>,
+  "score": <total 0-100, BE STRICT>,
   "breakdown": {
     "accuracy": <0-25>,
     "depth": <0-25>,
     "creativity": <0-25>,
     "christCenteredness": <0-25>
   },
-  "feedback": "Brief feedback on what they got right and what they missed",
-  "correctConnection": "The master-level connection explanation",
+  "feedback": "Honest, specific feedback on what they got right and what they missed. Be encouraging but truthful.",
+  "correctConnection": "The master-level genetic link explanation they should have found",
   "relatedVerses": ["Other verses in this family", "Up to 3 more"]
 }`;
 
