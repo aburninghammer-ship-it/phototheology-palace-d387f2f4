@@ -465,31 +465,33 @@ export const palaceFloors: Floor[] = [
         name: "Bible Freestyle",
         tag: "BF",
         icon: "Network",
-        purpose: "Build a mental concordance. Train instant recall of a verse's 'genetic relatives'—verses sharing theological DNA.",
-        action: "Select a verse, identify core concept, find 3-5 'relatives' (Brothers=near identical, Cousins=shared theme different angle).",
-        output: "Original Verse → 3-5 Relatives (labeled Brother/Cousin) with connection notes.",
-        coreQuestion: "What verses are this verse's theological 'relatives' (brothers/cousins)?",
+        purpose: "Every verse in Scripture is related to every other verse—some are siblings, others cousins, others distant relatives. Bible Freestyle (Verse Genetics) trains you to see these connections instantly, building a mental web where no verse stands alone.",
+        action: "Select any two verses (or receive a pair from Jeeves), then discover their genetic connection—how are they family?",
+        output: "Verse Pair → Connection Type (Sibling/Cousin/Distant) → Explanation of their theological DNA link.",
+        coreQuestion: "How are these two verses related? Every verse is connected—find the family link!",
         estimatedTime: "quick",
         quickMode: [
-          "Choose a verse",
-          "Identify its core theological concept",
-          "Find 3-5 relatives using concordance or memory",
-          "Classify: Brother (nearly identical) or Cousin (shared theme)"
+          "Pick any two verses (random or intentional)",
+          "Ask: How are they family?",
+          "Identify the connection type (sibling, cousin, distant)",
+          "Articulate the shared theological DNA"
         ],
-        method: "STEP-BY-STEP METHODOLOGY:\n\n1. SELECT a verse (any verse—start with familiar ones, then expand)\n2. IDENTIFY the verse's CORE CONCEPT\n   • What is the main idea? Faith? Love? Judgment? Provision? Suffering?\n   • Ignore peripheral details—focus on the theological heart\n3. SEARCH your mental/physical concordance for 3-5 'relatives'\n   • BROTHERS: Verses that say nearly the same thing (parallel passages, quotations, restatements)\n   • COUSINS: Verses that share the theme but approach from different angles\n   • Use these search methods:\n     a) Word search (concordance for key terms)\n     b) Theme search (other passages teaching this doctrine)\n     c) Parallel passages (Gospel parallels, OT quotes in NT)\n     d) Memory recall (train your brain to make connections)\n4. CLASSIFY each relative: Brother or Cousin?\n5. VERIFY the link—does the relative actually share theological DNA, or are you forcing it?\n6. RECORD: Original Verse → Relative 1 (Brother/Cousin) → Relative 2 → Relative 3 → Relative 4 → Relative 5\n7. PRACTICE SPEED: Time yourself—can you name 3 relatives in 30 seconds?\n\nKEY PRINCIPLES:\n• Shared WORDS alone don't make relatives—there must be shared MEANING\n• Relatives confirm and clarify—they give you a stereo view of truth\n• Brothers are closer than cousins—prioritize near-parallel texts first\n• NT often quotes or fulfills OT—those are always close relatives\n• The more BF reps you do, the faster your mind builds these links automatically\n• BF is cumulative—each verse you map makes the next easier",
+        method: "🧬 VERSE GENETICS METHODOLOGY:\n\nCORE TRUTH: Every verse in Scripture is related to every other verse. The Bible is one unified story with Christ at the center. Your job is to FIND the connection, not to wonder IF one exists.\n\n1️⃣ SELECT TWO VERSES (any two—the more random, the better the training)\n   • Start with verses you know, then push into unfamiliar territory\n   • Challenge yourself: Can you connect Genesis 1:1 to Revelation 22:21? Of course—they're family!\n\n2️⃣ CLASSIFY THE RELATIONSHIP:\n   • SIBLINGS: Nearly identical concept, direct parallels, one quoting or fulfilling the other\n   • COUSINS: Shared theme from different angles, complementary truths\n   • DISTANT RELATIVES: Connected through patterns, typology, or Christ-centered threads\n\n3️⃣ ARTICULATE THE CONNECTION:\n   • Name the shared theological DNA (theme, symbol, doctrine, promise, warning)\n   • Show how Christ bridges both verses\n   • Explain why they belong in the same family\n\n4️⃣ PRACTICE SPEED:\n   • Time yourself: Can you explain the connection in 60 seconds?\n   • The goal is REFLEXIVE thinking—your brain should automatically see links\n\n🔑 KEY PRINCIPLES:\n• There are NO unrelated verses—if you can't find the connection, you need more training\n• Word links ARE valid when the concepts also align (don't dismiss them!)\n• Distant connections are still connections—the whole Bible is one book\n• The more you practice, the faster you see the web\n• Every connection reveals Christ as the thread holding all Scripture together",
         examples: [
-          "John 3:16 (God's love in giving Son) RELATIVES:\n→ Romans 5:8 (BROTHER: 'God demonstrates his love in that while we were still sinners, Christ died for us')\n→ 1 John 4:9-10 (BROTHER: 'This is love: not that we loved God, but that he loved us and sent his Son as an atoning sacrifice')\n→ Ephesians 2:4-5 (COUSIN: 'But because of his great love for us, God... made us alive with Christ')\n→ Titus 3:4-5 (COUSIN: 'When the kindness and love of God appeared, he saved us, not by works...')\n→ Romans 8:32 (COUSIN: 'He who did not spare his own Son... how will he not also graciously give us all things?')",
-          "Philippians 4:13 ('I can do all things through Christ who strengthens me') RELATIVES:\n→ 2 Corinthians 12:9-10 (BROTHER: 'My grace is sufficient... my power is made perfect in weakness')\n→ Ephesians 3:20 (COUSIN: 'Now to him who is able to do immeasurably more than all we ask or imagine, according to his power that is at work within us')\n→ Isaiah 40:29-31 (COUSIN: 'He gives strength to the weary... those who hope in the LORD will renew their strength')\n→ Psalm 18:32-34 (COUSIN: 'It is God who arms me with strength... He makes my feet like the feet of a deer')",
-          "Jeremiah 29:11 ('Plans to prosper you, not to harm you, plans to give you hope and a future') RELATIVES:\n→ Romans 8:28 (BROTHER: 'God works all things together for good for those who love him')\n→ Genesis 50:20 (COUSIN: 'You intended to harm me, but God intended it for good')\n→ Proverbs 19:21 (COUSIN: 'Many are the plans in a person's heart, but it is the LORD's purpose that prevails')\n→ Ephesians 1:11 (COUSIN: 'In him we were chosen, having been predestined according to the plan of him who works out everything')"
+          "Genesis 22:8 ('God will provide himself a lamb') ↔ John 1:29 ('Behold the Lamb of God')\n→ SIBLINGS: Both point to God providing THE Lamb for sacrifice. Abraham's prophetic statement is fulfilled in Christ—the connection is direct, typological, and Christological.",
+          "Psalm 23:1 ('The LORD is my shepherd') ↔ John 10:11 ('I am the good shepherd')\n→ SIBLINGS: David's confession becomes Christ's claim. The OT shadow meets its NT substance. Both reveal God's protective, providing care for His people.",
+          "Genesis 3:15 ('He shall bruise your head') ↔ Revelation 12:17 ('war with the rest of her offspring')\n→ COUSINS: The first prophecy of conflict between the serpent and the Seed echoes in the final battle. The great controversy spans Scripture—these verses bookend the war.",
+          "Exodus 12:13 ('When I see the blood, I will pass over') ↔ 1 Corinthians 5:7 ('Christ our Passover is sacrificed')\n→ SIBLINGS: The Passover lamb's blood foreshadows Christ's blood. Paul makes the connection explicit—these are family members through typology.",
+          "Proverbs 3:5 ('Trust in the LORD with all your heart') ↔ John 14:1 ('Let not your heart be troubled... believe in God, believe also in me')\n→ COUSINS: Both call for whole-hearted trust in God. Jesus expands the OT command to include trust in Himself—the wisdom of Proverbs meets the revelation of Christ."
         ],
         pitfalls: [
-          "WORD-ONLY LINKS: Connecting verses that share a word but not a concept (e.g., 'love' appears in 'love of money' and 'God is love'—not relatives)",
-          "TOO DISTANT: Calling every verse about 'God' a relative—be more specific",
-          "IGNORING CONTEXT: Linking verses that seem similar but mean different things in context",
-          "FORCED FITS: Trying to make 5 relatives when you can only find 2 solid ones—quality over quantity",
-          "NOT TESTING SPEED: BF should become reflexive—if it takes 5 minutes to think of relatives, you need more reps"
+          "GIVING UP TOO FAST: If you say 'these verses aren't related'—you've failed the room. EVERY verse is connected; keep digging!",
+          "SURFACE-LEVEL ANSWERS: 'Both are about God' is too vague. Find the SPECIFIC shared DNA—theme, symbol, doctrine, or pattern.",
+          "MISSING CHRIST: The strongest connections run through Jesus. If your link doesn't touch Christ, you may be missing the deepest connection.",
+          "NOT PRACTICING SPEED: BF should become reflexive. If it takes 5 minutes to find a connection, you need more reps.",
+          "FORGETTING DISTANT RELATIVES: Don't only look for obvious links. The Bible's web includes subtle patterns, numbers, and sanctuary typology—train to see them all."
         ],
-        deliverable: "Genetic cluster map: Original Verse → 3-5 Relatives (labeled Brother or Cousin) with brief notes explaining the connection. Build a growing library of verse families. Time yourself: aim to identify 3 relatives in 30 seconds or less."
+        deliverable: "Verse Genetics Map: Two Verses → Relationship Type → Explanation of shared theological DNA. Build a growing mental web where you can connect ANY two verses in under 60 seconds."
       },
       {
         id: "hf",
