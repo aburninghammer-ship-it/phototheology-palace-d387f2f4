@@ -380,6 +380,15 @@ Please:
     }
 
     const content = data.choices?.[0]?.message?.content || "";
+    
+    // For expound action, return expoundedText field
+    if (action === "expound") {
+      return new Response(
+        JSON.stringify({ expoundedText: content, response: content }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
     return new Response(
       JSON.stringify({ response: content }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
