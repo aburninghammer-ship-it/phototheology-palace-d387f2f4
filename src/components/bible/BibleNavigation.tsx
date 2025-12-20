@@ -29,6 +29,25 @@ import { Link } from "react-router-dom";
 const OLD_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(0, 39);
 const NEW_TESTAMENT_BOOKS = BIBLE_BOOKS.slice(39);
 
+// Bible section definitions for filtering
+const BIBLE_SECTIONS = {
+  all: { label: "All Bible (66 books)", books: BIBLE_BOOKS },
+  ot: { label: "Old Testament (39 books)", books: OLD_TESTAMENT_BOOKS },
+  nt: { label: "New Testament (27 books)", books: NEW_TESTAMENT_BOOKS },
+  pentateuch: { label: "Pentateuch (Genesis-Deuteronomy)", books: BIBLE_BOOKS.slice(0, 5) },
+  history: { label: "History (Joshua-Esther)", books: BIBLE_BOOKS.slice(5, 17) },
+  poetry: { label: "Poetry & Wisdom (Job-Song of Solomon)", books: BIBLE_BOOKS.slice(17, 22) },
+  majorProphets: { label: "Major Prophets (Isaiah-Daniel)", books: BIBLE_BOOKS.slice(22, 27) },
+  minorProphets: { label: "Minor Prophets (Hosea-Malachi)", books: BIBLE_BOOKS.slice(27, 39) },
+  gospels: { label: "Gospels (Matthew-John)", books: BIBLE_BOOKS.slice(39, 43) },
+  acts: { label: "Acts", books: ["Acts"] },
+  pauline: { label: "Pauline Epistles (Romans-Philemon)", books: BIBLE_BOOKS.slice(44, 57) },
+  generalEpistles: { label: "General Epistles (Hebrews-Jude)", books: BIBLE_BOOKS.slice(57, 65) },
+  revelation: { label: "Revelation", books: ["Revelation"] },
+};
+
+type BibleScope = keyof typeof BIBLE_SECTIONS;
+
 interface GroupVerseResult {
   reference: string;
   text: string;
@@ -56,7 +75,7 @@ export const BibleNavigation = () => {
   const [verse, setVerse] = useState(() => getCustomState<string>('bibleNav_verse') || "");
   const [searchQuery, setSearchQuery] = useState(() => getCustomState<string>('bibleNav_searchQuery') || "");
   const [searchMode, setSearchMode] = useState<"reference" | "word" | "phrase" | "theme" | "event" | "group">(() => getCustomState<"reference" | "word" | "phrase" | "theme" | "event" | "group">('bibleNav_searchMode') || "reference");
-  const [searchScope, setSearchScope] = useState<"all" | "ot" | "nt">(() => getCustomState<"all" | "ot" | "nt">('bibleNav_searchScope') || "all");
+  const [searchScope, setSearchScope] = useState<BibleScope>(() => getCustomState<BibleScope>('bibleNav_searchScope') || "all");
   
   // Phrase search state
   const [phraseWords, setPhraseWords] = useState(() => getCustomState<string>('bibleNav_phraseWords') || "");
@@ -114,7 +133,12 @@ export const BibleNavigation = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('thematic-verse-search', {
-        body: { thematicQuery: groupQuery, maxResults: 30 }
+        body: { 
+          thematicQuery: groupQuery, 
+          maxResults: 50,
+          scope: searchScope,
+          scopeBooks: BIBLE_SECTIONS[searchScope].books
+        }
       });
 
       if (error) throw error;
@@ -241,14 +265,14 @@ export const BibleNavigation = () => {
             </TabsContent>
             
             <TabsContent value="word" className="mt-3 space-y-3">
-              <Select value={searchScope} onValueChange={(value) => setSearchScope(value as "all" | "ot" | "nt")}>
+              <Select value={searchScope} onValueChange={(value) => setSearchScope(value as BibleScope)}>
                 <SelectTrigger className="bg-white/10 backdrop-blur-md border-white/20 hover:border-primary/50 hover:bg-white/15 transition-all text-foreground">
                   <SelectValue placeholder="Search scope" />
                 </SelectTrigger>
-                <SelectContent className="bg-card/95 backdrop-blur-xl border-white/20 z-50">
-                  <SelectItem value="all">All Bible (66 books)</SelectItem>
-                  <SelectItem value="ot">Old Testament (39 books)</SelectItem>
-                  <SelectItem value="nt">New Testament (27 books)</SelectItem>
+                <SelectContent className="bg-card/95 backdrop-blur-xl border-white/20 z-50 max-h-[300px]">
+                  {Object.entries(BIBLE_SECTIONS).map(([key, { label }]) => (
+                    <SelectItem key={key} value={key}>{label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               
@@ -269,14 +293,14 @@ export const BibleNavigation = () => {
               <div className="text-xs text-muted-foreground mb-2">
                 Enter multiple words - find verses containing all/most of them (any order)
               </div>
-              <Select value={searchScope} onValueChange={(value) => setSearchScope(value as "all" | "ot" | "nt")}>
+              <Select value={searchScope} onValueChange={(value) => setSearchScope(value as BibleScope)}>
                 <SelectTrigger className="bg-white/10 backdrop-blur-md border-white/20 hover:border-primary/50 hover:bg-white/15 transition-all text-foreground">
                   <SelectValue placeholder="Search scope" />
                 </SelectTrigger>
-                <SelectContent className="bg-card/95 backdrop-blur-xl border-white/20 z-50">
-                  <SelectItem value="all">All Bible (66 books)</SelectItem>
-                  <SelectItem value="ot">Old Testament (39 books)</SelectItem>
-                  <SelectItem value="nt">New Testament (27 books)</SelectItem>
+                <SelectContent className="bg-card/95 backdrop-blur-xl border-white/20 z-50 max-h-[300px]">
+                  {Object.entries(BIBLE_SECTIONS).map(([key, { label }]) => (
+                    <SelectItem key={key} value={key}>{label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               
@@ -311,6 +335,17 @@ export const BibleNavigation = () => {
               <p className="text-xs text-muted-foreground">
                 Describe multiple related themes and Jeeves will find all relevant KJV verses grouped by topic.
               </p>
+
+              <Select value={searchScope} onValueChange={(value) => setSearchScope(value as BibleScope)}>
+                <SelectTrigger className="bg-white/10 backdrop-blur-md border-white/20 hover:border-green-400/50 hover:bg-white/15 transition-all text-foreground">
+                  <SelectValue placeholder="Search scope" />
+                </SelectTrigger>
+                <SelectContent className="bg-card/95 backdrop-blur-xl border-white/20 z-50 max-h-[300px]">
+                  {Object.entries(BIBLE_SECTIONS).map(([key, { label }]) => (
+                    <SelectItem key={key} value={key}>{label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               
               <Textarea
                 placeholder="e.g., verses about women weaving the veil, knitted in the womb, the veil renting in two, Jesus born of a woman, seed of a woman, fine linen as righteousness of saints..."
