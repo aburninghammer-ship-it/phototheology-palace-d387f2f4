@@ -134,32 +134,33 @@ export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExplor
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end md:items-center justify-center"
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
           onClick={e => e.stopPropagation()}
+          className="w-full md:w-auto"
         >
-          <Card className="w-full max-w-lg max-h-[80vh] overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <Card className="w-full max-w-lg max-h-[85vh] md:max-h-[80vh] overflow-hidden rounded-t-2xl md:rounded-xl mx-auto">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 sticky top-0 bg-card z-10">
               <CardTitle className="text-lg">
                 {mode ? `Explore: ${mode.charAt(0).toUpperCase() + mode.slice(1)}` : 'Explore This Spark'}
               </CardTitle>
-              <Button variant="ghost" size="icon" onClick={onClose}>
+              <Button variant="ghost" size="icon" onClick={onClose} className="touch-manipulation">
                 <X size={18} />
               </Button>
             </CardHeader>
             
-            <CardContent className="pb-6">
-              <ScrollArea className="max-h-[60vh]">
+            <CardContent className="pb-6 overflow-y-auto">
+              <ScrollArea className="max-h-[calc(85vh-120px)] md:max-h-[60vh]">
                 {!mode ? (
                   <div className="space-y-4">
                     <div className="p-3 bg-muted/50 rounded-lg">
                       <p className="font-medium text-sm">{spark.title}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{spark.recognition}</p>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{spark.recognition}</p>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-3">
@@ -167,11 +168,11 @@ export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExplor
                         <button
                           key={option.mode}
                           onClick={() => handleExplore(option.mode)}
-                          className="p-4 border rounded-lg text-left hover:bg-muted/50 transition-colors group"
+                          className="p-4 border rounded-lg text-left hover:bg-muted/50 active:bg-muted transition-colors group touch-manipulation"
                         >
                           <option.icon size={20} className="mb-2 text-primary" />
                           <p className="font-medium text-sm">{option.label}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{option.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{option.description}</p>
                           <ArrowRight size={14} className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
                         </button>
                       ))}
@@ -180,13 +181,13 @@ export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExplor
                 ) : loading ? (
                   <div className="flex flex-col items-center justify-center py-12 space-y-4">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground text-center">
                       Jeeves is preparing your {mode === 'trace' ? 'scripture trace' : mode === 'apply' ? 'application prompt' : 'mini-study'}...
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <Button variant="ghost" size="sm" onClick={handleBack}>
+                    <Button variant="ghost" size="sm" onClick={handleBack} className="touch-manipulation">
                       ← Back to options
                     </Button>
                     
@@ -205,8 +206,8 @@ export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExplor
                           className="resize-none"
                         />
                         <Button 
-                          size="sm" 
-                          className="w-full" 
+                          size="default" 
+                          className="w-full touch-manipulation" 
                           disabled={!userReflection.trim() || savingReflection}
                           onClick={handleSaveReflection}
                         >
@@ -224,8 +225,8 @@ export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExplor
                       <div className="flex gap-2 pt-2 border-t">
                         <Button 
                           variant="outline" 
-                          size="sm" 
-                          className="flex-1"
+                          size="default" 
+                          className="flex-1 touch-manipulation"
                           onClick={() => {
                             navigator.clipboard.writeText(result || '');
                             toast.success('Copied to clipboard');
@@ -234,8 +235,8 @@ export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExplor
                           Copy
                         </Button>
                         <Button 
-                          size="sm" 
-                          className="flex-1"
+                          size="default" 
+                          className="flex-1 touch-manipulation"
                           onClick={() => {
                             if (onSave) onSave(spark);
                             toast.success('Spark saved');

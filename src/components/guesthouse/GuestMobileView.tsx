@@ -18,6 +18,8 @@ import { GameRound } from "./GameRound";
 import { SymbolMatchGame } from "./games/SymbolMatchGame";
 import { ChainChessGame } from "./games/ChainChessGame";
 import { ProphecyTimelineGame } from "./games/ProphecyTimelineGame";
+import { SparkContainer } from "@/components/sparks/SparkContainer";
+import { useGuesthouseSparks } from "@/hooks/useGuesthouseSparks";
 import type { Json } from "@/integrations/supabase/types";
 
 interface GuestMobileViewProps {
@@ -65,6 +67,16 @@ export function GuestMobileView({ eventId, guestId, guestName }: GuestMobileView
   const [showScoreAnimation, setShowScoreAnimation] = useState(false);
   const [lastPoints, setLastPoints] = useState(0);
   const [announcement, setAnnouncement] = useState<string | null>(null);
+  
+  // Guesthouse sparks for unauthenticated guests
+  const {
+    sparks,
+    generateSpark,
+    openSpark,
+    saveSpark,
+    dismissSpark,
+    exploreSpark
+  } = useGuesthouseSparks({ eventId, guestId, guestName });
 
   useEffect(() => {
     fetchInitialData();
@@ -202,6 +214,13 @@ export function GuestMobileView({ eventId, guestId, guestName }: GuestMobileView
       
       setHasSubmitted(true);
       toast.success("Response submitted!");
+      
+      // Generate a spark after successful submission
+      generateSpark({
+        promptType: activePrompt.prompt_type,
+        promptData: activePrompt.prompt_data,
+        response: responseData
+      });
     } catch (error) {
       console.error("Error submitting:", error);
       toast.error("Failed to submit");
@@ -228,7 +247,19 @@ export function GuestMobileView({ eventId, guestId, guestName }: GuestMobileView
             <span className="font-medium text-sm">{guestName}</span>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* Sparks for guests */}
+            {sparks.length > 0 && (
+              <SparkContainer
+                sparks={sparks}
+                onOpen={openSpark}
+                onSave={saveSpark}
+                onDismiss={dismissSpark}
+                onExplore={exploreSpark}
+                position="floating"
+              />
+            )}
+            
             {/* Score Display */}
             <div className="relative">
               <Badge variant="outline" className="gap-1">

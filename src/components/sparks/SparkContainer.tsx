@@ -3,8 +3,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { SparkIcon } from './SparkIcon';
 import { SparkCard } from './SparkCard';
 import { SparkExploreFlow } from './SparkExploreFlow';
+import { cn } from '@/lib/utils';
 import type { Spark } from '@/hooks/useSparks';
-
 interface SparkContainerProps {
   sparks: Spark[];
   onOpen: (sparkId: string) => void;
@@ -61,9 +61,9 @@ export function SparkContainer({
   if (sparks.length === 0) return null;
 
   return (
-    <div className={className}>
+    <div className={cn("relative", className)}>
       {/* Spark Icons */}
-      <div className="flex gap-1">
+      <div className="flex gap-1.5">
         <AnimatePresence>
           {sparks.slice(0, 3).map((spark, index) => (
             <motion.div
@@ -77,6 +77,7 @@ export function SparkContainer({
                 type={spark.spark_type}
                 pulse={!spark.opened_at}
                 onClick={() => handleIconClick(spark.id)}
+                size="md"
               />
             </motion.div>
           ))}
@@ -89,9 +90,10 @@ export function SparkContainer({
         )}
       </div>
 
-      {/* Open Spark Card */}
+      {/* Open Spark Card - Mobile optimized positioning */}
       {openSpark && (
-        <div className="absolute right-0 top-full mt-2 z-50">
+        <div className="fixed inset-x-0 bottom-0 z-50 p-4 md:absolute md:inset-auto md:right-0 md:top-full md:mt-2 md:p-0">
+          <div className="md:hidden fixed inset-0 bg-background/60 backdrop-blur-sm -z-10" onClick={handleClose} />
           <SparkCard
             spark={openSpark}
             onClose={handleClose}

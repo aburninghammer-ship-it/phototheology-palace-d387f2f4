@@ -56,30 +56,30 @@ export function SparkCard({
         transition={{ duration: 0.2 }}
       >
         <Card className={cn(
-          'w-80 shadow-lg border-2',
+          'w-[calc(100vw-2rem)] max-w-80 shadow-lg border-2',
           config.borderColor,
           `bg-gradient-to-br ${config.gradient}`
         )}>
           <CardHeader className="pb-2 relative">
             <button
               onClick={onClose}
-              className="absolute top-2 right-2 p-1 rounded-full hover:bg-foreground/10 transition-colors"
+              className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-foreground/10 transition-colors touch-manipulation"
             >
-              <X size={16} className="text-muted-foreground" />
+              <X size={18} className="text-muted-foreground" />
             </button>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pr-8">
               <div className={cn(
-                'p-2 rounded-full',
+                'p-2 rounded-full shrink-0',
                 `bg-${spark.spark_type === 'connection' ? 'orange' : spark.spark_type === 'pattern' ? 'purple' : 'yellow'}-500/20`
               )}>
                 <Icon size={18} className={config.iconColor} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   {config.label}
                 </span>
-                <h4 className="font-semibold text-sm leading-tight">
+                <h4 className="font-semibold text-sm leading-tight line-clamp-2">
                   {spark.title}
                 </h4>
               </div>
@@ -87,19 +87,19 @@ export function SparkCard({
           </CardHeader>
           
           <CardContent className="pb-3 space-y-2">
-            <p className="text-xs text-muted-foreground italic">
+            <p className="text-xs text-muted-foreground italic line-clamp-2">
               {spark.recognition}
             </p>
-            <p className="text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed line-clamp-4">
               {spark.insight}
             </p>
           </CardContent>
           
-          <CardFooter className="pt-0 gap-2">
+          <CardFooter className="pt-0 gap-2 flex-wrap">
             <Button
               size="sm"
               variant="default"
-              className="flex-1"
+              className="flex-1 min-w-[100px] touch-manipulation"
               onClick={onExplore}
             >
               <Search size={14} className="mr-1" />
@@ -108,6 +108,7 @@ export function SparkCard({
             <Button
               size="sm"
               variant="outline"
+              className="touch-manipulation"
               onClick={onSave}
             >
               <Bookmark size={14} />
@@ -116,7 +117,7 @@ export function SparkCard({
               size="sm"
               variant="ghost"
               onClick={onDismiss}
-              className="text-muted-foreground"
+              className="text-muted-foreground touch-manipulation"
             >
               Dismiss
             </Button>
