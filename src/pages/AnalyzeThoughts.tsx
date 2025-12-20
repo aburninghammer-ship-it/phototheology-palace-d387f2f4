@@ -194,7 +194,7 @@ const AnalyzeThoughts = () => {
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { isAdmin } = useIsAdmin();
 
-  // Sparks integration
+  // Sparks integration - show all study sparks, not just current context
   const {
     sparks,
     preferences: sparkPreferences,
@@ -207,8 +207,8 @@ const AnalyzeThoughts = () => {
   } = useSparks({
     surface: 'study',
     contextType: 'study',
-    contextId: currentAnalysisId || 'analyze-thoughts',
-    maxSparks: 3,
+    contextId: '*', // Show all study sparks
+    maxSparks: 5,
     debounceMs: 60000
   });
 
