@@ -294,7 +294,7 @@ function App() {
                     <UserPreferencesProvider>
                     <SidebarProvider defaultOpen={false}>
                     <ChangeManagerProvider>
-                      <div className="min-h-screen flex flex-col w-full">
+                      <div className="min-h-screen flex flex-col w-full pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
                         <DonationBanner />
                         <FontSizeControl />
                         <AnnouncementBanner />
