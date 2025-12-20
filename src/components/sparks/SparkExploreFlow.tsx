@@ -1,26 +1,29 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowRight, BookOpen, PenLine, Layers, Bookmark } from 'lucide-react';
+import { X, ArrowRight, BookOpen, PenLine, Layers, Bookmark, Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import type { Spark } from '@/hooks/useSparks';
 
 interface SparkExploreFlowProps {
   spark: Spark;
   isOpen: boolean;
   onClose: () => void;
+  onSave?: (spark: Spark) => void;
 }
 
 type ExploreMode = 'trace' | 'apply' | 'build' | 'save';
 
-export function SparkExploreFlow({ spark, isOpen, onClose }: SparkExploreFlowProps) {
+export function SparkExploreFlow({ spark, isOpen, onClose, onSave }: SparkExploreFlowProps) {
   const [mode, setMode] = useState<ExploreMode | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [userReflection, setUserReflection] = useState('');
+  const [savingReflection, setSavingReflection] = useState(false);
 
   const exploreOptions = [
     {
@@ -53,7 +56,10 @@ export function SparkExploreFlow({ spark, isOpen, onClose }: SparkExploreFlowPro
     setMode(selectedMode);
     
     if (selectedMode === 'save') {
-      // Just save and close
+      if (onSave) {
+        onSave(spark);
+      }
+      toast.success('Spark saved to your collection');
       onClose();
       return;
     }
@@ -80,6 +86,37 @@ export function SparkExploreFlow({ spark, isOpen, onClose }: SparkExploreFlowPro
       setResult('Unable to generate exploration. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveReflection = async () => {
+    if (!userReflection.trim()) return;
+    
+    setSavingReflection(true);
+    try {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error('Not authenticated');
+      
+      // Save reflection as a gem linked to this spark
+      const { error } = await supabase.from('user_gems').insert({
+        user_id: user.id,
+        gem_name: `Reflection: ${spark.title}`,
+        gem_content: userReflection,
+        floor_number: 7, // Fire Room (spiritual/emotional)
+        room_id: 'FRm',
+        category: 'spark_reflection'
+      });
+
+      if (error) throw error;
+      
+      toast.success('Reflection saved to your Gems');
+      setUserReflection('');
+      onClose();
+    } catch (err) {
+      console.error('Save reflection error:', err);
+      toast.error('Failed to save reflection');
+    } finally {
+      setSavingReflection(false);
     }
   };
 
@@ -119,7 +156,6 @@ export function SparkExploreFlow({ spark, isOpen, onClose }: SparkExploreFlowPro
             <CardContent className="pb-6">
               <ScrollArea className="max-h-[60vh]">
                 {!mode ? (
-                  /* Mode Selection */
                   <div className="space-y-4">
                     <div className="p-3 bg-muted/50 rounded-lg">
                       <p className="font-medium text-sm">{spark.title}</p>
@@ -142,35 +178,72 @@ export function SparkExploreFlow({ spark, isOpen, onClose }: SparkExploreFlowPro
                     </div>
                   </div>
                 ) : loading ? (
-                  /* Loading State */
                   <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     <p className="text-sm text-muted-foreground">
-                      Jeeves is preparing your exploration...
+                      Jeeves is preparing your {mode === 'trace' ? 'scripture trace' : mode === 'apply' ? 'application prompt' : 'mini-study'}...
                     </p>
                   </div>
                 ) : (
-                  /* Result View */
                   <div className="space-y-4">
                     <Button variant="ghost" size="sm" onClick={handleBack}>
                       ← Back to options
                     </Button>
                     
-                    <div className="p-4 bg-muted/30 rounded-lg whitespace-pre-wrap text-sm">
+                    <div className="p-4 bg-muted/30 rounded-lg whitespace-pre-wrap text-sm leading-relaxed">
                       {result}
                     </div>
                     
                     {mode === 'apply' && (
-                      <div className="space-y-2">
+                      <div className="space-y-3 pt-2 border-t">
                         <label className="text-sm font-medium">Your Reflection</label>
                         <Textarea
                           value={userReflection}
                           onChange={e => setUserReflection(e.target.value)}
-                          placeholder="Write your thoughts here..."
+                          placeholder="Write your thoughts, prayers, or commitments here..."
                           rows={4}
+                          className="resize-none"
                         />
-                        <Button size="sm" className="w-full" disabled={!userReflection}>
-                          Save Reflection
+                        <Button 
+                          size="sm" 
+                          className="w-full" 
+                          disabled={!userReflection.trim() || savingReflection}
+                          onClick={handleSaveReflection}
+                        >
+                          {savingReflection ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Check className="h-4 w-4 mr-2" />
+                          )}
+                          Save Reflection as Gem
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {mode !== 'apply' && (
+                      <div className="flex gap-2 pt-2 border-t">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex-1"
+                          onClick={() => {
+                            navigator.clipboard.writeText(result || '');
+                            toast.success('Copied to clipboard');
+                          }}
+                        >
+                          Copy
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          className="flex-1"
+                          onClick={() => {
+                            if (onSave) onSave(spark);
+                            toast.success('Spark saved');
+                            onClose();
+                          }}
+                        >
+                          <Bookmark className="h-4 w-4 mr-2" />
+                          Save Spark
                         </Button>
                       </div>
                     )}
