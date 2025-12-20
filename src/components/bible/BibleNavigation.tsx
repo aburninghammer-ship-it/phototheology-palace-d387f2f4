@@ -393,7 +393,7 @@ export const BibleNavigation = () => {
                     </Button>
                   </div>
 
-                  <ScrollArea className="max-h-[400px]">
+                  <ScrollArea className="h-[60vh] max-h-[600px]">
                     <div className="space-y-2 pr-2">
                       {groupResults.groups.map((group, groupIndex) => (
                         <Collapsible 
@@ -431,21 +431,23 @@ export const BibleNavigation = () => {
                             </CollapsibleTrigger>
                             
                             <CollapsibleContent>
-                              <div className="p-2 space-y-2 bg-black/20">
-                                {group.verses.map((v, vIndex) => (
-                                  <div key={vIndex} className="text-xs border-l-2 border-green-400/30 pl-2 py-1">
-                                    <Link 
-                                      to={`/bible/${encodeURIComponent(v.reference.split(' ')[0])}/${v.reference.match(/\d+/)?.[0] || 1}`}
-                                      className="font-semibold text-green-400 hover:underline inline-flex items-center gap-1"
-                                    >
-                                      {v.reference}
-                                      <LinkIcon className="h-2 w-2" />
-                                    </Link>
-                                    <p className="text-foreground/90 mt-0.5 italic">"{v.text}"</p>
-                                    <p className="text-muted-foreground mt-0.5">{v.relevance}</p>
-                                  </div>
-                                ))}
-                              </div>
+                              <ScrollArea className="max-h-[300px]">
+                                <div className="p-2 space-y-2 bg-black/20">
+                                  {group.verses.map((v, vIndex) => (
+                                    <div key={vIndex} className="text-xs border-l-2 border-green-400/30 pl-2 py-1">
+                                      <Link 
+                                        to={`/bible/${encodeURIComponent(v.reference.split(' ')[0])}/${v.reference.match(/\d+/)?.[0] || 1}`}
+                                        className="font-semibold text-green-400 hover:underline inline-flex items-center gap-1"
+                                      >
+                                        {v.reference}
+                                        <LinkIcon className="h-2 w-2" />
+                                      </Link>
+                                      <p className="text-foreground/90 mt-0.5 italic">"{v.text}"</p>
+                                      <p className="text-muted-foreground mt-0.5">{v.relevance}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </ScrollArea>
                             </CollapsibleContent>
                           </div>
                         </Collapsible>
