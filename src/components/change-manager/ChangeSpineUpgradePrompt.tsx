@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, X, Clock, Sparkles } from 'lucide-react';
 import { useChangeSpine, shouldEscalateUpgrade } from '@/hooks/useChangeSpine';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -19,8 +20,15 @@ interface ChangeSpineUpgradePromptProps {
  */
 export const ChangeSpineUpgradePrompt = ({ className }: ChangeSpineUpgradePromptProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, loading: authLoading } = useAuth();
   const changeSpine = useChangeSpine();
   const { trialDaysRemaining, isPaid, isLoading, isNewUser, hasAchievedFirstWin } = changeSpine;
+
+  // Never show if not authenticated or already on pricing
+  if (authLoading || !user || location.pathname === '/pricing') {
+    return null;
+  }
   
   const [dismissed, setDismissed] = useState(false);
 

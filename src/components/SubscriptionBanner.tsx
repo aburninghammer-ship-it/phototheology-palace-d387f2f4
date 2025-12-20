@@ -1,14 +1,20 @@
 import { useSubscription } from "@/hooks/useSubscription";
+import { useAuth } from "@/hooks/useAuth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Sparkles, AlertTriangle, GraduationCap, Crown, Gift, Building2 } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function SubscriptionBanner() {
+  const { user, loading: authLoading } = useAuth();
+  const location = useLocation();
   const { subscription, loading } = useSubscription();
   const [showBanner, setShowBanner] = useState(false);
+
+  // Never show subscription/trial banners if not authenticated or already on pricing
+  if (authLoading || !user || location.pathname === "/pricing") return null;
 
   // Delay showing the banner to prevent flash on mount
   useEffect(() => {
