@@ -23,6 +23,7 @@ import { UserGemsList } from "@/components/UserGemsList";
 import { GemGenerator } from "@/components/gems/GemGenerator";
 import { FreestyleGame } from "@/components/freestyle/FreestyleGame";
 import { BibleFreestyleGame } from "@/components/freestyle/BibleFreestyleGame";
+import { VerseGeneticsArena } from "@/components/freestyle/VerseGeneticsArena";
 import { RoomGames } from "@/components/rooms/RoomGames";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
@@ -608,9 +609,9 @@ export default function RoomDetail() {
                   </Card>
                 )}
                 
-                {/* Bible Freestyle Game for BF room in Games tab */}
+                {/* Verse Genetics Arena for BF room in Games tab - includes PvP and vs Jeeves */}
                 {room.id === "bf" && (
-                  <BibleFreestyleGame roomId={room.id} roomName={room.name} />
+                  <VerseGeneticsArena roomId={room.id} roomName={room.name} />
                 )}
               </TabsContent>
 

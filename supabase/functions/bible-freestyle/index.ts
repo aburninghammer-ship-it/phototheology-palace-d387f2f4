@@ -41,7 +41,6 @@ Always be Christ-centered in your analysis. Look for:
 
     if (mode === "test_jeeves") {
       // User provides two verses, Jeeves shows the connection
-      // If refresh=true, emphasize finding a DIFFERENT angle/principle
       const refreshInstruction = refresh ? `
 IMPORTANT: This is a REFRESH request. The user has already seen one connection analysis for these verses.
 You MUST provide a COMPLETELY DIFFERENT angle and set of principles. Focus on:
@@ -137,6 +136,72 @@ Return a JSON object:
   "feedback": "Honest, specific feedback on what they got right and what they missed. Be encouraging but truthful.",
   "correctConnection": "The master-level genetic link explanation they should have found",
   "relatedVerses": ["Other verses in this family", "Up to 3 more"]
+}`;
+
+      responseFormat = {
+        type: "json_object"
+      };
+    }
+    else if (mode === "evaluate_pvp_answer") {
+      // PvP mode - evaluate a player's answer to another player's challenge
+      userPrompt = `Evaluate this Verse Genetics answer for a Player vs Player challenge. Be fair but strict.
+
+VERSE 1: ${verse1}
+VERSE 2: ${verse2}
+
+PLAYER'S ANSWER: "${userAnswer}"
+
+Score the answer (0-100) based on:
+- ACCURACY (0-25): Did they find a valid, meaningful connection?
+- DEPTH (0-25): Did they go beyond surface-level observations?
+- CREATIVITY (0-25): Did they find unique angles or multiple layers?
+- CHRIST-CENTEREDNESS (0-25): Did they connect it to Christ?
+
+Return a JSON object:
+{
+  "score": <total 0-100>,
+  "breakdown": {
+    "accuracy": <0-25>,
+    "depth": <0-25>,
+    "creativity": <0-25>,
+    "christCenteredness": <0-25>
+  },
+  "feedback": "Brief feedback on the answer quality",
+  "correctConnection": "A strong example of the genetic link between these verses"
+}`;
+
+      responseFormat = {
+        type: "json_object"
+      };
+    }
+    else if (mode === "jeeves_answers_challenge") {
+      // Jeeves answers the player's challenge in vs Jeeves mode
+      const difficultyLevel = difficulty || "intermediate";
+      
+      userPrompt = `The player has challenged you to find the genetic connection between these verses. As Jeeves, demonstrate your mastery!
+
+VERSE 1: ${verse1}
+VERSE 2: ${verse2}
+DIFFICULTY: ${difficultyLevel}
+
+Provide your analysis as if you are a master Bible scholar competing against the player. Be thorough but not perfect—at "${difficultyLevel}" difficulty, you should:
+${difficultyLevel === "beginner" ? "- Find a solid connection with clear reasoning. Score around 75-90." : ""}
+${difficultyLevel === "intermediate" ? "- Find a good connection but possibly miss some depth. Score around 65-85." : ""}
+${difficultyLevel === "difficult" ? "- Sometimes struggle or miss connections. Score around 50-75. You're not infallible!" : ""}
+
+Return a JSON object:
+{
+  "answer": "Your detailed analysis of the genetic connection between these verses, written as a scholar would present it",
+  "evaluation": {
+    "score": <your estimated score 0-100 based on difficulty>,
+    "breakdown": {
+      "accuracy": <0-25>,
+      "depth": <0-25>,
+      "creativity": <0-25>,
+      "christCenteredness": <0-25>
+    },
+    "feedback": "Self-assessment of your answer"
+  }
 }`;
 
       responseFormat = {
