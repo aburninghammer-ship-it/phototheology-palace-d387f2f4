@@ -145,8 +145,64 @@ const AnalyzeThoughts = () => {
   const [loadedStudyTitle, setLoadedStudyTitle] = useState<string | null>(null);
   const [isImportingFile, setIsImportingFile] = useState(false);
   const [isAddingToKnowledgeBank, setIsAddingToKnowledgeBank] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastAutoSaved, setLastAutoSaved] = useState<Date | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { isAdmin } = useIsAdmin();
+  
+  // Auto-save input to localStorage every 15 seconds
+  useEffect(() => {
+    if (input.trim()) {
+      // Clear existing timer
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+      
+      // Set new timer
+      autoSaveTimerRef.current = setTimeout(() => {
+        try {
+          localStorage.setItem('analyze-thoughts-draft', JSON.stringify({
+            input,
+            loadedStudyTitle,
+            timestamp: new Date().toISOString()
+          }));
+          setLastAutoSaved(new Date());
+          setIsAutoSaving(true);
+          setTimeout(() => setIsAutoSaving(false), 1000);
+        } catch (e) {
+          console.error('Failed to auto-save draft:', e);
+        }
+      }, 15000); // 15 seconds
+    }
+    
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [input, loadedStudyTitle]);
+  
+  // Restore draft on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('analyze-thoughts-draft');
+      if (saved) {
+        const { input: savedInput, loadedStudyTitle: savedTitle, timestamp } = JSON.parse(saved);
+        // Only restore if less than 24 hours old
+        const savedTime = new Date(timestamp);
+        const now = new Date();
+        const hoursDiff = (now.getTime() - savedTime.getTime()) / (1000 * 60 * 60);
+        if (hoursDiff < 24 && savedInput) {
+          setInput(savedInput);
+          setLoadedStudyTitle(savedTitle || null);
+          toast.info("Draft restored from last session");
+        }
+      }
+    } catch (e) {
+      console.error('Failed to restore draft:', e);
+    }
+  }, []);
 
   const { history, isLoading: historyLoading, saveAnalysis, deleteAnalysis, refetch } = useThoughtAnalysisHistory();
   const { recentStudies, recentNotes, fetchRecentStudies, fetchRecentNotes, isLoading: studiesLoading } = useRecentStudies();
@@ -299,6 +355,9 @@ const AnalyzeThoughts = () => {
       
       // Auto-save to history
       await saveAnalysis(input, analysisResult);
+      
+      // Clear draft after successful analysis
+      localStorage.removeItem('analyze-thoughts-draft');
       
       toast.success("Analysis complete!");
     } catch (error: any) {
@@ -593,6 +652,12 @@ const AnalyzeThoughts = () => {
                   className="min-h-[150px] bg-background/50 border-purple-500/20 focus:border-purple-500/50 pr-12"
                 />
                 <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                  {isAutoSaving && (
+                    <span className="text-xs text-emerald-400 animate-pulse">Saving...</span>
+                  )}
+                  {!isAutoSaving && lastAutoSaved && (
+                    <span className="text-xs text-muted-foreground/50">Saved</span>
+                  )}
                   <span className="text-xs text-muted-foreground/50">{input.length}</span>
                   <VoiceInput onTranscript={handleVoiceTranscript} disabled={isAnalyzing} />
                 </div>

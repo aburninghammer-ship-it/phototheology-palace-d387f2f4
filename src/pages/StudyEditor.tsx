@@ -94,7 +94,7 @@ const StudyEditor = () => {
     }
   }, [id, user]);
 
-  // Auto-save every 30 seconds
+  // Auto-save every 15 seconds
   useEffect(() => {
     if (hasChanges && !saving) {
       // Clear existing timer
@@ -105,7 +105,7 @@ const StudyEditor = () => {
       // Set new timer
       autoSaveTimerRef.current = setTimeout(() => {
         handleAutoSave();
-      }, 30000); // 30 seconds
+      }, 15000); // 15 seconds
     }
 
     return () => {
@@ -593,6 +593,16 @@ const StudyEditor = () => {
                     }`}
                   />
                 </Button>
+                <div className="flex items-center gap-2">
+                  {isAutoSaving && (
+                    <span className="text-xs text-emerald-500 animate-pulse">Auto-saving...</span>
+                  )}
+                  {!isAutoSaving && lastSaved && !hasChanges && (
+                    <span className="text-xs text-muted-foreground">
+                      Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
+                </div>
                 <Button
                   onClick={saveStudy}
                   disabled={saving || !hasChanges}
