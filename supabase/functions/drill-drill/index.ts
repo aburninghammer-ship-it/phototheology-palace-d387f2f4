@@ -129,43 +129,54 @@ CRITICAL: Create a UNIFIED STUDY where each principle naturally flows from and b
 
     if (mode === "auto" && rooms) {
       // Auto-drill: analyze verse through all rooms
-      systemPrompt += `\n\nYou are running an AUTO-DRILL. Analyze the verse through the rooms provided. 
+      const roomCount = rooms.length;
+      
+      systemPrompt += `\n\nYou are running an AUTO-DRILL. This is a "Gather the Fragments" exercise (John 6:12). 
+
+🎯 MISSION CRITICAL: You MUST provide EXACTLY ${roomCount} responses - ONE for EACH of the ${roomCount} rooms provided. Do NOT skip any room. The goal is to extract ONE principle from EVERY room in the Palace.
 
 CRITICAL INSTRUCTIONS:
-- Use ONLY ONE principle per room - select the most impactful one
+- Provide EXACTLY ONE response for EACH of the ${roomCount} rooms - no exceptions, no skipping
+- Use ONLY ONE principle per room - select the most impactful one for this verse
 - You are NOT locked into using rooms in order - start from any floor, room, or cycle that best illuminates this verse
 - Build sequence strategically: whatever room you use first should prepare the way for the next room
-- You may reuse principles across different "New Combinations" - the same principle can yield totally different insights
-- A "New Combination" means exploring different pathways, not necessarily using entirely new principles
+- Each response should be focused (2-4 sentences) but substantive
 - Always create a unified study where each response builds upon and references previous discoveries
-- Give focused 2-4 sentence responses that connect naturally to what came before
+
+ROOM REQUIREMENTS:
+${rooms.map((r: any, i: number) => `${i + 1}. ${r.tag} (${r.name}): ${r.coreQuestion}`).join('\n')}
 
 SPECIAL INSTRUCTION FOR QUESTIONS ROOM (QR):
 When you reach the Questions Room (QR), generate EXACTLY 15 questions:
 - 5 INTRATEXTUAL questions (about details within this verse/passage)
 - 5 INTERTEXTUAL questions (connecting to other Scripture passages)
 - 5 PALACE questions (applying Phototheology principles from other rooms)
+Label each question clearly with its type.
 
-Label each question clearly with its type.`;
+REMEMBER: You MUST generate exactly ${roomCount} responses, one for each room listed above. "Gather up the fragments that remain, that nothing be lost."`;
       
       userPrompt = `Run a complete Drill Drill on: "${verse}"
 ${verseText ? `\nVerse text: "${verseText}"` : ""}
 
-Analyze through these rooms and return a JSON response:
-${JSON.stringify(rooms.map((r: any) => ({ id: r.id, tag: r.tag, name: r.name, question: r.coreQuestion })), null, 2)}
+🎯 MANDATORY: Analyze through ALL ${roomCount} rooms below. Do NOT skip any room. Each room must receive exactly one response.
 
-CRITICAL INSTRUCTIONS:
-1. Use ONLY ONE principle per room - select the most impactful one
-2. Each response must reference and build upon previous room discoveries
-3. Create a unified, cohesive study where insights flow naturally
-4. For Questions Room (QR): Generate exactly 15 questions (5 intra, 5 inter, 5 palace)
+ROOMS TO ANALYZE (${roomCount} total):
+${rooms.map((r: any, i: number) => `${i + 1}. [${r.tag}] ${r.name} - "${r.coreQuestion}"`).join('\n')}
 
-Return JSON format:
+CRITICAL REQUIREMENTS:
+1. Generate EXACTLY ${roomCount} responses - one for each room listed above
+2. Use ONLY ONE principle per room - select the most impactful one
+3. Each response must reference and build upon previous room discoveries
+4. Create a unified, cohesive study where insights flow naturally
+5. For Questions Room (QR): Generate exactly 15 questions (5 intra, 5 inter, 5 palace)
+6. DO NOT SKIP ANY ROOM - every room must have a response
+
+Return JSON format with EXACTLY ${roomCount} room responses:
 {
   "responses": [
     { "roomId": "sr", "response": "Your Story Room analysis..." },
     { "roomId": "ir", "response": "Your Imagination Room analysis..." },
-    ...
+    ... (continue for ALL ${roomCount} rooms)
   ]
 }`;
     } else if (mode === "guided" && action === "teach") {
@@ -242,7 +253,7 @@ Please:
 
     console.log("Drill-drill request:", { mode, verse, roomCount: rooms?.length || 1 });
 
-    // Build the request body
+    // Increase token limit significantly for auto mode to accommodate all 35+ rooms
     const requestBody: any = {
       model: "google/gemini-2.5-flash",
       messages: [
@@ -250,7 +261,7 @@ Please:
         { role: "user", content: userPrompt }
       ],
       temperature: 0.7,
-      max_tokens: mode === "auto" ? 12000 : 2000,
+      max_tokens: mode === "auto" ? 24000 : 2000, // Increased from 12000 to handle all rooms
     };
 
     // Use tool calling for auto mode to ensure structured output
