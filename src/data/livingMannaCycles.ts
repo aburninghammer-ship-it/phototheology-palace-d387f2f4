@@ -18,6 +18,7 @@ export interface CycleWeek {
 }
 
 export interface StudyCycle {
+  id: string;
   sequenceNumber: number;
   title: string;
   description: string;
@@ -34,6 +35,7 @@ export interface StudyCycle {
 export const LIVING_MANNA_CYCLES: StudyCycle[] = [
   // CYCLE 1 — THE WAY INTO GOD'S PRESENCE
   {
+    id: "cycle-1-presence",
     sequenceNumber: 1,
     title: "The Way Into God's Presence",
     description: "Conversion, surrender, and justification - learning to approach God on His terms through the altar and laver.",
