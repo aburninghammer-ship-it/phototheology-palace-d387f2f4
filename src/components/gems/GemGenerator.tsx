@@ -152,7 +152,7 @@ export function GemGenerator({ floorNumber, roomId, onGemSaved }: GemGeneratorPr
             unexpected connection using the Phototheology Palace framework.
           </p>
           <p className="text-xs">
-            Each gem is structured with: Title → Verses → Thread → Palace Method → The Gem → Adventist Alignment
+            Each gem is structured with: Title → Verses → Thread → Palace Method → The Gem → Biblical Alignment
           </p>
         </div>
 

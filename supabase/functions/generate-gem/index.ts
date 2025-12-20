@@ -80,9 +80,9 @@ A single paragraph (5–8 sentences) that:
 - Feels theologically weighty
 - Has one stunning sentence at the end—the "hit line"
 
-🔹 ADVENTIST ALIGNMENT
+🔹 BIBLICAL ALIGNMENT
 A short confirmation (2–3 sentences) ensuring the insight aligns with:
-- The Great Controversy metanarrative
+- The biblical metanarrative of redemption
 - Sanctuary doctrine
 - Non-offshoot Adventist theology
 
@@ -95,7 +95,7 @@ FORMATTING RULES:
 - DO NOT use markdown bold (**) or italic (*) formatting
 - Keep formatting clean and readable`;
 
-    const userPrompt = `Produce a Gem. Select 2–3 seemingly unrelated Bible verses and reveal a hidden connection between them using the Phototheology Palace. Follow the Gem structure exactly: Title → Verses → Thread → Palace Method → The Gem → Adventist Alignment. The insight must be deep, elegant, unexpected, airtight, and fully rooted in PT floors and rooms. Reject any cliché or weak connection. Produce only high-quality Gems.`;
+    const userPrompt = `Produce a Gem. Select 2–3 seemingly unrelated Bible verses and reveal a hidden connection between them using the Phototheology Palace. Follow the Gem structure exactly: Title → Verses → Thread → Palace Method → The Gem → Biblical Alignment. The insight must be deep, elegant, unexpected, airtight, and fully rooted in PT floors and rooms. Reject any cliché or weak connection. Produce only high-quality Gems.`;
 
     console.log('Generating gem with Lovable AI...');
     
