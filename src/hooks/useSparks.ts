@@ -6,9 +6,10 @@ import { toast } from 'sonner';
 export interface Spark {
   id: string;
   user_id: string;
-  surface: 'notes' | 'verse' | 'study' | 'session' | 'bible_reader' | 'other';
-  context_type: 'verse' | 'note_block' | 'gem' | 'session' | 'study' | 'chapter';
-  context_id: string;
+  surface?: 'notes' | 'verse' | 'study' | 'session' | 'bible_reader' | 'guesthouse' | 'other';
+  surface_type?: string;
+  context_type?: 'verse' | 'note_block' | 'gem' | 'session' | 'study' | 'chapter' | 'game';
+  context_id?: string;
   spark_type: 'connection' | 'pattern' | 'application';
   title: string;
   recognition: string;
@@ -19,12 +20,13 @@ export interface Spark {
     mode: 'trace' | 'apply' | 'build' | 'save';
   } | null;
   confidence: number;
-  novelty_score: number;
-  content_hash: string | null;
+  novelty_score?: number;
+  content_hash?: string | null;
   created_at: string;
-  opened_at: string | null;
-  saved_at: string | null;
-  dismissed_at: string | null;
+  opened_at?: string | null;
+  saved_at?: string | null;
+  dismissed_at?: string | null;
+  explored_at?: string | null;
 }
 
 export interface SparkPreferences {
@@ -35,8 +37,8 @@ export interface SparkPreferences {
 }
 
 interface UseSparkOptions {
-  surface: 'notes' | 'verse' | 'study' | 'session' | 'bible_reader' | 'other';
-  contextType: 'verse' | 'note_block' | 'gem' | 'session' | 'study' | 'chapter';
+  surface: 'notes' | 'verse' | 'study' | 'session' | 'bible_reader' | 'guesthouse' | 'other';
+  contextType: 'verse' | 'note_block' | 'gem' | 'session' | 'study' | 'chapter' | 'game';
   contextId: string;
   maxSparks?: number;
   debounceMs?: number;
