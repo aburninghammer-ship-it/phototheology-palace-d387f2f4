@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,10 +13,12 @@ import {
   CloudOff, 
   Check,
   Edit2,
-  X 
+  X
 } from "lucide-react";
 import { useOfflineNotes, OfflineNote } from "@/hooks/useOfflineNotes";
 import { format } from "date-fns";
+import { useSparks } from "@/hooks/useSparks";
+import { SparkContainer, SparkSettings } from "@/components/sparks";
 
 interface QuickNotesProps {
   className?: string;
@@ -32,8 +34,48 @@ export const QuickNotes = ({ className = "", compact = false }: QuickNotesProps)
   const [editContent, setEditContent] = useState("");
   const [editTitle, setEditTitle] = useState("");
   const autoSaveRef = useRef<NodeJS.Timeout | null>(null);
+  const pauseDetectRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-save while typing (debounced)
+  // Sparks integration
+  const { 
+    sparks, 
+    preferences,
+    generateSpark, 
+    openSpark, 
+    saveSpark, 
+    dismissSpark,
+    exploreSpark,
+    updatePreferences,
+    generating 
+  } = useSparks({
+    surface: 'notes',
+    contextType: 'note_block',
+    contextId: editingId || 'new'
+  });
+
+
+  // Detect typing pause for spark generation
+  const handleContentChange = useCallback((content: string) => {
+    if (pauseDetectRef.current) {
+      clearTimeout(pauseDetectRef.current);
+    }
+
+    // Only trigger spark if content is substantial (280+ chars)
+    if (content.length >= 280 && preferences?.intensity !== 'off') {
+      pauseDetectRef.current = setTimeout(() => {
+        generateSpark(content);
+      }, 10000); // 10 second pause
+    }
+  }, [generateSpark, preferences?.intensity]);
+
+  // Trigger spark on save
+  const handleSaveWithSpark = useCallback((content: string) => {
+    if (content.length >= 100 && preferences?.intensity !== 'off') {
+      generateSpark(content);
+    }
+  }, [generateSpark, preferences?.intensity]);
+
+  // Auto-save while typing (debounced) + trigger spark detection
   useEffect(() => {
     if (editingId && editContent) {
       if (autoSaveRef.current) {
@@ -42,6 +84,9 @@ export const QuickNotes = ({ className = "", compact = false }: QuickNotesProps)
       autoSaveRef.current = setTimeout(() => {
         updateNote(editingId, editContent, editTitle);
       }, 1000);
+      
+      // Trigger pause detection for sparks
+      handleContentChange(editContent);
     }
 
     return () => {
@@ -49,11 +94,12 @@ export const QuickNotes = ({ className = "", compact = false }: QuickNotesProps)
         clearTimeout(autoSaveRef.current);
       }
     };
-  }, [editContent, editTitle, editingId, updateNote]);
+  }, [editContent, editTitle, editingId, updateNote, handleContentChange]);
 
   const handleAddNote = () => {
     if (!newContent.trim()) return;
     addNote(newContent, newTitle || undefined);
+    handleSaveWithSpark(newContent);
     setNewContent("");
     setNewTitle("");
     setIsAdding(false);
@@ -68,6 +114,7 @@ export const QuickNotes = ({ className = "", compact = false }: QuickNotesProps)
   const stopEditing = () => {
     if (editingId && editContent) {
       updateNote(editingId, editContent, editTitle);
+      handleSaveWithSpark(editContent);
     }
     setEditingId(null);
     setEditContent("");
@@ -149,7 +196,7 @@ export const QuickNotes = ({ className = "", compact = false }: QuickNotesProps)
   }
 
   return (
-    <Card className={`${className}`}>
+    <Card className={`${className} relative`}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
@@ -158,8 +205,17 @@ export const QuickNotes = ({ className = "", compact = false }: QuickNotesProps)
             <Badge variant="secondary" className="ml-2">
               {notes.length}
             </Badge>
+            {sparks.length > 0 && (
+              <Badge variant="outline" className="ml-1 text-amber-500 border-amber-500/30">
+                🔥 {sparks.length}
+              </Badge>
+            )}
           </CardTitle>
           <div className="flex items-center gap-2">
+            <SparkSettings
+              preferences={preferences}
+              onUpdate={updatePreferences}
+            />
             {isOnline ? (
               <Badge variant="outline" className="text-xs">
                 <Cloud className="h-3 w-3 mr-1 text-green-500" />
@@ -178,6 +234,21 @@ export const QuickNotes = ({ className = "", compact = false }: QuickNotesProps)
           </div>
         </div>
       </CardHeader>
+      
+      {/* Spark Container - shows in top right */}
+      {sparks.length > 0 && (
+        <div className="absolute top-16 right-4 z-10">
+          <SparkContainer
+            sparks={sparks}
+            onOpen={openSpark}
+            onSave={saveSpark}
+            onDismiss={dismissSpark}
+            onExplore={exploreSpark}
+          />
+        </div>
+      )}
+      
+      
       <CardContent>
         {isAdding && (
           <Card className="mb-4 border-primary/30">
