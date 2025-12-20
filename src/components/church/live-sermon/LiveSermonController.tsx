@@ -3,9 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Radio, RefreshCw, BookOpen, Lightbulb, HelpCircle, Landmark } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, Radio, RefreshCw, BookOpen, Lightbulb, HelpCircle, Landmark, Bot } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { LiveJeevesCommentary } from "./LiveJeevesCommentary";
 
 interface StudyCard {
   id: string;
@@ -171,77 +173,99 @@ export function LiveSermonController({ sessionId, onEnd, onBack }: LiveSermonCon
         </CardContent>
       </Card>
 
-      {/* Study Cards */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
+      {/* Tabbed Content: Jeeves Commentary + Study Cards */}
+      <Tabs defaultValue="jeeves" className="space-y-4">
+        <TabsList className="bg-card/50 backdrop-blur">
+          <TabsTrigger value="jeeves" className="gap-2">
+            <Bot className="h-4 w-4" />
+            Live Jeeves Commentary
+          </TabsTrigger>
+          <TabsTrigger value="cards" className="gap-2">
+            <BookOpen className="h-4 w-4" />
             Study Cards ({cards.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[500px] pr-4">
-            <div className="space-y-3">
-              {cards.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
-                  No study cards yet. Click "Generate Study Cards" to create them from your outline.
-                </p>
-              ) : (
-                cards.map((card) => (
-                  <Card key={card.id} className="bg-muted/30">
-                    <CardContent className="pt-4">
-                      <div className="flex items-start gap-3">
-                        {getCardIcon(card.card_type)}
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">
-                              {getCardLabel(card.card_type)}
-                            </Badge>
-                            {card.floor_number && (
-                              <Badge variant="secondary" className="text-xs">
-                                Floor {card.floor_number}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-sm font-medium">{card.sermon_point}</p>
-                          
-                          {card.pt_rooms.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                              {card.pt_rooms.map((room) => (
-                                <Badge key={room} className="text-xs">
-                                  {room}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="jeeves">
+          <LiveJeevesCommentary 
+            sessionId={sessionId} 
+            isLive={session?.status === "live"} 
+          />
+        </TabsContent>
+
+        <TabsContent value="cards">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                Study Cards ({cards.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[500px] pr-4">
+                <div className="space-y-3">
+                  {cards.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">
+                      No study cards yet. Click "Generate Study Cards" to create them from your outline.
+                    </p>
+                  ) : (
+                    cards.map((card) => (
+                      <Card key={card.id} className="bg-muted/30">
+                        <CardContent className="pt-4">
+                          <div className="flex items-start gap-3">
+                            {getCardIcon(card.card_type)}
+                            <div className="flex-1 space-y-2">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {getCardLabel(card.card_type)}
                                 </Badge>
-                              ))}
+                                {card.floor_number && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    Floor {card.floor_number}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-sm font-medium">{card.sermon_point}</p>
+                              
+                              {card.pt_rooms.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {card.pt_rooms.map((room) => (
+                                    <Badge key={room} className="text-xs">
+                                      {room}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+
+                              {card.cross_references.length > 0 && (
+                                <p className="text-xs text-muted-foreground">
+                                  📖 {card.cross_references.join(", ")}
+                                </p>
+                              )}
+
+                              {card.reflection_question && (
+                                <p className="text-sm italic text-primary">
+                                  ❓ {card.reflection_question}
+                                </p>
+                              )}
+
+                              {card.sanctuary_connection && (
+                                <p className="text-xs text-amber-600">
+                                  🏛️ {card.sanctuary_connection}
+                                </p>
+                              )}
                             </div>
-                          )}
-
-                          {card.cross_references.length > 0 && (
-                            <p className="text-xs text-muted-foreground">
-                              📖 {card.cross_references.join(", ")}
-                            </p>
-                          )}
-
-                          {card.reflection_question && (
-                            <p className="text-sm italic text-primary">
-                              ❓ {card.reflection_question}
-                            </p>
-                          )}
-
-                          {card.sanctuary_connection && (
-                            <p className="text-xs text-amber-600">
-                              🏛️ {card.sanctuary_connection}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
