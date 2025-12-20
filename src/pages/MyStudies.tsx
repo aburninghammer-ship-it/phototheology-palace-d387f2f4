@@ -39,6 +39,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { StudyTemplates } from "@/components/studies/StudyTemplates";
+import { useSparks } from "@/hooks/useSparks";
+import { SparkContainer, SparkSettings } from "@/components/sparks";
 
 const VERSE_ANALYSIS_TEMPLATE = `# Verse Analysis
 
@@ -148,6 +150,24 @@ const MyStudies = () => {
   const [searchQuery, setSearchQuery] = useState(() => getCustomState<string>('myStudies_searchQuery') || "");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [studyToDelete, setStudyToDelete] = useState<string | null>(null);
+
+  // Sparks integration
+  const {
+    sparks,
+    preferences: sparkPreferences,
+    generateSpark,
+    openSpark,
+    saveSpark,
+    dismissSpark,
+    exploreSpark,
+    updatePreferences: updateSparkPreferences
+  } = useSparks({
+    surface: 'study',
+    contextType: 'study',
+    contextId: 'my-studies',
+    maxSparks: 3,
+    debounceMs: 90000
+  });
 
   // Persist search query
   useEffect(() => { setCustomState('myStudies_searchQuery', searchQuery); }, [searchQuery, setCustomState]);
@@ -328,6 +348,28 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
+
+      {/* Sparks Container */}
+      {sparks.length > 0 && (
+        <div className="fixed top-20 right-4 z-50">
+          <SparkContainer
+            sparks={sparks}
+            onOpen={openSpark}
+            onSave={saveSpark}
+            onDismiss={dismissSpark}
+            onExplore={exploreSpark}
+            position="floating"
+          />
+        </div>
+      )}
+
+      {/* Spark Settings */}
+      <div className="fixed bottom-4 right-4 z-40">
+        <SparkSettings
+          preferences={sparkPreferences}
+          onUpdate={updateSparkPreferences}
+        />
+      </div>
       
       <div className="container mx-auto px-4 py-8 pt-24">
         {/* Header - Glass Card */}

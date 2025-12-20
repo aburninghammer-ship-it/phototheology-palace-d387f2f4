@@ -25,6 +25,8 @@ import { FollowUpChat } from "@/components/analyze/FollowUpChat";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { ChainWitness } from "@/components/analyze/ChainWitness";
 import { useRecentStudies } from "@/hooks/useRecentStudies";
+import { useSparks } from "@/hooks/useSparks";
+import { SparkContainer, SparkSettings } from "@/components/sparks";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -152,6 +154,34 @@ const AnalyzeThoughts = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { isAdmin } = useIsAdmin();
+
+  // Sparks integration
+  const {
+    sparks,
+    preferences: sparkPreferences,
+    generateSpark,
+    openSpark,
+    saveSpark,
+    dismissSpark,
+    exploreSpark,
+    updatePreferences: updateSparkPreferences
+  } = useSparks({
+    surface: 'study',
+    contextType: 'study',
+    contextId: currentAnalysisId || 'analyze-thoughts',
+    maxSparks: 3,
+    debounceMs: 60000
+  });
+
+  // Trigger spark generation when analysis completes
+  useEffect(() => {
+    if (result && input.length > 280) {
+      generateSpark(
+        `Analysis: ${result.summary}\nStrengths: ${result.strengths?.slice(0, 3).map(s => typeof s === 'string' ? s : s.point).join(', ')}\nScore: ${result.overallScore}/100`,
+        undefined
+      );
+    }
+  }, [result]);
   
   // Auto-save input to localStorage every 15 seconds
   useEffect(() => {
@@ -553,6 +583,28 @@ const AnalyzeThoughts = () => {
       </div>
       
       <Navigation />
+
+      {/* Sparks Container */}
+      {sparks.length > 0 && (
+        <div className="fixed top-20 right-4 z-50">
+          <SparkContainer
+            sparks={sparks}
+            onOpen={openSpark}
+            onSave={saveSpark}
+            onDismiss={dismissSpark}
+            onExplore={exploreSpark}
+            position="floating"
+          />
+        </div>
+      )}
+
+      {/* Spark Settings */}
+      <div className="fixed bottom-4 right-4 z-40">
+        <SparkSettings
+          preferences={sparkPreferences}
+          onUpdate={updateSparkPreferences}
+        />
+      </div>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
         {/* Header */}
