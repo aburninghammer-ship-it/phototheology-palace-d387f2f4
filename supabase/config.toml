@@ -202,3 +202,6 @@ verify_jwt = false
 
 [functions.weekly-spark-recap]
 verify_jwt = true
+
+[functions.bible-freestyle]
+verify_jwt = false

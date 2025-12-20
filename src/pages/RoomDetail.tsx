@@ -22,6 +22,7 @@ import { genesisImages } from "@/assets/24fps/genesis";
 import { UserGemsList } from "@/components/UserGemsList";
 import { GemGenerator } from "@/components/gems/GemGenerator";
 import { FreestyleGame } from "@/components/freestyle/FreestyleGame";
+import { BibleFreestyleGame } from "@/components/freestyle/BibleFreestyleGame";
 import { RoomGames } from "@/components/rooms/RoomGames";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
@@ -554,9 +555,14 @@ export default function RoomDetail() {
                   </>
                 )}
 
-                {/* Freestyle Game for Floor 3 rooms */}
-                {["nf", "pf", "bf", "hf", "lr"].includes(room.id) && (
+                {/* Freestyle Game for Floor 3 rooms (except BF which has its own) */}
+                {["nf", "pf", "hf", "lr"].includes(room.id) && (
                   <FreestyleGame roomId={room.id} roomName={room.name} />
+                )}
+                
+                {/* Bible Freestyle Game - specialized for BF room */}
+                {room.id === "bf" && (
+                  <BibleFreestyleGame roomId={room.id} roomName={room.name} />
                 )}
 
                 {room.id === "cec" && (
@@ -585,8 +591,8 @@ export default function RoomDetail() {
                 
                 <RoomGames roomId={room.id} roomName={room.name} />
                 
-                {/* Freestyle Game also shown in Games tab for Floor 3 rooms */}
-                {["nf", "pf", "bf", "hf", "lr"].includes(room.id) && (
+                {/* Freestyle Game also shown in Games tab for Floor 3 rooms (except BF) */}
+                {["nf", "pf", "hf", "lr"].includes(room.id) && (
                   <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -600,6 +606,11 @@ export default function RoomDetail() {
                       <FreestyleGame roomId={room.id} roomName={room.name} />
                     </CardContent>
                   </Card>
+                )}
+                
+                {/* Bible Freestyle Game for BF room in Games tab */}
+                {room.id === "bf" && (
+                  <BibleFreestyleGame roomId={room.id} roomName={room.name} />
                 )}
               </TabsContent>
 
