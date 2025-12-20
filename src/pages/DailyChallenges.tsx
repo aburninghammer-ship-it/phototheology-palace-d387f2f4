@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useOutputSpark } from "@/hooks/useOutputSpark";
 import { Flame, BookOpen, ChefHat, Calculator, Brain, Target, Lightbulb, Zap } from "lucide-react";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
@@ -27,6 +28,7 @@ const DailyChallenges = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { triggerOutputSpark } = useOutputSpark();
   const [dailyChallenge, setDailyChallenge] = useState<any>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [startTime] = useState(Date.now());
@@ -106,6 +108,19 @@ const DailyChallenges = () => {
       });
 
       setHasSubmitted(true);
+      
+      // Trigger output spark for challenge completion
+      const submissionContent = typeof submissionData === 'string' 
+        ? submissionData 
+        : JSON.stringify(submissionData);
+      
+      triggerOutputSpark({
+        type: 'challenge',
+        content: `Challenge: ${dailyChallenge.title}\nPrinciple: ${dailyChallenge.principle_used || 'General'}\nSubmission: ${submissionContent}`,
+        title: dailyChallenge.title,
+        verseReference: dailyChallenge.verses?.[0],
+        contextId: dailyChallenge.id
+      });
     } catch (error: any) {
       toast({
         title: "Error",

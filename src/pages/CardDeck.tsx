@@ -26,6 +26,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PTCardBattle } from "@/components/card-battle/PTCardBattle";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 import { useAuth } from "@/hooks/useAuth";
+import { useOutputSpark } from "@/hooks/useOutputSpark";
 import { StudyDeckInstructions } from "@/components/study-deck/StudyDeckInstructions";
 import { StudyDeckExamples } from "@/components/study-deck/StudyDeckExamples";
 import { StudyDeckModeSelector, StudyMode } from "@/components/study-deck/StudyDeckModeSelector";
@@ -165,6 +166,7 @@ const CYCLE_CARDS = [
 export default function CardDeck() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { triggerOutputSpark } = useOutputSpark();
   const [textType, setTextType] = useState<"verse" | "story">("verse");
   const [verseInput, setVerseInput] = useState("");
   const [verseText, setVerseText] = useState("");
@@ -677,6 +679,22 @@ export default function CardDeck() {
       });
       
       setSaveDialogOpen(false);
+      
+      // Trigger output spark for gem save
+      if (asGem) {
+        const gemContent = conversationHistory
+          .map(msg => `${msg.role === 'user' ? 'You' : 'Jeeves'}: ${msg.content}`)
+          .join('\n');
+        
+        triggerOutputSpark({
+          type: 'gem',
+          content: `Gem: ${gemTitle}\nVerse: ${verseText}\nCards Used: ${cardsUsed.join(', ')}\n${gemContent}`,
+          title: gemTitle,
+          verseReference: displayText.split(':')[0] || undefined,
+          contextId: `gem-${Date.now()}`
+        });
+      }
+      
       setGemTitle("");
       setGemNotes("");
     } catch (error) {

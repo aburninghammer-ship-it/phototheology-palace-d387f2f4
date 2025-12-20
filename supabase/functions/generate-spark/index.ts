@@ -23,7 +23,9 @@ async function generateSpark(
   surface: string,
   contextType: string,
   mode: 'beginner' | 'standard' | 'master',
-  apiKey: string
+  apiKey: string,
+  triggerType?: 'dwell' | 'output',
+  outputTitle?: string
 ): Promise<{
   spark_type: 'connection' | 'pattern' | 'application';
   title: string;
@@ -45,17 +47,23 @@ async function generateSpark(
     master: 'Prioritize novel, unexpected connections. Surface deep patterns, prophetic links, or sanctuary parallels that even advanced students might miss.'
   };
 
+  // Adjust recognition for output-triggered sparks
+  const outputContext = triggerType === 'output' 
+    ? `This spark is triggered AFTER the user saved their work${outputTitle ? ` titled "${outputTitle}"` : ''}. Acknowledge their completion and build upon it.`
+    : '';
+
   const systemPrompt = `You are Jeeves, a Phototheology discovery engine. Your task is to generate ONE high-quality "Discovery Spark" based on the user's study content.
 
 A Discovery Spark surfaces hidden connections, patterns, or applications that the student may not have noticed.
 
 ${modeInstructions[mode]}
+${outputContext}
 
 RULES:
 - Generate exactly ONE spark
 - Choose the most appropriate type: "connection" (links passages/themes), "pattern" (structure/typology/sequence), or "application" (practice/discipleship)
 - Title should be evocative and memorable (3-6 words)
-- Recognition should acknowledge what the user is studying (1 line)
+- Recognition should acknowledge what the user ${triggerType === 'output' ? 'just completed' : 'is studying'} (1 line)
 - Insight should be substantive but focused (3-6 sentences)
 - Include 2-4 related Scripture targets for exploration
 - Be Christ-centered when natural
@@ -77,11 +85,11 @@ OUTPUT FORMAT (JSON only, no markdown):
   "novelty_score": 0.75
 }`;
 
-  const userPrompt = `User is studying${verseReference ? ` (${verseReference})` : ''} on ${surface}:
+  const userPrompt = `User ${triggerType === 'output' ? 'just saved/completed' : 'is studying'}${verseReference ? ` (${verseReference})` : ''} on ${surface}:
 
 ${content}
 
-Generate ONE discovery spark that would genuinely deepen their understanding.`;
+Generate ONE discovery spark that would genuinely deepen their understanding${triggerType === 'output' ? ' and celebrate their work' : ''}.`;
 
   console.log('Generating spark for', surface, 'context...');
 
@@ -206,7 +214,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { content, verseReference, surface, contextType, contextId, mode, exploreMode, spark, recentHashes } = body;
+    const { content, verseReference, surface, contextType, contextId, mode, exploreMode, spark, recentHashes, triggerType, outputTitle } = body;
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -251,7 +259,9 @@ serve(async (req) => {
       surface,
       contextType || 'note_block',
       mode || 'standard',
-      LOVABLE_API_KEY
+      LOVABLE_API_KEY,
+      triggerType,
+      outputTitle
     );
 
     if (!generatedSpark) {
