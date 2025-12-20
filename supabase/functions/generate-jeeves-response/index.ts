@@ -252,12 +252,20 @@ serve(async (req) => {
 
     // Handle "fragment-dialogue" mode - interactive conversation about a specific principle
     if (mode === 'fragment-dialogue') {
-      if (!storyText || !cardCode || !userMessage) {
-        throw new Error('Missing required fields for fragment dialogue');
+      console.log('Fragment dialogue request:', { storyText: !!storyText, cardCode, userMessage: !!userMessage });
+      
+      if (!cardCode || !userMessage) {
+        const missing = [];
+        if (!cardCode) missing.push('cardCode');
+        if (!userMessage) missing.push('userMessage');
+        throw new Error(`Missing required fields for fragment dialogue: ${missing.join(', ')}`);
       }
       
+      // Use storyText if available, otherwise use a default context
+      const contextText = storyText || 'Continue the conversation about this Phototheology principle.';
+      
       const dialogueResponse = await generateFragmentDialogue(
-        storyText,
+        contextText,
         storyReference || '',
         cardCode,
         userMessage,
