@@ -250,6 +250,7 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
       // Start the scribe session with language setting
       await scribe.connect({
         token: data.token,
+        languageCode: selectedLanguage,
         microphone: {
           echoCancellation: true,
           noiseSuppression: true,
