@@ -453,9 +453,8 @@ const AnalyzeThoughts = () => {
     setShowResults(true);
     
     // Load the saved follow-up conversation if it exists
-    const savedConvo = (analysis as any).followup_conversation;
-    if (savedConvo && Array.isArray(savedConvo)) {
-      setFollowUpConversation(savedConvo);
+    if (analysis.followup_conversation && Array.isArray(analysis.followup_conversation)) {
+      setFollowUpConversation(analysis.followup_conversation);
     } else {
       setFollowUpConversation([]);
     }

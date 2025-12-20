@@ -84,19 +84,57 @@ export const FollowUpChat = ({
     if (analysisId && messages.length > 0) {
       const saveConversation = async () => {
         try {
-          await supabase
+          console.log('[FollowUpChat] Auto-saving conversation to analysis:', analysisId, 'Messages:', messages.length);
+          const { error } = await supabase
             .from('thought_analyses')
-            .update({ followup_conversation: messages } as any)
+            .update({ followup_conversation: messages as any })
             .eq('id', analysisId);
+          
+          if (error) {
+            console.error('[FollowUpChat] Error auto-saving conversation:', error);
+          } else {
+            console.log('[FollowUpChat] Conversation auto-saved successfully');
+          }
         } catch (error) {
-          console.error('Error auto-saving conversation:', error);
+          console.error('[FollowUpChat] Error auto-saving conversation:', error);
         }
       };
       // Debounce the save
-      const timer = setTimeout(saveConversation, 2000);
+      const timer = setTimeout(saveConversation, 1500);
       return () => clearTimeout(timer);
     }
   }, [messages, analysisId, onConversationChange]);
+
+  // Save immediately when component unmounts or page changes
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (analysisId && messages.length > 0) {
+        // Use synchronous fetch for beforeunload
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        
+        navigator.sendBeacon(
+          `${supabaseUrl}/rest/v1/thought_analyses?id=eq.${analysisId}`,
+          new Blob([JSON.stringify({ followup_conversation: messages })], { type: 'application/json' })
+        );
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Also save on unmount
+      if (analysisId && messages.length > 0) {
+        supabase
+          .from('thought_analyses')
+          .update({ followup_conversation: messages as any })
+          .eq('id', analysisId)
+          .then(({ error }) => {
+            if (error) console.error('[FollowUpChat] Error saving on unmount:', error);
+          });
+      }
+    };
+  }, [analysisId, messages]);
 
   const { recentStudies, fetchRecentStudies, formatStudyForContext, isLoading: studiesLoading } = useRecentStudies();
 
