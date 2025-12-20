@@ -153,14 +153,17 @@ export function SermonHub({ churchId }: SermonHubProps) {
             <Button 
               variant="outline" 
               className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-              onClick={() => {
-                const url = youtubeSettings.channel_url || 'https://www.youtube.com/@mylivingmanna';
-                window.open(url, '_blank');
-              }}
+              asChild
             >
-              <Youtube className="h-4 w-4 mr-2" />
-              Open Channel
-              <ExternalLink className="h-4 w-4 ml-2" />
+              <a 
+                href={youtubeSettings.channel_url || 'https://www.youtube.com/@mylivingmanna'} 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Youtube className="h-4 w-4 mr-2" />
+                Open Channel
+                <ExternalLink className="h-4 w-4 ml-2" />
+              </a>
             </Button>
           </div>
           {/* YouTube Embed */}
@@ -229,12 +232,17 @@ export function SermonHub({ churchId }: SermonHubProps) {
               (videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null);
 
             return (
-              <Card 
-                key={sermon.id} 
-                variant="glass" 
-                className="overflow-hidden hover:border-primary/30 transition-colors cursor-pointer bg-card/80"
-                onClick={() => window.open(sermon.youtube_url, '_blank')}
+              <a 
+                key={sermon.id}
+                href={sermon.youtube_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
               >
+                <Card 
+                  variant="glass" 
+                  className="overflow-hidden hover:border-primary/30 transition-colors cursor-pointer bg-card/80 h-full"
+                >
                 {/* Thumbnail */}
                 <div className="relative aspect-video bg-muted">
                   {thumbnailUrl ? (
@@ -291,6 +299,7 @@ export function SermonHub({ churchId }: SermonHubProps) {
                   )}
                 </CardContent>
               </Card>
+              </a>
             );
           })}
         </div>
