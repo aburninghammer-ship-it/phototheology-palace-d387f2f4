@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -25,7 +26,8 @@ async function generateSpark(
   mode: 'beginner' | 'standard' | 'master',
   apiKey: string,
   triggerType?: 'dwell' | 'output',
-  outputTitle?: string
+  outputTitle?: string,
+  userName?: string
 ): Promise<{
   spark_type: 'connection' | 'pattern' | 'application';
   title: string;
@@ -52,18 +54,24 @@ async function generateSpark(
     ? `This spark is triggered AFTER the user saved their work${outputTitle ? ` titled "${outputTitle}"` : ''}. Acknowledge their completion and build upon it.`
     : '';
 
+  // Personal greeting with user's name
+  const personalGreeting = userName 
+    ? `Address the user warmly by name as "Hey ${userName}" or similar in the recognition line.`
+    : '';
+
   const systemPrompt = `You are Jeeves, a Phototheology discovery engine. Your task is to generate ONE high-quality "Discovery Spark" based on the user's study content.
 
 A Discovery Spark surfaces hidden connections, patterns, or applications that the student may not have noticed.
 
 ${modeInstructions[mode]}
 ${outputContext}
+${personalGreeting}
 
 RULES:
 - Generate exactly ONE spark
 - Choose the most appropriate type: "connection" (links passages/themes), "pattern" (structure/typology/sequence), or "application" (practice/discipleship)
 - Title should be evocative and memorable (3-6 words)
-- Recognition should acknowledge what the user ${triggerType === 'output' ? 'just completed' : 'is studying'} (1 line)
+- Recognition should ${userName ? `start with a warm greeting using "${userName}" and then ` : ''}acknowledge what the user ${triggerType === 'output' ? 'just completed' : 'is studying'} (1 line)
 - Insight should be substantive but focused (3-6 sentences)
 - Include 2-4 related Scripture targets for exploration
 - Be Christ-centered when natural
@@ -74,7 +82,7 @@ OUTPUT FORMAT (JSON only, no markdown):
 {
   "spark_type": "connection" | "pattern" | "application",
   "title": "Short Evocative Title",
-  "recognition": "What you're noticing in their study...",
+  "recognition": "${userName ? `Hey ${userName}, ` : ''}What you're noticing in their study...",
   "insight": "The substantive insight here...",
   "explore": {
     "label": "Explore this idea",
@@ -85,7 +93,7 @@ OUTPUT FORMAT (JSON only, no markdown):
   "novelty_score": 0.75
 }`;
 
-  const userPrompt = `User ${triggerType === 'output' ? 'just saved/completed' : 'is studying'}${verseReference ? ` (${verseReference})` : ''} on ${surface}:
+  const userPrompt = `User${userName ? ` (${userName})` : ''} ${triggerType === 'output' ? 'just saved/completed' : 'is studying'}${verseReference ? ` (${verseReference})` : ''} on ${surface}:
 
 ${content}
 
@@ -214,11 +222,46 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { content, verseReference, surface, contextType, contextId, mode, exploreMode, spark, recentHashes, triggerType, outputTitle } = body;
+    const { content, verseReference, surface, contextType, contextId, mode, exploreMode, spark, recentHashes, triggerType, outputTitle, contextData } = body;
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
+    }
+
+    // Initialize Supabase client to fetch user info
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Try to get user name from auth header or context
+    let userName: string | undefined;
+    
+    // For guesthouse guests, use the provided guest name
+    if (contextData?.guestName) {
+      userName = contextData.guestName;
+      console.log('Using guest name:', userName);
+    } else {
+      // For authenticated users, try to get from auth token
+      const authHeader = req.headers.get('authorization');
+      if (authHeader) {
+        try {
+          const token = authHeader.replace('Bearer ', '');
+          const { data: { user } } = await supabase.auth.getUser(token);
+          if (user?.id) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('display_name, username')
+              .eq('id', user.id)
+              .single();
+            
+            userName = profile?.display_name || profile?.username || undefined;
+            console.log('Using authenticated user name:', userName);
+          }
+        } catch (err) {
+          console.log('Could not fetch user profile:', err);
+        }
+      }
     }
 
     // Handle explore mode
@@ -261,7 +304,8 @@ serve(async (req) => {
       mode || 'standard',
       LOVABLE_API_KEY,
       triggerType,
-      outputTitle
+      outputTitle,
+      userName
     );
 
     if (!generatedSpark) {
