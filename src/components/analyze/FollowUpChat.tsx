@@ -39,6 +39,9 @@ interface FollowUpChatProps {
     palaceRooms: { code: string; name: string; relevance: string }[];
     encouragement: string;
   };
+  analysisId?: string;
+  initialConversation?: Message[];
+  onConversationChange?: (messages: Message[]) => void;
 }
 
 const suggestedQuestions = [
@@ -49,15 +52,52 @@ const suggestedQuestions = [
   "What's the Christ-centered meaning here?",
 ];
 
-export const FollowUpChat = ({ originalThought, analysisResult }: FollowUpChatProps) => {
+export const FollowUpChat = ({ 
+  originalThought, 
+  analysisResult,
+  analysisId,
+  initialConversation,
+  onConversationChange
+}: FollowUpChatProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(initialConversation || []);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSavingConversation, setIsSavingConversation] = useState(false);
   const [studyContext, setStudyContext] = useState<RecentStudy | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   
+  // Sync with initial conversation when it loads
+  useEffect(() => {
+    if (initialConversation && initialConversation.length > 0 && messages.length === 0) {
+      setMessages(initialConversation);
+    }
+  }, [initialConversation]);
+
+  // Notify parent when messages change and persist to database
+  useEffect(() => {
+    if (onConversationChange && messages.length > 0) {
+      onConversationChange(messages);
+    }
+    
+    // Auto-save conversation to thought_analyses if we have an analysisId
+    if (analysisId && messages.length > 0) {
+      const saveConversation = async () => {
+        try {
+          await supabase
+            .from('thought_analyses')
+            .update({ followup_conversation: messages } as any)
+            .eq('id', analysisId);
+        } catch (error) {
+          console.error('Error auto-saving conversation:', error);
+        }
+      };
+      // Debounce the save
+      const timer = setTimeout(saveConversation, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [messages, analysisId, onConversationChange]);
+
   const { recentStudies, fetchRecentStudies, formatStudyForContext, isLoading: studiesLoading } = useRecentStudies();
 
   useEffect(() => {

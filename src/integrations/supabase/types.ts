@@ -10675,6 +10675,7 @@ export type Database = {
           created_at: string
           deeper_insights: Json | null
           encouragement: string | null
+          followup_conversation: Json | null
           further_study: string[] | null
           growth_areas: string[] | null
           id: string
@@ -10694,6 +10695,7 @@ export type Database = {
           created_at?: string
           deeper_insights?: Json | null
           encouragement?: string | null
+          followup_conversation?: Json | null
           further_study?: string[] | null
           growth_areas?: string[] | null
           id?: string
@@ -10713,6 +10715,7 @@ export type Database = {
           created_at?: string
           deeper_insights?: Json | null
           encouragement?: string | null
+          followup_conversation?: Json | null
           further_study?: string[] | null
           growth_areas?: string[] | null
           id?: string

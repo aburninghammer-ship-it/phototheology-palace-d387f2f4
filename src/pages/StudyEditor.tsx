@@ -45,6 +45,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { RichTextEditor } from "@/components/studies/RichTextEditor";
 import { FormattedStudyView } from "@/components/studies/FormattedStudyView";
 
+interface JeevesMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 interface Study {
   id: string;
   title: string;
@@ -52,6 +57,7 @@ interface Study {
   tags: string[];
   is_favorite: boolean;
   user_id: string;
+  jeeves_conversation?: JeevesMessage[];
 }
 
 const StudyEditor = () => {
@@ -74,6 +80,7 @@ const StudyEditor = () => {
   const [isFormatting, setIsFormatting] = useState(false);
   const [studyOwnerId, setStudyOwnerId] = useState<string>("");
   const [isAddingToKnowledgeBank, setIsAddingToKnowledgeBank] = useState(false);
+  const [jeevesConversation, setJeevesConversation] = useState<JeevesMessage[]>([]);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Collaborative features
@@ -130,6 +137,12 @@ const StudyEditor = () => {
       setTags(data.tags || []);
       setIsFavorite(data.is_favorite);
       setStudyOwnerId(data.user_id);
+      
+      // Load Jeeves conversation if it exists (cast to any since types may not be updated yet)
+      const studyData = data as any;
+      if (studyData.jeeves_conversation && Array.isArray(studyData.jeeves_conversation)) {
+        setJeevesConversation(studyData.jeeves_conversation as JeevesMessage[]);
+      }
     } catch (error) {
       console.error("Error fetching study:", error);
       toast({
@@ -155,8 +168,9 @@ const StudyEditor = () => {
           content,
           tags,
           is_favorite: isFavorite,
+          jeeves_conversation: jeevesConversation,
           updated_by: user?.id,
-        })
+        } as any)
         .eq("id", id);
 
       if (error) throw error;
@@ -210,8 +224,9 @@ const StudyEditor = () => {
           content: formattedContent,
           tags,
           is_favorite: isFavorite,
+          jeeves_conversation: jeevesConversation,
           updated_by: user?.id,
-        })
+        } as any)
         .eq("id", id);
 
       if (error) {
@@ -719,6 +734,11 @@ const StudyEditor = () => {
             <JeevesStudyAssistant 
               studyContext={`Title: ${title}\n\nContent: ${content.substring(0, 500)}`}
               studyId={id}
+              initialConversation={jeevesConversation}
+              onConversationChange={(messages) => {
+                setJeevesConversation(messages);
+                setHasChanges(true);
+              }}
               onContentUpdate={(updatedContent, updatedTags) => {
                 setContent(updatedContent);
                 setTags(updatedTags);
