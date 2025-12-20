@@ -76,6 +76,20 @@ export const PracticeDrill = ({
 
   useEffect(() => {
     setStartTime(Date.now());
+    console.log('[PracticeDrill] Mounted for room:', roomId, 'floor:', floorNumber);
+    
+    // Log any unexpected navigation attempts
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!completed && currentQuestionIndex > 0) {
+        console.warn('[PracticeDrill] Leaving with drill in progress at question', currentQuestionIndex + 1);
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      console.log('[PracticeDrill] Unmounted - completed:', completed, 'at question:', currentQuestionIndex + 1);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, []);
 
   const handleAnswerSelect = (answerIndex: number) => {
