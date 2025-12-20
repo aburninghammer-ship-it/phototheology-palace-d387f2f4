@@ -140,13 +140,54 @@ Return ONLY valid JSON with this structure:
     let searchResults;
     try {
       let jsonStr = content;
-      const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || content.match(/```\s*([\s\S]*?)\s*```/);
+      
+      // Try to extract JSON from markdown code blocks (use greedy match for large responses)
+      const jsonMatch = content.match(/```json\s*([\s\S]+)\s*```/) || content.match(/```\s*([\s\S]+)\s*```/);
       if (jsonMatch) {
         jsonStr = jsonMatch[1].trim();
+        // Remove trailing ``` if present
+        if (jsonStr.endsWith('```')) {
+          jsonStr = jsonStr.slice(0, -3).trim();
+        }
       }
-      searchResults = JSON.parse(jsonStr);
+      
+      // Try to parse as-is first
+      try {
+        searchResults = JSON.parse(jsonStr);
+      } catch {
+        // If parsing fails, try to find and fix truncated JSON
+        // Look for the start of valid JSON
+        const jsonStart = jsonStr.indexOf('{');
+        if (jsonStart > -1) {
+          jsonStr = jsonStr.slice(jsonStart);
+        }
+        
+        // Count braces to check if JSON is complete
+        let braceCount = 0;
+        let lastValidIndex = 0;
+        for (let i = 0; i < jsonStr.length; i++) {
+          if (jsonStr[i] === '{') braceCount++;
+          if (jsonStr[i] === '}') {
+            braceCount--;
+            if (braceCount === 0) {
+              lastValidIndex = i;
+            }
+          }
+        }
+        
+        // If braces are unbalanced, try to close the JSON
+        if (braceCount > 0 && lastValidIndex > 0) {
+          // Find the last complete verse entry
+          const lastCompleteVerse = jsonStr.lastIndexOf('}', jsonStr.lastIndexOf('"relevance"'));
+          if (lastCompleteVerse > 0) {
+            jsonStr = jsonStr.slice(0, lastCompleteVerse + 1) + ']}]}';
+          }
+        }
+        
+        searchResults = JSON.parse(jsonStr);
+      }
     } catch (parseError) {
-      console.error("Failed to parse AI response:", content);
+      console.error("Failed to parse AI response:", content.slice(0, 500) + "...[truncated]");
       throw new Error("Failed to parse search results");
     }
 
