@@ -5,11 +5,24 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Bot, Mic, MicOff, Trash2, BookOpen, 
-  Lightbulb, HelpCircle, Clock, AlertCircle, Radio
+  Lightbulb, HelpCircle, Clock, AlertCircle, Radio,
+  Download, Languages, FileText, ChevronDown
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useScribe, CommitStrategy } from "@elevenlabs/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface Commentary {
   id: string;
@@ -19,6 +32,12 @@ interface Commentary {
   crossReference: string | null;
   engagementPrompt: string | null;
   floor: number;
+  timestamp: Date;
+}
+
+interface TranscriptEntry {
+  id: string;
+  text: string;
   timestamp: Date;
 }
 
@@ -60,6 +79,30 @@ const PT_ROOM_LABELS: Record<string, string> = {
   SRm: "Speed Room",
 };
 
+// Language options for transcription
+const LANGUAGE_OPTIONS = [
+  { code: "en", label: "English" },
+  { code: "es", label: "Spanish" },
+  { code: "fr", label: "French" },
+  { code: "de", label: "German" },
+  { code: "pt", label: "Portuguese" },
+  { code: "it", label: "Italian" },
+  { code: "nl", label: "Dutch" },
+  { code: "pl", label: "Polish" },
+  { code: "ru", label: "Russian" },
+  { code: "ja", label: "Japanese" },
+  { code: "ko", label: "Korean" },
+  { code: "zh", label: "Chinese" },
+  { code: "ar", label: "Arabic" },
+  { code: "hi", label: "Hindi" },
+  { code: "id", label: "Indonesian" },
+  { code: "tr", label: "Turkish" },
+  { code: "vi", label: "Vietnamese" },
+  { code: "th", label: "Thai" },
+  { code: "sw", label: "Swahili" },
+  { code: "tl", label: "Tagalog" },
+];
+
 // Minimum text length before triggering commentary
 const MIN_TRANSCRIPT_LENGTH = 50;
 // Time to wait after speech stops before generating commentary (ms)
@@ -67,12 +110,15 @@ const COMMENTARY_DELAY = 3000;
 
 export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCommentaryProps) {
   const [commentaries, setCommentaries] = useState<Commentary[]>([]);
+  const [transcriptEntries, setTranscriptEntries] = useState<TranscriptEntry[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [transcriptBuffer, setTranscriptBuffer] = useState("");
   const [liveTranscript, setLiveTranscript] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const commentaryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const processedTextRef = useRef<string>("");
@@ -86,6 +132,12 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
     onCommittedTranscript: (data) => {
       console.log("Committed transcript:", data.text);
       if (data.text.trim()) {
+        const newEntry: TranscriptEntry = {
+          id: crypto.randomUUID(),
+          text: data.text.trim(),
+          timestamp: new Date(),
+        };
+        setTranscriptEntries(prev => [...prev, newEntry]);
         setTranscriptBuffer(prev => {
           const newBuffer = prev + " " + data.text.trim();
           return newBuffer.trim();
@@ -195,7 +247,7 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
         throw new Error("No token received");
       }
 
-      // Start the scribe session
+      // Start the scribe session with language setting
       await scribe.connect({
         token: data.token,
         microphone: {
@@ -206,14 +258,15 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
       });
 
       setIsListening(true);
-      toast.success("Jeeves is now listening to the sermon");
+      const langLabel = LANGUAGE_OPTIONS.find(l => l.code === selectedLanguage)?.label || "English";
+      toast.success(`Jeeves is now listening in ${langLabel}`);
     } catch (error) {
       console.error("Failed to start listening:", error);
       toast.error("Failed to start listening. Please check microphone permissions.");
     } finally {
       setIsConnecting(false);
     }
-  }, [scribe]);
+  }, [scribe, selectedLanguage]);
 
   const stopListening = useCallback(() => {
     scribe.disconnect();
@@ -225,8 +278,72 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
   const clearCommentaries = () => {
     setCommentaries([]);
     setTranscriptBuffer("");
+    setTranscriptEntries([]);
     processedTextRef.current = "";
-    toast.success("Commentary cleared");
+    toast.success("Commentary and transcript cleared");
+  };
+
+  const exportTranscript = () => {
+    if (transcriptEntries.length === 0) {
+      toast.error("No transcript to export");
+      return;
+    }
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    const timeStr = now.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+
+    let content = `Sermon Transcript\n`;
+    content += `Date: ${dateStr} at ${timeStr}\n`;
+    content += `Language: ${LANGUAGE_OPTIONS.find(l => l.code === selectedLanguage)?.label || "English"}\n`;
+    content += `${"=".repeat(50)}\n\n`;
+
+    transcriptEntries.forEach((entry) => {
+      const time = entry.timestamp.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      content += `[${time}] ${entry.text}\n\n`;
+    });
+
+    if (commentaries.length > 0) {
+      content += `\n${"=".repeat(50)}\n`;
+      content += `Jeeves Commentary\n`;
+      content += `${"=".repeat(50)}\n\n`;
+
+      commentaries.forEach((c) => {
+        const time = c.timestamp.toLocaleTimeString([], { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+        content += `[${time}] Sermon Point: "${c.sermonPoint}"\n`;
+        content += `PT Rooms: ${c.ptRooms.join(", ")} (Floor ${c.floor})\n`;
+        content += `Insight: ${c.insight}\n`;
+        if (c.crossReference) content += `Cross Reference: ${c.crossReference}\n`;
+        if (c.engagementPrompt) content += `Engagement: ${c.engagementPrompt}\n`;
+        content += `\n`;
+      });
+    }
+
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `sermon-transcript-${now.toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast.success("Transcript exported successfully");
   };
 
   const getRoomColor = (room: string) => {
@@ -271,8 +388,17 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
             <Button
               variant="ghost"
               size="sm"
+              onClick={exportTranscript}
+              disabled={transcriptEntries.length === 0}
+              title="Export Transcript"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={clearCommentaries}
-              disabled={commentaries.length === 0}
+              disabled={commentaries.length === 0 && transcriptEntries.length === 0}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -281,9 +407,28 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Listening Controls */}
+        {/* Language Selection & Listening Controls */}
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            {/* Language Selector */}
+            <Select 
+              value={selectedLanguage} 
+              onValueChange={setSelectedLanguage}
+              disabled={isListening}
+            >
+              <SelectTrigger className="w-[140px]">
+                <Languages className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Language" />
+              </SelectTrigger>
+              <SelectContent>
+                {LANGUAGE_OPTIONS.map((lang) => (
+                  <SelectItem key={lang.code} value={lang.code}>
+                    {lang.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             {!isListening ? (
               <Button
                 onClick={startListening}
@@ -317,7 +462,7 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
             {cooldown > 0 && (
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                Next in {cooldown}s
+                {cooldown}s
               </span>
             )}
           </div>
@@ -333,6 +478,35 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
                 {liveTranscript || transcriptBuffer.slice(-200) || "Listening for sermon..."}
               </p>
             </div>
+          )}
+
+          {/* Collapsible Full Transcript */}
+          {transcriptEntries.length > 0 && (
+            <Collapsible open={isTranscriptOpen} onOpenChange={setIsTranscriptOpen}>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-between">
+                  <span className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Full Transcript ({transcriptEntries.length} segments)
+                  </span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isTranscriptOpen ? 'rotate-180' : ''}`} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <ScrollArea className="h-[150px] mt-2 bg-muted/20 rounded-lg p-3 border">
+                  <div className="space-y-2">
+                    {transcriptEntries.map((entry) => (
+                      <div key={entry.id} className="text-sm">
+                        <span className="text-xs text-muted-foreground mr-2">
+                          [{entry.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}]
+                        </span>
+                        <span>{entry.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CollapsibleContent>
+            </Collapsible>
           )}
 
           {isGenerating && (
