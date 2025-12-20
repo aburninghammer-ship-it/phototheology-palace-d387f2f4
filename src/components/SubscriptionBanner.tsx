@@ -39,6 +39,10 @@ export function SubscriptionBanner() {
     );
   }
 
+  // Lifetime users get special treatment - no upgrade prompts ever
+  // If status is 'active' and tier is 'premium' with hasAccess, assume they're good
+  // (lifetime access is handled in useSubscription, sets status='active', tier='premium')
+  
   const now = new Date();
   const trialEndsAt = subscription.trialEndsAt ? new Date(subscription.trialEndsAt) : null;
   const studentExpiresAt = subscription.studentExpiresAt ? new Date(subscription.studentExpiresAt) : null;

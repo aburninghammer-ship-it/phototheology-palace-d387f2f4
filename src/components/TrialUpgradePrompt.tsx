@@ -27,6 +27,21 @@ export function TrialUpgradePrompt({ variant = 'banner', onDismiss }: TrialUpgra
     }
 
     const checkTrial = async () => {
+      // First check if user has lifetime access or active subscription
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('has_lifetime_access, subscription_status, subscription_tier')
+        .eq('id', user.id)
+        .single();
+
+      // Users with lifetime access or active paid subscriptions don't see trial prompts
+      if (profile?.has_lifetime_access || 
+          (profile?.subscription_status === 'active' && profile?.subscription_tier)) {
+        setTrialInfo(null);
+        setLoading(false);
+        return;
+      }
+
       const { data } = await supabase
         .from('user_subscriptions')
         .select('subscription_status, trial_ends_at')
