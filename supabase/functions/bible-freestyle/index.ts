@@ -12,9 +12,9 @@ serve(async (req) => {
   }
 
   try {
-    const { mode, verse1, verse2, userAnswer, difficulty } = await req.json();
+    const { mode, verse1, verse2, userAnswer, difficulty, refresh } = await req.json();
     
-    console.log("Bible freestyle request:", { mode, verse1, verse2, difficulty });
+    console.log("Bible freestyle request:", { mode, verse1, verse2, difficulty, refresh });
     
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -41,11 +41,23 @@ Always be Christ-centered in your analysis. Look for:
 
     if (mode === "test_jeeves") {
       // User provides two verses, Jeeves shows the connection
+      // If refresh=true, emphasize finding a DIFFERENT angle/principle
+      const refreshInstruction = refresh ? `
+IMPORTANT: This is a REFRESH request. The user has already seen one connection analysis for these verses.
+You MUST provide a COMPLETELY DIFFERENT angle and set of principles. Focus on:
+- A different type of relationship (if you said "siblings" before, try "cousins" or "distant relatives")
+- Different connecting principles (if you used typology, try verbal links or sanctuary patterns)
+- Different cross-references and related verses
+- A fresh Christ-centered perspective you haven't explored yet
+
+Make this analysis feel entirely new and insightful!
+` : "";
+
       userPrompt = `Analyze the genetic connection between these two verses:
 
 VERSE 1: ${verse1}
 VERSE 2: ${verse2}
-
+${refreshInstruction}
 Provide a rich analysis that includes:
 1. The TYPE of relationship (siblings, cousins, distant relatives)
 2. The SPECIFIC connection (theme, type, prophecy, pattern, etc.)
@@ -53,7 +65,7 @@ Provide a rich analysis that includes:
 4. At least 2 other "family members" (related verses) that share this connection
 
 Format your response with clear sections and make it engaging and educational.`;
-    } 
+    }
     else if (mode === "generate_challenge") {
       // Generate two verses for the user to connect
       const difficultyLevel = difficulty || 1;
