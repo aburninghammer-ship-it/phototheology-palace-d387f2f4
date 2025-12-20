@@ -192,6 +192,7 @@ const AnalyzeThoughts = () => {
   const [isAddingToKnowledgeBank, setIsAddingToKnowledgeBank] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastAutoSaved, setLastAutoSaved] = useState<Date | null>(null);
+  const [scholarMode, setScholarMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { isAdmin } = useIsAdmin();
@@ -396,10 +397,12 @@ const AnalyzeThoughts = () => {
     setResult(null);
     setSelectedHistoryId(undefined);
     
+    const analysisMode = scholarMode ? 'analyze-thoughts-scholar' : 'analyze-thoughts';
+    
     try {
-      console.log('[AnalyzeThoughts] Invoking jeeves with mode: analyze-thoughts');
+      console.log(`[AnalyzeThoughts] Invoking jeeves with mode: ${analysisMode}`);
       const { data, error } = await supabase.functions.invoke('jeeves', {
-        body: { mode: 'analyze-thoughts', message: input }
+        body: { mode: analysisMode, message: input }
       });
 
       console.log('[AnalyzeThoughts] Response:', { data, error });
@@ -805,9 +808,54 @@ const AnalyzeThoughts = () => {
                 </CollapsibleContent>
               </Collapsible>
 
+              {/* Scholar Mode Toggle */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-amber-500/20">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-full transition-all ${scholarMode ? 'bg-amber-500/30' : 'bg-muted/50'}`}>
+                    <GraduationCap className={`h-5 w-5 transition-colors ${scholarMode ? 'text-amber-400' : 'text-muted-foreground'}`} />
+                  </div>
+                  <div>
+                    <p className={`font-medium transition-colors ${scholarMode ? 'text-amber-200' : 'text-foreground'}`}>
+                      Scholar Mode
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Deep exegetical analysis with verse-by-verse breakdown, scholarly assessment, & typological precision
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setScholarMode(!scholarMode)}
+                  className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
+                    scholarMode 
+                      ? 'bg-gradient-to-r from-amber-500 to-purple-500 shadow-lg shadow-amber-500/30' 
+                      : 'bg-muted'
+                  }`}
+                >
+                  <motion.div
+                    className="absolute top-1 w-5 h-5 rounded-full bg-white shadow-md"
+                    animate={{ left: scholarMode ? '32px' : '4px' }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                </button>
+              </div>
+
               <Button onClick={handleAnalyze} disabled={isAnalyzing || !input.trim()}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 py-6 text-lg shadow-lg shadow-purple-500/25">
-                {isAnalyzing ? <><Loader2 className="h-5 w-5 mr-2 animate-spin" />Analyzing...</> : <><Send className="h-5 w-5 mr-2" />Analyze My Thoughts</>}
+                className={`w-full py-6 text-lg shadow-lg transition-all ${
+                  scholarMode 
+                    ? 'bg-gradient-to-r from-amber-600 via-purple-600 to-blue-600 hover:from-amber-500 hover:via-purple-500 hover:to-blue-500 shadow-amber-500/25' 
+                    : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 shadow-purple-500/25'
+                }`}>
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    {scholarMode ? 'Performing Deep Analysis...' : 'Analyzing...'}
+                  </>
+                ) : (
+                  <>
+                    {scholarMode ? <GraduationCap className="h-5 w-5 mr-2" /> : <Send className="h-5 w-5 mr-2" />}
+                    {scholarMode ? 'Scholar Analysis' : 'Analyze My Thoughts'}
+                  </>
+                )}
               </Button>
 
               {/* Chain Witness - Supporting Scripture Engine */}
