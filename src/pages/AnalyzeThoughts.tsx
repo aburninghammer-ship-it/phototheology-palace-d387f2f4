@@ -10,7 +10,7 @@ import {
   Lightbulb, Send, BookOpen, Target, TrendingUp, Sparkles, Building2, Link2, Loader2,
   ChevronDown, AlertTriangle, CheckCircle2, BookMarked, Layers, Shield, GraduationCap,
   Church, Cross, Moon, Scale, Compass, Save, Download, Copy, Gem, FolderOpen, MessageSquare,
-  Zap, ArrowRight, FileText, Brain
+  Zap, ArrowRight, FileText, Brain, Clock, Star, RefreshCw, CalendarDays, Box, Focus, MessageCircle
 } from "lucide-react";
 import { ExportToStudyButton } from "@/components/ExportToStudyButton";
 import { QuickShareButton } from "@/components/social/QuickShareButton";
@@ -95,10 +95,29 @@ interface AnalysisResult {
 }
 
 const scriptureSuggestions = [
-  { label: "Sanctuary Typology", icon: Church, prompt: "Consider how this connects to the sanctuary services and furniture." },
-  { label: "Gospel/Cross", icon: Cross, prompt: "Explore how this points to Christ's sacrifice and the gospel." },
-  { label: "Prophetic Link", icon: Moon, prompt: "Look for connections to Daniel and Revelation prophecies." },
-  { label: "Great Controversy", icon: Scale, prompt: "Consider the cosmic conflict dimension of this truth." },
+  // Core Theme Walls (4th Floor - TRm)
+  { label: "Sanctuary Typology", icon: Church, prompt: "Consider how this connects to the sanctuary services and furniture (BL - Blue Room)." },
+  { label: "Gospel/Cross", icon: Cross, prompt: "Explore how this points to Christ's sacrifice and the gospel (Gospel Floor)." },
+  { label: "Prophetic Link", icon: Moon, prompt: "Look for connections to Daniel and Revelation prophecies (PR - Prophecy Room)." },
+  { label: "Great Controversy", icon: Scale, prompt: "Consider the cosmic conflict dimension of this truth (GC Wall)." },
+  // Three Heavens (6th Floor)
+  { label: "First Heaven (1H)", icon: Clock, prompt: "Consider DoL¹/NE¹ - the Babylonian judgment and post-exilic restoration under Cyrus." },
+  { label: "Second Heaven (2H)", icon: Sparkles, prompt: "Consider DoL²/NE² - the 70 AD destruction and New-Covenant order, Christ's heavenly ministry." },
+  { label: "Third Heaven (3H)", icon: Star, prompt: "Consider DoL³/NE³ - the final cosmic judgment and literal new heavens and earth (Rev 21-22)." },
+  // Eight Cycles (6th Floor)
+  { label: "Cycles (@Ad-@Re)", icon: RefreshCw, prompt: "Which of the eight cycles does this fit? @Ad (Adamic), @No (Noahic), @Ab (Abrahamic), @Mo (Mosaic), @Cy (Cyrusic), @CyC (Cyrus-Christ), @Sp (Spirit), @Re (Remnant)." },
+  // Patterns & Parallels (4th Floor)
+  { label: "Types & Antitypes", icon: ArrowRight, prompt: "What types/shadows point forward to Christ here? (ST - Symbols/Types Room)" },
+  { label: "Parallels", icon: Layers, prompt: "What mirrored actions across time connect here? (P‖ - Parallels Room)" },
+  { label: "Patterns", icon: Zap, prompt: "What recurring patterns appear? (40 days, 3 days, deliverer stories) (PRm - Patterns Room)" },
+  // Feasts & Time Zones (5th Floor)
+  { label: "Feasts Connection", icon: CalendarDays, prompt: "Which feast(s) of Israel does this correlate with? Passover, Unleavened Bread, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles." },
+  // Dimensions (4th Floor - DR)
+  { label: "5 Dimensions", icon: Box, prompt: "Apply the five dimensions: Literal, Christ, Me, Church, Heaven (DR - Dimensions Room)." },
+  // Christ-Centered (4th Floor - CR)
+  { label: "Christ-Centered", icon: Focus, prompt: "How does this text reveal Christ? Pass it through the Concentration Room (CR)." },
+  // Three Angels (5th Floor - 3A)
+  { label: "Three Angels", icon: MessageCircle, prompt: "How does this connect to the Three Angels' Messages of Revelation 14:6-12? (3A Room)" },
 ];
 
 const checklistItems = [
