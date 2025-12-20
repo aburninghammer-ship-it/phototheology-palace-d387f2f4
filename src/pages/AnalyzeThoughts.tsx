@@ -119,11 +119,31 @@ const categoryLabels: Record<string, { label: string; icon: React.ReactNode }> =
 };
 
 // Helper to normalize strength/growth items
-const normalizeItem = (item: string | { point: string; expansion?: string }): { point: string; expansion?: string } => {
+const normalizeItem = (item: unknown): { point: string; expansion?: string } => {
+  // If it's already a proper object with point property
+  if (item && typeof item === 'object' && 'point' in item) {
+    const obj = item as { point: string; expansion?: string };
+    return { point: String(obj.point || ''), expansion: obj.expansion ? String(obj.expansion) : undefined };
+  }
+  
+  // If it's a string that looks like JSON, try to parse it
   if (typeof item === 'string') {
+    const trimmed = item.trim();
+    if (trimmed.startsWith('{') && trimmed.includes('"point"')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (parsed && typeof parsed === 'object' && parsed.point) {
+          return { point: String(parsed.point), expansion: parsed.expansion ? String(parsed.expansion) : undefined };
+        }
+      } catch {
+        // Not valid JSON, treat as plain string
+      }
+    }
     return { point: item };
   }
-  return item;
+  
+  // Fallback
+  return { point: String(item || '') };
 };
 
 // Helper to normalize further study items
