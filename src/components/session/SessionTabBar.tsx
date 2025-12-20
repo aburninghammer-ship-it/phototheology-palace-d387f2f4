@@ -52,19 +52,23 @@ export function SessionTabBar() {
           {/* Tabs */}
           <ScrollArea className="flex-1">
             <div className="flex items-center gap-1">
-              {tabs.map((tab) => {
+                {tabs.map((tab) => {
                 const isActive = tab.id === activeTab?.id;
                 return (
                   <div
                     key={tab.id}
                     className={cn(
-                      "group flex items-center gap-1.5 px-3 py-1.5 rounded-md cursor-pointer transition-all",
+                      "group flex items-center gap-1.5 px-3 py-1.5 rounded-lg cursor-pointer transition-all relative",
                       isActive 
-                        ? "bg-primary/10 text-primary border border-primary/30" 
+                        ? "bg-primary/15 text-primary border border-primary/40 shadow-[0_0_20px_4px_hsl(var(--primary)/0.3),inset_0_1px_0_hsl(var(--primary-foreground)/0.1)] backdrop-blur-sm" 
                         : "hover:bg-muted text-muted-foreground hover:text-foreground"
                     )}
                     onClick={() => handleTabClick(tab)}
                   >
+                    {/* Glassy halo effect for active tab */}
+                    {isActive && (
+                      <div className="absolute inset-0 rounded-lg bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
+                    )}
                     {TAB_ICONS[tab.type]}
                     <span className="text-xs font-medium max-w-24 truncate">
                       {tab.title}

@@ -17,6 +17,7 @@ import {
   PlayCircle,
   Star
 } from "lucide-react";
+import { GlassBubbles } from "@/components/ui/glass-bubbles";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { myStudiesSteps } from "@/config/howItWorksSteps";
 import { StudyPreviewCard } from "@/components/studies/StudyPreviewCard";
@@ -329,28 +330,31 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
       <Navigation />
       
       <div className="container mx-auto px-4 py-8 pt-24">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">My Studies</h1>
-            <p className="text-muted-foreground">
-              Your personal Bible study notes and insights
-            </p>
+        {/* Header - Glass Card */}
+        <Card variant="glass" className="mb-8 p-6">
+          <GlassBubbles />
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">My Studies</h1>
+              <p className="text-muted-foreground">
+                Your personal Bible study notes and insights
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <HowItWorksDialog title="How to Use My Studies" steps={myStudiesSteps} />
+              <StudyTemplates onSelect={handleTemplateSelect} />
+              <Button 
+                onClick={() => createNewStudy()} 
+                size="lg" 
+                className="gap-2"
+                disabled={authLoading || !user}
+              >
+                <Plus className="w-5 h-5" />
+                New Study
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <HowItWorksDialog title="How to Use My Studies" steps={myStudiesSteps} />
-            <StudyTemplates onSelect={handleTemplateSelect} />
-            <Button 
-              onClick={() => createNewStudy()} 
-              size="lg" 
-              className="gap-2"
-              disabled={authLoading || !user}
-            >
-              <Plus className="w-5 h-5" />
-              New Study
-            </Button>
-          </div>
-        </div>
+        </Card>
 
         {/* Search */}
         <div className="relative mb-8">
