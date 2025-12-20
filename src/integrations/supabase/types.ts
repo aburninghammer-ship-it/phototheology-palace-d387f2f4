@@ -2861,6 +2861,145 @@ export type Database = {
           },
         ]
       }
+      disciple_training_enrollments: {
+        Row: {
+          cohort_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          current_week: number | null
+          id: string
+          program_id: string | null
+          started_at: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          cohort_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_week?: number | null
+          id?: string
+          program_id?: string | null
+          started_at?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          cohort_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_week?: number | null
+          id?: string
+          program_id?: string | null
+          started_at?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciple_training_enrollments_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "discipleship_cohorts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciple_training_enrollments_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "discipleship_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disciple_training_weeks: {
+        Row: {
+          church_id: string | null
+          created_at: string | null
+          discussion_questions: Json | null
+          facilitator_notes: string | null
+          goal: string | null
+          id: string
+          is_template: boolean | null
+          key_truth: string | null
+          life_application: string | null
+          practices: string[] | null
+          prayer_focus: string | null
+          program_id: string | null
+          pt_rooms: string[] | null
+          sanctuary_focus: string | null
+          scripture_focus: string[] | null
+          theme: string | null
+          title: string
+          updated_at: string | null
+          week_number: number
+        }
+        Insert: {
+          church_id?: string | null
+          created_at?: string | null
+          discussion_questions?: Json | null
+          facilitator_notes?: string | null
+          goal?: string | null
+          id?: string
+          is_template?: boolean | null
+          key_truth?: string | null
+          life_application?: string | null
+          practices?: string[] | null
+          prayer_focus?: string | null
+          program_id?: string | null
+          pt_rooms?: string[] | null
+          sanctuary_focus?: string | null
+          scripture_focus?: string[] | null
+          theme?: string | null
+          title: string
+          updated_at?: string | null
+          week_number: number
+        }
+        Update: {
+          church_id?: string | null
+          created_at?: string | null
+          discussion_questions?: Json | null
+          facilitator_notes?: string | null
+          goal?: string | null
+          id?: string
+          is_template?: boolean | null
+          key_truth?: string | null
+          life_application?: string | null
+          practices?: string[] | null
+          prayer_focus?: string | null
+          program_id?: string | null
+          pt_rooms?: string[] | null
+          sanctuary_focus?: string | null
+          scripture_focus?: string[] | null
+          theme?: string | null
+          title?: string
+          updated_at?: string | null
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciple_training_weeks_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciple_training_weeks_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciple_training_weeks_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "discipleship_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       discipleship_cohorts: {
         Row: {
           church_id: string | null
@@ -9804,8 +9943,15 @@ export type Database = {
           created_by: string | null
           cycle_type: string
           description: string | null
+          goal: string | null
+          icon: string | null
           id: string
+          is_active: boolean | null
           is_template: boolean | null
+          pt_rooms: string[] | null
+          sanctuary_focus: string | null
+          sequence_number: number | null
+          theme: string | null
           title: string
           updated_at: string
           week_content: Json | null
@@ -9816,8 +9962,15 @@ export type Database = {
           created_by?: string | null
           cycle_type: string
           description?: string | null
+          goal?: string | null
+          icon?: string | null
           id?: string
+          is_active?: boolean | null
           is_template?: boolean | null
+          pt_rooms?: string[] | null
+          sanctuary_focus?: string | null
+          sequence_number?: number | null
+          theme?: string | null
           title: string
           updated_at?: string
           week_content?: Json | null
@@ -9828,8 +9981,15 @@ export type Database = {
           created_by?: string | null
           cycle_type?: string
           description?: string | null
+          goal?: string | null
+          icon?: string | null
           id?: string
+          is_active?: boolean | null
           is_template?: boolean | null
+          pt_rooms?: string[] | null
+          sanctuary_focus?: string | null
+          sequence_number?: number | null
+          theme?: string | null
           title?: string
           updated_at?: string
           week_content?: Json | null
