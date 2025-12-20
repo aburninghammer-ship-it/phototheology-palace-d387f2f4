@@ -63,6 +63,7 @@ const GenesisHighRise = lazy(() => import("./pages/GenesisHighRise"));
 const Bible = lazy(() => import("./pages/Bible"));
 const BibleChapter = lazy(() => import("./pages/BibleChapter"));
 const BibleSearch = lazy(() => import("./pages/BibleSearch"));
+const ThematicSearch = lazy(() => import("./pages/ThematicSearch"));
 const DailyChallenges = lazy(() => import("./pages/DailyChallenges"));
 const DailyVerse = lazy(() => import("./pages/DailyVerse"));
 const GrowthJournal = lazy(() => import("./pages/GrowthJournal"));
@@ -373,6 +374,7 @@ function App() {
             
             <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
             <Route path="/bible/search" element={<ProtectedRoute><BibleSearch /></ProtectedRoute>} />
+            <Route path="/bible/thematic-search" element={<ProtectedRoute><ThematicSearch /></ProtectedRoute>} />
             <Route path="/bible/:book/:chapter" element={<ProtectedRoute><BibleChapter /></ProtectedRoute>} />
             <Route path="/daily-verse" element={<ProtectedRoute><DailyVerse /></ProtectedRoute>} />
             <Route path="/reading-plans" element={<ProtectedRoute><ReadingPlans /></ProtectedRoute>} />
