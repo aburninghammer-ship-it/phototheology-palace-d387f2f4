@@ -9352,6 +9352,112 @@ export type Database = {
           },
         ]
       }
+      sermon_amplified_studies: {
+        Row: {
+          action_challenge: string | null
+          application_section: Json | null
+          biblical_foundation: Json | null
+          christ_synthesis: string | null
+          church_id: string
+          created_at: string
+          created_by: string
+          discussion_questions: string[] | null
+          id: string
+          key_passages: string[] | null
+          opening_section: Json | null
+          prayer_focus: string | null
+          preacher: string | null
+          sermon_date: string | null
+          sermon_id: string | null
+          sermon_outline: string
+          sermon_title: string
+          share_token: string | null
+          status: string
+          study_content: Json
+          study_title: string
+          theological_analysis: Json | null
+          updated_at: string
+          week_end: string | null
+          week_start: string | null
+        }
+        Insert: {
+          action_challenge?: string | null
+          application_section?: Json | null
+          biblical_foundation?: Json | null
+          christ_synthesis?: string | null
+          church_id: string
+          created_at?: string
+          created_by: string
+          discussion_questions?: string[] | null
+          id?: string
+          key_passages?: string[] | null
+          opening_section?: Json | null
+          prayer_focus?: string | null
+          preacher?: string | null
+          sermon_date?: string | null
+          sermon_id?: string | null
+          sermon_outline: string
+          sermon_title: string
+          share_token?: string | null
+          status?: string
+          study_content?: Json
+          study_title: string
+          theological_analysis?: Json | null
+          updated_at?: string
+          week_end?: string | null
+          week_start?: string | null
+        }
+        Update: {
+          action_challenge?: string | null
+          application_section?: Json | null
+          biblical_foundation?: Json | null
+          christ_synthesis?: string | null
+          church_id?: string
+          created_at?: string
+          created_by?: string
+          discussion_questions?: string[] | null
+          id?: string
+          key_passages?: string[] | null
+          opening_section?: Json | null
+          prayer_focus?: string | null
+          preacher?: string | null
+          sermon_date?: string | null
+          sermon_id?: string | null
+          sermon_outline?: string
+          sermon_title?: string
+          share_token?: string | null
+          status?: string
+          study_content?: Json
+          study_title?: string
+          theological_analysis?: Json | null
+          updated_at?: string
+          week_end?: string | null
+          week_start?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sermon_amplified_studies_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sermon_amplified_studies_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sermon_amplified_studies_sermon_id_fkey"
+            columns: ["sermon_id"]
+            isOneToOne: false
+            referencedRelation: "church_sermons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sermon_study_cards: {
         Row: {
           card_type: string
