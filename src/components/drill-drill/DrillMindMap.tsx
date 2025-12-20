@@ -44,6 +44,7 @@ export const DrillMindMap = ({ session, onSave, onRefresh }: DrillMindMapProps) 
   const [drillName, setDrillName] = useState("");
   const [expandedFloors, setExpandedFloors] = useState<number[]>([1, 2, 3, 4, 5, 6, 7]);
   const [expoundingRoomId, setExpoundingRoomId] = useState<string | null>(null);
+  const [expoundedResponses, setExpoundedResponses] = useState<Record<string, string>>({});
 
   // Group responses by floor
   const responsesByFloor = session.responses.reduce((acc, resp) => {
@@ -91,11 +92,18 @@ export const DrillMindMap = ({ session, onSave, onRefresh }: DrillMindMapProps) 
       });
 
       if (error) throw error;
-      toast.success("Response expounded!");
       
-      // Note: In a real implementation, you'd update the session state
-      // For now, we'll show the expounded text in the toast
-      // You may want to add state management to store expanded responses
+      // Store the expounded response
+      if (data?.expoundedText) {
+        setExpoundedResponses(prev => ({
+          ...prev,
+          [roomId]: data.expoundedText
+        }));
+        toast.success("Response expounded!");
+      } else {
+        console.error("No expounded text in response:", data);
+        toast.error("No expounded content received");
+      }
     } catch (error) {
       console.error("Expound error:", error);
       toast.error("Failed to expound");
@@ -247,6 +255,19 @@ export const DrillMindMap = ({ session, onSave, onRefresh }: DrillMindMapProps) 
                                   <ReactMarkdown>{resp.jeevesResponse}</ReactMarkdown>
                                 </div>
                               </div>
+                              
+                              {/* Show expounded content if available */}
+                              {expoundedResponses[resp.roomId] && (
+                                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 text-sm">
+                                  <div className="flex items-center gap-2 mb-2 text-primary">
+                                    <Sparkles className="h-4 w-4" />
+                                    <span className="font-medium">Expounded Insight</span>
+                                  </div>
+                                  <div className="prose prose-sm dark:prose-invert max-w-none">
+                                    <ReactMarkdown>{expoundedResponses[resp.roomId]}</ReactMarkdown>
+                                  </div>
+                                </div>
+                              )}
                               
                               {/* Interactive Dialogue */}
                               <FragmentDialogue
