@@ -2092,13 +2092,29 @@ Make it scholarly yet accessible, warm and illuminating.`;
     } else if (mode === "hebrew-greek-analysis") {
       const { strongsNumber, originalWord, transliteration, partOfSpeech } = requestBody;
       
-      systemPrompt = `You are Jeeves, an expert in biblical Hebrew and Greek. You help friends understand the depth and richness of Scripture through word analysis.
+      // Determine if Hebrew or Greek based on book name
+      const normalizedBook = book?.toLowerCase()?.trim() || '';
+      const oldTestamentBooks = [
+        'genesis', 'exodus', 'leviticus', 'numbers', 'deuteronomy', 
+        'joshua', 'judges', 'ruth', '1 samuel', '2 samuel', '1 kings', '2 kings',
+        '1 chronicles', '2 chronicles', 'ezra', 'nehemiah', 'esther', 'job', 
+        'psalm', 'psalms', 'proverbs', 'ecclesiastes', 'song of solomon', 'song of songs', 
+        'isaiah', 'jeremiah', 'lamentations', 'ezekiel', 'daniel', 
+        'hosea', 'joel', 'amos', 'obadiah', 'jonah', 'micah', 'nahum', 
+        'habakkuk', 'zephaniah', 'haggai', 'zechariah', 'malachi'
+      ];
+      const isOldTestament = oldTestamentBooks.includes(normalizedBook);
+      const language = isOldTestament ? 'Hebrew' : 'Greek';
+      
+      systemPrompt = `You are Jeeves, an expert in biblical ${language}. You help friends understand the depth and richness of Scripture through word analysis.
 
-TASK: Provide comprehensive linguistic analysis of this Hebrew/Greek word in its biblical context.
+TASK: Provide comprehensive ${language} linguistic analysis of this word in its biblical context.
+
+IMPORTANT: This is ${book}, which is in the ${isOldTestament ? 'Old' : 'New'} Testament, so analyze the ${language} text.
 
 WORD DETAILS:
 - Strong's: ${strongsNumber}
-- Original: ${originalWord}
+- Original ${language}: ${originalWord}
 - Transliteration: ${transliteration}
 - Part of Speech: ${partOfSpeech}
 
@@ -2110,7 +2126,7 @@ CRITICAL FORMATTING REQUIREMENTS:
 - Use clear paragraph breaks (double newlines)
 - Add emojis: 📖 Etymology | 🎯 Core Meaning | 💡 In Context | 🔍 Cross-References | ✨ Significance
 - Use bullet points with • or - for lists
-- Use **bold** for key Hebrew/Greek terms
+- Use **bold** for key ${language} terms
 - Include pronunciation help where helpful
 - Keep each section concise but rich (2-4 sentences)
 - Tone: Conversational and warm ("Ah, my friend" not "My dear student")
@@ -2118,23 +2134,23 @@ CRITICAL FORMATTING REQUIREMENTS:
 ANALYSIS STRUCTURE (provide all 5 sections):
 
 📖 **Etymology & Root**
-Explain word origin, root meaning, and linguistic family. What's the basic building block?
+Explain the ${language} word origin, root meaning, and linguistic family. What's the basic building block?
 
 🎯 **Core Meaning**
-Define the primary meaning and semantic range. What are the main ways this word is used?
+Define the primary meaning and semantic range. What are the main ways this ${language} word is used?
 
 💡 **In This Context**
-How does this word function specifically in THIS verse? Why did the author choose THIS word?
+How does this ${language} word function specifically in THIS verse? Why did the author choose THIS word?
 
 🔍 **Cross-References**
-Mention 2-3 other key passages where this word appears. What patterns emerge?
+Mention 2-3 other key passages where this ${language} word appears. What patterns emerge?
 
 ✨ **Theological Significance**
-What does this word reveal about God, salvation, or covenant? How does understanding the original language enrich the English translation?
+What does this ${language} word reveal about God, salvation, or covenant? How does understanding the original ${language} language enrich the English translation?
 
-Keep it warm and conversational. Help your friend see the treasure in the original languages.`;
+Keep it warm and conversational. Help your friend see the treasure in the original ${language} language.`;
       
-      userPrompt = `Ah, my friend, let's explore Strong's ${strongsNumber} (${originalWord}) in ${book} ${chapter}:${verse}. Show me what treasures this word holds!`;
+      userPrompt = `Ah, my friend, let's explore the ${language} word ${strongsNumber} (${originalWord}) in ${book} ${chapter}:${verse}. Show me what treasures this ${language} word holds!`;
     
     } else if (mode === "generate-drills") {
       // Properties already destructured from requestBody
