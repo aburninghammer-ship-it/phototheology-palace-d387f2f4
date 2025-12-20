@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Bookmark, Search, Flame, Sparkles, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { Spark } from '@/hooks/useSparks';
 
@@ -16,23 +15,26 @@ interface SparkCardProps {
 const sparkTypeConfig = {
   connection: {
     icon: Flame,
-    gradient: 'from-orange-500/20 to-red-500/10',
-    borderColor: 'border-orange-500/30',
-    iconColor: 'text-orange-500',
+    gradient: 'from-orange-500/30 via-red-500/20 to-amber-500/10',
+    borderColor: 'border-orange-400/40',
+    iconColor: 'text-orange-400',
+    glowColor: 'shadow-orange-500/30',
     label: 'Connection Spark'
   },
   pattern: {
     icon: Sparkles,
-    gradient: 'from-purple-500/20 to-indigo-500/10',
-    borderColor: 'border-purple-500/30',
-    iconColor: 'text-purple-500',
+    gradient: 'from-purple-500/30 via-indigo-500/20 to-violet-500/10',
+    borderColor: 'border-purple-400/40',
+    iconColor: 'text-purple-400',
+    glowColor: 'shadow-purple-500/30',
     label: 'Pattern Spark'
   },
   application: {
     icon: Lightbulb,
-    gradient: 'from-yellow-500/20 to-amber-500/10',
-    borderColor: 'border-yellow-500/30',
-    iconColor: 'text-yellow-500',
+    gradient: 'from-yellow-500/30 via-amber-500/20 to-orange-500/10',
+    borderColor: 'border-yellow-400/40',
+    iconColor: 'text-yellow-400',
+    glowColor: 'shadow-yellow-500/30',
     label: 'Application Spark'
   }
 };
@@ -53,76 +55,143 @@ export function SparkCard({
         initial={{ opacity: 0, y: 10, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -10, scale: 0.95 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="relative"
       >
-        <Card className={cn(
-          'w-[calc(100vw-2rem)] max-w-80 shadow-lg border-2',
-          config.borderColor,
+        {/* Outer glow */}
+        <div className={cn(
+          "absolute -inset-1 rounded-2xl blur-xl opacity-50",
           `bg-gradient-to-br ${config.gradient}`
+        )} />
+        
+        {/* Glass card */}
+        <div className={cn(
+          'relative w-[calc(100vw-2rem)] max-w-80 rounded-xl overflow-hidden',
+          'backdrop-blur-xl bg-background/70',
+          'border-2 shadow-xl',
+          config.borderColor,
+          config.glowColor
         )}>
-          <CardHeader className="pb-2 relative">
-            <button
-              onClick={onClose}
-              className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-foreground/10 transition-colors touch-manipulation"
-            >
-              <X size={18} className="text-muted-foreground" />
-            </button>
-            
-            <div className="flex items-center gap-2 pr-8">
-              <div className={cn(
-                'p-2 rounded-full shrink-0',
-                `bg-${spark.spark_type === 'connection' ? 'orange' : spark.spark_type === 'pattern' ? 'purple' : 'yellow'}-500/20`
-              )}>
-                <Icon size={18} className={config.iconColor} />
-              </div>
-              <div className="min-w-0">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {config.label}
-                </span>
-                <h4 className="font-semibold text-sm leading-tight line-clamp-2">
-                  {spark.title}
-                </h4>
+          {/* Shimmer effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+            animate={{
+              x: ['-100%', '200%'],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              repeatDelay: 2,
+              ease: "easeInOut",
+            }}
+          />
+          
+          {/* Floating sparkle particles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(4)].map((_, i) => (
+              <motion.span
+                key={i}
+                className="absolute w-1 h-1 rounded-full bg-white/40"
+                style={{
+                  left: `${20 + i * 20}%`,
+                  top: `${30 + (i % 2) * 40}%`,
+                }}
+                animate={{
+                  y: [0, -10, 0],
+                  opacity: [0.2, 0.6, 0.2],
+                  scale: [0.8, 1.2, 0.8],
+                }}
+                transition={{
+                  duration: 2 + i * 0.3,
+                  repeat: Infinity,
+                  delay: i * 0.4,
+                }}
+              />
+            ))}
+          </div>
+          
+          {/* Content */}
+          <div className={cn(
+            "relative z-10",
+            `bg-gradient-to-br ${config.gradient}`
+          )}>
+            {/* Header */}
+            <div className="p-4 pb-2 relative">
+              <button
+                onClick={onClose}
+                className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-foreground/10 transition-colors touch-manipulation"
+              >
+                <X size={18} className="text-muted-foreground" />
+              </button>
+              
+              <div className="flex items-center gap-2 pr-8">
+                <motion.div 
+                  className={cn(
+                    'p-2 rounded-full shrink-0 backdrop-blur-sm border border-white/20',
+                    `bg-${spark.spark_type === 'connection' ? 'orange' : spark.spark_type === 'pattern' ? 'purple' : 'yellow'}-500/25`
+                  )}
+                  animate={{
+                    boxShadow: [
+                      `0 0 10px 2px ${spark.spark_type === 'connection' ? 'rgba(249,115,22,0.3)' : spark.spark_type === 'pattern' ? 'rgba(168,85,247,0.3)' : 'rgba(234,179,8,0.3)'}`,
+                      `0 0 20px 4px ${spark.spark_type === 'connection' ? 'rgba(249,115,22,0.2)' : spark.spark_type === 'pattern' ? 'rgba(168,85,247,0.2)' : 'rgba(234,179,8,0.2)'}`,
+                      `0 0 10px 2px ${spark.spark_type === 'connection' ? 'rgba(249,115,22,0.3)' : spark.spark_type === 'pattern' ? 'rgba(168,85,247,0.3)' : 'rgba(234,179,8,0.3)'}`,
+                    ]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <Icon size={18} className={config.iconColor} />
+                </motion.div>
+                <div className="min-w-0">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    {config.label}
+                  </span>
+                  <h4 className="font-semibold text-sm leading-tight line-clamp-2">
+                    {spark.title}
+                  </h4>
+                </div>
               </div>
             </div>
-          </CardHeader>
-          
-          <CardContent className="pb-3 space-y-2">
-            <p className="text-xs text-muted-foreground italic line-clamp-2">
-              {spark.recognition}
-            </p>
-            <p className="text-sm leading-relaxed line-clamp-4">
-              {spark.insight}
-            </p>
-          </CardContent>
-          
-          <CardFooter className="pt-0 gap-2 flex-wrap">
-            <Button
-              size="sm"
-              variant="default"
-              className="flex-1 min-w-[100px] touch-manipulation"
-              onClick={onExplore}
-            >
-              <Search size={14} className="mr-1" />
-              Explore
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="touch-manipulation"
-              onClick={onSave}
-            >
-              <Bookmark size={14} />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={onDismiss}
-              className="text-muted-foreground touch-manipulation"
-            >
-              Dismiss
-            </Button>
-          </CardFooter>
-        </Card>
+            
+            {/* Body */}
+            <div className="px-4 pb-3 space-y-2">
+              <p className="text-xs text-muted-foreground italic line-clamp-2">
+                {spark.recognition}
+              </p>
+              <p className="text-sm leading-relaxed line-clamp-4">
+                {spark.insight}
+              </p>
+            </div>
+            
+            {/* Footer */}
+            <div className="px-4 pb-4 pt-0 gap-2 flex flex-wrap">
+              <Button
+                size="sm"
+                variant="default"
+                className="flex-1 min-w-[100px] touch-manipulation shadow-lg"
+                onClick={onExplore}
+              >
+                <Search size={14} className="mr-1" />
+                Explore
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="touch-manipulation backdrop-blur-sm bg-background/50 border-white/20"
+                onClick={onSave}
+              >
+                <Bookmark size={14} />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onDismiss}
+                className="text-muted-foreground touch-manipulation"
+              >
+                Dismiss
+              </Button>
+            </div>
+          </div>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
