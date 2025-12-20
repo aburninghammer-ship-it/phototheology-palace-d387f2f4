@@ -24,6 +24,7 @@ import { QuickAudioButton } from "@/components/audio";
 import { FollowUpChat } from "@/components/analyze/FollowUpChat";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { ChainWitness } from "@/components/analyze/ChainWitness";
+import { VerseExtraction } from "@/components/analyze/VerseExtraction";
 import { useRecentStudies } from "@/hooks/useRecentStudies";
 import { useSparks } from "@/hooks/useSparks";
 import { SparkContainer, SparkSettings } from "@/components/sparks";
@@ -846,6 +847,12 @@ const AnalyzeThoughts = () => {
                 <Button onClick={handleCopy} variant="outline" className="bg-purple-500/10 border-purple-500/30 text-purple-400">
                   <Copy className="h-4 w-4 mr-2" />Copy
                 </Button>
+                <VerseExtraction
+                  inputText={input}
+                  scriptureConnections={result.scriptureConnections}
+                  typologyLayers={result.typologyLayers}
+                  followUpConversation={followUpConversation}
+                />
                 <QuickShareButton
                   title="My Thought Analysis"
                   content={result.encouragement || result.summary || "I analyzed my thoughts using Phototheology!"}
