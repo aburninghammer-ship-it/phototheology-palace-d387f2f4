@@ -25,6 +25,7 @@ import { FollowUpChat } from "@/components/analyze/FollowUpChat";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { ChainWitness } from "@/components/analyze/ChainWitness";
 import { VerseExtraction } from "@/components/analyze/VerseExtraction";
+import { CopyableVerse } from "@/components/analyze/CopyableVerse";
 import { useRecentStudies } from "@/hooks/useRecentStudies";
 import { useSparks } from "@/hooks/useSparks";
 import { SparkContainer, SparkSettings } from "@/components/sparks";
@@ -1120,7 +1121,9 @@ const AnalyzeThoughts = () => {
                               <span className="text-blue-400">→</span>
                               <span className="font-medium text-blue-200">{l.meaning}</span>
                             </div>
-                            <p className="text-sm text-muted-foreground">{l.reference}</p>
+                            <p className="text-sm text-muted-foreground">
+                              <CopyableVerse reference={l.reference} className="text-blue-300" />
+                            </p>
                             {l.insight && (
                               <p className="text-sm text-blue-200/80 mt-2 italic border-l-2 border-blue-500/30 pl-3">{l.insight}</p>
                             )}
@@ -1178,7 +1181,8 @@ const AnalyzeThoughts = () => {
                               <p className="text-sm text-muted-foreground leading-relaxed">{insight.explanation}</p>
                               {insight.reference && (
                                 <p className="text-xs text-emerald-400/70 mt-2 flex items-center gap-1">
-                                  <BookOpen className="h-3 w-3" /> {insight.reference}
+                                  <BookOpen className="h-3 w-3" /> 
+                                  <CopyableVerse reference={insight.reference} className="text-emerald-300" />
                                 </p>
                               )}
                             </motion.div>
@@ -1200,7 +1204,9 @@ const AnalyzeThoughts = () => {
                         <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-background/30 border border-amber-500/10">
                           <BookOpen className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
                           <div>
-                            <p className="font-medium text-amber-300 mb-1">{c.reference}</p>
+                            <p className="font-medium text-amber-300 mb-1">
+                              <CopyableVerse reference={c.reference} className="text-amber-300" />
+                            </p>
                             <p className="text-sm text-muted-foreground leading-relaxed">{c.connection}</p>
                           </div>
                         </div>
