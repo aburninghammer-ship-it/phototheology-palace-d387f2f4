@@ -85,11 +85,10 @@ export function LiveSermonBanner({ churchId }: LiveSermonBannerProps) {
     }
   };
 
-  const handleWatchLive = () => {
-    const liveUrl = youtubeUrl?.includes('/live') 
+  const getLiveUrl = () => {
+    return youtubeUrl?.includes('/live') 
       ? youtubeUrl 
       : `${youtubeUrl}/live`;
-    window.open(liveUrl, '_blank');
   };
 
   return (
@@ -146,7 +145,7 @@ export function LiveSermonBanner({ churchId }: LiveSermonBannerProps) {
           </div>
 
           <Button 
-            onClick={handleWatchLive}
+            asChild
             className={`shrink-0 ${
               isLive 
                 ? 'bg-red-500 hover:bg-red-600 text-white' 
@@ -154,17 +153,19 @@ export function LiveSermonBanner({ churchId }: LiveSermonBannerProps) {
             }`}
             size="lg"
           >
-            {isLive ? (
-              <>
-                <Radio className="h-4 w-4 mr-2 animate-pulse" />
-                Watch Live
-              </>
-            ) : (
-              <>
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Watch on YouTube
-              </>
-            )}
+            <a href={getLiveUrl()} target="_blank" rel="noopener noreferrer">
+              {isLive ? (
+                <>
+                  <Radio className="h-4 w-4 mr-2 animate-pulse" />
+                  Watch Live
+                </>
+              ) : (
+                <>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Watch on YouTube
+                </>
+              )}
+            </a>
           </Button>
         </div>
       </CardContent>
