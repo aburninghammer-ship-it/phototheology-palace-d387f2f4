@@ -24,11 +24,6 @@ export const ChangeSpineUpgradePrompt = ({ className }: ChangeSpineUpgradePrompt
   const { user, loading: authLoading } = useAuth();
   const changeSpine = useChangeSpine();
   const { trialDaysRemaining, isPaid, isLoading, isNewUser, hasAchievedFirstWin } = changeSpine;
-
-  // Never show if not authenticated or already on pricing
-  if (authLoading || !user || location.pathname === '/pricing') {
-    return null;
-  }
   
   const [dismissed, setDismissed] = useState(false);
 
@@ -40,6 +35,11 @@ export const ChangeSpineUpgradePrompt = ({ className }: ChangeSpineUpgradePrompt
       setDismissed(false);
     }
   }, []);
+
+  // Never show if not authenticated or already on pricing
+  if (authLoading || !user || location.pathname === '/pricing') {
+    return null;
+  }
 
   // Don't show if paid, loading, or dismissed
   if (isLoading || isPaid || dismissed) {
