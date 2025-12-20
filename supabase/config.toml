@@ -199,3 +199,6 @@ verify_jwt = false
 
 [functions.generate-spark]
 verify_jwt = false
+
+[functions.weekly-spark-recap]
+verify_jwt = true
