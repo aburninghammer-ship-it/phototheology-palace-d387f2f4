@@ -100,12 +100,19 @@ export function TrialUrgencyMessage() {
       }
 
       try {
-        // Check profile for trial info
+        // Check profile for trial info AND subscription status
         const { data } = await supabase
           .from("profiles")
-          .select("trial_ends_at, created_at")
+          .select("trial_ends_at, created_at, has_lifetime_access, subscription_status, subscription_tier")
           .eq("id", user.id)
           .maybeSingle();
+
+        // Users with lifetime access or active paid subscriptions don't see trial messages
+        if (data?.has_lifetime_access || 
+            (data?.subscription_status === 'active' && data?.subscription_tier)) {
+          setLoading(false);
+          return;
+        }
 
         if (!data?.trial_ends_at) {
           setLoading(false);
