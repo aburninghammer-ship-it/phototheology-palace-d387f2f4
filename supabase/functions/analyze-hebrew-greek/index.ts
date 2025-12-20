@@ -18,12 +18,18 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    const isOldTestament = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 
-      'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings',
-      '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 
-      'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah',
-      'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah',
-      'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi'].includes(book);
+    // Normalize book name and check if Old Testament (Hebrew)
+    const normalizedBook = book?.toLowerCase()?.trim() || '';
+    const oldTestamentBooks = [
+      'genesis', 'exodus', 'leviticus', 'numbers', 'deuteronomy', 
+      'joshua', 'judges', 'ruth', '1 samuel', '2 samuel', '1 kings', '2 kings',
+      '1 chronicles', '2 chronicles', 'ezra', 'nehemiah', 'esther', 'job', 
+      'psalm', 'psalms', 'proverbs', 'ecclesiastes', 'song of solomon', 'song of songs', 
+      'isaiah', 'jeremiah', 'lamentations', 'ezekiel', 'daniel', 
+      'hosea', 'joel', 'amos', 'obadiah', 'jonah', 'micah', 'nahum', 
+      'habakkuk', 'zephaniah', 'haggai', 'zechariah', 'malachi'
+    ];
+    const isOldTestament = oldTestamentBooks.includes(normalizedBook);
 
     const language = isOldTestament ? 'Hebrew' : 'Greek';
 
