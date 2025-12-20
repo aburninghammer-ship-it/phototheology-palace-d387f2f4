@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Bot, Send, Pause, Play, Trash2, BookOpen, 
-  Lightbulb, HelpCircle, Clock, Shield, AlertCircle 
+  Lightbulb, HelpCircle, Clock, AlertCircle 
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -178,12 +178,7 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
               <Badge className="bg-red-500 text-white animate-pulse text-xs">LIVE</Badge>
             )}
           </CardTitle>
-          <div className="flex items-center gap-3">
-            {/* Safeguard Controls */}
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">Safeguards</span>
-            </div>
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
