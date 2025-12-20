@@ -1,12 +1,21 @@
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { Card } from "@/components/ui/card";
+import { StudyNextSteps } from "./StudyNextSteps";
 import DOMPurify from "dompurify";
 
 interface FormattedStudyViewProps {
   content: string;
+  studyId?: string;
+  onContentChange?: (content: string) => void;
+  readOnly?: boolean;
 }
 
-export const FormattedStudyView = ({ content }: FormattedStudyViewProps) => {
+export const FormattedStudyView = ({ 
+  content, 
+  studyId,
+  onContentChange,
+  readOnly = false 
+}: FormattedStudyViewProps) => {
   // Check if content is HTML (from TipTap editor) or markdown/plain text
   const isHtmlContent = (text: string) => {
     return /<[a-z][\s\S]*>/i.test(text);
@@ -23,9 +32,21 @@ export const FormattedStudyView = ({ content }: FormattedStudyViewProps) => {
   // Split content by Jeeves Research sections
   const sections = content.split(/(?=### Jeeves Research:)/);
   
+// Check if content has Next Steps section
+  const hasNextSteps = content.includes("## Next Steps") || 
+                       content.includes("Review this study");
+
+  // Remove Next Steps section from content for separate rendering
+  const contentWithoutNextSteps = content
+    .replace(/---\n\n## Next Steps[\s\S]*$/, '')
+    .replace(/## Next Steps[\s\S]*$/, '')
+    .trim();
+
+  const sectionsToRender = contentWithoutNextSteps.split(/(?=### Jeeves Research:)/);
+  
   return (
     <div className="space-y-6">
-      {sections.map((section, index) => {
+      {sectionsToRender.map((section, index) => {
         if (!section.trim()) return null;
         
         // Check if this is a Jeeves Research section
@@ -90,6 +111,16 @@ export const FormattedStudyView = ({ content }: FormattedStudyViewProps) => {
           </Card>
         );
       })}
+      
+      {/* Render interactive Next Steps */}
+      {hasNextSteps && studyId && (
+        <StudyNextSteps
+          studyId={studyId}
+          content={content}
+          onContentChange={onContentChange}
+          readOnly={readOnly}
+        />
+      )}
     </div>
   );
 };

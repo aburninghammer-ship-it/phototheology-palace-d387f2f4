@@ -681,7 +681,15 @@ const StudyEditor = () => {
                 </div>
                 
                 <TabsContent value="formatted" className="mt-0">
-                  <FormattedStudyView content={content} />
+                  <FormattedStudyView 
+                    content={content} 
+                    studyId={id}
+                    onContentChange={(newContent) => {
+                      setContent(newContent);
+                      setHasChanges(true);
+                    }}
+                    readOnly={!canEdit}
+                  />
                 </TabsContent>
                 
                 <TabsContent value="edit" className="mt-0">
