@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchChapter, Translation } from "@/services/bibleApi";
 import { Chapter } from "@/types/bible";
@@ -40,6 +40,9 @@ import { useVerseNotes } from "@/hooks/useVerseNotes";
 import { useReadingStreak } from "@/hooks/useReadingStreak";
 import { AIPromptBanner } from "@/components/AIPromptBanner";
 import { CopyableVersesCard } from "./CopyableVersesCard";
+import { useSparks } from "@/hooks/useSparks";
+import { SparkContainer, SparkSettings } from "@/components/sparks";
+import { Badge } from "@/components/ui/badge";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -104,6 +107,38 @@ export const BibleReader = () => {
   
   const [translation, setTranslation] = useState<Translation>("kjv");
   const jeevesRef = useRef<HTMLDivElement>(null);
+  const sparkTriggerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Sparks integration for verse reading
+  const { 
+    sparks, 
+    preferences: sparkPreferences,
+    generateSpark, 
+    openSpark, 
+    saveSpark, 
+    dismissSpark,
+    exploreSpark,
+    updatePreferences: updateSparkPreferences,
+  } = useSparks({
+    surface: 'bible_reader',
+    contextType: 'chapter',
+    contextId: `${book}:${chapter}`
+  });
+
+  // Trigger spark when verse is selected for a period
+  const handleSparkTrigger = useCallback((verseNum: number, verseText: string) => {
+    if (sparkTriggerRef.current) {
+      clearTimeout(sparkTriggerRef.current);
+    }
+    
+    if (sparkPreferences?.intensity === 'off') return;
+    
+    // Trigger after 5 seconds of verse selection
+    sparkTriggerRef.current = setTimeout(() => {
+      const content = `Studying ${book} ${chapter}:${verseNum} - "${verseText}"`;
+      generateSpark(content, `${book} ${chapter}:${verseNum}`);
+    }, 5000);
+  }, [generateSpark, sparkPreferences?.intensity, book, chapter]);
 
   useEffect(() => {
     // Get translation from URL parameter or use preference
@@ -173,6 +208,12 @@ export const BibleReader = () => {
     } else {
       // Single select in other modes
       setSelectedVerse(verseNum);
+      
+      // Trigger spark generation after dwelling on verse
+      const verseText = chapterData?.verses.find(v => v.verse === verseNum)?.text || '';
+      if (verseText) {
+        handleSparkTrigger(verseNum, verseText);
+      }
     }
   };
 
@@ -221,6 +262,16 @@ export const BibleReader = () => {
             </div>
 
             <div className="relative z-10 flex gap-2 flex-wrap items-center">
+              {/* Spark indicators */}
+              {sparks.length > 0 && (
+                <Badge variant="outline" className="text-amber-500 border-amber-500/30 animate-pulse">
+                  🔥 {sparks.length}
+                </Badge>
+              )}
+              <SparkSettings
+                preferences={sparkPreferences}
+                onUpdate={updateSparkPreferences}
+              />
               <ReadingStreakBadge compact />
               <ReadingControls />
               <Button
@@ -254,6 +305,19 @@ export const BibleReader = () => {
               </Button>
             </div>
           </div>
+
+          {/* Spark Container */}
+          {sparks.length > 0 && (
+            <div className="absolute top-20 right-4 z-20">
+              <SparkContainer
+                sparks={sparks}
+                onOpen={openSpark}
+                onSave={saveSpark}
+                onDismiss={dismissSpark}
+                onExplore={exploreSpark}
+              />
+            </div>
+          )}
 
           {/* AI Prompt Banner - Surface Jeeves */}
           {!jeevesMode && (

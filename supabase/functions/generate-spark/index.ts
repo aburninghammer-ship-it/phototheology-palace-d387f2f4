@@ -206,7 +206,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { content, verseReference, surface, contextType, contextId, mode, exploreMode, spark } = body;
+    const { content, verseReference, surface, contextType, contextId, mode, exploreMode, spark, recentHashes } = body;
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -226,6 +226,23 @@ serve(async (req) => {
     // Handle spark generation
     if (!content || !surface) {
       throw new Error('Missing required fields: content and surface');
+    }
+
+    // NOVELTY SUPPRESSION: Check if content hash is too similar to recent sparks
+    const contentHash = hashContent(content);
+    if (recentHashes && Array.isArray(recentHashes)) {
+      const isTooSimilar = recentHashes.some((hash: string) => {
+        // Check exact match or very similar (same content)
+        return hash === contentHash;
+      });
+      
+      if (isTooSimilar) {
+        console.log('⏭️ Skipping spark - content too similar to recent spark');
+        return new Response(
+          JSON.stringify({ spark: null, message: 'Content too similar to recent spark', suppressed: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     const generatedSpark = await generateSpark(

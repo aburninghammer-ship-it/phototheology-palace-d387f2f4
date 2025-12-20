@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 export interface Spark {
   id: string;
   user_id: string;
-  surface: 'notes' | 'verse' | 'study' | 'session' | 'other';
-  context_type: 'verse' | 'note_block' | 'gem' | 'session' | 'study';
+  surface: 'notes' | 'verse' | 'study' | 'session' | 'bible_reader' | 'other';
+  context_type: 'verse' | 'note_block' | 'gem' | 'session' | 'study' | 'chapter';
   context_id: string;
   spark_type: 'connection' | 'pattern' | 'application';
   title: string;
@@ -35,8 +35,8 @@ export interface SparkPreferences {
 }
 
 interface UseSparkOptions {
-  surface: 'notes' | 'verse' | 'study' | 'session' | 'other';
-  contextType: 'verse' | 'note_block' | 'gem' | 'session' | 'study';
+  surface: 'notes' | 'verse' | 'study' | 'session' | 'bible_reader' | 'other';
+  contextType: 'verse' | 'note_block' | 'gem' | 'session' | 'study' | 'chapter';
   contextId: string;
   maxSparks?: number;
   debounceMs?: number;
