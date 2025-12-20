@@ -1,16 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
-  Bot, Send, Pause, Play, Trash2, BookOpen, 
-  Lightbulb, HelpCircle, Clock, AlertCircle 
+  Bot, Mic, MicOff, Trash2, BookOpen, 
+  Lightbulb, HelpCircle, Clock, AlertCircle, Radio
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useScribe, CommitStrategy } from "@elevenlabs/react";
 
 interface Commentary {
   id: string;
@@ -61,16 +60,42 @@ const PT_ROOM_LABELS: Record<string, string> = {
   SRm: "Speed Room",
 };
 
+// Minimum text length before triggering commentary
+const MIN_TRANSCRIPT_LENGTH = 50;
+// Time to wait after speech stops before generating commentary (ms)
+const COMMENTARY_DELAY = 3000;
+
 export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCommentaryProps) {
-  const [inputText, setInputText] = useState("");
   const [commentaries, setCommentaries] = useState<Commentary[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [autoMode, setAutoMode] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [transcriptBuffer, setTranscriptBuffer] = useState("");
+  const [liveTranscript, setLiveTranscript] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const commentaryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const processedTextRef = useRef<string>("");
 
-  // Cooldown timer for rate limiting safeguard
+  const scribe = useScribe({
+    modelId: "scribe_v2_realtime",
+    commitStrategy: CommitStrategy.VAD,
+    onPartialTranscript: (data) => {
+      setLiveTranscript(data.text);
+    },
+    onCommittedTranscript: (data) => {
+      console.log("Committed transcript:", data.text);
+      if (data.text.trim()) {
+        setTranscriptBuffer(prev => {
+          const newBuffer = prev + " " + data.text.trim();
+          return newBuffer.trim();
+        });
+        setLiveTranscript("");
+      }
+    },
+  });
+
+  // Cooldown timer for rate limiting
   useEffect(() => {
     if (cooldown > 0) {
       const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
@@ -85,14 +110,40 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
     }
   }, [commentaries]);
 
-  const generateCommentary = async () => {
-    if (!inputText.trim() || isPaused || cooldown > 0) return;
+  // Process transcript buffer and generate commentary
+  useEffect(() => {
+    if (!transcriptBuffer || isGenerating || cooldown > 0) return;
+    
+    // Check if we have enough new content to process
+    const newContent = transcriptBuffer.slice(processedTextRef.current.length).trim();
+    
+    if (newContent.length >= MIN_TRANSCRIPT_LENGTH) {
+      // Clear any existing timeout
+      if (commentaryTimeoutRef.current) {
+        clearTimeout(commentaryTimeoutRef.current);
+      }
+      
+      // Wait for a pause in speech before generating
+      commentaryTimeoutRef.current = setTimeout(() => {
+        generateCommentary(newContent);
+      }, COMMENTARY_DELAY);
+    }
+    
+    return () => {
+      if (commentaryTimeoutRef.current) {
+        clearTimeout(commentaryTimeoutRef.current);
+      }
+    };
+  }, [transcriptBuffer, isGenerating, cooldown]);
+
+  const generateCommentary = async (sermonPoint: string) => {
+    if (!sermonPoint.trim() || isGenerating || cooldown > 0) return;
 
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke("live-sermon-commentary", {
         body: { 
-          sermonPoint: inputText.trim(),
+          sermonPoint: sermonPoint.trim(),
           sessionId 
         },
       });
@@ -102,7 +153,7 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
       if (data?.commentary) {
         const newCommentary: Commentary = {
           id: crypto.randomUUID(),
-          sermonPoint: inputText.trim(),
+          sermonPoint: sermonPoint.trim(),
           ptRooms: data.commentary.ptRooms || ["CR"],
           insight: data.commentary.insight || "",
           crossReference: data.commentary.crossReference,
@@ -111,32 +162,70 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
           timestamp: new Date(),
         };
         setCommentaries(prev => [...prev, newCommentary]);
-        setInputText("");
-        // Apply cooldown safeguard (10 seconds between requests)
+        // Mark this content as processed
+        processedTextRef.current = transcriptBuffer;
+        // Apply cooldown (10 seconds between commentaries)
         setCooldown(10);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Commentary error:", error);
-      if (error.message?.includes("429") || error.message?.includes("rate")) {
-        toast.error("Rate limited. Please wait before submitting again.");
+      const errorMessage = error instanceof Error ? error.message : "";
+      if (errorMessage.includes("429") || errorMessage.includes("rate")) {
+        toast.error("Rate limited. Please wait before next commentary.");
         setCooldown(30);
       } else {
-        toast.error(error.message || "Failed to generate commentary");
+        toast.error("Failed to generate commentary");
       }
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      generateCommentary();
+  const startListening = useCallback(async () => {
+    setIsConnecting(true);
+    try {
+      // Request microphone permission
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      // Get token from edge function
+      const { data, error } = await supabase.functions.invoke("elevenlabs-scribe-token");
+
+      if (error) throw error;
+      if (!data?.token) {
+        throw new Error("No token received");
+      }
+
+      // Start the scribe session
+      await scribe.connect({
+        token: data.token,
+        microphone: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+
+      setIsListening(true);
+      toast.success("Jeeves is now listening to the sermon");
+    } catch (error) {
+      console.error("Failed to start listening:", error);
+      toast.error("Failed to start listening. Please check microphone permissions.");
+    } finally {
+      setIsConnecting(false);
     }
-  };
+  }, [scribe]);
+
+  const stopListening = useCallback(() => {
+    scribe.disconnect();
+    setIsListening(false);
+    setLiveTranscript("");
+    toast.info("Jeeves stopped listening");
+  }, [scribe]);
 
   const clearCommentaries = () => {
     setCommentaries([]);
+    setTranscriptBuffer("");
+    processedTextRef.current = "";
     toast.success("Commentary cleared");
   };
 
@@ -174,19 +263,11 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
           <CardTitle className="text-lg flex items-center gap-2">
             <Bot className="h-5 w-5 text-primary" />
             Live Jeeves Commentary
-            {isLive && (
-              <Badge className="bg-red-500 text-white animate-pulse text-xs">LIVE</Badge>
+            {isListening && (
+              <Badge className="bg-red-500 text-white animate-pulse text-xs">LISTENING</Badge>
             )}
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsPaused(!isPaused)}
-              className={isPaused ? "text-yellow-500" : ""}
-            >
-              {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-            </Button>
             <Button
               variant="ghost"
               size="sm"
@@ -197,63 +278,80 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
             </Button>
           </div>
         </div>
-        {isPaused && (
-          <div className="flex items-center gap-2 text-yellow-500 text-sm mt-2">
-            <AlertCircle className="h-4 w-4" />
-            Commentary paused - click play to resume
-          </div>
-        )}
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Input Area */}
-        <div className="space-y-2">
-          <Textarea
-            placeholder="Enter the current sermon point for Jeeves to comment on..."
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="min-h-[80px] resize-none"
-            disabled={isPaused || isGenerating}
-          />
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {cooldown > 0 && (
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  Wait {cooldown}s
-                </span>
-              )}
-            </div>
-            <Button
-              onClick={generateCommentary}
-              disabled={!inputText.trim() || isPaused || isGenerating || cooldown > 0}
-              size="sm"
-            >
-              {isGenerating ? (
-                <>
-                  <div className="h-4 w-4 mr-2 animate-spin border-2 border-current border-t-transparent rounded-full" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Send className="h-4 w-4 mr-2" />
-                  Get Commentary
-                </>
-              )}
-            </Button>
+        {/* Listening Controls */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-4">
+            {!isListening ? (
+              <Button
+                onClick={startListening}
+                disabled={isConnecting}
+                className="flex-1"
+                variant="default"
+              >
+                {isConnecting ? (
+                  <>
+                    <div className="h-4 w-4 mr-2 animate-spin border-2 border-current border-t-transparent rounded-full" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Mic className="h-4 w-4 mr-2" />
+                    Start Listening
+                  </>
+                )}
+              </Button>
+            ) : (
+              <Button
+                onClick={stopListening}
+                variant="destructive"
+                className="flex-1"
+              >
+                <MicOff className="h-4 w-4 mr-2" />
+                Stop Listening
+              </Button>
+            )}
+            
+            {cooldown > 0 && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                Next in {cooldown}s
+              </span>
+            )}
           </div>
+
+          {/* Live Transcript Display */}
+          {isListening && (
+            <div className="bg-muted/30 rounded-lg p-3 border border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Radio className="h-4 w-4 text-red-500 animate-pulse" />
+                <span className="text-xs font-medium text-muted-foreground">Live Transcript</span>
+              </div>
+              <p className="text-sm text-foreground/80 min-h-[40px]">
+                {liveTranscript || transcriptBuffer.slice(-200) || "Listening for sermon..."}
+              </p>
+            </div>
+          )}
+
+          {isGenerating && (
+            <div className="flex items-center gap-2 text-primary text-sm">
+              <div className="h-4 w-4 animate-spin border-2 border-current border-t-transparent rounded-full" />
+              Generating commentary...
+            </div>
+          )}
         </div>
 
         {/* Commentary Feed */}
-        <ScrollArea className="h-[400px]" ref={scrollRef}>
+        <ScrollArea className="h-[350px]" ref={scrollRef}>
           <div className="space-y-4 pr-4">
             {commentaries.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p className="text-sm">
-                  Enter a sermon point above and Jeeves will provide<br />
-                  instant Phototheology commentary
+                  Click "Start Listening" and Jeeves will automatically<br />
+                  provide Phototheology commentary as the sermon plays
                 </p>
               </div>
             ) : (
@@ -265,7 +363,7 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
                       <span className="text-xs text-muted-foreground mt-0.5">
                         {c.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
-                      <p className="text-sm font-medium text-foreground/90 italic">
+                      <p className="text-sm font-medium text-foreground/90 italic line-clamp-2">
                         "{c.sermonPoint}"
                       </p>
                     </div>
