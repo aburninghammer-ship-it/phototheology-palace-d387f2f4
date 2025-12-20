@@ -49,6 +49,34 @@ export function useSubscription() {
 
   const loadSubscription = async () => {
     try {
+      // First check profile for lifetime access
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('has_lifetime_access, subscription_status, subscription_tier')
+        .eq('id', user!.id)
+        .single();
+
+      // If user has lifetime access, they're premium and have full access
+      if (profile?.has_lifetime_access) {
+        setSubscription({
+          status: 'active',
+          tier: 'premium',
+          isStudent: false,
+          trialEndsAt: null,
+          studentExpiresAt: null,
+          promotionalExpiresAt: null,
+          hasAccess: true,
+          church: {
+            hasChurchAccess: false,
+            churchId: null,
+            churchTier: null,
+            churchRole: null,
+          },
+        });
+        setLoading(false);
+        return;
+      }
+
       // Use secure function to get subscription summary
       const { data: subData, error: subError } = await supabase
         .rpc('get_subscription_summary', { _user_id: user!.id });

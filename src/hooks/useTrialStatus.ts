@@ -31,6 +31,28 @@ export function useTrialStatus() {
     }
 
     const checkTrial = async () => {
+      // First check if user has lifetime or active paid subscription in profiles
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('has_lifetime_access, subscription_status, subscription_tier')
+        .eq('id', user.id)
+        .single();
+
+      // Users with lifetime access or active paid subscriptions are NOT on trial
+      if (profile?.has_lifetime_access || 
+          (profile?.subscription_status === 'active' && profile?.subscription_tier)) {
+        setStatus({
+          isOnTrial: false,
+          daysLeft: 0,
+          hoursLeft: 0,
+          isExpired: false,
+          isExpiringSoon: false,
+          trialEndsAt: null,
+        });
+        setLoading(false);
+        return;
+      }
+
       const { data } = await supabase
         .from('user_subscriptions')
         .select('subscription_status, trial_ends_at')
