@@ -10,6 +10,7 @@ import { Bot, Sparkles, BookOpen, Dumbbell, Loader2, HelpCircle, Brain, Star, Tr
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { QuickAudioButton } from "@/components/audio";
+import { getFirstName } from "@/utils/userNameUtils";
 
 interface JeevesAssistantProps {
   roomTag: string;
@@ -78,7 +79,7 @@ export const JeevesAssistant = ({
         .eq('id', user.id)
         .single() : { data: null };
 
-      const userName = profile?.display_name || null;
+      const userName = getFirstName(profile?.display_name);
 
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
@@ -123,7 +124,7 @@ export const JeevesAssistant = ({
         .eq('id', user.id)
         .single() : { data: null };
 
-      const userName = profile?.display_name || null;
+      const userName = getFirstName(profile?.display_name);
 
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
@@ -160,7 +161,7 @@ export const JeevesAssistant = ({
         .eq('id', user.id)
         .single() : { data: null };
 
-      const userName = profile?.display_name || null;
+      const userName = getFirstName(profile?.display_name);
 
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {

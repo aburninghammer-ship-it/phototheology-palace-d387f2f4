@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, MessageSquare, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getFirstName } from "@/utils/userNameUtils";
 
 export function JeevesWelcomeModal() {
   const [open, setOpen] = useState(false);
@@ -34,7 +35,7 @@ export function JeevesWelcomeModal() {
         .single();
 
       if (profile) {
-        setUserName(profile.display_name || "friend");
+        setUserName(getFirstName(profile.display_name));
         // Only show if they haven't taken a meaningful action
         if (!profile.first_meaningful_action_at) {
           setOpen(true);
