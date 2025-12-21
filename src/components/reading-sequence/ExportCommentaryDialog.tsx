@@ -83,6 +83,19 @@ export function ExportCommentaryDialog({
     }
   }, [open, audioUrl]);
 
+  // Determine TTS provider from voice name
+  const getProviderForVoice = (voiceName: string): 'openai' | 'elevenlabs' | 'speechify' => {
+    const elevenlabsVoices = ['george', 'aria', 'roger', 'sarah', 'charlie', 'callum', 'river', 'liam', 'charlotte', 'alice', 'matilda', 'will', 'jessica', 'eric', 'chris', 'brian', 'daniel', 'lily', 'bill'];
+    const speechifyVoices = ['henry', 'mrbeast', 'cliff', 'cody', 'kristy', 'natasha', 'cindy'];
+    const openaiVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'];
+    
+    const voiceLower = voiceName.toLowerCase();
+    if (elevenlabsVoices.includes(voiceLower)) return 'elevenlabs';
+    if (speechifyVoices.includes(voiceLower)) return 'speechify';
+    if (openaiVoices.includes(voiceLower)) return 'openai';
+    return 'elevenlabs';
+  };
+
   // Generate TTS for commentary
   const generateCommentaryTTS = async (text: string): Promise<{ audioContent?: string } | null> => {
     try {
@@ -113,8 +126,9 @@ export function ExportCommentaryDialog({
         setGenerationStep(`Generating audio chunk ${i + 1}/${chunks.length}...`);
         setGenerationProgress(10 + (i / chunks.length) * 40);
         
+        const provider = getProviderForVoice(voice);
         const { data, error } = await supabase.functions.invoke("text-to-speech", {
-          body: { text: chunks[i], voice, provider: 'openai' },
+          body: { text: chunks[i], voice, provider },
         });
 
         if (error) throw error;
