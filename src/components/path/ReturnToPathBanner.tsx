@@ -35,7 +35,7 @@ export function ReturnToPathBanner({ className = "" }: ReturnToPathBannerProps) 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        className={`fixed top-32 md:top-20 left-1/2 -translate-x-1/2 z-30 pointer-events-auto ${className}`}
+        className={`fixed top-16 right-2 md:top-20 md:left-1/2 md:-translate-x-1/2 md:right-auto z-30 pointer-events-auto ${className}`}
       >
         <div 
           className={`
