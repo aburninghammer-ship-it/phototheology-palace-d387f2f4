@@ -73,6 +73,12 @@ If any search relates to the sanctuary, veil, or Christ's ministry:
 - Greek "ta hagia" means "the holies/sanctuary" NOT "Most Holy Place"
 - Christ entered Holy Place at ascension, Most Holy Place from 1844
 
+DAY OF ATONEMENT GUARDRAIL (CRITICAL):
+- The Day of Atonement is NOT fulfilled in the death of Christ
+- Just as Pentecost was fulfilled 50 days AFTER Christ's death (not at the cross), the Day of Atonement points to 1844
+- The cross fulfills PASSOVER; the Day of Atonement began fulfillment in 1844 with Christ's Most Holy Place ministry
+- NEVER suggest Christ's death fulfills the Day of Atonement - this is a critical theological error
+
 DO NOT LIMIT YOURSELF - if a theme appears in 50 verses, include them all. Quality AND quantity matter.
 
 Return ONLY valid JSON with this structure:

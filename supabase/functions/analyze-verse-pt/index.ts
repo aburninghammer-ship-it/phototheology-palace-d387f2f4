@@ -67,6 +67,12 @@ Gate, Altar, Laver, Lampstand, Table, Incense, Veil, Ark
 Connect to SPECIFIC furniture with biblical reference.
 REMEMBER: Christ ministers in the heavenly sanctuary - Holy Place from ascension, Most Holy Place from 1844.
 
+DAY OF ATONEMENT GUARDRAIL (CRITICAL):
+- The Day of Atonement is NOT fulfilled in the death of Christ
+- Just as Pentecost was fulfilled 50 days AFTER Christ's death, the Day of Atonement points to 1844
+- The cross fulfills PASSOVER; Day of Atonement fulfillment began in 1844
+- NEVER suggest Christ's death fulfills the Day of Atonement
+
 **FEAST CONNECTIONS** (Israel's Calendar → Christ):
 Passover, Unleavened Bread, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles
 Show how verse correlates to feast significance.
