@@ -1184,6 +1184,34 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       const itemsBefore = activeSequences.slice(0, idx).reduce((acc, s) => acc + s.items.length, 0);
       return currentItemIdx >= itemsBefore && currentItemIdx < itemsBefore + seq.items.length;
     });
+    
+    // CRITICAL OPTIMIZATION: Start commentary prefetch IMMEDIATELY (before verse TTS)
+    // This runs commentary generation IN PARALLEL with verse TTS generation,
+    // using the ~2-5 second verse generation time to prepare commentary
+    const includeCommentaryEarly = currentSeq?.includeJeevesCommentary || false;
+    const commentaryModeEarly = currentSeq?.commentaryMode || "chapter";
+    const commentaryVoiceEarly = currentSeq?.commentaryVoice || "daniel";
+    
+    if (includeCommentaryEarly && commentaryModeEarly === "verse" && !offlineMode) {
+      // Start prefetching current verse commentary IMMEDIATELY (fire and forget)
+      prefetchVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryVoiceEarly, currentCommentaryDepth);
+      
+      // Also prefetch next verse's commentary in parallel
+      const nextVerseIdx = verseIdx + 1;
+      if (nextVerseIdx < content.verses.length) {
+        const nextVerse = content.verses[nextVerseIdx];
+        prefetchVerseCommentary(content.book, content.chapter, nextVerse.verse, nextVerse.text, commentaryVoiceEarly, currentCommentaryDepth);
+      }
+      
+      // Prefetch 2 verses ahead with slight delay
+      const nextNextVerseIdx = verseIdx + 2;
+      if (nextNextVerseIdx < content.verses.length) {
+        const nextNextVerse = content.verses[nextNextVerseIdx];
+        setTimeout(() => {
+          prefetchVerseCommentary(content.book, content.chapter, nextNextVerse.verse, nextNextVerse.text, commentaryVoiceEarly, currentCommentaryDepth);
+        }, 300);
+      }
+    }
     const playbackSpeed = currentSeq?.playbackSpeed || 1;
     
     // Check cache first (only for online mode)
@@ -1263,34 +1291,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     // Use the session-level commentary depth (can be changed mid-session)
     const commentaryDepth = currentCommentaryDepth;
     
-    // Prefetch commentary while verse plays
-    if (includeCommentary) {
-      if (commentaryMode === "verse") {
-        // Prefetch verse commentary for current verse
-        prefetchVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryVoice, commentaryDepth);
-        
-        // OPTIMIZATION: Also prefetch NEXT verse's commentary so it's ready when current commentary finishes
-        // This significantly reduces perceived loading time between verses
-        const nextVerseIdx = verseIdx + 1;
-        if (nextVerseIdx < content.verses.length) {
-          const nextVerse = content.verses[nextVerseIdx];
-          prefetchVerseCommentary(content.book, content.chapter, nextVerse.verse, nextVerse.text, commentaryVoice, commentaryDepth);
-        }
-        
-        // Also prefetch 2 verses ahead for even smoother playback
-        const nextNextVerseIdx = verseIdx + 2;
-        if (nextNextVerseIdx < content.verses.length) {
-          const nextNextVerse = content.verses[nextNextVerseIdx];
-          // Slight delay to prioritize current and next verse
-          setTimeout(() => {
-            prefetchVerseCommentary(content.book, content.chapter, nextNextVerse.verse, nextNextVerse.text, commentaryVoice, commentaryDepth);
-          }, 500);
-        }
-      } else if (commentaryMode === "chapter" && verseIdx >= content.verses.length - 3) {
-        // Prefetch chapter commentary when near end of chapter
-        const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
-        prefetchChapterCommentary(content.book, content.chapter, chapterText, commentaryVoice, commentaryDepth);
-      }
+    // Prefetch chapter commentary when near end of chapter (verse prefetch moved to top of function)
+    if (includeCommentary && commentaryMode === "chapter" && verseIdx >= content.verses.length - 3) {
+      const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
+      prefetchChapterCommentary(content.book, content.chapter, chapterText, commentaryVoice, commentaryDepth);
     }
 
     // Stop any existing audio BEFORE setting up new one
