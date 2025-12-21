@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 /**
@@ -61,6 +62,7 @@ export const GUIDED_PATH_STEPS = [
 export const useChangeSpine = (): ChangeSpineStatus => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { subscription } = useSubscription(); // Use subscription hook for reliable paid status
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['change-spine-status', user?.id],
@@ -112,14 +114,19 @@ export const useChangeSpine = (): ChangeSpineStatus => {
     return Math.max(0, diffDays);
   }, [data?.trial_ends_at]);
 
-  // Check if user is paid
+  // Check if user is paid - now integrates with useSubscription for reliability
   const isPaid = useCallback((): boolean => {
+    // First check useSubscription (which includes Stripe direct check fallback)
+    if (subscription.hasAccess) return true;
+    if (subscription.tier && ['premium', 'essential', 'patron', 'student'].includes(subscription.tier)) return true;
+    
+    // Also check local profile data as backup
     if (!data) return false;
     if (data.has_lifetime_access) return true;
     if (data.subscription_status === 'active') return true;
     if (data.subscription_tier && ['premium', 'essential', 'patron', 'student'].includes(data.subscription_tier)) return true;
     return false;
-  }, [data]);
+  }, [data, subscription]);
 
   // Check if this is a new user (created after Change Manager launch)
   const isNewUser = useCallback((): boolean => {

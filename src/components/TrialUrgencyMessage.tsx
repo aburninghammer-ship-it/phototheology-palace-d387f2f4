@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { X, Clock, Sparkles, ArrowRight, Zap, Star, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { useEventTracking } from "@/hooks/useEventTracking";
 
@@ -90,26 +91,32 @@ export function TrialUrgencyMessage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
   const { trackPaywallHit, trackUpgradeClick } = useEventTracking();
 
   useEffect(() => {
     async function fetchTrialInfo() {
-      if (!user) {
+      if (!user || subscriptionLoading) {
+        return;
+      }
+
+      // Use subscription hook for reliable paid status check
+      if (subscription.hasAccess && subscription.status !== 'trial') {
+        // User has active paid access - don't show trial messages
         setLoading(false);
         return;
       }
 
       try {
-        // Check profile for trial info AND subscription status
+        // Check profile for trial info
         const { data } = await supabase
           .from("profiles")
-          .select("trial_ends_at, created_at, has_lifetime_access, subscription_status, subscription_tier")
+          .select("trial_ends_at, created_at, has_lifetime_access")
           .eq("id", user.id)
           .maybeSingle();
 
-        // Users with lifetime access or active paid subscriptions don't see trial messages
-        if (data?.has_lifetime_access || 
-            (data?.subscription_status === 'active' && data?.subscription_tier)) {
+        // Additional check for lifetime access from profile
+        if (data?.has_lifetime_access) {
           setLoading(false);
           return;
         }
@@ -152,7 +159,7 @@ export function TrialUrgencyMessage() {
     }
 
     fetchTrialInfo();
-  }, [user, trackPaywallHit]);
+  }, [user, subscription, subscriptionLoading, trackPaywallHit]);
 
   const handleAction = () => {
     if (!trialInfo || !message) return;
