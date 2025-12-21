@@ -89,9 +89,11 @@ export default function Auth() {
     }
   }, []);
 
+  const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
   const validateEmail = (email: string) => {
     try {
-      emailSchema.parse(email);
+      emailSchema.parse(normalizeEmail(email));
       return true;
     } catch (e) {
       if (e instanceof z.ZodError) {
@@ -116,22 +118,26 @@ export default function Auth() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     if (!validateEmail(loginEmail) || !validatePassword(loginPassword)) {
       return;
     }
 
+    const email = normalizeEmail(loginEmail);
+
     setLoading(true);
-    
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
+        email,
         password: loginPassword,
       });
 
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
-          setError("Invalid email or password. Please try again.");
+          setError(
+            "Invalid email or password. If you signed up with Google/Microsoft/Facebook, use that button or reset your password to set one."
+          );
         } else if (error.message.includes("Email not confirmed")) {
           setError("Please confirm your email address before logging in.");
         } else {
@@ -142,18 +148,17 @@ export default function Auth() {
 
       // Save email only if remember me is checked (never store passwords)
       if (rememberMe) {
-        localStorage.setItem('rememberedEmail', loginEmail);
+        localStorage.setItem("rememberedEmail", email);
       } else {
-        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem("rememberedEmail");
       }
-      
+
       // Clean up any legacy password storage
-      localStorage.removeItem('rememberedPassword');
+      localStorage.removeItem("rememberedPassword");
 
       toast.success("Welcome back!");
       // Don't navigate here; once auth state updates, the effect above will route
       // to either the requested redirect target or the normal Gatehouse/Dashboard flow.
-
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
       console.error("Login error:", err);
@@ -165,15 +170,17 @@ export default function Auth() {
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     if (!validateEmail(resetEmail)) {
       return;
     }
 
+    const email = normalizeEmail(resetEmail);
+
     setLoading(true);
-    
+
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth`,
       });
 
@@ -196,7 +203,7 @@ export default function Auth() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     if (!validateEmail(signupEmail) || !validatePassword(signupPassword)) {
       return;
     }
@@ -223,13 +230,15 @@ export default function Auth() {
       }
     }
 
+    const email = normalizeEmail(signupEmail);
+
     setLoading(true);
-    
+
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
+
       const { data, error } = await supabase.auth.signUp({
-        email: signupEmail,
+        email,
         password: signupPassword,
         options: {
           emailRedirectTo: redirectUrl,
@@ -255,24 +264,23 @@ export default function Auth() {
       if (data.user && data.session) {
         // Send signup notification
         try {
-          await supabase.functions.invoke('send-signup-notification', {
+          await supabase.functions.invoke("send-signup-notification", {
             body: {
-              userEmail: signupEmail,
+              userEmail: email,
               displayName: signupDisplayName,
               userId: data.user.id,
-            }
+            },
           });
         } catch (notifError) {
-          console.error('Failed to send signup notification:', notifError);
+          console.error("Failed to send signup notification:", notifError);
         }
-        
+
         toast.success("Account created! Welcome to Phototheology!");
         if (safeRedirect) {
           navigate(safeRedirect, { replace: true });
         } else {
           navigate("/onboarding");
         }
-
       } else if (data.user && !data.session) {
         toast.success("Account created! Please check your email to verify your account.");
       } else {
