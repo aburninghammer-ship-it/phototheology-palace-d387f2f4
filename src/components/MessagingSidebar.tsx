@@ -180,8 +180,9 @@ export const MessagingSidebar = () => {
     setActiveConversationId(null);
   };
 
-  // Return null for UI when collapsed, but event listener above is always active
-  if (isCollapsed) {
+  // Return null for UI when collapsed on desktop AND not open on mobile
+  // On mobile, we use openMobile state; on desktop, we use open/isCollapsed state
+  if (isCollapsed && !openMobile) {
     return null;
   }
 
