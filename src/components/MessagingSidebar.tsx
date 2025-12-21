@@ -209,30 +209,51 @@ export const MessagingSidebar = () => {
         collapsible="icon" 
         side="left"
       >
-        <SidebarContent className="flex flex-col h-full relative">
-          {/* Floating Close Button - Always Visible */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              console.log('❌ Closing sidebar via floating button');
-              setActiveConversationId(null);
-              if (setOpen) {
-                setOpen(false);
-              } else {
-                toggleSidebar();
-              }
-            }}
-            className="absolute top-2 right-2 z-50 h-8 w-8 hover:bg-destructive/10 bg-background/80 backdrop-blur-sm shadow-md border border-border"
-            aria-label="Close sidebar"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b bg-background pt-12">
-            <h2 className="font-semibold text-lg">Messages</h2>
+      <SidebarContent className="flex flex-col h-full relative">
+          {/* Mobile Header with Back Button */}
+          <div className="flex items-center gap-2 p-3 border-b bg-background/95 backdrop-blur-lg sticky top-0 z-50">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log('❌ Closing sidebar via back button');
+                setActiveConversationId(null);
+                if (isMobile) {
+                  setOpenMobile(false);
+                }
+                if (setOpen) {
+                  setOpen(false);
+                } else {
+                  toggleSidebar();
+                }
+              }}
+              className="h-9 w-9 shrink-0"
+              aria-label="Close messages"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h2 className="font-semibold text-lg flex-1">Messages</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveConversationId(null);
+                if (isMobile) {
+                  setOpenMobile(false);
+                }
+                if (setOpen) {
+                  setOpen(false);
+                } else {
+                  toggleSidebar();
+                }
+              }}
+              className="h-9 w-9 shrink-0"
+              aria-label="Close messages"
+            >
+              <X className="h-5 w-5" />
+            </Button>
           </div>
 
         {/* Split Layout */}
