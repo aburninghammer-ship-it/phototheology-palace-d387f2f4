@@ -534,6 +534,24 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     fetchChapter(nextItem.book, nextItem.chapter);
   }, [allItems, fetchChapter]);
 
+  // Determine TTS provider from voice name
+  const getProviderForVoice = useCallback((voice: string): 'openai' | 'elevenlabs' | 'speechify' => {
+    // ElevenLabs voices
+    const elevenlabsVoices = ['george', 'aria', 'roger', 'sarah', 'charlie', 'callum', 'river', 'liam', 'charlotte', 'alice', 'matilda', 'will', 'jessica', 'eric', 'chris', 'brian', 'daniel', 'lily', 'bill'];
+    // Speechify voices
+    const speechifyVoices = ['henry', 'mrbeast', 'cliff', 'cody', 'kristy', 'natasha', 'cindy'];
+    // OpenAI voices
+    const openaiVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'];
+    
+    const voiceLower = voice.toLowerCase();
+    if (elevenlabsVoices.includes(voiceLower)) return 'elevenlabs';
+    if (speechifyVoices.includes(voiceLower)) return 'speechify';
+    if (openaiVoices.includes(voiceLower)) return 'openai';
+    
+    // Default to elevenlabs for premium experience
+    return 'elevenlabs';
+  }, []);
+
   // Generate TTS for text - with offline fallback
   const generateTTS = useCallback(async (text: string, voice: string): Promise<string | null> => {
     // If offline mode, use browser speech synthesis
@@ -542,9 +560,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return null; // Signal to use speech synthesis
     }
     
+    // Auto-detect provider from voice name
+    const provider = getProviderForVoice(voice);
+    console.log(`[TTS] Using provider: ${provider} for voice: ${voice}`);
+    
     try {
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
-        body: { text, voice, provider: 'openai' },
+        body: { text, voice, provider },
       });
 
       if (error) throw error;
@@ -573,7 +595,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       // Fallback to offline mode if API fails
       return null;
     }
-  }, [offlineMode]);
+  }, [offlineMode, getProviderForVoice]);
 
   // Browser speech synthesis for offline mode - with pause/resume support and chunking
   const speakWithBrowserTTS = useCallback((text: string, playbackSpeed: number, onEnd: () => void): void => {
