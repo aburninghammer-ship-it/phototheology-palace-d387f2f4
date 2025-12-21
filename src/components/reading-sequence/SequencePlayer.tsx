@@ -1446,6 +1446,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           setIsPlayingCommentary(true);
           playingCommentaryRef.current = true;
           
+          // CRITICAL: Prefetch NEXT verse commentary NOW while this commentary plays
+          // Commentary playback takes 10-30 seconds - perfect time to prepare next verse
+          const nextVerseToPrep = verseIdx + 1;
+          if (nextVerseToPrep < content.verses.length) {
+            const nextVerse = content.verses[nextVerseToPrep];
+            prefetchVerseCommentary(content.book, content.chapter, nextVerse.verse, nextVerse.text, commentaryVoice, commentaryDepth);
+          }
+          // Also prefetch verse after next
+          const afterNextVerse = verseIdx + 2;
+          if (afterNextVerse < content.verses.length) {
+            const futureVerse = content.verses[afterNextVerse];
+            setTimeout(() => {
+              prefetchVerseCommentary(content.book, content.chapter, futureVerse.verse, futureVerse.text, commentaryVoice, commentaryDepth);
+            }, 500);
+          }
+          
           const commentaryAudio = new Audio(cached.audioUrl);
           // Use refs for volume to avoid stale closures on mobile
           commentaryAudio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
@@ -1497,6 +1513,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         } else if (cached?.text) {
           // Have text but no audio - generate TTS only
           console.log("[Verse Commentary] Using cached text, generating audio");
+          
+          // Also prefetch next verse while this commentary TTS generates
+          const nextVerseToPrep = verseIdx + 1;
+          if (nextVerseToPrep < content.verses.length) {
+            const nextVerse = content.verses[nextVerseToPrep];
+            prefetchVerseCommentary(content.book, content.chapter, nextVerse.verse, nextVerse.text, commentaryVoice, commentaryDepth);
+          }
+          
           playCommentary(cached.text, commentaryVoice, proceedAfterCommentary);
           return;
         }
@@ -1504,6 +1528,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         // Fallback: generate everything with timeout protection
         console.log("[Verse Commentary] No cache, generating for verse", verseIdx + 1);
         setIsLoading(true);
+        
+        // Start prefetching next verse while we generate current - use every opportunity
+        const nextVerseToPrep = verseIdx + 1;
+        if (nextVerseToPrep < content.verses.length) {
+          const nextVerse = content.verses[nextVerseToPrep];
+          prefetchVerseCommentary(content.book, content.chapter, nextVerse.verse, nextVerse.text, commentaryVoice, commentaryDepth);
+        }
         
         // Add timeout to prevent hanging on commentary generation
         const timeoutMs = 15000; // 15 second timeout
