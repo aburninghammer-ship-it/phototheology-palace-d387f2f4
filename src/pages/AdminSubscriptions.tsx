@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RevenueDashboard } from "@/components/admin/RevenueDashboard";
@@ -35,6 +35,7 @@ export default function AdminSubscriptions() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [sendingPatreonReminder, setSendingPatreonReminder] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
 
@@ -61,6 +62,29 @@ export default function AdminSubscriptions() {
       });
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const handleSendPatreonReminder = async () => {
+    setSendingPatreonReminder(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-patreon-reminder');
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Patreon Reminder Sent",
+        description: data?.message || `Sent ${data?.emailsSent || 0} reminder emails`,
+      });
+    } catch (error: any) {
+      console.error("Patreon reminder error:", error);
+      toast({
+        title: "Failed to Send Reminders",
+        description: error.message || "Failed to send Patreon reminders",
+        variant: "destructive",
+      });
+    } finally {
+      setSendingPatreonReminder(false);
     }
   };
 
@@ -231,6 +255,7 @@ export default function AdminSubscriptions() {
           <TabsTrigger value="mismatches">Subscription Health</TabsTrigger>
           <TabsTrigger value="revenue">Revenue & Churn</TabsTrigger>
           <TabsTrigger value="winback">Win-Back Campaign</TabsTrigger>
+          <TabsTrigger value="patreon">Patreon</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -337,6 +362,39 @@ export default function AdminSubscriptions() {
 
         <TabsContent value="winback">
           <WinBackCampaign />
+        </TabsContent>
+
+        <TabsContent value="patreon">
+          <Card>
+            <CardHeader>
+              <CardTitle>Patreon Integration</CardTitle>
+              <CardDescription>
+                Send reminder emails to Patreon supporters who haven't connected their accounts yet
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                This will fetch all active patrons from your Patreon campaign and send reminder emails 
+                to those who haven't connected their Patreon account to Phototheology.
+              </p>
+              <Button 
+                onClick={handleSendPatreonReminder} 
+                disabled={sendingPatreonReminder}
+              >
+                {sendingPatreonReminder ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Sending Reminders...
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    Send Patreon Connection Reminders
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
