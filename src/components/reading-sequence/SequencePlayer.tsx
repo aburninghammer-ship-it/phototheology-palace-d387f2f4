@@ -467,7 +467,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       console.error("[Verse Commentary] Error:", e);
       return null;
     }
-  }, []);
+  }, [userName, fetchRelevantStudies, formatStudiesForPrompt]);
 
   // Move to next chapter
   const moveToNextChapter = useCallback(() => {
@@ -1073,7 +1073,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         setIsPlaying(false);
       }
     }
-  }, [generateVerseCommentary, playCommentary, moveToNextChapter]);
+  }, [generateVerseCommentary, playCommentary, moveToNextChapter, currentCommentaryDepth]);
 
   // Play commentary only (skip verse reading)
   const playCommentaryOnlyChapter = useCallback(async (content: ChapterContent, sequence: ReadingSequenceBlock) => {
@@ -1159,7 +1159,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       setIsPlaying(false);
       toast.error("Failed to generate commentary");
     }
-  }, [generateCommentary, playCommentary, moveToNextChapter, playCommentaryOnlyVerse]);
+  }, [generateCommentary, playCommentary, moveToNextChapter, playCommentaryOnlyVerse, currentCommentaryDepth]);
 
   // Play a specific verse by index - using a stable ref to avoid stale closures
   const playVerseAtIndex = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
