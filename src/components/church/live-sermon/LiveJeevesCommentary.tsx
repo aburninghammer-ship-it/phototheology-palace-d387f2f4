@@ -126,12 +126,33 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
   const scribe = useScribe({
     modelId: "scribe_v2_realtime",
     commitStrategy: CommitStrategy.VAD,
+    languageCode: selectedLanguage,
+    vadSilenceThresholdSecs: 0.5,
+    vadThreshold: 0.5,
+    minSpeechDurationMs: 100,
+    minSilenceDurationMs: 500,
+    onSessionStarted: () => {
+      console.log("Scribe session started");
+    },
+    onConnect: () => {
+      console.log("Scribe connected");
+    },
+    onDisconnect: () => {
+      console.log("Scribe disconnected");
+      setIsListening(false);
+    },
+    onError: (error) => {
+      console.error("Scribe error:", error);
+      toast.error("Transcription error. Please try again.");
+      setIsListening(false);
+    },
     onPartialTranscript: (data) => {
+      console.log("Partial transcript:", data.text);
       setLiveTranscript(data.text);
     },
     onCommittedTranscript: (data) => {
       console.log("Committed transcript:", data.text);
-      if (data.text.trim()) {
+      if (data.text && data.text.trim()) {
         const newEntry: TranscriptEntry = {
           id: crypto.randomUUID(),
           text: data.text.trim(),
@@ -236,21 +257,27 @@ export function LiveJeevesCommentary({ sessionId, isLive = false }: LiveJeevesCo
   const startListening = useCallback(async () => {
     setIsConnecting(true);
     try {
-      // Request microphone permission
-      await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Request microphone permission first
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log("Microphone access granted, tracks:", stream.getAudioTracks().length);
 
       // Get token from edge function
       const { data, error } = await supabase.functions.invoke("elevenlabs-scribe-token");
 
-      if (error) throw error;
+      if (error) {
+        console.error("Token fetch error:", error);
+        throw error;
+      }
       if (!data?.token) {
+        console.error("No token in response:", data);
         throw new Error("No token received");
       }
+      
+      console.log("Token received, connecting to scribe...");
 
-      // Start the scribe session with language setting
+      // Start the scribe session (languageCode is set in hook options)
       await scribe.connect({
         token: data.token,
-        languageCode: selectedLanguage,
         microphone: {
           echoCancellation: true,
           noiseSuppression: true,
