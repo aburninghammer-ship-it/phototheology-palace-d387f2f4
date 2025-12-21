@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
@@ -39,21 +39,18 @@ export function useSubscription() {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      loadSubscription();
-    } else {
+  const loadSubscription = useCallback(async () => {
+    if (!user) {
       setLoading(false);
+      return;
     }
-  }, [user]);
 
-  const loadSubscription = async () => {
     try {
       // First check profile for lifetime access
       const { data: profile } = await supabase
         .from('profiles')
         .select('has_lifetime_access, subscription_status, subscription_tier')
-        .eq('id', user!.id)
+        .eq('id', user.id)
         .single();
 
       // If user has lifetime access, they're premium and have full access
@@ -79,61 +76,116 @@ export function useSubscription() {
 
       // Use secure function to get subscription summary
       const { data: subData, error: subError } = await supabase
-        .rpc('get_subscription_summary', { _user_id: user!.id });
+        .rpc('get_subscription_summary', { _user_id: user.id });
 
       // Check church access
       const { data: churchAccess } = await supabase.rpc('has_church_access', {
-        _user_id: user!.id
+        _user_id: user.id
       }).single();
 
       const hasChurchAccess = churchAccess?.has_access || false;
 
+      let hasAccessFromDb = false;
+      let tierFromDb: SubscriptionStatus['tier'] = 'free';
+      let statusFromDb: SubscriptionStatus['status'] = 'none';
+      let trialEndsAtFromDb: string | null = null;
+
       if (subData && subData.length > 0) {
         const sub = subData[0];
-        
-        setSubscription({
-          status: sub.status as SubscriptionStatus['status'],
-          tier: sub.tier as SubscriptionStatus['tier'],
-          isStudent: sub.tier === 'student',
-          trialEndsAt: sub.trial_ends_at,
-          studentExpiresAt: null,
-          promotionalExpiresAt: null,
-          hasAccess: sub.has_access || hasChurchAccess,
-          church: {
-            hasChurchAccess,
-            churchId: churchAccess?.church_id || null,
-            churchTier: churchAccess?.church_tier as any || null,
-            churchRole: churchAccess?.role as any || null,
-          },
-        });
-      } else {
-        // No subscription record - set defaults with church access check
-        setSubscription({
-          status: 'none',
-          tier: 'free',
-          isStudent: false,
-          trialEndsAt: null,
-          studentExpiresAt: null,
-          promotionalExpiresAt: null,
-          hasAccess: hasChurchAccess,
-          church: {
-            hasChurchAccess,
-            churchId: churchAccess?.church_id || null,
-            churchTier: churchAccess?.church_tier as any || null,
-            churchRole: churchAccess?.role as any || null,
-          },
-        });
+        statusFromDb = sub.status as SubscriptionStatus['status'];
+        tierFromDb = sub.tier as SubscriptionStatus['tier'];
+        trialEndsAtFromDb = sub.trial_ends_at;
+        hasAccessFromDb = sub.has_access || false;
       }
+
+      // If database shows active subscription or church access, use that
+      if (hasAccessFromDb || hasChurchAccess) {
+        setSubscription({
+          status: statusFromDb,
+          tier: tierFromDb,
+          isStudent: tierFromDb === 'student',
+          trialEndsAt: trialEndsAtFromDb,
+          studentExpiresAt: null,
+          promotionalExpiresAt: null,
+          hasAccess: true,
+          church: {
+            hasChurchAccess,
+            churchId: churchAccess?.church_id || null,
+            churchTier: churchAccess?.church_tier as any || null,
+            churchRole: churchAccess?.role as any || null,
+          },
+        });
+        setLoading(false);
+        return;
+      }
+
+      // FALLBACK: Check Stripe directly for users who may have paid but DB isn't synced
+      // This catches cases where webhook failed to update database
+      try {
+        console.log('[useSubscription] DB shows no access, checking Stripe directly...');
+        const { data: stripeCheck, error: stripeError } = await supabase.functions.invoke(
+          'check-stripe-subscription'
+        );
+
+        if (!stripeError && stripeCheck?.subscribed) {
+          console.log('[useSubscription] Stripe shows active subscription!', stripeCheck);
+          setSubscription({
+            status: stripeCheck.status === 'trialing' ? 'trial' : 'active',
+            tier: stripeCheck.tier || 'premium',
+            isStudent: stripeCheck.tier === 'student',
+            trialEndsAt: stripeCheck.subscription_end,
+            studentExpiresAt: null,
+            promotionalExpiresAt: null,
+            hasAccess: true,
+            church: {
+              hasChurchAccess: false,
+              churchId: null,
+              churchTier: null,
+              churchRole: null,
+            },
+          });
+          setLoading(false);
+          return;
+        }
+      } catch (stripeCheckError) {
+        console.error('[useSubscription] Stripe check failed:', stripeCheckError);
+        // Continue with database result if Stripe check fails
+      }
+
+      // No subscription found anywhere
+      setSubscription({
+        status: statusFromDb || 'none',
+        tier: tierFromDb || 'free',
+        isStudent: false,
+        trialEndsAt: trialEndsAtFromDb,
+        studentExpiresAt: null,
+        promotionalExpiresAt: null,
+        hasAccess: hasChurchAccess,
+        church: {
+          hasChurchAccess,
+          churchId: churchAccess?.church_id || null,
+          churchTier: churchAccess?.church_tier as any || null,
+          churchRole: churchAccess?.role as any || null,
+        },
+      });
     } catch (error) {
       console.error("Error loading subscription:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  const refreshSubscription = () => {
+  useEffect(() => {
+    if (user) {
+      loadSubscription();
+    } else {
+      setLoading(false);
+    }
+  }, [user, loadSubscription]);
+
+  const refreshSubscription = useCallback(() => {
     loadSubscription();
-  };
+  }, [loadSubscription]);
 
   return { subscription, loading, refreshSubscription };
 }

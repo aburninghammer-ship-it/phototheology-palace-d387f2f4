@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,33 +16,27 @@ interface TrialUpgradePromptProps {
 
 export function TrialUpgradePrompt({ variant = 'banner', onDismiss }: TrialUpgradePromptProps) {
   const { user } = useAuth();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
   const [trialInfo, setTrialInfo] = useState<{ daysLeft: number; hoursLeft: number; isExpired: boolean } | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || subscriptionLoading) {
+      return;
+    }
+
+    // Use subscription hook for reliable paid status check
+    if (subscription.hasAccess && subscription.status !== 'trial') {
+      // User has active paid access - don't show trial prompts
+      setTrialInfo(null);
       setLoading(false);
       return;
     }
 
     const checkTrial = async () => {
-      // First check if user has lifetime access or active subscription
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('has_lifetime_access, subscription_status, subscription_tier')
-        .eq('id', user.id)
-        .single();
-
-      // Users with lifetime access or active paid subscriptions don't see trial prompts
-      if (profile?.has_lifetime_access || 
-          (profile?.subscription_status === 'active' && profile?.subscription_tier)) {
-        setTrialInfo(null);
-        setLoading(false);
-        return;
-      }
-
+      // Check for trial end date
       const { data } = await supabase
         .from('user_subscriptions')
         .select('subscription_status, trial_ends_at')
@@ -63,7 +58,7 @@ export function TrialUpgradePrompt({ variant = 'banner', onDismiss }: TrialUpgra
     };
 
     checkTrial();
-  }, [user]);
+  }, [user, subscription, subscriptionLoading]);
 
   const handleDismiss = () => {
     setDismissed(true);
