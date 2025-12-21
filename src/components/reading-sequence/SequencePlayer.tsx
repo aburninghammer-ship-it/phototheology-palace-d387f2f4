@@ -1268,6 +1268,24 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       if (commentaryMode === "verse") {
         // Prefetch verse commentary for current verse
         prefetchVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryVoice, commentaryDepth);
+        
+        // OPTIMIZATION: Also prefetch NEXT verse's commentary so it's ready when current commentary finishes
+        // This significantly reduces perceived loading time between verses
+        const nextVerseIdx = verseIdx + 1;
+        if (nextVerseIdx < content.verses.length) {
+          const nextVerse = content.verses[nextVerseIdx];
+          prefetchVerseCommentary(content.book, content.chapter, nextVerse.verse, nextVerse.text, commentaryVoice, commentaryDepth);
+        }
+        
+        // Also prefetch 2 verses ahead for even smoother playback
+        const nextNextVerseIdx = verseIdx + 2;
+        if (nextNextVerseIdx < content.verses.length) {
+          const nextNextVerse = content.verses[nextNextVerseIdx];
+          // Slight delay to prioritize current and next verse
+          setTimeout(() => {
+            prefetchVerseCommentary(content.book, content.chapter, nextNextVerse.verse, nextNextVerse.text, commentaryVoice, commentaryDepth);
+          }, 500);
+        }
       } else if (commentaryMode === "chapter" && verseIdx >= content.verses.length - 3) {
         // Prefetch chapter commentary when near end of chapter
         const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
