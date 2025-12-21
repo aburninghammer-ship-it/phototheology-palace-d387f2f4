@@ -13,10 +13,8 @@ export function SubscriptionBanner() {
   const { subscription, loading } = useSubscription();
   const [showBanner, setShowBanner] = useState(false);
 
-  // Never show subscription/trial banners if not authenticated or already on pricing
-  if (authLoading || !user || location.pathname === "/pricing") return null;
-
   // Delay showing the banner to prevent flash on mount
+  // MUST be before any conditional returns to satisfy React hooks rules
   useEffect(() => {
     if (!loading) {
       const timer = setTimeout(() => setShowBanner(true), 150);
@@ -25,6 +23,9 @@ export function SubscriptionBanner() {
       setShowBanner(false);
     }
   }, [loading]);
+
+  // Never show subscription/trial banners if not authenticated or already on pricing
+  if (authLoading || !user || location.pathname === "/pricing") return null;
 
   if (loading || !showBanner) return null;
   
