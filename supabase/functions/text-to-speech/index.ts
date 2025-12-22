@@ -54,6 +54,13 @@ const DEFAULT_VOICE = 'onyx';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
 function normalizeBookName(book: string): string {
   return book.toLowerCase().replace(/\s+/g, '-');
 }
@@ -73,7 +80,7 @@ async function checkCache(
   try {
     // Include provider in cache lookup
     const storagePath = getStoragePath(book, chapter, verse, voiceId, provider);
-    
+
     const { data, error } = await supabase
       .from('bible_audio_cache')
       .select('storage_path')
@@ -108,7 +115,7 @@ async function storeInCache(
 ): Promise<string | null> {
   try {
     const storagePath = getStoragePath(book, chapter, verse, voiceId, provider);
-    
+
     const { error: uploadError } = await supabase.storage
       .from('bible-audio')
       .upload(storagePath, audioBuffer, {
@@ -168,7 +175,7 @@ function splitTextIntoChunks(text: string, maxChars: number): string[] {
     const searchText = remaining.substring(0, maxChars);
     const sentenceEndings = ['. ', '! ', '? ', '.\n', '!\n', '?\n'];
     let lastSentenceEnd = -1;
-    
+
     for (const ending of sentenceEndings) {
       const idx = searchText.lastIndexOf(ending);
       if (idx > lastSentenceEnd) {
@@ -205,7 +212,7 @@ async function generateOpenAI(
   apiKey: string
 ): Promise<ArrayBuffer> {
   const selectedVoice = OPENAI_VOICES.includes(voice.toLowerCase()) ? voice.toLowerCase() : DEFAULT_VOICE;
-  
+
   const response = await fetch('https://api.openai.com/v1/audio/speech', {
     method: 'POST',
     headers: {
@@ -238,7 +245,7 @@ async function generateElevenLabs(
 ): Promise<ArrayBuffer> {
   // Get voice ID from name or use directly if it looks like an ID
   const voiceId = ELEVENLABS_VOICES[voice.toLowerCase()] || voice;
-  
+
   const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
     method: 'POST',
     headers: {
@@ -274,12 +281,12 @@ async function generateSpeechify(
   apiKey: string
 ): Promise<ArrayBuffer> {
   const voiceId = SPEECHIFY_VOICES[voice.toLowerCase()] || voice;
-  
+
   console.log(`[Speechify] Generating speech with voice: ${voiceId}`);
-  
+
   // Clean the text - remove SSML tags if present, Speechify expects plain text or proper SSML
   const cleanText = text.replace(/<[^>]*>/g, '');
-  
+
   const response = await fetch('https://api.sws.speechify.com/v1/audio/speech', {
     method: 'POST',
     headers: {
@@ -300,7 +307,7 @@ async function generateSpeechify(
   }
 
   const data = await response.json();
-  
+
   // Speechify returns base64 audio
   if (data.audio_data) {
     const binaryString = atob(data.audio_data);
@@ -310,7 +317,7 @@ async function generateSpeechify(
     }
     return bytes.buffer;
   }
-  
+
   throw new Error('No audio data received from Speechify');
 }
 
@@ -320,15 +327,17 @@ serve(async (req) => {
   }
 
   try {
-    const { 
-      text, 
-      voice = DEFAULT_VOICE, 
-      speed = 1.0, 
-      book, 
-      chapter, 
-      verse, 
+    const {
+      text,
+      voice = DEFAULT_VOICE,
+      speed = 1.0,
+      book,
+      chapter,
+      verse,
       useCache = true,
-      provider = 'openai' as TTSProvider
+      provider = 'openai' as TTSProvider,
+      // Backward-compatible: callers can request a URL response to avoid huge base64 payloads
+      returnType = 'base64' as 'base64' | 'url'
     } = await req.json();
 
     if (!text) {
@@ -363,13 +372,13 @@ serve(async (req) => {
     // Check cache if verse info provided
     if (useCache && book && chapter !== undefined && verse !== undefined) {
       console.log(`[TTS] Checking cache: ${book} ${chapter}:${verse} (${provider}:${voice})`);
-      
+
       const cacheResult = await checkCache(supabase, book, chapter, verse, voice, provider);
-      
+
       if (cacheResult.found && cacheResult.url) {
         console.log(`[TTS] CACHE HIT - ${book} ${chapter}:${verse}`);
         return new Response(
-          JSON.stringify({ 
+          JSON.stringify({
             audioUrl: cacheResult.url,
             cached: true,
             provider,
@@ -378,7 +387,7 @@ serve(async (req) => {
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      
+
       console.log(`[TTS] CACHE MISS - generating audio with ${provider}`);
     }
 
@@ -387,11 +396,11 @@ serve(async (req) => {
     console.log(`[TTS] Split into ${chunks.length} chunks`);
 
     const audioBuffers: ArrayBuffer[] = [];
-    
+
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
       console.log(`[TTS] Processing chunk ${i + 1}/${chunks.length} (${chunk.length} chars)`);
-      
+
       let buffer: ArrayBuffer;
       switch (provider) {
         case 'elevenlabs':
@@ -405,9 +414,9 @@ serve(async (req) => {
           buffer = await generateOpenAI(chunk, voice, speed, apiKey);
           break;
       }
-      
+
       audioBuffers.push(buffer);
-      
+
       if (i < chunks.length - 1) {
         await delay(100);
       }
@@ -427,10 +436,10 @@ serve(async (req) => {
     // Store in cache if verse info provided
     if (useCache && book && chapter !== undefined && verse !== undefined) {
       const cachedUrl = await storeInCache(supabase, book, chapter, verse, voice, provider, combined.buffer);
-      
+
       if (cachedUrl) {
         return new Response(
-          JSON.stringify({ 
+          JSON.stringify({
             audioUrl: cachedUrl,
             cached: false,
             justCached: true,
@@ -442,11 +451,53 @@ serve(async (req) => {
       }
     }
 
-    // Return base64 if not caching
+    // If requested, return a URL response to avoid huge base64 payloads (better for mobile)
+    if (returnType === 'url') {
+      try {
+        const stableKey = await sha256Hex(JSON.stringify({
+          provider,
+          voice,
+          speed: Math.round(speed * 100) / 100,
+          text: text.trim(),
+        }));
+
+        const storagePath = `tts/${provider}/${voice}/${stableKey}.mp3`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('bible-audio')
+          .upload(storagePath, combined.buffer, {
+            contentType: 'audio/mpeg',
+            upsert: true,
+          });
+
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from('bible-audio')
+            .getPublicUrl(storagePath);
+
+          return new Response(
+            JSON.stringify({
+              audioUrl: urlData.publicUrl,
+              cached: false,
+              justCached: false,
+              provider,
+              contentType: 'audio/mpeg'
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        console.error('[TTS] URL upload failed, falling back to base64:', uploadError);
+      } catch (err) {
+        console.error('[TTS] Failed to return URL, falling back to base64:', err);
+      }
+    }
+
+    // Return base64 (legacy behavior)
     const base64Audio = base64Encode(combined.buffer);
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: true,
         audioContent: base64Audio,
         contentType: 'audio/mpeg',
