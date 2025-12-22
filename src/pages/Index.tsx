@@ -139,7 +139,7 @@ const Index = () => {
       <QuickTestimonialBanner />
 
       {/* Give Me A Gem - Prominent CTA */}
-      <div className="flex justify-center py-6 bg-gradient-to-b from-background to-muted/30">
+      <div className="flex justify-center py-8 bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 border-y border-amber-500/20">
         <GiveGemButton />
       </div>
 
