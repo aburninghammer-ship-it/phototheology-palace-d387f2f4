@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useThoughtAnalysisHistory, SavedAnalysis, DeeperInsight } from "@/hooks/useThoughtAnalysisHistory";
 import { AnimatedScore } from "@/components/analyze/AnimatedScore";
 import { VoiceInput } from "@/components/analyze/VoiceInput";
+import { StyledMarkdownSections } from "@/components/ui/styled-markdown";
 import { SavedAnalysesList } from "@/components/analyze/SavedAnalysesList";
 import { QuickAudioButton } from "@/components/audio";
 import { FollowUpChat } from "@/components/analyze/FollowUpChat";
@@ -605,16 +606,16 @@ const AnalyzeThoughts = () => {
     }
   };
 
-  // Format narrative analysis with proper paragraphs
+  // Format narrative analysis with styled markdown (headings, bullets, etc.)
   const formatNarrative = (text: string) => {
     if (!text) return null;
-    const paragraphs = text.split('\n\n').filter(p => p.trim());
-    return paragraphs.map((p, i) => (
-      <p key={i} className="text-base leading-relaxed text-foreground/90 mb-4 last:mb-0">
-        {p}
-      </p>
-    ));
+    return <StyledMarkdownSections content={text} className="text-base leading-relaxed" />;
   };
+
+  // Safely get the overall score, defaulting to 0 if null/undefined/NaN
+  const safeOverallScore = typeof result?.overallScore === 'number' && !isNaN(result.overallScore) 
+    ? result.overallScore 
+    : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
@@ -1007,7 +1008,7 @@ const AnalyzeThoughts = () => {
                         <CardContent className="pt-6">
                           {/* Main Score */}
                           <div className="flex justify-center mb-8">
-                            <AnimatedScore score={result.overallScore} size="lg" delay={500} />
+                            <AnimatedScore score={safeOverallScore} size="lg" delay={500} />
                           </div>
                           
                           {/* Category Scores Grid */}
@@ -1024,7 +1025,7 @@ const AnalyzeThoughts = () => {
                                   transition={{ delay: 0.6 + index * 0.1 }}
                                 >
                                   <AnimatedScore 
-                                    score={value} 
+                                    score={typeof value === 'number' && !isNaN(value) ? value : 0} 
                                     size="sm" 
                                     delay={700 + index * 150}
                                     showLabel
