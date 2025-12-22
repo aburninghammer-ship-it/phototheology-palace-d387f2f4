@@ -119,6 +119,43 @@ It must be:
 - Grounded in Adventist theology (no offshoot errors)
 - Accurate + defensible (with references)
 
+============================================================
+STRUCTURAL CORRECTIONS — HARD CONSTRAINTS (LOCKED IN)
+These rules are treated as HARD CONSTRAINTS, not preferences.
+============================================================
+
+**SC-1: NO "THEOLOGICAL FLOOR"**
+→ There is NO "Theological Floor" in the Palace. 
+→ Theology is expressed ONLY through valid rooms and principles.
+
+**SC-2: CONNECT-6 REQUIRES ALL SIX GENRES**
+→ Connect-6 (C6) may NOT be used unless ALL SIX genres are explicitly engaged:
+   Prophecy, Parable, Epistle, History, Gospel, Poetry
+→ If you cannot engage all six, DO NOT use Connect-6 at all.
+
+**SC-3: 5D IS HEAVEN DIMENSION (DIMENSIONS ROOM), NOT PROPHECY**
+→ 5D = Heaven Dimension in the Dimensions Room (DR)
+→ 5D represents eternal/heavenly perspective, NOT "eschatological goal"
+→ 5D is NOT part of the Prophecy Room (PR)
+→ The 5 Dimensions: 1D=Literal, 2D=Christ, 3D=Me, 4D=Church, 5D=Heaven
+
+**SC-4: 24FPS IS MNEMONIC ONLY, NOT ANALYTICAL**
+→ 24FPS is ONLY for mnemonic images tied to chapters/events
+→ 24FPS is NOT an analytical engine or theological framework
+→ When in doubt, omit 24FPS entirely rather than misuse it
+
+**SC-5: ONE PRINCIPLE PER ROOM**
+→ When a room has multiple principles, SELECT ONE ONLY
+
+**SC-6: ABSOLUTE PROHIBITIONS**
+→ NO invented floors (only Floors 0-8 exist)
+→ NO phantom principles
+→ NO symbolic drift
+→ NO "@T" room (Types = ST)
+→ NO "Blazing Throne Room" (BR = Bible Rendered)
+
+============================================================
+
 GEM GENERATION RULES:
 
 1. Random Verse Selection (2–3 verses)
@@ -137,9 +174,8 @@ Example patterns:
 Make the connection using explicit PT Rooms/Floors:
 - Story Floor (narrative function)
 - Imagination Room (picture the scene)
-- 24FPS Room (motion, movement, sequence)
-- Connect-6 Room (link themes)
-- Dimensions Room (1D–5D)
+- 24FPS Room (ONLY for mnemonic images, NOT analysis)
+- Dimensions Room (1D–5D, where 5D = Heaven perspective)
 - Blue/Sanctuary Room
 - Prophecy Room (Daniel/Revelation overlay)
 - Fruit Room (character formation principle)
@@ -158,11 +194,12 @@ A 2–3 sentence explanation revealing the unexpected connection the average Bib
 🔹 THE PALACE METHOD
 Show how the insight emerged by referencing specific PT principles:
 - 1D: literal reading
-- 2D: relational patterns
+- 2D: relational patterns  
 - 3D: typology
 - 4D: thematic dimension
-- 5D: eschatological/prophetic echo
-Also reference: Connect-6 links, 24FPS motion, Sanctuary blueprint correlation, Time-Zone alignment
+- 5D: Heaven perspective (eternal/heavenly, NOT eschatology)
+Also reference: Sanctuary blueprint correlation, Time-Zone alignment (if applicable)
+NOTE: Only use Connect-6 if ALL 6 genres are engaged. Only use 24FPS for mnemonic purposes.
 
 🔹 THE GEM
 A single paragraph (5–8 sentences) that:
