@@ -28,6 +28,7 @@ import { ChainWitness } from "@/components/analyze/ChainWitness";
 import { VerseExtraction } from "@/components/analyze/VerseExtraction";
 import { CopyableVerse } from "@/components/analyze/CopyableVerse";
 import { useRecentStudies } from "@/hooks/useRecentStudies";
+import { useGemLimit } from "@/hooks/useGemLimit";
 import { useSparks } from "@/hooks/useSparks";
 import { SparkContainer, SparkSettings } from "@/components/sparks";
 import {
@@ -197,6 +198,7 @@ const AnalyzeThoughts = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { isAdmin } = useIsAdmin();
+  const { canCreateGem, gemsRemaining, getLimitMessage, refetch: refetchGemLimit } = useGemLimit();
 
   // Sparks integration - show all study sparks, not just current context
   const {
@@ -504,6 +506,15 @@ const AnalyzeThoughts = () => {
 
   const handleSaveToGems = async () => {
     if (!result) return;
+    
+    // Check gem limit before proceeding
+    if (!canCreateGem) {
+      toast.error("You've reached your weekly limit of 5 gems. Your limit resets on Sunday.", {
+        duration: 5000,
+      });
+      return;
+    }
+    
     setIsSaving(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -521,7 +532,10 @@ const AnalyzeThoughts = () => {
         category: 'Thought Analysis'
       });
       if (error) throw error;
-      toast.success("Saved to Gems Room! 💎");
+      
+      // Refetch limit after successful save
+      refetchGemLimit();
+      toast.success(`Saved to Gems Room! 💎 (${gemsRemaining - 1} gems remaining this week)`);
     } catch (error) {
       console.error("Error saving gem:", error);
       toast.error("Failed to save");
@@ -876,10 +890,22 @@ const AnalyzeThoughts = () => {
               transition={{ duration: 0.5 }}
             >
               {/* Action Buttons */}
-              <motion.div className="flex flex-wrap gap-3 justify-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-                <Button onClick={handleSaveToGems} disabled={isSaving} variant="outline" className="bg-emerald-500/10 border-emerald-500/30 text-emerald-400">
-                  {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}Save to Gems
-                </Button>
+              <motion.div className="flex flex-wrap gap-3 justify-center items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+                <div className="flex flex-col items-center gap-1">
+                  <Button 
+                    onClick={handleSaveToGems} 
+                    disabled={isSaving || !canCreateGem} 
+                    variant="outline" 
+                    className={`bg-emerald-500/10 border-emerald-500/30 text-emerald-400 ${!canCreateGem ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title={getLimitMessage()}
+                  >
+                    {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Gem className="h-4 w-4 mr-2" />}
+                    Save to Gems ({gemsRemaining}/5 left)
+                  </Button>
+                  {!canCreateGem && (
+                    <span className="text-xs text-amber-400">Weekly limit reached — resets Sunday</span>
+                  )}
+                </div>
                 <ExportToStudyButton
                   type="thought-analysis"
                   title={`Thought Analysis — ${new Date().toLocaleDateString()}`}
