@@ -10,6 +10,7 @@ import { useChangeSpine } from '@/hooks/useChangeSpine';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { UserCountBadge } from '@/components/UserCountBadge';
+import { GiveGemButton } from '@/components/GiveGemButton';
 
 type ViewState = 'choice' | 'appeal' | 'exit';
 
@@ -276,6 +277,10 @@ const Gatehouse = () => {
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground">
               The Choice Is Yours
             </h1>
+
+            <div className="mt-8 flex justify-center">
+              <GiveGemButton />
+            </div>
           </motion.div>
 
           {/* Full Card Layout */}
@@ -440,6 +445,10 @@ const Gatehouse = () => {
           >
             <UserCountBadge />
           </motion.div>
+
+          <div className="mt-8 flex justify-center">
+            <GiveGemButton />
+          </div>
         </motion.div>
 
         {/* The Two Paths - Glass Cards */}
