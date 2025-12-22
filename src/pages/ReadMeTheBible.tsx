@@ -224,7 +224,7 @@ export default function ReadMeTheBible() {
     return (
       <div className="min-h-screen bg-gradient-subtle">
         <Navigation />
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="container mx-auto px-4 py-8 pb-24 md:pb-8 max-w-4xl">
           <div className="flex gap-3 mb-6">
             <Button 
               variant="ghost" 
@@ -277,7 +277,7 @@ export default function ReadMeTheBible() {
       </div>
       
       <Navigation />
-      <div className="container mx-auto px-4 py-8 relative z-10">
+      <div className="container mx-auto px-4 py-8 pb-24 md:pb-8 relative z-10">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
