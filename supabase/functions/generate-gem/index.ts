@@ -41,6 +41,69 @@ serve(async (req) => {
       userId = user?.id || null;
     }
 
+    // Get IP for anonymous rate limiting
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+                     req.headers.get('x-real-ip') || 
+                     'unknown';
+
+    // Check daily gem limit (3 per day)
+    const DAILY_LIMIT = 3;
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    
+    let gemsToday = 0;
+    if (userId) {
+      // Check by user ID
+      const { count, error: countError } = await supabase
+        .from('generated_gems')
+        .select('*', { count: 'exact', head: true })
+        .eq('generated_for_user_id', userId)
+        .gte('created_at', `${today}T00:00:00.000Z`);
+      
+      if (countError) {
+        console.error('Error checking daily limit:', countError);
+      } else {
+        gemsToday = count || 0;
+      }
+    } else {
+      // For anonymous users, use a simpler approach - check by IP in last 24 hours
+      // We'll store IP in the content field metadata or use a separate tracking mechanism
+      // For now, anonymous users share a pool - we check total anonymous gems today
+      const { count, error: countError } = await supabase
+        .from('generated_gems')
+        .select('*', { count: 'exact', head: true })
+        .is('generated_for_user_id', null)
+        .gte('created_at', `${today}T00:00:00.000Z`);
+      
+      if (countError) {
+        console.error('Error checking anonymous daily limit:', countError);
+      } else {
+        // Anonymous users share a more generous pool (30 total per day)
+        if ((count || 0) >= 30) {
+          return new Response(
+            JSON.stringify({ 
+              error: 'Daily gem limit reached for anonymous users. Sign in for your personal daily limit.',
+              limit_reached: true
+            }),
+            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    }
+
+    if (userId && gemsToday >= DAILY_LIMIT) {
+      return new Response(
+        JSON.stringify({ 
+          error: `You've discovered ${DAILY_LIMIT} gems today. Return tomorrow for more treasures!`,
+          limit_reached: true,
+          gems_today: gemsToday,
+          daily_limit: DAILY_LIMIT
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`User ${userId || 'anonymous'} has generated ${gemsToday}/${DAILY_LIMIT} gems today`);
+
     // Generate a unique seed to ensure variety
     const uniqueSeed = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}-${userId || 'anonymous'}`;
 

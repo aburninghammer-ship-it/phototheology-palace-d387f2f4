@@ -24,6 +24,17 @@ export const GiveGemButton = () => {
         throw error;
       }
 
+      // Check if limit was reached
+      if (data?.limit_reached) {
+        toast({
+          title: "Daily Limit Reached",
+          description: data.error || "You've discovered all your gems for today. Return tomorrow!",
+          variant: "default"
+        });
+        setIsOpen(false);
+        return;
+      }
+
       if (data?.gem) {
         setGem({
           title: data.title || 'A Precious Gem',
@@ -32,11 +43,21 @@ export const GiveGemButton = () => {
       }
     } catch (error: any) {
       console.error('Error generating gem:', error);
-      toast({
-        title: "Unable to generate gem",
-        description: error.message || "Please try again in a moment",
-        variant: "destructive"
-      });
+      
+      // Handle rate limit from edge function
+      if (error?.message?.includes('limit') || error?.status === 429) {
+        toast({
+          title: "Daily Limit Reached",
+          description: "You've discovered all your gems for today. Return tomorrow!",
+          variant: "default"
+        });
+      } else {
+        toast({
+          title: "Unable to generate gem",
+          description: error.message || "Please try again in a moment",
+          variant: "destructive"
+        });
+      }
       setIsOpen(false);
     } finally {
       setIsGenerating(false);
