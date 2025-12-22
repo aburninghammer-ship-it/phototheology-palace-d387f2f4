@@ -83,7 +83,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending feedback email:", { category: sanitizedCategory, title: sanitizedTitle, userEmail: sanitizedEmail });
 
     const emailResponse = await resend.emails.send({
-      from: "Phototheology Feedback <onboarding@resend.dev>",
+      from: "Phototheology Feedback <feedback@thephototheologyapp.com>",
       to: ["aburninghammer@gmail.com"],
       subject: `New Feedback: ${sanitizedCategory} - ${sanitizedTitle}`,
       html: `

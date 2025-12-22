@@ -25,7 +25,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending admin signup email for:", { userName, userEmail });
 
     const emailResponse = await resend.emails.send({
-      from: "Phototheology <onboarding@resend.dev>",
+      from: "Phototheology <noreply@thephototheologyapp.com>",
       to: ["aburninghammer@gmail.com"],
       subject: `📧 Latest Signup Details: ${userName}`,
       html: `

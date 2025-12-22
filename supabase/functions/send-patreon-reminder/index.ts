@@ -177,7 +177,7 @@ serve(async (req: Request) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "Phototheology <noreply@phototheology.com>",
+            from: "Phototheology <noreply@thephototheologyapp.com>",
             to: [patron.email],
             subject: "Connect Your Patreon for Premium Access 🎁",
             html: `
