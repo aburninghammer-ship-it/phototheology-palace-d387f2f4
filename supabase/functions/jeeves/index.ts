@@ -5467,10 +5467,10 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
 
     // Handle analyze-thoughts mode (both standard and scholar) - parse JSON and return structured analysis
     if (mode === "analyze-thoughts" || mode === "analyze-thoughts-scholar") {
+      // Clean the content - remove any markdown code blocks (defined outside try for catch access)
+      let cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      
       try {
-        // Clean the content - remove any markdown code blocks
-        let cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-        
         // Try to extract JSON from the response
         const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
@@ -5485,35 +5485,41 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
         }
       } catch (parseError) {
         console.error(`Error parsing ${mode} JSON:`, parseError);
-        // Return a fallback structured response
+        console.error(`Raw content that failed to parse:`, cleanContent.substring(0, 2000));
+        
+        // Return an error response so the user knows analysis failed - don't give fake scores
         return new Response(
           JSON.stringify({ 
+            error: "Analysis parsing failed - please try again",
+            parseError: true,
             analysis: {
-              overallScore: 7,
+              summary: "Unable to complete analysis due to a processing error. Your notes were received but the AI response couldn't be parsed correctly. Please try submitting again.",
+              narrativeAnalysis: "We encountered a technical issue while analyzing your thoughtful submission. This is NOT a reflection of your work quality - it's a parsing error on our end. Please click 'Analyze' again to get your proper score and feedback.",
+              overallScore: null,
+              parseErrorOccurred: true,
               categories: {
-                biblicalAccuracy: 7,
-                depthOfInsight: 7,
-                christCenteredness: 7,
-                ptApplication: 7
+                biblicalAccuracy: null,
+                theologicalDepth: null,
+                christCenteredness: null,
+                practicalApplication: null,
+                doctrinalSoundness: null,
+                sanctuaryHarmony: null
               },
               strengths: [
-                "You've made an effort to engage with Scripture thoughtfully",
-                "Your willingness to explore biblical connections shows growth"
+                {"point": "Your submission was received", "expansion": "We just had trouble processing the AI's response. Try again!"}
               ],
-              growthAreas: [
-                "Consider exploring deeper Christ-centered connections",
-                "Try connecting your insight to specific Palace rooms"
-              ],
-              palaceMapping: {
-                primaryRoom: "Concentration Room (CR)",
-                relatedRooms: ["Questions Room (QR)", "Gems Room (GR)"],
-                floorRecommendation: "Continue building foundations on Floor 1-2 before advancing"
+              growthAreas: [],
+              palaceRooms: [],
+              scriptureConnections: [],
+              typologyLayers: [],
+              deeperInsights: [],
+              potentialMisinterpretations: [],
+              alignmentCheck: {
+                status: "aligned",
+                notes: "Unable to evaluate due to parsing error - please retry."
               },
-              scriptureConnections: [
-                { reference: "John 5:39", connection: "Jesus said the Scriptures testify of Him - keep searching for Christ!" },
-                { reference: "2 Timothy 2:15", connection: "Study to show yourself approved, rightly dividing the word of truth" }
-              ],
-              encouragement: "Keep studying and growing! Every insight is a stepping stone. What other Scripture might connect to your idea?"
+              furtherStudy: [],
+              encouragement: "Your notes were received! We just had a technical hiccup processing the analysis. Please try again - your insights deserve a proper evaluation!"
             }
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
