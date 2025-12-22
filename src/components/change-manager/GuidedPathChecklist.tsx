@@ -41,13 +41,13 @@ export const GuidedPathChecklist = ({ className, minimized = false }: GuidedPath
     return null;
   }
 
-  // Don't show if completed first win and dismissed, or still loading
-  if (isLoading || (guidedPathCompleted && dismissed)) {
+  // Don't show if dismissed, or still loading
+  if (isLoading || dismissed) {
     return null;
   }
 
-  // Don't show if first win achieved
-  if (hasAchievedFirstWin) {
+  // Don't show if first win achieved and path completed
+  if (hasAchievedFirstWin && guidedPathCompleted) {
     return null;
   }
 
@@ -181,8 +181,8 @@ export const GuidedPathChecklist = ({ className, minimized = false }: GuidedPath
                 </div>
               )}
 
-              {/* Dismiss option after first win */}
-              {hasAchievedFirstWin && (
+              {/* Dismiss option - always show when path is at step 3+ or completed */}
+              {(guidedPathCompleted || currentStep >= 3 || hasAchievedFirstWin) && (
                 <div className="p-4 pt-0 border-t border-border/50">
                   <button
                     onClick={handleDismiss}
