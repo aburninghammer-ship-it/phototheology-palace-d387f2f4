@@ -16,6 +16,7 @@ import { PunchyHero } from "@/components/PunchyHero";
 import { QuickTestimonialBanner } from "@/components/landing/QuickTestimonialBanner";
 import { LandingPageSkeleton, TestimonialsSkeleton } from "@/components/landing/LandingPageSkeleton";
 import { useSyncEarlyTracking } from "@/hooks/useSyncEarlyTracking";
+import { GiveGemButton } from "@/components/GiveGemButton";
 
 // Lazy load heavy below-the-fold components
 const StreamlinedTestimonials = lazy(() => 
@@ -136,6 +137,11 @@ const Index = () => {
 
       {/* Quick testimonial banner - immediate social proof */}
       <QuickTestimonialBanner />
+
+      {/* Give Me A Gem - Prominent CTA */}
+      <div className="flex justify-center py-6 bg-gradient-to-b from-background to-muted/30">
+        <GiveGemButton />
+      </div>
 
       {/* 1. Hero - The 10-second hook - NOT lazy loaded */}
       <PunchyHero />
