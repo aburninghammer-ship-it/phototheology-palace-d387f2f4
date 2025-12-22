@@ -147,37 +147,53 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     }
   }, []);
 
-  const generateTTS = useCallback(async (text: string, voice: VoiceId): Promise<string | null> => {
+  const generateTTS = useCallback(async (text: string, voice: VoiceId, verseNum?: number): Promise<string | null> => {
     try {
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
-        body: { text, voice },
+        body: {
+          text,
+          voice,
+          // Prefer URL responses on mobile to avoid huge base64 payloads
+          returnType: "url",
+          // Enable backend caching when verse metadata is available
+          book,
+          chapter,
+          verse: verseNum,
+          useCache: verseNum !== undefined,
+          provider: "openai",
+        },
       });
 
       if (error) {
-        console.error("[TTS] Supabase function error:", error);
+        console.error("[TTS] Function error:", error);
         throw error;
       }
 
-      if (!data?.audioContent) {
-        console.error("[TTS] No audio content in response:", data);
-        return null;
+      // Preferred path: URL (cached or freshly generated)
+      if (data?.audioUrl) {
+        return data.audioUrl as string;
       }
-      
-      // Decode base64 in chunks to avoid stack overflow on large audio
-      const binaryString = atob(data.audioContent);
-      const len = binaryString.length;
-      const bytes = new Uint8Array(len);
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+
+      // Fallback: base64
+      if (data?.audioContent) {
+        const binaryString = atob(data.audioContent);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        const blob = new Blob([bytes], { type: "audio/mpeg" });
+        return URL.createObjectURL(blob);
       }
-      
-      const blob = new Blob([bytes], { type: "audio/mpeg" });
-      return URL.createObjectURL(blob);
+
+      console.error("[TTS] No audioUrl/audioContent in response:", data);
+      return null;
     } catch (e) {
       console.error("[TTS] Error generating TTS:", e);
       return null;
     }
-  }, []);
+  }, [book, chapter]);
 
   // Prefetch audio for a verse index
   const prefetchVerse = useCallback(async (verseIndex: number) => {
