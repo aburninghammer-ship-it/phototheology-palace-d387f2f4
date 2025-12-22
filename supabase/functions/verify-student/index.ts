@@ -97,7 +97,7 @@ serve(async (req) => {
 
     // Send verification email
     const { error: emailError } = await resend.emails.send({
-      from: "Palace of Study <onboarding@resend.dev>",
+      from: "Phototheology <noreply@thephototheologyapp.com>",
       to: [email.toLowerCase()],
       subject: "Verify Your Student Email - Palace of Study",
       html: `

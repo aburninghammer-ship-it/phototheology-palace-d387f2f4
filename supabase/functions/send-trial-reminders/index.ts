@@ -136,7 +136,7 @@ serve(async (req) => {
 
       try {
         await resend.emails.send({
-          from: "Phototheology <noreply@phototheology.com>",
+          from: "Phototheology <noreply@thephototheologyapp.com>",
           to: [user.email],
           subject,
           html: `

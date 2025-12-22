@@ -34,7 +34,7 @@ const handler = async (req: Request): Promise<Response> => {
       : '🆓'; // Free
 
     const emailResponse = await resend.emails.send({
-      from: "Phototheology Notifications <onboarding@resend.dev>",
+      from: "Phototheology Notifications <noreply@thephototheologyapp.com>",
       to: ["aburninghammer@gmail.com"],
       subject: `${tierEmoji} New ${tierLabel} Sign-Up: ${displayName || userEmail}`,
       html: `

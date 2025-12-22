@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
         const annualPrice = profile.subscription_tier === 'essential' ? '$90' : '$150';
 
         await resend.emails.send({
-          from: 'Phototheology <onboarding@resend.dev>',
+          from: 'Phototheology <noreply@thephototheologyapp.com>',
           to: [email],
           subject: `Your Phototheology ${tierName} subscription renews in 30 days`,
           html: `
