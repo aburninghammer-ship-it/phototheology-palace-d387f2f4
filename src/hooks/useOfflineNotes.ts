@@ -54,14 +54,6 @@ export const useOfflineNotes = () => {
     }
   };
 
-  const saveToLocalStorage = useCallback((updatedNotes: OfflineNote[]) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotes));
-      setNotes(updatedNotes);
-    } catch (e) {
-      console.error("Failed to save notes to localStorage:", e);
-    }
-  }, []);
 
   const addNote = useCallback((content: string, title?: string, tags?: string[]) => {
     const newNote: OfflineNote = {
@@ -132,10 +124,19 @@ export const useOfflineNotes = () => {
 
     try {
       // For now, just mark as synced - we can add DB sync later
-      const updatedNotes = notes.map((n) =>
-        n.id === note.id ? { ...n, synced: true } : n
-      );
-      saveToLocalStorage(updatedNotes);
+      setNotes((prevNotes) => {
+        const updatedNotes = prevNotes.map((n) =>
+          n.id === note.id ? { ...n, synced: true } : n
+        );
+
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotes));
+        } catch (e) {
+          console.error("Failed to save notes to localStorage:", e);
+        }
+
+        return updatedNotes;
+      });
     } catch (e) {
       console.error("Failed to sync note:", e);
     }
