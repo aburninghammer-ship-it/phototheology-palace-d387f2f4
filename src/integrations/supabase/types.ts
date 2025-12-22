@@ -4580,6 +4580,33 @@ export type Database = {
         }
         Relationships: []
       }
+      generated_gems: {
+        Row: {
+          content: string
+          content_hash: string
+          created_at: string
+          generated_for_user_id: string | null
+          id: string
+          title: string | null
+        }
+        Insert: {
+          content: string
+          content_hash: string
+          created_at?: string
+          generated_for_user_id?: string | null
+          id?: string
+          title?: string | null
+        }
+        Update: {
+          content?: string
+          content_hash?: string
+          created_at?: string
+          generated_for_user_id?: string | null
+          id?: string
+          title?: string | null
+        }
+        Relationships: []
+      }
       genesis_challenge_daily_progress: {
         Row: {
           completed_at: string | null
