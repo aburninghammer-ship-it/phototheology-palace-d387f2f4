@@ -74,8 +74,15 @@ export const useOfflineNotes = () => {
       synced: false,
     };
 
-    const updatedNotes = [newNote, ...notes];
-    saveToLocalStorage(updatedNotes);
+    setNotes(prevNotes => {
+      const updatedNotes = [newNote, ...prevNotes];
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotes));
+      } catch (e) {
+        console.error("Failed to save notes to localStorage:", e);
+      }
+      return updatedNotes;
+    });
     
     // Auto-sync if online
     if (isOnline && user) {
@@ -83,27 +90,42 @@ export const useOfflineNotes = () => {
     }
 
     return newNote;
-  }, [notes, isOnline, user, saveToLocalStorage]);
+  }, [isOnline, user]);
 
   const updateNote = useCallback((id: string, content: string, title?: string) => {
-    const updatedNotes = notes.map((note) =>
-      note.id === id
-        ? { ...note, content, title: title || note.title, updated_at: new Date().toISOString(), synced: false }
-        : note
-    );
-    saveToLocalStorage(updatedNotes);
-
-    // Auto-sync if online
-    if (isOnline && user) {
-      const updatedNote = updatedNotes.find((n) => n.id === id);
-      if (updatedNote) syncNote(updatedNote);
-    }
-  }, [notes, isOnline, user, saveToLocalStorage]);
+    setNotes(prevNotes => {
+      const updatedNotes = prevNotes.map((note) =>
+        note.id === id
+          ? { ...note, content, title: title || note.title, updated_at: new Date().toISOString(), synced: false }
+          : note
+      );
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotes));
+      } catch (e) {
+        console.error("Failed to save notes to localStorage:", e);
+      }
+      
+      // Auto-sync if online
+      if (isOnline && user) {
+        const updatedNote = updatedNotes.find((n) => n.id === id);
+        if (updatedNote) syncNote(updatedNote);
+      }
+      
+      return updatedNotes;
+    });
+  }, [isOnline, user]);
 
   const deleteNote = useCallback((id: string) => {
-    const updatedNotes = notes.filter((note) => note.id !== id);
-    saveToLocalStorage(updatedNotes);
-  }, [notes, saveToLocalStorage]);
+    setNotes(prevNotes => {
+      const updatedNotes = prevNotes.filter((note) => note.id !== id);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotes));
+      } catch (e) {
+        console.error("Failed to save notes to localStorage:", e);
+      }
+      return updatedNotes;
+    });
+  }, []);
 
   const syncNote = async (note: OfflineNote) => {
     if (!user) return;
