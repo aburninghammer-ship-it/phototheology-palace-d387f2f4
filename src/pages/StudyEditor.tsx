@@ -168,9 +168,8 @@ const StudyEditor = () => {
           content,
           tags,
           is_favorite: isFavorite,
-          jeeves_conversation: jeevesConversation,
           updated_by: user?.id,
-        } as any)
+        })
         .eq("id", id);
 
       if (error) throw error;
@@ -224,9 +223,8 @@ const StudyEditor = () => {
           content: formattedContent,
           tags,
           is_favorite: isFavorite,
-          jeeves_conversation: jeevesConversation,
           updated_by: user?.id,
-        } as any)
+        })
         .eq("id", id);
 
       if (error) {
