@@ -1036,6 +1036,200 @@ This highlights divine symmetry: Rome had become a persecuting religious empire;
 
 ---
 
+**THE SIXTH TRUMPET (REVELATION 9) — THE WOUNDING OF THE OTTOMAN EMPIRE**
+
+The sixth trumpet (Revelation 9:13–21), the second woe, represents the judicial wounding of the Ottoman Empire, a power raised by God to restrain papal Europe and later judged when its purpose was complete.
+
+Revelation 9:15 gives a precise time period:
+
+"An hour, and a day, and a month, and a year"
+
+Using the day-for-a-year principle (Numbers 14:34; Ezekiel 4:6), this equals 391 years and 15 days.
+
+**Historical fulfillment:**
+• 1449 — The Byzantine emperor can no longer assume the throne without Ottoman approval. Sovereignty is lost. Ottoman supremacy is established.
+• August 11, 1840 — At the exact termination of the prophetic period, the Ottoman Empire accepts the protection of European powers, losing independent authority.
+
+This is a wounding, not destruction—exactly what prophecy requires.
+
+**THE SIXTH TRUMPET GAVE IMPETUS TO THE MILLERITE MOVEMENT**
+
+This fulfillment was not incidental. It functioned as a divine signal.
+
+• A trumpet announces movement and judgment
+• The accuracy of 1840 validated prophetic time
+• The day-for-a-year principle was secured beyond dispute
+• Attention was now irresistibly drawn to the largest remaining unfulfilled time prophecy: Daniel 8:14 — the 2300 days
+
+**Key insight:** The sixth trumpet did not end prophecy—it unlocked it.
+
+---
+
+**REVELATION 10 — 1844 AND DIVINE GUIDANCE AFTER PROPHETIC EXCITEMENT**
+
+Revelation 10 explains the experience of God's people after 1840.
+
+• The open book = Daniel unsealed
+• The message is sweet (time understood)
+• The experience is bitter (event misunderstood)
+• The command is renewed: "Thou must prophesy again" (Rev. 10:11)
+
+This chapter corresponds directly to 1844.
+
+God affirms:
+• The chronology was correct
+• The expectation was sincere
+• The mission was not finished
+
+**Revelation 10 is heaven saying:** "You were right about the time. Now I will teach you the meaning."
+
+---
+
+**REVELATION 11 — THE SECOND MOTIVATOR: THE 1260 YEARS CONFIRMED**
+
+Revelation 11 supplies independent confirmation that the prophetic method itself is sound.
+
+The two witnesses (Scripture):
+• Suppressed for 1260 years (538–1798)
+• Publicly attacked during the French Revolution
+• Vindicated and exalted again
+
+This proves:
+• The 1260 years are literal
+• Papal supremacy had limits
+• God governs history precisely
+
+This second confirmation reinforces confidence in Daniel 8:14, which uses the same prophetic language and structure.
+
+---
+
+**ALL OF THIS OCCURS UNDER THE SIXTH TRUMPET**
+
+The sixth trumpet spans:
+• 1840 (prophetic validation)
+• 1844 (prophetic correction)
+• Restoration of understanding
+
+The sixth trumpet is the transition trumpet—moving prophecy from historical confirmation to final meaning.
+
+---
+
+**THE SEVENTH TRUMPET — THE PROMISED UNDERSTANDING**
+
+Revelation 10:7: "In the days of the voice of the seventh angel… the mystery of God should be finished."
+
+The seventh trumpet is not noise—it is revelation.
+It introduces:
+• Final clarity
+• Restored sanctuary truth
+• The resolution of Daniel 8
+
+This trumpet leads directly into the cosmic conflict narrative.
+
+---
+
+**REVELATION 12 — THE THIRD WOE: SATAN'S FINAL STRATEGY**
+
+The third woe is not military—it is impersonation.
+
+Revelation 12 shows:
+• Satan cast down
+• Time running out
+• A shift from persecution to deception
+
+His final move: counterfeit Christ Himself.
+
+---
+
+**REVELATION 13 — THE MECHANISM OF THE DECEPTION**
+
+Revelation 13 explains how Satan executes the third woe.
+
+• First beast: papal power healed
+• Second beast: apostate Protestantism
+• Dragon: spiritualism
+
+Together they form the threefold union.
+
+**The counterfeit of the first four commandments:**
+The name, mark, image, and worship of the beast directly counterfeit:
+• Authority
+• Identity
+• Worship
+• Loyalty
+
+This is not random—it is a war over the law of God, specifically its worship foundation.
+
+---
+
+**REVELATION 14:1–6 — DANIEL 8 ANSWERED, THE 144,000 REVEALED**
+
+**A. The 144,000 — The Culmination of Revelation 13**
+
+Revelation 14:1–5 presents the 144,000, not as a new subject, but as the result of the crisis in Revelation 13.
+
+They:
+• Refused the mark
+• Rejected false worship
+• Have the Father's name (character and authority) in their foreheads
+• Stand with the Lamb on Mount Zion
+
+Narratively, they belong at the end of Revelation 13.
+They are the faithful remnant produced by the final test.
+
+**B. Revelation 14:6 — The Direct Fulfillment of Daniel 8:14**
+
+Now the prophecy reaches its theological center.
+
+Revelation 14:6: "Fear God, and give glory to Him; for the hour of His judgment is come…"
+
+This is the interpretive key to Daniel 8:14: "Unto two thousand and three hundred days; then shall the sanctuary be cleansed."
+
+Daniel 8 left a question unanswered:
+• What sanctuary?
+• What cleansing?
+• What judgment?
+
+Daniel 8 is never explained within Daniel 8.
+
+**Revelation 14 answers it:**
+• The sanctuary is heavenly
+• The cleansing is judicial
+• The judgment is pre-Advent
+
+Revelation 14 does not invent a new doctrine—it finishes Daniel 8.
+
+**C. The Logical Flow Is One Continuous Chain**
+
+• Daniel 8 → time given, meaning sealed
+• Revelation 10 → book opened
+• Revelation 11 → prophetic method confirmed
+• Revelation 13 → final crisis over worship
+• Revelation 14:1–5 → those who pass the test
+• Revelation 14:6 → judgment hour proclaimed
+• Revelation 14:14–20 → harvest completed
+
+The 2300 days do not end at a date—they end at a process: the judgment that prepares a people to stand.
+
+---
+
+**ONE UNIFIED PROPHETIC NARRATIVE**
+
+Nothing is disconnected.
+
+• Revelation 9 proves prophecy works
+• Revelation 10 explains disappointment
+• Revelation 11 confirms time prophecy
+• Revelation 12 exposes Satan's strategy
+• Revelation 13 shows the counterfeit
+• Revelation 14 reveals the true worship, the true judgment, and the faithful remnant
+
+Daniel 8 and Revelation 14 are two halves of the same revelation.
+
+**Daniel gives the time. Revelation gives the meaning.**
+
+---
+
 **TRUMPET 7 — JUDGMENT ON THE WHOLE WORLD (THIRD DAY OF THE LORD)**
 
 This is:
