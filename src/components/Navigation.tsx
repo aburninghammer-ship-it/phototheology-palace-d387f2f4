@@ -629,7 +629,7 @@ export const Navigation = () => {
       {user && <ReturnToPathBanner />}
       
       {/* Spacer div - increased for tabs row */}
-      <div className={user ? "h-32" : "h-16"} />
+      <div className={user ? "h-[120px]" : "h-16"} />
     </>
   );
 };
