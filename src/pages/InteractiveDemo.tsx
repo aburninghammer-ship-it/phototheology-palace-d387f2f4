@@ -297,7 +297,10 @@ export default function InteractiveDemo() {
       <Navigation />
 
       {/* Progress Bar */}
-      <div className="fixed top-16 left-0 right-0 z-40 bg-background border-b">
+      <div
+        className="fixed left-0 right-0 z-40 bg-background border-b"
+        style={{ top: "var(--app-header-height, 64px)" }}
+      >
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
