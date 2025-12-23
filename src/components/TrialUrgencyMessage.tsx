@@ -205,7 +205,8 @@ export function TrialUrgencyMessage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        className="fixed top-16 left-4 right-4 md:left-auto md:right-4 md:w-[420px] z-40"
+        className="fixed left-4 right-4 md:left-auto md:right-4 md:w-[420px] z-40"
+        style={{ top: "calc(var(--app-header-height, 64px) + 0.75rem)" }}
       >
         <div className={`relative rounded-xl p-4 shadow-lg border backdrop-blur-sm ${urgencyColors[message.urgency]}`}>
           <button

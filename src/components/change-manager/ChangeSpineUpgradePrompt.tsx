@@ -107,8 +107,9 @@ export const ChangeSpineUpgradePrompt = ({ className }: ChangeSpineUpgradePrompt
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
+        style={{ top: "calc(var(--app-header-height, 64px) + 0.75rem)" }}
         className={cn(
-          "fixed top-16 left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-md",
+          "fixed left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-md",
           "border rounded-xl shadow-lg backdrop-blur-sm",
           config.bgClass,
           className

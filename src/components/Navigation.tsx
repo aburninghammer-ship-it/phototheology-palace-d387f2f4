@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target, StickyNote, Radio, Church } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,31 @@ export const Navigation = () => {
   const { toggleSidebar } = useSidebar();
   const { conversations } = useDirectMessagesContext();
   const location = useLocation();
+
+  const navRef = useRef<HTMLElement | null>(null);
+  const [headerHeight, setHeaderHeight] = useState<number>(64);
+
+  useLayoutEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const next = Math.ceil(el.getBoundingClientRect().height);
+      setHeaderHeight(next);
+      document.documentElement.style.setProperty("--app-header-height", `${next}px`);
+    };
+
+    update();
+
+    if (typeof ResizeObserver === "undefined") return;
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+
+    return () => {
+      ro.disconnect();
+    };
+  }, [user, loading]);
   
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread_count, 0);
   
@@ -44,7 +70,7 @@ export const Navigation = () => {
   if (loading) {
     return (
       <>
-        <nav className="fixed top-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm">
+        <nav ref={navRef} className="fixed top-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm pt-[env(safe-area-inset-top)]">
           <div className="w-full px-4">
             <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
               <Link to="/" className="flex items-center gap-2 group">
@@ -62,14 +88,14 @@ export const Navigation = () => {
             </div>
           </div>
         </nav>
-        <div className="h-16" />
+        <div aria-hidden style={{ height: headerHeight }} />
       </>
     );
   }
   
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm">
+      <nav ref={navRef} className="fixed top-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm pt-[env(safe-area-inset-top)]">
         <div className="w-full px-4">
           <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
             <div className="flex items-center gap-2">
@@ -628,8 +654,8 @@ export const Navigation = () => {
       {/* Return to Path Banner - appears when user has active path */}
       {user && <ReturnToPathBanner />}
       
-      {/* Spacer div - increased for tabs row */}
-      <div className={user ? "h-[120px]" : "h-16"} />
+      {/* Spacer div - matches the actual fixed header height */}
+      <div aria-hidden style={{ height: headerHeight }} />
     </>
   );
 };

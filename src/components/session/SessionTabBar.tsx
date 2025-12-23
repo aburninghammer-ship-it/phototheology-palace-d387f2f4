@@ -38,7 +38,10 @@ export function SessionTabBar() {
   };
 
   return (
-    <div className="fixed top-16 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50">
+    <div
+      className="fixed left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50"
+      style={{ top: "var(--app-header-height, 64px)" }}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center gap-2 py-2">
           {/* Session Info */}
