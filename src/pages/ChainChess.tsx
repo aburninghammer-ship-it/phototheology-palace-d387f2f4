@@ -160,7 +160,7 @@ const ChainChess = () => {
             verse: randomVerse,
             difficulty: difficultyLevel,
             whoStarts: whoStarts,
-            isVsJeeves: isVsJeeves // Store in game state!
+            isVsJeeves: isVsJeeves || mode === "jeeves" // Always store this flag!
           },
         })
         .select()
@@ -274,13 +274,36 @@ const ChainChess = () => {
       const verse = gameState?.verse || "John 3:16";
       setCurrentVerse(verse);
       await fetchVerseText(verse);
-      setIsMyTurn(data.current_turn === user!.id);
       setSelectedGameCategories(gameState?.categories || categories);
       setGameStarted(true);
+      
+      // Determine if this is a Jeeves game from game state or URL
+      const isJeevesGame = gameState?.isVsJeeves || isVsJeeves || mode === "jeeves";
+      
+      // If current_turn is null AND it's a Jeeves game, Jeeves should move
+      // If current_turn is user.id, it's the user's turn
+      // If current_turn is null but NOT a Jeeves game (PvP), we're waiting for opponent
+      if (data.current_turn === user!.id) {
+        setIsMyTurn(true);
+        console.log("It's the user's turn");
+      } else if (data.current_turn === null && isJeevesGame) {
+        // It's Jeeves' turn - trigger Jeeves to respond
+        console.log("It's Jeeves' turn - triggering Jeeves move");
+        setIsMyTurn(false);
+        setProcessing(true);
+        // Delay to let UI render, then trigger Jeeves
+        setTimeout(() => {
+          jeevesMove(gameId!, false);
+        }, 1000);
+      } else {
+        setIsMyTurn(false);
+        console.log("Waiting for opponent");
+      }
       
       console.log("isMyTurn set to:", data.current_turn === user!.id);
       console.log("current_turn:", data.current_turn);
       console.log("user id:", user!.id);
+      console.log("isJeevesGame:", isJeevesGame);
       
       loadMoves();
     } else {
@@ -292,22 +315,8 @@ const ChainChess = () => {
     console.log("=== Loading Moves ===");
     console.log("Game ID:", gameId);
     
-    // First get the game state to check whose turn it is
-    const { data: gameData, error: gameError } = await supabase
-      .from("games")
-      .select("current_turn")
-      .eq("id", gameId)
-      .single();
-
-    if (gameError) {
-      console.error("Error loading game:", gameError);
-    } else if (gameData) {
-      // Update isMyTurn based on whose turn it is
-      // null means Jeeves' turn, user.id means user's turn
-      setIsMyTurn(gameData.current_turn === user!.id);
-      console.log("Current turn:", gameData.current_turn);
-      console.log("Is my turn:", gameData.current_turn === user!.id);
-    }
+    // Note: We don't update isMyTurn here anymore - that's handled in loadGame
+    // to avoid race conditions with Jeeves auto-triggering
     
     const { data, error } = await supabase
       .from("game_moves")
