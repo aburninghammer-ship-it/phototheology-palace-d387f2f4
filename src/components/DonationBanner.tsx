@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Heart, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,9 +24,47 @@ export const DonationBanner = () => {
   const [customAmount, setCustomAmount] = useState("");
   const { user } = useAuth();
 
+  const bannerRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+
+    const setHeight = (h: number) => {
+      root.style.setProperty("--app-top-banner-height", `${h}px`);
+      window.dispatchEvent(new Event("app:topBannerResize"));
+    };
+
+    if (isDismissed) {
+      setHeight(0);
+      return;
+    }
+
+    const el = bannerRef.current;
+    if (!el) {
+      setHeight(0);
+      return;
+    }
+
+    const update = () => {
+      const next = Math.ceil(el.getBoundingClientRect().height);
+      setHeight(next);
+    };
+
+    update();
+
+    if (typeof ResizeObserver === "undefined") return;
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+
+    return () => {
+      ro.disconnect();
+    };
+  }, [isDismissed]);
+
   const handleDonate = async () => {
     const amount = selectedAmount === "custom" ? Number(customAmount) : selectedAmount;
-    
+
     if (!amount || amount < 1) {
       toast.error("Please enter a valid amount");
       return;
@@ -59,7 +97,10 @@ export const DonationBanner = () => {
   if (isDismissed) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-primary/90 to-primary pt-[env(safe-area-inset-top,0px)] pb-2 px-4 shadow-md">
+    <div
+      ref={bannerRef}
+      className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-primary/90 to-primary pt-[env(safe-area-inset-top,0px)] pb-2 px-4 shadow-md"
+    >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 py-2">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <Heart className="h-4 w-4 text-primary-foreground animate-pulse flex-shrink-0" />
@@ -70,19 +111,19 @@ export const DonationBanner = () => {
             </Link>
           </p>
           <p className="text-xs text-primary-foreground font-medium sm:hidden truncate">
-            <Link to="/donate" className="underline">Support us!</Link>
+            <Link to="/donate" className="underline">
+              Support us!
+            </Link>
           </p>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="whitespace-nowrap h-7 px-2 text-xs"
-              >
-                {selectedAmount === "custom" 
-                  ? (customAmount ? `$${customAmount}` : "Custom") 
+              <Button variant="secondary" size="sm" className="whitespace-nowrap h-7 px-2 text-xs">
+                {selectedAmount === "custom"
+                  ? customAmount
+                    ? `$${customAmount}`
+                    : "Custom"
                   : `$${selectedAmount}`}
                 <ChevronDown className="ml-1 h-3 w-3" />
               </Button>
@@ -97,10 +138,7 @@ export const DonationBanner = () => {
                   ${amount}
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuItem
-                onClick={() => setSelectedAmount("custom")}
-                className="cursor-pointer"
-              >
+              <DropdownMenuItem onClick={() => setSelectedAmount("custom")} className="cursor-pointer">
                 Custom amount
               </DropdownMenuItem>
             </DropdownMenuContent>

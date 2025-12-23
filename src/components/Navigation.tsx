@@ -43,26 +43,40 @@ export const Navigation = () => {
     const el = navRef.current;
     if (!el) return;
 
+    const getBannerHeight = () => {
+      const raw = getComputedStyle(document.documentElement).getPropertyValue("--app-top-banner-height");
+      const n = parseFloat(raw);
+      return Number.isFinite(n) ? n : 0;
+    };
+
     const update = () => {
-      const next = Math.ceil(el.getBoundingClientRect().height);
-      setHeaderHeight(next);
-      document.documentElement.style.setProperty("--app-header-height", `${next}px`);
+      const navH = Math.ceil(el.getBoundingClientRect().height);
+      const total = navH + getBannerHeight();
+      setHeaderHeight(total);
+      document.documentElement.style.setProperty("--app-header-height", `${total}px`);
     };
 
     update();
 
-    if (typeof ResizeObserver === "undefined") return;
+    window.addEventListener("app:topBannerResize", update);
+
+    if (typeof ResizeObserver === "undefined") {
+      return () => {
+        window.removeEventListener("app:topBannerResize", update);
+      };
+    }
 
     const ro = new ResizeObserver(update);
     ro.observe(el);
 
     return () => {
+      window.removeEventListener("app:topBannerResize", update);
       ro.disconnect();
     };
   }, [user, loading]);
-  
+
   const totalUnread = conversations.reduce((sum, c) => sum + c.unread_count, 0);
-  
+
   // Helper to check if a path is active
   const isActiveTab = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
 
@@ -70,7 +84,11 @@ export const Navigation = () => {
   if (loading) {
     return (
       <>
-        <nav ref={navRef} className="fixed top-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm pt-[env(safe-area-inset-top)]">
+        <nav
+          ref={navRef}
+          style={{ top: "var(--app-top-banner-height, 0px)" }}
+          className="fixed left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm pt-[env(safe-area-inset-top)]"
+        >
           <div className="w-full px-4">
             <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
               <Link to="/" className="flex items-center gap-2 group">
@@ -92,10 +110,14 @@ export const Navigation = () => {
       </>
     );
   }
-  
+
   return (
     <>
-      <nav ref={navRef} className="fixed top-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm pt-[env(safe-area-inset-top)]">
+      <nav
+        ref={navRef}
+        style={{ top: "var(--app-top-banner-height, 0px)" }}
+        className="fixed left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm pt-[env(safe-area-inset-top)]"
+      >
         <div className="w-full px-4">
           <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
             <div className="flex items-center gap-2">
@@ -110,12 +132,12 @@ export const Navigation = () => {
                 </span>
               </Link>
             </div>
-          
+
             <div className="flex items-center gap-2 md:gap-4 flex-1 justify-end">
               <GlobalSearch />
               <PWAInstallButton />
               <ThemeToggle />
-              
+
               {/* Admin-only Live Demo Link */}
               {isAdmin && (
                 <Button
@@ -130,9 +152,9 @@ export const Navigation = () => {
                   </Link>
                 </Button>
               )}
-              
+
               {/* Church Admin Link - only for church admins */}
-              {user && churchRole === 'admin' && (
+              {user && churchRole === "admin" && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -145,7 +167,7 @@ export const Navigation = () => {
                   </Link>
                 </Button>
               )}
-              
+
               {/* Live User Count - Always Visible */}
               <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="relative">
