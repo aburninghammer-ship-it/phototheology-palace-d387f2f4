@@ -7,6 +7,7 @@ export interface ChapterFrame {
   summary: string;
   memoryHook: string;
   symbol: string;
+  book?: string;
 }
 
 export const exodus24fpsData: ChapterFrame[] = [
