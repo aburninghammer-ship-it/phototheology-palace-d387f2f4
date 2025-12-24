@@ -37,7 +37,7 @@ const roomGamesMap: Record<string, RoomGame[]> = {
   ],
   "24fps": [
     { id: "24fps-chapter", name: "24FPS Challenge", description: "Create memorable chapter image associations", path: "/games/room-game/24fps-chapter", icon: "🎬", difficulty: "medium", xpReward: 35 },
-    { id: "24fps-genesis", name: "Genesis Frames", description: "Build frames for Genesis 1-24", path: "/games/room-game/24fps-genesis", icon: "🏗️", difficulty: "easy", xpReward: 25 },
+    { id: "24fps-genesis", name: "Genesis Frames", description: "Build frames for Genesis 1-50", path: "/games/room-game/24fps-genesis", icon: "🏗️", difficulty: "easy", xpReward: 25 },
     { id: "24fps-match", name: "Frame Match", description: "Match chapters to their visual frames", path: "/games/room-game/24fps-match", icon: "🖼️", difficulty: "medium", xpReward: 30 },
     { id: "24fps-sprint", name: "Frame Sprint", description: "Rapid-fire chapter identification", path: "/games/room-game/24fps-sprint", icon: "⚡", difficulty: "hard", xpReward: 40 },
     { id: "24fps-gallery", name: "Gallery Walk", description: "Navigate a visual Bible gallery", path: "/games/room-game/24fps-gallery", icon: "🏛️", difficulty: "medium", xpReward: 35 },

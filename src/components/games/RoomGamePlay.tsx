@@ -99,9 +99,9 @@ const gameConfigs: Record<string, GameConfig> = {
   },
   "24fps-genesis": {
     id: "24fps-genesis", name: "Genesis Frames", roomId: "24fps", roomName: "24FPS Room",
-    description: "Build frames for Genesis 1-24", icon: "🏗️", xpReward: 25, difficulty: "easy",
+    description: "Build frames for Genesis 1-50", icon: "🏗️", xpReward: 25, difficulty: "easy",
     gameType: "genesis_frames",
-    instructions: "Create memorable image symbols for Genesis chapters 1-10. Each should be a single vivid image that captures the chapter's main event."
+    instructions: "Create memorable image symbols for Genesis chapters. Each should be a single vivid image that captures the chapter's main event."
   },
   "24fps-match": {
     id: "24fps-match", name: "Frame Match", roomId: "24fps", roomName: "24FPS Room",

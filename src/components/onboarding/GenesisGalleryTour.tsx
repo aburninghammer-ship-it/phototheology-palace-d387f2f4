@@ -61,7 +61,7 @@ export function GenesisGalleryTour({ onComplete, onSkip }: GenesisGalleryTourPro
   const handleStartChallenge = () => {
     trackEvent({ eventType: "24fps_tour_completed", eventData: { action: "start_challenge" } });
     onComplete();
-    navigate("/genesis-high-rise");
+    navigate("/genesis-challenge");
   };
 
   const handleSkipTour = () => {
