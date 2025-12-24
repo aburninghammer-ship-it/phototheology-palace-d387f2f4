@@ -90,6 +90,11 @@ export default function RoomDetail() {
   const [showOnboardingGuide, setShowOnboardingGuide] = useState(true);
   const [activeTab, setActiveTab] = useState("learn");
   
+  // Scroll to top when room changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [floorNumber, roomId]);
+  
   // Check if this is the first room visit after onboarding (now 24FPS Room)
   const isFirstRoomVisit = Number(floorNumber) === 1 && roomId === "24fps" && 
     !localStorage.getItem("onboarding_guide_24fps");
