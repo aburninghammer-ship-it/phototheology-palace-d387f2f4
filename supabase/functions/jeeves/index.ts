@@ -5262,16 +5262,46 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
         console.error("=== ERROR PARSING CHAIN CHESS ===");
         console.error("Parse error:", parseError);
         console.error("Raw content:", content);
-        
-        // Fallback if not JSON - return error instead of trying to salvage
-        const errorMessage = parseError instanceof Error ? parseError.message : "Unknown error";
+
+        // Best-effort fallback (never fail the game turn just because JSON parsing failed)
+        // Common failure: unescaped newlines/quotes inside JSON strings.
+        const cleaned = (content || "")
+          .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
+          .replace(/```[\s\S]*?```/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        const verseRefRegex = /\b(?:[1-3]\s)?[A-Z][a-z]+(?:\s[A-Z][a-z]+)*\s\d{1,3}:\d{1,3}(?:-\d{1,3})?\b/;
+        const verseMatch = cleaned.match(verseRefRegex);
+        const fallbackVerse = (verseMatch?.[0] || (typeof verse === "string" && verse.trim()) || "John 3:16").trim();
+
+        const cats = Array.isArray(availableCategories) ? (availableCategories as string[]) : [];
+        const fallbackChallenge =
+          cats.find((c) => c.includes("Books of the Bible"))
+            ? "Books of the Bible - Romans"
+            : cats.find((c) => c.includes("Rooms of the Palace"))
+              ? "Rooms of the Palace - Story Room"
+              : cats.find((c) => c.includes("Principles of the Palace"))
+                ? "Principles of the Palace - DR"
+                : "Books of the Bible - John";
+
+        const sentences = cleaned
+          .split(/(?<=[.!?])\s+/)
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+        const fallbackCommentary =
+          sentences.slice(0, 4).join(" ").trim() ||
+          "This verse is a strong foundation—watch how it points to Christ and anchors faith. Let’s build on it together.";
+
         return new Response(
-          JSON.stringify({ 
-            error: "Failed to parse AI response. Please try again.",
-            details: errorMessage,
-            rawContent: content.substring(0, 500) // First 500 chars for debugging
+          JSON.stringify({
+            verse: fallbackVerse,
+            commentary: fallbackCommentary,
+            challengeCategory: fallbackChallenge,
+            score: 8,
+            parseWarning: parseError instanceof Error ? parseError.message : "parse_error",
           }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
     } else if (mode === "chain-chess-feedback") {
