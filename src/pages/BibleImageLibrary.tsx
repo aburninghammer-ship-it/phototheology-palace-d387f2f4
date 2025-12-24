@@ -958,9 +958,9 @@ export default function BibleImageLibrary() {
             <Card className="mb-6 bg-white/10 backdrop-blur-sm border-white/20 p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Genesis 1-24 Starter Pack</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">Genesis 1-50 Complete Pack</h3>
                   <p className="text-purple-200">
-                    Pre-illustrated frames for the first 24 chapters of Genesis from the 24FPS Room
+                    Pre-illustrated frames for all 50 chapters of Genesis from the 24FPS Room
                   </p>
                 </div>
                 <Button
@@ -976,7 +976,7 @@ export default function BibleImageLibrary() {
                   ) : (
                     <>
                       <Download className="mr-2 h-4 w-4" />
-                      Import All 24
+                      Import All 50
                     </>
                   )}
                 </Button>
