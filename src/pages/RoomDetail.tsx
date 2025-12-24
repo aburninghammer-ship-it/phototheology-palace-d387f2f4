@@ -30,6 +30,7 @@ import { SpeedRoomDrill } from "@/components/rooms/SpeedRoomDrill";
 import { MathematicsRoomDrill } from "@/components/rooms/MathematicsRoomDrill";
 import { JuiceRoomDrill } from "@/components/rooms/JuiceRoomDrill";
 import { CyclesRoomDrill } from "@/components/rooms/CyclesRoomDrill";
+import { ThreeHeavensRoomDrill } from "@/components/rooms/ThreeHeavensRoomDrill";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -608,6 +609,11 @@ export default function RoomDetail() {
                 {room.id === "cycles" && (
                   <CyclesRoomDrill />
                 )}
+
+                {/* Three Heavens Room Drill - Prophetic Horizon Discernment */}
+                {room.id === "123h" && (
+                  <ThreeHeavensRoomDrill />
+                )}
               </TabsContent>
 
               {/* GAMES TAB */}
@@ -707,6 +713,23 @@ export default function RoomDetail() {
                     </CardHeader>
                     <CardContent>
                       <CyclesRoomDrill />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Three Heavens Room Drill in Games tab */}
+                {room.id === "123h" && (
+                  <Card className="border-2 border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-blue-500/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🌌 Prophetic Horizon Challenge
+                      </CardTitle>
+                      <CardDescription>
+                        Discern which heaven(s) a prophecy addresses — 1H, 2H, or 3H
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ThreeHeavensRoomDrill />
                     </CardContent>
                   </Card>
                 )}
