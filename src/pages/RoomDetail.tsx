@@ -29,6 +29,7 @@ import { RoomGames } from "@/components/rooms/RoomGames";
 import { SpeedRoomDrill } from "@/components/rooms/SpeedRoomDrill";
 import { MathematicsRoomDrill } from "@/components/rooms/MathematicsRoomDrill";
 import { JuiceRoomDrill } from "@/components/rooms/JuiceRoomDrill";
+import { CyclesRoomDrill } from "@/components/rooms/CyclesRoomDrill";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -602,6 +603,11 @@ export default function RoomDetail() {
                 {room.id === "jr" && (
                   <JuiceRoomDrill />
                 )}
+
+                {/* 8-Cycle Room Drill - Covenant Discernment Training */}
+                {room.id === "cycles" && (
+                  <CyclesRoomDrill />
+                )}
               </TabsContent>
 
               {/* GAMES TAB */}
@@ -684,6 +690,23 @@ export default function RoomDetail() {
                     </CardHeader>
                     <CardContent>
                       <JuiceRoomDrill />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* 8-Cycle Room Drill in Games tab */}
+                {room.id === "cycles" && (
+                  <Card className="border-2 border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 to-purple-500/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🔁 Covenant Cycle Challenge
+                      </CardTitle>
+                      <CardDescription>
+                        Locate any text within the 8 covenant cycles of redemption
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <CyclesRoomDrill />
                     </CardContent>
                   </Card>
                 )}
