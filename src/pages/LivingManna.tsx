@@ -22,7 +22,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export default function LivingManna() {
   const { user } = useAuth();
   const { subscription, loading: subscriptionLoading } = useSubscription();
-  const { isMember, churchId: memberChurchId, isLoading: membershipLoading } = useChurchMembership();
+  const { isMember, churchId: memberChurchId, role: memberRole, isLoading: membershipLoading } = useChurchMembership();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [churchName, setChurchName] = useState<string>("Living Manna Online Church");
@@ -89,6 +89,9 @@ export default function LivingManna() {
 
   // Check if user has church access
   const hasChurchAccess = subscription.church.hasChurchAccess || isMember;
+  
+  // Check if user is admin (from either subscription or membership)
+  const isChurchAdmin = subscription.church.churchRole === 'admin' || memberRole === 'admin';
 
   // If user doesn't have church access, show join options
   if (!hasChurchAccess) {
@@ -163,14 +166,26 @@ export default function LivingManna() {
                 <Flame className="h-5 w-5 text-primary" />
                 <h1 className="text-lg font-bold truncate">{churchName}</h1>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="h-9 w-9"
-              >
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </Button>
+              <div className="flex items-center gap-1">
+                {isChurchAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate('/church-admin')}
+                    className="h-9 w-9"
+                  >
+                    <Users className="h-5 w-5" />
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="h-9 w-9"
+                >
+                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -190,7 +205,7 @@ export default function LivingManna() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {subscription.church.churchRole === 'admin' && (
+                  {isChurchAdmin && (
                     <Button 
                       variant="outline" 
                       size="sm" 
