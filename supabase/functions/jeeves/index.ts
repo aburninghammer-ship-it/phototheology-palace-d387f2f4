@@ -1537,11 +1537,15 @@ For each verse:
         },
         "2d": { 
           name: "2D Christ Dimension", 
-          description: "personal Christ-centered relationship and individual salvation themes" 
+          description: "how the text reveals Christ - His person, work, or character" 
         },
         "3d": { 
-          name: "3D Kingdom Dimension", 
-          description: "corporate church body, community, and kingdom expansion themes" 
+          name: "3D Me Dimension", 
+          description: "how the text relates to me individually, personal application" 
+        },
+        "4d": { 
+          name: "4D Church Dimension", 
+          description: "how the text relates to the church, corporate body, community" 
         },
         "sanctuary": { 
           name: "Sanctuary Principles", 
@@ -1622,8 +1626,9 @@ Return as JSON array: [...]`;
         "prophecy": { name: "Prophetic Connections", description: "prophetic fulfillments, types, and future events" },
         "life-of-christ": { name: "Life of Christ Wall", description: "connections to events in Christ's earthly ministry" },
         "70-weeks": { name: "70 Week Prophecy", description: "connections to Daniel's 70-week prophecy and timeline" },
-        "2d": { name: "2D Christ Dimension", description: "personal Christ-centered relationship and individual salvation" },
-        "3d": { name: "3D Kingdom Dimension", description: "corporate church body, community, and kingdom expansion" },
+        "2d": { name: "2D Christ Dimension", description: "how the text reveals Christ - His person, work, or character" },
+        "3d": { name: "3D Me Dimension", description: "how the text relates to me individually, personal application" },
+        "4d": { name: "4D Church Dimension", description: "how the text relates to the church, corporate body, community" },
         "sanctuary": { name: "Sanctuary Principles", description: "connections to tabernacle/temple services, furniture, rituals" },
         "feasts": { name: "Feast Connections", description: "connections to biblical feasts and their prophetic significance" },
         "types": { name: "Types & Shadows", description: "Old Testament types and shadows pointing to Christ" },

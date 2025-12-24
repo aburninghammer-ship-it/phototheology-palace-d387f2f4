@@ -66,10 +66,10 @@ FLOOR 4: NEXT LEVEL (Christ-Centered Structure)
 🔹 CR (Concentration Room): Where is Jesus? (Office/Title, Act, Benefit, Horizon)
 🔹 DR (Dimensions Room): Use LITERAL dimension plus ONE other dimension
    • 1D = Literal (what the text says plainly, historical/grammatical) - ALWAYS include this
-   • 2D = Christ (personal Christ relationship, individual salvation)
-   • 3D = Me (how it relates to you individually, personal application)
-   • 4D = Church (corporate body, ecclesiology, community)
-   • 5D = Heaven (celestial realm, throne room, divine glory)
+   • 2D = Christ (how does this text reveal Christ? His person, work, or character)
+   • 3D = Me (how it relates to me individually, personal application)
+   • 4D = Church (how it relates to the church, corporate body, community)
+   • 5D = Heaven (how it relates to heaven, eternal realities, new creation)
    CRITICAL: Do NOT use all five dimensions - choose literal + ONE other
 🔹 C6 (Connect-6 Room): How does this text connect across genres? Which genres illuminate it? Can you link it to Prophecy/Parable/Epistle/History/Gospel/Poetry?
 🔹 TRm (Theme Room): Which structural span? (Sanctuary/Life of Christ/Great Controversy/Time-Prophecy/Gospel/Heaven)
