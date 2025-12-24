@@ -14,6 +14,7 @@ import { useRoomUnlock } from "@/hooks/useRoomUnlock";
 import { useMastery } from "@/hooks/useMastery";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { PracticeDrill } from "@/components/practice/PracticeDrill";
 import { getDrillsByRoom, getDrillName } from "@/data/drillQuestions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,6 +26,7 @@ import { FreestyleGame } from "@/components/freestyle/FreestyleGame";
 import { BibleFreestyleGame } from "@/components/freestyle/BibleFreestyleGame";
 import { VerseGeneticsArena } from "@/components/freestyle/VerseGeneticsArena";
 import { RoomGames } from "@/components/rooms/RoomGames";
+import { SpeedRoomDrill } from "@/components/rooms/SpeedRoomDrill";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -579,6 +581,13 @@ export default function RoomDetail() {
                     </CardContent>
                   </Card>
                 )}
+
+                {/* Speed Room Drill - The core exercise for SRm */}
+                {room.id === "srm" && (
+                  <SpeedRoomDrill onComplete={(score) => {
+                    toast.success(`Speed Drill complete! Average: ${score}/100`);
+                  }} />
+                )}
               </TabsContent>
 
               {/* GAMES TAB */}
@@ -612,6 +621,23 @@ export default function RoomDetail() {
                 {/* Verse Genetics Arena for BF room in Games tab - includes PvP and vs Jeeves */}
                 {room.id === "bf" && (
                   <VerseGeneticsArena roomId={room.id} roomName={room.name} />
+                )}
+                
+                {/* Speed Room Drill in Games tab */}
+                {room.id === "srm" && (
+                  <Card className="border-2 border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        ⚡ Speed Drill Challenge
+                      </CardTitle>
+                      <CardDescription>
+                        Timed PT principle application - build reflexive thinking
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <SpeedRoomDrill />
+                    </CardContent>
+                  </Card>
                 )}
               </TabsContent>
 
