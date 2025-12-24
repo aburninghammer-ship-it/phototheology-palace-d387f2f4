@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useChurchMembership } from "@/hooks/useChurchMembership";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,20 +35,25 @@ interface Church {
 export default function ChurchAdmin() {
   const { user } = useAuth();
   const { subscription, loading: subscriptionLoading } = useSubscription();
+  const { churchId: memberChurchId, role: memberRole, isLoading: membershipLoading } = useChurchMembership();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const [church, setChurch] = useState<Church | null>(null);
   const [loading, setLoading] = useState(true);
   const [usedSeats, setUsedSeats] = useState(0);
 
+  // Combine both sources for church access
+  const hasChurchAccess = subscription.church.hasChurchAccess || !!memberChurchId;
+  const churchRole = subscription.church.churchRole || memberRole;
+  const effectiveChurchId = subscription.church.churchId || memberChurchId;
+  const isAdmin = hasChurchAccess && churchRole === 'admin';
+
   useEffect(() => {
-    // Wait for subscription to load before making any decisions
-    if (subscriptionLoading) return;
+    // Wait for both subscriptions to load before making any decisions
+    if (subscriptionLoading || membershipLoading) return;
 
     // ProtectedRoute will handle auth redirects; here we just gate church-admin capability
     if (!user) return;
-
-    const isAdmin = subscription.church.hasChurchAccess && subscription.church.churchRole === 'admin';
 
     if (!isAdmin) {
       // Stop the spinner and show an access message instead of bouncing routes
@@ -57,17 +63,17 @@ export default function ChurchAdmin() {
 
     setLoading(true);
     loadChurchData();
-  }, [user, subscription, subscriptionLoading]);
+  }, [user, subscription, subscriptionLoading, memberChurchId, memberRole, membershipLoading, isAdmin]);
 
   const loadChurchData = async () => {
     try {
-      if (!subscription.church.churchId) return;
+      if (!effectiveChurchId) return;
 
       // Load church details
       const { data: churchData, error: churchError } = await supabase
         .from('churches')
         .select('*')
-        .eq('id', subscription.church.churchId)
+        .eq('id', effectiveChurchId)
         .single();
 
       if (churchError) throw churchError;
@@ -77,7 +83,7 @@ export default function ChurchAdmin() {
       const { count, error: countError } = await supabase
         .from('church_members')
         .select('*', { count: 'exact', head: true })
-        .eq('church_id', subscription.church.churchId);
+        .eq('church_id', effectiveChurchId);
 
       if (countError) throw countError;
       setUsedSeats(count || 0);
@@ -89,7 +95,7 @@ export default function ChurchAdmin() {
     }
   };
 
-  if (subscriptionLoading || loading) {
+  if (subscriptionLoading || membershipLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-dreamy">
         <div className="text-center">
@@ -101,7 +107,7 @@ export default function ChurchAdmin() {
   }
 
   // If user isn't a church admin, show a clear message instead of redirecting away
-  if (!subscription.church.hasChurchAccess) {
+  if (!hasChurchAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-dreamy p-4">
         <Card className="w-full max-w-lg">
@@ -135,7 +141,7 @@ export default function ChurchAdmin() {
             </div>
 
             <div className="text-xs text-muted-foreground">
-              Debug: hasChurchAccess={String(subscription.church.hasChurchAccess)}, role={String(subscription.church.churchRole)}, churchId={String(subscription.church.churchId)}
+              Debug: hasChurchAccess={String(hasChurchAccess)}, role={String(churchRole)}, churchId={String(effectiveChurchId)}
             </div>
           </CardContent>
         </Card>
@@ -143,7 +149,7 @@ export default function ChurchAdmin() {
     );
   }
 
-  if (subscription.church.churchRole !== 'admin') {
+  if (churchRole !== 'admin') {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-dreamy p-4">
         <Card className="w-full max-w-lg">
@@ -171,7 +177,7 @@ export default function ChurchAdmin() {
             </div>
 
             <div className="text-xs text-muted-foreground">
-              Debug: hasChurchAccess={String(subscription.church.hasChurchAccess)}, role={String(subscription.church.churchRole)}, churchId={String(subscription.church.churchId)}
+              Debug: hasChurchAccess={String(hasChurchAccess)}, role={String(churchRole)}, churchId={String(effectiveChurchId)}
             </div>
           </CardContent>
         </Card>
