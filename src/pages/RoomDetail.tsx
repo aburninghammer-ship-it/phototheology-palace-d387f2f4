@@ -27,6 +27,7 @@ import { BibleFreestyleGame } from "@/components/freestyle/BibleFreestyleGame";
 import { VerseGeneticsArena } from "@/components/freestyle/VerseGeneticsArena";
 import { RoomGames } from "@/components/rooms/RoomGames";
 import { SpeedRoomDrill } from "@/components/rooms/SpeedRoomDrill";
+import { MathematicsRoomDrill } from "@/components/rooms/MathematicsRoomDrill";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -588,6 +589,13 @@ export default function RoomDetail() {
                     toast.success(`Speed Drill complete! Average: ${score}/100`);
                   }} />
                 )}
+
+                {/* Mathematics Room Drill - Time Prophecy Training */}
+                {room.id === "math" && (
+                  <MathematicsRoomDrill onComplete={(score) => {
+                    toast.success(`Mathematics Drill complete! Average: ${score}/100`);
+                  }} />
+                )}
               </TabsContent>
 
               {/* GAMES TAB */}
@@ -636,6 +644,23 @@ export default function RoomDetail() {
                     </CardHeader>
                     <CardContent>
                       <SpeedRoomDrill />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Mathematics Room Drill in Games tab */}
+                {room.id === "math" && (
+                  <Card className="border-2 border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-indigo-500/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🔢 Time Prophecy Challenge
+                      </CardTitle>
+                      <CardDescription>
+                        Master the 6 prophetic time structures through timed drills
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <MathematicsRoomDrill />
                     </CardContent>
                   </Card>
                 )}
