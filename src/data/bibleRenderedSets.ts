@@ -12,9 +12,9 @@ export const bibleRenderedSets: BibleRenderedSet[] = [
   {
     number: 1,
     symbol: "÷",
-    name: "Separation / Division",
+    name: "Division",
     range: "Genesis 1–24",
-    description: "Creation, fall, flood, Babel, call of Abram",
+    description: "Creation, fall, flood, Babel, call of Abram — God divides light from darkness, waters, land, and separates a people",
     category: "Genesis to Early Monarchy"
   },
   {
@@ -22,7 +22,7 @@ export const bibleRenderedSets: BibleRenderedSet[] = [
     symbol: "×",
     name: "Multiplication",
     range: "Genesis 25–50",
-    description: "Abraham's line explodes → Isaac, Jacob, 12 tribes, Joseph",
+    description: "Abraham's seed multiplies → Isaac, Jacob, 12 tribes, Joseph in Egypt — the family expands despite famine and betrayal",
     category: "Genesis to Early Monarchy"
   },
   {
