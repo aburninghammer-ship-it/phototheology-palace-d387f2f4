@@ -28,6 +28,7 @@ import { VerseGeneticsArena } from "@/components/freestyle/VerseGeneticsArena";
 import { RoomGames } from "@/components/rooms/RoomGames";
 import { SpeedRoomDrill } from "@/components/rooms/SpeedRoomDrill";
 import { MathematicsRoomDrill } from "@/components/rooms/MathematicsRoomDrill";
+import { JuiceRoomDrill } from "@/components/rooms/JuiceRoomDrill";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -596,6 +597,11 @@ export default function RoomDetail() {
                     toast.success(`Mathematics Drill complete! Average: ${score}/100`);
                   }} />
                 )}
+
+                {/* Juice Room Drill - Meaning Extraction Training */}
+                {room.id === "jr" && (
+                  <JuiceRoomDrill />
+                )}
               </TabsContent>
 
               {/* GAMES TAB */}
@@ -661,6 +667,23 @@ export default function RoomDetail() {
                     </CardHeader>
                     <CardContent>
                       <MathematicsRoomDrill />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Juice Room Drill in Games tab */}
+                {room.id === "jr" && (
+                  <Card className="border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-amber-500/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🧃 Juice Extraction Challenge
+                      </CardTitle>
+                      <CardDescription>
+                        Extract maximum meaning with minimum waste — verse, chapter, or book level
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <JuiceRoomDrill />
                     </CardContent>
                   </Card>
                 )}
