@@ -2,19 +2,24 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sparkles, Loader2, X } from "lucide-react";
+import { Sparkles, Loader2, X, Save, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 export const GiveGemButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [gem, setGem] = useState<{ title: string; content: string } | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleGenerateGem = async () => {
     setIsGenerating(true);
     setGem(null);
+    setIsSaved(false);
     setIsOpen(true);
 
     try {
@@ -64,9 +69,52 @@ export const GiveGemButton = () => {
     }
   };
 
+  const handleSaveGem = async () => {
+    if (!user || !gem) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to save gems to your collection",
+        variant: "default"
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const { error } = await supabase.from('deck_studies').insert({
+        user_id: user.id,
+        verse_text: gem.content,
+        verse_reference: gem.title,
+        is_gem: true,
+        gem_title: gem.title,
+        gem_notes: gem.content,
+        cards_used: [],
+        conversation_history: []
+      });
+
+      if (error) throw error;
+
+      setIsSaved(true);
+      toast({
+        title: "Gem Saved! 💎",
+        description: "Added to your Gems collection",
+      });
+    } catch (error: any) {
+      console.error('Error saving gem:', error);
+      toast({
+        title: "Failed to save gem",
+        description: error.message || "Please try again",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleClose = () => {
     setIsOpen(false);
     setGem(null);
+    setIsSaved(false);
   };
 
   return (
@@ -130,7 +178,29 @@ export const GiveGemButton = () => {
           </ScrollArea>
 
           {gem && !isGenerating && (
-            <div className="px-6 pb-6 pt-2 border-t">
+            <div className="px-6 pb-6 pt-2 border-t space-y-2">
+              <Button 
+                onClick={handleSaveGem} 
+                className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white"
+                disabled={isSaving || isSaved}
+              >
+                {isSaved ? (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Saved to Your Collection
+                  </>
+                ) : isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save This Gem
+                  </>
+                )}
+              </Button>
               <Button 
                 onClick={handleGenerateGem} 
                 variant="outline" 
