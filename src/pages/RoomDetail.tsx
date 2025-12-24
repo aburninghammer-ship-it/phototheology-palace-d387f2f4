@@ -31,6 +31,7 @@ import { MathematicsRoomDrill } from "@/components/rooms/MathematicsRoomDrill";
 import { JuiceRoomDrill } from "@/components/rooms/JuiceRoomDrill";
 import { CyclesRoomDrill } from "@/components/rooms/CyclesRoomDrill";
 import { ThreeHeavensRoomDrill } from "@/components/rooms/ThreeHeavensRoomDrill";
+import DefComRoomDrill from "@/components/rooms/DefComRoomDrill";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -618,6 +619,11 @@ export default function RoomDetail() {
                 {/* Three Heavens Room Drill - Prophetic Horizon Discernment */}
                 {room.id === "123h" && (
                   <ThreeHeavensRoomDrill />
+                )}
+
+                {/* Def-Com Room - Word Study & Commentary Tools */}
+                {room.id === "dc" && (
+                  <DefComRoomDrill />
                 )}
               </TabsContent>
 
