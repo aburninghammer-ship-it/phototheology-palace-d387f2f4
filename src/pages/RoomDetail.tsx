@@ -20,6 +20,7 @@ import { getDrillsByRoom, getDrillName } from "@/data/drillQuestions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
 import { genesisImages } from "@/assets/24fps/genesis";
+import { Exodus24FPSDrill } from "@/components/rooms/Exodus24FPSDrill";
 import { UserGemsList } from "@/components/UserGemsList";
 import { GemGenerator } from "@/components/gems/GemGenerator";
 import { FreestyleGame } from "@/components/freestyle/FreestyleGame";
@@ -494,62 +495,80 @@ export default function RoomDetail() {
                 </Collapsible>
 
                 {room.id === "24fps" && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Visual Gallery: Genesis 1-24</CardTitle>
-                      <CardDescription>
-                        Complete set of 24FPS frames for the first 24 chapters of Genesis
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Tabs defaultValue="grid" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2">
-                          <TabsTrigger value="grid">Gallery View</TabsTrigger>
-                          <TabsTrigger value="list">Chapter List</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="grid" className="mt-4">
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            {genesisImages.map((image, index) => {
-                              const chapter = index + 1;
-                              return (
-                                <div key={chapter} className="relative group">
-                                  <div className="aspect-square rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-colors">
+                  <>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Visual Gallery: Genesis 1-50</CardTitle>
+                        <CardDescription>
+                          Complete set of 24FPS frames for all 50 chapters of Genesis
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Tabs defaultValue="grid" className="w-full">
+                          <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="grid">Gallery View</TabsTrigger>
+                            <TabsTrigger value="list">Chapter List</TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="grid" className="mt-4">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                              {genesisImages.map((image, index) => {
+                                const chapter = index + 1;
+                                return (
+                                  <div key={chapter} className="relative group">
+                                    <div className="aspect-square rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-colors">
+                                      <img
+                                        src={image}
+                                        alt={`Genesis Chapter ${chapter}`}
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
+                                      />
+                                    </div>
+                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                                      <span className="text-white font-bold text-2xl">Ch. {chapter}</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </TabsContent>
+                          <TabsContent value="list" className="mt-4">
+                            <div className="space-y-2 max-h-96 overflow-y-auto">
+                              {genesisImages.map((image, index) => {
+                                const chapter = index + 1;
+                                return (
+                                  <div key={chapter} className="flex items-center gap-4 p-3 rounded-lg border hover:bg-accent transition-colors">
                                     <img
                                       src={image}
                                       alt={`Genesis Chapter ${chapter}`}
-                                      className="w-full h-full object-cover"
+                                      className="w-16 h-16 object-cover rounded border"
                                       loading="lazy"
                                     />
+                                    <span className="font-medium">Genesis Chapter {chapter}</span>
                                   </div>
-                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                    <span className="text-white font-bold text-2xl">Ch. {chapter}</span>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </TabsContent>
-                        <TabsContent value="list" className="mt-4">
-                          <div className="space-y-2 max-h-96 overflow-y-auto">
-                            {genesisImages.map((image, index) => {
-                              const chapter = index + 1;
-                              return (
-                                <div key={chapter} className="flex items-center gap-4 p-3 rounded-lg border hover:bg-accent transition-colors">
-                                  <img
-                                    src={image}
-                                    alt={`Genesis Chapter ${chapter}`}
-                                    className="w-16 h-16 object-cover rounded border"
-                                    loading="lazy"
-                                  />
-                                  <span className="font-medium">Genesis Chapter {chapter}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </TabsContent>
-                      </Tabs>
-                    </CardContent>
-                  </Card>
+                                );
+                              })}
+                            </div>
+                          </TabsContent>
+                        </Tabs>
+                      </CardContent>
+                    </Card>
+                    
+                    {/* Exodus 1-24 Memorization Drill */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <span className="text-2xl">📖</span>
+                          Exodus 1-24: Deliverance
+                        </CardTitle>
+                        <CardDescription>
+                          Master the Exodus chapters with symbol-based memorization. Theme: God delivers His people.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Exodus24FPSDrill />
+                      </CardContent>
+                    </Card>
+                  </>
                 )}
 
                 {room.id === "gr" && (
