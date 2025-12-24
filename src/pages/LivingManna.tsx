@@ -205,6 +205,14 @@ export default function LivingManna() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Return to App
+                  </Button>
                   {isChurchAdmin && (
                     <Button 
                       variant="outline" 
