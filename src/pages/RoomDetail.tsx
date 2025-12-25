@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSpacedRepetition } from "@/hooks/useSpacedRepetition";
 import { genesisImages } from "@/assets/24fps/genesis";
 import { Exodus24FPSDrill } from "@/components/rooms/Exodus24FPSDrill";
+import { Bible24FPSBrowser } from "@/components/rooms/Bible24FPSBrowser";
 import { UserGemsList } from "@/components/UserGemsList";
 import { GemGenerator } from "@/components/gems/GemGenerator";
 import { FreestyleGame } from "@/components/freestyle/FreestyleGame";
@@ -496,6 +497,22 @@ export default function RoomDetail() {
 
                 {room.id === "24fps" && (
                   <>
+                    {/* Complete 24FPS Bible Browser - All 50 Sets */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <span className="text-2xl">🎬</span>
+                          24FPS Bible Sets
+                        </CardTitle>
+                        <CardDescription>
+                          All 50 memorization sets covering every chapter of the Bible. Click a set to explore its chapters.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Bible24FPSBrowser />
+                      </CardContent>
+                    </Card>
+                    
                     <Card>
                       <CardHeader>
                         <CardTitle>Visual Gallery: Genesis 1-50</CardTitle>
