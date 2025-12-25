@@ -834,6 +834,49 @@ export const genesisStories: BiblicalStory[] = [
     setting: "Bethel (Luz)"
   },
   {
+    id: "jacob-serves-rachel",
+    title: "Jacob Serves for Rachel",
+    reference: "Genesis 29-30",
+    volume: "Genesis",
+    category: "Patriarchs",
+    summary: "Jacob arrives in Haran, meets Rachel at the well, rolls away the stone, waters the sheep, kisses her, weeps. He stays with Laban, agrees to serve seven years for Rachel. After seven years, Laban substitutes Leah on the wedding night. Jacob works seven more years for Rachel. The sisters compete through childbearing. Leah bears Reuben, Simeon, Levi, Judah. Rachel gives Bilhah who bears Dan, Naphtali. Leah gives Zilpah who bears Gad, Asher. Leah bears Issachar, Zebulun, Dinah. Finally Rachel bears Joseph.",
+    keyElements: [
+      "Stone on well",
+      "Jacob rolls stone away",
+      "Waters the flock",
+      "Kisses Rachel, weeps",
+      "Seven years \"seemed but a few days for the love he had\"",
+      "Laban's deception with Leah",
+      "Seven more years for Rachel",
+      "Twelve sons born (plus Dinah)",
+      "Competition between wives",
+      "Joseph born to Rachel"
+    ],
+    christPattern: [
+      { element: "Stone rolled away", christApplication: "Christ removes barrier" },
+      { element: "Waters the flock", christApplication: "Christ gives living water" },
+      { element: "Serves for bride", christApplication: "Christ serves, gives Himself for church" },
+      { element: "Deception endured", christApplication: "Christ endured injustice" },
+      { element: "Two sets of seven years", christApplication: "Complete service" },
+      { element: "Twelve sons", christApplication: "Twelve tribes, twelve apostles" }
+    ],
+    dimensions: {
+      literal: "Jacob's marriages and children",
+      christ: "Christ serves and suffers for His bride",
+      personal: "Are we willing to serve for what we love?",
+      church: "Christ labors for the church through trials",
+      heavenFuture: "The twelve tribes, New Jerusalem",
+      heavenPast: "God builds His people"
+    },
+    relatedStories: [
+      "Ephesians 5:25 (Christ loved the church and gave Himself)",
+      "Revelation 7:4-8 (Twelve tribes sealed)",
+      "Revelation 21:12-14 (Twelve gates, twelve foundations)"
+    ],
+    keyFigures: ["Jacob", "Rachel", "Leah", "Laban", "Bilhah", "Zilpah"],
+    setting: "Haran, Paddan-aram"
+  },
+  {
     id: "jacob-wrestles",
     title: "Jacob Wrestles with God",
     reference: "Genesis 32:22-32",
