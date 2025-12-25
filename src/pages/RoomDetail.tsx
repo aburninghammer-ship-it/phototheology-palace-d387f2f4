@@ -35,6 +35,7 @@ import { CyclesRoomDrill } from "@/components/rooms/CyclesRoomDrill";
 import { ThreeHeavensRoomDrill } from "@/components/rooms/ThreeHeavensRoomDrill";
 import DefComRoomDrill from "@/components/rooms/DefComRoomDrill";
 import { ConcentrationRoomDrill } from "@/components/rooms/ConcentrationRoomDrill";
+import { PatternExplorer } from "@/components/palace/PatternExplorer";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";

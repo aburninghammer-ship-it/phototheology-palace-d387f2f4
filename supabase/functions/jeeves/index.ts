@@ -15,7 +15,8 @@ import {
   ALWAYS_DO_THIS,
   FIVE_MASTERMIND_COUNCIL,
   FORMATTING_REQUIREMENTS,
-  CLOSING_BEHAVIOR
+  CLOSING_BEHAVIOR,
+  MASTER_PATTERNS
 } from './palace-schema.ts';
 
 const corsHeaders = {
