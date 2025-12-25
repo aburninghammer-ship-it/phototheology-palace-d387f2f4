@@ -35,6 +35,7 @@ import { CyclesRoomDrill } from "@/components/rooms/CyclesRoomDrill";
 import { ThreeHeavensRoomDrill } from "@/components/rooms/ThreeHeavensRoomDrill";
 import DefComRoomDrill from "@/components/rooms/DefComRoomDrill";
 import { SymbolsLibrary } from "@/components/rooms/SymbolsLibrary";
+import { StoryLibrary } from "@/components/rooms/StoryLibrary";
 import { ConcentrationRoomDrill } from "@/components/rooms/ConcentrationRoomDrill";
 import { PatternExplorer } from "@/components/palace/PatternExplorer";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
@@ -401,6 +402,17 @@ export default function RoomDetail() {
                   />
                 )}
                 
+                {/* LIBRARIES FIRST - Make them the prominent feature */}
+                {/* Story Room - Biblical Story Library */}
+                {room.id === "sr" && (
+                  <StoryLibrary />
+                )}
+
+                {/* Symbols Room - Biblical Symbols Library */}
+                {room.id === "st" && (
+                  <SymbolsLibrary />
+                )}
+
                 {showQuickStart && <ValueProposition roomId={room.id} />}
                 {showQuickStart && <QuickStartGuide roomId={room.id} roomName={room.name} />}
 
@@ -498,10 +510,7 @@ export default function RoomDetail() {
                   </Card>
                 </Collapsible>
 
-                {/* Symbols Room - Biblical Symbols Library - Show prominently at top */}
-                {room.id === "st" && (
-                  <SymbolsLibrary />
-                )}
+                {/* Symbols Library is now shown at the top as a prominent feature */}
 
                 {room.id === "24fps" && (
                   <>
@@ -758,10 +767,12 @@ export default function RoomDetail() {
 
               {/* PRACTICE TAB */}
               <TabsContent value="practice" className="space-y-6 mt-6">
+                {/* Libraries in Practice tab too for quick reference */}
+                {room.id === "sr" && (
+                  <StoryLibrary />
+                )}
                 {room.id === "st" && (
-                  <div className="space-y-4">
-                    <SymbolsLibrary />
-                  </div>
+                  <SymbolsLibrary />
                 )}
 
                 <RoomPracticeSpace
