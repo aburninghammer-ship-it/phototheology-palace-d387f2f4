@@ -660,6 +660,9 @@ export const revelationSet: BibleSet = {
   ]
 };
 
+// Import remaining books
+import { remainingBibleSets } from './remainingBooks';
+
 // Collect all sets
 export const allBibleSets: BibleSet[] = [
   // Old Testament
@@ -683,6 +686,8 @@ export const allBibleSets: BibleSet[] = [
   actsSet,
   romansSet,
   revelationSet,
+  // All remaining books
+  ...remainingBibleSets,
 ];
 
 // Helper to get a specific chapter
