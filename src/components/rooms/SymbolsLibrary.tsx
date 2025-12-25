@@ -24,7 +24,7 @@ export function SymbolsLibrary() {
         <div className="space-y-2 pt-2 border-t border-border">
           <h4 className="font-semibold text-sm flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            5 Dimensions
+            5 Dimensions (DR)
           </h4>
           <div className="grid gap-1.5 text-sm">
             {symbol.dimensions.literal && (
@@ -45,9 +45,42 @@ export function SymbolsLibrary() {
           </div>
         </div>
       )}
+
+      {/* PT Principles Section */}
+      {(symbol.type || symbol.pattern || symbol.parallel || symbol.cycle || symbol.theme || symbol.sanctuary || symbol.prophecy || symbol.freestyle) && (
+        <div className="space-y-2 pt-2 border-t border-border">
+          <h4 className="font-semibold text-sm">PT Principles</h4>
+          <div className="grid gap-1.5 text-sm">
+            {symbol.type && (
+              <div><Badge variant="outline" className="mr-2 bg-orange-500/20">ST</Badge><span className="text-muted-foreground">Type:</span> {symbol.type}</div>
+            )}
+            {symbol.pattern && (
+              <div><Badge variant="outline" className="mr-2 bg-cyan-500/20">PRm</Badge><span className="text-muted-foreground">Pattern:</span> {symbol.pattern}</div>
+            )}
+            {symbol.parallel && (
+              <div><Badge variant="outline" className="mr-2 bg-pink-500/20">P‖</Badge><span className="text-muted-foreground">Parallel:</span> {symbol.parallel}</div>
+            )}
+            {symbol.sanctuary && (
+              <div><Badge variant="outline" className="mr-2 bg-sky-500/20">BL</Badge><span className="text-muted-foreground">Sanctuary:</span> {symbol.sanctuary}</div>
+            )}
+            {symbol.cycle && (
+              <div><Badge variant="outline" className="mr-2 bg-violet-500/20">@</Badge><span className="text-muted-foreground">Cycle:</span> {symbol.cycle}</div>
+            )}
+            {symbol.theme && (
+              <div><Badge variant="outline" className="mr-2 bg-rose-500/20">TRm</Badge><span className="text-muted-foreground">Theme:</span> {symbol.theme}</div>
+            )}
+            {symbol.prophecy && (
+              <div><Badge variant="outline" className="mr-2 bg-indigo-500/20">PR</Badge><span className="text-muted-foreground">Prophecy:</span> {symbol.prophecy}</div>
+            )}
+            {symbol.freestyle && (
+              <div><Badge variant="outline" className="mr-2 bg-emerald-500/20">FS</Badge><span className="text-muted-foreground">Freestyle:</span> {symbol.freestyle}</div>
+            )}
+          </div>
+        </div>
+      )}
       
       {symbol.notes && (
-        <p className="text-sm text-muted-foreground">{symbol.notes}</p>
+        <p className="text-sm text-muted-foreground italic">{symbol.notes}</p>
       )}
       
       {symbol.keyTexts && symbol.keyTexts.length > 0 && (

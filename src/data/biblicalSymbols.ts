@@ -15,6 +15,15 @@ export interface BiblicalSymbol {
   keyTexts?: string[];
   relatedSymbols?: string[];
   notes?: string;
+  // Additional PT Principles
+  pattern?: string;        // Patterns Room (PRm) - recurring motifs
+  parallel?: string;       // Parallels Room (P‖) - mirrored actions
+  type?: string;           // Symbols/Types Room (ST) - typological meaning
+  cycle?: string;          // Cycles (@Ad, @No, @Mo, etc.)
+  theme?: string;          // Theme Room (TRm) - sanctuary, GC, gospel
+  sanctuary?: string;      // Blue Room (BL) - sanctuary connection
+  prophecy?: string;       // Prophecy Room (PR) - prophetic significance
+  freestyle?: string;      // Freestyle application - nature/personal/history
 }
 
 export interface SymbolCategory {
@@ -45,7 +54,14 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
           heaven: "The Lamb slain from foundation of world"
         },
         keyTexts: ["Exodus 27:1-8", "Hebrews 13:10", "Revelation 6:9"],
-        relatedSymbols: ["Fire = Purification", "Ashes = Complete consumption", "Horns = Power, refuge", "Blood at base = Life poured out"]
+        relatedSymbols: ["Fire = Purification", "Ashes = Complete consumption", "Horns = Power, refuge", "Blood at base = Life poured out"],
+        type: "Cross of Christ - every OT altar pointed forward to Calvary",
+        pattern: "Sacrifice pattern: Abel's lamb → Abraham's ram → Passover → Daily sacrifices → Christ",
+        parallel: "Cain's rejected offering ‖ Nadab/Abihu's strange fire ‖ false worship in last days",
+        cycle: "@Mo (Mosaic) - central to tabernacle worship instituted at Sinai",
+        theme: "Gospel Floor - justification begins here; Great Controversy - cost of sin revealed",
+        sanctuary: "First piece of furniture encountered; gate of salvation",
+        freestyle: "Nature: fire consumes completely; Personal: what am I holding back from the altar?"
       },
       {
         symbol: "Laver (Bronze Basin)",
@@ -59,7 +75,15 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
           heaven: "Sea of glass (purified saints)"
         },
         keyTexts: ["Exodus 30:17-21", "Ephesians 5:26", "Revelation 4:6"],
-        relatedSymbols: ["Water = Cleansing, Spirit, Word", "Bronze = Judgment endured", "Mirrors = Self-examination"]
+        relatedSymbols: ["Water = Cleansing, Spirit, Word", "Bronze = Judgment endured", "Mirrors = Self-examination"],
+        type: "Baptism and daily washing by the Word",
+        pattern: "Water cleansing: Red Sea → Jordan → Laver → Baptism → Word",
+        parallel: "Flood waters ‖ Red Sea ‖ Jordan crossing - all judgment/deliverance",
+        cycle: "@Mo → @Sp - from physical washing to Spirit baptism",
+        theme: "Sanctuary Wall - second step in salvation journey",
+        sanctuary: "Between altar and Holy Place; must wash before service",
+        prophecy: "Sea of glass in heaven - saints who passed through cleansing",
+        freestyle: "Daily shower cleanses body; daily Word cleanses soul"
       }
     ]
   },
@@ -81,7 +105,15 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
           heaven: "Seven Spirits before the throne"
         },
         keyTexts: ["Exodus 25:31-40", "Zechariah 4:2-6", "Revelation 1:20"],
-        relatedSymbols: ["Seven branches = Completeness", "Pure gold = Divine nature", "Olive oil = Holy Spirit", "Almond flowers = Resurrection"]
+        relatedSymbols: ["Seven branches = Completeness", "Pure gold = Divine nature", "Olive oil = Holy Spirit", "Almond flowers = Resurrection"],
+        type: "Holy Spirit illuminating truth through Christ",
+        pattern: "Light pattern: Creation light → Pillar of fire → Lampstand → Christ → Church → New Jerusalem",
+        parallel: "Zechariah's lampstand vision ‖ Seven churches ‖ Two witnesses",
+        cycle: "@Sp - Spirit age, church as light-bearer",
+        theme: "Great Controversy - light vs darkness battle",
+        sanctuary: "Only light source in Holy Place; no natural light",
+        prophecy: "Seven churches of Revelation - lampstands that can be removed",
+        freestyle: "Without oil (Spirit), the lamp goes out - daily filling needed"
       },
       {
         symbol: "Table of Showbread",
@@ -95,7 +127,14 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
           heaven: "Marriage Supper of the Lamb"
         },
         keyTexts: ["Exodus 25:23-30", "Leviticus 24:5-9", "John 6:35"],
-        relatedSymbols: ["Twelve loaves = Twelve tribes/apostles", "Frankincense = Prayers", "Golden table = Divine provision"]
+        relatedSymbols: ["Twelve loaves = Twelve tribes/apostles", "Frankincense = Prayers", "Golden table = Divine provision"],
+        type: "Christ the Bread of Life; Word made flesh",
+        pattern: "Bread pattern: Manna → Showbread → Bread of Life → Lords Supper → Marriage Supper",
+        parallel: "Manna in wilderness ‖ Multiplied loaves ‖ Last Supper bread",
+        cycle: "@Mo → @CyC - from wilderness manna to Christ incarnate",
+        theme: "Gospel Floor - nourishment for the journey",
+        sanctuary: "Renewed every Sabbath - fresh truth each week",
+        freestyle: "Physical hunger reminds us of spiritual need; breakfast before Bible?"
       },
       {
         symbol: "Altar of Incense",
@@ -109,7 +148,15 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
           heaven: "Prayers of saints ascending (Rev 8:3-4)"
         },
         keyTexts: ["Exodus 30:1-10", "Psalm 141:2", "Revelation 8:3-4"],
-        relatedSymbols: ["Gold = Divine nature", "Horns = Power of intercession", "Sweet spices = Christ's merits"]
+        relatedSymbols: ["Gold = Divine nature", "Horns = Power of intercession", "Sweet spices = Christ's merits"],
+        type: "Christ's intercessory ministry blended with our prayers",
+        pattern: "Prayer pattern: Patriarchs calling on God → Tabernacle incense → Temple → Christ → Heavenly sanctuary",
+        parallel: "Zacharias at incense altar ‖ Christ in Gethsemane ‖ Heavenly intercession",
+        cycle: "@CyC → @Sp - Christ's earthly prayers continue in heaven",
+        theme: "Sanctuary Wall - closest point to Most Holy Place",
+        sanctuary: "Just before the veil; prayers ascend to throne",
+        prophecy: "Rev 8:3-4 - angel with golden censer; prayers trigger events",
+        freestyle: "Smoke rises naturally upward - prayer finds its way to God"
       }
     ]
   },
@@ -131,7 +178,14 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
           heaven: "God's throne, center of government"
         },
         keyTexts: ["Exodus 25:10-22", "Hebrews 9:4", "Revelation 11:19"],
-        relatedSymbols: ["Acacia wood = Humanity", "Gold overlay = Divinity", "Crown molding = Royalty"]
+        relatedSymbols: ["Acacia wood = Humanity", "Gold overlay = Divinity", "Crown molding = Royalty"],
+        type: "Christ as the meeting place between God and man",
+        pattern: "Ark pattern: Noah's ark (salvation) → Ark of bulrushes (Moses) → Ark of Covenant → Christ",
+        parallel: "Captured by Philistines ‖ Jerusalem falls ‖ Temple destroyed - yet God's presence endures",
+        cycle: "@Mo → @Re - from Sinai institution to heavenly revelation",
+        theme: "Sanctuary Wall center; Great Controversy - Satan attacks the law within",
+        sanctuary: "Heart of the sanctuary; entered only on Day of Atonement",
+        prophecy: "Rev 11:19 - Ark seen in heaven temple; law still binding"
       },
       {
         symbol: "Mercy Seat",
@@ -145,28 +199,47 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
           heaven: "God's throne of grace"
         },
         keyTexts: ["Exodus 25:17-22", "Leviticus 16:14-15", "Hebrews 4:16"],
-        relatedSymbols: ["Pure gold = Divine mercy", "Cherubim = Angels beholding redemption", "Blood sprinkled = Atonement applied"]
+        relatedSymbols: ["Pure gold = Divine mercy", "Cherubim = Angels beholding redemption", "Blood sprinkled = Atonement applied"],
+        type: "Christ as the place where law and mercy meet",
+        pattern: "Mercy covering judgment: Abel's blood → Passover blood → Mercy seat → Cross",
+        theme: "Gospel Floor - where righteousness and peace kiss (Ps 85:10)",
+        sanctuary: "Blood applied here made atonement effective"
       },
       {
         symbol: "Stone Tablets (Ten Commandments)",
         emoji: "📜",
         meaning: "God's Law, Eternal Standard, Character of God",
         notes: "Written by God's finger = Divine origin. Two tablets = Duty to God / Duty to man. Stone = Permanence, unchangeable.",
-        keyTexts: ["Exodus 31:18", "Deuteronomy 4:13", "2 Corinthians 3:3"]
+        keyTexts: ["Exodus 31:18", "Deuteronomy 4:13", "2 Corinthians 3:3"],
+        type: "Character of Christ written in believers' hearts",
+        pattern: "Law given: Eden → Patriarchs → Sinai → Heart (New Covenant)",
+        parallel: "First tablets broken (sin) ‖ Second tablets preserved (grace)",
+        cycle: "@Mo - covenant formalized at Sinai",
+        theme: "Great Controversy Wall - Satan's attack on God's law",
+        prophecy: "Rev 11:19 - Ark with law seen in judgment hour"
       },
       {
         symbol: "Aaron's Rod That Budded",
         emoji: "🌿",
         meaning: "Resurrection, Divine Selection, Priesthood",
         notes: "Dead wood budding = Resurrection. Almonds = First to bloom, watching. Confirms God's chosen leadership.",
-        keyTexts: ["Numbers 17:1-11", "Hebrews 9:4"]
+        keyTexts: ["Numbers 17:1-11", "Hebrews 9:4"],
+        type: "Christ's resurrection vindicating His priesthood",
+        pattern: "Dead becoming alive: Isaac → Joseph → Rod → Lazarus → Christ",
+        parallel: "Korah's rebellion questioned priesthood ‖ Jews rejected Christ's priesthood",
+        theme: "Life of Christ Wall - resurrection power"
       },
       {
         symbol: "Golden Pot of Manna",
         emoji: "🏺",
         meaning: "Divine Provision, Hidden Manna, Christ",
         notes: "Manna = Christ, Bread from heaven. Golden pot = Preserved, memorial. Hidden = Rewards for overcomers (Rev 2:17).",
-        keyTexts: ["Exodus 16:33", "Hebrews 9:4", "Revelation 2:17"]
+        keyTexts: ["Exodus 16:33", "Hebrews 9:4", "Revelation 2:17"],
+        type: "Christ the living bread; provision in wilderness",
+        pattern: "Bread provision: Eden → Manna → Showbread → Christ → Lords Supper",
+        parallel: "40 years manna ‖ 40 days temptation - living by every word",
+        cycle: "@Mo - wilderness provision; @Re - hidden manna for overcomers",
+        freestyle: "What fell daily required daily gathering - so with the Word"
       }
     ]
   },
@@ -291,24 +364,24 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
     icon: "🔢",
     description: "Numbers and their prophetic significance",
     symbols: [
-      { symbol: "1", meaning: "Unity, primacy, beginning", notes: "One God, one Lord" },
-      { symbol: "2", meaning: "Witness, division, confirmation", notes: "Two witnesses, two tablets" },
-      { symbol: "3", meaning: "Divine completeness, Godhead", notes: "Father, Son, Spirit" },
-      { symbol: "4", meaning: "Earth, creation, universality", notes: "Four winds, four corners" },
-      { symbol: "5", meaning: "Grace, favor", notes: "Five loaves, Pentateuch" },
-      { symbol: "6", meaning: "Man, imperfection, labor", notes: "Six days of work, 666" },
-      { symbol: "7", meaning: "Divine perfection, completeness", notes: "Sabbath, 7 churches, 7 seals" },
-      { symbol: "8", meaning: "New beginning, resurrection", notes: "Circumcision day 8" },
-      { symbol: "9", meaning: "Finality, judgment", notes: "9th hour - Christ's death" },
-      { symbol: "10", meaning: "Law, order, completeness", notes: "10 Commandments, 10 plagues" },
-      { symbol: "12", meaning: "God's people, government", notes: "12 tribes, 12 apostles" },
-      { symbol: "40", meaning: "Testing, probation", notes: "40 days, 40 years" },
-      { symbol: "50", meaning: "Jubilee, liberty, Spirit", notes: "Pentecost" },
-      { symbol: "70", meaning: "Universal completion", notes: "70 weeks, 70 elders" },
-      { symbol: "144", meaning: "God's complete people", notes: "12 x 12, sealed" },
-      { symbol: "1000", meaning: "Millennium, vastness", notes: "1000 years" },
-      { symbol: "1260", meaning: "Persecution period", notes: "Days/years of papal supremacy (538-1798 AD)" },
-      { symbol: "2300", meaning: "Sanctuary cleansed", notes: "457 BC - 1844 AD" }
+      { symbol: "1", meaning: "Unity, primacy, beginning", notes: "One God, one Lord", type: "Christ as the One Mediator", theme: "God is one (Deut 6:4)" },
+      { symbol: "2", meaning: "Witness, division, confirmation", notes: "Two witnesses, two tablets", pattern: "Two witnesses pattern throughout Scripture", parallel: "Moses & Elijah ‖ Two witnesses of Rev 11" },
+      { symbol: "3", meaning: "Divine completeness, Godhead", notes: "Father, Son, Spirit", type: "Trinity; resurrection on third day", pattern: "3 days: Jonah → Christ → symbolic resurrections" },
+      { symbol: "4", meaning: "Earth, creation, universality", notes: "Four winds, four corners", type: "Gospel to all creation", sanctuary: "Four horns on altar; four corners of earth" },
+      { symbol: "5", meaning: "Grace, favor", notes: "Five loaves, Pentateuch", pattern: "5 books of Moses; 5 wounds of Christ" },
+      { symbol: "6", meaning: "Man, imperfection, labor", notes: "Six days of work, 666", type: "Man apart from God; beast number", theme: "Great Controversy - man trying to be God", prophecy: "666 = culmination of human rebellion" },
+      { symbol: "7", meaning: "Divine perfection, completeness", notes: "Sabbath, 7 churches, 7 seals", type: "Christ is Lord of Sabbath", pattern: "7 days, 7 seals, 7 trumpets, 7 plagues - divine completeness", sanctuary: "7-branched lampstand", cycle: "All cycles contain 7-fold patterns" },
+      { symbol: "8", meaning: "New beginning, resurrection", notes: "Circumcision day 8", type: "Christ rose on first day of new week (8th day)", parallel: "8 souls saved in ark ‖ New creation" },
+      { symbol: "9", meaning: "Finality, judgment", notes: "9th hour - Christ's death", type: "Christ died at 9th hour; judgment complete" },
+      { symbol: "10", meaning: "Law, order, completeness", notes: "10 Commandments, 10 plagues", type: "God's complete moral standard", theme: "Great Controversy - law as issue", pattern: "10 plagues → 10 Commandments" },
+      { symbol: "12", meaning: "God's people, government", notes: "12 tribes, 12 apostles", type: "Christ chose 12; new Jerusalem gates", pattern: "12 tribes → 12 apostles → 144,000 (12×12×1000)", cycle: "@Ab → @Re - Gods organized people" },
+      { symbol: "40", meaning: "Testing, probation", notes: "40 days, 40 years", pattern: "Flood → Moses → Elijah → Jesus → disciples - all 40", parallel: "Israel 40 years ‖ Jesus 40 days - one failed, one victorious" },
+      { symbol: "50", meaning: "Jubilee, liberty, Spirit", notes: "Pentecost", type: "Spirit given 50 days after resurrection", sanctuary: "Jubilee released debts; Pentecost released Spirit", cycle: "@Sp - Spirit age begins at 50th day" },
+      { symbol: "70", meaning: "Universal completion", notes: "70 weeks, 70 elders", prophecy: "Daniel 9 - 70 weeks for Messiah", type: "70 sent by Jesus (Luke 10)" },
+      { symbol: "144", meaning: "God's complete people", notes: "12 x 12, sealed", prophecy: "144,000 sealed in Revelation 7 & 14", cycle: "@Re - remnant sealed", theme: "Three Angels - final generation" },
+      { symbol: "1000", meaning: "Millennium, vastness", notes: "1000 years", prophecy: "Rev 20 - millennium judgment", cycle: "@Re - between second and third coming events" },
+      { symbol: "1260", meaning: "Persecution period", notes: "Days/years of papal supremacy (538-1798 AD)", prophecy: "Daniel 7:25, Rev 12:6 - persecution time", theme: "Great Controversy - Satan's war on saints", cycle: "@Sp → @Re transition" },
+      { symbol: "2300", meaning: "Sanctuary cleansed", notes: "457 BC - 1844 AD", prophecy: "Daniel 8:14 - longest time prophecy", sanctuary: "Heavenly Day of Atonement begins", cycle: "@Re - judgment hour message" }
     ]
   },
   // PART IV: COLORS
@@ -336,12 +409,12 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
     icon: "☀️",
     description: "Sun, moon, stars and their meanings",
     symbols: [
-      { symbol: "Sun", emoji: "☀️", meaning: "Christ, Glory, Righteousness", notes: "Sun of Righteousness (Mal 4:2). Fourth day creation = Christ's appearing." },
-      { symbol: "Moon", emoji: "🌙", meaning: "Church, Reflected Light, Israel", notes: "Reflects sun's light = Church reflects Christ. Under woman's feet (Rev 12) = Old Covenant." },
-      { symbol: "Stars", emoji: "⭐", meaning: "Angels, Leaders, God's People", notes: "Seven stars = Angels of churches. Falling stars = Apostasy. Abraham's seed = Countless multitude." },
-      { symbol: "Clouds", emoji: "☁️", meaning: "Divine Presence, Judgment, Witnesses", notes: "Pillar of cloud = God's guidance. Second coming = On clouds." },
-      { symbol: "Rainbow", emoji: "🌈", meaning: "Covenant, Mercy, Throne of God", notes: "Noah's covenant = No more flood. Around throne = Mercy in judgment." },
-      { symbol: "Lightning/Thunder", emoji: "⚡", meaning: "God's Power, Judgment, Theophany", notes: "Sinai = Law giving. From throne = Proceeding judgment." }
+      { symbol: "Sun", emoji: "☀️", meaning: "Christ, Glory, Righteousness", notes: "Sun of Righteousness (Mal 4:2). Fourth day creation = Christ's appearing.", type: "Christ the Light of the World", pattern: "Fourth day sun ‖ Fourth millennium Christ appears", prophecy: "Mal 4:2 - Sun of Righteousness with healing", freestyle: "Sun gives light freely; so Christ gives grace" },
+      { symbol: "Moon", emoji: "🌙", meaning: "Church, Reflected Light, Israel", notes: "Reflects sun's light = Church reflects Christ. Under woman's feet (Rev 12) = Old Covenant.", type: "Church has no light of its own - reflects Christ", parallel: "Woman clothed with sun, moon under feet - old/new covenant", prophecy: "Moon to blood (Joel 2:31) - end time signs" },
+      { symbol: "Stars", emoji: "⭐", meaning: "Angels, Leaders, God's People", notes: "Seven stars = Angels of churches. Falling stars = Apostasy. Abraham's seed = Countless multitude.", pattern: "Stars fall: Isa 14 (Satan) → apostasy → 1833 meteor shower", prophecy: "Stars falling - sign fulfilled Nov 13, 1833", cycle: "@Ab - seed as stars; @Re - stars in Christ's hand" },
+      { symbol: "Clouds", emoji: "☁️", meaning: "Divine Presence, Judgment, Witnesses", notes: "Pillar of cloud = God's guidance. Second coming = On clouds.", type: "Christ comes in clouds of glory", pattern: "Sinai cloud → Pillar → Transfiguration → Ascension → Return", prophecy: "Every eye shall see Him coming in clouds" },
+      { symbol: "Rainbow", emoji: "🌈", meaning: "Covenant, Mercy, Throne of God", notes: "Noah's covenant = No more flood. Around throne = Mercy in judgment.", type: "Christ is the covenant; rainbow encircles His throne", pattern: "Noah → Ezekiel's vision → Revelation throne", cycle: "@No - covenant sign established", theme: "Gospel Floor - mercy remembered in judgment" },
+      { symbol: "Lightning/Thunder", emoji: "⚡", meaning: "God's Power, Judgment, Theophany", notes: "Sinai = Law giving. From throne = Proceeding judgment.", type: "God's voice; divine power manifested", pattern: "Sinai → Elijah → Transfiguration → Throne", sanctuary: "Lightnings proceed from throne" }
     ]
   },
   // PART VI: WATER
@@ -388,13 +461,13 @@ export const biblicalSymbolsLibrary: SymbolCategory[] = [
     icon: "🐑",
     description: "Livestock and domesticated animals",
     symbols: [
-      { symbol: "Lamb", emoji: "🐑", meaning: "Christ, innocence, sacrifice", notes: "Passover lamb", keyTexts: ["John 1:29", "Revelation 5:6"] },
-      { symbol: "Sheep", emoji: "🐏", meaning: "God's people, followers", notes: "Can also mean wandering, lost", keyTexts: ["John 10:1-16", "Isaiah 53:6"] },
-      { symbol: "Ram", meaning: "Substitution, leadership", notes: "Abraham's substitute", keyTexts: ["Genesis 22:13"] },
-      { symbol: "Goat", emoji: "🐐", meaning: "Sin bearer, atonement", notes: "Day of Atonement. Also: wicked, cursed", keyTexts: ["Leviticus 16", "Matthew 25:32-33"] },
-      { symbol: "Bull/Ox", emoji: "🐂", meaning: "Service, strength, patience", notes: "Also: stubbornness", keyTexts: ["Deuteronomy 25:4", "1 Corinthians 9:9"] },
-      { symbol: "Donkey", emoji: "🫏", meaning: "Humility, service, peace", notes: "Christ's entry into Jerusalem", keyTexts: ["Zechariah 9:9", "Matthew 21:5"] },
-      { symbol: "Horse", emoji: "🐴", meaning: "War, strength, power", notes: "Also: trust in flesh", keyTexts: ["Revelation 6:1-8", "Psalm 20:7"] }
+      { symbol: "Lamb", emoji: "🐑", meaning: "Christ, innocence, sacrifice", notes: "Passover lamb", keyTexts: ["John 1:29", "Revelation 5:6"], type: "Christ the Lamb of God who takes away sin", pattern: "Abel's lamb → Passover → Daily sacrifice → John 1:29 → Rev 5", sanctuary: "Central sacrifice; without blemish", cycle: "@Ad → @Re - Lamb slain from foundation to throne", theme: "Gospel Floor foundation" },
+      { symbol: "Sheep", emoji: "🐏", meaning: "God's people, followers", notes: "Can also mean wandering, lost", keyTexts: ["John 10:1-16", "Isaiah 53:6"], type: "Believers following the Good Shepherd", parallel: "Lost sheep (Luke 15) ‖ Scattered sheep (Zech 13:7)", freestyle: "Sheep need a shepherd; they cannot lead themselves" },
+      { symbol: "Ram", meaning: "Substitution, leadership", notes: "Abraham's substitute", keyTexts: ["Genesis 22:13"], type: "Christ as substitute caught in thorns", pattern: "Isaac's ram → Passover lamb → Christ crowned with thorns", cycle: "@Ab - substitution principle established" },
+      { symbol: "Goat", emoji: "🐐", meaning: "Sin bearer, atonement", notes: "Day of Atonement. Also: wicked, cursed", keyTexts: ["Leviticus 16", "Matthew 25:32-33"], type: "Lord's goat = Christ; Scapegoat = Satan", sanctuary: "Day of Atonement central ritual", parallel: "Goats on left (judgment) ‖ Scapegoat sent away", prophecy: "Final judgment separates sheep from goats" },
+      { symbol: "Bull/Ox", emoji: "🐂", meaning: "Service, strength, patience", notes: "Also: stubbornness", keyTexts: ["Deuteronomy 25:4", "1 Corinthians 9:9"], type: "Christ serving patiently; ministers worthy of support", freestyle: "Ox knows its master (Isa 1:3) - do we?" },
+      { symbol: "Donkey", emoji: "🫏", meaning: "Humility, service, peace", notes: "Christ's entry into Jerusalem", keyTexts: ["Zechariah 9:9", "Matthew 21:5"], type: "Christ came humble, not on war horse", parallel: "Balaam's donkey saw angel ‖ Triumphal entry - humility vs pride", prophecy: "Zech 9:9 fulfilled exactly" },
+      { symbol: "Horse", emoji: "🐴", meaning: "War, strength, power", notes: "Also: trust in flesh", keyTexts: ["Revelation 6:1-8", "Psalm 20:7"], prophecy: "Four horsemen of Revelation", pattern: "White → Red → Black → Pale - church history", theme: "Great Controversy - spiritual warfare" }
     ]
   },
   {
