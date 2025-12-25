@@ -1387,10 +1387,32 @@ export const exodusStories: BiblicalStory[] = [
   }
 ];
 
+// Import extended stories
+import { 
+  leviticusStories, 
+  numbersStories, 
+  deuteronomyStories, 
+  joshuaStories, 
+  judgesStories, 
+  ruthStories, 
+  samuel1Stories,
+  danielStories,
+  jonahStories
+} from "./storyLibraryExtended";
+
 // Combine all volumes
 export const allStories: BiblicalStory[] = [
   ...genesisStories,
-  ...exodusStories
+  ...exodusStories,
+  ...leviticusStories,
+  ...numbersStories,
+  ...deuteronomyStories,
+  ...joshuaStories,
+  ...judgesStories,
+  ...ruthStories,
+  ...samuel1Stories,
+  ...danielStories,
+  ...jonahStories
 ];
 
 // Get stories by volume
