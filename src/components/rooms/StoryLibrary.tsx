@@ -7,7 +7,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, Book, Users, MapPin, Sparkles, Cross, Church, CloudSun, Clock, ArrowLeft, ChevronRight } from "lucide-react";
-import { allStories, getVolumes, getStoriesByVolume, searchStories, type BiblicalStory } from "@/data/storyLibrary";
+import { allStoriesComplete, getVolumesComplete, getStoriesByVolumeComplete, searchStoriesComplete, type BiblicalStory } from "@/data/storyLibraryComplete";
+import { StoryOfTheDay } from "./StoryOfTheDay";
 
 interface StoryLibraryProps {
   onBack?: () => void;
@@ -18,10 +19,10 @@ export function StoryLibrary({ onBack }: StoryLibraryProps) {
   const [selectedStory, setSelectedStory] = useState<BiblicalStory | null>(null);
   const [selectedVolume, setSelectedVolume] = useState("Genesis");
 
-  const volumes = getVolumes();
+  const volumes = getVolumesComplete();
   const displayedStories = searchQuery 
-    ? searchStories(searchQuery) 
-    : getStoriesByVolume(selectedVolume);
+    ? searchStoriesComplete(searchQuery) 
+    : getStoriesByVolumeComplete(selectedVolume);
 
   return (
     <div className="space-y-6">
