@@ -5,6 +5,7 @@ import { palaceFloors } from "@/data/palaceData";
 import { useRoomUnlock } from "@/hooks/useRoomUnlock";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { isRoomRenovated } from "@/config/renovatedRooms";
 
 // Floor-specific icons and theming
 const FLOOR_THEMES = [
@@ -199,6 +200,7 @@ const RoomDoor = ({ room, floorNumber, theme, user, index }: RoomDoorProps) => {
   };
 
   const hasWarning = !!recommendationWarning;
+  const isRenovated = isRoomRenovated(room.id);
   
   return (
     <div
@@ -224,6 +226,16 @@ const RoomDoor = ({ room, floorNumber, theme, user, index }: RoomDoorProps) => {
         >
           {/* Gradient overlay on hover */}
           <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient} opacity-0 group-hover/door:opacity-20 transition-opacity duration-300`} />
+
+          {/* Newly Renovated Badge */}
+          {isRenovated && (
+            <div className="absolute top-2 left-2 z-20">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/80 text-primary-foreground px-2 py-0.5 text-[10px] font-semibold shadow-sm backdrop-blur">
+                <Sparkles className="h-3 w-3" />
+                Newly Renovated
+              </span>
+            </div>
+          )}
           
           {/* Glass frame border */}
           <div className="absolute inset-3 border border-white/20 rounded-lg group-hover/door:border-white/40 transition-colors" />
