@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Lock, Sparkles } from "lucide-react";
+import { ChevronRight, Lock, Sparkles, Star } from "lucide-react";
 import { useRoomUnlock } from "@/hooks/useRoomUnlock";
 import { Room } from "@/data/palaceData";
 import { motion } from "framer-motion";
@@ -12,6 +12,9 @@ interface FloorRoomCardProps {
   floorNumber: number;
   gradient: string;
 }
+
+// Rooms that have been newly renovated (updated in the last 24 hours)
+const newlyRenovatedRooms = new Set(["jr", "math", "cr"]);
 
 // Room emojis for visual flair
 const roomEmojis: Record<string, string> = {
@@ -78,6 +81,7 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
   
   const showLocked = loading || !isUnlocked;
   const roomEmoji = roomEmojis[room.id] || "⭐";
+  const isNewlyRenovated = newlyRenovatedRooms.has(room.id);
   // Use room-specific gradient if available, otherwise fall back to floor gradient
   const roomGradient = roomGradients[room.id] || gradient;
 
@@ -124,6 +128,12 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
                   </motion.div>
                   
                   <div className="flex flex-col gap-2">
+                    {isNewlyRenovated && (
+                      <Badge className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black shadow-lg animate-pulse flex items-center gap-1">
+                        <Star className="h-3 w-3 fill-current" />
+                        Newly Renovated
+                      </Badge>
+                    )}
                     {showLocked && (
                       <div className="flex items-center gap-2">
                         <Lock className="h-4 w-4 text-destructive" />
