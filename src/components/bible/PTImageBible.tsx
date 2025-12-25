@@ -469,22 +469,11 @@ export function PTImageBible() {
                     title={`${book} ${chapter.chapter}: ${chapter.title}`}
                   >
                     {imageUrl ? (
-                      <>
-                        <img
-                          src={imageUrl}
-                          alt={`${book} ${chapter.chapter}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <div className="absolute bottom-0 left-0 right-0 p-1 text-center">
-                          <span className="text-[10px] font-bold text-white drop-shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                            {chapter.chapter}
-                          </span>
-                        </div>
-                        <div className="absolute top-1 right-1 text-sm opacity-70 group-hover:opacity-100">
-                          {chapter.symbol}
-                        </div>
-                      </>
+                      <img
+                        src={imageUrl}
+                        alt={`${book} ${chapter.chapter}`}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-muted/50 to-muted/30 hover:from-primary/10 hover:to-accent/10 transition-colors">
                         <span className="text-lg">{chapter.symbol}</span>
@@ -522,24 +511,10 @@ export function PTImageBible() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 sm:ml-auto flex-wrap">
-          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs">
-            <Sparkles className="h-3 w-3 mr-1" />
-            {generatedImages.size + 50} Images
-          </Badge>
-          {user && chaptersNeedingImages.length > 0 && !batchProgress && (
-            <Button
-              size="sm"
-              onClick={startBatchGeneration}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-xs sm:text-sm"
-            >
-              <Zap className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-              <span className="hidden xs:inline">Generate All</span>
-              <span className="xs:hidden">Gen</span>
-              ({chaptersNeedingImages.length})
-            </Button>
-          )}
-        </div>
+        <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs sm:ml-auto">
+          <Sparkles className="h-3 w-3 mr-1" />
+          {generatedImages.size + 50} Images
+        </Badge>
       </div>
 
       {/* Batch Progress - Mobile optimized */}
