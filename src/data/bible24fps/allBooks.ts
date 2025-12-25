@@ -707,9 +707,9 @@ export const revelationSet: BibleSet = {
 // Import remaining books
 import { remainingBibleSets } from './remainingBooks';
 
-// Collect all sets
-export const allBibleSets: BibleSet[] = [
-  // Old Testament
+// Build chronological 24-chapter sets (can cross book boundaries)
+const SOURCE_BIBLE_SETS: BibleSet[] = [
+  // Defined in this file
   genesisSet,
   genesis25to50Set,
   exodus1to24Set,
@@ -726,7 +726,8 @@ export const allBibleSets: BibleSet[] = [
   firstSamuel1to24Set,
   firstSamuel25to31Set,
   psalms1to30Set,
-  // New Testament
+
+  // Defined in this file (NT subset)
   matthew1to24Set,
   matthew25to28Set,
   markSet,
@@ -735,14 +736,169 @@ export const allBibleSets: BibleSet[] = [
   actsSet,
   romansSet,
   revelationSet,
-  // All remaining books
+
+  // Defined in remainingBooks.ts
   ...remainingBibleSets,
 ];
+
+const OT_BOOK_ORDER: string[] = [
+  'Genesis',
+  'Exodus',
+  'Leviticus',
+  'Numbers',
+  'Deuteronomy',
+  'Joshua',
+  'Judges',
+  'Ruth',
+  '1 Samuel',
+  '2 Samuel',
+  '1 Kings',
+  '2 Kings',
+  '1 Chronicles',
+  '2 Chronicles',
+  'Ezra',
+  'Nehemiah',
+  'Esther',
+  'Job',
+  'Psalms',
+  'Proverbs',
+  'Ecclesiastes',
+  'Song of Solomon',
+  'Isaiah',
+  'Jeremiah',
+  'Lamentations',
+  'Ezekiel',
+  'Daniel',
+  'Hosea',
+  'Joel',
+  'Amos',
+  'Obadiah',
+  'Jonah',
+  'Micah',
+  'Nahum',
+  'Habakkuk',
+  'Zephaniah',
+  'Haggai',
+  'Zechariah',
+  'Malachi',
+];
+
+const NT_BOOK_ORDER: string[] = [
+  'Matthew',
+  'Mark',
+  'Luke',
+  'John',
+  'Acts',
+  'Romans',
+  '1 Corinthians',
+  '2 Corinthians',
+  'Galatians',
+  'Ephesians',
+  'Philippians',
+  'Colossians',
+  '1 Thessalonians',
+  '2 Thessalonians',
+  '1 Timothy',
+  '2 Timothy',
+  'Titus',
+  'Philemon',
+  'Hebrews',
+  'James',
+  '1 Peter',
+  '2 Peter',
+  '1 John',
+  '2 John',
+  '3 John',
+  'Jude',
+  'Revelation',
+];
+
+const buildIndex = (sets: BibleSet[]) => {
+  const byKey = new Map<string, ChapterFrame>();
+  const maxByBook = new Map<string, number>();
+
+  for (const set of sets) {
+    for (const ch of set.chapters) {
+      byKey.set(`${ch.book}|${ch.chapter}`, ch);
+
+      const currentMax = maxByBook.get(ch.book) ?? 0;
+      if (ch.chapter > currentMax) maxByBook.set(ch.book, ch.chapter);
+    }
+  }
+
+  return { byKey, maxByBook };
+};
+
+const { byKey: CHAPTER_INDEX, maxByBook: MAX_CHAPTERS_BY_BOOK } = buildIndex(SOURCE_BIBLE_SETS);
+
+const getFrame = (book: string, chapter: number): ChapterFrame => {
+  return (
+    CHAPTER_INDEX.get(`${book}|${chapter}`) ?? {
+      book,
+      chapter,
+      title: `${book} ${chapter}`,
+      summary: '',
+      memoryHook: '',
+      symbol: '📖',
+    }
+  );
+};
+
+const flattenInOrder = (bookOrder: string[]): ChapterFrame[] => {
+  const frames: ChapterFrame[] = [];
+
+  for (const book of bookOrder) {
+    const max = MAX_CHAPTERS_BY_BOOK.get(book) ?? 0;
+    for (let ch = 1; ch <= max; ch++) frames.push(getFrame(book, ch));
+  }
+
+  return frames;
+};
+
+const chunk = <T,>(arr: T[], size: number): T[][] => {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+};
+
+const formatRangeLabel = (start: ChapterFrame, end: ChapterFrame) =>
+  start.book === end.book
+    ? `${start.book} ${start.chapter}–${end.chapter}`
+    : `${start.book} ${start.chapter} – ${end.book} ${end.chapter}`;
+
+const buildSets = (
+  frames: ChapterFrame[],
+  testament: 'old' | 'new',
+  startingIndex: number
+): BibleSet[] => {
+  return chunk(frames, 24).map((chapters, i) => {
+    const setNumber = startingIndex + i;
+    const start = chapters[0];
+    const end = chapters[chapters.length - 1];
+
+    return {
+      id: `set-${String(setNumber).padStart(2, '0')}`,
+      label: `Set ${String(setNumber).padStart(2, '0')} · ${formatRangeLabel(start, end)}`,
+      theme: 'Chronological 24-chapter block',
+      testament,
+      chapters,
+    };
+  });
+};
+
+const OT_FRAMES = flattenInOrder(OT_BOOK_ORDER);
+const NT_FRAMES = flattenInOrder(NT_BOOK_ORDER);
+
+const OT_SETS = buildSets(OT_FRAMES, 'old', 1);
+const NT_SETS = buildSets(NT_FRAMES, 'new', OT_SETS.length + 1);
+
+// Collect all sets (chronological 24-chapter blocks)
+export const allBibleSets: BibleSet[] = [...OT_SETS, ...NT_SETS];
 
 // Helper to get a specific chapter
 export const getChapter = (book: string, chapter: number): ChapterFrame | undefined => {
   for (const set of allBibleSets) {
-    const found = set.chapters.find(c => c.book === book && c.chapter === chapter);
+    const found = set.chapters.find((c) => c.book === book && c.chapter === chapter);
     if (found) return found;
   }
   return undefined;
@@ -752,7 +908,7 @@ export const getChapter = (book: string, chapter: number): ChapterFrame | undefi
 export const getBookChapters = (book: string): ChapterFrame[] => {
   const chapters: ChapterFrame[] = [];
   for (const set of allBibleSets) {
-    chapters.push(...set.chapters.filter(c => c.book === book));
+    chapters.push(...set.chapters.filter((c) => c.book === book));
   }
   return chapters.sort((a, b) => a.chapter - b.chapter);
 };
@@ -767,3 +923,4 @@ export const getAllBooks = (): string[] => {
   }
   return Array.from(books);
 };
+
