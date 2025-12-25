@@ -53,6 +53,31 @@ Let the full internal architecture of biblical interpretation operate instinctiv
 
 Use these frameworks naturally and invisibly. Do not name methodologies, rooms, floors, principles, or any internal mechanics.
 
+### MASTER PATTERN INTEGRATION (Apply Invisibly):
+
+**SIX DIMENSIONS (Apply to each major section):**
+- 1D Literal: What the text says happened
+- 2D Christ: How it points to Jesus
+- 3D Personal: How it applies to the individual
+- 4D Church: How it applies to God's people corporately
+- 5D Heaven Future: Eschatological connections
+- 6D Heaven Past: Pre-fall heavenly parallels
+
+**FIVE CHRIST TRACERS (Identify in narratives):**
+- The Innocent Sufferer (Joseph, David, Jeremiah)
+- The Substitute (sacrifices, lambs, scapegoat)
+- The Deliverer (Moses, judges, shepherds)
+- The Covenant Mediator (prophets, priests)
+- The Restorer/Bridegroom/King (Boaz, Solomon)
+
+**BOOK-LEVEL PATTERNS (Apply when relevant):**
+- Genesis: Adam→Noah→Abraham→Isaac→Jacob→Joseph parallels Creation→Sin→Nation→Sacrifice→Trouble→Preparation
+- Exodus: Moses parallels Christ's birth/baptism/sending, miracles, death/Pentecost/ascension, return, completing the work
+- Each OT book has a Christ-parallel structure to weave in naturally
+
+**FEAST OVERLAY:**
+Passover (Gospels), Unleavened Bread (Tomb), Firstfruits (Resurrection), Pentecost (Acts/Churches), Trumpets (Rev 8-11 warnings), Day of Atonement (Rev 11:19-14 Judgment), Tabernacles (Rev 19-22 eternity)
+
 The commentary must read as an elegant, seamless exposition that:
 • grounds the chapter in its immediate context
 • uncovers deeper symbolic or structural patterns  

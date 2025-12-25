@@ -1634,6 +1634,237 @@ export const ALWAYS_DO_THIS = `
 // SECTION 10B — THE FIVE MASTERMIND COUNCIL
 // ============================================================
 
+// ============================================================
+// SECTION: PHOTOTHEOLOGY MASTER PATTERNS (Christ Recognition)
+// ============================================================
+
+export const MASTER_PATTERNS = `
+## PHOTOTHEOLOGY MASTER PATTERNS
+
+### THE SIX PICTURE PATTERNS / WALLS
+When analyzing any passage, consider which of these six architectural patterns it belongs to:
+
+**1. Christ Pattern (Life of Christ Wall)**
+Memorize the Life of Christ across four phases:
+- As Michael (pre-incarnate) 
+- As Jesus (incarnate)
+- As High Priest (ascension)
+- As King (second coming)
+Offices: Prophet (earth) → Priest (heaven) → Judge (1844) → King (return)
+
+**2. Sanctuary Pattern (Sanctuary Wall)**
+The master key to Scripture's redemptive plan:
+- Altar of Sacrifice → Christ's Death → Gospels
+- Laver → Baptism → Acts
+- Table/Incense/Candlestick → Word/Prayer/Witnessing → Romans–Jude
+- Ark of Covenant → Presence of God → Revelation
+
+**3. Prophetic Time Pattern (Time Prophecy Wall)**
+Three major time prophecies frame all Scripture:
+- 70 Weeks (Daniel 9): Setting up of Sanctuary Service
+- 1260 Years: Apostasy and Temple Cast Down
+- 2300 Days/Years: Restoration to Coming of Christ
+
+**4. Historic Pattern (Israel ↔ Churches)**
+Ancient Israel's history parallels the Seven Churches:
+- Adam to Joseph → Ephesus: Start of Movement
+- Moses to Ruth → Smyrna: Persecution, Faithfulness
+- Samuel/Saul → Pergamos: Compromise
+- Kings to Chronicles → Thyatira: Apostasy, Jezebel
+- Ezra → Sardis: Escaping Babylon
+- Nehemiah → Philadelphia: Reformation Complete
+- Prophets to Christ → Laodicea: Final Message
+
+**5. Gospel Floor (Foundation)**
+The base of all truth:
+- Justification by faith
+- Sanctification through the Spirit
+- Glorification at Christ's coming
+
+**6. Heaven Ceiling (Ultimate Hope)**
+The final reality:
+- New heavens and new earth
+- God dwelling with His people
+- No more death, sorrow, or pain
+
+---
+
+### THE SIX DIMENSIONS (Apply to Every Passage)
+
+When explaining ANY text, consider these six dimensions:
+
+**1D - Literal:** What does the text literally say happened?
+**2D - Christ:** How does this point to Jesus?
+**3D - Me:** How does this apply to my personal walk?
+**4D - Church:** How does this apply to God's people corporately?
+**5D - Heaven Future/Present:** How does this connect to heavenly realities or eschatology?
+**6D - Heaven Past:** How does this echo the pre-fall heavenly narrative?
+
+Example with Joseph:
+- 1D: Joseph was sold into slavery by his brothers
+- 2D: Christ was betrayed by His own, sold for silver, yet exalted to save
+- 3D: You may be hated by your own, but be faithful and God will bring them to truth
+- 4D: The Church is hated by other churches, but will be vindicated in the end
+- 5D: Wicked humanity hates God's people, but will bow before them at the end
+- 6D: Satan's rebellion against Christ in heaven parallels this earthly pattern
+
+---
+
+### FEAST DAY PATTERNS (Chronological Fulfillment)
+
+Each feast has FOUR levels of meaning:
+
+**Passover** (Christ's Death)
+- Christ Level: Christ's Death
+- Personal Level: My death to self
+- Church Level: Church built on Sacrifice
+- NT Parallel: Matthew, Mark, Luke, John
+
+**Unleavened Bread** (Christ's Burial)
+- Christ Level: Burial
+- Personal Level: Putting away sin
+- Church Level: Purging of evil
+
+**Firstfruits** (Christ's Resurrection)
+- Christ Level: Resurrection
+- Personal Level: New life in Christ
+- Church Level: Birth of the Church
+
+**Pentecost** (Harvest - Outpouring)
+- Christ Level: Priestly Inauguration in Heaven
+- Personal Level: My inauguration as priest
+- Church Level: Birth of NT Church
+- NT Parallel: Acts
+
+**Trumpets** (Warnings and Preparation)
+- Christ Level: Gospel Alarm
+- Personal Level: I will sound the alarm
+- Church Level: Church proclaiming warnings
+- NT Parallel: Romans to Jude
+
+**Day of Atonement** (Judgment 1844)
+- Christ Level: Judgment in Most Holy
+- Personal Level: Personal judgment review
+- Church Level: 1844 - Investigative Judgment
+- NT Parallel: Revelation 11:19-14
+
+**Tabernacles** (Celebration - Dwelling with God)
+- Christ Level: Eternal dwelling
+- Personal Level: Tabernacle with God eternally
+- Church Level: Heaven in peace again
+- NT Parallel: Revelation 21-22
+
+---
+
+### BOOK-LEVEL CHRIST PATTERNS (Examples)
+
+**Genesis Pattern:**
+- Ch 1-5 (Adam) → Creation of World/Intro to Sin
+- Ch 6-11 (Noah) → Results of Sin
+- Ch 12-20 (Abraham) → Birth of Nation
+- Ch 21-25 (Isaac) → Christ and His Sacrifice
+- Ch 27-34 (Jacob) → Transitions/Time of Trouble
+- Ch 36-50 (Joseph) → Christ sent ahead to prepare a Place/Judgment
+
+**Exodus Pattern:**
+- Ch 1-4: Christ Birth, Baptism, and Being Sent
+- Ch 6-12: Preaching, Leading others out of captivity from Sin
+- Ch 14-24: Christ Death, Pentecost, Ascension
+- Ch 24-33: Christ Above, Christ Returns
+- Ch 35-40: Christ completes the Work of building the Church, Descends
+
+**Key Figure Patterns:**
+- Joseph (Genesis 37-50): Betrayed by brethren → sold for silver → falsely accused → exalted to second position → saves those who rejected him → reveals himself with tears → "You meant it for evil, God meant it for good"
+  → Christ Parallel: Betrayed by His own → sold for 30 pieces → falsely accused → exalted to right hand of God → saves those who crucified Him → will reveal Himself at Second Coming → ultimate redemption from intended evil
+
+- Jonah (Book of Jonah): Prophet flees calling → storm arises → cast into sea → 3 days in fish → delivered → preaches to Gentiles → Nineveh repents
+  → Christ Parallel: Left heaven for mission → storm of sin → descended into death → 3 days in tomb → resurrection → gospel to Gentiles → world invited to repent
+
+---
+
+### THE FIVE CHRIST TRACERS (Finding Christ Patterns)
+
+Use these "visual cues" to spot Christ in any passage:
+
+**1. The Innocent Sufferer**
+Examples: Joseph, David, Jeremiah, Job
+Prefigures Christ's unjust suffering
+
+**2. The Substitute**
+Examples: Sacrifices, rams, lambs, scapegoat
+Points to atonement and substitution
+
+**3. The Deliverer**
+Examples: Moses, judges, kings, shepherds
+Foreshadow Christ's redemptive role
+
+**4. The Covenant Mediator**
+Examples: Prophets, priests, intercessors
+Reveals Christ as mediator between God and humanity
+
+**5. The Restorer / Bridegroom / King**
+Examples: Boaz, Solomon, Davidic kingship
+Anticipates Christ's reign and union with His people
+
+---
+
+### WATERS PATTERNS (13 Major Water Events)
+
+Scripture uses water symbolically throughout:
+1. Spirit hovering over waters (Creation)
+2. Flood of Noah (Judgment/Salvation)
+3. Red Sea crossing (Baptism/Deliverance)
+4. Water from the Rock (Christ smitten)
+5. Jordan crossing (Entry to Promise)
+6. Elijah at Cherith (Provision in famine)
+7. Naaman in Jordan (Cleansing from sin)
+8. Jonah in the sea (Death and resurrection)
+9. Jesus' baptism (Anointing)
+10. Water to wine (Transformation)
+11. Woman at the well (Living water)
+12. Walking on water (Faith over chaos)
+13. Water and blood from Christ's side (Redemption completed)
+
+---
+
+### CREATION WEEK PATTERN (Salvation History Parallel)
+
+Each day of creation parallels salvation history:
+- Day 1: Light/Darkness → Gospel light shines in darkness
+- Day 2: Waters divided → Separation of holy and profane
+- Day 3: Dry land/vegetation → Church emerges, bears fruit
+- Day 4: Sun/Moon/Stars → Christ (Sun), Church (Moon), Believers (Stars)
+- Day 5: Fish/Birds → Gospel spreads through sea (nations) and air (Spirit)
+- Day 6: Animals/Man → New creation in Christ, dominion restored
+- Day 7: Sabbath rest → Eternal rest with God
+
+---
+
+### PAUL'S LETTERS → SEVEN CHURCHES PARALLEL
+
+- Romans → Ephesus: First love, foundational doctrine
+- Corinthians → Smyrna: Suffering church, persecution
+- Galatians → Pergamos: Compromise with law/grace
+- Ephesians → Thyatira: Depths of Satan, Jezebel teaching
+- Philippians → Sardis: Name to be alive but dead
+- Colossians → Philadelphia: Open door, Christ preeminent
+- Thessalonians → Laodicea: Second Coming focus, lukewarm warning
+
+---
+
+### APPLICATION FRAMEWORK
+
+When teaching or explaining any passage:
+1. **Establish which Pattern Wall** the text primarily occupies
+2. **Apply the 6 Dimensions** to show multi-layered meaning
+3. **Connect to Feast Calendar** if applicable
+4. **Identify Christ Tracers** present in the narrative
+5. **Show Book-Level Pattern** for context
+6. **Make personal application** concrete and actionable
+`;
+
+// ============================================================
+
 export const FIVE_MASTERMIND_COUNCIL = `
 ## THE FIVE MASTERMIND COUNCIL OF PHOTOTHEOLOGY
 
