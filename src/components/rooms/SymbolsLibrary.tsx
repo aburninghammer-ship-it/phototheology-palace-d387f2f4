@@ -4,81 +4,70 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Search, ChevronDown, Book, Sparkles } from "lucide-react";
+import { Search, Book, Sparkles } from "lucide-react";
 import { biblicalSymbolsLibrary, searchSymbols, BiblicalSymbol } from "@/data/biblicalSymbols";
 
 export function SymbolsLibrary() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedSymbol, setExpandedSymbol] = useState<string | null>(null);
 
   const searchResults = searchQuery.length >= 2 ? searchSymbols(searchQuery) : [];
 
-  const renderSymbol = (symbol: BiblicalSymbol, showCategory = false) => (
-    <Collapsible
-      key={symbol.symbol}
-      open={expandedSymbol === symbol.symbol}
-      onOpenChange={(open) => setExpandedSymbol(open ? symbol.symbol : null)}
-    >
-      <CollapsibleTrigger className="w-full">
-        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{symbol.emoji || "📖"}</span>
-            <div className="text-left">
-              <div className="font-medium">{symbol.symbol}</div>
-              <div className="text-sm text-muted-foreground">{symbol.meaning}</div>
-            </div>
+  const renderSymbol = (symbol: BiblicalSymbol) => (
+    <div key={symbol.symbol} className="rounded-lg border border-border bg-card p-4 space-y-3">
+      <div className="flex items-center gap-3">
+        <span className="text-3xl">{symbol.emoji || "📖"}</span>
+        <div>
+          <div className="font-semibold text-lg">{symbol.symbol}</div>
+          <div className="text-sm text-muted-foreground">{symbol.meaning}</div>
+        </div>
+      </div>
+      
+      {symbol.dimensions && (
+        <div className="space-y-2 pt-2 border-t border-border">
+          <h4 className="font-semibold text-sm flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            5 Dimensions
+          </h4>
+          <div className="grid gap-1.5 text-sm">
+            {symbol.dimensions.literal && (
+              <div><Badge variant="outline" className="mr-2">1D</Badge>{symbol.dimensions.literal}</div>
+            )}
+            {symbol.dimensions.christ && (
+              <div><Badge variant="outline" className="mr-2 bg-amber-500/20">2D</Badge>{symbol.dimensions.christ}</div>
+            )}
+            {symbol.dimensions.personal && (
+              <div><Badge variant="outline" className="mr-2 bg-blue-500/20">3D</Badge>{symbol.dimensions.personal}</div>
+            )}
+            {symbol.dimensions.church && (
+              <div><Badge variant="outline" className="mr-2 bg-purple-500/20">4D</Badge>{symbol.dimensions.church}</div>
+            )}
+            {symbol.dimensions.heaven && (
+              <div><Badge variant="outline" className="mr-2 bg-green-500/20">5D</Badge>{symbol.dimensions.heaven}</div>
+            )}
           </div>
-          <ChevronDown className={`h-4 w-4 transition-transform ${expandedSymbol === symbol.symbol ? "rotate-180" : ""}`} />
         </div>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <div className="p-4 mt-2 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
-          {symbol.dimensions && (
-            <div className="space-y-2">
-              <h4 className="font-semibold text-sm flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                5 Dimensions
-              </h4>
-              <div className="grid gap-1.5 text-sm">
-                {symbol.dimensions.literal && (
-                  <div><Badge variant="outline" className="mr-2">1D</Badge>{symbol.dimensions.literal}</div>
-                )}
-                {symbol.dimensions.christ && (
-                  <div><Badge variant="outline" className="mr-2 bg-amber-500/20">2D</Badge>{symbol.dimensions.christ}</div>
-                )}
-                {symbol.dimensions.personal && (
-                  <div><Badge variant="outline" className="mr-2 bg-blue-500/20">3D</Badge>{symbol.dimensions.personal}</div>
-                )}
-                {symbol.dimensions.church && (
-                  <div><Badge variant="outline" className="mr-2 bg-purple-500/20">4D</Badge>{symbol.dimensions.church}</div>
-                )}
-                {symbol.dimensions.heaven && (
-                  <div><Badge variant="outline" className="mr-2 bg-green-500/20">5D</Badge>{symbol.dimensions.heaven}</div>
-                )}
-              </div>
-            </div>
-          )}
-          {symbol.notes && (
-            <p className="text-sm text-muted-foreground">{symbol.notes}</p>
-          )}
-          {symbol.keyTexts && symbol.keyTexts.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              <Book className="h-4 w-4 text-muted-foreground mr-1" />
-              {symbol.keyTexts.map((text) => (
-                <Badge key={text} variant="secondary" className="text-xs">{text}</Badge>
-              ))}
-            </div>
-          )}
-          {symbol.relatedSymbols && symbol.relatedSymbols.length > 0 && (
-            <div className="text-sm">
-              <span className="text-muted-foreground">Related: </span>
-              {symbol.relatedSymbols.join(" • ")}
-            </div>
-          )}
+      )}
+      
+      {symbol.notes && (
+        <p className="text-sm text-muted-foreground">{symbol.notes}</p>
+      )}
+      
+      {symbol.keyTexts && symbol.keyTexts.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          <Book className="h-4 w-4 text-muted-foreground mr-1" />
+          {symbol.keyTexts.map((text) => (
+            <Badge key={text} variant="secondary" className="text-xs">{text}</Badge>
+          ))}
         </div>
-      </CollapsibleContent>
-    </Collapsible>
+      )}
+      
+      {symbol.relatedSymbols && symbol.relatedSymbols.length > 0 && (
+        <div className="text-sm">
+          <span className="text-muted-foreground">Related: </span>
+          {symbol.relatedSymbols.join(" • ")}
+        </div>
+      )}
+    </div>
   );
 
   return (
@@ -109,7 +98,7 @@ export function SymbolsLibrary() {
               {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} for "{searchQuery}"
             </h3>
             <div className="space-y-2">
-              {searchResults.map((symbol) => renderSymbol(symbol, true))}
+              {searchResults.map((symbol) => renderSymbol(symbol))}
               {searchResults.length === 0 && (
                 <p className="text-center text-muted-foreground py-8">No symbols found. Try a different search term.</p>
               )}
