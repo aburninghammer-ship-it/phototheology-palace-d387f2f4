@@ -1,11 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Image, ChevronDown, ChevronRight, Camera, Sparkles, BookOpen, Search, Wand2, Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Image, ChevronDown, ChevronRight, Camera, Sparkles, BookOpen, Search, Wand2, Loader2, Play, Pause, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { genesisImages } from "@/assets/24fps/genesis";
 import { oldTestamentSets } from "@/data/bible24fps/oldTestament";
@@ -25,6 +26,15 @@ interface SelectedChapter {
   memoryHook: string;
   symbol: string;
   imageUrl?: string;
+}
+
+interface BatchProgress {
+  current: number;
+  total: number;
+  currentBook: string;
+  currentChapter: number;
+  isRunning: boolean;
+  isPaused: boolean;
 }
 
 // Combine all sets
@@ -80,6 +90,9 @@ export function PTImageBible() {
   const [activeTab, setActiveTab] = useState("old");
   const [generatedImages, setGeneratedImages] = useState<Map<string, string>>(new Map());
   const [isGenerating, setIsGenerating] = useState(false);
+  const [batchProgress, setBatchProgress] = useState<BatchProgress | null>(null);
+  const isPausedRef = useRef(false);
+  const shouldStopRef = useRef(false);
   const { user } = useAuth();
 
   const chaptersByBook = useMemo(() => getChaptersByBook(), []);
@@ -102,6 +115,168 @@ export function PTImageBible() {
       }
     };
     loadGeneratedImages();
+  }, []);
+
+  // Get all chapters that need images
+  const chaptersNeedingImages = useMemo(() => {
+    const needsImage: ChapterFrame[] = [];
+    const allBooks = [...OLD_TESTAMENT_BOOKS, ...NEW_TESTAMENT_BOOKS];
+    
+    allBooks.forEach(book => {
+      const chapters = chaptersByBook.get(book) || [];
+      chapters.forEach(chapter => {
+        const key = `${chapter.book}-${chapter.chapter}`;
+        // Skip Genesis (already has static images) and any already generated
+        if (chapter.book !== "Genesis" && !generatedImages.has(key)) {
+          needsImage.push(chapter);
+        }
+      });
+    });
+    
+    return needsImage;
+  }, [chaptersByBook, generatedImages]);
+
+  // Generate image for a single chapter (with delay for rate limiting)
+  const generateSingleImage = useCallback(async (chapter: ChapterFrame): Promise<boolean> => {
+    try {
+      const prompt = `Create a memorable symbolic visual anchor for ${chapter.book} chapter ${chapter.chapter}: "${chapter.title}". ${chapter.summary}. The symbol is ${chapter.symbol}. Make it vivid, symbolic, and suitable for Bible memorization using the 24FPS method. Style: Rich colors, clear iconography, memorable composition.`;
+
+      const { data: response, error: fnError } = await supabase.functions.invoke(
+        "generate-visual-anchor",
+        { body: { prompt } }
+      );
+
+      if (fnError) throw fnError;
+      if (!response?.image) throw new Error("No image generated");
+
+      // Convert base64 to blob and upload
+      const base64Data = response.image.replace(/^data:image\/\w+;base64,/, "");
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "image/png" });
+
+      const fileName = `24fps/${chapter.book.toLowerCase().replace(/\s+/g, '-')}/${chapter.book.toLowerCase().replace(/\s+/g, '-')}-${chapter.chapter}-${Date.now()}.png`;
+      const { error: uploadError } = await supabase.storage
+        .from("bible-images")
+        .upload(fileName, blob, { contentType: "image/png", upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("bible-images")
+        .getPublicUrl(fileName);
+
+      // Save to database
+      await supabase.from("bible_images").insert({
+        user_id: user!.id,
+        book: chapter.book,
+        chapter: chapter.chapter,
+        image_url: urlData.publicUrl,
+        description: `${chapter.book} ${chapter.chapter}: ${chapter.title}`,
+        room_type: "24fps",
+        is_public: true,
+        is_favorite: false,
+      });
+
+      // Update local state
+      const key = `${chapter.book}-${chapter.chapter}`;
+      setGeneratedImages((prev) => new Map(prev).set(key, urlData.publicUrl));
+      
+      return true;
+    } catch (err: any) {
+      console.error(`Error generating image for ${chapter.book} ${chapter.chapter}:`, err);
+      return false;
+    }
+  }, [user]);
+
+  // Batch generate all missing images
+  const startBatchGeneration = useCallback(async () => {
+    if (!user) {
+      toast.error("Please sign in to generate images");
+      return;
+    }
+
+    const chaptersToGenerate = chaptersNeedingImages;
+    if (chaptersToGenerate.length === 0) {
+      toast.info("All chapters already have images!");
+      return;
+    }
+
+    shouldStopRef.current = false;
+    isPausedRef.current = false;
+
+    setBatchProgress({
+      current: 0,
+      total: chaptersToGenerate.length,
+      currentBook: chaptersToGenerate[0].book,
+      currentChapter: chaptersToGenerate[0].chapter,
+      isRunning: true,
+      isPaused: false
+    });
+
+    toast.info(`Starting batch generation for ${chaptersToGenerate.length} chapters...`);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < chaptersToGenerate.length; i++) {
+      // Check if stopped
+      if (shouldStopRef.current) {
+        toast.info("Batch generation stopped");
+        break;
+      }
+
+      // Wait while paused
+      while (isPausedRef.current && !shouldStopRef.current) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      const chapter = chaptersToGenerate[i];
+      
+      setBatchProgress(prev => prev ? {
+        ...prev,
+        current: i,
+        currentBook: chapter.book,
+        currentChapter: chapter.chapter,
+      } : null);
+
+      const success = await generateSingleImage(chapter);
+      if (success) {
+        successCount++;
+      } else {
+        failCount++;
+      }
+
+      // Add delay between requests to avoid rate limiting
+      if (i < chaptersToGenerate.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    setBatchProgress(null);
+    toast.success(`Batch complete! Generated ${successCount} images. ${failCount > 0 ? `${failCount} failed.` : ''}`);
+  }, [user, chaptersNeedingImages, generateSingleImage]);
+
+  const pauseBatchGeneration = useCallback(() => {
+    isPausedRef.current = true;
+    setBatchProgress(prev => prev ? { ...prev, isPaused: true } : null);
+    toast.info("Batch generation paused");
+  }, []);
+
+  const resumeBatchGeneration = useCallback(() => {
+    isPausedRef.current = false;
+    setBatchProgress(prev => prev ? { ...prev, isPaused: false } : null);
+    toast.info("Batch generation resumed");
+  }, []);
+
+  const stopBatchGeneration = useCallback(() => {
+    shouldStopRef.current = true;
+    isPausedRef.current = false;
+    setBatchProgress(null);
   }, []);
 
   const toggleBook = (book: string) => {
@@ -344,11 +519,57 @@ export function PTImageBible() {
             {totalChapters}+ chapter frames with memory hooks & symbols
           </p>
         </div>
-        <Badge className="ml-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-          <Sparkles className="h-3 w-3 mr-1" />
-          50 Genesis Images
-        </Badge>
+        <div className="ml-auto flex items-center gap-2">
+          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            <Sparkles className="h-3 w-3 mr-1" />
+            {generatedImages.size + 50} Images
+          </Badge>
+          {user && chaptersNeedingImages.length > 0 && !batchProgress && (
+            <Button
+              size="sm"
+              onClick={startBatchGeneration}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+            >
+              <Zap className="h-4 w-4 mr-1" />
+              Generate All ({chaptersNeedingImages.length})
+            </Button>
+          )}
+        </div>
       </div>
+
+      {/* Batch Progress */}
+      {batchProgress && (
+        <Card className="p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin text-purple-400" />
+              <span className="font-medium">
+                Generating: {batchProgress.currentBook} {batchProgress.currentChapter}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {batchProgress.isPaused ? (
+                <Button size="sm" variant="outline" onClick={resumeBatchGeneration}>
+                  <Play className="h-4 w-4 mr-1" />
+                  Resume
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" onClick={pauseBatchGeneration}>
+                  <Pause className="h-4 w-4 mr-1" />
+                  Pause
+                </Button>
+              )}
+              <Button size="sm" variant="destructive" onClick={stopBatchGeneration}>
+                Stop
+              </Button>
+            </div>
+          </div>
+          <Progress value={(batchProgress.current / batchProgress.total) * 100} className="h-2" />
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            {batchProgress.current} of {batchProgress.total} chapters ({Math.round((batchProgress.current / batchProgress.total) * 100)}%)
+          </p>
+        </Card>
+      )}
 
       {/* Search */}
       <div className="relative">
