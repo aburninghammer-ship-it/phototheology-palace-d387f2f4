@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, Book, Users, MapPin, Sparkles, Cross, Church, CloudSun, Clock, ArrowLeft, ChevronRight } from "lucide-react";
+import { Search, Book, Users, MapPin, Sparkles, Cross, Church, CloudSun, Clock, ArrowLeft, ChevronRight, GraduationCap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { allStoriesComplete, getVolumesComplete, getStoriesByVolumeComplete, searchStoriesComplete, type BiblicalStory } from "@/data/storyLibraryComplete";
 import { StoryOfTheDay } from "./StoryOfTheDay";
 
@@ -15,9 +16,23 @@ interface StoryLibraryProps {
 }
 
 export function StoryLibrary({ onBack }: StoryLibraryProps) {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStory, setSelectedStory] = useState<BiblicalStory | null>(null);
   const [selectedVolume, setSelectedVolume] = useState("Genesis");
+
+  const handleStudyStory = (story: BiblicalStory) => {
+    // Navigate to Bible reader with the story's reference pre-loaded
+    const reference = story.reference;
+    // Parse the reference to get book and chapter
+    const match = reference.match(/^(\d?\s?[A-Za-z]+)\s*(\d+)/);
+    if (match) {
+      const book = match[1].trim();
+      const chapter = match[2];
+      navigate(`/bible/${encodeURIComponent(book)}/${chapter}`);
+    }
+    setSelectedStory(null);
+  };
 
   const volumes = getVolumesComplete();
   const displayedStories = searchQuery 
@@ -206,6 +221,21 @@ export function StoryLibrary({ onBack }: StoryLibraryProps) {
                         <li key={i}>• {rs}</li>
                       ))}
                     </ul>
+                  </div>
+
+                  {/* Study This Story Button */}
+                  <div className="pt-4 border-t">
+                    <Button 
+                      onClick={() => handleStudyStory(selectedStory)}
+                      className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                      size="lg"
+                    >
+                      <GraduationCap className="mr-2 h-5 w-5" />
+                      Study This Story Through Palace Principles
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center mt-2">
+                      Opens in the Bible Reader with all Palace study tools available
+                    </p>
                   </div>
                 </div>
               </ScrollArea>
