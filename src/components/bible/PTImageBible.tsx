@@ -43,6 +43,9 @@ interface BatchProgress {
 // Combine all sets
 const allSets = [...oldTestamentSets, ...newTestamentSets];
 
+const STATIC_24FPS_BOOKS = new Set(["Genesis", "Exodus", "Leviticus", "Numbers"]);
+const STATIC_24FPS_IMAGE_COUNT = 153; // Genesis(50)+Exodus(40)+Leviticus(27)+Numbers(36)
+
 // Group chapters by book
 const getChaptersByBook = (): Map<string, ChapterFrame[]> => {
   const bookChapters = new Map<string, ChapterFrame[]>();
@@ -105,9 +108,10 @@ export function PTImageBible() {
     const loadGeneratedImages = async () => {
       const { data } = await supabase
         .from("bible_images")
-        .select("book, chapter, image_url")
+        .select("book, chapter, image_url, created_at")
         .eq("room_type", "24fps")
-        .eq("is_public", true);
+        .eq("is_public", true)
+        .order("created_at", { ascending: true });
       
       if (data) {
         const imageMap = new Map<string, string>();
@@ -130,7 +134,7 @@ export function PTImageBible() {
       chapters.forEach(chapter => {
         const key = `${chapter.book}-${chapter.chapter}`;
         // Skip books with static images and any already generated
-        const hasStaticImages = ["Genesis", "Exodus", "Leviticus", "Numbers"].includes(chapter.book);
+        const hasStaticImages = STATIC_24FPS_BOOKS.has(chapter.book);
         if (!hasStaticImages && !generatedImages.has(key)) {
           needsImage.push(chapter);
         }
@@ -143,7 +147,13 @@ export function PTImageBible() {
   // Generate image for a single chapter (with delay for rate limiting)
   const generateSingleImage = useCallback(async (chapter: ChapterFrame): Promise<boolean> => {
     try {
-      const prompt = `Create a memorable symbolic visual anchor for ${chapter.book} chapter ${chapter.chapter}: "${chapter.title}". ${chapter.summary}. The symbol is ${chapter.symbol}. Make it vivid, symbolic, and suitable for Bible memorization using the 24FPS method. Style: Rich colors, clear iconography, memorable composition.`;
+      const prompt = [
+        `Create a flashcard-front illustration (no text) for ${chapter.book} chapter ${chapter.chapter}: "${chapter.title}".`,
+        `Use this summary to choose distinct visual elements: ${chapter.summary}`,
+        `Primary symbol to feature: ${chapter.symbol}.`,
+        "Rules: NO words, NO letters, NO numbers, NO captions, NO watermarks, NO signatures.",
+        "Style: bold iconic composition, high contrast, clean shapes, rich color, single clear focal point, minimal background.",
+      ].join(" ");
 
       const { data: response, error: fnError } = await supabase.functions.invoke(
         "generate-visual-anchor",
@@ -296,7 +306,7 @@ export function PTImageBible() {
   };
 
   const hasImagesForBook = (book: string): boolean => {
-    return book === "Genesis" || Array.from(generatedImages.keys()).some(key => key.startsWith(`${book}-`));
+    return STATIC_24FPS_BOOKS.has(book) || Array.from(generatedImages.keys()).some(key => key.startsWith(`${book}-`));
   };
 
   const getImageForChapter = (book: string, chapter: number): string | undefined => {
@@ -329,7 +339,13 @@ export function PTImageBible() {
 
     setIsGenerating(true);
     try {
-      const prompt = `Create a memorable symbolic visual anchor for ${chapter.book} chapter ${chapter.chapter}: "${chapter.title}". ${chapter.summary}. The symbol is ${chapter.symbol}. Make it vivid, symbolic, and suitable for Bible memorization using the 24FPS method.`;
+      const prompt = [
+        `Create a flashcard-front illustration (no text) for ${chapter.book} chapter ${chapter.chapter}: "${chapter.title}".`,
+        `Use this summary to choose distinct visual elements: ${chapter.summary}`,
+        `Primary symbol to feature: ${chapter.symbol}.`,
+        "Rules: NO words, NO letters, NO numbers, NO captions, NO watermarks, NO signatures.",
+        "Style: bold iconic composition, high contrast, clean shapes, rich color, single clear focal point, minimal background.",
+      ].join(" ");
 
       const { data: response, error: fnError } = await supabase.functions.invoke(
         "generate-visual-anchor",
@@ -349,7 +365,7 @@ export function PTImageBible() {
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "image/png" });
 
-      const fileName = `24fps/${chapter.book.toLowerCase()}/${chapter.book.toLowerCase()}-${chapter.chapter}-${Date.now()}.png`;
+      const fileName = `24fps/${chapter.book.toLowerCase().replace(/\s+/g, '-')}/${chapter.book.toLowerCase().replace(/\s+/g, '-')}-${chapter.chapter}-${Date.now()}.png`;
       const { error: uploadError } = await supabase.storage
         .from("bible-images")
         .upload(fileName, blob, { contentType: "image/png", upsert: true });
@@ -524,10 +540,26 @@ export function PTImageBible() {
             </p>
           </div>
         </div>
-        <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs sm:ml-auto">
-          <Sparkles className="h-3 w-3 mr-1" />
-          {generatedImages.size + 90} Images
-        </Badge>
+
+        <div className="flex items-center gap-2 sm:ml-auto">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={startBatchGeneration}
+            disabled={!user || !!batchProgress?.isRunning || chaptersNeedingImages.length === 0}
+            className="h-8"
+          >
+            <Wand2 className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">Generate missing</span>
+            <span className="sm:hidden">Generate</span>
+            <span className="ml-1">({chaptersNeedingImages.length})</span>
+          </Button>
+
+          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs">
+            <Sparkles className="h-3 w-3 mr-1" />
+            {generatedImages.size + STATIC_24FPS_IMAGE_COUNT} Images
+          </Badge>
+        </div>
       </div>
 
       {/* Batch Progress - Mobile optimized */}
@@ -651,58 +683,106 @@ export function PTImageBible() {
           
           {selectedChapter && (
             <div className="space-y-3 sm:space-y-4">
-              {selectedChapter.imageUrl ? (
-                <div className="relative rounded-lg overflow-hidden bg-muted/20">
-                  <img
-                    src={selectedChapter.imageUrl}
-                    alt={`${selectedChapter.book} ${selectedChapter.chapter}`}
-                    className="w-full h-auto max-h-[40vh] sm:max-h-[50vh] object-contain"
-                  />
-                </div>
-              ) : (
-                <div className="relative rounded-lg overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 border-2 border-dashed border-border/50 p-4 sm:p-8 text-center">
-                  <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">{selectedChapter.symbol}</div>
-                  <p className="text-sm text-muted-foreground mb-3 sm:mb-4">No unique image yet</p>
-                  <Button
-                    onClick={() => {
-                      const chapter = chaptersByBook.get(selectedChapter.book)?.find(
-                        c => c.chapter === selectedChapter.chapter
-                      );
-                      if (chapter) generateImageForChapter(chapter);
-                    }}
-                    disabled={isGenerating || !user}
-                    size="sm"
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Wand2 className="h-4 w-4 mr-2" />
-                        Generate Image
-                      </>
-                    )}
-                  </Button>
-                  {!user && (
-                    <p className="text-xs text-muted-foreground mt-2">Sign in to generate</p>
+              <Tabs defaultValue="front" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="front">Front</TabsTrigger>
+                  <TabsTrigger value="back">Back</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="front" className="mt-3 sm:mt-4">
+                  {selectedChapter.imageUrl ? (
+                    <div className="space-y-3">
+                      <div className="relative rounded-lg overflow-hidden bg-muted/20 border border-border/50">
+                        <img
+                          src={selectedChapter.imageUrl}
+                          alt={`${selectedChapter.book} ${selectedChapter.chapter} visual flashcard`}
+                          className="w-full aspect-[3/4] object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const chapter = chaptersByBook.get(selectedChapter.book)?.find(
+                              (c) => c.chapter === selectedChapter.chapter
+                            );
+                            if (chapter) generateImageForChapter(chapter);
+                          }}
+                          disabled={isGenerating || !user}
+                        >
+                          {isGenerating ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Regenerating…
+                            </>
+                          ) : (
+                            <>
+                              <Wand2 className="h-4 w-4 mr-2" />
+                              Regenerate (no text)
+                            </>
+                          )}
+                        </Button>
+
+                        {!user && (
+                          <p className="text-xs text-muted-foreground">Sign in to regenerate</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative rounded-lg overflow-hidden bg-muted/20 border border-dashed border-border/50 p-4 sm:p-8 text-center">
+                      <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">{selectedChapter.symbol}</div>
+                      <p className="text-sm text-muted-foreground mb-3 sm:mb-4">No unique image yet</p>
+                      <Button
+                        onClick={() => {
+                          const chapter = chaptersByBook.get(selectedChapter.book)?.find(
+                            (c) => c.chapter === selectedChapter.chapter
+                          );
+                          if (chapter) generateImageForChapter(chapter);
+                        }}
+                        disabled={isGenerating || !user}
+                        size="sm"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Generating…
+                          </>
+                        ) : (
+                          <>
+                            <Wand2 className="h-4 w-4 mr-2" />
+                            Generate (no text)
+                          </>
+                        )}
+                      </Button>
+                      {!user && (
+                        <p className="text-xs text-muted-foreground mt-2">Sign in to generate</p>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-              
-              <Card className="p-3 sm:p-4 bg-muted/30 border-border/50">
-                <p className="text-sm sm:text-base leading-relaxed mb-2 sm:mb-3">{selectedChapter.summary}</p>
-                
-                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/50">
-                  <Badge variant="outline" className="bg-primary/10 text-primary text-xs">
-                    <Sparkles className="h-3 w-3 mr-1" />
-                    Memory Hook
-                  </Badge>
-                  <span className="text-xs sm:text-sm font-medium">{selectedChapter.memoryHook}</span>
-                </div>
-              </Card>
+                </TabsContent>
+
+                <TabsContent value="back" className="mt-3 sm:mt-4">
+                  <Card className="p-3 sm:p-4 bg-muted/30 border-border/50">
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-sm sm:text-base leading-relaxed">{selectedChapter.summary}</p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-border/50">
+                        <Badge variant="outline" className="text-xs">
+                          <Sparkles className="h-3 w-3 mr-1" />
+                          Memory Hook
+                        </Badge>
+                        <span className="text-xs sm:text-sm font-medium">{selectedChapter.memoryHook}</span>
+                      </div>
+                    </div>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+
               
               <div className="flex justify-between gap-2">
                 <Button
