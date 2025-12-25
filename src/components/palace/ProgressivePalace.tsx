@@ -344,9 +344,9 @@ const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
               }}
               className="relative"
             >
-              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white text-[10px] font-bold shadow-lg">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white text-[9px] font-bold shadow-lg whitespace-nowrap">
                 <Sparkles className="h-3 w-3" />
-                NEW
+                Newly Renovated
               </span>
               {/* Twinkle effect */}
               <motion.div
