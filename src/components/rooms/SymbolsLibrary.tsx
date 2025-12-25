@@ -108,14 +108,12 @@ export function SymbolsLibrary() {
             <h3 className="font-medium text-sm text-muted-foreground">
               {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} for "{searchQuery}"
             </h3>
-            <ScrollArea className="h-[500px]">
-              <div className="space-y-2 pr-4">
-                {searchResults.map((symbol) => renderSymbol(symbol, true))}
-                {searchResults.length === 0 && (
-                  <p className="text-center text-muted-foreground py-8">No symbols found. Try a different search term.</p>
-                )}
-              </div>
-            </ScrollArea>
+            <div className="space-y-2">
+              {searchResults.map((symbol) => renderSymbol(symbol, true))}
+              {searchResults.length === 0 && (
+                <p className="text-center text-muted-foreground py-8">No symbols found. Try a different search term.</p>
+              )}
+            </div>
           </div>
         ) : (
           <Tabs defaultValue={biblicalSymbolsLibrary[0].id} className="w-full">
@@ -135,11 +133,9 @@ export function SymbolsLibrary() {
                   <h3 className="font-semibold">{category.name}</h3>
                   <p className="text-sm text-muted-foreground">{category.description}</p>
                 </div>
-                <ScrollArea className="h-[400px]">
-                  <div className="space-y-2 pr-4">
-                    {category.symbols.map((symbol) => renderSymbol(symbol))}
-                  </div>
-                </ScrollArea>
+                <div className="space-y-2">
+                  {category.symbols.map((symbol) => renderSymbol(symbol))}
+                </div>
               </TabsContent>
             ))}
           </Tabs>
