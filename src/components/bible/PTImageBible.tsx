@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Image, ChevronDown, ChevronRight, Camera, Sparkles, BookOpen, Search, Wand2, Loader2, Play, Pause, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { genesisImages } from "@/assets/24fps/genesis";
+import { exodusImages } from "@/assets/24fps/exodus";
 import { oldTestamentSets } from "@/data/bible24fps/oldTestament";
 import { newTestamentSets } from "@/data/bible24fps/newTestament";
 import { ChapterFrame } from "@/data/bible24fps";
@@ -126,8 +127,8 @@ export function PTImageBible() {
       const chapters = chaptersByBook.get(book) || [];
       chapters.forEach(chapter => {
         const key = `${chapter.book}-${chapter.chapter}`;
-        // Skip Genesis (already has static images) and any already generated
-        if (chapter.book !== "Genesis" && !generatedImages.has(key)) {
+        // Skip Genesis and Exodus (already have static images) and any already generated
+        if (chapter.book !== "Genesis" && chapter.book !== "Exodus" && !generatedImages.has(key)) {
           needsImage.push(chapter);
         }
       });
@@ -304,6 +305,10 @@ export function PTImageBible() {
     // Fall back to static Genesis images
     if (book === "Genesis" && chapter >= 1 && chapter <= 50) {
       return genesisImages[chapter - 1];
+    }
+    // Fall back to static Exodus images
+    if (book === "Exodus" && chapter >= 1 && chapter <= 40) {
+      return exodusImages[chapter - 1];
     }
     return undefined;
   };
@@ -513,7 +518,7 @@ export function PTImageBible() {
         </div>
         <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs sm:ml-auto">
           <Sparkles className="h-3 w-3 mr-1" />
-          {generatedImages.size + 50} Images
+          {generatedImages.size + 90} Images
         </Badge>
       </div>
 
