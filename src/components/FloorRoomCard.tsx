@@ -13,8 +13,9 @@ interface FloorRoomCardProps {
   gradient: string;
 }
 
-// Rooms that have been newly renovated (updated in the last 24 hours)
-const newlyRenovatedRooms = new Set(["jr", "math", "cr", "fe", "bl"]);
+// Rooms that have been newly renovated/updated
+// NOTE: keep this list in sync with RENOVATED_ROOMS in ProgressivePalace.tsx
+const newlyRenovatedRooms = new Set(["sr", "24fps", "st", "ir", "tr", "gr", "or", "dc", "fe", "bl"]);
 
 // Room emojis for visual flair
 const roomEmojis: Record<string, string> = {
