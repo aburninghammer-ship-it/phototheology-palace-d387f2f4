@@ -12,7 +12,8 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 // Rooms that have been recently renovated/updated
-const RENOVATED_ROOMS = ["sr", "24fps", "st", "ir", "tr", "gr", "or", "dc"];
+// NOTE: keep this list in sync with any other “renovated” indicators across the palace UI.
+const RENOVATED_ROOMS = ["sr", "24fps", "st", "ir", "tr", "gr", "or", "dc", "fe", "bl"];
 
 const FLOOR_THEMES = [
   { gradient: "from-violet-600 to-purple-600", icon: "📚", name: "Furnishing" },
