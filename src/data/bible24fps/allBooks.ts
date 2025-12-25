@@ -707,9 +707,8 @@ export const revelationSet: BibleSet = {
 // Import remaining books
 import { remainingBibleSets } from './remainingBooks';
 
-// Build chronological 24-chapter sets (can cross book boundaries)
+// Combine all source sets for chapter lookup
 const SOURCE_BIBLE_SETS: BibleSet[] = [
-  // Defined in this file
   genesisSet,
   genesis25to50Set,
   exodus1to24Set,
@@ -726,8 +725,6 @@ const SOURCE_BIBLE_SETS: BibleSet[] = [
   firstSamuel1to24Set,
   firstSamuel25to31Set,
   psalms1to30Set,
-
-  // Defined in this file (NT subset)
   matthew1to24Set,
   matthew25to28Set,
   markSet,
@@ -736,100 +733,16 @@ const SOURCE_BIBLE_SETS: BibleSet[] = [
   actsSet,
   romansSet,
   revelationSet,
-
-  // Defined in remainingBooks.ts
   ...remainingBibleSets,
 ];
 
-const OT_BOOK_ORDER: string[] = [
-  'Genesis',
-  'Exodus',
-  'Leviticus',
-  'Numbers',
-  'Deuteronomy',
-  'Joshua',
-  'Judges',
-  'Ruth',
-  '1 Samuel',
-  '2 Samuel',
-  '1 Kings',
-  '2 Kings',
-  '1 Chronicles',
-  '2 Chronicles',
-  'Ezra',
-  'Nehemiah',
-  'Esther',
-  'Job',
-  'Psalms',
-  'Proverbs',
-  'Ecclesiastes',
-  'Song of Solomon',
-  'Isaiah',
-  'Jeremiah',
-  'Lamentations',
-  'Ezekiel',
-  'Daniel',
-  'Hosea',
-  'Joel',
-  'Amos',
-  'Obadiah',
-  'Jonah',
-  'Micah',
-  'Nahum',
-  'Habakkuk',
-  'Zephaniah',
-  'Haggai',
-  'Zechariah',
-  'Malachi',
-];
-
-const NT_BOOK_ORDER: string[] = [
-  'Matthew',
-  'Mark',
-  'Luke',
-  'John',
-  'Acts',
-  'Romans',
-  '1 Corinthians',
-  '2 Corinthians',
-  'Galatians',
-  'Ephesians',
-  'Philippians',
-  'Colossians',
-  '1 Thessalonians',
-  '2 Thessalonians',
-  '1 Timothy',
-  '2 Timothy',
-  'Titus',
-  'Philemon',
-  'Hebrews',
-  'James',
-  '1 Peter',
-  '2 Peter',
-  '1 John',
-  '2 John',
-  '3 John',
-  'Jude',
-  'Revelation',
-];
-
-const buildIndex = (sets: BibleSet[]) => {
-  const byKey = new Map<string, ChapterFrame>();
-  const maxByBook = new Map<string, number>();
-
-  for (const set of sets) {
-    for (const ch of set.chapters) {
-      byKey.set(`${ch.book}|${ch.chapter}`, ch);
-
-      const currentMax = maxByBook.get(ch.book) ?? 0;
-      if (ch.chapter > currentMax) maxByBook.set(ch.book, ch.chapter);
-    }
+// Build lookup index
+const CHAPTER_INDEX = new Map<string, ChapterFrame>();
+for (const set of SOURCE_BIBLE_SETS) {
+  for (const ch of set.chapters) {
+    CHAPTER_INDEX.set(`${ch.book}|${ch.chapter}`, ch);
   }
-
-  return { byKey, maxByBook };
-};
-
-const { byKey: CHAPTER_INDEX, maxByBook: MAX_CHAPTERS_BY_BOOK } = buildIndex(SOURCE_BIBLE_SETS);
+}
 
 const getFrame = (book: string, chapter: number): ChapterFrame => {
   return (
@@ -844,56 +757,296 @@ const getFrame = (book: string, chapter: number): ChapterFrame => {
   );
 };
 
-const flattenInOrder = (bookOrder: string[]): ChapterFrame[] => {
+// Helper to get range of chapters from a book
+const getRange = (book: string, start: number, end: number): ChapterFrame[] => {
   const frames: ChapterFrame[] = [];
-
-  for (const book of bookOrder) {
-    const max = MAX_CHAPTERS_BY_BOOK.get(book) ?? 0;
-    for (let ch = 1; ch <= max; ch++) frames.push(getFrame(book, ch));
+  for (let ch = start; ch <= end; ch++) {
+    frames.push(getFrame(book, ch));
   }
-
   return frames;
 };
 
-const chunk = <T,>(arr: T[], size: number): T[][] => {
-  const out: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-  return out;
-};
+// Define the exact 47 sets as specified by Phototheology 24FPS method
+const SET_DEFINITIONS: { label: string; testament: 'old' | 'new'; chapters: ChapterFrame[] }[] = [
+  // Set 1: Genesis 1-24
+  { label: 'Genesis 1–24', testament: 'old', chapters: getRange('Genesis', 1, 24) },
+  
+  // Set 2: Genesis 25-48
+  { label: 'Genesis 25–48', testament: 'old', chapters: getRange('Genesis', 25, 48) },
+  
+  // Set 3: Genesis 49 – Exodus 22
+  { label: 'Genesis 49 – Exodus 22', testament: 'old', chapters: [
+    ...getRange('Genesis', 49, 50),
+    ...getRange('Exodus', 1, 22),
+  ]},
+  
+  // Set 4: Exodus 23 – Leviticus 6
+  { label: 'Exodus 23 – Leviticus 6', testament: 'old', chapters: [
+    ...getRange('Exodus', 23, 40),
+    ...getRange('Leviticus', 1, 6),
+  ]},
+  
+  // Set 5: Leviticus 7 – Numbers 3
+  { label: 'Leviticus 7 – Numbers 3', testament: 'old', chapters: [
+    ...getRange('Leviticus', 7, 27),
+    ...getRange('Numbers', 1, 3),
+  ]},
+  
+  // Set 6: Numbers 4 – Numbers 27
+  { label: 'Numbers 4 – Numbers 27', testament: 'old', chapters: getRange('Numbers', 4, 27) },
+  
+  // Set 7: Numbers 28 – Deuteronomy 15
+  { label: 'Numbers 28 – Deuteronomy 15', testament: 'old', chapters: [
+    ...getRange('Numbers', 28, 36),
+    ...getRange('Deuteronomy', 1, 15),
+  ]},
+  
+  // Set 8: Deuteronomy 16 – Joshua 15
+  { label: 'Deuteronomy 16 – Joshua 15', testament: 'old', chapters: [
+    ...getRange('Deuteronomy', 16, 34),
+    ...getRange('Joshua', 1, 5),
+  ]},
+  
+  // Set 9: Joshua 6 – Judges 8
+  { label: 'Joshua 6 – Judges 8', testament: 'old', chapters: [
+    ...getRange('Joshua', 6, 24),
+    ...getRange('Judges', 1, 5),
+  ]},
+  
+  // Set 10: Judges 6 – 1 Samuel 5
+  { label: 'Judges 6 – 1 Samuel 5', testament: 'old', chapters: [
+    ...getRange('Judges', 6, 21),
+    ...getRange('Ruth', 1, 4),
+    ...getRange('1 Samuel', 1, 4),
+  ]},
+  
+  // Set 11: 1 Samuel 5 – 1 Samuel 28
+  { label: '1 Samuel 5 – 1 Samuel 28', testament: 'old', chapters: getRange('1 Samuel', 5, 28) },
+  
+  // Set 12: 1 Samuel 29 – 2 Samuel 21
+  { label: '1 Samuel 29 – 2 Samuel 21', testament: 'old', chapters: [
+    ...getRange('1 Samuel', 29, 31),
+    ...getRange('2 Samuel', 1, 21),
+  ]},
+  
+  // Set 13: 2 Samuel 22 – 1 Kings 21
+  { label: '2 Samuel 22 – 1 Kings 21', testament: 'old', chapters: [
+    ...getRange('2 Samuel', 22, 24),
+    ...getRange('1 Kings', 1, 21),
+  ]},
+  
+  // Set 14: 1 Kings 22 – 2 Kings 21
+  { label: '1 Kings 22 – 2 Kings 21', testament: 'old', chapters: [
+    ...getRange('1 Kings', 22, 22),
+    ...getRange('2 Kings', 1, 23),
+  ]},
+  
+  // Set 15: 2 Kings 22 – 1 Chronicles 20
+  { label: '2 Kings 22 – 1 Chronicles 20', testament: 'old', chapters: [
+    ...getRange('2 Kings', 24, 25),
+    ...getRange('1 Chronicles', 1, 22),
+  ]},
+  
+  // Set 16: 1 Chronicles 21 – 2 Chronicles 14
+  { label: '1 Chronicles 21 – 2 Chronicles 14', testament: 'old', chapters: [
+    ...getRange('1 Chronicles', 23, 29),
+    ...getRange('2 Chronicles', 1, 17),
+  ]},
+  
+  // Set 17: 2 Chronicles 15 – Ezra 10
+  { label: '2 Chronicles 15 – Ezra 10', testament: 'old', chapters: [
+    ...getRange('2 Chronicles', 18, 36),
+    ...getRange('Ezra', 1, 5),
+  ]},
+  
+  // Set 18: Ezra 6 – Job 5
+  { label: 'Ezra 6 – Job 5', testament: 'old', chapters: [
+    ...getRange('Ezra', 6, 10),
+    ...getRange('Nehemiah', 1, 13),
+    ...getRange('Esther', 1, 6),
+  ]},
+  
+  // Set 19: Esther 7 – Job 18
+  { label: 'Esther 7 – Job 18', testament: 'old', chapters: [
+    ...getRange('Esther', 7, 10),
+    ...getRange('Job', 1, 20),
+  ]},
+  
+  // Set 20: Job 19 – Psalm 18
+  { label: 'Job 19 – Psalm 18', testament: 'old', chapters: [
+    ...getRange('Job', 21, 42),
+    ...getRange('Psalms', 1, 2),
+  ]},
+  
+  // Set 21: Psalm 3 – Psalm 26
+  { label: 'Psalm 3 – Psalm 26', testament: 'old', chapters: getRange('Psalms', 3, 26) },
+  
+  // Set 22: Psalm 27 – Psalm 50
+  { label: 'Psalm 27 – Psalm 50', testament: 'old', chapters: getRange('Psalms', 27, 50) },
+  
+  // Set 23: Psalm 51 – Psalm 74
+  { label: 'Psalm 51 – Psalm 74', testament: 'old', chapters: getRange('Psalms', 51, 74) },
+  
+  // Set 24: Psalm 75 – Psalm 98
+  { label: 'Psalm 75 – Psalm 98', testament: 'old', chapters: getRange('Psalms', 75, 98) },
+  
+  // Set 25: Psalm 99 – Psalm 122
+  { label: 'Psalm 99 – Psalm 122', testament: 'old', chapters: getRange('Psalms', 99, 122) },
+  
+  // Set 26: Psalm 123 – Proverbs 20
+  { label: 'Psalm 123 – Proverbs 20', testament: 'old', chapters: [
+    ...getRange('Psalms', 123, 150),
+    ...getRange('Proverbs', 1, 4),
+  ]},
+  
+  // Set 27: Proverbs 5 – Song of Solomon 4
+  { label: 'Proverbs 5 – Song of Solomon 4', testament: 'old', chapters: [
+    ...getRange('Proverbs', 5, 31),
+    ...getRange('Ecclesiastes', 1, 12),
+    ...getRange('Song of Solomon', 1, 4),
+  ]},
+  
+  // Set 28: Song of Solomon 5 – Isaiah 20
+  { label: 'Song of Solomon 5 – Isaiah 20', testament: 'old', chapters: [
+    ...getRange('Song of Solomon', 5, 8),
+    ...getRange('Isaiah', 1, 20),
+  ]},
+  
+  // Set 29: Isaiah 21 – Isaiah 44
+  { label: 'Isaiah 21 – Isaiah 44', testament: 'old', chapters: getRange('Isaiah', 21, 44) },
+  
+  // Set 30: Isaiah 45 – Jeremiah 2
+  { label: 'Isaiah 45 – Jeremiah 2', testament: 'old', chapters: [
+    ...getRange('Isaiah', 45, 66),
+    ...getRange('Jeremiah', 1, 2),
+  ]},
+  
+  // Set 31: Jeremiah 3 – Jeremiah 26
+  { label: 'Jeremiah 3 – Jeremiah 26', testament: 'old', chapters: getRange('Jeremiah', 3, 26) },
+  
+  // Set 32: Jeremiah 27 – Jeremiah 50
+  { label: 'Jeremiah 27 – Jeremiah 50', testament: 'old', chapters: getRange('Jeremiah', 27, 50) },
+  
+  // Set 33: Jeremiah 51 – Ezekiel 21
+  { label: 'Jeremiah 51 – Ezekiel 21', testament: 'old', chapters: [
+    ...getRange('Jeremiah', 51, 52),
+    ...getRange('Lamentations', 1, 5),
+    ...getRange('Ezekiel', 1, 17),
+  ]},
+  
+  // Set 34: Ezekiel 18 – Ezekiel 41
+  { label: 'Ezekiel 18 – Ezekiel 41', testament: 'old', chapters: getRange('Ezekiel', 18, 41) },
+  
+  // Set 35: Ezekiel 42 – Hosea 9
+  { label: 'Ezekiel 42 – Hosea 9', testament: 'old', chapters: [
+    ...getRange('Ezekiel', 42, 48),
+    ...getRange('Daniel', 1, 12),
+    ...getRange('Hosea', 1, 5),
+  ]},
+  
+  // Set 36: Hosea 6 – Zephaniah 3
+  { label: 'Hosea 6 – Zephaniah 3', testament: 'old', chapters: [
+    ...getRange('Hosea', 6, 14),
+    ...getRange('Joel', 1, 3),
+    ...getRange('Amos', 1, 9),
+    ...getRange('Obadiah', 1, 1),
+    ...getRange('Jonah', 1, 4),
+    ...getRange('Micah', 1, 7),
+    ...getRange('Nahum', 1, 3),
+    ...getRange('Habakkuk', 1, 3),
+    ...getRange('Zephaniah', 1, 3),
+  ]},
+  
+  // Set 37: Haggai 1 – Matthew 10
+  { label: 'Haggai 1 – Matthew 10', testament: 'new', chapters: [
+    ...getRange('Haggai', 1, 2),
+    ...getRange('Zechariah', 1, 14),
+    ...getRange('Malachi', 1, 4),
+    ...getRange('Matthew', 1, 4),
+  ]},
+  
+  // Set 38: Matthew 5 – Matthew 28
+  { label: 'Matthew 5 – Matthew 28', testament: 'new', chapters: getRange('Matthew', 5, 28) },
+  
+  // Set 39: Mark 1 – Luke 8
+  { label: 'Mark 1 – Luke 8', testament: 'new', chapters: [
+    ...getRange('Mark', 1, 16),
+    ...getRange('Luke', 1, 8),
+  ]},
+  
+  // Set 40: Luke 9 – John 8
+  { label: 'Luke 9 – John 8', testament: 'new', chapters: [
+    ...getRange('Luke', 9, 24),
+    ...getRange('John', 1, 8),
+  ]},
+  
+  // Set 41: John 9 – Acts 8
+  { label: 'John 9 – Acts 8', testament: 'new', chapters: [
+    ...getRange('John', 9, 21),
+    ...getRange('Acts', 1, 11),
+  ]},
+  
+  // Set 42: Acts 9 – Romans 8
+  { label: 'Acts 9 – Romans 8', testament: 'new', chapters: [
+    ...getRange('Acts', 12, 28),
+    ...getRange('Romans', 1, 7),
+  ]},
+  
+  // Set 43: Romans 8 – 1 Corinthians 16
+  { label: 'Romans 8 – 1 Corinthians 16', testament: 'new', chapters: [
+    ...getRange('Romans', 8, 16),
+    ...getRange('1 Corinthians', 1, 15),
+  ]},
+  
+  // Set 44: 1 Corinthians 16 – Colossians 4
+  { label: '1 Corinthians 16 – Colossians 4', testament: 'new', chapters: [
+    ...getRange('1 Corinthians', 16, 16),
+    ...getRange('2 Corinthians', 1, 13),
+    ...getRange('Galatians', 1, 6),
+    ...getRange('Ephesians', 1, 4),
+  ]},
+  
+  // Set 45: Ephesians 5 – Hebrews 4
+  { label: 'Ephesians 5 – Hebrews 4', testament: 'new', chapters: [
+    ...getRange('Ephesians', 5, 6),
+    ...getRange('Philippians', 1, 4),
+    ...getRange('Colossians', 1, 4),
+    ...getRange('1 Thessalonians', 1, 5),
+    ...getRange('2 Thessalonians', 1, 3),
+    ...getRange('1 Timothy', 1, 2),
+  ]},
+  
+  // Set 46: 1 Timothy 3 – 1 Peter 5
+  { label: '1 Timothy 3 – 1 Peter 5', testament: 'new', chapters: [
+    ...getRange('1 Timothy', 3, 6),
+    ...getRange('2 Timothy', 1, 4),
+    ...getRange('Titus', 1, 3),
+    ...getRange('Philemon', 1, 1),
+    ...getRange('Hebrews', 1, 10),
+  ]},
+  
+  // Set 47: Hebrews 5 – Revelation 22
+  { label: 'Hebrews 5 – Revelation 22', testament: 'new', chapters: [
+    ...getRange('Hebrews', 11, 13),
+    ...getRange('James', 1, 5),
+    ...getRange('1 Peter', 1, 5),
+    ...getRange('2 Peter', 1, 3),
+    ...getRange('1 John', 1, 5),
+    ...getRange('2 John', 1, 1),
+    ...getRange('3 John', 1, 1),
+    ...getRange('Jude', 1, 1),
+    ...getRange('Revelation', 1, 22),
+  ]},
+];
 
-const formatRangeLabel = (start: ChapterFrame, end: ChapterFrame) =>
-  start.book === end.book
-    ? `${start.book} ${start.chapter}–${end.chapter}`
-    : `${start.book} ${start.chapter} – ${end.book} ${end.chapter}`;
-
-const buildSets = (
-  frames: ChapterFrame[],
-  testament: 'old' | 'new',
-  startingIndex: number
-): BibleSet[] => {
-  return chunk(frames, 24).map((chapters, i) => {
-    const setNumber = startingIndex + i;
-    const start = chapters[0];
-    const end = chapters[chapters.length - 1];
-
-    return {
-      id: `set-${String(setNumber).padStart(2, '0')}`,
-      label: `Set ${String(setNumber).padStart(2, '0')} · ${formatRangeLabel(start, end)}`,
-      theme: 'Chronological 24-chapter block',
-      testament,
-      chapters,
-    };
-  });
-};
-
-const OT_FRAMES = flattenInOrder(OT_BOOK_ORDER);
-const NT_FRAMES = flattenInOrder(NT_BOOK_ORDER);
-
-const OT_SETS = buildSets(OT_FRAMES, 'old', 1);
-const NT_SETS = buildSets(NT_FRAMES, 'new', OT_SETS.length + 1);
-
-// Collect all sets (chronological 24-chapter blocks)
-export const allBibleSets: BibleSet[] = [...OT_SETS, ...NT_SETS];
+// Build the final sets
+export const allBibleSets: BibleSet[] = SET_DEFINITIONS.map((def, i) => ({
+  id: `set-${String(i + 1).padStart(2, '0')}`,
+  label: `Set ${i + 1}: ${def.label}`,
+  theme: `24FPS Memory Block ${i + 1}`,
+  testament: def.testament,
+  chapters: def.chapters,
+}));
 
 // Helper to get a specific chapter
 export const getChapter = (book: string, chapter: number): ChapterFrame | undefined => {
