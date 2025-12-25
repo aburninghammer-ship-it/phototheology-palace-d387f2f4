@@ -10,6 +10,8 @@ import { Image, ChevronDown, ChevronRight, Camera, Sparkles, BookOpen, Search, W
 import { motion } from "framer-motion";
 import { genesisImages } from "@/assets/24fps/genesis";
 import { exodusImages } from "@/assets/24fps/exodus";
+import { leviticusImages } from "@/assets/24fps/leviticus";
+import { numbersImages } from "@/assets/24fps/numbers";
 import { oldTestamentSets } from "@/data/bible24fps/oldTestament";
 import { newTestamentSets } from "@/data/bible24fps/newTestament";
 import { ChapterFrame } from "@/data/bible24fps";
@@ -127,8 +129,9 @@ export function PTImageBible() {
       const chapters = chaptersByBook.get(book) || [];
       chapters.forEach(chapter => {
         const key = `${chapter.book}-${chapter.chapter}`;
-        // Skip Genesis and Exodus (already have static images) and any already generated
-        if (chapter.book !== "Genesis" && chapter.book !== "Exodus" && !generatedImages.has(key)) {
+        // Skip books with static images and any already generated
+        const hasStaticImages = ["Genesis", "Exodus", "Leviticus", "Numbers"].includes(chapter.book);
+        if (!hasStaticImages && !generatedImages.has(key)) {
           needsImage.push(chapter);
         }
       });
@@ -302,13 +305,18 @@ export function PTImageBible() {
     if (generatedImages.has(generatedKey)) {
       return generatedImages.get(generatedKey);
     }
-    // Fall back to static Genesis images
+    // Fall back to static images
     if (book === "Genesis" && chapter >= 1 && chapter <= 50) {
       return genesisImages[chapter - 1];
     }
-    // Fall back to static Exodus images
     if (book === "Exodus" && chapter >= 1 && chapter <= 40) {
       return exodusImages[chapter - 1];
+    }
+    if (book === "Leviticus" && chapter >= 1 && chapter <= 27) {
+      return leviticusImages[chapter - 1];
+    }
+    if (book === "Numbers" && chapter >= 1 && chapter <= 36) {
+      return numbersImages[chapter - 1];
     }
     return undefined;
   };
