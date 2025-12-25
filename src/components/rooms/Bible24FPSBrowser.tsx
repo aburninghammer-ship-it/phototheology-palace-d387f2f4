@@ -1,20 +1,29 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Book, Sparkles, X, Layers, ImageIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Book, Sparkles, X, Layers, ImageIcon, Wand2, Loader2 } from "lucide-react";
 import { allBibleSets, BibleSet, ChapterFrame } from "@/data/bible24fps/allBooks";
 import { genesisImages } from "@/assets/24fps/genesis";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Bible24FPSBrowserProps {
   onClose?: () => void;
 }
 
-// Get image for a chapter - uses Genesis images for Genesis, falls back to generated placeholder
-const getChapterImage = (chapter: ChapterFrame): string | null => {
+// Get image for a chapter - uses Genesis images for Genesis, falls back to database or null
+const getChapterImage = (chapter: ChapterFrame, generatedImages: Map<string, string>): string | null => {
+  // Check for generated images first
+  const key = `${chapter.book}-${chapter.chapter}`;
+  if (generatedImages.has(key)) {
+    return generatedImages.get(key)!;
+  }
+  // Fall back to static Genesis images
   if (chapter.book === "Genesis" && chapter.chapter >= 1 && chapter.chapter <= 50) {
     return genesisImages[chapter.chapter - 1];
   }
@@ -47,12 +56,99 @@ export function Bible24FPSBrowser({ onClose }: Bible24FPSBrowserProps) {
   const [selectedSet, setSelectedSet] = useState<BibleSet | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<ChapterFrame | null>(null);
   const [view, setView] = useState<"sets" | "chapters">("sets");
+  const [generatedImages, setGeneratedImages] = useState<Map<string, string>>(new Map());
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { user } = useAuth();
   
   const oldTestamentSets = allBibleSets.filter(s => s.testament === 'old');
   const newTestamentSets = allBibleSets.filter(s => s.testament === 'new');
   
   const totalSets = allBibleSets.length;
   const totalChapters = allBibleSets.reduce((sum, set) => sum + set.chapters.length, 0);
+
+  // Load previously generated images from database
+  useEffect(() => {
+    const loadGeneratedImages = async () => {
+      const { data } = await supabase
+        .from("bible_images")
+        .select("book, chapter, image_url")
+        .eq("room_type", "24fps")
+        .eq("is_public", true);
+      
+      if (data) {
+        const imageMap = new Map<string, string>();
+        data.forEach((img) => {
+          imageMap.set(`${img.book}-${img.chapter}`, img.image_url);
+        });
+        setGeneratedImages(imageMap);
+      }
+    };
+    loadGeneratedImages();
+  }, []);
+
+  const generateImageForChapter = async (chapter: ChapterFrame) => {
+    if (!user) {
+      toast.error("Please sign in to generate images");
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const prompt = `Create a memorable symbolic visual anchor for ${chapter.book} chapter ${chapter.chapter}: "${chapter.title}". ${chapter.summary}. The symbol is ${chapter.symbol}. Make it vivid, symbolic, and suitable for Bible memorization using the 24FPS method.`;
+
+      const { data: response, error: fnError } = await supabase.functions.invoke(
+        "generate-visual-anchor",
+        { body: { prompt } }
+      );
+
+      if (fnError) throw fnError;
+      if (!response?.image) throw new Error("No image generated");
+
+      // Convert base64 to blob and upload
+      const base64Data = response.image.replace(/^data:image\/\w+;base64,/, "");
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "image/png" });
+
+      const fileName = `24fps/${chapter.book.toLowerCase()}/${chapter.book.toLowerCase()}-${chapter.chapter}-${Date.now()}.png`;
+      const { error: uploadError } = await supabase.storage
+        .from("bible-images")
+        .upload(fileName, blob, { contentType: "image/png", upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("bible-images")
+        .getPublicUrl(fileName);
+
+      // Save to database
+      await supabase.from("bible_images").insert({
+        user_id: user.id,
+        book: chapter.book,
+        chapter: chapter.chapter,
+        image_url: urlData.publicUrl,
+        description: `${chapter.book} ${chapter.chapter}: ${chapter.title}`,
+        room_type: "24fps",
+        is_public: true,
+        is_favorite: false,
+      });
+
+      // Update local state
+      const key = `${chapter.book}-${chapter.chapter}`;
+      setGeneratedImages((prev) => new Map(prev).set(key, urlData.publicUrl));
+
+      toast.success(`Generated image for ${chapter.book} ${chapter.chapter}`);
+    } catch (err: any) {
+      console.error("Error generating image:", err);
+      toast.error(err.message || "Failed to generate image");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
   
   const handleSetSelect = (set: BibleSet) => {
     setSelectedSet(set);
@@ -83,9 +179,11 @@ export function Bible24FPSBrowser({ onClose }: Bible24FPSBrowserProps) {
   const currentSetIndex = selectedSet ? allBibleSets.indexOf(selectedSet) : 0;
   const currentSetColor = getSetColor(currentSetIndex);
   
-  // Check if a set has images (Genesis sets have images)
+  // Check if a set has images (Genesis sets have images or any generated images)
   const setHasImages = (set: BibleSet) => {
-    return set.chapters.some(ch => ch.book === "Genesis");
+    return set.chapters.some(ch => 
+      ch.book === "Genesis" || generatedImages.has(`${ch.book}-${ch.chapter}`)
+    );
   };
   
   const renderSetButton = (set: BibleSet, index: number) => {
@@ -108,7 +206,7 @@ export function Bible24FPSBrowser({ onClose }: Bible24FPSBrowserProps) {
             {previewChapters.map((ch, i) => (
               <div key={i} className="w-8 h-8 rounded overflow-hidden border border-white/20">
                 <img 
-                  src={getChapterImage(ch) || ''} 
+                  src={getChapterImage(ch, generatedImages) || ''} 
                   alt={`${ch.book} ${ch.chapter}`}
                   className="w-full h-full object-cover"
                 />
@@ -227,7 +325,7 @@ export function Bible24FPSBrowser({ onClose }: Bible24FPSBrowserProps) {
           <ScrollArea className="h-[400px]">
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 pr-4">
               {selectedSet?.chapters.map((chapter, idx) => {
-                const imageUrl = getChapterImage(chapter);
+                const imageUrl = getChapterImage(chapter, generatedImages);
                 
                 return (
                   <Card
@@ -277,7 +375,7 @@ export function Bible24FPSBrowser({ onClose }: Bible24FPSBrowserProps) {
             <DialogTitle className="flex items-center gap-3">
               {/* Image or Symbol */}
               {(() => {
-                const imageUrl = selectedChapter ? getChapterImage(selectedChapter) : null;
+                const imageUrl = selectedChapter ? getChapterImage(selectedChapter, generatedImages) : null;
                 return imageUrl ? (
                   <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white/20 shadow-lg">
                     <img 
@@ -304,16 +402,40 @@ export function Bible24FPSBrowser({ onClose }: Bible24FPSBrowserProps) {
           </DialogHeader>
           
           <div className="space-y-4">
-            {/* Full image preview if available */}
+            {/* Full image preview or Generate button */}
             {(() => {
-              const imageUrl = selectedChapter ? getChapterImage(selectedChapter) : null;
-              return imageUrl && (
+              const imageUrl = selectedChapter ? getChapterImage(selectedChapter, generatedImages) : null;
+              return imageUrl ? (
                 <div className="rounded-lg overflow-hidden border border-white/20 shadow-lg">
                   <img 
                     src={imageUrl}
                     alt={`${selectedChapter?.book} ${selectedChapter?.chapter}`}
                     className="w-full h-48 object-cover"
                   />
+                </div>
+              ) : (
+                <div className="rounded-lg border-2 border-dashed border-white/20 p-6 text-center bg-background/20">
+                  <div className="text-5xl mb-3">{selectedChapter?.symbol}</div>
+                  <p className="text-sm text-muted-foreground mb-3">No unique image yet</p>
+                  <Button
+                    size="sm"
+                    onClick={() => selectedChapter && generateImageForChapter(selectedChapter)}
+                    disabled={isGenerating || !user}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="h-3 w-3 mr-1" />
+                        Generate Image
+                      </>
+                    )}
+                  </Button>
+                  {!user && <p className="text-xs text-muted-foreground mt-2">Sign in to generate</p>}
                 </div>
               );
             })()}
