@@ -9,6 +9,7 @@ export const RENOVATED_ROOMS = [
   "dc",
   "fe",
   "bl",
+  "123h",
 ] as const;
 
 export const RENOVATED_ROOMS_SET = new Set<string>(RENOVATED_ROOMS);
