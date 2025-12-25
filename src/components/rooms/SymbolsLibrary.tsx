@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Book, Sparkles } from "lucide-react";
 import { biblicalSymbolsLibrary, searchSymbols, BiblicalSymbol } from "@/data/biblicalSymbols";
 
@@ -105,29 +103,22 @@ export function SymbolsLibrary() {
             </div>
           </div>
         ) : (
-          <Tabs defaultValue={biblicalSymbolsLibrary[0].id} className="w-full">
-            <ScrollArea className="w-full">
-              <TabsList className="inline-flex w-max gap-1 p-1">
-                {biblicalSymbolsLibrary.map((category) => (
-                  <TabsTrigger key={category.id} value={category.id} className="text-xs whitespace-nowrap">
-                    {category.icon} {category.name.split(":").pop()?.trim() || category.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </ScrollArea>
-
+          <div className="space-y-8">
             {biblicalSymbolsLibrary.map((category) => (
-              <TabsContent key={category.id} value={category.id}>
-                <div className="mb-3">
-                  <h3 className="font-semibold">{category.name}</h3>
+              <div key={category.id}>
+                <div className="mb-4 pb-2 border-b border-border">
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <span>{category.icon}</span>
+                    {category.name}
+                  </h3>
                   <p className="text-sm text-muted-foreground">{category.description}</p>
                 </div>
-                <div className="space-y-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {category.symbols.map((symbol) => renderSymbol(symbol))}
                 </div>
-              </TabsContent>
+              </div>
             ))}
-          </Tabs>
+          </div>
         )}
       </CardContent>
     </Card>
