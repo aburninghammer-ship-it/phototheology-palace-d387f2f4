@@ -612,6 +612,11 @@ export default function RoomDetail() {
                 {room.id === "cr" && (
                   <ConcentrationRoomDrill />
                 )}
+
+                {/* Symbols Room - Biblical Symbols Library */}
+                {room.id === "st" && (
+                  <SymbolsLibrary />
+                )}
               </TabsContent>
 
               {/* GAMES TAB */}
