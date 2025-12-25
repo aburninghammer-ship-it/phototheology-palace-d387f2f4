@@ -6,6 +6,7 @@ import { useRoomUnlock } from "@/hooks/useRoomUnlock";
 import { Room } from "@/data/palaceData";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { isRoomRenovated } from "@/config/renovatedRooms";
 
 interface FloorRoomCardProps {
   room: Room;
@@ -13,9 +14,7 @@ interface FloorRoomCardProps {
   gradient: string;
 }
 
-// Rooms that have been newly renovated/updated
-// NOTE: keep this list in sync with RENOVATED_ROOMS in ProgressivePalace.tsx
-const newlyRenovatedRooms = new Set(["sr", "24fps", "st", "ir", "tr", "gr", "or", "dc", "fe", "bl"]);
+// Renovated rooms are defined centrally in @/config/renovatedRooms
 
 // Room emojis for visual flair
 const roomEmojis: Record<string, string> = {
@@ -82,7 +81,7 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
   
   const showLocked = loading || !isUnlocked;
   const roomEmoji = roomEmojis[room.id] || "⭐";
-  const isNewlyRenovated = newlyRenovatedRooms.has(room.id);
+  const isNewlyRenovated = isRoomRenovated(room.id);
   // Use room-specific gradient if available, otherwise fall back to floor gradient
   const roomGradient = roomGradients[room.id] || gradient;
 

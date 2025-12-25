@@ -10,10 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { isRoomRenovated } from "@/config/renovatedRooms";
 
-// Rooms that have been recently renovated/updated
-// NOTE: keep this list in sync with any other “renovated” indicators across the palace UI.
-const RENOVATED_ROOMS = ["sr", "24fps", "st", "ir", "tr", "gr", "or", "dc", "fe", "bl"];
+// Renovated rooms are defined centrally in @/config/renovatedRooms
 
 const FLOOR_THEMES = [
   { gradient: "from-violet-600 to-purple-600", icon: "📚", name: "Furnishing" },
@@ -308,7 +307,7 @@ interface RoomCardProps {
 const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
   const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
   const roomImage = getRoomImage(room.id, floorNumber);
-  const isRenovated = RENOVATED_ROOMS.includes(room.id);
+  const isRenovated = isRoomRenovated(room.id);
 
   return (
     <Link
