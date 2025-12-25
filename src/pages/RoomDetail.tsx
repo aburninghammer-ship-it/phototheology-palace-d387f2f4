@@ -498,6 +498,11 @@ export default function RoomDetail() {
                   </Card>
                 </Collapsible>
 
+                {/* Symbols Room - Biblical Symbols Library - Show prominently at top */}
+                {room.id === "st" && (
+                  <SymbolsLibrary />
+                )}
+
                 {room.id === "24fps" && (
                   <>
                     {/* Complete 24FPS Bible Browser - All 50 Sets */}
@@ -613,10 +618,6 @@ export default function RoomDetail() {
                   <ConcentrationRoomDrill />
                 )}
 
-                {/* Symbols Room - Biblical Symbols Library */}
-                {room.id === "st" && (
-                  <SymbolsLibrary />
-                )}
               </TabsContent>
 
               {/* GAMES TAB */}
