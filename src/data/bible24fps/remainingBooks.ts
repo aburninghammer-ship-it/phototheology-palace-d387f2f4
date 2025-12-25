@@ -295,13 +295,16 @@ export const jobSet: BibleSet = {
   ]
 };
 
-// More Psalms sets
-export const psalms31to72Set: BibleSet = {
-  id: 'psalms-31-72',
-  label: 'Psalms 31-72',
-  theme: 'Book I-II - Deliverance & Kingship',
+// More Psalms sets - following PDF 90-day breakdown
+// DAY 38-42: Psalms 4-30 (already in allBooks as psalms1to30Set)
+// DAY 42-45: Psalms 31-55 (splitting from here)
+
+export const psalms31to55Set: BibleSet = {
+  id: 'psalms-31-55',
+  label: 'Psalms 31-55',
+  theme: 'Book I-II - Deliverance Cries',
   testament: 'old',
-  chapters: Array.from({ length: 42 }, (_, i) => ({
+  chapters: Array.from({ length: 25 }, (_, i) => ({
     chapter: i + 31,
     book: 'Psalms',
     title: `Psalm ${i + 31}`,
@@ -311,33 +314,67 @@ export const psalms31to72Set: BibleSet = {
   }))
 };
 
-export const psalms73to106Set: BibleSet = {
-  id: 'psalms-73-106',
-  label: 'Psalms 73-106',
-  theme: 'Book III - Sanctuary Songs',
+// DAY 45-47: Psalms 56-81
+export const psalms56to81Set: BibleSet = {
+  id: 'psalms-56-81',
+  label: 'Psalms 56-81',
+  theme: 'Book II-III - Trust & Praise',
   testament: 'old',
-  chapters: Array.from({ length: 34 }, (_, i) => ({
-    chapter: i + 73,
+  chapters: Array.from({ length: 26 }, (_, i) => ({
+    chapter: i + 56,
     book: 'Psalms',
-    title: `Psalm ${i + 73}`,
-    summary: getPsalmSummary(i + 73),
-    memoryHook: getPsalmHook(i + 73),
-    symbol: getPsalmSymbol(i + 73),
+    title: `Psalm ${i + 56}`,
+    summary: getPsalmSummary(i + 56),
+    memoryHook: getPsalmHook(i + 56),
+    symbol: getPsalmSymbol(i + 56),
   }))
 };
 
-export const psalms107to150Set: BibleSet = {
-  id: 'psalms-107-150',
-  label: 'Psalms 107-150',
-  theme: 'Book IV-V - Praise Collection',
+// DAY 47-48: Psalms 82-106
+export const psalms82to106Set: BibleSet = {
+  id: 'psalms-82-106',
+  label: 'Psalms 82-106',
+  theme: 'Book III-IV - Sanctuary Songs',
   testament: 'old',
-  chapters: Array.from({ length: 44 }, (_, i) => ({
+  chapters: Array.from({ length: 25 }, (_, i) => ({
+    chapter: i + 82,
+    book: 'Psalms',
+    title: `Psalm ${i + 82}`,
+    summary: getPsalmSummary(i + 82),
+    memoryHook: getPsalmHook(i + 82),
+    symbol: getPsalmSymbol(i + 82),
+  }))
+};
+
+// DAY 48-49: Psalms 107-134
+export const psalms107to134Set: BibleSet = {
+  id: 'psalms-107-134',
+  label: 'Psalms 107-134',
+  theme: 'Book V - Songs of Ascent',
+  testament: 'old',
+  chapters: Array.from({ length: 28 }, (_, i) => ({
     chapter: i + 107,
     book: 'Psalms',
     title: `Psalm ${i + 107}`,
     summary: getPsalmSummary(i + 107),
     memoryHook: getPsalmHook(i + 107),
     symbol: getPsalmSymbol(i + 107),
+  }))
+};
+
+// DAY 49: Psalms 135-150
+export const psalms135to150Set: BibleSet = {
+  id: 'psalms-135-150',
+  label: 'Psalms 135-150',
+  theme: 'Book V - Hallelujah Chorus',
+  testament: 'old',
+  chapters: Array.from({ length: 16 }, (_, i) => ({
+    chapter: i + 135,
+    book: 'Psalms',
+    title: `Psalm ${i + 135}`,
+    summary: getPsalmSummary(i + 135),
+    memoryHook: getPsalmHook(i + 135),
+    symbol: getPsalmSymbol(i + 135),
   }))
 };
 
@@ -773,9 +810,11 @@ export const remainingBibleSets: BibleSet[] = [
   nehemiahSet,
   estherSet,
   jobSet,
-  psalms31to72Set,
-  psalms73to106Set,
-  psalms107to150Set,
+  psalms31to55Set,
+  psalms56to81Set,
+  psalms82to106Set,
+  psalms107to134Set,
+  psalms135to150Set,
   proverbsSet,
   ecclesiastesSet,
   songOfSolomonSet,
