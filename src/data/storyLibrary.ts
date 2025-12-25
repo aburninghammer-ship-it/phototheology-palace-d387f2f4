@@ -473,6 +473,50 @@ export const genesisStories: BiblicalStory[] = [
     setting: "Canaan, night vision"
   },
   {
+    id: "hagar-ishmael",
+    title: "Hagar and Ishmael",
+    reference: "Genesis 16, 21:8-21",
+    volume: "Genesis",
+    category: "Patriarchs",
+    summary: "Sarai, unable to conceive, gives her Egyptian servant Hagar to Abraham. Hagar conceives and despises Sarai. Sarai deals harshly with her; Hagar flees. The Angel of the Lord finds her by a fountain, tells her to return and submit, promises her son will be great, and names him Ishmael (\"God hears\"). Years later, after Isaac is weaned, Ishmael mocks. Sarah demands their expulsion. Abraham distressed, but God confirms. Hagar wanders in the wilderness; God opens her eyes to a well, and Ishmael becomes an archer in Paran.",
+    keyElements: [
+      "Sarai's plan (flesh, not faith)",
+      "Hagar: Egyptian servant",
+      "Despised her mistress",
+      "Angel of the Lord at fountain",
+      "\"The Lord has heard your affliction\"",
+      "Ishmael = \"God hears\"",
+      "Wild donkey of a man",
+      "Ishmael mocks Isaac",
+      "Cast out bondwoman and son",
+      "Wilderness wandering",
+      "God opens eyes to well",
+      "Archer in Paran"
+    ],
+    christPattern: [
+      { element: "Son of flesh vs. promise", christApplication: "Works vs. grace" },
+      { element: "Bondwoman vs. freewoman", christApplication: "Law vs. gospel" },
+      { element: "Cast out bondwoman", christApplication: "Law cannot save" },
+      { element: "God hears affliction", christApplication: "Christ hears our cries" },
+      { element: "Well in wilderness", christApplication: "Living water" }
+    ],
+    dimensions: {
+      literal: "Historical account of Hagar and Ishmael",
+      christ: "Christ is the true Son of promise",
+      personal: "Am I living by flesh or Spirit?",
+      church: "Galatians 4 allegory—two covenants",
+      heavenFuture: "Children of promise inherit",
+      heavenPast: "God's plan vs. human scheming"
+    },
+    relatedStories: [
+      "Galatians 4:21-31 (Allegory of two covenants)",
+      "Romans 9:6-9 (Children of promise)",
+      "Genesis 21 (Isaac born, Ishmael cast out)"
+    ],
+    keyFigures: ["Hagar", "Ishmael", "Abraham", "Sarah"],
+    setting: "Canaan, Wilderness of Beersheba"
+  },
+  {
     id: "sodom-gomorrah",
     title: "Sodom and Gomorrah",
     reference: "Genesis 18-19",
@@ -700,6 +744,51 @@ export const genesisStories: BiblicalStory[] = [
     ],
     keyFigures: ["Isaac", "Rebekah", "Jacob", "Esau"],
     setting: "Canaan"
+  },
+  {
+    id: "jacob-stolen-blessing",
+    title: "Jacob's Stolen Blessing",
+    reference: "Genesis 27",
+    volume: "Genesis",
+    category: "Patriarchs",
+    summary: "Isaac, old and blind, prepares to bless Esau. Rebekah overhears, plots with Jacob to deceive Isaac. Jacob wears Esau's clothes and goatskins on his hands and neck. He brings savory food. Isaac is suspicious: \"The voice is Jacob's, but the hands are Esau's.\" He blesses Jacob with dew, fatness, dominion over brothers. Esau returns, discovers the deception, cries bitterly. Isaac cannot reverse the blessing. Esau receives lesser blessing and vows to kill Jacob. Rebekah sends Jacob to Laban.",
+    keyElements: [
+      "Isaac blind",
+      "\"Bring me venison that I may bless you\"",
+      "Rebekah's scheme",
+      "Goatskins as disguise",
+      "Voice vs. hands",
+      "Kiss of deception",
+      "Blessing: dew, grain, wine, lordship",
+      "Esau's bitter cry",
+      "\"He took away my birthright and blessing\"",
+      "Cannot reverse blessing",
+      "Esau's blessing: live by sword, serve brother",
+      "Murder plot",
+      "Jacob sent away"
+    ],
+    christPattern: [
+      { element: "Deception", christApplication: "Sin has consequences even when obtaining promises" },
+      { element: "Younger blessed", christApplication: "Grace chooses the unlikely" },
+      { element: "Garments of firstborn", christApplication: "Clothed in Christ's righteousness" },
+      { element: "Bitter cry", christApplication: "Too late repentance" },
+      { element: "Cannot reverse", christApplication: "Blessing is irrevocable" }
+    ],
+    dimensions: {
+      literal: "Historical deception and blessing",
+      christ: "We receive blessing clothed in Christ's garments",
+      personal: "God works through flawed people; His purposes stand",
+      church: "Spiritual Israel receives the blessing",
+      heavenFuture: "Final inheritance cannot be reversed",
+      heavenPast: "God's plan cannot be thwarted"
+    },
+    relatedStories: [
+      "Hebrews 12:17 (Found no place of repentance)",
+      "Hebrews 11:20 (By faith Isaac blessed)",
+      "Romans 9 (Election stands)"
+    ],
+    keyFigures: ["Isaac", "Rebekah", "Jacob", "Esau"],
+    setting: "Isaac's tent in Canaan"
   },
   {
     id: "jacob-ladder",
