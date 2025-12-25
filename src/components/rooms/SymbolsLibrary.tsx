@@ -20,6 +20,29 @@ export function SymbolsLibrary() {
         </div>
       </div>
       
+      {/* Key Scripture Texts with Explanations */}
+      {symbol.keyTexts && symbol.keyTexts.length > 0 && (
+        <div className="space-y-2 pt-2 border-t border-border">
+          <h4 className="font-semibold text-sm flex items-center gap-2">
+            <Book className="h-4 w-4 text-primary" />
+            Key Scriptures
+          </h4>
+          <div className="space-y-2">
+            {symbol.keyTexts.map((text, idx) => (
+              <div key={text} className="p-2 bg-muted/50 rounded-lg text-sm">
+                <Badge variant="secondary" className="mb-1">{text}</Badge>
+                {symbol.dimensions && idx === 0 && (
+                  <p className="text-muted-foreground text-xs mt-1">
+                    {symbol.dimensions.christ || symbol.dimensions.literal}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 5 Dimensions */}
       {symbol.dimensions && (
         <div className="space-y-2 pt-2 border-t border-border">
           <h4 className="font-semibold text-sm flex items-center gap-2">
@@ -45,55 +68,13 @@ export function SymbolsLibrary() {
           </div>
         </div>
       )}
-
-      {/* PT Principles Section */}
-      {(symbol.type || symbol.pattern || symbol.parallel || symbol.cycle || symbol.theme || symbol.sanctuary || symbol.prophecy || symbol.freestyle) && (
-        <div className="space-y-2 pt-2 border-t border-border">
-          <h4 className="font-semibold text-sm">PT Principles</h4>
-          <div className="grid gap-1.5 text-sm">
-            {symbol.type && (
-              <div><Badge variant="outline" className="mr-2 bg-orange-500/20">ST</Badge><span className="text-muted-foreground">Type:</span> {symbol.type}</div>
-            )}
-            {symbol.pattern && (
-              <div><Badge variant="outline" className="mr-2 bg-cyan-500/20">PRm</Badge><span className="text-muted-foreground">Pattern:</span> {symbol.pattern}</div>
-            )}
-            {symbol.parallel && (
-              <div><Badge variant="outline" className="mr-2 bg-pink-500/20">P‖</Badge><span className="text-muted-foreground">Parallel:</span> {symbol.parallel}</div>
-            )}
-            {symbol.sanctuary && (
-              <div><Badge variant="outline" className="mr-2 bg-sky-500/20">BL</Badge><span className="text-muted-foreground">Sanctuary:</span> {symbol.sanctuary}</div>
-            )}
-            {symbol.cycle && (
-              <div><Badge variant="outline" className="mr-2 bg-violet-500/20">@</Badge><span className="text-muted-foreground">Cycle:</span> {symbol.cycle}</div>
-            )}
-            {symbol.theme && (
-              <div><Badge variant="outline" className="mr-2 bg-rose-500/20">TRm</Badge><span className="text-muted-foreground">Theme:</span> {symbol.theme}</div>
-            )}
-            {symbol.prophecy && (
-              <div><Badge variant="outline" className="mr-2 bg-indigo-500/20">PR</Badge><span className="text-muted-foreground">Prophecy:</span> {symbol.prophecy}</div>
-            )}
-            {symbol.freestyle && (
-              <div><Badge variant="outline" className="mr-2 bg-emerald-500/20">FS</Badge><span className="text-muted-foreground">Freestyle:</span> {symbol.freestyle}</div>
-            )}
-          </div>
-        </div>
-      )}
       
       {symbol.notes && (
-        <p className="text-sm text-muted-foreground italic">{symbol.notes}</p>
-      )}
-      
-      {symbol.keyTexts && symbol.keyTexts.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          <Book className="h-4 w-4 text-muted-foreground mr-1" />
-          {symbol.keyTexts.map((text) => (
-            <Badge key={text} variant="secondary" className="text-xs">{text}</Badge>
-          ))}
-        </div>
+        <p className="text-sm text-muted-foreground italic pt-2">{symbol.notes}</p>
       )}
       
       {symbol.relatedSymbols && symbol.relatedSymbols.length > 0 && (
-        <div className="text-sm">
+        <div className="text-sm pt-2">
           <span className="text-muted-foreground">Related: </span>
           {symbol.relatedSymbols.join(" • ")}
         </div>
@@ -109,7 +90,7 @@ export function SymbolsLibrary() {
           Biblical Symbols Library
         </CardTitle>
         <CardDescription>
-          Comprehensive reference of {biblicalSymbolsLibrary.reduce((acc, cat) => acc + cat.symbols.length, 0)}+ biblical symbols with 5-dimensional applications
+          Explore {biblicalSymbolsLibrary.reduce((acc, cat) => acc + cat.symbols.length, 0)}+ biblical symbols with Scripture references and dimensional meanings
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

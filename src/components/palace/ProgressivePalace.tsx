@@ -11,6 +11,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
+// Rooms that have been recently renovated/updated
+const RENOVATED_ROOMS = ["sr", "24fps", "st", "ir", "tr", "gr", "or", "dc"];
+
 const FLOOR_THEMES = [
   { gradient: "from-violet-600 to-purple-600", icon: "📚", name: "Furnishing" },
   { gradient: "from-blue-600 to-indigo-600", icon: "🔍", name: "Investigation" },
@@ -304,6 +307,7 @@ interface RoomCardProps {
 const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
   const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
   const roomImage = getRoomImage(room.id, floorNumber);
+  const isRenovated = RENOVATED_ROOMS.includes(room.id);
 
   return (
     <Link
@@ -324,6 +328,43 @@ const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
         <div className={cn(
           "absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"
         )} />
+
+        {/* Newly Renovated Badge */}
+        {isRenovated && (
+          <div className="absolute top-2 left-2 z-20">
+            <motion.div
+              animate={{ 
+                scale: [1, 1.1, 1],
+                opacity: [1, 0.8, 1]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="relative"
+            >
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white text-[10px] font-bold shadow-lg">
+                <Sparkles className="h-3 w-3" />
+                NEW
+              </span>
+              {/* Twinkle effect */}
+              <motion.div
+                animate={{ 
+                  opacity: [0, 1, 0],
+                  scale: [0.5, 1.2, 0.5]
+                }}
+                transition={{ 
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.5
+                }}
+                className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-300 rounded-full"
+              />
+            </motion.div>
+          </div>
+        )}
         
         {/* Content */}
         <div className="relative z-10 p-3 w-full text-left">
