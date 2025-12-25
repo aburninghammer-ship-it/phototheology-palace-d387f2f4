@@ -14,12 +14,14 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // Use prompt mode so our in-app PWAUpdatePrompt can reliably detect + apply updates
+      registerType: 'prompt',
       includeAssets: ['favicon.ico', 'robots.txt', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: false, // Use external manifest.webmanifest
       workbox: {
         skipWaiting: true,
         clientsClaim: true,
+        cleanupOutdatedCaches: true,
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api/, /^\/supabase/],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
