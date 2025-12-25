@@ -1542,7 +1542,10 @@ import {
 } from "./storyLibraryPoetry";
 
 import {
-  isaiahStories, jeremiahStories, lamentationsStories, ezekielStories,
+  isaiahStoriesExpanded, jeremiahStoriesExpanded, lamentationsStoriesExpanded, ezekielStoriesExpanded
+} from "./storyLibraryProphetsExpanded";
+
+import {
   hoseaStories, joelStories, amosStories, obadiahStories, micahStories,
   nahumStories, habakkukStories, zephaniahStories, haggaiStories, zechariahStories, malachiStories
 } from "./storyLibraryProphets";
@@ -1560,7 +1563,7 @@ export const allStories: BiblicalStory[] = [
   ...kings1Stories, ...kings2Stories, ...chronicles1Stories, ...chronicles2Stories,
   ...ezraStories, ...nehemiahStories, ...estherStories,
   ...jobStories, ...psalmsStories, ...proverbsStories, ...ecclesiastesStories, ...songStories,
-  ...isaiahStories, ...jeremiahStories, ...lamentationsStories, ...ezekielStories,
+  ...isaiahStoriesExpanded, ...jeremiahStoriesExpanded, ...lamentationsStoriesExpanded, ...ezekielStoriesExpanded,
   ...danielStories, ...hoseaStories, ...joelStories, ...amosStories, ...obadiahStories,
   ...jonahStories, ...micahStories, ...nahumStories, ...habakkukStories, ...zephaniahStories,
   ...haggaiStories, ...zechariahStories, ...malachiStories,
