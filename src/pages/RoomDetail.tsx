@@ -34,6 +34,7 @@ import { JuiceRoomDrill } from "@/components/rooms/JuiceRoomDrill";
 import { CyclesRoomDrill } from "@/components/rooms/CyclesRoomDrill";
 import { ThreeHeavensRoomDrill } from "@/components/rooms/ThreeHeavensRoomDrill";
 import DefComRoomDrill from "@/components/rooms/DefComRoomDrill";
+import { ConcentrationRoomDrill } from "@/components/rooms/ConcentrationRoomDrill";
 import { RoomPracticeSpace } from "@/components/RoomPracticeSpace";
 import { QuickStartGuide } from "@/components/palace/QuickStartGuide";
 import { ValueProposition } from "@/components/palace/ValueProposition";
@@ -604,6 +605,11 @@ export default function RoomDetail() {
                 {room.id === "dc" && (
                   <DefComRoomDrill />
                 )}
+
+                {/* Concentration Room - Christ-Centered Training */}
+                {room.id === "cr" && (
+                  <ConcentrationRoomDrill />
+                )}
               </TabsContent>
 
               {/* GAMES TAB */}
@@ -703,6 +709,23 @@ export default function RoomDetail() {
                     </CardHeader>
                     <CardContent>
                       <CyclesRoomDrill />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Concentration Room Drill in Games tab */}
+                {room.id === "cr" && (
+                  <Card className="border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-indigo-500/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        👁️ Find-the-Christ Challenge
+                      </CardTitle>
+                      <CardDescription>
+                        Train your eyes to see Christ hidden in every passage
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ConcentrationRoomDrill />
                     </CardContent>
                   </Card>
                 )}
