@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Book, Cross, ChevronRight } from "lucide-react";
-import { getStoryOfTheDay, type BiblicalStory } from "@/data/storyLibraryComplete";
+import { getStoryOfTheDay, type BiblicalStory } from "@/data/storyLibrary";
 
 interface StoryOfTheDayProps {
   onViewStory: (story: BiblicalStory) => void;

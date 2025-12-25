@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Search, Book, Users, MapPin, Sparkles, Cross, Church, CloudSun, Clock, ArrowLeft, ChevronRight, GraduationCap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { allStoriesComplete, getVolumesComplete, getStoriesByVolumeComplete, searchStoriesComplete, type BiblicalStory } from "@/data/storyLibraryComplete";
+import { allStories, getVolumes, getStoriesByVolume, searchStories, type BiblicalStory } from "@/data/storyLibrary";
 import { StoryOfTheDay } from "./StoryOfTheDay";
 
 interface StoryLibraryProps {
@@ -34,10 +34,10 @@ export function StoryLibrary({ onBack }: StoryLibraryProps) {
     setSelectedStory(null);
   };
 
-  const volumes = getVolumesComplete();
+  const volumes = getVolumes();
   const displayedStories = searchQuery 
-    ? searchStoriesComplete(searchQuery) 
-    : getStoriesByVolumeComplete(selectedVolume);
+    ? searchStories(searchQuery) 
+    : getStoriesByVolume(selectedVolume);
 
   return (
     <div className="space-y-6">

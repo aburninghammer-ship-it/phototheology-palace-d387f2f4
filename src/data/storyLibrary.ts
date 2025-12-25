@@ -1467,3 +1467,12 @@ export const searchStories = (query: string): BiblicalStory[] => {
     s.keyFigures?.some(f => f.toLowerCase().includes(lowerQuery))
   );
 };
+
+// Story of the Day function - rotates through all stories based on day of year
+export function getStoryOfTheDay(): BiblicalStory {
+  const startOfYear = new Date(new Date().getFullYear(), 0, 0);
+  const diff = new Date().getTime() - startOfYear.getTime();
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const storyIndex = dayOfYear % allStories.length;
+  return allStories[storyIndex];
+}
