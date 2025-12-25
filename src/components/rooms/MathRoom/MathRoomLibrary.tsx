@@ -22,9 +22,6 @@ import {
   Heart,
   Crown,
   Scroll,
-  Sun,
-  Moon,
-  Star,
   Zap,
   AlertTriangle,
   CheckCircle,
@@ -36,6 +33,7 @@ import {
   Timer,
   Compass,
   Hash,
+  Star,
 } from "lucide-react";
 import { TIME_CYCLES, KEY_NUMBERS, THEOLOGICAL_FUNCTIONS, DAY_YEAR_PRINCIPLE, TimeCycle } from "./mathRoomData";
 
@@ -53,22 +51,78 @@ const iconMap: Record<string, React.ElementType> = {
   Scroll,
 };
 
+// Static color class mappings - Tailwind requires full class names at build time
+const COLOR_CLASSES = {
+  amber: {
+    border: "border-amber-500/50",
+    text: "text-amber-400",
+    bg: "bg-amber-500/20",
+    glow: "shadow-amber-500/20",
+    gradient: "from-amber-500 to-amber-600",
+    hoverBorder: "hover:border-amber-400/50",
+  },
+  rose: {
+    border: "border-rose-500/50",
+    text: "text-rose-400",
+    bg: "bg-rose-500/20",
+    glow: "shadow-rose-500/20",
+    gradient: "from-rose-500 to-rose-600",
+    hoverBorder: "hover:border-rose-400/50",
+  },
+  blue: {
+    border: "border-blue-500/50",
+    text: "text-blue-400",
+    bg: "bg-blue-500/20",
+    glow: "shadow-blue-500/20",
+    gradient: "from-blue-500 to-blue-600",
+    hoverBorder: "hover:border-blue-400/50",
+  },
+  violet: {
+    border: "border-violet-500/50",
+    text: "text-violet-400",
+    bg: "bg-violet-500/20",
+    glow: "shadow-violet-500/20",
+    gradient: "from-violet-500 to-violet-600",
+    hoverBorder: "hover:border-violet-400/50",
+  },
+  emerald: {
+    border: "border-emerald-500/50",
+    text: "text-emerald-400",
+    bg: "bg-emerald-500/20",
+    glow: "shadow-emerald-500/20",
+    gradient: "from-emerald-500 to-emerald-600",
+    hoverBorder: "hover:border-emerald-400/50",
+  },
+  yellow: {
+    border: "border-yellow-500/50",
+    text: "text-yellow-400",
+    bg: "bg-yellow-500/20",
+    glow: "shadow-yellow-500/20",
+    gradient: "from-yellow-500 to-yellow-600",
+    hoverBorder: "hover:border-yellow-400/50",
+  },
+  purple: {
+    border: "border-purple-500/50",
+    text: "text-purple-400",
+    bg: "bg-purple-500/20",
+    glow: "shadow-purple-500/20",
+    gradient: "from-purple-500 to-purple-600",
+    hoverBorder: "hover:border-purple-400/50",
+  },
+} as const;
+
+type ColorKey = keyof typeof COLOR_CLASSES;
+
+const getColorClasses = (color: string) => {
+  return COLOR_CLASSES[color as ColorKey] || COLOR_CLASSES.amber;
+};
+
 // Time Cycle Card Component
 const TimeCycleCard: React.FC<{ cycle: TimeCycle }> = ({ cycle }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showQuizAnswers, setShowQuizAnswers] = useState<Record<number, boolean>>({});
   const Icon = iconMap[cycle.icon] || Clock;
-
-  const colorClasses: Record<string, { border: string; text: string; bg: string; glow: string }> = {
-    amber: { border: "border-amber-500/50", text: "text-amber-400", bg: "bg-amber-500/20", glow: "shadow-amber-500/20" },
-    rose: { border: "border-rose-500/50", text: "text-rose-400", bg: "bg-rose-500/20", glow: "shadow-rose-500/20" },
-    blue: { border: "border-blue-500/50", text: "text-blue-400", bg: "bg-blue-500/20", glow: "shadow-blue-500/20" },
-    violet: { border: "border-violet-500/50", text: "text-violet-400", bg: "bg-violet-500/20", glow: "shadow-violet-500/20" },
-    emerald: { border: "border-emerald-500/50", text: "text-emerald-400", bg: "bg-emerald-500/20", glow: "shadow-emerald-500/20" },
-    yellow: { border: "border-yellow-500/50", text: "text-yellow-400", bg: "bg-yellow-500/20", glow: "shadow-yellow-500/20" },
-  };
-
-  const colors = colorClasses[cycle.color] || colorClasses.amber;
+  const colors = getColorClasses(cycle.color);
 
   const toggleQuizAnswer = (index: number) => {
     setShowQuizAnswers(prev => ({ ...prev, [index]: !prev[index] }));
@@ -80,7 +134,7 @@ const TimeCycleCard: React.FC<{ cycle: TimeCycle }> = ({ cycle }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className={`bg-gradient-to-br ${cycle.bgGradient} backdrop-blur-sm border ${colors.border} hover:shadow-lg hover:${colors.glow} transition-all duration-300`}>
+      <Card className={`bg-gradient-to-br ${cycle.bgGradient} backdrop-blur-sm border ${colors.border} hover:shadow-lg transition-all duration-300`}>
         <CardHeader 
           className="cursor-pointer group"
           onClick={() => setIsExpanded(!isExpanded)}
@@ -105,7 +159,7 @@ const TimeCycleCard: React.FC<{ cycle: TimeCycle }> = ({ cycle }) => {
           {/* Timeline Bar */}
           <div className={`mt-4 h-2 rounded-full ${colors.bg} overflow-hidden`}>
             <motion.div 
-              className={`h-full bg-gradient-to-r from-${cycle.color}-400 to-${cycle.color}-600`}
+              className={`h-full bg-gradient-to-r ${colors.gradient}`}
               initial={{ width: "0%" }}
               animate={{ width: isExpanded ? "100%" : "30%" }}
               transition={{ duration: 0.5 }}
@@ -171,7 +225,7 @@ const TimeCycleCard: React.FC<{ cycle: TimeCycle }> = ({ cycle }) => {
                       The Six Purposes of Daniel 9:24
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {cycle.additionalDetails.sixPurposes?.map((purpose: any, i: number) => (
+                      {cycle.additionalDetails.sixPurposes?.map((purpose: { purpose: string; meaning: string }, i: number) => (
                         <div key={i} className={`p-3 rounded-lg ${colors.bg} border ${colors.border}`}>
                           <p className={`font-medium ${colors.text}`}>{i + 1}. {purpose.purpose}</p>
                           <p className="text-xs text-muted-foreground">{purpose.meaning}</p>
@@ -203,8 +257,8 @@ const TimeCycleCard: React.FC<{ cycle: TimeCycle }> = ({ cycle }) => {
                         Key Dates
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {cycle.additionalDetails.keyDates?.map((kd: any, i: number) => (
-                          <Badge key={i} variant="outline" className={`${colors.text} border-${cycle.color}-500/50`}>
+                        {cycle.additionalDetails.keyDates?.map((kd: { date: string; event: string }, i: number) => (
+                          <Badge key={i} variant="outline" className={colors.text}>
                             {kd.date}: {kd.event}
                           </Badge>
                         ))}
@@ -222,14 +276,14 @@ const TimeCycleCard: React.FC<{ cycle: TimeCycle }> = ({ cycle }) => {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className={`${colors.bg}`}>
+                          <tr className={colors.bg}>
                             <th className="p-2 text-left">Expression</th>
                             <th className="p-2 text-left">Reference</th>
                             <th className="p-2 text-left">Calculation</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {cycle.additionalDetails.equivalentExpressions?.map((expr: any, i: number) => (
+                          {cycle.additionalDetails.equivalentExpressions?.map((expr: { expression: string; reference: string; calculation: string }, i: number) => (
                             <tr key={i} className="border-t border-white/10">
                               <td className={`p-2 ${colors.text}`}>{expr.expression}</td>
                               <td className="p-2 text-muted-foreground">{expr.reference}</td>
@@ -289,7 +343,7 @@ const TimeCycleCard: React.FC<{ cycle: TimeCycle }> = ({ cycle }) => {
                 </div>
 
                 {/* Type → Antitype */}
-                <div className={`p-4 rounded-xl bg-gradient-to-r from-purple-900/20 to-indigo-900/20 border border-purple-500/30`}>
+                <div className="p-4 rounded-xl bg-gradient-to-r from-purple-900/20 to-indigo-900/20 border border-purple-500/30">
                   <h4 className="flex items-center gap-2 font-semibold text-white mb-3">
                     <ArrowRight className="w-4 h-4 text-purple-400" />
                     Type → Antitype Connections
@@ -412,6 +466,7 @@ const OverviewTab: React.FC = () => (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {TIME_CYCLES.map((cycle, i) => {
           const Icon = iconMap[cycle.icon] || Clock;
+          const colors = getColorClasses(cycle.color);
           return (
             <motion.div
               key={cycle.id}
@@ -419,11 +474,11 @@ const OverviewTab: React.FC = () => (
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 * i }}
             >
-              <Card className={`bg-gradient-to-br ${cycle.bgGradient} border-${cycle.color}-500/30 hover:border-${cycle.color}-400/50 transition-all cursor-pointer group`}>
+              <Card className={`bg-gradient-to-br ${cycle.bgGradient} ${colors.border} ${colors.hoverBorder} transition-all cursor-pointer group`}>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3 mb-2">
-                    <Icon className={`w-5 h-5 text-${cycle.color}-400`} />
-                    <h4 className={`font-semibold text-${cycle.color}-400`}>{cycle.title}</h4>
+                    <Icon className={`w-5 h-5 ${colors.text}`} />
+                    <h4 className={`font-semibold ${colors.text}`}>{cycle.title}</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">{cycle.duration}</p>
                 </CardContent>
@@ -450,14 +505,14 @@ const OverviewTab: React.FC = () => (
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {[
-              { title: "Meaning", icon: Lightbulb, color: "amber" },
-              { title: "Historical Application", icon: BookOpen, color: "blue" },
-              { title: "Theological Principle", icon: Crown, color: "purple" },
-              { title: "Pattern Reappearance", icon: Zap, color: "emerald" },
-              { title: "Type/Antitype Parallels", icon: ArrowRight, color: "rose" },
+              { title: "Meaning", icon: Lightbulb, colorClass: "text-amber-400", borderClass: "border-amber-500/20" },
+              { title: "Historical Application", icon: BookOpen, colorClass: "text-blue-400", borderClass: "border-blue-500/20" },
+              { title: "Theological Principle", icon: Crown, colorClass: "text-purple-400", borderClass: "border-purple-500/20" },
+              { title: "Pattern Reappearance", icon: Zap, colorClass: "text-emerald-400", borderClass: "border-emerald-500/20" },
+              { title: "Type/Antitype Parallels", icon: ArrowRight, colorClass: "text-rose-400", borderClass: "border-rose-500/20" },
             ].map((item, i) => (
-              <div key={i} className={`p-3 rounded-lg bg-black/20 border border-${item.color}-500/20 text-center`}>
-                <item.icon className={`w-5 h-5 text-${item.color}-400 mx-auto mb-2`} />
+              <div key={i} className={`p-3 rounded-lg bg-black/20 border ${item.borderClass} text-center`}>
+                <item.icon className={`w-5 h-5 ${item.colorClass} mx-auto mb-2`} />
                 <p className="text-sm text-white font-medium">{item.title}</p>
               </div>
             ))}
@@ -542,9 +597,9 @@ const ConvergenceTab: React.FC = () => (
           {/* Visual Timeline Bars */}
           <div className="space-y-3">
             {[
-              { label: "70 Weeks (490 years)", start: "457 BC", end: "AD 34", width: "20%", color: "violet" },
-              { label: "2300 Days (2300 years)", start: "457 BC", end: "1844", width: "100%", color: "yellow" },
-              { label: "1260 Days (1260 years)", start: "538", end: "1798", width: "55%", color: "emerald", offset: "23%" },
+              { label: "70 Weeks (490 years)", start: "457 BC", end: "AD 34", width: "20%", gradientClass: "from-violet-500 to-violet-600" },
+              { label: "2300 Days (2300 years)", start: "457 BC", end: "1844", width: "100%", gradientClass: "from-yellow-500 to-yellow-600" },
+              { label: "1260 Days (1260 years)", start: "538", end: "1798", width: "55%", gradientClass: "from-emerald-500 to-emerald-600", offset: "23%" },
             ].map((item, i) => (
               <div key={i} className="space-y-1">
                 <div className="flex justify-between text-xs text-muted-foreground">
@@ -553,7 +608,7 @@ const ConvergenceTab: React.FC = () => (
                 </div>
                 <div className="h-4 bg-black/30 rounded-full overflow-hidden relative">
                   <div 
-                    className={`absolute h-full bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 rounded-full`}
+                    className={`absolute h-full bg-gradient-to-r ${item.gradientClass} rounded-full`}
                     style={{ width: item.width, left: item.offset || "0%" }}
                   />
                 </div>
@@ -654,7 +709,7 @@ const PrinciplesTab: React.FC = () => (
       <Card className="bg-gradient-to-br from-amber-900/30 to-orange-900/30 border-amber-500/30">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sun className="w-5 h-5 text-amber-400" />
+            <Clock className="w-5 h-5 text-amber-400" />
             {DAY_YEAR_PRINCIPLE.title}
           </CardTitle>
         </CardHeader>
