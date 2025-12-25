@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { BibleReader } from "@/components/bible/BibleReader";
 import { BibleNavigation } from "@/components/bible/BibleNavigation";
+import { PTImageBible } from "@/components/bible/PTImageBible";
 import { Button } from "@/components/ui/button";
-import { BookMarked, HelpCircle, Headphones } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { BookMarked, HelpCircle, Headphones, BookOpen, Camera } from "lucide-react";
 import { Link } from "react-router-dom";
 import { StudyBibleDemoDialog } from "@/components/bible/StudyBibleDemoDialog";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
@@ -14,6 +16,7 @@ import { usePreservePage } from "@/hooks/usePreservePage";
 const Bible = () => {
   const { user } = useAuth();
   const [demoOpen, setDemoOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"study" | "images">("study");
   
   // Enable scroll position preservation for this page
   usePreservePage();
@@ -80,13 +83,41 @@ const Bible = () => {
             />
           )}
 
-          {/* Navigation */}
-          <div className="mb-6 sm:mb-8">
-            <BibleNavigation />
-          </div>
+          {/* Main Tabs */}
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "study" | "images")} className="space-y-6">
+            <TabsList className="grid w-full max-w-md grid-cols-2 bg-card/50 backdrop-blur-md border border-border/50">
+              <TabsTrigger 
+                value="study" 
+                className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary flex items-center gap-2"
+              >
+                <BookOpen className="h-4 w-4" />
+                PT Study Bible
+              </TabsTrigger>
+              <TabsTrigger 
+                value="images" 
+                className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary flex items-center gap-2"
+              >
+                <Camera className="h-4 w-4" />
+                PT Image Bible
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Bible Reader */}
-          <BibleReader />
+            <TabsContent value="study" className="space-y-6">
+              {/* Navigation */}
+              <div className="mb-6 sm:mb-8">
+                <BibleNavigation />
+              </div>
+
+              {/* Bible Reader */}
+              <BibleReader />
+            </TabsContent>
+
+            <TabsContent value="images">
+              <div className="glass-card p-6 rounded-2xl">
+                <PTImageBible />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
       
