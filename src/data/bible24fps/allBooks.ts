@@ -8,6 +8,7 @@ export interface ChapterFrame {
   summary: string;
   memoryHook: string;
   symbol: string;
+  imageUrl?: string; // Optional image URL for 24FPS visual anchors
 }
 
 export interface BibleSet {
