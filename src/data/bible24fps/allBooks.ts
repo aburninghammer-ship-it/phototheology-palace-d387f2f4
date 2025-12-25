@@ -158,9 +158,9 @@ export const exodus25to40Set: BibleSet = {
   ]
 };
 
-export const leviticus1to27Set: BibleSet = {
-  id: 'leviticus-1-27',
-  label: 'Leviticus 1-27',
+export const leviticus1to24Set: BibleSet = {
+  id: 'leviticus-1-24',
+  label: 'Leviticus 1-24',
   theme: 'Holiness - Laws for Worship & Living',
   testament: 'old',
   chapters: [
@@ -188,16 +188,25 @@ export const leviticus1to27Set: BibleSet = {
     { chapter: 22, book: 'Leviticus', title: 'Holy Offerings', summary: 'Priests must be clean to eat offerings. Animals must be without defect.', memoryHook: 'Perfect unblemished lamb', symbol: '🐑' },
     { chapter: 23, book: 'Leviticus', title: 'Feasts of the Lord', summary: 'Seven appointed feasts: Sabbath, Passover, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles.', memoryHook: 'Calendar with 7 circles', symbol: '📅' },
     { chapter: 24, book: 'Leviticus', title: 'Lamp & Blasphemer', summary: 'Lamp and bread regulations. Blasphemer stoned. Eye for eye.', memoryHook: 'Oil lamp and stones', symbol: '🪔' },
+  ]
+};
+
+export const leviticus25to27Set: BibleSet = {
+  id: 'leviticus-25-27',
+  label: 'Leviticus 25-27',
+  theme: 'Holiness - Jubilee & Vows',
+  testament: 'old',
+  chapters: [
     { chapter: 25, book: 'Leviticus', title: 'Sabbath Years & Jubilee', summary: 'Land rests every 7th year. Jubilee every 50th - freedom and return.', memoryHook: 'Trumpet blast, land resting', symbol: '📯' },
     { chapter: 26, book: 'Leviticus', title: 'Blessings & Curses', summary: 'Covenant blessings for obedience. Five-fold curses for disobedience.', memoryHook: 'Two paths - sunshine vs. storm', symbol: '🌦️' },
     { chapter: 27, book: 'Leviticus', title: 'Vows & Tithes', summary: 'Valuation of vows. Tithes of land, animals. Devoted things.', memoryHook: 'Scales weighing vow values', symbol: '🎚️' },
   ]
 };
 
-export const numbersSet: BibleSet = {
-  id: 'numbers-1-36',
-  label: 'Numbers 1-36',
-  theme: 'Wandering - Wilderness Journey',
+export const numbers1to24Set: BibleSet = {
+  id: 'numbers-1-24',
+  label: 'Numbers 1-24',
+  theme: 'Wandering - Wilderness Journey Part 1',
   testament: 'old',
   chapters: [
     { chapter: 1, book: 'Numbers', title: 'First Census', summary: 'Counting men 20+ for war. 603,550 from 12 tribes. Levites excluded.', memoryHook: 'Counting heads in desert', symbol: '📊' },
@@ -224,6 +233,15 @@ export const numbersSet: BibleSet = {
     { chapter: 22, book: 'Numbers', title: 'Balaam\'s Donkey', summary: 'Balak summons Balaam. Donkey sees angel, speaks to Balaam.', memoryHook: 'Talking donkey on path', symbol: '🫏' },
     { chapter: 23, book: 'Numbers', title: 'Balaam\'s Oracles 1-2', summary: 'Balaam blesses Israel instead of cursing. Two oracles of blessing.', memoryHook: 'Curse turning to blessing', symbol: '🔄' },
     { chapter: 24, book: 'Numbers', title: 'Balaam\'s Oracles 3-4', summary: 'More blessings. Star from Jacob prophecy. Nations judged.', memoryHook: 'Star rising from Jacob', symbol: '⭐' },
+  ]
+};
+
+export const numbers25to36Set: BibleSet = {
+  id: 'numbers-25-36',
+  label: 'Numbers 25-36',
+  theme: 'Wandering - Preparing for Canaan',
+  testament: 'old',
+  chapters: [
     { chapter: 25, book: 'Numbers', title: 'Baal Peor Sin', summary: 'Israel sins with Moabite women at Baal Peor. Phinehas stops plague.', memoryHook: 'Spear through tent', symbol: '🗡️' },
     { chapter: 26, book: 'Numbers', title: 'Second Census', summary: 'New generation counted. 601,730 men. Land to be divided by tribe.', memoryHook: 'New count, new generation', symbol: '📋' },
     { chapter: 27, book: 'Numbers', title: 'Daughters & Joshua', summary: 'Zelophehad\'s daughters inherit. Joshua commissioned as Moses\' successor.', memoryHook: 'Women with land deed, Moses with hands on Joshua', symbol: '👩‍👩‍👧‍👧' },
@@ -239,10 +257,10 @@ export const numbersSet: BibleSet = {
   ]
 };
 
-export const deuteronomySet: BibleSet = {
-  id: 'deuteronomy-1-34',
-  label: 'Deuteronomy 1-34',
-  theme: 'Renewal - Moses\' Final Sermons',
+export const deuteronomy1to24Set: BibleSet = {
+  id: 'deuteronomy-1-24',
+  label: 'Deuteronomy 1-24',
+  theme: 'Renewal - Moses\' Sermons Part 1',
   testament: 'old',
   chapters: [
     { chapter: 1, book: 'Deuteronomy', title: 'History Recap', summary: 'Moses reviews journey from Horeb. Appointing judges. Spy failure.', memoryHook: 'Old man at podium, map behind', symbol: '🗣️' },
@@ -269,6 +287,15 @@ export const deuteronomySet: BibleSet = {
     { chapter: 22, book: 'Deuteronomy', title: 'Neighbor & Purity', summary: 'Return lost items. Gender distinctions. Building codes. Sexual purity.', memoryHook: 'Fence on roof, distinct clothes', symbol: '🏠' },
     { chapter: 23, book: 'Deuteronomy', title: 'Assembly Exclusions', summary: 'Who may enter assembly. Camp cleanliness. Escaped slaves. No interest.', memoryHook: 'Entry requirements list', symbol: '📝' },
     { chapter: 24, book: 'Deuteronomy', title: 'Marriage & Justice', summary: 'Divorce certificate. Newlywed exemption. Just treatment of poor.', memoryHook: 'Scroll and gleaning field', symbol: '🌾' },
+  ]
+};
+
+export const deuteronomy25to34Set: BibleSet = {
+  id: 'deuteronomy-25-34',
+  label: 'Deuteronomy 25-34',
+  theme: 'Renewal - Moses\' Final Words',
+  testament: 'old',
+  chapters: [
     { chapter: 25, book: 'Deuteronomy', title: 'Fairness & Levirate', summary: 'Forty stripes limit. Levirate marriage. Honest weights. Destroy Amalek.', memoryHook: 'Balanced scales, sandal', symbol: '⚖️' },
     { chapter: 26, book: 'Deuteronomy', title: 'Firstfruits & Tithes', summary: 'Bring firstfruits and confess salvation history. Tithe declaration.', memoryHook: 'Basket of firstfruits', symbol: '🧺' },
     { chapter: 27, book: 'Deuteronomy', title: 'Stones & Curses', summary: 'Write law on plastered stones. Curses from Mount Ebal.', memoryHook: 'Plastered stones with writing', symbol: '🪨' },
@@ -360,9 +387,9 @@ export const ruthSet: BibleSet = {
 };
 
 // ... Continue with more books
-export const firstSamuelSet: BibleSet = {
-  id: '1-samuel-1-31',
-  label: '1 Samuel 1-31',
+export const firstSamuel1to24Set: BibleSet = {
+  id: '1-samuel-1-24',
+  label: '1 Samuel 1-24',
   theme: 'Kingdom - From Judges to Kings',
   testament: 'old',
   chapters: [
@@ -390,6 +417,15 @@ export const firstSamuelSet: BibleSet = {
     { chapter: 22, book: '1 Samuel', title: 'Priests Killed', summary: 'David at Adullam cave. Doeg kills 85 priests. Abiathar escapes to David.', memoryHook: 'Cave hideout, slain priests', symbol: '🕯️' },
     { chapter: 23, book: '1 Samuel', title: 'David Rescued', summary: 'David saves Keilah. Jonathan strengthens David. Narrow escape from Saul.', memoryHook: 'Wilderness chase, close call', symbol: '🏃' },
     { chapter: 24, book: '1 Samuel', title: 'David Spares Saul', summary: 'David cuts Saul\'s robe in cave but won\'t harm LORD\'s anointed.', memoryHook: 'Cut robe corner', symbol: '✂️' },
+  ]
+};
+
+export const firstSamuel25to31Set: BibleSet = {
+  id: '1-samuel-25-31',
+  label: '1 Samuel 25-31',
+  theme: 'Kingdom - Saul\'s Fall',
+  testament: 'old',
+  chapters: [
     { chapter: 25, book: '1 Samuel', title: 'Nabal & Abigail', summary: 'Samuel dies. Nabal insults David. Abigail intervenes. Nabal dies. David marries Abigail.', memoryHook: 'Wise woman with food', symbol: '🍖' },
     { chapter: 26, book: '1 Samuel', title: 'Spear & Jug', summary: 'David again spares Saul. Takes spear and water jug from sleeping camp.', memoryHook: 'Spear and jug lifted', symbol: '🏺' },
     { chapter: 27, book: '1 Samuel', title: 'David Among Philistines', summary: 'David flees to Philistia. Given Ziklag. Raids enemies secretly.', memoryHook: 'Double life in enemy land', symbol: '🎭' },
@@ -400,7 +436,6 @@ export const firstSamuelSet: BibleSet = {
   ]
 };
 
-// Continue with Psalms (5 sets of ~30 chapters)
 export const psalms1to30Set: BibleSet = {
   id: 'psalms-1-30',
   label: 'Psalms 1-30',
@@ -442,9 +477,9 @@ export const psalms1to30Set: BibleSet = {
 
 // NEW TESTAMENT
 
-export const matthewSet: BibleSet = {
-  id: 'matthew-1-28',
-  label: 'Matthew 1-28',
+export const matthew1to24Set: BibleSet = {
+  id: 'matthew-1-24',
+  label: 'Matthew 1-24',
   theme: 'King - Behold Your King',
   testament: 'new',
   chapters: [
@@ -472,6 +507,15 @@ export const matthewSet: BibleSet = {
     { chapter: 22, book: 'Matthew', title: 'Parables & Questions', summary: 'Wedding feast. Render to Caesar. Greatest commandment. David\'s Lord.', memoryHook: 'Wedding clothes, coin', symbol: '💍' },
     { chapter: 23, book: 'Matthew', title: 'Woe to Pharisees', summary: 'Seven woes. Whitewashed tombs. Jerusalem lamented.', memoryHook: 'White tombs, hen with chicks', symbol: '🪦' },
     { chapter: 24, book: 'Matthew', title: 'End Times Signs', summary: 'Temple destruction. Tribulation signs. Son coming on clouds. Stay ready.', memoryHook: 'Temple falling, clouds parting', symbol: '⛅' },
+  ]
+};
+
+export const matthew25to28Set: BibleSet = {
+  id: 'matthew-25-28',
+  label: 'Matthew 25-28',
+  theme: 'King - Passion & Commission',
+  testament: 'new',
+  chapters: [
     { chapter: 25, book: 'Matthew', title: 'Three Parables', summary: 'Ten virgins. Talents. Sheep and goats. "Whatever you did to least..."', memoryHook: 'Lamps, coins, sheep/goats', symbol: '🐐' },
     { chapter: 26, book: 'Matthew', title: 'Betrayal & Arrest', summary: 'Anointing. Last Supper. Gethsemane. Judas\' kiss. Peter\'s denial.', memoryHook: 'Perfume, bread, kiss, rooster', symbol: '🐓' },
     { chapter: 27, book: 'Matthew', title: 'Trial & Crucifixion', summary: 'Before Pilate. Barabbas released. Crucified at Golgotha. Buried.', memoryHook: 'Cross, torn veil, sealed tomb', symbol: '✝️' },
@@ -670,16 +714,21 @@ export const allBibleSets: BibleSet[] = [
   genesis25to50Set,
   exodus1to24Set,
   exodus25to40Set,
-  leviticus1to27Set,
-  numbersSet,
-  deuteronomySet,
+  leviticus1to24Set,
+  leviticus25to27Set,
+  numbers1to24Set,
+  numbers25to36Set,
+  deuteronomy1to24Set,
+  deuteronomy25to34Set,
   joshuaSet,
   judgesSet,
   ruthSet,
-  firstSamuelSet,
+  firstSamuel1to24Set,
+  firstSamuel25to31Set,
   psalms1to30Set,
   // New Testament
-  matthewSet,
+  matthew1to24Set,
+  matthew25to28Set,
   markSet,
   lukeSet,
   johnSet,
