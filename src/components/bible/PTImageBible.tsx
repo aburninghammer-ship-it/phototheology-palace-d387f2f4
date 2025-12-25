@@ -457,7 +457,7 @@ export function PTImageBible() {
             exit={{ opacity: 0, height: 0 }}
             className="pl-4 pr-2 py-3"
           >
-            <div className={`grid gap-2 ${hasImages ? "grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10" : "grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12"}`}>
+            <div className={`grid gap-1.5 sm:gap-2 ${hasImages ? "grid-cols-4 xs:grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10" : "grid-cols-5 xs:grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12"}`}>
               {chapters.map((chapter) => {
                 const imageUrl = getImageForChapter(book, chapter.chapter);
                 
@@ -509,18 +509,21 @@ export function PTImageBible() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-lg bg-primary/20">
-          <Camera className="h-5 w-5 text-primary" />
+      {/* Mobile-optimized header */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/20 shrink-0">
+            <Camera className="h-5 w-5 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-serif text-lg font-semibold">PT Image Bible</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              {totalChapters}+ chapter frames
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="font-serif text-lg font-semibold">PT Image Bible</h3>
-          <p className="text-sm text-muted-foreground">
-            {totalChapters}+ chapter frames with memory hooks & symbols
-          </p>
-        </div>
-        <div className="ml-auto flex items-center gap-2">
-          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+        <div className="flex items-center gap-2 sm:ml-auto flex-wrap">
+          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs">
             <Sparkles className="h-3 w-3 mr-1" />
             {generatedImages.size + 50} Images
           </Badge>
@@ -528,45 +531,47 @@ export function PTImageBible() {
             <Button
               size="sm"
               onClick={startBatchGeneration}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-xs sm:text-sm"
             >
-              <Zap className="h-4 w-4 mr-1" />
-              Generate All ({chaptersNeedingImages.length})
+              <Zap className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <span className="hidden xs:inline">Generate All</span>
+              <span className="xs:hidden">Gen</span>
+              ({chaptersNeedingImages.length})
             </Button>
           )}
         </div>
       </div>
 
-      {/* Batch Progress */}
+      {/* Batch Progress - Mobile optimized */}
       {batchProgress && (
-        <Card className="p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-purple-400" />
-              <span className="font-medium">
-                Generating: {batchProgress.currentBook} {batchProgress.currentChapter}
+        <Card className="p-3 sm:p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <Loader2 className="h-4 w-4 animate-spin text-purple-400 shrink-0" />
+              <span className="font-medium text-sm truncate">
+                {batchProgress.currentBook} {batchProgress.currentChapter}
               </span>
             </div>
             <div className="flex items-center gap-2">
               {batchProgress.isPaused ? (
-                <Button size="sm" variant="outline" onClick={resumeBatchGeneration}>
+                <Button size="sm" variant="outline" onClick={resumeBatchGeneration} className="flex-1 sm:flex-none">
                   <Play className="h-4 w-4 mr-1" />
                   Resume
                 </Button>
               ) : (
-                <Button size="sm" variant="outline" onClick={pauseBatchGeneration}>
+                <Button size="sm" variant="outline" onClick={pauseBatchGeneration} className="flex-1 sm:flex-none">
                   <Pause className="h-4 w-4 mr-1" />
                   Pause
                 </Button>
               )}
-              <Button size="sm" variant="destructive" onClick={stopBatchGeneration}>
+              <Button size="sm" variant="destructive" onClick={stopBatchGeneration} className="flex-1 sm:flex-none">
                 Stop
               </Button>
             </div>
           </div>
           <Progress value={(batchProgress.current / batchProgress.total) * 100} className="h-2" />
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            {batchProgress.current} of {batchProgress.total} chapters ({Math.round((batchProgress.current / batchProgress.total) * 100)}%)
+            {batchProgress.current}/{batchProgress.total} ({Math.round((batchProgress.current / batchProgress.total) * 100)}%)
           </p>
         </Card>
       )}
@@ -615,19 +620,21 @@ export function PTImageBible() {
         </div>
       ) : (
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="old">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Old Testament
+          <TabsList className="grid w-full grid-cols-2 h-auto">
+            <TabsTrigger value="old" className="text-xs sm:text-sm py-2.5">
+              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden xs:inline">Old Testament</span>
+              <span className="xs:hidden">OT</span>
             </TabsTrigger>
-            <TabsTrigger value="new">
-              <BookOpen className="h-4 w-4 mr-2" />
-              New Testament
+            <TabsTrigger value="new" className="text-xs sm:text-sm py-2.5">
+              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden xs:inline">New Testament</span>
+              <span className="xs:hidden">NT</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="old">
-            <ScrollArea className="h-[600px] pr-4">
+            <ScrollArea className="h-[calc(100vh-300px)] sm:h-[600px] pr-2 sm:pr-4">
               <div className="space-y-1">
                 {OLD_TESTAMENT_BOOKS.map((book) => renderBookSection(book))}
               </div>
@@ -635,7 +642,7 @@ export function PTImageBible() {
           </TabsContent>
 
           <TabsContent value="new">
-            <ScrollArea className="h-[600px] pr-4">
+            <ScrollArea className="h-[calc(100vh-300px)] sm:h-[600px] pr-2 sm:pr-4">
               <div className="space-y-1">
                 {NEW_TESTAMENT_BOOKS.map((book) => renderBookSection(book))}
               </div>
@@ -644,30 +651,30 @@ export function PTImageBible() {
         </Tabs>
       )}
 
-      {/* Chapter Detail Dialog */}
+      {/* Chapter Detail Dialog - Mobile optimized */}
       <Dialog open={!!selectedChapter} onOpenChange={() => setSelectedChapter(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden">
+        <DialogContent className="max-w-3xl max-h-[90vh] sm:max-h-[85vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <span className="text-2xl">{selectedChapter?.symbol}</span>
-              {selectedChapter?.book} {selectedChapter?.chapter}: {selectedChapter?.title}
+            <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <span className="text-xl sm:text-2xl">{selectedChapter?.symbol}</span>
+              <span className="truncate">{selectedChapter?.book} {selectedChapter?.chapter}: {selectedChapter?.title}</span>
             </DialogTitle>
           </DialogHeader>
           
           {selectedChapter && (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {selectedChapter.imageUrl ? (
                 <div className="relative rounded-lg overflow-hidden bg-muted/20">
                   <img
                     src={selectedChapter.imageUrl}
                     alt={`${selectedChapter.book} ${selectedChapter.chapter}`}
-                    className="w-full h-auto max-h-[50vh] object-contain"
+                    className="w-full h-auto max-h-[40vh] sm:max-h-[50vh] object-contain"
                   />
                 </div>
               ) : (
-                <div className="relative rounded-lg overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 border-2 border-dashed border-border/50 p-8 text-center">
-                  <div className="text-6xl mb-4">{selectedChapter.symbol}</div>
-                  <p className="text-muted-foreground mb-4">No unique image yet for this chapter</p>
+                <div className="relative rounded-lg overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 border-2 border-dashed border-border/50 p-4 sm:p-8 text-center">
+                  <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">{selectedChapter.symbol}</div>
+                  <p className="text-sm text-muted-foreground mb-3 sm:mb-4">No unique image yet</p>
                   <Button
                     onClick={() => {
                       const chapter = chaptersByBook.get(selectedChapter.book)?.find(
@@ -676,6 +683,7 @@ export function PTImageBible() {
                       if (chapter) generateImageForChapter(chapter);
                     }}
                     disabled={isGenerating || !user}
+                    size="sm"
                     className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                   >
                     {isGenerating ? (
@@ -686,52 +694,56 @@ export function PTImageBible() {
                     ) : (
                       <>
                         <Wand2 className="h-4 w-4 mr-2" />
-                        Generate Unique Image
+                        Generate Image
                       </>
                     )}
                   </Button>
                   {!user && (
-                    <p className="text-xs text-muted-foreground mt-2">Sign in to generate images</p>
+                    <p className="text-xs text-muted-foreground mt-2">Sign in to generate</p>
                   )}
                 </div>
               )}
               
-              <Card className="p-4 bg-muted/30 border-border/50">
-                <p className="text-base leading-relaxed mb-3">{selectedChapter.summary}</p>
+              <Card className="p-3 sm:p-4 bg-muted/30 border-border/50">
+                <p className="text-sm sm:text-base leading-relaxed mb-2 sm:mb-3">{selectedChapter.summary}</p>
                 
-                <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                  <Badge variant="outline" className="bg-primary/10 text-primary">
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/50">
+                  <Badge variant="outline" className="bg-primary/10 text-primary text-xs">
                     <Sparkles className="h-3 w-3 mr-1" />
                     Memory Hook
                   </Badge>
-                  <span className="text-sm font-medium">{selectedChapter.memoryHook}</span>
+                  <span className="text-xs sm:text-sm font-medium">{selectedChapter.memoryHook}</span>
                 </div>
               </Card>
               
               <div className="flex justify-between gap-2">
                 <Button
                   variant="outline"
+                  size="sm"
                   disabled={selectedChapter.chapter <= 1}
                   onClick={() => {
                     const chapters = chaptersByBook.get(selectedChapter.book);
                     const prevChapter = chapters?.find(c => c.chapter === selectedChapter.chapter - 1);
                     if (prevChapter) handleChapterClick(prevChapter);
                   }}
+                  className="text-xs sm:text-sm"
                 >
-                  ← Previous
+                  ← <span className="hidden xs:inline">Previous</span><span className="xs:hidden">Prev</span>
                 </Button>
-                <Badge className="self-center bg-gradient-to-r from-purple-500 to-pink-500">
-                  {selectedChapter.imageUrl ? "24FPS Frame" : "Chapter Frame"}
+                <Badge className="self-center bg-gradient-to-r from-purple-500 to-pink-500 text-xs">
+                  {selectedChapter.imageUrl ? "24FPS" : "Frame"}
                 </Badge>
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => {
                     const chapters = chaptersByBook.get(selectedChapter.book);
                     const nextChapter = chapters?.find(c => c.chapter === selectedChapter.chapter + 1);
                     if (nextChapter) handleChapterClick(nextChapter);
                   }}
+                  className="text-xs sm:text-sm"
                 >
-                  Next →
+                  <span className="hidden xs:inline">Next</span><span className="xs:hidden">Next</span> →
                 </Button>
               </div>
             </div>
