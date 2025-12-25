@@ -324,12 +324,6 @@ export const job22to42Set: BibleSet = {
     { chapter: 42, book: 'Job', title: 'Repentance & Restoration', summary: 'Job repents in dust. Friends rebuked. Double blessing restored.', memoryHook: 'Humbled then doubled', symbol: '🙏' },
   ]
 };
-    { chapter: 39, book: 'Job', title: 'Animal Kingdom', summary: 'Mountain goats, wild donkey, ostrich, horse, hawk.', memoryHook: 'Creation zoo tour', symbol: '🦁' },
-    { chapter: 40, book: 'Job', title: 'Behemoth', summary: 'Job silenced. Behold Behemoth I made with you.', memoryHook: 'Hand on mouth, giant beast', symbol: '🦛' },
-    { chapter: 41, book: 'Job', title: 'Leviathan', summary: 'Can you capture Leviathan? Fire-breathing sea monster.', memoryHook: 'Fearless sea creature', symbol: '🐉' },
-    { chapter: 42, book: 'Job', title: 'Repentance & Restoration', summary: 'Job repents in dust. Friends rebuked. Double blessing restored.', memoryHook: 'Humbled then doubled', symbol: '🙏' },
-  ]
-};
 
 // More Psalms sets - following PDF 90-day breakdown
 // DAY 38-42: Psalms 4-30 (already in allBooks as psalms1to30Set)
