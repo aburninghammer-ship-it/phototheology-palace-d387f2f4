@@ -14,8 +14,10 @@ import {
   XCircle,
   BookOpen,
   Zap,
-  Trophy
+  Trophy,
+  WifiOff
 } from "lucide-react";
+import { OfflineIndicator } from "@/components/bible/OfflineIndicator";
 import { ChapterFrame } from "@/data/exodus24fpsData";
 import { genesis25to50Data } from "@/data/genesis25to50Data";
 import { exodus25toLev8Data } from "@/data/exodus25toLev8Data";
@@ -365,6 +367,15 @@ export const Extended24FPSDrill: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Offline indicator */}
+      <OfflineIndicator />
+      
+      {/* Offline-ready badge */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <WifiOff className="h-4 w-4" />
+        <span>Works offline - all {shuffledCards.length} chapters stored locally</span>
+      </div>
+
       {/* Book Set Tabs */}
       <Tabs value={activeSet} onValueChange={setActiveSet}>
         <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-auto">
