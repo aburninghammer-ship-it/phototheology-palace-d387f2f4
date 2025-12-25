@@ -758,6 +758,12 @@ export default function RoomDetail() {
 
               {/* PRACTICE TAB */}
               <TabsContent value="practice" className="space-y-6 mt-6">
+                {room.id === "st" && (
+                  <div className="space-y-4">
+                    <SymbolsLibrary />
+                  </div>
+                )}
+
                 <RoomPracticeSpace
                   floorNumber={floor.number}
                   roomId={room.id}
