@@ -1388,31 +1388,53 @@ export const exodusStories: BiblicalStory[] = [
 ];
 
 // Import extended stories
-import { 
-  leviticusStories, 
-  numbersStories, 
-  deuteronomyStories, 
-  joshuaStories, 
-  judgesStories, 
-  ruthStories, 
+import {
+  leviticusStories,
+  numbersStories,
+  deuteronomyStories,
+  joshuaStories,
+  judgesStories,
+  ruthStories,
   samuel1Stories,
   danielStories,
   jonahStories
 } from "./storyLibraryExtended";
 
+import {
+  samuel2Stories, kings1Stories, kings2Stories, chronicles1Stories, chronicles2Stories,
+  ezraStories, nehemiahStories, estherStories
+} from "./storyLibraryOT2";
+
+import {
+  jobStories, psalmsStories, proverbsStories, ecclesiastesStories, songStories
+} from "./storyLibraryPoetry";
+
+import {
+  isaiahStories, jeremiahStories, lamentationsStories, ezekielStories,
+  hoseaStories, joelStories, amosStories, obadiahStories, micahStories,
+  nahumStories, habakkukStories, zephaniahStories, haggaiStories, zechariahStories, malachiStories
+} from "./storyLibraryProphets";
+
+import {
+  matthewStories, markStories, lukeStories, johnStories, actsStories,
+  romansStories, corinthians1Stories, ephesiansStories, philippiansStories,
+  hebrewsStories, revelationStories
+} from "./storyLibraryNT";
+
 // Combine all volumes
 export const allStories: BiblicalStory[] = [
-  ...genesisStories,
-  ...exodusStories,
-  ...leviticusStories,
-  ...numbersStories,
-  ...deuteronomyStories,
-  ...joshuaStories,
-  ...judgesStories,
-  ...ruthStories,
-  ...samuel1Stories,
-  ...danielStories,
-  ...jonahStories
+  ...genesisStories, ...exodusStories, ...leviticusStories, ...numbersStories, ...deuteronomyStories,
+  ...joshuaStories, ...judgesStories, ...ruthStories, ...samuel1Stories, ...samuel2Stories,
+  ...kings1Stories, ...kings2Stories, ...chronicles1Stories, ...chronicles2Stories,
+  ...ezraStories, ...nehemiahStories, ...estherStories,
+  ...jobStories, ...psalmsStories, ...proverbsStories, ...ecclesiastesStories, ...songStories,
+  ...isaiahStories, ...jeremiahStories, ...lamentationsStories, ...ezekielStories,
+  ...danielStories, ...hoseaStories, ...joelStories, ...amosStories, ...obadiahStories,
+  ...jonahStories, ...micahStories, ...nahumStories, ...habakkukStories, ...zephaniahStories,
+  ...haggaiStories, ...zechariahStories, ...malachiStories,
+  ...matthewStories, ...markStories, ...lukeStories, ...johnStories, ...actsStories,
+  ...romansStories, ...corinthians1Stories, ...ephesiansStories, ...philippiansStories,
+  ...hebrewsStories, ...revelationStories
 ];
 
 // Get stories by volume
