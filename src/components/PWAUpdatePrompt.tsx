@@ -207,5 +207,40 @@ export function useCheckForUpdates() {
     }
   }, []);
 
-  return { checkForUpdates, applyUpdate, isChecking, updateAvailable };
+  // Force update - bypasses cooldown, clears all caches, unregisters SW and reloads
+  const forceUpdate = useCallback(async () => {
+    console.log('Force update initiated...');
+    
+    // Clear cooldown
+    localStorage.removeItem(UPDATE_COOLDOWN_KEY);
+    
+    try {
+      // Unregister all service workers
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+          console.log('Unregistered SW:', registration.scope);
+        }
+      }
+      
+      // Clear all caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        for (const cacheName of cacheNames) {
+          await caches.delete(cacheName);
+          console.log('Deleted cache:', cacheName);
+        }
+      }
+      
+      // Force reload bypassing cache
+      window.location.href = window.location.href.split('?')[0] + '?t=' + Date.now();
+    } catch (error) {
+      console.error('Error during force update:', error);
+      // Fallback: just hard reload
+      window.location.reload();
+    }
+  }, []);
+
+  return { checkForUpdates, applyUpdate, forceUpdate, isChecking, updateAvailable };
 }
