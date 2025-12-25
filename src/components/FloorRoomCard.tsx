@@ -14,7 +14,7 @@ interface FloorRoomCardProps {
 }
 
 // Rooms that have been newly renovated (updated in the last 24 hours)
-const newlyRenovatedRooms = new Set(["jr", "math", "cr"]);
+const newlyRenovatedRooms = new Set(["jr", "math", "cr", "fe", "bl"]);
 
 // Room emojis for visual flair
 const roomEmojis: Record<string, string> = {
