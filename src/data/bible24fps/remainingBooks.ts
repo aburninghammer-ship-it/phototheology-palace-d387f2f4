@@ -101,10 +101,11 @@ export const secondKingsSet: BibleSet = {
   ]
 };
 
-export const firstChroniclesSet: BibleSet = {
-  id: '1-chronicles-1-29',
-  label: '1 Chronicles 1-29',
-  theme: 'Genealogies & David\'s Kingdom',
+// 1 Chronicles split per PDF Day 27-29
+export const firstChronicles1to13Set: BibleSet = {
+  id: '1-chronicles-1-13',
+  label: '1 Chronicles 1-13',
+  theme: 'Genealogies & David\'s Rise',
   testament: 'old',
   chapters: [
     { chapter: 1, book: '1 Chronicles', title: 'Adam to Abraham', summary: 'Genealogy from Adam through Noah\'s sons to Abraham, Ishmael, and Esau.', memoryHook: 'Family tree from first man', symbol: '🌳' },
@@ -120,6 +121,15 @@ export const firstChroniclesSet: BibleSet = {
     { chapter: 11, book: '1 Chronicles', title: 'David Made King', summary: 'All Israel makes David king. Captures Jerusalem. Mighty men listed.', memoryHook: 'Hebron anointing, Zion captured', symbol: '🏙️' },
     { chapter: 12, book: '1 Chronicles', title: 'Warriors Join David', summary: 'Warriors from all tribes join David at Ziklag and Hebron.', memoryHook: 'Growing army from every tribe', symbol: '🪖' },
     { chapter: 13, book: '1 Chronicles', title: 'Ark Moved', summary: 'First attempt to bring ark. Uzzah struck dead. Ark to Obed-edom.', memoryHook: 'Cart disaster, stopped journey', symbol: '🛞' },
+  ]
+};
+
+export const firstChronicles14to29Set: BibleSet = {
+  id: '1-chronicles-14-29',
+  label: '1 Chronicles 14-29',
+  theme: 'David\'s Kingdom & Temple Prep',
+  testament: 'old',
+  chapters: [
     { chapter: 14, book: '1 Chronicles', title: 'David Established', summary: 'Hiram helps. David\'s family. Two victories over Philistines.', memoryHook: 'Palace, family, battles won', symbol: '🏠' },
     { chapter: 15, book: '1 Chronicles', title: 'Ark Brought Properly', summary: 'Levites carry ark correctly. Celebration and worship.', memoryHook: 'Right way to carry, dancing', symbol: '🎺' },
     { chapter: 16, book: '1 Chronicles', title: 'Worship Established', summary: 'Ark placed in tent. David\'s psalm of thanks. Worship order set.', memoryHook: 'Thanksgiving psalm, appointed singers', symbol: '🎶' },
@@ -139,10 +149,11 @@ export const firstChroniclesSet: BibleSet = {
   ]
 };
 
-export const secondChroniclesSet: BibleSet = {
-  id: '2-chronicles-1-36',
-  label: '2 Chronicles 1-36',
-  theme: 'Temple & Reformation',
+// 2 Chronicles split per PDF Day 29-31
+export const secondChronicles1to18Set: BibleSet = {
+  id: '2-chronicles-1-18',
+  label: '2 Chronicles 1-18',
+  theme: 'Temple & Early Kings',
   testament: 'old',
   chapters: [
     { chapter: 1, book: '2 Chronicles', title: 'Solomon\'s Wisdom', summary: 'Solomon worships at Gibeon. Asks for wisdom. Receives wealth too.', memoryHook: 'Dream choice, double blessing', symbol: '🧠' },
@@ -163,6 +174,15 @@ export const secondChroniclesSet: BibleSet = {
     { chapter: 16, book: '2 Chronicles', title: 'Asa\'s Failure', summary: 'Asa relies on Syria not God. Diseased feet. Angry at prophet.', memoryHook: 'Good start, bad ending', symbol: '🦶' },
     { chapter: 17, book: '2 Chronicles', title: 'Jehoshaphat', summary: 'Jehoshaphat\'s reforms. Sends teachers throughout Judah. Nations fear.', memoryHook: 'Teaching Levites, respected kingdom', symbol: '📚' },
     { chapter: 18, book: '2 Chronicles', title: 'Micaiah\'s Warning', summary: 'Alliance with Ahab. Micaiah prophesies defeat. Ahab dies.', memoryHook: '400 vs 1 prophet, random arrow', symbol: '🎯' },
+  ]
+};
+
+export const secondChronicles19to36Set: BibleSet = {
+  id: '2-chronicles-19-36',
+  label: '2 Chronicles 19-36',
+  theme: 'Revival & Exile',
+  testament: 'old',
+  chapters: [
     { chapter: 19, book: '2 Chronicles', title: 'Judicial Reform', summary: 'Jehoshaphat rebuked. Appoints judges. "Judge for the LORD."', memoryHook: 'Courts established, fear God', symbol: '⚖️' },
     { chapter: 20, book: '2 Chronicles', title: 'Singers Lead Battle', summary: 'Massive army attacks. Jehoshaphat prays. Singers lead. Enemies destroy each other.', memoryHook: 'Choir marches, enemies self-destruct', symbol: '🎵' },
     { chapter: 21, book: '2 Chronicles', title: 'Jehoram\'s Evil', summary: 'Kills brothers. Follows Ahab\'s ways. Elijah\'s letter. Painful death.', memoryHook: 'Fratricidal king, bowels fall out', symbol: '💀' },
@@ -244,10 +264,11 @@ export const estherSet: BibleSet = {
   ]
 };
 
-export const jobSet: BibleSet = {
-  id: 'job-1-42',
-  label: 'Job 1-42',
-  theme: 'Suffering & Sovereignty',
+// Job split per PDF Day 34-37
+export const job1to21Set: BibleSet = {
+  id: 'job-1-21',
+  label: 'Job 1-21',
+  theme: 'Suffering & Dialogue',
   testament: 'old',
   chapters: [
     { chapter: 1, book: 'Job', title: 'Satan\'s Test', summary: 'Job\'s prosperity. Satan challenges. Loses children and possessions.', memoryHook: 'Hedge removed, losses multiply', symbol: '💔' },
@@ -271,6 +292,15 @@ export const jobSet: BibleSet = {
     { chapter: 19, book: 'Job', title: 'My Redeemer Lives', summary: 'God has wronged me. Friends abandon. But my Redeemer lives!', memoryHook: '"I know that my Redeemer lives"', symbol: '✝️' },
     { chapter: 20, book: 'Job', title: 'Zophar Second', summary: 'Wicked\'s joy is brief. Riches vomited up. God\'s wrath.', memoryHook: 'Sweet poison, fleeting triumph', symbol: '🍬' },
     { chapter: 21, book: 'Job', title: 'Wicked Prosper', summary: 'Why do wicked live long and prosper? Your answers are empty.', memoryHook: 'Rich wicked die in peace', symbol: '💰' },
+  ]
+};
+
+export const job22to42Set: BibleSet = {
+  id: 'job-22-42',
+  label: 'Job 22-42',
+  theme: 'God Answers',
+  testament: 'old',
+  chapters: [
     { chapter: 22, book: 'Job', title: 'Eliphaz Third', summary: 'Your wickedness is great! Repent and be restored.', memoryHook: 'False accusations, "Repent!"', symbol: '👆' },
     { chapter: 23, book: 'Job', title: 'If Only I Could Find Him', summary: 'I would present my case. He knows my way. Tested as gold.', memoryHook: 'Searching all directions, gold refining', symbol: '🔍' },
     { chapter: 24, book: 'Job', title: 'Why Hidden Times?', summary: 'Why doesn\'t God hold court? Wicked exploit the poor.', memoryHook: 'Justice delayed, evil unchecked', symbol: '❓' },
@@ -288,6 +318,12 @@ export const jobSet: BibleSet = {
     { chapter: 36, book: 'Job', title: 'God is Great', summary: 'God is mighty but doesn\'t despise. Learn from suffering.', memoryHook: 'Teacher through pain', symbol: '📚' },
     { chapter: 37, book: 'Job', title: 'Storm Theology', summary: 'Thunder is God\'s voice. Clouds, ice, winds obey.', memoryHook: 'Weather as sermon', symbol: '⛈️' },
     { chapter: 38, book: 'Job', title: 'God Answers', summary: 'Who is this? Where were you at creation? Questions from whirlwind.', memoryHook: '"Where were you?"', symbol: '🌪️' },
+    { chapter: 39, book: 'Job', title: 'Animal Kingdom', summary: 'Mountain goats, wild donkey, ostrich, horse, hawk.', memoryHook: 'Creation zoo tour', symbol: '🦁' },
+    { chapter: 40, book: 'Job', title: 'Behemoth', summary: 'Job silenced. Behold Behemoth I made with you.', memoryHook: 'Hand on mouth, giant beast', symbol: '🦛' },
+    { chapter: 41, book: 'Job', title: 'Leviathan', summary: 'Can you capture Leviathan? Fire-breathing sea monster.', memoryHook: 'Fearless sea creature', symbol: '🐉' },
+    { chapter: 42, book: 'Job', title: 'Repentance & Restoration', summary: 'Job repents in dust. Friends rebuked. Double blessing restored.', memoryHook: 'Humbled then doubled', symbol: '🙏' },
+  ]
+};
     { chapter: 39, book: 'Job', title: 'Animal Kingdom', summary: 'Mountain goats, wild donkey, ostrich, horse, hawk.', memoryHook: 'Creation zoo tour', symbol: '🦁' },
     { chapter: 40, book: 'Job', title: 'Behemoth', summary: 'Job silenced. Behold Behemoth I made with you.', memoryHook: 'Hand on mouth, giant beast', symbol: '🦛' },
     { chapter: 41, book: 'Job', title: 'Leviathan', summary: 'Can you capture Leviathan? Fire-breathing sea monster.', memoryHook: 'Fearless sea creature', symbol: '🐉' },
@@ -804,12 +840,15 @@ export const remainingBibleSets: BibleSet[] = [
   secondSamuelSet,
   firstKingsSet,
   secondKingsSet,
-  firstChroniclesSet,
-  secondChroniclesSet,
+  firstChronicles1to13Set,
+  firstChronicles14to29Set,
+  secondChronicles1to18Set,
+  secondChronicles19to36Set,
   ezraSet,
   nehemiahSet,
   estherSet,
-  jobSet,
+  job1to21Set,
+  job22to42Set,
   psalms31to55Set,
   psalms56to81Set,
   psalms82to106Set,
