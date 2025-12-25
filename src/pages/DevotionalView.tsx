@@ -294,29 +294,29 @@ export default function DevotionalView() {
       <div className={`relative bg-gradient-to-r ${gradient} py-6 px-4`}>
         <div className="absolute inset-0 bg-black/10 pointer-events-none" />
         <div className="relative max-w-4xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/devotionals")} className="hidden md:flex text-white hover:bg-white/20">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <Button variant="ghost" size="icon" onClick={() => navigate("/devotionals")} className="hidden md:flex text-white hover:bg-white/20 shrink-0">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <div>
-                <h1 className="font-bold text-white text-lg truncate max-w-[200px] md:max-w-none">{plan.title}</h1>
+              <div className="min-w-0">
+                <h1 className="font-bold text-white text-lg truncate">{plan.title}</h1>
                 <p className="text-white/80 text-sm">Day {selectedDayIndex + 1} of {plan.duration}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleRegenerateDay}
                 disabled={isRegeneratingDay}
-                className="text-white hover:bg-white/20 disabled:opacity-30"
+                className="text-white hover:bg-white/20 disabled:opacity-30 h-9 w-9"
                 aria-label="Regenerate this day's devotional"
               >
                 {isRegeneratingDay ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <RefreshCw className="h-5 w-5" />
+                  <RefreshCw className="h-4 w-4" />
                 )}
               </Button>
               {plan && currentDay && (
@@ -324,17 +324,17 @@ export default function DevotionalView() {
                   plan={plan} 
                   day={currentDay}
                   trigger={
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-                      <Share2 className="h-5 w-5" />
+                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-9 w-9">
+                      <Share2 className="h-4 w-4" />
                     </Button>
                   }
                 />
               )}
-              <Button variant="ghost" size="icon" onClick={goToPrevDay} disabled={selectedDayIndex === 0} className="text-white hover:bg-white/20 disabled:opacity-30">
-                <ChevronLeft className="h-5 w-5" />
+              <Button variant="ghost" size="icon" onClick={goToPrevDay} disabled={selectedDayIndex === 0} className="text-white hover:bg-white/20 disabled:opacity-30 h-9 w-9">
+                <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={goToNextDay} disabled={selectedDayIndex === (days?.length || 1) - 1} className="text-white hover:bg-white/20 disabled:opacity-30">
-                <ChevronRight className="h-5 w-5" />
+              <Button variant="ghost" size="icon" onClick={goToNextDay} disabled={selectedDayIndex === (days?.length || 1) - 1} className="text-white hover:bg-white/20 disabled:opacity-30 h-9 w-9">
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
