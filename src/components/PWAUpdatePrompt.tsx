@@ -7,7 +7,7 @@ import { hardReloadApp, PWA_UPDATE_COOLDOWN_KEY } from '@/lib/pwa';
 
 // Key for tracking recent updates to prevent prompt spam
 const UPDATE_COOLDOWN_KEY = PWA_UPDATE_COOLDOWN_KEY;
-const UPDATE_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown after update
+const UPDATE_COOLDOWN_MS = 30 * 1000; // 30 seconds cooldown after update (reduced from 5 min)
 
 function getCooldownUntil(): number | null {
   try {
@@ -130,15 +130,25 @@ export function PWAUpdatePrompt() {
   }, []);
 
   // Also check for updates when user returns to the app (mobile + desktop)
+  // Auto-apply updates if a SW is waiting when user returns
   useEffect(() => {
-    const check = () => {
+    const checkAndAutoApply = async () => {
       const r = registrationRef.current;
-      if (r) r.update();
+      if (r) {
+        await r.update();
+        // Auto-apply if there's a waiting SW and we're not in cooldown
+        if (r.waiting && !isInCooldown()) {
+          console.log('Auto-applying update on visibility change...');
+          setCooldown();
+          r.waiting.postMessage({ type: 'SKIP_WAITING' });
+          window.location.reload();
+        }
+      }
     };
 
-    const onFocus = () => check();
+    const onFocus = () => checkAndAutoApply();
     const onVisibility = () => {
-      if (document.visibilityState === 'visible') check();
+      if (document.visibilityState === 'visible') checkAndAutoApply();
     };
 
     window.addEventListener('focus', onFocus);
@@ -169,8 +179,8 @@ export function PWAUpdatePrompt() {
     setOfflineReady(false);
     setNeedRefresh(false);
     setShowReload(false);
-    // Shorter cooldown when user dismisses
-    setCooldown(2 * 60 * 1000);
+    // Short cooldown when user dismisses (15 seconds)
+    setCooldown(15 * 1000);
   };
 
   if (!offlineReady && !showReload) return null;
