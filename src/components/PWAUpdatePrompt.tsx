@@ -245,6 +245,15 @@ export function PWAUpdatePrompt() {
                 <RefreshCw className={`h-3 w-3 mr-1 ${isUpdating ? 'animate-spin' : ''}`} />
                 {isUpdating ? 'Updating...' : 'Reload'}
               </Button>
+              <Button
+                onClick={hardReload}
+                variant="outline"
+                size="sm"
+                className="flex-1 sm:flex-initial"
+                disabled={isUpdating}
+              >
+                Force Update
+              </Button>
               <Button onClick={close} variant="outline" size="sm" className="flex-1 sm:flex-initial" disabled={isUpdating}>
                 Later
               </Button>

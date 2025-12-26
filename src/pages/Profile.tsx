@@ -41,8 +41,8 @@ export default function Profile() {
     
     try {
       // Clear update cooldown
-      localStorage.removeItem('pwa-update-cooldown');
-      
+      localStorage.removeItem('pwa_update_cooldown');
+
       // Unregister all service workers
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
