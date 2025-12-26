@@ -19,89 +19,111 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     VitePWA({
-      // Prompt mode so the in-app update banner can coordinate reloads
-      registerType: 'prompt',
-      includeAssets: ['favicon.ico', 'robots.txt', 'pwa-192x192.png', 'pwa-512x512.png'],
+      // In production, update automatically so published users aren't stuck on old builds.
+      // In dev, keep prompt mode so we can coordinate in-app messaging.
+      registerType: mode === "production" ? "autoUpdate" : "prompt",
+      includeAssets: [
+        "favicon.ico",
+        "robots.txt",
+        "pwa-192x192.png",
+        "pwa-512x512.png",
+      ],
       manifest: false, // Use external manifest.webmanifest
       workbox: {
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api/, /^\/supabase/],
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+
+        // IMPORTANT: do NOT serve index.html purely from precache.
+        // This avoids the "published app never updates" trap.
+        // We'll handle navigations via NetworkFirst runtime caching instead.
+        globPatterns: ["**/*.{js,css,ico,png,svg,woff,woff2}"],
+
         runtimeCaching: [
+          // Always try the network for navigations; fall back to cache when offline.
+          {
+            urlPattern: ({ request }) => request.mode === "navigate",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "html-pages",
+              networkTimeoutSeconds: 5,
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 60 * 24, // 1 day
+              },
+            },
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'google-fonts-cache',
+              cacheName: "google-fonts-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              }
-            }
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+            },
           },
           {
             urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'gstatic-fonts-cache',
+              cacheName: "gstatic-fonts-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              }
-            }
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+            },
           },
+          // Hashed assets are safe to cache aggressively.
           {
             urlPattern: /\.(?:js|css)$/,
-            handler: 'NetworkFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'static-resources',
-              networkTimeoutSeconds: 3,
+              cacheName: "static-resources",
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7
-              }
-            }
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+            },
           },
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
-            handler: 'CacheFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'images-cache',
+              cacheName: "images-cache",
               expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 30
-              }
-            }
+                maxEntries: 300,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+            },
           },
           {
             urlPattern: /^https:\/\/tdjtumtdkjicnhlpqqzd\.supabase\.co\/rest\/.*/i,
-            handler: 'NetworkFirst',
+            handler: "NetworkFirst",
             options: {
-              cacheName: 'supabase-api-cache',
+              cacheName: "backend-api-cache",
               networkTimeoutSeconds: 10,
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 5 // 5 minutes
-              }
-            }
+                maxAgeSeconds: 60 * 5, // 5 minutes
+              },
+            },
           },
           {
             urlPattern: /^https:\/\/tdjtumtdkjicnhlpqqzd\.supabase\.co\/storage\/.*/i,
-            handler: 'CacheFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'supabase-storage-cache',
+              cacheName: "backend-storage-cache",
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7
-              }
-            }
-          }
-        ]
-      }
-    })
+                maxEntries: 150,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+            },
+          },
+        ],
+      },
+    }),
   ].filter(Boolean),
   resolve: {
     alias: {
