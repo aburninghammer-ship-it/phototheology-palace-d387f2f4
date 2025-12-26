@@ -37,10 +37,10 @@ export function useRoomRenovationStatus(
       setLoading(true);
 
       // Call the database function to check if room is newly renovated
-      const { data, error } = await supabase.rpc("is_room_newly_renovated", {
-        p_user_id: user.id,
-        p_room_id: roomId,
-        p_floor_number: floorNumber,
+      // Using type assertion until types regenerate
+      const { data, error } = await (supabase.rpc as any)("is_room_newly_renovated", {
+        _user_id: user.id,
+        _room_id: roomId,
       });
 
       if (error) throw error;
@@ -59,10 +59,10 @@ export function useRoomRenovationStatus(
 
     try {
       // Call the database function to mark room as visited
-      const { error } = await supabase.rpc("mark_room_visited", {
-        p_user_id: user.id,
-        p_room_id: roomId,
-        p_floor_number: floorNumber,
+      // Using type assertion until types regenerate
+      const { error } = await (supabase.rpc as any)("mark_room_visited", {
+        _user_id: user.id,
+        _room_id: roomId,
       });
 
       if (error) throw error;

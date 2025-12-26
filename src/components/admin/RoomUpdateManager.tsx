@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +16,7 @@ interface RoomUpdate {
   room_id: string;
   floor_number: number;
   update_description: string;
-  updated_at: string;
+  created_at: string;
 }
 
 export function RoomUpdateManager() {
@@ -52,14 +51,15 @@ export function RoomUpdateManager() {
 
   const fetchUpdates = async () => {
     try {
-      const { data, error } = await supabase
-        .from("room_content_updates")
+      // Use type assertion to work around missing types until they regenerate
+      const { data, error } = await (supabase
+        .from("room_content_updates" as any)
         .select("*")
-        .order("updated_at", { ascending: false })
-        .limit(50);
+        .order("created_at", { ascending: false })
+        .limit(50) as any);
 
       if (error) throw error;
-      setUpdates(data || []);
+      setUpdates((data as RoomUpdate[]) || []);
     } catch (error) {
       console.error("Error fetching room updates:", error);
     } finally {
@@ -75,12 +75,13 @@ export function RoomUpdateManager() {
 
     setCreating(true);
     try {
-      const { error } = await supabase.from("room_content_updates").insert({
-        room_id: selectedRoom,
-        floor_number: parseInt(selectedFloor),
-        update_description: description.trim(),
-        updated_by: user?.id,
-      });
+      const { error } = await (supabase
+        .from("room_content_updates" as any)
+        .insert({
+          room_id: selectedRoom,
+          floor_number: parseInt(selectedFloor),
+          update_description: description.trim(),
+        }) as any);
 
       if (error) throw error;
 
@@ -97,7 +98,10 @@ export function RoomUpdateManager() {
 
   const deleteUpdate = async (id: string) => {
     try {
-      const { error } = await supabase.from("room_content_updates").delete().eq("id", id);
+      const { error } = await (supabase
+        .from("room_content_updates" as any)
+        .delete()
+        .eq("id", id) as any);
 
       if (error) throw error;
       toast({ title: "Update removed" });
@@ -212,7 +216,7 @@ export function RoomUpdateManager() {
                         </p>
                         <p className="text-sm text-muted-foreground">{update.update_description}</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {format(new Date(update.updated_at), "MMM d, yyyy 'at' h:mm a")}
+                          {format(new Date(update.created_at), "MMM d, yyyy 'at' h:mm a")}
                         </p>
                       </div>
                     </div>
