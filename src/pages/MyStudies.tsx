@@ -582,6 +582,29 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
               </Card>
             )}
 
+            {/* Active filter indicator */}
+            {(searchQuery || selectedTags.length > 0) && (
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 border border-primary/20">
+                <Search className="w-4 h-4 text-primary" />
+                <span className="text-sm text-foreground">
+                  Showing {filteredStudies.length} of {studies.length} studies
+                  {searchQuery && <span className="font-medium"> matching "{searchQuery}"</span>}
+                  {selectedTags.length > 0 && <span className="font-medium"> with {selectedTags.length} tag filter{selectedTags.length > 1 ? 's' : ''}</span>}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="ml-auto h-7 text-xs"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedTags([]);
+                  }}
+                >
+                  Clear all filters
+                </Button>
+              </div>
+            )}
+
             {/* Sort & Filter Bar */}
             <div className="flex flex-col sm:flex-row gap-3 justify-between">
               <StudyTagsManager
