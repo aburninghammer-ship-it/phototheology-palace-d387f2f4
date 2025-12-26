@@ -3,18 +3,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight, Lock, Sparkles, Star } from "lucide-react";
 import { useRoomUnlock } from "@/hooks/useRoomUnlock";
+import { useRoomRenovationStatus } from "@/hooks/useRoomRenovationStatus";
 import { Room } from "@/data/palaceData";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { isRoomRenovated } from "@/config/renovatedRooms";
 
 interface FloorRoomCardProps {
   room: Room;
   floorNumber: number;
   gradient: string;
 }
-
-// Renovated rooms are defined centrally in @/config/renovatedRooms
 
 // Room emojis for visual flair
 const roomEmojis: Record<string, string> = {
@@ -77,17 +75,17 @@ const roomGradients: Record<string, string> = {
 
 export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProps) => {
   const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
+  const { isNewlyRenovated, markAsVisited } = useRoomRenovationStatus(room.id, floorNumber);
   const navigate = useNavigate();
-  
+
   const showLocked = loading || !isUnlocked;
   const roomEmoji = roomEmojis[room.id] || "⭐";
-  const isNewlyRenovated = isRoomRenovated(room.id);
   // Use room-specific gradient if available, otherwise fall back to floor gradient
   const roomGradient = roomGradients[room.id] || gradient;
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (loading) return;
-    
+
     if (!isUnlocked) {
       toast.error("🔒 Room Locked", {
         description: `Complete the previous floors to unlock Floor ${floorNumber}. Progress through each floor in order to access new rooms.`,
@@ -95,7 +93,10 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
       });
       return;
     }
-    
+
+    // Mark room as visited (removes "Newly Renovated" badge)
+    await markAsVisited();
+
     navigate(`/palace/floor/${floorNumber}/room/${room.id}`);
   };
 
