@@ -12,6 +12,7 @@ import { useDirectMessagesContext } from "@/contexts/DirectMessagesContext";
 import { Badge } from "@/components/ui/badge";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { PWAInstallButton } from "@/components/PWAInstallButton";
+import { PWAForceUpdateButton } from "@/components/PWAForceUpdateButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NavigationStyleToggle } from "@/components/NavigationStyleToggle";
@@ -102,6 +103,7 @@ export const Navigation = () => {
               </Link>
               <div className="flex items-center gap-2">
                 <PWAInstallButton />
+                <PWAForceUpdateButton aria-label="Reload latest version" />
               </div>
             </div>
           </div>
@@ -136,6 +138,7 @@ export const Navigation = () => {
             <div className="flex items-center gap-2 md:gap-4 flex-1 justify-end">
               <GlobalSearch />
               <PWAInstallButton />
+              <PWAForceUpdateButton aria-label="Reload latest version" className="hidden sm:inline-flex" />
               <ThemeToggle />
 
               {/* Admin-only Live Demo Link */}
