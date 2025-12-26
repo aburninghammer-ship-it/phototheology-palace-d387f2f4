@@ -59,6 +59,7 @@ export function PWAUpdatePrompt() {
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
   } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
       console.log('SW registered:', swUrl);
@@ -129,36 +130,6 @@ export function PWAUpdatePrompt() {
     return () => window.clearTimeout(t);
   }, []);
 
-  // Also check for updates when user returns to the app (mobile + desktop)
-  // Auto-apply updates if a SW is waiting when user returns
-  useEffect(() => {
-    const checkAndAutoApply = async () => {
-      const r = registrationRef.current;
-      if (r) {
-        await r.update();
-        // Auto-apply if there's a waiting SW and we're not in cooldown
-        if (r.waiting && !isInCooldown()) {
-          console.log('Auto-applying update on visibility change...');
-          setCooldown();
-          r.waiting.postMessage({ type: 'SKIP_WAITING' });
-          window.location.reload();
-        }
-      }
-    };
-
-    const onFocus = () => checkAndAutoApply();
-    const onVisibility = () => {
-      if (document.visibilityState === 'visible') checkAndAutoApply();
-    };
-
-    window.addEventListener('focus', onFocus);
-    document.addEventListener('visibilitychange', onVisibility);
-    return () => {
-      window.removeEventListener('focus', onFocus);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, []);
-
   const handleUpdate = useCallback(async () => {
     if (isUpdating) return;
     setIsUpdating(true);
@@ -167,13 +138,53 @@ export function PWAUpdatePrompt() {
       // Mark cooldown immediately to avoid prompt spam
       setCooldown();
 
-      // Most reliable path: clear SW + caches and do a cache-busted navigation
-      await hardReload();
+      // Preferred path: ask the waiting SW to activate and reload.
+      // If that fails (or no SW), fall back to a full hard reload.
+      await updateServiceWorker(true);
     } catch (error) {
-      console.error('Error during update:', error);
+      console.error('SW apply failed, falling back to hard reload:', error);
       await hardReload();
+    } finally {
+      // If reload didn't happen for any reason, re-enable the UI
+      setIsUpdating(false);
     }
-  }, [isUpdating]);
+  }, [isUpdating, updateServiceWorker]);
+
+  // Also check for updates when user returns to the app (mobile + desktop)
+  // Auto-apply updates if a SW is waiting when user returns
+  useEffect(() => {
+    const checkAndAutoApply = async () => {
+      try {
+        if (!('serviceWorker' in navigator)) return;
+
+        const reg = registrationRef.current ?? (await navigator.serviceWorker.getRegistration());
+        if (!reg) return;
+        registrationRef.current = reg;
+
+        await reg.update();
+
+        const hasWaiting = !!(reg.waiting ?? (await navigator.serviceWorker.getRegistration())?.waiting);
+        if ((needRefresh || hasWaiting) && !isInCooldown()) {
+          console.log('Auto-applying update on return...');
+          await handleUpdate();
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    const onFocus = () => void checkAndAutoApply();
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') void checkAndAutoApply();
+    };
+
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [handleUpdate, needRefresh]);
 
   const close = () => {
     setOfflineReady(false);
