@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -176,10 +177,10 @@ export const ChainChessLeaderboard = () => {
 
         {/* View Full Leaderboard */}
         <Button variant="ghost" className="w-full mt-4" asChild>
-          <a href="/leaderboard">
+          <Link to="/leaderboard">
             <TrendingUp className="h-4 w-4 mr-2" />
             View Full Leaderboard
-          </a>
+          </Link>
         </Button>
       </CardContent>
     </Card>
