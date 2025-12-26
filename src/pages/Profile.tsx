@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { User, Mail, Trophy, Star, Calendar, Upload, Loader2 } from "lucide-react";
+import { User, Mail, Trophy, Star, Calendar, Upload, Loader2, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
@@ -32,7 +32,48 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [isOwner, setIsOwner] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleForceRefresh = async () => {
+    setIsRefreshing(true);
+    toast.info("Clearing app cache and refreshing...");
+    
+    try {
+      // Clear update cooldown
+      localStorage.removeItem('pwa-update-cooldown');
+      
+      // Unregister all service workers
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+          console.log('Unregistered SW:', registration.scope);
+        }
+      }
+      
+      // Clear all caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        for (const cacheName of cacheNames) {
+          await caches.delete(cacheName);
+          console.log('Deleted cache:', cacheName);
+        }
+      }
+      
+      toast.success("Cache cleared! Reloading app...");
+      
+      // Small delay so user sees the success message
+      setTimeout(() => {
+        // Force reload bypassing cache
+        window.location.href = window.location.href.split('?')[0] + '?t=' + Date.now();
+      }, 500);
+    } catch (error) {
+      console.error('Error during force refresh:', error);
+      toast.error("Error clearing cache. Reloading anyway...");
+      window.location.reload();
+    }
+  };
 
   const getTierDisplay = () => {
     switch (tier) {
@@ -380,6 +421,42 @@ export default function Profile() {
 
           {/* Notification Preferences */}
           <NotificationPreferences />
+
+          {/* App Refresh */}
+          <Card className="glass-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <RefreshCw className="h-5 w-5" />
+                App Refresh
+              </CardTitle>
+              <CardDescription>
+                Force refresh the app to get the latest updates
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                If the app seems outdated or you're experiencing issues, use this button to clear the cache and reload with the latest version.
+              </p>
+              <Button 
+                onClick={handleForceRefresh} 
+                disabled={isRefreshing}
+                variant="outline"
+                className="w-full"
+              >
+                {isRefreshing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Refreshing...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Force Refresh App
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Announcements (Owner Only) */}
           {isOwner && (
