@@ -23,17 +23,19 @@ const imageArraysRef: Record<string, string[]> = {
   Numbers: [],
   Deuteronomy: [],
   Joshua: [],
+  Ruth: [],
 };
 
 // Dynamic imports for static image arrays
 const loadImageArrays = async () => {
-  const [genesis, exodus, leviticus, numbers, deuteronomy, joshua] = await Promise.all([
+  const [genesis, exodus, leviticus, numbers, deuteronomy, joshua, ruth] = await Promise.all([
     import("@/assets/24fps/genesis").then(m => m.genesisImages),
     import("@/assets/24fps/exodus").then(m => m.exodusImages),
     import("@/assets/24fps/leviticus").then(m => m.leviticusImages),
     import("@/assets/24fps/numbers").then(m => m.numbersImages),
     import("@/assets/24fps/deuteronomy").then(m => m.deuteronomyImages),
     import("@/assets/24fps/joshua").then(m => m.joshuaImages),
+    import("@/assets/24fps/ruth").then(m => m.ruthImages),
   ]);
   imageArraysRef.Genesis = genesis;
   imageArraysRef.Exodus = exodus;
@@ -41,6 +43,7 @@ const loadImageArrays = async () => {
   imageArraysRef.Numbers = numbers;
   imageArraysRef.Deuteronomy = deuteronomy;
   imageArraysRef.Joshua = joshua;
+  imageArraysRef.Ruth = Object.values(ruth);
 };
 
 interface SelectedChapter {
@@ -72,9 +75,10 @@ const STATIC_24FPS_BOOKS = new Set([
   "Numbers",
   "Deuteronomy",
   "Joshua",
+  "Ruth",
 ]);
 
-const STATIC_24FPS_IMAGE_COUNT = 211; // Genesis(50)+Exodus(40)+Leviticus(27)+Numbers(36)+Deuteronomy(34)+Joshua(24)
+const STATIC_24FPS_IMAGE_COUNT = 215; // Genesis(50)+Exodus(40)+Leviticus(27)+Numbers(36)+Deuteronomy(34)+Joshua(24)+Ruth(4)
 
 // Group chapters by book
 const getChaptersByBook = (): Map<string, ChapterFrame[]> => {
