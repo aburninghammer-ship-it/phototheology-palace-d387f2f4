@@ -8,14 +8,35 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Progress } from "@/components/ui/progress";
 import { Image, ChevronDown, ChevronRight, Camera, Sparkles, BookOpen, Search, Wand2, Loader2, Play, Pause, Zap } from "lucide-react";
 import { motion } from "framer-motion";
-import { genesisImages } from "@/assets/24fps/genesis";
-import { exodusImages } from "@/assets/24fps/exodus";
-import { leviticusImages } from "@/assets/24fps/leviticus";
-import { numbersImages } from "@/assets/24fps/numbers";
-import { deuteronomyImages } from "@/assets/24fps/deuteronomy";
-import { joshuaImages } from "@/assets/24fps/joshua";
-import { allBibleSets } from "@/data/bible24fps/allBooks";
-import { ChapterFrame } from "@/data/bible24fps";
+import { allBibleSets, ChapterFrame } from "@/data/bible24fps/allBooks";
+
+// Image array refs - will be populated by dynamic imports
+const imageArraysRef = {
+  Genesis: [] as string[],
+  Exodus: [] as string[],
+  Leviticus: [] as string[],
+  Numbers: [] as string[],
+  Deuteronomy: [] as string[],
+  Joshua: [] as string[],
+};
+
+// Dynamic imports for static image arrays
+const loadImageArrays = async () => {
+  const [genesis, exodus, leviticus, numbers, deuteronomy, joshua] = await Promise.all([
+    import("@/assets/24fps/genesis").then(m => m.genesisImages),
+    import("@/assets/24fps/exodus").then(m => m.exodusImages),
+    import("@/assets/24fps/leviticus").then(m => m.leviticusImages),
+    import("@/assets/24fps/numbers").then(m => m.numbersImages),
+    import("@/assets/24fps/deuteronomy").then(m => m.deuteronomyImages),
+    import("@/assets/24fps/joshua").then(m => m.joshuaImages),
+  ]);
+  imageArraysRef.Genesis = genesis;
+  imageArraysRef.Exodus = exodus;
+  imageArraysRef.Leviticus = leviticus;
+  imageArraysRef.Numbers = numbers;
+  imageArraysRef.Deuteronomy = deuteronomy;
+  imageArraysRef.Joshua = joshua;
+};
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
@@ -106,9 +127,15 @@ export function PTImageBible() {
   const [generatedImages, setGeneratedImages] = useState<Map<string, string>>(new Map());
   const [isGenerating, setIsGenerating] = useState(false);
   const [batchProgress, setBatchProgress] = useState<BatchProgress | null>(null);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const isPausedRef = useRef(false);
   const shouldStopRef = useRef(false);
   const { user } = useAuth();
+
+  // Load static image arrays on mount
+  useEffect(() => {
+    loadImageArrays().then(() => setImagesLoaded(true));
+  }, []);
 
   const chaptersByBook = useMemo(() => getChaptersByBook(), []);
 
@@ -326,22 +353,22 @@ export function PTImageBible() {
     }
     // Fall back to static images
     if (book === "Genesis" && chapter >= 1 && chapter <= 50) {
-      return genesisImages[chapter - 1];
+      return imageArraysRef.Genesis[chapter - 1];
     }
     if (book === "Exodus" && chapter >= 1 && chapter <= 40) {
-      return exodusImages[chapter - 1];
+      return imageArraysRef.Exodus[chapter - 1];
     }
     if (book === "Leviticus" && chapter >= 1 && chapter <= 27) {
-      return leviticusImages[chapter - 1];
+      return imageArraysRef.Leviticus[chapter - 1];
     }
     if (book === "Numbers" && chapter >= 1 && chapter <= 36) {
-      return numbersImages[chapter - 1];
+      return imageArraysRef.Numbers[chapter - 1];
     }
     if (book === "Deuteronomy" && chapter >= 1 && chapter <= 34) {
-      return deuteronomyImages[chapter - 1];
+      return imageArraysRef.Deuteronomy[chapter - 1];
     }
     if (book === "Joshua" && chapter >= 1 && chapter <= 24) {
-      return joshuaImages[chapter - 1];
+      return imageArraysRef.Joshua[chapter - 1];
     }
     return undefined;
   };
