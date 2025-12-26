@@ -403,13 +403,19 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <RefreshCw className="h-5 w-5" />
-                App Refresh
+                App Version & Refresh
               </CardTitle>
               <CardDescription>
                 Force refresh the app to get the latest updates
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                <span className="text-sm text-muted-foreground">Current Version</span>
+                <Badge variant="outline" className="font-mono">
+                  {import.meta.env.VITE_APP_VERSION || `build-${new Date().toISOString().slice(0, 10)}`}
+                </Badge>
+              </div>
               <p className="text-sm text-muted-foreground">
                 If the app seems outdated or you're experiencing issues, use this button to clear the cache and reload with the latest version.
               </p>
