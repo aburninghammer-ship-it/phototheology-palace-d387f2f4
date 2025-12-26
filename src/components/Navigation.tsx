@@ -220,12 +220,14 @@ export const Navigation = () => {
                     <EnhancedMobileDrawer />
                   </div>
                   
-                  {/* Enter App Button - Desktop Only */}
-                  <Button asChild className="hidden md:flex gradient-palace whitespace-nowrap">
-                    <Link to="/palace">
-                      <Building2 className="h-4 w-4 mr-2" />
-                      Enter App
-                    </Link>
+                  {/* Sign Out Button - Desktop Only */}
+                  <Button 
+                    variant="outline" 
+                    className="hidden md:flex whitespace-nowrap"
+                    onClick={signOut}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
                   </Button>
                 </>
               ) : (
