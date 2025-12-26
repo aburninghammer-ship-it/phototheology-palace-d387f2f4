@@ -14,8 +14,16 @@ export async function hardReloadApp(): Promise<void> {
   try {
     // Unregister all service workers
     if ("serviceWorker" in navigator) {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map((r) => r.unregister()));
+      const sw = navigator.serviceWorker;
+
+      const registrations =
+        typeof sw.getRegistrations === "function"
+          ? await sw.getRegistrations()
+          : [await sw.getRegistration()].filter(
+              (r): r is ServiceWorkerRegistration => Boolean(r)
+            );
+
+      await Promise.allSettled(registrations.map((r) => r.unregister()));
     }
 
     // Clear all caches
