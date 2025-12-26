@@ -22,6 +22,7 @@ import { PathProfileSection, PathCertificatesGallery } from "@/components/path";
 import { usePath } from "@/hooks/usePath";
 import { SocialMediaConnect } from "@/components/SocialMediaConnect";
 import { LanguageSelector } from "@/components/settings/LanguageSelector";
+import { clearPwaUpdateCooldown, hardReloadApp } from "@/lib/pwa";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -38,42 +39,17 @@ export default function Profile() {
   const handleForceRefresh = async () => {
     setIsRefreshing(true);
     toast.info("Clearing app cache and refreshing...");
-    
-    try {
-      // Clear update cooldown
-      localStorage.removeItem('pwa_update_cooldown');
 
-      // Unregister all service workers
-      if ('serviceWorker' in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        for (const registration of registrations) {
-          await registration.unregister();
-          console.log('Unregistered SW:', registration.scope);
-        }
-      }
-      
-      // Clear all caches
-      if ('caches' in window) {
-        const cacheNames = await caches.keys();
-        for (const cacheName of cacheNames) {
-          await caches.delete(cacheName);
-          console.log('Deleted cache:', cacheName);
-        }
-      }
-      
-      toast.success("Cache cleared! Reloading app...");
-      
-      // Small delay so user sees the success message
-      setTimeout(() => {
-        // Force reload bypassing cache
-        window.location.href = window.location.href.split('?')[0] + '?t=' + Date.now();
-      }, 500);
+    try {
+      clearPwaUpdateCooldown();
+      await hardReloadApp();
     } catch (error) {
-      console.error('Error during force refresh:', error);
+      console.error("Error during force refresh:", error);
       toast.error("Error clearing cache. Reloading anyway...");
       window.location.reload();
     }
   };
+
 
   const getTierDisplay = () => {
     switch (tier) {

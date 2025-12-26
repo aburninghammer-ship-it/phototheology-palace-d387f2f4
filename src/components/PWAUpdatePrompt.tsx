@@ -3,9 +3,10 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Download, RefreshCw } from 'lucide-react';
+import { hardReloadApp, PWA_UPDATE_COOLDOWN_KEY } from '@/lib/pwa';
 
 // Key for tracking recent updates to prevent prompt spam
-const UPDATE_COOLDOWN_KEY = 'pwa_update_cooldown';
+const UPDATE_COOLDOWN_KEY = PWA_UPDATE_COOLDOWN_KEY;
 const UPDATE_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown after update
 
 function getCooldownUntil(): number | null {
@@ -46,45 +47,34 @@ function setCooldown(ms: number = UPDATE_COOLDOWN_MS): void {
 }
 
 async function hardReload(): Promise<void> {
-  try {
-    // Unregister all service workers
-    if ('serviceWorker' in navigator) {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map((r) => r.unregister()));
-    }
-
-    // Clear all caches
-    if ('caches' in window) {
-      const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map((name) => caches.delete(name)));
-    }
-  } finally {
-    // Force reload bypassing cache (preserve current path + query + hash)
-    const url = new URL(window.location.href);
-    url.searchParams.set('t', String(Date.now()));
-    window.location.href = url.toString();
-  }
+  await hardReloadApp();
 }
+
 export function PWAUpdatePrompt() {
   const [showReload, setShowReload] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
-  
+  const updateIntervalRef = useRef<number | null>(null);
+
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
   } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
       console.log('SW registered:', swUrl);
       registrationRef.current = r ?? null;
 
+      if (updateIntervalRef.current) {
+        window.clearInterval(updateIntervalRef.current);
+        updateIntervalRef.current = null;
+      }
+
       if (r) {
-        // Check for updates every 5 minutes
-        setInterval(() => {
+        // Check for updates every 2 minutes
+        updateIntervalRef.current = window.setInterval(() => {
           console.log('Checking for SW update...');
           r.update();
-        }, 5 * 60 * 1000);
+        }, 2 * 60 * 1000);
 
         // Also check immediately on load
         r.update();
@@ -107,6 +97,12 @@ export function PWAUpdatePrompt() {
       console.error('SW registration error:', error);
     },
   });
+
+  useEffect(() => {
+    return () => {
+      if (updateIntervalRef.current) window.clearInterval(updateIntervalRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     // Only show if needRefresh is true AND not in cooldown
@@ -158,50 +154,16 @@ export function PWAUpdatePrompt() {
     setIsUpdating(true);
 
     try {
-      // Trigger update (we handle reload ourselves)
-      await updateServiceWorker(false);
-
-      // Ask waiting SW (if any) to activate
-      if ('serviceWorker' in navigator) {
-        const registration = await navigator.serviceWorker.getRegistration();
-        if (registration?.waiting) {
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-
-        // Wait for the new SW to take control
-        await new Promise<void>((resolve) => {
-          let done = false;
-          const finish = () => {
-            if (done) return;
-            done = true;
-            resolve();
-          };
-
-          const onControllerChange = () => {
-            navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
-            finish();
-          };
-
-          navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
-          setTimeout(() => {
-            navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
-            finish();
-          }, 4000);
-        });
-      }
-
-      // Only set cooldown once we've attempted to activate the new worker
+      // Mark cooldown immediately to avoid prompt spam
       setCooldown();
 
-      // Cache-bust reload (keeps the current route + query)
-      const url = new URL(window.location.href);
-      url.searchParams.set('v', String(Date.now()));
-      window.location.href = url.toString();
+      // Most reliable path: clear SW + caches and do a cache-busted navigation
+      await hardReload();
     } catch (error) {
       console.error('Error during update:', error);
       await hardReload();
     }
-  }, [updateServiceWorker, isUpdating]);
+  }, [isUpdating]);
 
   const close = () => {
     setOfflineReady(false);
