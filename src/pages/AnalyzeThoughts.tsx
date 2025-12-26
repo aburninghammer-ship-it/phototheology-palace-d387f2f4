@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -1300,9 +1301,9 @@ const AnalyzeThoughts = () => {
                         {result.furtherStudy.map((item, i) => {
                           const study = normalizeFurtherStudy(item);
                           return (
-                            <a
+                            <Link
                               key={i}
-                              href={`/encyclopedia?search=${encodeURIComponent(study.topic)}`}
+                              to={`/encyclopedia?search=${encodeURIComponent(study.topic)}`}
                               className="block p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer group active:scale-[0.98]"
                             >
                               <div className="flex items-center justify-between gap-2">
@@ -1312,7 +1313,7 @@ const AnalyzeThoughts = () => {
                               {study.whyItMatters && (
                                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">{study.whyItMatters}</p>
                               )}
-                            </a>
+                            </Link>
                           );
                         })}
                       </div>
