@@ -4,13 +4,16 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
-const APP_BUILD_TIME = new Date().toISOString();
-
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  define: {
-    __APP_BUILD_TIME__: JSON.stringify(APP_BUILD_TIME),
-  },
+export default defineConfig(({ mode }) => {
+  // NOTE: compute inside the config function so it changes on every build,
+  // even if the build process reuses a long-lived Node process.
+  const APP_BUILD_TIME = new Date().toISOString();
+
+  return ({
+    define: {
+      __APP_BUILD_TIME__: JSON.stringify(APP_BUILD_TIME),
+    },
   server: {
     host: "::",
     port: 8080,
@@ -150,5 +153,5 @@ export default defineConfig(({ mode }) => ({
       drop: ['console', 'debugger'],
     },
   },
-}));
-
+  });
+});
