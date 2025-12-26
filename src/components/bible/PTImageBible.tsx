@@ -12,8 +12,9 @@ import { genesisImages } from "@/assets/24fps/genesis";
 import { exodusImages } from "@/assets/24fps/exodus";
 import { leviticusImages } from "@/assets/24fps/leviticus";
 import { numbersImages } from "@/assets/24fps/numbers";
-import { oldTestamentSets } from "@/data/bible24fps/oldTestament";
-import { newTestamentSets } from "@/data/bible24fps/newTestament";
+import { deuteronomyImages } from "@/assets/24fps/deuteronomy";
+import { joshuaImages } from "@/assets/24fps/joshua";
+import { allBibleSets } from "@/data/bible24fps/allBooks";
 import { ChapterFrame } from "@/data/bible24fps";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -40,11 +41,19 @@ interface BatchProgress {
   isPaused: boolean;
 }
 
-// Combine all sets
-const allSets = [...oldTestamentSets, ...newTestamentSets];
+// Combine all sets (full 66-book coverage)
+const allSets = allBibleSets;
 
-const STATIC_24FPS_BOOKS = new Set(["Genesis", "Exodus", "Leviticus", "Numbers"]);
-const STATIC_24FPS_IMAGE_COUNT = 153; // Genesis(50)+Exodus(40)+Leviticus(27)+Numbers(36)
+const STATIC_24FPS_BOOKS = new Set([
+  "Genesis",
+  "Exodus",
+  "Leviticus",
+  "Numbers",
+  "Deuteronomy",
+  "Joshua",
+]);
+
+const STATIC_24FPS_IMAGE_COUNT = 211; // Genesis(50)+Exodus(40)+Leviticus(27)+Numbers(36)+Deuteronomy(34)+Joshua(24)
 
 // Group chapters by book
 const getChaptersByBook = (): Map<string, ChapterFrame[]> => {
@@ -327,6 +336,12 @@ export function PTImageBible() {
     }
     if (book === "Numbers" && chapter >= 1 && chapter <= 36) {
       return numbersImages[chapter - 1];
+    }
+    if (book === "Deuteronomy" && chapter >= 1 && chapter <= 34) {
+      return deuteronomyImages[chapter - 1];
+    }
+    if (book === "Joshua" && chapter >= 1 && chapter <= 24) {
+      return joshuaImages[chapter - 1];
     }
     return undefined;
   };
