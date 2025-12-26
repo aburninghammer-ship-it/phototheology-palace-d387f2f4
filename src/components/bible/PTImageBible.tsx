@@ -583,60 +583,11 @@ export function PTImageBible() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:ml-auto">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={startBatchGeneration}
-            disabled={!user || !!batchProgress?.isRunning || chaptersNeedingImages.length === 0}
-            className="h-8"
-          >
-            <Wand2 className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Generate missing</span>
-            <span className="sm:hidden">Generate</span>
-            <span className="ml-1">({chaptersNeedingImages.length})</span>
-          </Button>
-
-          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs">
-            <Sparkles className="h-3 w-3 mr-1" />
-            {generatedImages.size + STATIC_24FPS_IMAGE_COUNT} Images
-          </Badge>
-        </div>
+        <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs sm:ml-auto">
+          <Sparkles className="h-3 w-3 mr-1" />
+          {generatedImages.size + STATIC_24FPS_IMAGE_COUNT} Images
+        </Badge>
       </div>
-
-      {/* Batch Progress - Mobile optimized */}
-      {batchProgress && (
-        <Card className="p-3 sm:p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <Loader2 className="h-4 w-4 animate-spin text-purple-400 shrink-0" />
-              <span className="font-medium text-sm truncate">
-                {batchProgress.currentBook} {batchProgress.currentChapter}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              {batchProgress.isPaused ? (
-                <Button size="sm" variant="outline" onClick={resumeBatchGeneration} className="flex-1 sm:flex-none">
-                  <Play className="h-4 w-4 mr-1" />
-                  Resume
-                </Button>
-              ) : (
-                <Button size="sm" variant="outline" onClick={pauseBatchGeneration} className="flex-1 sm:flex-none">
-                  <Pause className="h-4 w-4 mr-1" />
-                  Pause
-                </Button>
-              )}
-              <Button size="sm" variant="destructive" onClick={stopBatchGeneration} className="flex-1 sm:flex-none">
-                Stop
-              </Button>
-            </div>
-          </div>
-          <Progress value={(batchProgress.current / batchProgress.total) * 100} className="h-2" />
-          <p className="text-xs text-muted-foreground mt-2 text-center">
-            {batchProgress.current}/{batchProgress.total} ({Math.round((batchProgress.current / batchProgress.total) * 100)}%)
-          </p>
-        </Card>
-      )}
 
       {/* Search */}
       <div className="relative">
