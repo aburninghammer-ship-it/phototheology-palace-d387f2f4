@@ -8,14 +8,41 @@ import { Download, RefreshCw } from 'lucide-react';
 const UPDATE_COOLDOWN_KEY = 'pwa_update_cooldown';
 const UPDATE_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown after update
 
-function isInCooldown(): boolean {
-  const cooldownUntil = localStorage.getItem(UPDATE_COOLDOWN_KEY);
-  if (!cooldownUntil) return false;
-  return Date.now() < parseInt(cooldownUntil, 10);
+function getCooldownUntil(): number | null {
+  try {
+    const raw = localStorage.getItem(UPDATE_COOLDOWN_KEY);
+    if (!raw) return null;
+
+    const until = Number(raw);
+    if (!Number.isFinite(until)) {
+      localStorage.removeItem(UPDATE_COOLDOWN_KEY);
+      return null;
+    }
+
+    // Guardrail: prevent a bad timestamp from blocking updates indefinitely
+    const maxFuture = Date.now() + 60 * 60 * 1000; // 1 hour
+    if (until > maxFuture) {
+      localStorage.removeItem(UPDATE_COOLDOWN_KEY);
+      return null;
+    }
+
+    return until;
+  } catch {
+    return null;
+  }
 }
 
-function setCooldown(): void {
-  localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + UPDATE_COOLDOWN_MS));
+function isInCooldown(): boolean {
+  const until = getCooldownUntil();
+  return typeof until === 'number' && Date.now() < until;
+}
+
+function setCooldown(ms: number = UPDATE_COOLDOWN_MS): void {
+  try {
+    localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + ms));
+  } catch {
+    // Ignore storage failures (private mode, quota, etc.)
+  }
 }
 
 async function hardReload(): Promise<void> {
@@ -53,19 +80,14 @@ export function PWAUpdatePrompt() {
       registrationRef.current = r ?? null;
 
       if (r) {
-        // Check for updates every 5 minutes (less aggressive)
+        // Check for updates every 5 minutes
         setInterval(() => {
-          // Don't check if in cooldown
-          if (!isInCooldown()) {
-            console.log('Checking for SW update...');
-            r.update();
-          }
+          console.log('Checking for SW update...');
+          r.update();
         }, 5 * 60 * 1000);
 
-        // Only check immediately if not in cooldown
-        if (!isInCooldown()) {
-          r.update();
-        }
+        // Also check immediately on load
+        r.update();
       }
     },
     onNeedRefresh() {
@@ -93,11 +115,29 @@ export function PWAUpdatePrompt() {
     }
   }, [needRefresh]);
 
+  // Failsafe: if a SW is already waiting (but callbacks didn't fire), surface the prompt
+  useEffect(() => {
+    const t = window.setTimeout(async () => {
+      try {
+        if (!('serviceWorker' in navigator)) return;
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (!reg) return;
+
+        await reg.update();
+        if (reg.waiting && !isInCooldown()) setShowReload(true);
+      } catch {
+        // ignore
+      }
+    }, 1500);
+
+    return () => window.clearTimeout(t);
+  }, []);
+
   // Also check for updates when user returns to the app (mobile + desktop)
   useEffect(() => {
     const check = () => {
       const r = registrationRef.current;
-      if (r && !isInCooldown()) r.update();
+      if (r) r.update();
     };
 
     const onFocus = () => check();
@@ -167,8 +207,8 @@ export function PWAUpdatePrompt() {
     setOfflineReady(false);
     setNeedRefresh(false);
     setShowReload(false);
-    // Set a shorter cooldown when user dismisses
-    localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + 2 * 60 * 1000)); // 2 min cooldown
+    // Shorter cooldown when user dismisses
+    setCooldown(2 * 60 * 1000);
   };
 
   if (!offlineReady && !showReload) return null;
@@ -222,11 +262,6 @@ export function useCheckForUpdates() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const checkForUpdates = useCallback(async () => {
-    // Don't check if in cooldown
-    if (isInCooldown()) {
-      return false;
-    }
-    
     setIsChecking(true);
     try {
       if ('serviceWorker' in navigator) {
@@ -264,7 +299,11 @@ export function useCheckForUpdates() {
     console.log('Force update initiated...');
 
     // Clear cooldown
-    localStorage.removeItem(UPDATE_COOLDOWN_KEY);
+    try {
+      localStorage.removeItem(UPDATE_COOLDOWN_KEY);
+    } catch {
+      // ignore
+    }
 
     await hardReload();
   }, []);
