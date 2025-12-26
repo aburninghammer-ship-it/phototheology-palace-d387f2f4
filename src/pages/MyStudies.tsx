@@ -312,15 +312,21 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
   const allTags = [...new Set(studies.flatMap(s => s.tags))].sort();
 
   const filteredStudies = studies.filter((study) => {
-    const matchesSearch = 
-      study.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      study.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      study.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesTags = 
-      selectedTags.length === 0 || 
-      selectedTags.some(tag => study.tags.includes(tag));
-    
+    const q = searchQuery.trim().toLowerCase();
+    const title = (study.title ?? "").toLowerCase();
+    const content = (study.content ?? "").toLowerCase();
+    const tags = Array.isArray(study.tags) ? study.tags : [];
+
+    const matchesSearch =
+      q.length === 0 ||
+      title.includes(q) ||
+      content.includes(q) ||
+      tags.some((tag) => (tag ?? "").toLowerCase().includes(q));
+
+    const matchesTags =
+      selectedTags.length === 0 ||
+      selectedTags.some((tag) => tags.includes(tag));
+
     return matchesSearch && matchesTags;
   });
 
@@ -611,14 +617,26 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
               </div>
             )}
 
-            {filteredStudies.length === 0 && searchQuery && (
-              <Card className="text-center py-12">
-                <CardContent>
+            {filteredStudies.length === 0 && (searchQuery || selectedTags.length > 0) && (
+              <Card className="text-center">
+                <CardContent className="py-12">
                   <Search className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-2xl font-semibold mb-2">No results found</h3>
+                  <h3 className="text-2xl font-semibold mb-2">No studies found</h3>
                   <p className="text-muted-foreground">
-                    Try adjusting your search query
+                    No studies match your current search or filters.
                   </p>
+                  <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-2">
+                    {searchQuery && (
+                      <Button variant="outline" onClick={() => setSearchQuery("")}> 
+                        Clear search
+                      </Button>
+                    )}
+                    {selectedTags.length > 0 && (
+                      <Button variant="outline" onClick={() => setSelectedTags([])}>
+                        Clear tag filters
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
