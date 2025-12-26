@@ -413,7 +413,7 @@ export default function Profile() {
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                 <span className="text-sm text-muted-foreground">Current Version</span>
                 <Badge variant="outline" className="font-mono">
-                  {import.meta.env.VITE_APP_VERSION || `build-${new Date().toISOString().slice(0, 10)}`}
+                  {import.meta.env.VITE_APP_VERSION || __APP_BUILD_TIME__}
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground">

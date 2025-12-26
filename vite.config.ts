@@ -4,8 +4,13 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
+const APP_BUILD_TIME = new Date().toISOString();
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  define: {
+    __APP_BUILD_TIME__: JSON.stringify(APP_BUILD_TIME),
+  },
   server: {
     host: "::",
     port: 8080,
