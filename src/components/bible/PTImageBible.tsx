@@ -9,15 +9,20 @@ import { Progress } from "@/components/ui/progress";
 import { Image, ChevronDown, ChevronRight, Camera, Sparkles, BookOpen, Search, Wand2, Loader2, Play, Pause, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { allBibleSets, ChapterFrame } from "@/data/bible24fps/allBooks";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 // Image array refs - will be populated by dynamic imports
-const imageArraysRef = {
-  Genesis: [] as string[],
-  Exodus: [] as string[],
-  Leviticus: [] as string[],
-  Numbers: [] as string[],
-  Deuteronomy: [] as string[],
-  Joshua: [] as string[],
+const imageArraysRef: Record<string, string[]> = {
+  Genesis: [],
+  Exodus: [],
+  Leviticus: [],
+  Numbers: [],
+  Deuteronomy: [],
+  Joshua: [],
 };
 
 // Dynamic imports for static image arrays
@@ -37,11 +42,6 @@ const loadImageArrays = async () => {
   imageArraysRef.Deuteronomy = deuteronomy;
   imageArraysRef.Joshua = joshua;
 };
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth";
 
 interface SelectedChapter {
   book: string;
