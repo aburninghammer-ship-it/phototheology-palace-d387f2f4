@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -18,9 +18,30 @@ function setCooldown(): void {
   localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + UPDATE_COOLDOWN_MS));
 }
 
+async function hardReload(): Promise<void> {
+  try {
+    // Unregister all service workers
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((r) => r.unregister()));
+    }
+
+    // Clear all caches
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((name) => caches.delete(name)));
+    }
+  } finally {
+    // Force reload bypassing cache (preserve current path + query + hash)
+    const url = new URL(window.location.href);
+    url.searchParams.set('t', String(Date.now()));
+    window.location.href = url.toString();
+  }
+}
 export function PWAUpdatePrompt() {
   const [showReload, setShowReload] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
   
   const {
     offlineReady: [offlineReady, setOfflineReady],
@@ -29,6 +50,8 @@ export function PWAUpdatePrompt() {
   } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
       console.log('SW registered:', swUrl);
+      registrationRef.current = r ?? null;
+
       if (r) {
         // Check for updates every 5 minutes (less aggressive)
         setInterval(() => {
@@ -38,7 +61,7 @@ export function PWAUpdatePrompt() {
             r.update();
           }
         }, 5 * 60 * 1000);
-        
+
         // Only check immediately if not in cooldown
         if (!isInCooldown()) {
           r.update();
@@ -70,44 +93,73 @@ export function PWAUpdatePrompt() {
     }
   }, [needRefresh]);
 
+  // Also check for updates when user returns to the app (mobile + desktop)
+  useEffect(() => {
+    const check = () => {
+      const r = registrationRef.current;
+      if (r && !isInCooldown()) r.update();
+    };
+
+    const onFocus = () => check();
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') check();
+    };
+
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
+
   const handleUpdate = useCallback(async () => {
     if (isUpdating) return;
     setIsUpdating(true);
-    
+
     try {
-      // Set cooldown before updating to prevent immediate re-prompt
-      setCooldown();
-      
-      // Update the service worker
-      await updateServiceWorker(true);
-      
-      // Wait for SW to activate, then reload
+      // Trigger update (we handle reload ourselves)
+      await updateServiceWorker(false);
+
+      // Ask waiting SW (if any) to activate
       if ('serviceWorker' in navigator) {
         const registration = await navigator.serviceWorker.getRegistration();
         if (registration?.waiting) {
-          // Send skip waiting message
           registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-          
-          // Wait for the new SW to activate
-          await new Promise<void>((resolve) => {
-            const onControllerChange = () => {
-              navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
-              resolve();
-            };
-            navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
-            // Timeout after 3 seconds
-            setTimeout(resolve, 3000);
-          });
         }
+
+        // Wait for the new SW to take control
+        await new Promise<void>((resolve) => {
+          let done = false;
+          const finish = () => {
+            if (done) return;
+            done = true;
+            resolve();
+          };
+
+          const onControllerChange = () => {
+            navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+            finish();
+          };
+
+          navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+          setTimeout(() => {
+            navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+            finish();
+          }, 4000);
+        });
       }
-      
-      // Reload the page
-      window.location.reload();
+
+      // Only set cooldown once we've attempted to activate the new worker
+      setCooldown();
+
+      // Cache-bust reload (keeps the current route + query)
+      const url = new URL(window.location.href);
+      url.searchParams.set('v', String(Date.now()));
+      window.location.href = url.toString();
     } catch (error) {
       console.error('Error during update:', error);
-      setIsUpdating(false);
-      // Still try to reload
-      window.location.reload();
+      await hardReload();
     }
   }, [updateServiceWorker, isUpdating]);
 
@@ -210,36 +262,11 @@ export function useCheckForUpdates() {
   // Force update - bypasses cooldown, clears all caches, unregisters SW and reloads
   const forceUpdate = useCallback(async () => {
     console.log('Force update initiated...');
-    
+
     // Clear cooldown
     localStorage.removeItem(UPDATE_COOLDOWN_KEY);
-    
-    try {
-      // Unregister all service workers
-      if ('serviceWorker' in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        for (const registration of registrations) {
-          await registration.unregister();
-          console.log('Unregistered SW:', registration.scope);
-        }
-      }
-      
-      // Clear all caches
-      if ('caches' in window) {
-        const cacheNames = await caches.keys();
-        for (const cacheName of cacheNames) {
-          await caches.delete(cacheName);
-          console.log('Deleted cache:', cacheName);
-        }
-      }
-      
-      // Force reload bypassing cache
-      window.location.href = window.location.href.split('?')[0] + '?t=' + Date.now();
-    } catch (error) {
-      console.error('Error during force update:', error);
-      // Fallback: just hard reload
-      window.location.reload();
-    }
+
+    await hardReload();
   }, []);
 
   return { checkForUpdates, applyUpdate, forceUpdate, isChecking, updateAvailable };
