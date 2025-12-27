@@ -49,13 +49,15 @@ export default defineConfig(({ mode }) => {
            {
              urlPattern: ({ request }) => request.mode === "navigate",
              handler: "NetworkFirst",
-             options: {
-               cacheName: "html-pages",
-               expiration: {
-                 maxEntries: 20,
-                 maxAgeSeconds: 60 * 60 * 24, // 1 day
-               },
-             },
+              options: {
+                cacheName: "html-pages",
+                // Bypass HTTP cache for HTML so new publishes show up immediately.
+                fetchOptions: ({ cache: "no-store" } as any),
+                expiration: {
+                  maxEntries: 20,
+                  maxAgeSeconds: 60 * 60 * 24, // 1 day
+                },
+              },
            },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
