@@ -101,7 +101,7 @@ export default function ChurchSignupSuccess() {
             <CardContent className="space-y-4">
               <Alert>
                 <AlertDescription>
-                  If youre not signed in, please sign in and then retry. If you are signed in and this keeps happening, contact support and include your checkout session id.
+                  If you're not signed in, please sign in and then retry. If you are signed in and this keeps happening, contact support and include your checkout session id.
                 </AlertDescription>
               </Alert>
 
