@@ -152,9 +152,9 @@ export default function Version() {
       <main className="min-h-[calc(100vh-var(--app-header-height,0px))] bg-background text-foreground">
         <section className="max-w-3xl mx-auto px-4 py-10">
           <header className="space-y-2">
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold">App Version & Updates</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold">App Version &amp; Updates</h1>
             <p className="text-muted-foreground">
-              If your <span className="font-medium text-foreground">Palace</span> edits arent showing on the live app,
+              If your <span className="font-medium text-foreground">Palace</span> edits aren't showing on the live app,
               compare the build info here between the two places.
             </p>
           </header>
@@ -189,7 +189,7 @@ export default function Version() {
               <CardContent className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <Button onClick={() => void refresh()} disabled={isChecking}>
-                    {isChecking ? "Checking" : "Check for updates"}
+                    {isChecking ? "Checking..." : "Check for updates"}
                   </Button>
                   <Button variant="outline" onClick={clearCooldown} disabled={isChecking}>
                     Clear update cooldown
@@ -217,19 +217,19 @@ export default function Version() {
 
                   <div className="space-y-1">
                     <div className="text-sm text-muted-foreground">SW scope</div>
-                    <div className="text-sm font-mono break-all">{snapshot?.scope ?? ""}</div>
+                    <div className="text-sm font-mono break-all">{snapshot?.scope ?? "(none)"}</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-sm text-muted-foreground">SW active</div>
-                    <div className="text-sm font-mono break-all">{snapshot?.activeScript ?? ""}</div>
+                    <div className="text-sm font-mono break-all">{snapshot?.activeScript ?? "(none)"}</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-sm text-muted-foreground">SW waiting</div>
-                    <div className="text-sm font-mono break-all">{snapshot?.waitingScript ?? ""}</div>
+                    <div className="text-sm font-mono break-all">{snapshot?.waitingScript ?? "(none)"}</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-sm text-muted-foreground">SW installing</div>
-                    <div className="text-sm font-mono break-all">{snapshot?.installingScript ?? ""}</div>
+                    <div className="text-sm font-mono break-all">{snapshot?.installingScript ?? "(none)"}</div>
                   </div>
 
                   <Separator />
@@ -246,7 +246,7 @@ export default function Version() {
                         </li>
                       ))}
                       {(snapshot?.cacheNames?.length ?? 0) > 12 && (
-                        <li className="text-xs text-muted-foreground">…and more</li>
+                        <li className="text-xs text-muted-foreground">...and more</li>
                       )}
                     </ul>
                   </div>
