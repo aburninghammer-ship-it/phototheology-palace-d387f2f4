@@ -54,6 +54,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const InteractiveDemo = lazy(() => import("./pages/InteractiveDemo"));
 const DonationPage = lazy(() => import("./pages/DonationPage"));
+const Version = lazy(() => import("./pages/Version"));
 
 // Lazy load all other pages
 const Palace = lazy(() => import("./pages/Palace"));
@@ -329,6 +330,7 @@ function App() {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/patreon-callback" element={<PatreonCallback />} />
             <Route path="/interactive-demo" element={<InteractiveDemo />} />
+            <Route path="/version" element={<Version />} />
             <Route path="/onboarding" element={
               <ProtectedRoute>
                 <Onboarding />
