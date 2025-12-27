@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Loader2, X, BookOpen, RefreshCw, Share2, Copy, Mail, MessageCircle, Twitter } from "lucide-react";
+import { Sparkles, Loader2, X, BookOpen, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,12 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { FreeAudioButton } from "@/components/audio/FreeAudioButton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { VoiceRecorder } from "@/components/studies/VoiceRecorder";
 
 type DepthLevel = "light" | "standard" | "deep";
@@ -111,76 +105,6 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
     }
     setDevotion(null);
     generateDevotion(true);
-  };
-
-  const getShareContent = () => {
-    if (!devotion) return "";
-    const appLink = window.location.origin;
-    const divider = "═".repeat(20);
-    
-    const parts: string[] = [];
-    parts.push(`✨ ${devotion.title} ✨`);
-    parts.push("");
-    parts.push(`📖 ${devotion.scripture_reference}`);
-    parts.push("");
-    parts.push(`"${devotion.scripture_text}"`);
-    parts.push("");
-    parts.push(divider);
-    parts.push("");
-    parts.push("✝️ Christ Connection:");
-    parts.push("");
-    parts.push(devotion.christ_connection);
-    parts.push("");
-    parts.push(divider);
-    parts.push("");
-    parts.push("🎯 Application:");
-    parts.push("");
-    parts.push(devotion.application);
-    parts.push("");
-    parts.push(divider);
-    parts.push("");
-    parts.push(`🧠 Remember: "${devotion.memory_hook}"`);
-    parts.push("");
-    parts.push(divider);
-    parts.push("");
-    parts.push("🙏 Prayer:");
-    parts.push("");
-    parts.push(devotion.prayer);
-    parts.push("");
-    parts.push(divider);
-    parts.push("");
-    parts.push("🌟 Get your own daily devotionals:");
-    parts.push(`📱 ${appLink}`);
-    
-    return parts.join("\n");
-  };
-
-  const handleCopyContent = () => {
-    navigator.clipboard.writeText(getShareContent());
-    toast.success("Devotional copied to clipboard!");
-  };
-
-  const handleShareViaEmail = () => {
-    if (!devotion) return;
-    const subject = encodeURIComponent(devotion.title);
-    const body = encodeURIComponent(getShareContent());
-    window.open(`mailto:?subject=${subject}&body=${body}`);
-  };
-
-  const handleShareViaSMS = () => {
-    const text = encodeURIComponent(getShareContent());
-    window.open(`sms:?body=${text}`);
-  };
-
-  const handleShareViaTwitter = () => {
-    if (!devotion) return;
-    const text = encodeURIComponent(`📖 ${devotion.title} - ${devotion.scripture_reference}\n\n${window.location.origin}`);
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
-  };
-
-  const handleShareViaWhatsApp = () => {
-    const text = encodeURIComponent(getShareContent());
-    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
 
   return (
@@ -325,36 +249,6 @@ export function QuickDevotion({ onClose }: QuickDevotionProps) {
 
               {/* Actions */}
               <div className="flex gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="flex-1">
-                      <Share2 className="h-4 w-4 mr-2" />
-                      Share
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-48">
-                    <DropdownMenuItem onClick={handleCopyContent}>
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copy Content
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShareViaEmail}>
-                      <Mail className="h-4 w-4 mr-2" />
-                      Email
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShareViaSMS}>
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Text Message
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShareViaWhatsApp}>
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      WhatsApp
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShareViaTwitter}>
-                      <Twitter className="h-4 w-4 mr-2" />
-                      Twitter/X
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
                 <Button 
                   variant="outline" 
                   onClick={handleRegenerate} 

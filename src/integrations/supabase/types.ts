@@ -8963,30 +8963,6 @@ export type Database = {
         }
         Relationships: []
       }
-      room_content_updates: {
-        Row: {
-          created_at: string
-          floor_number: number
-          id: string
-          room_id: string
-          update_description: string | null
-        }
-        Insert: {
-          created_at?: string
-          floor_number: number
-          id?: string
-          room_id: string
-          update_description?: string | null
-        }
-        Update: {
-          created_at?: string
-          floor_number?: number
-          id?: string
-          room_id?: string
-          update_description?: string | null
-        }
-        Relationships: []
-      }
       room_curriculum_progress: {
         Row: {
           completed_activities: Json | null
@@ -11963,27 +11939,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_room_visits: {
-        Row: {
-          id: string
-          last_visited_at: string
-          room_id: string
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          last_visited_at?: string
-          room_id: string
-          user_id: string
-        }
-        Update: {
-          id?: string
-          last_visited_at?: string
-          room_id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       user_studies: {
         Row: {
           content: string | null
@@ -13401,10 +13356,6 @@ export type Database = {
         Args: { _game_id: string; _user_id: string }
         Returns: boolean
       }
-      is_room_newly_renovated: {
-        Args: { _room_id: string; _user_id: string }
-        Returns: boolean
-      }
       is_site_admin: {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
@@ -13421,10 +13372,6 @@ export type Database = {
       is_youth_overseer: {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
-      }
-      mark_room_visited: {
-        Args: { _room_id: string; _user_id: string }
-        Returns: undefined
       }
       redeem_access_code: { Args: { code_input: string }; Returns: Json }
       search_encyclopedia_articles: {

@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Lock, Sparkles, Star } from "lucide-react";
+import { ChevronRight, Lock, Sparkles } from "lucide-react";
 import { useRoomUnlock } from "@/hooks/useRoomUnlock";
-import { useRoomRenovationStatus } from "@/hooks/useRoomRenovationStatus";
 import { Room } from "@/data/palaceData";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -75,17 +74,16 @@ const roomGradients: Record<string, string> = {
 
 export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProps) => {
   const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
-  const { isNewlyRenovated, markAsVisited } = useRoomRenovationStatus(room.id, floorNumber);
   const navigate = useNavigate();
-
+  
   const showLocked = loading || !isUnlocked;
   const roomEmoji = roomEmojis[room.id] || "⭐";
   // Use room-specific gradient if available, otherwise fall back to floor gradient
   const roomGradient = roomGradients[room.id] || gradient;
 
-  const handleClick = async () => {
+  const handleClick = () => {
     if (loading) return;
-
+    
     if (!isUnlocked) {
       toast.error("🔒 Room Locked", {
         description: `Complete the previous floors to unlock Floor ${floorNumber}. Progress through each floor in order to access new rooms.`,
@@ -93,10 +91,7 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
       });
       return;
     }
-
-    // Mark room as visited (removes "Newly Renovated" badge)
-    await markAsVisited();
-
+    
     navigate(`/palace/floor/${floorNumber}/room/${room.id}`);
   };
 
@@ -129,12 +124,6 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
                   </motion.div>
                   
                   <div className="flex flex-col gap-2">
-                    {isNewlyRenovated && (
-                      <Badge className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black shadow-lg animate-pulse flex items-center gap-1">
-                        <Star className="h-3 w-3 fill-current" />
-                        Newly Renovated
-                      </Badge>
-                    )}
                     {showLocked && (
                       <div className="flex items-center gap-2">
                         <Lock className="h-4 w-4 text-destructive" />

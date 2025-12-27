@@ -1,61 +1,27 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Download, RefreshCw } from 'lucide-react';
-import { hardReloadApp, PWA_UPDATE_COOLDOWN_KEY } from '@/lib/pwa';
 
 // Key for tracking recent updates to prevent prompt spam
-const UPDATE_COOLDOWN_KEY = PWA_UPDATE_COOLDOWN_KEY;
-const UPDATE_COOLDOWN_MS = 30 * 1000; // 30 seconds cooldown after update (reduced from 5 min)
-
-function getCooldownUntil(): number | null {
-  try {
-    const raw = localStorage.getItem(UPDATE_COOLDOWN_KEY);
-    if (!raw) return null;
-
-    const until = Number(raw);
-    if (!Number.isFinite(until)) {
-      localStorage.removeItem(UPDATE_COOLDOWN_KEY);
-      return null;
-    }
-
-    // Guardrail: prevent a bad timestamp from blocking updates indefinitely
-    const maxFuture = Date.now() + 60 * 60 * 1000; // 1 hour
-    if (until > maxFuture) {
-      localStorage.removeItem(UPDATE_COOLDOWN_KEY);
-      return null;
-    }
-
-    return until;
-  } catch {
-    return null;
-  }
-}
+const UPDATE_COOLDOWN_KEY = 'pwa_update_cooldown';
+const UPDATE_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown after update
 
 function isInCooldown(): boolean {
-  const until = getCooldownUntil();
-  return typeof until === 'number' && Date.now() < until;
+  const cooldownUntil = localStorage.getItem(UPDATE_COOLDOWN_KEY);
+  if (!cooldownUntil) return false;
+  return Date.now() < parseInt(cooldownUntil, 10);
 }
 
-function setCooldown(ms: number = UPDATE_COOLDOWN_MS): void {
-  try {
-    localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + ms));
-  } catch {
-    // Ignore storage failures (private mode, quota, etc.)
-  }
-}
-
-async function hardReload(): Promise<void> {
-  await hardReloadApp();
+function setCooldown(): void {
+  localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + UPDATE_COOLDOWN_MS));
 }
 
 export function PWAUpdatePrompt() {
   const [showReload, setShowReload] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
-  const updateIntervalRef = useRef<number | null>(null);
-
+  
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
@@ -63,22 +29,20 @@ export function PWAUpdatePrompt() {
   } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
       console.log('SW registered:', swUrl);
-      registrationRef.current = r ?? null;
-
-      if (updateIntervalRef.current) {
-        window.clearInterval(updateIntervalRef.current);
-        updateIntervalRef.current = null;
-      }
-
       if (r) {
-        // Check for updates every 2 minutes
-        updateIntervalRef.current = window.setInterval(() => {
-          console.log('Checking for SW update...');
+        // Check for updates every 5 minutes (less aggressive)
+        setInterval(() => {
+          // Don't check if in cooldown
+          if (!isInCooldown()) {
+            console.log('Checking for SW update...');
+            r.update();
+          }
+        }, 5 * 60 * 1000);
+        
+        // Only check immediately if not in cooldown
+        if (!isInCooldown()) {
           r.update();
-        }, 2 * 60 * 1000);
-
-        // Also check immediately on load
-        r.update();
+        }
       }
     },
     onNeedRefresh() {
@@ -100,98 +64,59 @@ export function PWAUpdatePrompt() {
   });
 
   useEffect(() => {
-    return () => {
-      if (updateIntervalRef.current) window.clearInterval(updateIntervalRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
     // Only show if needRefresh is true AND not in cooldown
     if (needRefresh && !isInCooldown()) {
       setShowReload(true);
     }
   }, [needRefresh]);
 
-  // Failsafe: if a SW is already waiting (but callbacks didn't fire), surface the prompt
-  useEffect(() => {
-    const t = window.setTimeout(async () => {
-      try {
-        if (!('serviceWorker' in navigator)) return;
-        const reg = await navigator.serviceWorker.getRegistration();
-        if (!reg) return;
-
-        await reg.update();
-        if (reg.waiting && !isInCooldown()) setShowReload(true);
-      } catch {
-        // ignore
-      }
-    }, 1500);
-
-    return () => window.clearTimeout(t);
-  }, []);
-
   const handleUpdate = useCallback(async () => {
     if (isUpdating) return;
     setIsUpdating(true);
-
+    
     try {
-      // Mark cooldown immediately to avoid prompt spam
+      // Set cooldown before updating to prevent immediate re-prompt
       setCooldown();
-
-      // Preferred path: ask the waiting SW to activate and reload.
-      // If that fails (or no SW), fall back to a full hard reload.
+      
+      // Update the service worker
       await updateServiceWorker(true);
-    } catch (error) {
-      console.error('SW apply failed, falling back to hard reload:', error);
-      await hardReload();
-    } finally {
-      // If reload didn't happen for any reason, re-enable the UI
-      setIsUpdating(false);
-    }
-  }, [isUpdating, updateServiceWorker]);
-
-  // Also check for updates when user returns to the app (mobile + desktop)
-  // Auto-apply updates if a SW is waiting when user returns
-  useEffect(() => {
-    const checkAndAutoApply = async () => {
-      try {
-        if (!('serviceWorker' in navigator)) return;
-
-        const reg = registrationRef.current ?? (await navigator.serviceWorker.getRegistration());
-        if (!reg) return;
-        registrationRef.current = reg;
-
-        await reg.update();
-
-        const hasWaiting = !!(reg.waiting ?? (await navigator.serviceWorker.getRegistration())?.waiting);
-        if ((needRefresh || hasWaiting) && !isInCooldown()) {
-          console.log('Auto-applying update on return...');
-          await handleUpdate();
+      
+      // Wait for SW to activate, then reload
+      if ('serviceWorker' in navigator) {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration?.waiting) {
+          // Send skip waiting message
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          
+          // Wait for the new SW to activate
+          await new Promise<void>((resolve) => {
+            const onControllerChange = () => {
+              navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+              resolve();
+            };
+            navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+            // Timeout after 3 seconds
+            setTimeout(resolve, 3000);
+          });
         }
-      } catch {
-        // ignore
       }
-    };
-
-    const onFocus = () => void checkAndAutoApply();
-    const onVisibility = () => {
-      if (document.visibilityState === 'visible') void checkAndAutoApply();
-    };
-
-    window.addEventListener('focus', onFocus);
-    document.addEventListener('visibilitychange', onVisibility);
-    return () => {
-      window.removeEventListener('focus', onFocus);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, [handleUpdate, needRefresh]);
+      
+      // Reload the page
+      window.location.reload();
+    } catch (error) {
+      console.error('Error during update:', error);
+      setIsUpdating(false);
+      // Still try to reload
+      window.location.reload();
+    }
+  }, [updateServiceWorker, isUpdating]);
 
   const close = () => {
     setOfflineReady(false);
     setNeedRefresh(false);
     setShowReload(false);
-    // Short cooldown when user dismisses (15 seconds)
-    setCooldown(15 * 1000);
+    // Set a shorter cooldown when user dismisses
+    localStorage.setItem(UPDATE_COOLDOWN_KEY, String(Date.now() + 2 * 60 * 1000)); // 2 min cooldown
   };
 
   if (!offlineReady && !showReload) return null;
@@ -228,15 +153,6 @@ export function PWAUpdatePrompt() {
                 <RefreshCw className={`h-3 w-3 mr-1 ${isUpdating ? 'animate-spin' : ''}`} />
                 {isUpdating ? 'Updating...' : 'Reload'}
               </Button>
-              <Button
-                onClick={hardReload}
-                variant="outline"
-                size="sm"
-                className="flex-1 sm:flex-initial"
-                disabled={isUpdating}
-              >
-                Force Update
-              </Button>
               <Button onClick={close} variant="outline" size="sm" className="flex-1 sm:flex-initial" disabled={isUpdating}>
                 Later
               </Button>
@@ -254,6 +170,11 @@ export function useCheckForUpdates() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const checkForUpdates = useCallback(async () => {
+    // Don't check if in cooldown
+    if (isInCooldown()) {
+      return false;
+    }
+    
     setIsChecking(true);
     try {
       if ('serviceWorker' in navigator) {
@@ -286,19 +207,5 @@ export function useCheckForUpdates() {
     }
   }, []);
 
-  // Force update - bypasses cooldown, clears all caches, unregisters SW and reloads
-  const forceUpdate = useCallback(async () => {
-    console.log('Force update initiated...');
-
-    // Clear cooldown
-    try {
-      localStorage.removeItem(UPDATE_COOLDOWN_KEY);
-    } catch {
-      // ignore
-    }
-
-    await hardReload();
-  }, []);
-
-  return { checkForUpdates, applyUpdate, forceUpdate, isChecking, updateAvailable };
+  return { checkForUpdates, applyUpdate, isChecking, updateAvailable };
 }

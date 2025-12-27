@@ -5,15 +5,7 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
-  // NOTE: compute inside the config function so it changes on every build,
-  // even if the build process reuses a long-lived Node process.
-  const APP_BUILD_TIME = new Date().toISOString();
-
-  return ({
-    define: {
-      __APP_BUILD_TIME__: JSON.stringify(APP_BUILD_TIME),
-    },
+export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -22,114 +14,74 @@ export default defineConfig(({ mode }) => {
     react(),
     mode === "development" && componentTagger(),
     VitePWA({
-      // In production, update automatically so published users aren't stuck on old builds.
-      // In dev, keep prompt mode so we can coordinate in-app messaging.
-      registerType: mode === "production" ? "autoUpdate" : "prompt",
-      includeAssets: [
-        "favicon.ico",
-        "robots.txt",
-        "pwa-192x192.png",
-        "pwa-512x512.png",
-      ],
-      manifest: false, // Use external manifest.webmanifest
+      registerType: 'prompt',
+      includeAssets: ['favicon.ico', 'robots.txt'],
+      manifest: {
+        name: 'The Phototheology Digital Bible',
+        short_name: 'Phototheology',
+        description: 'Master Bible study through the 8-floor Palace method',
+        theme_color: '#1a1a2e',
+        background_color: '#0f0f1e',
+        display: 'standalone',
+        icons: [
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
+      },
       workbox: {
-        skipWaiting: true,
-        clientsClaim: true,
-        cleanupOutdatedCaches: true,
-
-        // IMPORTANT: do NOT serve index.html purely from precache.
-        // This avoids the "published app never updates" trap.
-        // We'll handle navigations via NetworkFirst runtime caching instead.
-        globPatterns: ["**/*.{js,css,ico,png,svg,woff,woff2}"],
-
-         runtimeCaching: [
-           // Always try the network for navigations; fall back to cache when offline.
-           // IMPORTANT: no networkTimeoutSeconds here — on slow mobile connections a timeout
-           // can incorrectly serve an old cached HTML shell, making new publishes look "stuck".
-           {
-             urlPattern: ({ request }) => request.mode === "navigate",
-             handler: "NetworkFirst",
-              options: {
-                cacheName: "html-pages",
-                // Bypass HTTP cache for HTML so new publishes show up immediately.
-                fetchOptions: ({ cache: "no-store" } as any),
-                expiration: {
-                  maxEntries: 20,
-                  maxAgeSeconds: 60 * 60 * 24, // 1 day
-                },
-              },
-           },
+        navigateFallback: '/index.html',
+        runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: "CacheFirst",
+            handler: 'CacheFirst',
             options: {
-              cacheName: "google-fonts-cache",
+              cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
-              },
-            },
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
+            }
           },
           {
             urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: "CacheFirst",
+            handler: 'CacheFirst',
             options: {
-              cacheName: "gstatic-fonts-cache",
+              cacheName: 'gstatic-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
-              },
-            },
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
+            }
           },
-          // Hashed assets are safe to cache aggressively.
           {
             urlPattern: /\.(?:js|css)$/,
-            handler: "CacheFirst",
+            handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: "static-resources",
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
-              },
-            },
+              cacheName: 'static-resources'
+            }
           },
           {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
-            handler: "CacheFirst",
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            handler: 'CacheFirst',
             options: {
-              cacheName: "images-cache",
+              cacheName: 'images-cache',
               expiration: {
-                maxEntries: 300,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
-              },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/tdjtumtdkjicnhlpqqzd\.supabase\.co\/rest\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "backend-api-cache",
-              networkTimeoutSeconds: 10,
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 5, // 5 minutes
-              },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/tdjtumtdkjicnhlpqqzd\.supabase\.co\/storage\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "backend-storage-cache",
-              expiration: {
-                maxEntries: 150,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
-              },
-            },
-          },
-        ],
-      },
-    }),
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          }
+        ]
+      }
+    })
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -144,17 +96,18 @@ export default defineConfig(({ mode }) => {
         entryFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
-        },
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
+        }
       },
     },
     chunkSizeWarningLimit: 1000,
-    // Use esbuild minifier for faster & more reliable builds (terser can be slow/time out)
-    minify: 'esbuild',
-    esbuild: {
-      drop: ['console', 'debugger'],
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
     },
   },
-  });
-});
+}));

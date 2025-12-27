@@ -1,12 +1,9 @@
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { BibleReader } from "@/components/bible/BibleReader";
 import { BibleNavigation } from "@/components/bible/BibleNavigation";
-import { PTImageBible } from "@/components/bible/PTImageBible";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { BookMarked, HelpCircle, Headphones, BookOpen, Image } from "lucide-react";
+import { BookMarked, HelpCircle, Headphones } from "lucide-react";
 import { Link } from "react-router-dom";
 import { StudyBibleDemoDialog } from "@/components/bible/StudyBibleDemoDialog";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
@@ -16,25 +13,7 @@ import { usePreservePage } from "@/hooks/usePreservePage";
 
 const Bible = () => {
   const { user } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [demoOpen, setDemoOpen] = useState(false);
-  const tabFromUrl = searchParams.get("tab") === "images" ? "images" : "study";
-  const [activeTab, setActiveTab] = useState<"study" | "images">(tabFromUrl);
-  
-  useEffect(() => {
-    const tab = searchParams.get("tab") === "images" ? "images" : "study";
-    setActiveTab(tab);
-  }, [searchParams]);
-  
-  const handleTabChange = (value: string) => {
-    const newTab = value as "study" | "images";
-    setActiveTab(newTab);
-    if (newTab === "images") {
-      setSearchParams({ tab: "images" });
-    } else {
-      setSearchParams({});
-    }
-  };
   
   // Enable scroll position preservation for this page
   usePreservePage();
@@ -101,41 +80,13 @@ const Bible = () => {
             />
           )}
 
-          {/* Main Tabs */}
-          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-            <TabsList className="grid w-full max-w-md grid-cols-2 bg-card/50 backdrop-blur-md border border-border/50">
-              <TabsTrigger 
-                value="study" 
-                className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary flex items-center gap-2"
-              >
-                <BookOpen className="h-4 w-4" />
-                PT Study Bible
-              </TabsTrigger>
-              <TabsTrigger 
-                value="images" 
-                className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary flex items-center gap-2"
-              >
-                <Image className="h-4 w-4" />
-                PT Image Bible
-              </TabsTrigger>
-            </TabsList>
+          {/* Navigation */}
+          <div className="mb-6 sm:mb-8">
+            <BibleNavigation />
+          </div>
 
-            <TabsContent value="study" className="space-y-6">
-              {/* Navigation */}
-              <div className="mb-6 sm:mb-8">
-                <BibleNavigation />
-              </div>
-
-              {/* Bible Reader */}
-              <BibleReader />
-            </TabsContent>
-
-            <TabsContent value="images">
-              <div className="glass-card p-6 rounded-2xl">
-                <PTImageBible />
-              </div>
-            </TabsContent>
-          </Tabs>
+          {/* Bible Reader */}
+          <BibleReader />
         </div>
       </div>
       

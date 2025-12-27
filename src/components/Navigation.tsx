@@ -12,7 +12,6 @@ import { useDirectMessagesContext } from "@/contexts/DirectMessagesContext";
 import { Badge } from "@/components/ui/badge";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { PWAInstallButton } from "@/components/PWAInstallButton";
-import { PWAForceUpdateButton } from "@/components/PWAForceUpdateButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NavigationStyleToggle } from "@/components/NavigationStyleToggle";
@@ -103,7 +102,6 @@ export const Navigation = () => {
               </Link>
               <div className="flex items-center gap-2">
                 <PWAInstallButton />
-                <PWAForceUpdateButton aria-label="Reload latest version" />
               </div>
             </div>
           </div>
@@ -138,7 +136,6 @@ export const Navigation = () => {
             <div className="flex items-center gap-2 md:gap-4 flex-1 justify-end">
               <GlobalSearch />
               <PWAInstallButton />
-              <PWAForceUpdateButton aria-label="Reload latest version" />
               <ThemeToggle />
 
               {/* Admin-only Live Demo Link */}
@@ -220,14 +217,12 @@ export const Navigation = () => {
                     <EnhancedMobileDrawer />
                   </div>
                   
-                  {/* Sign Out Button - Desktop Only */}
-                  <Button 
-                    variant="outline" 
-                    className="hidden md:flex whitespace-nowrap"
-                    onClick={() => void signOut()}
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
+                  {/* Enter App Button - Desktop Only */}
+                  <Button asChild className="hidden md:flex gradient-palace whitespace-nowrap">
+                    <Link to="/palace">
+                      <Building2 className="h-4 w-4 mr-2" />
+                      Enter App
+                    </Link>
                   </Button>
                 </>
               ) : (
@@ -385,13 +380,6 @@ export const Navigation = () => {
                   >
                     <BookOpen className="h-3.5 w-3.5 text-blue-500" />
                     <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent font-semibold">Phototheology Study Bible</span>
-                  </Link>
-                  <Link 
-                    to="/bible?tab=images" 
-                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 hover:from-amber-500/20 hover:to-orange-500/20 ${isActiveTab('/bible?tab=images') ? 'shadow-[0_0_12px_2px_rgba(245,158,11,0.5)] border-amber-400/60' : ''}`}
-                  >
-                    <Image className="h-3.5 w-3.5 text-amber-500" />
-                    <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent font-semibold">PT Image Bible</span>
                   </Link>
                   <Link 
                     to="/card-deck" 

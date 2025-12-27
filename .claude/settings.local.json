@@ -20,9 +20,7 @@
       "Bash(cat:*)",
       "Bash(grep:*)",
       "WebSearch",
-      "Bash(npx supabase gen types typescript --local:*)",
-      "Bash(git fetch:*)",
-      "Bash(rm:*)"
+      "Bash(npx supabase gen types typescript --local:*)"
     ],
     "deny": [],
     "ask": []

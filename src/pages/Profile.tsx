@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { User, Mail, Trophy, Star, Calendar, Upload, Loader2, RefreshCw } from "lucide-react";
+import { User, Mail, Trophy, Star, Calendar, Upload, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
@@ -22,7 +22,6 @@ import { PathProfileSection, PathCertificatesGallery } from "@/components/path";
 import { usePath } from "@/hooks/usePath";
 import { SocialMediaConnect } from "@/components/SocialMediaConnect";
 import { LanguageSelector } from "@/components/settings/LanguageSelector";
-import { clearPwaUpdateCooldown, hardReloadApp } from "@/lib/pwa";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -33,23 +32,7 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [isOwner, setIsOwner] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleForceRefresh = async () => {
-    setIsRefreshing(true);
-    toast.info("Clearing app cache and refreshing...");
-
-    try {
-      clearPwaUpdateCooldown();
-      await hardReloadApp();
-    } catch (error) {
-      console.error("Error during force refresh:", error);
-      toast.error("Error clearing cache. Reloading anyway...");
-      window.location.reload();
-    }
-  };
-
 
   const getTierDisplay = () => {
     switch (tier) {
@@ -397,48 +380,6 @@ export default function Profile() {
 
           {/* Notification Preferences */}
           <NotificationPreferences />
-
-          {/* App Refresh */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <RefreshCw className="h-5 w-5" />
-                App Version & Refresh
-              </CardTitle>
-              <CardDescription>
-                Force refresh the app to get the latest updates
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <span className="text-sm text-muted-foreground">Current Version</span>
-                <Badge variant="outline" className="font-mono">
-                  {import.meta.env.VITE_APP_VERSION || __APP_BUILD_TIME__}
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                If the app seems outdated or you're experiencing issues, use this button to clear the cache and reload with the latest version.
-              </p>
-              <Button 
-                onClick={handleForceRefresh} 
-                disabled={isRefreshing}
-                variant="outline"
-                className="w-full"
-              >
-                {isRefreshing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Refreshing...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    Force Refresh App
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
 
           {/* Announcements (Owner Only) */}
           {isOwner && (

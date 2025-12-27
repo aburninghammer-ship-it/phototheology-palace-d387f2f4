@@ -9,7 +9,6 @@ import { Book, Sparkles, CheckCircle2, Calendar, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { Navigation } from "@/components/Navigation";
@@ -279,7 +278,7 @@ export default function DailyVerse() {
                   Sign up to track your progress, mark verses as read, and unlock the full Phototheology experience with 7 unique perspectives on every verse.
                 </p>
                 <Button asChild size="lg" className="mt-2">
-                  <Link to="/auth">Sign Up Free</Link>
+                  <a href="/auth">Sign Up Free</a>
                 </Button>
               </div>
             </CardContent>

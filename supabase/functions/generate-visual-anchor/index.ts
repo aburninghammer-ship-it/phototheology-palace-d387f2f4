@@ -37,11 +37,11 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-image-preview",
+        model: "google/gemini-2.5-flash-image",
         messages: [
           {
             role: "user",
-            content: `Create a unique, vivid, memorable visual anchor image for Bible study memorization. ${prompt}. Style: Rich colors, clear symbolic imagery, suitable for mental palace visualization. Make it visually distinct and memorable.`
+            content: `Create a beautiful, memorable visual anchor image for Bible study. ${prompt}. Style: Clear, symbolic, memorable for mental palace visualization.`
           }
         ],
         modalities: ["image", "text"]
