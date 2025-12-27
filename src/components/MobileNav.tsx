@@ -314,7 +314,7 @@ export const MobileNav = () => {
                 variant="ghost"
                 className="w-full justify-start text-destructive hover:text-destructive"
                 size="sm"
-                onClick={signOut}
+                onClick={() => void signOut()}
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
