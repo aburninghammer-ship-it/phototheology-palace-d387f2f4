@@ -42,20 +42,21 @@ export default defineConfig(({ mode }) => {
         // We'll handle navigations via NetworkFirst runtime caching instead.
         globPatterns: ["**/*.{js,css,ico,png,svg,woff,woff2}"],
 
-        runtimeCaching: [
-          // Always try the network for navigations; fall back to cache when offline.
-          {
-            urlPattern: ({ request }) => request.mode === "navigate",
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "html-pages",
-              networkTimeoutSeconds: 5,
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24, // 1 day
-              },
-            },
-          },
+         runtimeCaching: [
+           // Always try the network for navigations; fall back to cache when offline.
+           // IMPORTANT: no networkTimeoutSeconds here — on slow mobile connections a timeout
+           // can incorrectly serve an old cached HTML shell, making new publishes look "stuck".
+           {
+             urlPattern: ({ request }) => request.mode === "navigate",
+             handler: "NetworkFirst",
+             options: {
+               cacheName: "html-pages",
+               expiration: {
+                 maxEntries: 20,
+                 maxAgeSeconds: 60 * 60 * 24, // 1 day
+               },
+             },
+           },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: "CacheFirst",
