@@ -45,7 +45,7 @@ export function PWAForceUpdateButton({
       {...props}
     >
       <RefreshCw className={"h-4 w-4" + (isRefreshing ? " animate-spin" : "")} />
-      <span className="hidden sm:inline">{label}</span>
+      {label && <span className="sr-only sm:not-sr-only">{label}</span>}
     </Button>
   );
 }

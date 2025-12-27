@@ -138,7 +138,7 @@ export const Navigation = () => {
             <div className="flex items-center gap-2 md:gap-4 flex-1 justify-end">
               <GlobalSearch />
               <PWAInstallButton />
-              <PWAForceUpdateButton aria-label="Reload latest version" className="hidden sm:inline-flex" />
+              <PWAForceUpdateButton aria-label="Reload latest version" />
               <ThemeToggle />
 
               {/* Admin-only Live Demo Link */}
