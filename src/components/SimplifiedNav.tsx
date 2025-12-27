@@ -32,10 +32,10 @@ export const SimplifiedNav = () => {
   const studyLinks = [
     { to: "/dashboard", label: "Dashboard", icon: Home },
     { to: "/daily-verse", label: "Verse of the Day", icon: BookOpen },
-    { to: "/bible", label: "Bible Reader", icon: BookOpen },
+    { to: "/bible", label: "PT Study Bible", icon: BookOpen },
+    { to: "/bible-image-library", label: "PT Image Bible", icon: BookOpen },
     { to: "/bible/search", label: "Search", icon: BookOpen },
     { to: "/palace/floor/1/room/gr", label: "Produce a Gem", icon: BookOpen },
-    { to: "/bible-image-library", label: "Image Library", icon: BookOpen },
     { to: "/quarterly-study", label: "Quarterly Study", icon: BookOpen },
     { to: "/memorization", label: "Memorization", icon: BookOpen },
     { to: "/notes", label: "Notes", icon: StickyNote },

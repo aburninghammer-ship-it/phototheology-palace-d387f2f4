@@ -39,7 +39,8 @@ const categoryConfig = {
     title: "Study",
     icon: BookOpen,
     links: [
-      { to: "/bible", label: "Phototheology Study Bible (PSB)", icon: "📖" },
+      { to: "/bible", label: "PT Study Bible", icon: "📖" },
+      { to: "/bible-image-library", label: "PT Image Bible", icon: "🎨" },
       { to: "/read-me-the-bible", label: "Listen to Bible", icon: "🎧" },
       { to: "/reading-plans", label: "Reading Plans", icon: "📅" },
       { to: "/devotionals", label: "Devotionals", icon: "💜" },
@@ -50,7 +51,6 @@ const categoryConfig = {
       { to: "/palace/floor/1/room/gr", label: "Produce a Gem", icon: "💎" },
       { to: "/memory", label: "Memory Palace", icon: "🧠" },
       { to: "/verse-memory-hall", label: "Verse Memory Hall (Legacy)", icon: "📚" },
-      { to: "/bible-image-library", label: "Image Library", icon: "🎨" },
       { to: "/quarterly-study", label: "Lesson Study", icon: "📅" },
       { to: "/bible-study-leader", label: "Lead Bible Study", icon: "👥" },
     ],
