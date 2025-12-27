@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, ChevronRight, Lock, CheckCircle, Sparkles, Play, BookOpen } from "lucide-react";
+import { ChevronDown, ChevronRight, Lock, CheckCircle, Sparkles, Play, BookOpen, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { palaceFloors } from "@/data/palaceData";
 import { useRoomUnlock } from "@/hooks/useRoomUnlock";
 import { usePalaceProgress } from "@/hooks/usePalaceProgress";
+import { useNewlyRenovatedRoom } from "@/hooks/useNewlyRenovatedRoom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -303,6 +304,7 @@ interface RoomCardProps {
 
 const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
   const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
+  const { showBadge: showRenovatedBadge } = useNewlyRenovatedRoom(room.id);
   const roomImage = getRoomImage(room.id, floorNumber);
 
   return (
@@ -324,6 +326,16 @@ const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
         <div className={cn(
           "absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"
         )} />
+        
+        {/* Newly Renovated Badge */}
+        {showRenovatedBadge && (
+          <div className="absolute top-2 left-2 z-20">
+            <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-[10px] px-1.5 py-0.5 animate-pulse shadow-lg">
+              <Star className="h-2.5 w-2.5 mr-0.5 fill-current" />
+              NEW
+            </Badge>
+          </div>
+        )}
         
         {/* Content */}
         <div className="relative z-10 p-3 w-full text-left">
