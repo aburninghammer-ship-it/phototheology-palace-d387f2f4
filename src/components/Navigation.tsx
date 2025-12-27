@@ -224,7 +224,7 @@ export const Navigation = () => {
                   <Button 
                     variant="outline" 
                     className="hidden md:flex whitespace-nowrap"
-                    onClick={signOut}
+                    onClick={() => void signOut()}
                   >
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
