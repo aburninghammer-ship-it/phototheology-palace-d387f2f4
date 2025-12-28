@@ -16,6 +16,7 @@ import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
 import { ChainChessLeaderboard, GroupEscapeRoom } from "@/components/social";
 import { UnifiedGameRankings } from "@/components/games/UnifiedGameRankings";
 import { ActiveGameSessions } from "@/components/games/ActiveGameSessions";
+import { usePreservePageState, usePreserveFormState } from "@/contexts/PageStateContext";
 
 // Bible translations available for games
 const BIBLE_TRANSLATIONS = [
@@ -33,9 +34,20 @@ const Games = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [floorFilter, setFloorFilter] = useState("all");
-  const [viewMode, setViewMode] = useState<"all" | "floor" | "mode">("all");
+
+  // Preserve page state across navigation
+  usePreservePageState();
+  const [formState, updateFormState] = usePreserveFormState({
+    searchQuery: "",
+    floorFilter: "all",
+    viewMode: "all" as "all" | "floor" | "mode",
+  });
+
+  const { searchQuery, floorFilter, viewMode } = formState;
+  const setSearchQuery = (val: string) => updateFormState({ searchQuery: val });
+  const setFloorFilter = (val: string) => updateFormState({ floorFilter: val });
+  const setViewMode = (val: "all" | "floor" | "mode") => updateFormState({ viewMode: val });
+
   const [selectedTranslation, setSelectedTranslation] = useState(() => {
     // Load from localStorage or default to KJV
     return localStorage.getItem("games_bible_translation") || "kjv";
