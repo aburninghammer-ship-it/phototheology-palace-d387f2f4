@@ -511,6 +511,16 @@ export const BibleReader = () => {
                     onAddNote={addNote}
                     onUpdateNote={updateNote}
                     onDeleteNote={deleteNote}
+                    onAskJeeves={(verseNum, verseText) => {
+                      setSelectedVerse(verseNum);
+                      setJeevesMode(true);
+                      setStrongsMode(false);
+                      setPrincipleMode(false);
+                      setChainReferenceMode(false);
+                      setTimeout(() => {
+                        jeevesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }}
                   />
                 ))
               )}

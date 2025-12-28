@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Verse } from "@/types/bible";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2, BookOpen, RefreshCw } from "lucide-react";
+import { Sparkles, Loader2, BookOpen, RefreshCw, HelpCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,6 @@ import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { VerseHighlightMenu } from "./VerseHighlightMenu";
 import { VerseNoteEditor } from "./VerseNoteEditor";
-import { VerseCopyMenu } from "./VerseCopyMenu";
 import { VerseNote } from "@/hooks/useVerseNotes";
 import { cn } from "@/lib/utils";
 
@@ -45,6 +44,7 @@ interface VerseViewProps {
   onAddNote?: (verse: number, content: string) => Promise<VerseNote | null>;
   onUpdateNote?: (noteId: string, content: string) => void;
   onDeleteNote?: (noteId: string) => void;
+  onAskJeeves?: (verse: number, verseText: string) => void;
 }
 
 // All available principles from the palace
@@ -89,15 +89,15 @@ const generateVersePrinciples = (verseNumber: number): string[] => {
   return shuffled.slice(0, 4);
 };
 
-export const VerseView = ({ 
-  verse, 
-  isSelected, 
-  onSelect, 
-  showPrinciples, 
-  isHighlighted, 
-  isAudioPlaying, 
-  principles, 
-  book, 
+export const VerseView = ({
+  verse,
+  isSelected,
+  onSelect,
+  showPrinciples,
+  isHighlighted,
+  isAudioPlaying,
+  principles,
+  book,
   chapter,
   highlightColor,
   highlightColors = [],
@@ -107,6 +107,7 @@ export const VerseView = ({
   onAddNote,
   onUpdateNote,
   onDeleteNote,
+  onAskJeeves,
 }: VerseViewProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedPrinciple, setSelectedPrinciple] = useState<string>("");
@@ -254,7 +255,7 @@ export const VerseView = ({
               {verse.verse}
             </span>
             
-            {/* Highlight, Note & Copy buttons */}
+            {/* Highlight, Note & Ask Jeeves buttons */}
             <div className="flex gap-0.5">
               {onHighlight && onRemoveHighlight && (
                 <VerseHighlightMenu
@@ -274,15 +275,20 @@ export const VerseView = ({
                   onDelete={onDeleteNote}
                 />
               )}
-              <VerseCopyMenu
-                reference={`${book} ${chapter}:${verse.verse}`}
-                text={verse.text}
-                book={book}
-                chapter={chapter}
-                verse={verse.verse}
-                className="h-6 w-6 p-0"
-                size="icon"
-              />
+              {onAskJeeves && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAskJeeves(verse.verse, verse.text);
+                  }}
+                  title="Ask Jeeves about this verse"
+                >
+                  <HelpCircle className="h-3 w-3 text-purple-500" />
+                </Button>
+              )}
             </div>
           </div>
           

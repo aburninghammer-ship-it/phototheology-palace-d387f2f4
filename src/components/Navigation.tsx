@@ -411,10 +411,10 @@ export const Navigation = () => {
                   </Link>
                   <Link
                     to="/image-bible"
-                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 hover:from-purple-500/20 hover:to-indigo-500/20 ${isActiveTab('/image-bible') ? 'shadow-[0_0_12px_2px_rgba(168,85,247,0.5)] border-purple-400/60' : ''}`}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 hover:from-amber-500/20 hover:to-orange-500/20 ${isActiveTab('/image-bible') ? 'shadow-[0_0_12px_2px_rgba(245,158,11,0.5)] border-amber-400/60' : ''}`}
                   >
-                    <Image className="h-3.5 w-3.5 text-purple-500" />
-                    <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent font-semibold">PT Image Bible</span>
+                    <Image className="h-3.5 w-3.5 text-amber-500" />
+                    <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent font-semibold">PT Image Bible</span>
                   </Link>
                   <Link
                     to="/card-deck" 
