@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Book, Check, Lock, Sparkles } from "lucide-react";
 import { revelationLessons } from "@/data/revelationCourseData";
 import { ProphecyCourseEnhancements } from "@/components/prophecy/ProphecyCourseEnhancements";
+import { ProphecyTimeline } from "@/components/prophecy/ProphecyTimeline";
 
 const RevelationCourse = () => {
   const [currentLesson, setCurrentLesson] = useState(1);
@@ -185,6 +186,11 @@ const RevelationCourse = () => {
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Prophecy Timeline Visualization */}
+        <div className="max-w-6xl mx-auto">
+          <ProphecyTimeline />
         </div>
 
         {/* Enhanced Study Tools */}

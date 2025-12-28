@@ -8,6 +8,7 @@ import { Navigation } from "@/components/Navigation";
 import { danielCourse, kidsDanielCourse } from "@/data/danielCourseData";
 import { Footer } from "@/components/Footer";
 import { ProphecyCourseEnhancements } from "@/components/prophecy/ProphecyCourseEnhancements";
+import { ProphecyTimeline } from "@/components/prophecy/ProphecyTimeline";
 
 export default function DanielCourse() {
   const [completedDays, setCompletedDays] = useState<number[]>([]);
@@ -386,6 +387,9 @@ export default function DanielCourse() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Prophecy Timeline Visualization */}
+        <ProphecyTimeline />
 
         {/* Enhanced Study Tools */}
         <ProphecyCourseEnhancements

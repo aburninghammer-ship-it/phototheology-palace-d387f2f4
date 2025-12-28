@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target, StickyNote, Radio, Church } from "lucide-react";
+import { Building2, Sparkles, Users, User, CreditCard, LogOut, MessageCircle, BookOpen, Calendar, Image, Search, Video, Sword, Crown, Shield, Brain, Lightbulb, Zap, Trophy, MessageSquare, Target, StickyNote, Radio, Church, GraduationCap, Award, Gamepad2, BarChart3, Archive, Library, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveUsers } from "@/hooks/useActiveUsers";
@@ -472,14 +472,50 @@ export const Navigation = () => {
                     <Zap className="h-3.5 w-3.5 text-fuchsia-500" />
                     <span className="bg-gradient-to-r from-fuchsia-600 to-pink-600 bg-clip-text text-transparent font-semibold">Games</span>
                   </Link>
-                  <Link 
-                    to="/memory" 
+                  <Link
+                    to="/memory"
                     className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 hover:from-cyan-500/20 hover:to-teal-500/20 ${isActiveTab('/memory') ? 'shadow-[0_0_12px_2px_rgba(6,182,212,0.5)] border-cyan-400/60' : ''}`}
                   >
                     <Brain className="h-3.5 w-3.5 text-cyan-500" />
                     <span className="bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent font-semibold">Memory Palace</span>
                   </Link>
-                  <Link 
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 hover:from-emerald-500/20 hover:to-teal-500/20">
+                        <Layers className="h-3.5 w-3.5 text-emerald-500" />
+                        <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent font-semibold">Study Tools</span>
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56 bg-card border-border z-50">
+                      <DropdownMenuItem asChild>
+                        <Link to="/flashcards">
+                          <Layers className="h-4 w-4 mr-2" />
+                          Flashcards
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/daily-reading">
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Daily Reading
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/training-drills">
+                          <Target className="h-4 w-4 mr-2" />
+                          Training Drills
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/study-partners">
+                          <Users className="h-4 w-4 mr-2" />
+                          Study Partners
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <Link
                     to="/leaderboard" 
                     className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 hover:from-yellow-500/20 hover:to-amber-500/20 ${isActiveTab('/leaderboard') ? 'shadow-[0_0_12px_2px_rgba(234,179,8,0.5)] border-yellow-400/60' : ''}`}
                   >
@@ -617,21 +653,35 @@ export const Navigation = () => {
                     <CreditCard className="h-3.5 w-3.5 text-lime-500" />
                     <span className="bg-gradient-to-r from-lime-600 to-green-600 bg-clip-text text-transparent font-semibold">Pricing</span>
                   </Link>
-                  <Link 
-                    to="/community" 
-                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border border-teal-500/20 hover:from-teal-500/20 hover:to-cyan-500/20"
-                  >
-                    <Users className="h-3.5 w-3.5 text-teal-500" />
-                    <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-semibold">Community</span>
-                  </Link>
-                  <Link 
-                    to="/guilds" 
-                    className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border border-indigo-500/20 hover:from-indigo-500/20 hover:to-violet-500/20"
-                  >
-                    <Shield className="h-3.5 w-3.5 text-indigo-500" />
-                    <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent font-semibold">Guilds</span>
-                  </Link>
-                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="px-3 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border border-teal-500/20 hover:from-teal-500/20 hover:to-cyan-500/20">
+                        <Users className="h-3.5 w-3.5 text-teal-500" />
+                        <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-semibold">Community</span>
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56 bg-card border-border z-50">
+                      <DropdownMenuItem asChild>
+                        <Link to="/community">
+                          <Users className="h-4 w-4 mr-2" />
+                          Community Feed
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/pt-multiplayer">
+                          <Gamepad2 className="h-4 w-4 mr-2" />
+                          PT Multiplayer
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/guilds">
+                          <Shield className="h-4 w-4 mr-2" />
+                          Guilds
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap flex items-center gap-1">
@@ -658,9 +708,22 @@ export const Navigation = () => {
                       <DropdownMenuItem asChild>
                         <Link to="/research-mode">Research Mode</Link>
                       </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/sermon-archive">
+                          <Archive className="h-4 w-4 mr-2" />
+                          Sermon Archive
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/content-library">
+                          <Library className="h-4 w-4 mr-2" />
+                          Content Library
+                        </Link>
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  
+
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="px-3 py-1.5 text-sm font-medium text-foreground hover:text-primary hover:bg-accent/50 rounded-md transition-colors whitespace-nowrap flex items-center gap-1">
@@ -675,6 +738,19 @@ export const Navigation = () => {
                           Profile
                         </Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/my-progress">
+                          <BarChart3 className="h-4 w-4 mr-2" />
+                          My Analytics
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/certificates">
+                          <Award className="h-4 w-4 mr-2" />
+                          Certificates
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <Link to="/pricing">
                           <CreditCard className="h-4 w-4 mr-2" />
