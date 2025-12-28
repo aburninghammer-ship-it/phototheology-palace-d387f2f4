@@ -30,7 +30,6 @@ const routeTitles: Record<string, string> = {
   "/verse-memory-hall": "Verse Memory Hall",
   "/bible-image-library": "Image Library",
   "/quarterly-study": "Lesson Study",
-  "/bible-study-leader": "Bible Study Leader",
   "/escape-room": "Escape Rooms",
   "/treasure-hunt": "Treasure Hunt",
   "/live-study": "Live Study",

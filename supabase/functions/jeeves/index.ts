@@ -246,7 +246,9 @@ serve(async (req) => {
       // Card deck properties
       roomId,
       userAnswer,
-      textType
+      textType,
+      // Chain Chess repetition prevention
+      usedChallenges
     } = requestBody;
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -1738,29 +1740,41 @@ Write one profound insight (2–3 sentences) that ties everything together.
 At the very end, on a new line, append: PRINCIPLES_REVEALED: [list of room codes you used]`;
 
     } else if (mode === "commentary-applied") {
-      systemPrompt = `You are Jeeves, a theologian providing insightful Bible commentary by APPLYING specific analytical frameworks to verses.
-Provide deep, thoughtful analysis while remaining clear and accessible.
+      systemPrompt = `You are Jeeves, a master Phototheology analyst providing DEEP, SUBSTANTIVE Bible commentary by APPLYING specific analytical lenses to verses.
 
-CRITICAL FORMATTING REQUIREMENTS (FOLLOW ALL OF THESE):
-- Do NOT use any markdown formatting at all (no bold, no italics, no headings).
-- Do NOT use asterisks (*) anywhere in the response.
-- Never write phrases like "Ah, my friend", "Ah,", "my friend", "friend", or "dear friend" - use the user's name instead.
-- Write in clear paragraphs, with a blank line between each paragraph.
-- Use emojis generously (📖 ✨ 🔍 💡 ⭐ 🌟 ✅ 🎯 💭 🙏 📚 🔥 ⚡ 🎨 etc.).
-- When you need lists, use the bullet character "•" at the start of the line, followed by a space.
-- Start each room analysis with a relevant emoji, but keep the rest of the line plain text.
-- Keep text conversational, warm, and genuine without sounding theatrical.
-- Make your response visually scannable with short sections separated by blank lines.
+Your analysis must be SCHOLARLY and APPLIED—not surface-level descriptions of what each room does. Instead, you must DEMONSTRATE each room's methodology by actually applying it to the specific verse text.
+
+CRITICAL ANALYSIS REQUIREMENTS:
+1. For each room/lens, QUOTE specific words or phrases from the verse you're analyzing
+2. SHOW the room's methodology in action—don't just describe it
+3. EXTRACT insights that are UNIQUE to that lens (what would be missed without it?)
+4. CONNECT to cross-references, Greek/Hebrew, and typology where relevant
+5. Each room analysis should be 80-120 words of substantive content
+
+EXAMPLES OF DEPTH EXPECTED:
+
+SHALLOW (BAD): "The Observation Room notices details in this passage."
+
+DEEP (GOOD): "🔍 OR — The repeated word 'verily' (Greek: ἀμήν ἀμήν) appears 25 times in John, always as Jesus's authoritative introduction. In John 3:3, this double-amen formula signals that what follows is not opinion but divine revelation. The choice of 'cannot see' (οὐ δύναται ἰδεῖν) rather than 'will not enter' shifts the focus from permission to perception—the unregenerated mind literally lacks the capacity to perceive kingdom realities. This linguistic precision reveals regeneration as an epistemological transformation."
+
+CRITICAL FORMATTING REQUIREMENTS:
+- Do NOT use markdown formatting (no bold, no italics).
+- Do NOT use asterisks (*) anywhere.
+- Never write "Ah, my friend" or theatrical openings.
+- Write in clear paragraphs with blank lines between sections.
+- Use emojis sparingly for visual clarity: 📖 ✨ 🔍 💡 ⭐ 🎯 💭 📚 🔥 ⚡ 🎨 🏛️ ⏰ 🌱
+- When listing items, use the bullet character "•" not asterisks.
+- Each room should have its own clearly separated section.
 
 ${PALACE_SCHEMA}
 
-CRITICAL INSTRUCTIONS:
+CRITICAL METHODOLOGY INSTRUCTIONS:
 1. Only use rooms that exist in the Palace Schema above.
-2. Use the exact methodology listed for each room.
-3. If using Bible Freestyle (BF): List verse relatives, don't write philosophical analysis.
-4. If using Connect-6 (C6): Discuss GENRE, not the 6 themes (those are in Theme Room).
-5. Never invent new rooms or modify existing methods.
-6. Never start lines with asterisks. Use bullet points (•) or emojis instead.`;
+2. Use the EXACT methodology for each room—apply it, don't just describe it.
+3. Bible Freestyle (BF): List specific verse relatives with their connections.
+4. Connect-6 (C6): Discuss GENRE, not thematic content.
+5. Never invent rooms or modify methods.
+6. Show your work—cite the text, reference the Greek/Hebrew, draw cross-references.`;
 
       // Random principle selection for refresh mode
       const allPrinciples = [
@@ -1804,7 +1818,7 @@ CRITICAL INSTRUCTIONS:
       
       const principleList = usedPrinciples.join(", ");
       
-      userPrompt = `Provide commentary on ${book} ${chapter}:${verseText.verse} by APPLYING these analytical lenses: ${principleList}
+      userPrompt = `Provide DEEP, APPLIED commentary on ${book} ${chapter}:${verseText.verse} through these analytical lenses: ${principleList}
 
 Verse text: "${verseText.text}"
 
@@ -1843,32 +1857,49 @@ Ellen G. White does not appear to have written specific commentary on ${book} ${
 • Expound briefly on how each quote relates to the verse
 • Vary your quotes each time you regenerate to show different perspectives` : ''}
 
+**CRITICAL INSTRUCTION - DEEP APPLICATION REQUIRED:**
+
+DO NOT just describe what each room does generically. Actually APPLY the room's methodology to this specific verse and show the SPECIFIC INSIGHTS gained.
+
+For EACH room/principle, you MUST:
+1. QUOTE the specific words/phrases from the verse that this lens illuminates
+2. APPLY the room's methodology concretely to those words
+3. EXTRACT specific theological insights that ONLY this lens reveals
+4. SHOW how the verse text itself supports your analysis
+
+**EXAMPLE OF WHAT NOT TO DO (shallow, generic):**
+"The SR (Story Room) helps us see this as a narrative about spiritual transformation."
+
+**EXAMPLE OF WHAT TO DO (deep, applied):**
+"📚 SR (Story Room) — The phrase 'born again' places Nicodemus mid-narrative in a dramatic turning point. He comes 'by night' (a storytelling device signaling spiritual darkness). Jesus's double 'verily, verily' functions as the story's climax—the moment the hidden truth is unveiled. Nicodemus's question 'How can a man be born when he is old?' reveals his role as the confused inquirer, a narrative archetype inviting every reader to ask the same question. The story arc moves from darkness→confusion→revelation."
+
 **FORMATTING INSTRUCTIONS - CRITICAL:**
-- Start with a warm opening using an emoji (📖, ✨, 🔍)
-- For EACH room/principle you analyze, format like this:
+- Start with a striking observation about what makes this verse's language significant
+- For EACH room/principle, use this format:
 
-🎯 **Room Name (CODE)** clearly illuminates this passage by showing [your insight]. [Continue with 2-3 more sentences of analysis]
+🔍 [ROOM NAME] ([CODE])
 
-💡 **Next Room (CODE)** reveals [your insight]. [Continue analysis]
+[Quote the specific words from the verse you're analyzing in quotation marks]
 
-- Use different emojis for each room: 📚 🔥 ⚡ 🎨 💎 🌟 ⭐ 🔍 💭 📖 ✨
+[4-6 sentences of deep analysis applying this room's SPECIFIC methodology to those words. Reference the actual Greek/Hebrew if relevant. Draw specific cross-references. Show what insight this lens uniquely reveals that other lenses would miss.]
+
+- Use different emojis for each room: 📚 🔥 ⚡ 🎨 💎 🌟 ⭐ 🔍 💭 📖 ✨ 🎯 💡 🌱 ⏰ 🏛️
 - Separate each room's analysis with a blank line
-- DO NOT use asterisks (*) for bullets - only use bullet points (•) if listing items
-- Keep language warm and conversational
-- End with an encouraging closing thought with emoji
+- DO NOT use asterisks (*) for bullets - use bullet points (•) if listing items
+- Keep language warm but substantive
 
 ${includeSOP ? '' : '✨ **Interconnections**'}
-Show how these principles work together when applied to this verse. Use 2-3 sentences.
+Show how these lenses TOGETHER reveal something no single lens could show. Be specific—reference insights from multiple rooms.
 
-🎯 **Practical Application**
-Give one concrete way to apply this insight. Keep it actionable and encouraging.
+🎯 **Transformative Application**
+Based on your multi-lens analysis, give ONE specific, actionable application. Reference the specific insight(s) that lead to this application.
 
-💫 **Closing Thought**
-End with one profound, inspiring insight.
+💫 **The Deeper Truth**
+Synthesize the insights into ONE profound revelation about this verse that the reader will remember.
 
-Keep it warm and easy to understand, visually appealing, and easy to scan.
-      
-      IMPORTANT: At the very end, on a new line, include: "PRINCIPLES_USED: ${principleList}"`;
+MINIMUM WORD COUNT PER ROOM: 80 words of substantive analysis.
+
+IMPORTANT: At the very end, on a new line, include: "PRINCIPLES_USED: ${principleList}"`;
     
     } else if (mode === "deep-palace-commentary") {
       // Deep Palace Commentary - Full Palace analysis using 16+ principles
@@ -2550,13 +2581,16 @@ You MUST be specific. Never give a generic category without naming the specific 
 
       if (isFirstMove) {
         const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");
-        userPrompt = `You're starting a Chain Chess game! You go FIRST. 
+        const usedChallengesText = usedChallenges && usedChallenges.length > 0
+          ? `\n\n**IMPORTANT - DO NOT REPEAT THESE CHALLENGES (already used):** ${usedChallenges.join(", ")}`
+          : "";
+        userPrompt = `You're starting a Chain Chess game! You go FIRST.
 
 **YOU CHOOSE THE OPENING VERSE!**
 
 Pick any powerful, well-known Bible verse to start the game. This will be the foundation verse for the entire game.
 
-Available categories for this game: ${categoriesText}
+Available categories for this game: ${categoriesText}${usedChallengesText}
 
 **YOUR CRITICAL TASK:**
 1. Choose an excellent opening verse (like John 3:16, Romans 8:28, Psalm 23:1, etc.)
@@ -2595,26 +2629,47 @@ Return ONLY valid JSON with:
       } else {
         const lastMove = previousMoves[previousMoves.length - 1];
         const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");
-        
+        const usedChallengesText = usedChallenges && usedChallenges.length > 0
+          ? `\n\n**IMPORTANT - DO NOT REPEAT THESE CHALLENGES (already used in this game):** ${usedChallenges.join(", ")}`
+          : "";
+
         // Handle generic challenges by making them specific
         let specificChallenge = lastMove.challengeCategory || "Books of the Bible";
         if (!specificChallenge.includes(" - ")) {
           // User gave a generic challenge - make it specific
           if (specificChallenge.includes("Books of the Bible")) {
             const books = ["Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings", "Isaiah", "Jeremiah", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "Revelation"];
-            const randomBook = books[Math.floor(Math.random() * books.length)];
+            // Filter out already used books
+            const availableBooks = usedChallenges && usedChallenges.length > 0
+              ? books.filter(b => !usedChallenges.some(used => used.includes(b)))
+              : books;
+            const randomBook = availableBooks.length > 0
+              ? availableBooks[Math.floor(Math.random() * availableBooks.length)]
+              : books[Math.floor(Math.random() * books.length)];
             specificChallenge = `Books of the Bible - ${randomBook}`;
           } else if (specificChallenge.includes("Rooms of the Palace")) {
             const rooms = ["Story Room", "Observation Room", "Gems Room", "Concentration Room", "Sanctuary (Blue Room)", "Theme Room", "Patterns Room"];
-            const randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
+            // Filter out already used rooms
+            const availableRooms = usedChallenges && usedChallenges.length > 0
+              ? rooms.filter(r => !usedChallenges.some(used => used.includes(r)))
+              : rooms;
+            const randomRoom = availableRooms.length > 0
+              ? availableRooms[Math.floor(Math.random() * availableRooms.length)]
+              : rooms[Math.floor(Math.random() * rooms.length)];
             specificChallenge = `Rooms of the Palace - ${randomRoom}`;
           } else if (specificChallenge.includes("Principles")) {
             const principles = ["2D/3D", "Time Zones", "Repeat & Enlarge", "Heaven Ceiling", "Gospel Floor"];
-            const randomPrinciple = principles[Math.floor(Math.random() * principles.length)];
+            // Filter out already used principles
+            const availablePrinciples = usedChallenges && usedChallenges.length > 0
+              ? principles.filter(p => !usedChallenges.some(used => used.includes(p)))
+              : principles;
+            const randomPrinciple = availablePrinciples.length > 0
+              ? availablePrinciples[Math.floor(Math.random() * availablePrinciples.length)]
+              : principles[Math.floor(Math.random() * principles.length)];
             specificChallenge = `Principles of the Palace - ${randomPrinciple}`;
           }
         }
-        
+
         userPrompt = `Continue Chain Chess on ${verse}.
 
 Player's previous move:
@@ -2622,7 +2677,7 @@ Verse: "${lastMove.verse}"
 Commentary: "${lastMove.commentary}"
 Their challenge: "${specificChallenge}"
 
-Available categories: ${categoriesText}
+Available categories: ${categoriesText}${usedChallengesText}
 
 **YOUR TASK:**
 1. Find a verse that relates to their challenge "${specificChallenge}"
@@ -2633,7 +2688,9 @@ Available categories: ${categoriesText}
    - "Rooms of the Palace - [ROOM NAME]" (e.g., "Rooms of the Palace - Feasts Room", "Rooms of the Palace - Gems Room")
    - "Principles of the Palace - [PRINCIPLE]" (e.g., "Principles of the Palace - 2D", "Principles of the Palace - Repeat & Enlarge")
 
-**CRITICAL:** DO NOT use generic categories! ALWAYS include the specific book/room/principle name after the dash!
+**CRITICAL:**
+- DO NOT use generic categories! ALWAYS include the specific book/room/principle name after the dash!
+- DO NOT repeat any challenges that have already been used in this game!
 
 Example CORRECT challenges:
 - "Books of the Bible - Exodus"

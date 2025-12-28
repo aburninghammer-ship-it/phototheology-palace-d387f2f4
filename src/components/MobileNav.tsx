@@ -109,12 +109,6 @@ export const MobileNav = () => {
                   📅 Lesson Study
                 </Button>
               </Link>
-              <Link to="/bible-study-leader">
-                <Button variant="ghost" className="w-full justify-start" size="sm">
-                  👥 Lead a Bible Study
-                </Button>
-              </Link>
-              
               <Separator className="my-2" />
               <div className="text-xs font-semibold text-muted-foreground px-2 py-1">Research Tools</div>
               

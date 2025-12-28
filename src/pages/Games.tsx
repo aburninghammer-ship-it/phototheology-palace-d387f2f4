@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Gamepad2, MapPin, UsersRound, Search, Trophy, Users } from "lucide-react";
+import { Gamepad2, MapPin, UsersRound, Search, Trophy, Users, BookOpen } from "lucide-react";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { gamesSteps } from "@/config/howItWorksSteps";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,18 @@ import { ChainChessLeaderboard, GroupEscapeRoom } from "@/components/social";
 import { UnifiedGameRankings } from "@/components/games/UnifiedGameRankings";
 import { ActiveGameSessions } from "@/components/games/ActiveGameSessions";
 
+// Bible translations available for games
+const BIBLE_TRANSLATIONS = [
+  { id: "kjv", name: "KJV", description: "King James Version" },
+  { id: "nkjv", name: "NKJV", description: "New King James Version" },
+  { id: "niv", name: "NIV", description: "New International Version" },
+  { id: "esv", name: "ESV", description: "English Standard Version" },
+  { id: "nasb", name: "NASB", description: "New American Standard Bible" },
+  { id: "nlt", name: "NLT", description: "New Living Translation" },
+  { id: "amp", name: "AMP", description: "Amplified Bible" },
+  { id: "msg", name: "MSG", description: "The Message" },
+];
+
 const Games = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -24,6 +36,20 @@ const Games = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [floorFilter, setFloorFilter] = useState("all");
   const [viewMode, setViewMode] = useState<"all" | "floor" | "mode">("all");
+  const [selectedTranslation, setSelectedTranslation] = useState(() => {
+    // Load from localStorage or default to KJV
+    return localStorage.getItem("games_bible_translation") || "kjv";
+  });
+
+  // Save translation preference
+  const handleTranslationChange = (translation: string) => {
+    setSelectedTranslation(translation);
+    localStorage.setItem("games_bible_translation", translation);
+    toast({
+      title: "Translation Updated",
+      description: `Games will now use ${BIBLE_TRANSLATIONS.find(t => t.id === translation)?.name || translation}`,
+    });
+  };
 
   const allGames = [
     {
@@ -344,7 +370,7 @@ const Games = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-x-hidden">
         {/* Animated Background */}
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
@@ -361,7 +387,7 @@ const Games = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-x-hidden">
       {/* Animated Background - Simplified on mobile */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-48 md:w-72 h-48 md:h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
@@ -423,6 +449,31 @@ const Games = () => {
               <SelectItem value="6">Floor 6</SelectItem>
               <SelectItem value="7">Floor 7</SelectItem>
               <SelectItem value="8">Floor 8</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Bible Translation Selector */}
+          <Select value={selectedTranslation} onValueChange={handleTranslationChange}>
+            <SelectTrigger className="w-full md:w-[180px] h-12 text-base backdrop-blur-sm bg-background/50 border-border/50">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-primary" />
+                <SelectValue placeholder="Translation" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground border-b mb-1">
+                Select Bible Translation
+              </div>
+              {BIBLE_TRANSLATIONS.map((translation) => (
+                <SelectItem key={translation.id} value={translation.id}>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">{translation.name}</span>
+                    <span className="text-xs text-muted-foreground hidden sm:inline">
+                      - {translation.description}
+                    </span>
+                  </div>
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </motion.div>

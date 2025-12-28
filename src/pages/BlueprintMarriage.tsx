@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
 import { BlueprintMap } from "@/components/blueprint/BlueprintMap";
+import { BlueprintEnhancedFeatures } from "@/components/blueprint/BlueprintEnhancedFeatures";
 
 export default function BlueprintMarriage() {
   const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
@@ -249,6 +250,21 @@ export default function BlueprintMarriage() {
               </ScrollArea>
             </CardContent>
           </Card>
+
+          {/* Interactive Study Tools */}
+          <BlueprintEnhancedFeatures
+            blueprintType="marriage"
+            currentArticleId={currentArticle?.id}
+            currentArticleTitle={currentArticle?.name}
+            currentArticleContent={currentArticle?.detailedTeaching}
+            dailyCheckItems={[
+              "Read today's marriage principle",
+              "Prayed together as a couple",
+              "Practiced an exercise from the article",
+              "Had a meaningful conversation",
+              "Showed intentional love/service"
+            ]}
+          />
         )}
       </main>
     </div>

@@ -20,7 +20,13 @@
       "Bash(cat:*)",
       "Bash(grep:*)",
       "WebSearch",
-      "Bash(npx supabase gen types typescript --local:*)"
+      "Bash(npx supabase gen types typescript --local:*)",
+      "Bash(npx tsc:*)",
+      "Bash(lsof:*)",
+      "WebFetch(domain:phototheology-palace.lovable.app)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

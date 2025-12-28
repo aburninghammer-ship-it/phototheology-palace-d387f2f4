@@ -10,6 +10,7 @@ import { WEIGHT_LOSS_ARTICLES, WEIGHT_LOSS_INTRO } from "@/data/blueprintWeightL
 import { useToast } from "@/hooks/use-toast";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
 import { BlueprintMap } from "@/components/blueprint/BlueprintMap";
+import { BlueprintEnhancedFeatures } from "@/components/blueprint/BlueprintEnhancedFeatures";
 
 const STORAGE_KEY = "weightloss_blueprint_progress";
 
@@ -254,6 +255,22 @@ export default function BlueprintWeightLoss() {
               </ScrollArea>
             </CardContent>
           </Card>
+
+          {/* Interactive Study Tools */}
+          <BlueprintEnhancedFeatures
+            blueprintType="weightloss"
+            currentArticleId={currentArticle?.id}
+            currentArticleTitle={currentArticle?.name}
+            currentArticleContent={currentArticle?.detailedTeaching}
+            dailyCheckItems={[
+              "Drank 8+ glasses of water today",
+              "Made healthy food choices",
+              "Got physical activity (30+ min)",
+              "Read today's blueprint article",
+              "Prayed about health journey",
+              "Avoided emotional eating triggers"
+            ]}
+          />
         )}
       </main>
     </div>

@@ -10,6 +10,7 @@ import { MENTAL_HEALTH_ARTICLES, MENTAL_HEALTH_INTRO } from "@/data/blueprintMen
 import { useToast } from "@/hooks/use-toast";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
 import { BlueprintMap } from "@/components/blueprint/BlueprintMap";
+import { BlueprintEnhancedFeatures } from "@/components/blueprint/BlueprintEnhancedFeatures";
 
 const STORAGE_KEY = "mentalhealth_blueprint_progress";
 
@@ -240,6 +241,22 @@ export default function BlueprintMentalHealth() {
               </ScrollArea>
             </CardContent>
           </Card>
+
+          {/* Interactive Study Tools */}
+          <BlueprintEnhancedFeatures
+            blueprintType="mentalhealth"
+            currentArticleId={currentArticle?.id}
+            currentArticleTitle={currentArticle?.name}
+            currentArticleContent={currentArticle?.detailedTeaching}
+            dailyCheckItems={[
+              "Read today's mental health article",
+              "Practiced a coping strategy",
+              "Engaged in physical activity",
+              "Connected with someone",
+              "Prayed or meditated",
+              "Got adequate sleep (7-8 hrs)"
+            ]}
+          />
         )}
       </main>
     </div>

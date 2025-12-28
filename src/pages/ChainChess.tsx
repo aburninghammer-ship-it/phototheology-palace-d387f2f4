@@ -51,6 +51,7 @@ const ChainChess = () => {
   const [chatMessages, setChatMessages] = useState<Array<{ userId: string; userName: string; message: string; timestamp: string }>>([]);
   const [userDisplayName, setUserDisplayName] = useState<string>("");
   const [whoStarts, setWhoStarts] = useState<"jeeves" | "player" | null>(null);
+  const [usedChallenges, setUsedChallenges] = useState<string[]>([]); // Track used challenge categories to prevent repetition
 
   const categories = ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"];
   const isVsJeeves = mode === "jeeves";
@@ -142,9 +143,12 @@ const ChainChess = () => {
       console.log("isVsJeeves:", isVsJeeves);
       console.log("mode:", mode);
       console.log("whoStarts:", whoStarts);
-      
-      // Jeeves chooses the verse if he starts, otherwise use a random one for player to respond to
-      const randomVerse = whoStarts === "jeeves" ? getRandomVerse() : getRandomVerse();
+
+      // Reset used challenges for new game
+      setUsedChallenges([]);
+
+      // Select starting verse - use different pools for variety
+      const randomVerse = getRandomVerse();
       
       // Create new game
       const { data: newGame, error } = await supabase
@@ -394,6 +398,11 @@ const ChainChess = () => {
       
       console.log("Latest moves for Jeeves:", formattedMoves);
       
+      // Extract used challenges from previous moves to prevent repetition
+      const challengesUsedSoFar = formattedMoves
+        .filter(m => m.challengeCategory)
+        .map(m => m.challengeCategory);
+
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "chain-chess",
@@ -401,6 +410,7 @@ const ChainChess = () => {
           isFirstMove: isFirst,
           previousMoves: formattedMoves,
           availableCategories: selectedGameCategories,
+          usedChallenges: challengesUsedSoFar, // Pass used challenges to prevent repetition
           difficulty: game?.game_state?.difficulty || difficultyLevel,
         },
       });
@@ -498,19 +508,26 @@ const ChainChess = () => {
       }
 
       setChallengeCategory(data.challengeCategory);
-      setIsMyTurn(true);
 
       // Reload moves to ensure the new move is displayed
       await loadMoves();
 
-      // Update game state
-      await supabase
+      // Update game state - set turn to user FIRST
+      const { error: updateError } = await supabase
         .from("games")
         .update({
           current_turn: user!.id,
           updated_at: new Date().toISOString(),
         })
         .eq("id", currentGameId);
+
+      // Only set isMyTurn AFTER database update succeeds
+      if (!updateError) {
+        setIsMyTurn(true);
+      } else {
+        console.error("Failed to update game turn:", updateError);
+        throw updateError;
+      }
     } catch (error: any) {
       console.error("Jeeves move error:", error);
       toast({
@@ -631,10 +648,11 @@ const ChainChess = () => {
             console.error("Error in Jeeves move setTimeout:", error);
             toast({
               title: "Error",
-              description: "Jeeves encountered an error responding. Please refresh the page.",
+              description: "Jeeves encountered an error. Use the 'Jeeves, it's your turn' button to retry.",
               variant: "destructive",
             });
-            setIsMyTurn(true);
+            // Don't set isMyTurn to true - let the user use the manual retry button
+            // This prevents the UI from showing the form when Jeeves should be responding
             setProcessing(false);
           }
         }, 1500);

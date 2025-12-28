@@ -7,6 +7,7 @@ import { Book, CheckCircle2, Circle, BookOpen, Sparkles, Users, Scroll } from "l
 import { Navigation } from "@/components/Navigation";
 import { danielCourse, kidsDanielCourse } from "@/data/danielCourseData";
 import { Footer } from "@/components/Footer";
+import { ProphecyCourseEnhancements } from "@/components/prophecy/ProphecyCourseEnhancements";
 
 export default function DanielCourse() {
   const [completedDays, setCompletedDays] = useState<number[]>([]);
@@ -385,6 +386,14 @@ export default function DanielCourse() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Enhanced Study Tools */}
+        <ProphecyCourseEnhancements
+          courseType="daniel"
+          currentDayId={selectedDay || undefined}
+          currentDayTitle={selectedDayData?.title}
+          currentDayContent={selectedDayData?.activity}
+        />
       </main>
       <Footer />
     </div>

@@ -1,19 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Brain, Sparkles, Plus, Loader2, Trash2, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Brain, Sparkles, Plus, Loader2, Trash2, Eye, ChevronLeft, ChevronRight, Play, RotateCcw } from "lucide-react";
 import { flashcardSetSchema, aiPromptSchema } from "@/lib/validationSchemas";
 import { sanitizeText } from "@/lib/sanitize";
 import { BIBLE_TRANSLATIONS } from "@/services/bibleApi";
+import { useGameSession } from "@/hooks/useGameSession";
 
 interface FlashcardSet {
   id: string;
@@ -31,6 +32,17 @@ interface Flashcard {
   verse_reference: string | null;
 }
 
+// Game state for study mode persistence
+interface FlashcardStudyState {
+  setId: string;
+  setTitle: string;
+  studyCards: Flashcard[];
+  currentCardIndex: number;
+  showAnswer: boolean;
+  selectedTranslation: string;
+  cardsViewed: number;
+}
+
 export default function Flashcards() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -38,12 +50,41 @@ export default function Flashcards() {
   const [mySets, setMySets] = useState<FlashcardSet[]>([]);
   const [publicSets, setPublicSets] = useState<FlashcardSet[]>([]);
   const [activeTab, setActiveTab] = useState<"my" | "public">("my");
-  
-  const [studyMode, setStudyMode] = useState(false);
-  const [studyCards, setStudyCards] = useState<Flashcard[]>([]);
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [selectedTranslation, setSelectedTranslation] = useState("kjv");
+  const [showResumeDialog, setShowResumeDialog] = useState(false);
+
+  // Initial state for study mode
+  const initialStudyState: FlashcardStudyState = {
+    setId: '',
+    setTitle: '',
+    studyCards: [],
+    currentCardIndex: 0,
+    showAnswer: false,
+    selectedTranslation: 'kjv',
+    cardsViewed: 0,
+  };
+
+  // Use game session for study mode persistence
+  const {
+    gameState: studyState,
+    hasExistingSession,
+    isLoading: sessionLoading,
+    saveSession,
+    startNewGame,
+    resumeGame,
+    completeGame,
+    setGameState: setStudyState,
+  } = useGameSession<FlashcardStudyState>({
+    gameType: 'flashcard_study',
+    initialState: initialStudyState,
+    autoSaveInterval: 10000, // Save every 10 seconds
+  });
+
+  // Derived state
+  const studyMode = studyState.studyCards.length > 0;
+  const studyCards = studyState.studyCards;
+  const currentCardIndex = studyState.currentCardIndex;
+  const showAnswer = studyState.showAnswer;
+  const selectedTranslation = studyState.selectedTranslation;
 
   const [newSet, setNewSet] = useState({
     title: "",
@@ -58,9 +99,29 @@ export default function Flashcards() {
     fetchSets();
   }, []);
 
+  // Check for existing study session
+  useEffect(() => {
+    if (!sessionLoading && hasExistingSession && studyState.studyCards.length > 0) {
+      setShowResumeDialog(true);
+    }
+  }, [sessionLoading, hasExistingSession, studyState.studyCards.length]);
+
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
   };
+
+  // Handle resume study session
+  const handleResumeStudy = useCallback(() => {
+    resumeGame();
+    setShowResumeDialog(false);
+    toast.success("Welcome back! Your study progress has been restored.");
+  }, [resumeGame]);
+
+  // Handle start new study
+  const handleStartNewStudy = useCallback(async () => {
+    await startNewGame();
+    setShowResumeDialog(false);
+  }, [startNewGame]);
 
   const fetchSets = async () => {
     try {
@@ -220,7 +281,7 @@ export default function Flashcards() {
     }
   };
 
-  const startStudying = async (setId: string) => {
+  const startStudying = async (setId: string, setTitle?: string) => {
     try {
       const { data, error } = await supabase
         .from("flashcards")
@@ -229,50 +290,125 @@ export default function Flashcards() {
         .order("order_index");
 
       if (error) throw error;
-      
+
       if (!data || data.length === 0) {
         toast.error("This set has no flashcards yet");
         return;
       }
 
-      setStudyCards(data);
-      setCurrentCardIndex(0);
-      setShowAnswer(false);
-      setStudyMode(true);
+      // Start new game session with the study data
+      await startNewGame();
+      setStudyState({
+        setId,
+        setTitle: setTitle || 'Flashcards',
+        studyCards: data,
+        currentCardIndex: 0,
+        showAnswer: false,
+        selectedTranslation: 'kjv',
+        cardsViewed: 0,
+      });
     } catch (error) {
       console.error("Error loading flashcards:", error);
       toast.error("Failed to load flashcards");
     }
   };
 
+  const exitStudyMode = async () => {
+    // Complete the session when exiting
+    await completeGame(studyState.cardsViewed);
+    setStudyState(initialStudyState);
+  };
+
   const nextCard = () => {
-    setShowAnswer(false);
-    setCurrentCardIndex((prev) => Math.min(prev + 1, studyCards.length - 1));
+    const newIndex = Math.min(currentCardIndex + 1, studyCards.length - 1);
+    const newCardsViewed = Math.max(studyState.cardsViewed, newIndex + 1);
+    setStudyState(prev => ({
+      ...prev,
+      showAnswer: false,
+      currentCardIndex: newIndex,
+      cardsViewed: newCardsViewed,
+    }));
+    saveSession({ currentCardIndex: newIndex, showAnswer: false, cardsViewed: newCardsViewed });
   };
 
   const prevCard = () => {
-    setShowAnswer(false);
-    setCurrentCardIndex((prev) => Math.max(prev - 1, 0));
+    const newIndex = Math.max(currentCardIndex - 1, 0);
+    setStudyState(prev => ({
+      ...prev,
+      showAnswer: false,
+      currentCardIndex: newIndex,
+    }));
+    saveSession({ currentCardIndex: newIndex, showAnswer: false });
   };
+
+  const toggleAnswer = () => {
+    setStudyState(prev => ({
+      ...prev,
+      showAnswer: !prev.showAnswer,
+    }));
+  };
+
+  const updateTranslation = (value: string) => {
+    setStudyState(prev => ({
+      ...prev,
+      selectedTranslation: value,
+    }));
+    saveSession({ selectedTranslation: value });
+  };
+
+  // Resume dialog for existing session
+  if (showResumeDialog && hasExistingSession && studyState.studyCards.length > 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center p-6">
+        <Dialog open={showResumeDialog} onOpenChange={setShowResumeDialog}>
+          <DialogContent className="sm:max-w-md bg-card">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Play className="w-5 h-5 text-primary" />
+                Resume Flashcard Study?
+              </DialogTitle>
+              <DialogDescription>
+                You have an ongoing study session for "{studyState.setTitle}".
+                <div className="mt-3 p-3 bg-accent/10 rounded-lg space-y-1 text-sm">
+                  <p><strong>Progress:</strong> Card {studyState.currentCardIndex + 1} of {studyState.studyCards.length}</p>
+                  <p><strong>Cards Viewed:</strong> {studyState.cardsViewed}</p>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex gap-2 sm:gap-0">
+              <Button variant="outline" onClick={handleStartNewStudy} className="flex items-center gap-2">
+                <RotateCcw className="w-4 h-4" />
+                Start Fresh
+              </Button>
+              <Button onClick={handleResumeStudy} className="flex items-center gap-2">
+                <Play className="w-4 h-4" />
+                Resume
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
 
   if (studyMode) {
     const currentCard = studyCards[currentCardIndex];
-    
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center p-6">
         <div className="max-w-2xl w-full">
           <div className="flex items-center justify-between mb-4">
             <Button
-              onClick={() => setStudyMode(false)}
+              onClick={exitStudyMode}
               variant="outline"
               className="bg-white/20 text-white border-white/40"
             >
               Exit Study Mode
             </Button>
-            
+
             <div className="flex items-center gap-2">
               <label className="text-sm text-white">Bible Version:</label>
-              <Select value={selectedTranslation} onValueChange={setSelectedTranslation}>
+              <Select value={selectedTranslation} onValueChange={updateTranslation}>
                 <SelectTrigger className="w-[140px] bg-white/20 text-white border-white/40">
                   <SelectValue />
                 </SelectTrigger>
@@ -287,13 +423,17 @@ export default function Flashcards() {
             </div>
           </div>
 
+          <div className="text-center text-white/70 text-sm mb-2">
+            Your progress is automatically saved
+          </div>
+
           <Card className="bg-white/95 backdrop-blur-sm min-h-[400px] flex flex-col">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>
                   Card {currentCardIndex + 1} of {studyCards.length}
                 </CardTitle>
-                {currentCard.verse_reference && (
+                {currentCard?.verse_reference && (
                   <span className="text-sm text-purple-600 font-medium">{currentCard.verse_reference}</span>
                 )}
               </div>
@@ -302,18 +442,18 @@ export default function Flashcards() {
               <div className="text-center space-y-6">
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Question:</p>
-                  <p className="text-2xl font-medium text-foreground">{currentCard.question}</p>
+                  <p className="text-2xl font-medium text-foreground">{currentCard?.question}</p>
                 </div>
 
                 {showAnswer && (
                   <div className="pt-6 border-t animate-in fade-in">
                     <p className="text-sm text-muted-foreground mb-2">Answer:</p>
-                    <p className="text-lg text-foreground">{currentCard.answer}</p>
+                    <p className="text-lg text-foreground">{currentCard?.answer}</p>
                   </div>
                 )}
 
                 <Button
-                  onClick={() => setShowAnswer(!showAnswer)}
+                  onClick={toggleAnswer}
                   className="w-full"
                   size="lg"
                 >
@@ -473,7 +613,7 @@ export default function Flashcards() {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                      <Button onClick={() => startStudying(set.id)} className="w-full">
+                      <Button onClick={() => startStudying(set.id, set.title)} className="w-full">
                         <Eye className="mr-2 h-4 w-4" />
                         Study
                       </Button>
@@ -510,7 +650,7 @@ export default function Flashcards() {
                       )}
                     </CardHeader>
                     <CardContent>
-                      <Button onClick={() => startStudying(set.id)} className="w-full">
+                      <Button onClick={() => startStudying(set.id, set.title)} className="w-full">
                         <Eye className="mr-2 h-4 w-4" />
                         Study
                       </Button>

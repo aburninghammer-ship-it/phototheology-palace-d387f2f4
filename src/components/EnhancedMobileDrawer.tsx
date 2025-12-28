@@ -8,15 +8,15 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { 
-  Menu, 
-  Building2, 
-  BookOpen, 
-  Sparkles, 
-  User, 
-  CreditCard, 
-  LogOut, 
-  Clock, 
+import {
+  Menu,
+  Building2,
+  BookOpen,
+  Sparkles,
+  User,
+  CreditCard,
+  LogOut,
+  Clock,
   Star,
   Home,
   Gamepad2,
@@ -25,12 +25,15 @@ import {
   Zap,
   Trophy,
   Trash2,
+  Brain,
+  LayoutGrid,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRecentPages } from "@/hooks/useRecentPages";
 import { usePageBookmarks } from "@/hooks/usePageBookmarks";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +46,7 @@ const categoryConfig = {
       { to: "/bible-image-library", label: "PT Image Bible", icon: "🎨" },
       { to: "/read-me-the-bible", label: "Listen to Bible", icon: "🎧" },
       { to: "/reading-plans", label: "Reading Plans", icon: "📅" },
+      { to: "/daily-reading", label: "Daily Reading", icon: "📖" },
       { to: "/devotionals", label: "Devotionals", icon: "💜" },
       { to: "/encyclopedia", label: "Encyclopedia", icon: "🔍" },
       { to: "/video-training", label: "Video Training", icon: "🎥" },
@@ -52,7 +56,7 @@ const categoryConfig = {
       { to: "/memory", label: "Memory Palace", icon: "🧠" },
       { to: "/verse-memory-hall", label: "Verse Memory Hall (Legacy)", icon: "📚" },
       { to: "/quarterly-study", label: "Lesson Study", icon: "📅" },
-      { to: "/bible-study-leader", label: "Lead Bible Study", icon: "👥" },
+      { to: "/flashcards", label: "Flashcards", icon: "🗂️" },
     ],
   },
   practice: {
@@ -67,6 +71,7 @@ const categoryConfig = {
       { to: "/genesis-challenge", label: "Genesis High Rise", icon: "🏢" },
       { to: "/treasure-hunt", label: "Treasure Hunt", icon: "🏆" },
       { to: "/escape-room", label: "Escape Rooms", icon: "🚨" },
+      { to: "/pt-multiplayer", label: "PT Multiplayer", icon: "🎯" },
     ],
   },
   blueprints: {
@@ -111,6 +116,8 @@ const categoryConfig = {
     links: [
       { to: "/research-mode", label: "Research Mode", icon: "🔬" },
       { to: "/prophecy-watch", label: "Prophecy Watch", icon: "👁️" },
+      { to: "/sermon-archive", label: "Sermon Archive", icon: "🎙️" },
+      { to: "/content-library", label: "Content Library", icon: "📚" },
     ],
   },
   community: {
@@ -119,6 +126,7 @@ const categoryConfig = {
     links: [
       { to: "/guilds", label: "Guilds", icon: "⚔️" },
       { to: "/community", label: "Community Chat", icon: "💬" },
+      { to: "/study-partners", label: "Study Partners", icon: "👥" },
       { to: "/live-study", label: "Live Study", icon: "📺" },
       { to: "/leaderboard", label: "Leaderboard", icon: "🏅" },
       { to: "/achievements", label: "Achievements", icon: "🎖️" },
@@ -131,19 +139,36 @@ const categoryConfig = {
     icon: Trophy,
     links: [
       { to: "/mastery-dashboard", label: "Mastery Dashboard", icon: "🎯" },
+      { to: "/my-progress", label: "My Analytics", icon: "📊" },
       { to: "/spiritual-training", label: "Christian Art of War Dojo", icon: "⚔️" },
       { to: "/analyze-thoughts", label: "Analyze My Thoughts", icon: "💡" },
+      { to: "/certificates", label: "Certificates", icon: "🏆" },
     ],
   },
 };
+
+// Simplified quick links for "Simplified Navigation" mode
+const simplifiedQuickLinks = [
+  { to: "/dashboard", label: "Home", icon: Home, color: "from-primary/10 to-primary/5", borderColor: "border-primary/20", iconColor: "text-primary" },
+  { to: "/palace", label: "Palace", icon: Building2, color: "from-amber-500/10 to-orange-500/5", borderColor: "border-amber-500/20", iconColor: "text-amber-500" },
+  { to: "/bible", label: "Bible", icon: BookOpen, color: "from-blue-500/10 to-blue-500/5", borderColor: "border-blue-500/20", iconColor: "text-blue-500" },
+  { to: "/games", label: "Games", icon: Gamepad2, color: "from-fuchsia-500/10 to-pink-500/5", borderColor: "border-fuchsia-500/20", iconColor: "text-fuchsia-500" },
+  { to: "/memory", label: "Memory", icon: Brain, color: "from-cyan-500/10 to-teal-500/5", borderColor: "border-cyan-500/20", iconColor: "text-cyan-500" },
+  { to: "/leaderboard", label: "Scores", icon: Trophy, color: "from-yellow-500/10 to-amber-500/5", borderColor: "border-yellow-500/20", iconColor: "text-yellow-500" },
+  { to: "/community", label: "Social", icon: Users, color: "from-emerald-500/10 to-green-500/5", borderColor: "border-emerald-500/20", iconColor: "text-emerald-500" },
+  { to: "/phototheologygpt", label: "AI Chat", icon: Sparkles, color: "from-violet-500/10 to-purple-500/5", borderColor: "border-violet-500/20", iconColor: "text-violet-500" },
+];
 
 export const EnhancedMobileDrawer = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const { recentPages, clearRecentPages } = useRecentPages();
   const { bookmarks, isBookmarked, toggleBookmark } = usePageBookmarks();
+  const { preferences, updatePreference } = useUserPreferences();
   const [open, setOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+
+  const isSimplified = preferences.navigation_style === "simplified";
 
   const handleLinkClick = () => {
     setOpen(false);
@@ -195,41 +220,89 @@ export const EnhancedMobileDrawer = () => {
         <ScrollArea className="flex-1 px-4">
           {user ? (
             <div className="py-4 space-y-4">
-              {/* Quick Actions Grid - Most used features */}
-              <div className="grid grid-cols-4 gap-2">
-                <Link
-                  to="/dashboard"
-                  onClick={handleLinkClick}
-                  className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 active:scale-95 transition-transform"
-                >
-                  <Home className="h-5 w-5 text-primary mb-1" />
-                  <span className="text-[10px] font-medium text-center">Home</span>
-                </Link>
-                <Link
-                  to="/palace"
-                  onClick={handleLinkClick}
-                  className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 active:scale-95 transition-transform"
-                >
-                  <Building2 className="h-5 w-5 text-amber-500 mb-1" />
-                  <span className="text-[10px] font-medium text-center">Palace</span>
-                </Link>
-                <Link
-                  to="/bible"
-                  onClick={handleLinkClick}
-                  className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 active:scale-95 transition-transform"
-                >
-                  <BookOpen className="h-5 w-5 text-blue-500 mb-1" />
-                  <span className="text-[10px] font-medium text-center">Bible</span>
-                </Link>
-                <Link
-                  to="/games"
-                  onClick={handleLinkClick}
-                  className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-fuchsia-500/10 to-pink-500/5 border border-fuchsia-500/20 active:scale-95 transition-transform"
-                >
-                  <Gamepad2 className="h-5 w-5 text-fuchsia-500 mb-1" />
-                  <span className="text-[10px] font-medium text-center">Games</span>
-                </Link>
+              {/* Navigation Style Toggle */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/50 border border-border/50">
+                <div className="flex items-center gap-2">
+                  <LayoutGrid className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Navigation Mode</span>
+                </div>
+                <div className="flex gap-1">
+                  <Button
+                    variant={isSimplified ? "outline" : "default"}
+                    size="sm"
+                    className="h-7 text-xs px-3"
+                    onClick={() => updatePreference("navigation_style", "full")}
+                  >
+                    Full
+                  </Button>
+                  <Button
+                    variant={isSimplified ? "default" : "outline"}
+                    size="sm"
+                    className="h-7 text-xs px-3"
+                    onClick={() => updatePreference("navigation_style", "simplified")}
+                  >
+                    Simple
+                  </Button>
+                </div>
               </div>
+
+              {/* Quick Actions Grid - Changes based on navigation style */}
+              {isSimplified ? (
+                /* Simplified Navigation - Larger grid with core features */
+                <div className="grid grid-cols-4 gap-3">
+                  {simplifiedQuickLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      onClick={handleLinkClick}
+                      className={cn(
+                        "flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br border active:scale-95 transition-transform",
+                        link.color,
+                        link.borderColor
+                      )}
+                    >
+                      <link.icon className={cn("h-6 w-6 mb-1.5", link.iconColor)} />
+                      <span className="text-[11px] font-medium text-center">{link.label}</span>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                /* Full Navigation - Original 4-column quick access */
+                <div className="grid grid-cols-4 gap-2">
+                  <Link
+                    to="/dashboard"
+                    onClick={handleLinkClick}
+                    className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 active:scale-95 transition-transform"
+                  >
+                    <Home className="h-5 w-5 text-primary mb-1" />
+                    <span className="text-[10px] font-medium text-center">Home</span>
+                  </Link>
+                  <Link
+                    to="/palace"
+                    onClick={handleLinkClick}
+                    className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 active:scale-95 transition-transform"
+                  >
+                    <Building2 className="h-5 w-5 text-amber-500 mb-1" />
+                    <span className="text-[10px] font-medium text-center">Palace</span>
+                  </Link>
+                  <Link
+                    to="/bible"
+                    onClick={handleLinkClick}
+                    className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 active:scale-95 transition-transform"
+                  >
+                    <BookOpen className="h-5 w-5 text-blue-500 mb-1" />
+                    <span className="text-[10px] font-medium text-center">Bible</span>
+                  </Link>
+                  <Link
+                    to="/games"
+                    onClick={handleLinkClick}
+                    className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-fuchsia-500/10 to-pink-500/5 border border-fuchsia-500/20 active:scale-95 transition-transform"
+                  >
+                    <Gamepad2 className="h-5 w-5 text-fuchsia-500 mb-1" />
+                    <span className="text-[10px] font-medium text-center">Games</span>
+                  </Link>
+                </div>
+              )}
 
               {/* Recent Pages */}
               {recentPages.length > 0 && (
@@ -334,9 +407,10 @@ export const EnhancedMobileDrawer = () => {
                 </>
               )}
 
-              {/* Categorized Navigation - Collapsible */}
+              {/* Categorized Navigation - Only show in Full mode */}
+              {!isSimplified && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Browse</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Browse All Features</p>
                 {Object.entries(categoryConfig).map(([key, category]) => {
                   const isExpanded = expandedCategories.has(key);
                   return (
@@ -402,6 +476,7 @@ export const EnhancedMobileDrawer = () => {
                   );
                 })}
               </div>
+              )}
 
               {/* Account Section */}
               <div className="space-y-2 pb-6">

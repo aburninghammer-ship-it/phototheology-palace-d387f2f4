@@ -113,7 +113,20 @@ const RiddlePuzzle = ({ puzzle, onSolve, showHint }: PuzzleProps) => {
   const [answer, setAnswer] = useState("");
 
   const checkAnswer = () => {
-    const isCorrect = answer.toLowerCase().trim().includes(puzzle.answer?.toLowerCase() || "");
+    const normalizedAnswer = answer.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
+    const expectedAnswer = (puzzle.answer || "").toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
+
+    // Check for exact match or if the core answer words match
+    const answerWords = normalizedAnswer.split(/\s+/);
+    const expectedWords = expectedAnswer.split(/\s+/);
+
+    // Check if all expected words are present in the answer (order doesn't matter for flexibility)
+    const allWordsMatch = expectedWords.every(word =>
+      answerWords.some(ansWord => ansWord === word || ansWord.startsWith(word) && word.length >= 3)
+    );
+
+    // Also accept if normalized answer equals expected
+    const isCorrect = normalizedAnswer === expectedAnswer || allWordsMatch;
     onSolve(isCorrect, answer);
   };
 
@@ -677,11 +690,25 @@ export default function EscapeRoomPlayRenovated() {
 
     setAttempts(prev => prev + 1);
 
-    const isCorrect = finalAnswerInput.toLowerCase().includes(
-      room.finalAnswer.answer.toLowerCase().split(' ')[0].toLowerCase()
-    ) || finalAnswerInput.toLowerCase().includes(
-      room.finalAnswer.answer.split('-')[0]?.toLowerCase().trim() || room.finalAnswer.answer.toLowerCase()
+    // Normalize answers for comparison
+    const normalizedInput = finalAnswerInput.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
+    const expectedAnswer = room.finalAnswer.answer.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
+
+    // Check for exact match first
+    const exactMatch = normalizedInput === expectedAnswer;
+
+    // Check if all key words from expected answer are in input
+    const expectedWords = expectedAnswer.split(/\s+/).filter(w => w.length >= 3);
+    const inputWords = normalizedInput.split(/\s+/);
+    const keyWordsMatch = expectedWords.length > 0 && expectedWords.every(word =>
+      inputWords.some(inputWord => inputWord === word || inputWord.startsWith(word))
     );
+
+    // Also allow if the input exactly matches the first significant word of the expected answer
+    const firstWord = expectedWords[0];
+    const exactFirstWordMatch = firstWord && inputWords.some(w => w === firstWord);
+
+    const isCorrect = exactMatch || keyWordsMatch || exactFirstWordMatch;
 
     if (isCorrect) {
       playVictory();
@@ -916,6 +943,40 @@ export default function EscapeRoomPlayRenovated() {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
+                      {/* Mission Briefing - Shows at the start of each puzzle */}
+                      {currentPuzzleIndex === 0 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-lg p-4 space-y-2"
+                        >
+                          <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                            <AlertTriangle className="h-4 w-4" />
+                            MISSION BRIEFING
+                          </div>
+                          <p className="text-sm text-muted-foreground italic">{room.storyIntro}</p>
+                        </motion.div>
+                      )}
+
+                      {/* Your Mission for this Puzzle */}
+                      <div className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 border border-emerald-500/20 rounded-lg p-4 space-y-2">
+                        <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold text-sm">
+                          <Zap className="h-4 w-4" />
+                          YOUR MISSION
+                        </div>
+                        <p className="text-sm font-medium">
+                          {currentPuzzle.type === 'riddle' && "Solve this riddle by entering your answer. Use the Phototheology principle shown below to guide your thinking."}
+                          {currentPuzzle.type === 'fill-blank' && "Fill in the missing word(s) to complete this biblical truth. The principle below will help you find the answer."}
+                          {currentPuzzle.type === 'multiple-choice' && "Choose the correct answer from the options. Apply the Phototheology principle to identify the right choice."}
+                          {currentPuzzle.type === 'sequence' && "Arrange these items in the correct order. Use the principle to understand the proper sequence."}
+                          {currentPuzzle.type === 'match' && "Match each item on the left with its corresponding pair on the right. The principle reveals the connections."}
+                          {currentPuzzle.type === 'cipher' && "Decode this encrypted message using the key provided. The principle will help you understand the hidden meaning."}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Each correct answer reveals a CLUE. Collect all clues to unlock the final puzzle and escape!
+                        </p>
+                      </div>
+
                       {/* Principle Explainer */}
                       <Button
                         variant="outline"

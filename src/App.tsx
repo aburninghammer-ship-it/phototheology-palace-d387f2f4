@@ -185,7 +185,6 @@ const ConcentrationRoom = lazy(() => import("./pages/games/ConcentrationRoom"));
 const DimensionsRoom = lazy(() => import("./pages/games/DimensionsRoom"));
 const BlueRoomGame = lazy(() => import("./pages/games/BlueRoomGame"));
 const PublicImageLibrary = lazy(() => import("./pages/PublicImageLibrary"));
-const BibleStudyLeader = lazy(() => import("./pages/BibleStudyLeader"));
 const BibleStudySeriesBuilder = lazy(() => import("./pages/BibleStudySeriesBuilder"));
 const SeriesLessonEditor = lazy(() => import("./pages/SeriesLessonEditor"));
 const SeriesPresenter = lazy(() => import("./pages/SeriesPresenter"));
@@ -485,7 +484,6 @@ function App() {
           <Route path="/daniel-revelation-gpt" element={<ProtectedRoute><DanielRevelationGPT /></ProtectedRoute>} />
           <Route path="/apologetics-gpt" element={<ProtectedRoute><ApologeticsGPT /></ProtectedRoute>} />
           <Route path="/quarterly-study" element={<ProtectedRoute><QuarterlyStudy /></ProtectedRoute>} />
-            <Route path="/bible-study-leader" element={<ProtectedRoute><BibleStudyLeader /></ProtectedRoute>} />
            <Route path="/bible-study-series" element={<ProtectedRoute><BibleStudySeriesBuilder /></ProtectedRoute>} />
            <Route path="/devotionals" element={<ProtectedRoute><Devotionals /></ProtectedRoute>} />
            <Route path="/devotionals/:planId" element={<ProtectedRoute><DevotionalView /></ProtectedRoute>} />

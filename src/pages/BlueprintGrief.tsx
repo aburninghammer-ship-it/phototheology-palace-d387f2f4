@@ -10,6 +10,7 @@ import { SANCTUARY_GRIEF_ARTICLES, GRIEF_BLUEPRINT_INTRO } from "@/data/blueprin
 import { useToast } from "@/hooks/use-toast";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
 import { BlueprintMap } from "@/components/blueprint/BlueprintMap";
+import { BlueprintEnhancedFeatures } from "@/components/blueprint/BlueprintEnhancedFeatures";
 
 const STORAGE_KEY = "grief_blueprint_progress";
 
@@ -230,6 +231,22 @@ export default function BlueprintGrief() {
               </ScrollArea>
             </CardContent>
           </Card>
+
+          {/* Interactive Study Tools */}
+          <BlueprintEnhancedFeatures
+            blueprintType="grief"
+            currentArticleId={currentArticle?.id}
+            currentArticleTitle={currentArticle?.name}
+            currentArticleContent={currentArticle?.detailedTeaching}
+            dailyCheckItems={[
+              "Read today's grief healing article",
+              "Allowed myself to feel emotions",
+              "Prayed or meditated on Scripture",
+              "Journaled my thoughts/feelings",
+              "Reached out to someone supportive",
+              "Did one act of self-care"
+            ]}
+          />
         )}
       </main>
     </div>

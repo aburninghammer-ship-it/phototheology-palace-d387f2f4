@@ -7,6 +7,7 @@ import { CheckCircle2, ArrowLeft } from "lucide-react";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
 import { blueprintStressData, sanctuaryExplanation } from "@/data/blueprintStressData";
 import { BlueprintMap } from "@/components/blueprint/BlueprintMap";
+import { BlueprintEnhancedFeatures } from "@/components/blueprint/BlueprintEnhancedFeatures";
 
 const BlueprintStress = () => {
   const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
@@ -125,6 +126,22 @@ const BlueprintStress = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Interactive Study Tools */}
+          <BlueprintEnhancedFeatures
+            blueprintType="stress"
+            currentArticleId={currentArticle?.id}
+            currentArticleTitle={currentArticle?.name}
+            currentArticleContent={currentArticle?.teaching}
+            dailyCheckItems={[
+              "Read today's stress management article",
+              "Practiced deep breathing/relaxation",
+              "Took a break when overwhelmed",
+              "Prayed or meditated on peace",
+              "Exercised or moved my body",
+              "Got adequate sleep"
+            ]}
+          />
         </div>
       </div>
     );

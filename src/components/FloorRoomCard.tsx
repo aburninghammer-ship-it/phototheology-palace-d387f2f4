@@ -25,7 +25,7 @@ const roomEmojis: Record<string, string> = {
 };
 
 // Newly renovated rooms - show special badge
-const NEWLY_RENOVATED_ROOMS = new Set(["dc", "sr", "24fps", "st"]);
+const NEWLY_RENOVATED_ROOMS = new Set(["dc", "sr", "24fps", "st", "hf", "nf"]);
 
 // Unique gradients per room for visual distinction
 const roomGradients: Record<string, string> = {

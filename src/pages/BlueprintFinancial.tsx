@@ -7,6 +7,7 @@ import { CheckCircle2, ArrowLeft } from "lucide-react";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
 import { blueprintFinancialData, sanctuaryExplanation } from "@/data/blueprintFinancialData";
 import { BlueprintMap } from "@/components/blueprint/BlueprintMap";
+import { BlueprintEnhancedFeatures } from "@/components/blueprint/BlueprintEnhancedFeatures";
 
 const BlueprintFinancial = () => {
   const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
@@ -125,6 +126,22 @@ const BlueprintFinancial = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Interactive Study Tools */}
+          <BlueprintEnhancedFeatures
+            blueprintType="financial"
+            currentArticleId={currentArticle?.id}
+            currentArticleTitle={currentArticle?.name}
+            currentArticleContent={currentArticle?.teaching}
+            dailyCheckItems={[
+              "Read today's financial stewardship article",
+              "Tracked spending/income today",
+              "Avoided an unnecessary purchase",
+              "Prayed about financial decisions",
+              "Gave generously or planned giving",
+              "Reviewed budget or financial goals"
+            ]}
+          />
         </div>
       </div>
     );

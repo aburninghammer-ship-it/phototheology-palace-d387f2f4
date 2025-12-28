@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sword, Shield, Target, BookOpen, Flame, Trophy, Scroll, Loader2, GraduationCap, Dumbbell } from "lucide-react";
+import { Sword, Shield, Target, BookOpen, Flame, Trophy, Scroll, Loader2, GraduationCap, Dumbbell, Swords, Calendar, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -18,6 +18,9 @@ import { LessonCard } from "@/components/dojo/LessonCard";
 import { LessonDetail } from "@/components/dojo/LessonDetail";
 import { ThirtyDayChallenge } from "@/components/dojo/ThirtyDayChallenge";
 import { CharacteristicTracker } from "@/components/dojo/CharacteristicTracker";
+import { WarriorProfile } from "@/components/dojo/WarriorProfile";
+import { CombatArena } from "@/components/dojo/CombatArena";
+import { DailyTraining } from "@/components/dojo/DailyTraining";
 
 const FRUITS_OF_SPIRIT = [
   { name: "Love", description: "Selfless care for others", color: "bg-red-500" },
@@ -482,10 +485,24 @@ export default function SpiritualTraining() {
           </CardContent>
         </Card>
 
+        {/* Warrior Profile Section */}
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="md:col-span-1">
+            <WarriorProfile />
+          </div>
+          <div className="md:col-span-2">
+            <DailyTraining />
+          </div>
+        </div>
+
         {/* Training Tabs */}
-        <Tabs defaultValue="lessons" className="w-full">
+        <Tabs defaultValue="arena" className="w-full">
           <ScrollArea className="w-full">
             <TabsList className="inline-flex w-full">
+              <TabsTrigger value="arena" className="flex-1">
+                <Swords className="w-4 h-4 mr-2" />
+                Combat Arena
+              </TabsTrigger>
               <TabsTrigger value="lessons" className="flex-1">
                 <GraduationCap className="w-4 h-4 mr-2" />
                 Lessons
@@ -508,6 +525,11 @@ export default function SpiritualTraining() {
               </TabsTrigger>
             </TabsList>
           </ScrollArea>
+
+          {/* Combat Arena Tab */}
+          <TabsContent value="arena" className="space-y-4">
+            <CombatArena />
+          </TabsContent>
 
           {/* Lessons Tab */}
           <TabsContent value="lessons" className="space-y-4">

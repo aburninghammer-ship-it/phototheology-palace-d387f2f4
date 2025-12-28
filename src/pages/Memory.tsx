@@ -42,7 +42,7 @@ export default function Memory() {
   if (!userId) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-palace-purple/5 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-palace-purple/5 relative overflow-x-hidden">
       {/* Animated background glow effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-palace-purple/20 rounded-full blur-[100px] animate-pulse" />

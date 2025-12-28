@@ -10,6 +10,7 @@ import { SANCTUARY_STRONGHOLD_ARTICLES, STRONGHOLD_BLUEPRINT_INTRO } from "@/dat
 import { useToast } from "@/hooks/use-toast";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
 import { BlueprintMap } from "@/components/blueprint/BlueprintMap";
+import { BlueprintEnhancedFeatures } from "@/components/blueprint/BlueprintEnhancedFeatures";
 
 const STORAGE_KEY = "stronghold_blueprint_progress";
 
@@ -229,6 +230,22 @@ export default function BlueprintStronghold() {
               </ScrollArea>
             </CardContent>
           </Card>
+
+          {/* Interactive Study Tools */}
+          <BlueprintEnhancedFeatures
+            blueprintType="stronghold"
+            currentArticleId={currentArticle?.id}
+            currentArticleTitle={currentArticle?.name}
+            currentArticleContent={currentArticle?.detailedTeaching}
+            dailyCheckItems={[
+              "Read today's stronghold-breaking article",
+              "Identified a thought pattern to demolish",
+              "Replaced a lie with truth from Scripture",
+              "Prayed against spiritual strongholds",
+              "Memorized a freedom Scripture",
+              "Shared a victory with an accountability partner"
+            ]}
+          />
         )}
       </main>
     </div>

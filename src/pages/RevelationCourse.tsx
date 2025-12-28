@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Book, Check, Lock, Sparkles } from "lucide-react";
 import { revelationLessons } from "@/data/revelationCourseData";
+import { ProphecyCourseEnhancements } from "@/components/prophecy/ProphecyCourseEnhancements";
 
 const RevelationCourse = () => {
   const [currentLesson, setCurrentLesson] = useState(1);
@@ -185,6 +186,14 @@ const RevelationCourse = () => {
             </Card>
           </div>
         </div>
+
+        {/* Enhanced Study Tools */}
+        <ProphecyCourseEnhancements
+          courseType="revelation"
+          currentDayId={currentLesson}
+          currentDayTitle={lesson?.title}
+          currentDayContent={lesson?.content}
+        />
       </main>
     </div>
   );

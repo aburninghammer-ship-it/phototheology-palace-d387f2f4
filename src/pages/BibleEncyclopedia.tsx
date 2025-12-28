@@ -115,7 +115,7 @@ const BibleEncyclopedia = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-palace-purple/5 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-palace-purple/5 relative overflow-x-hidden">
       <Navigation />
       
       {/* Animated background glow effects */}

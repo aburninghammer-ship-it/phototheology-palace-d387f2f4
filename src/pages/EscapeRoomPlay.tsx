@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useGameSession } from "@/hooks/useGameSession";
 import { toast } from "sonner";
-import { Clock, HelpCircle, Trophy, Zap, CheckCircle, XCircle } from "lucide-react";
+import { Clock, HelpCircle, Trophy, Zap, CheckCircle, XCircle, Play, RotateCcw } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface Puzzle {
   id: string;
@@ -37,41 +39,137 @@ interface EscapeRoom {
   expires_at: string;
 }
 
+// Game state for persistence
+interface EscapeRoomGameState {
+  roomId: string;
+  attemptId: string | null;
+  currentPuzzleIndex: number;
+  timeElapsed: number;
+  score: number;
+  hintsUsed: number;
+  showHint: boolean;
+  submittedVerses: string;
+  roomJustification: string;
+  principleUsed: string;
+  usedPrinciples: string[];
+  solutions: { puzzle_number: number; is_correct: boolean; points_earned: number }[];
+}
+
 export default function EscapeRoomPlay() {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [room, setRoom] = useState<EscapeRoom | null>(null);
   const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
-  const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
-  const [attemptId, setAttemptId] = useState<string | null>(null);
-  
-  const [submittedVerses, setSubmittedVerses] = useState("");
-  const [roomJustification, setRoomJustification] = useState("");
-  const [principleUsed, setPrincipleUsed] = useState("");
-  const [usedPrinciples, setUsedPrinciples] = useState<string[]>([]);
-  
-  const [timeElapsed, setTimeElapsed] = useState(0);
-  const [score, setScore] = useState(0);
-  const [hintsUsed, setHintsUsed] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showHint, setShowHint] = useState(false);
-  const [solutions, setSolutions] = useState<any[]>([]);
+  const [showResumeDialog, setShowResumeDialog] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
+  // Use game session for state persistence
+  const initialGameState: EscapeRoomGameState = {
+    roomId: roomId || '',
+    attemptId: null,
+    currentPuzzleIndex: 0,
+    timeElapsed: 0,
+    score: 0,
+    hintsUsed: 0,
+    showHint: false,
+    submittedVerses: '',
+    roomJustification: '',
+    principleUsed: '',
+    usedPrinciples: [],
+    solutions: [],
+  };
+
+  const {
+    gameState,
+    hasExistingSession,
+    isLoading: sessionLoading,
+    saveSession,
+    startNewGame,
+    resumeGame,
+    completeGame,
+    setGameState,
+  } = useGameSession<EscapeRoomGameState>({
+    gameType: `escape_room_${roomId}`,
+    initialState: initialGameState,
+    totalSteps: puzzles.length,
+    autoSaveInterval: 15000, // Save every 15 seconds
+  });
+
+  // Derived state from gameState
+  const currentPuzzleIndex = gameState.currentPuzzleIndex;
+  const attemptId = gameState.attemptId;
+  const submittedVerses = gameState.submittedVerses;
+  const roomJustification = gameState.roomJustification;
+  const principleUsed = gameState.principleUsed;
+  const usedPrinciples = gameState.usedPrinciples;
+  const timeElapsed = gameState.timeElapsed;
+  const score = gameState.score;
+  const hintsUsed = gameState.hintsUsed;
+  const showHint = gameState.showHint;
+  const solutions = gameState.solutions;
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Load room data
   useEffect(() => {
     if (!user || !roomId) return;
     loadEscapeRoom();
-    startAttempt();
   }, [user, roomId]);
 
+  // Show resume dialog if there's an existing session
   useEffect(() => {
+    if (!sessionLoading && hasExistingSession && gameState.roomId === roomId) {
+      setShowResumeDialog(true);
+    }
+  }, [sessionLoading, hasExistingSession, gameState.roomId, roomId]);
+
+  // Timer - only runs when game has started
+  useEffect(() => {
+    if (!gameStarted || !room) return;
+
     const timer = setInterval(() => {
-      setTimeElapsed(prev => prev + 1);
+      setGameState(prev => ({ ...prev, timeElapsed: prev.timeElapsed + 1 }));
     }, 1000);
-    
+
     return () => clearInterval(timer);
-  }, []);
+  }, [gameStarted, room]);
+
+  // Handle resume game
+  const handleResumeGame = useCallback(() => {
+    resumeGame();
+    setGameStarted(true);
+    setShowResumeDialog(false);
+    toast.success("Welcome back! Your progress has been restored.");
+  }, [resumeGame]);
+
+  // Handle start new game
+  const handleStartNewGame = useCallback(async () => {
+    await startNewGame();
+    await createNewAttempt();
+    setGameStarted(true);
+    setShowResumeDialog(false);
+  }, [startNewGame]);
+
+  // Create new attempt in the escape_room_attempts table
+  const createNewAttempt = async () => {
+    if (!user || !roomId) return;
+
+    const { data, error } = await supabase
+      .from('escape_room_attempts')
+      .insert({
+        room_id: roomId,
+        user_id: user.id,
+        is_team: false,
+      })
+      .select()
+      .single();
+
+    if (!error && data) {
+      setGameState(prev => ({ ...prev, attemptId: data.id }));
+    }
+  };
 
   const loadEscapeRoom = async () => {
     const { data: roomData, error: roomError } = await supabase
@@ -99,46 +197,77 @@ export default function EscapeRoomPlay() {
     }
   };
 
-  const startAttempt = async () => {
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from('escape_room_attempts')
-      .insert({
-        room_id: roomId,
-        user_id: user.id,
-        is_team: false,
-      })
-      .select()
-      .single();
-
-    if (!error && data) {
-      setAttemptId(data.id);
-    }
-  };
-
   const handleSubmitSolution = async () => {
     if (!attemptId || !user) return;
-    
+
     const currentPuzzle = puzzles[currentPuzzleIndex];
     if (!currentPuzzle) return;
 
     // Check for repeated principle
+    let penaltyScore = 0;
     if (usedPrinciples.includes(principleUsed) && currentPuzzleIndex > 0) {
       toast.error("Cannot reuse the same principle back-to-back (−1 pt penalty)");
-      setScore(prev => Math.max(0, prev - 1));
+      penaltyScore = 1;
     }
 
     setIsSubmitting(true);
 
     try {
       const versesArray = submittedVerses.split('\n').map(v => v.trim()).filter(v => v);
-      
-      // Simple validation: check if submitted verses match expected
-      const isCorrect = versesArray.some(v => 
-        currentPuzzle.expected_verses.some(expected => 
-          v.toLowerCase().includes(expected.toLowerCase())
-        )
+
+      // Normalize verse reference for comparison (handles variations like "John 3:16" vs "John3:16" vs "John 3: 16")
+      const normalizeVerse = (verse: string): string => {
+        return verse
+          .toLowerCase()
+          .replace(/\s+/g, '') // Remove all whitespace
+          .replace(/(\d)([a-z])/gi, '$1 $2') // Add space between number and letter (e.g., "1john" -> "1 john")
+          .replace(/([a-z])(\d)/gi, '$1 $2') // Add space between letter and number (e.g., "john3" -> "john 3")
+          .replace(/\s+/g, ' ') // Normalize to single spaces
+          .trim();
+      };
+
+      // Check if two verse references match (strict comparison)
+      const versesMatch = (submitted: string, expected: string): boolean => {
+        const normalizedSubmitted = normalizeVerse(submitted);
+        const normalizedExpected = normalizeVerse(expected);
+
+        // Exact match after normalization
+        if (normalizedSubmitted === normalizedExpected) return true;
+
+        // Check if submitted verse is within a range (e.g., "John 3:16" matches expected "John 3:14-18")
+        const rangeMatch = normalizedExpected.match(/^(.+?)(\d+):(\d+)-(\d+)$/);
+        if (rangeMatch) {
+          const [, book, chapter, startVerse, endVerse] = rangeMatch;
+          const submittedMatch = normalizedSubmitted.match(/^(.+?)(\d+):(\d+)$/);
+          if (submittedMatch) {
+            const [, subBook, subChapter, subVerse] = submittedMatch;
+            const bookMatch = normalizeVerse(subBook) === normalizeVerse(book);
+            const chapterMatch = subChapter === chapter;
+            const verseInRange = parseInt(subVerse) >= parseInt(startVerse) && parseInt(subVerse) <= parseInt(endVerse);
+            if (bookMatch && chapterMatch && verseInRange) return true;
+          }
+        }
+
+        // Check if expected is a single verse and submitted includes that verse in a range
+        const singleMatch = normalizedExpected.match(/^(.+?)(\d+):(\d+)$/);
+        if (singleMatch) {
+          const [, book, chapter, verse] = singleMatch;
+          const submittedRangeMatch = normalizedSubmitted.match(/^(.+?)(\d+):(\d+)-(\d+)$/);
+          if (submittedRangeMatch) {
+            const [, subBook, subChapter, startVerse, endVerse] = submittedRangeMatch;
+            const bookMatch = normalizeVerse(subBook) === normalizeVerse(book);
+            const chapterMatch = subChapter === chapter;
+            const expectedVerseInRange = parseInt(verse) >= parseInt(startVerse) && parseInt(verse) <= parseInt(endVerse);
+            if (bookMatch && chapterMatch && expectedVerseInRange) return true;
+          }
+        }
+
+        return false;
+      };
+
+      // Validation: check if submitted verses match expected (strict matching)
+      const isCorrect = versesArray.some(v =>
+        currentPuzzle.expected_verses.some(expected => versesMatch(v, expected))
       );
 
       const pointsEarned = isCorrect ? currentPuzzle.points_perfect : currentPuzzle.points_partial;
@@ -157,31 +286,44 @@ export default function EscapeRoomPlay() {
 
       if (error) throw error;
 
-      setScore(prev => prev + pointsEarned);
-      setUsedPrinciples(prev => [...prev, principleUsed]);
-      setSolutions(prev => [...prev, { 
+      const newScore = Math.max(0, score + pointsEarned - penaltyScore);
+      const newSolutions = [...solutions, {
         puzzle_number: currentPuzzle.puzzle_number,
         is_correct: isCorrect,
-        points_earned: pointsEarned 
-      }]);
+        points_earned: pointsEarned
+      }];
+      const newUsedPrinciples = [...usedPrinciples, principleUsed];
 
       toast.success(isCorrect ? `Perfect! +${pointsEarned} pts` : `Partial credit: +${pointsEarned} pts`);
 
       // Move to next puzzle or finish
       if (currentPuzzleIndex < puzzles.length - 1) {
-        const nextPuzzleNumber = currentPuzzleIndex + 2; // +2 because index is 0-based
+        const nextPuzzleNumber = currentPuzzleIndex + 2;
         setTimeout(() => {
-          setCurrentPuzzleIndex(prev => prev + 1);
-          setSubmittedVerses("");
-          setRoomJustification("");
-          setPrincipleUsed("");
-          setShowHint(false);
-          toast.info(`Moving to Puzzle ${nextPuzzleNumber}...`, {
-            duration: 3000,
-          });
+          const newState = {
+            ...gameState,
+            currentPuzzleIndex: currentPuzzleIndex + 1,
+            score: newScore,
+            solutions: newSolutions,
+            usedPrinciples: newUsedPrinciples,
+            submittedVerses: '',
+            roomJustification: '',
+            principleUsed: '',
+            showHint: false,
+          };
+          setGameState(newState);
+          saveSession(newState, newScore, currentPuzzleIndex + 1);
+          toast.info(`Moving to Puzzle ${nextPuzzleNumber}...`, { duration: 3000 });
         }, 1000);
       } else {
-        finishAttempt(true);
+        // Update final state before finishing
+        setGameState(prev => ({
+          ...prev,
+          score: newScore,
+          solutions: newSolutions,
+          usedPrinciples: newUsedPrinciples,
+        }));
+        finishAttempt(true, newScore);
       }
     } catch (error) {
       console.error('Error submitting solution:', error);
@@ -197,36 +339,127 @@ export default function EscapeRoomPlay() {
       return;
     }
 
-    setHintsUsed(prev => prev + 1);
-    setScore(prev => Math.max(0, prev - 2));
-    setShowHint(true);
+    const newHintsUsed = hintsUsed + 1;
+    const newScore = Math.max(0, score - 2);
+    setGameState(prev => ({
+      ...prev,
+      hintsUsed: newHintsUsed,
+      score: newScore,
+      showHint: true,
+    }));
+    saveSession({ hintsUsed: newHintsUsed, score: newScore, showHint: true }, newScore);
     toast.info("Hint revealed (−2 pts)");
   };
 
-  const finishAttempt = async (completed: boolean) => {
+  const finishAttempt = async (completed: boolean, finalScore?: number) => {
     if (!attemptId) return;
+
+    const scoreToSave = finalScore ?? score;
 
     await supabase
       .from('escape_room_attempts')
       .update({
         completed_at: new Date().toISOString(),
-        score: score,
+        score: scoreToSave,
         hints_used: hintsUsed,
         time_elapsed_seconds: timeElapsed,
       })
       .eq('id', attemptId);
 
+    // Mark the game session as completed
+    await completeGame(scoreToSave);
+
     toast.success(completed ? "Escape room completed!" : "Time's up!");
     navigate('/escape-room');
   };
 
-  if (!room || puzzles.length === 0) {
+  // Helper functions to update form state
+  const updateSubmittedVerses = (value: string) => {
+    setGameState(prev => ({ ...prev, submittedVerses: value }));
+  };
+
+  const updateRoomJustification = (value: string) => {
+    setGameState(prev => ({ ...prev, roomJustification: value }));
+  };
+
+  const updatePrincipleUsed = (value: string) => {
+    setGameState(prev => ({ ...prev, principleUsed: value }));
+  };
+
+  if (sessionLoading || !room || puzzles.length === 0) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Loading escape room...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Resume Dialog
+  if (showResumeDialog) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 pt-20 pb-12 max-w-md">
+          <Dialog open={showResumeDialog} onOpenChange={setShowResumeDialog}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Play className="w-5 h-5 text-primary" />
+                  Resume Escape Room?
+                </DialogTitle>
+                <DialogDescription>
+                  You have an ongoing escape room session for "{room.title}".
+                  <div className="mt-3 p-3 bg-accent/10 rounded-lg space-y-1 text-sm">
+                    <p><strong>Progress:</strong> Puzzle {gameState.currentPuzzleIndex + 1} of {puzzles.length}</p>
+                    <p><strong>Score:</strong> {gameState.score} pts</p>
+                    <p><strong>Time:</strong> {Math.floor(gameState.timeElapsed / 60)}:{(gameState.timeElapsed % 60).toString().padStart(2, '0')}</p>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex gap-2 sm:gap-0">
+                <Button variant="outline" onClick={handleStartNewGame} className="flex items-center gap-2">
+                  <RotateCcw className="w-4 h-4" />
+                  Start Over
+                </Button>
+                <Button onClick={handleResumeGame} className="flex items-center gap-2">
+                  <Play className="w-4 h-4" />
+                  Resume
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </main>
+      </div>
+    );
+  }
+
+  // Start screen if game hasn't started yet
+  if (!gameStarted && !hasExistingSession) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 pt-20 pb-12 max-w-md">
+          <Card className="border-primary/20">
+            <CardHeader>
+              <CardTitle>{room.title}</CardTitle>
+              <CardDescription>
+                {puzzles.length} puzzles · {room.time_limit_minutes} minutes · {room.max_hints} hints available
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Your progress will be automatically saved. You can leave and resume anytime.
+              </p>
+              <Button onClick={handleStartNewGame} className="w-full" size="lg">
+                <Play className="w-4 h-4 mr-2" />
+                Begin Escape Room
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
       </div>
     );
   }
@@ -319,7 +552,7 @@ export default function EscapeRoomPlay() {
                 <Textarea
                   id="verses"
                   value={submittedVerses}
-                  onChange={(e) => setSubmittedVerses(e.target.value)}
+                  onChange={(e) => updateSubmittedVerses(e.target.value)}
                   placeholder="e.g., Genesis 3:15&#10;John 1:29"
                   rows={4}
                   className="font-mono"
@@ -331,7 +564,7 @@ export default function EscapeRoomPlay() {
                 <Textarea
                   id="justification"
                   value={roomJustification}
-                  onChange={(e) => setRoomJustification(e.target.value)}
+                  onChange={(e) => updateRoomJustification(e.target.value)}
                   placeholder="Explain which room(s) you used and how..."
                   rows={2}
                 />
@@ -342,7 +575,7 @@ export default function EscapeRoomPlay() {
                 <Input
                   id="principle"
                   value={principleUsed}
-                  onChange={(e) => setPrincipleUsed(e.target.value)}
+                  onChange={(e) => updatePrincipleUsed(e.target.value)}
                   placeholder="e.g., Typology, Parallels, Sanctuary"
                   className="text-sm"
                 />
