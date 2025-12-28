@@ -402,14 +402,21 @@ export const Navigation = () => {
                       <span className="bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent font-semibold">My Church Space</span>
                     </Link>
                   )}
-                  <Link 
-                    to="/bible" 
+                  <Link
+                    to="/bible"
                     className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 hover:from-blue-500/20 hover:to-cyan-500/20 ${isActiveTab('/bible') ? 'shadow-[0_0_12px_2px_rgba(59,130,246,0.5)] border-blue-400/60' : ''}`}
                   >
                     <BookOpen className="h-3.5 w-3.5 text-blue-500" />
                     <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent font-semibold">Phototheology Study Bible</span>
                   </Link>
-                  <Link 
+                  <Link
+                    to="/image-bible"
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 hover:from-purple-500/20 hover:to-indigo-500/20 ${isActiveTab('/image-bible') ? 'shadow-[0_0_12px_2px_rgba(168,85,247,0.5)] border-purple-400/60' : ''}`}
+                  >
+                    <Image className="h-3.5 w-3.5 text-purple-500" />
+                    <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent font-semibold">PT Image Bible</span>
+                  </Link>
+                  <Link
                     to="/card-deck" 
                     className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-violet-500/10 to-purple-500/10 border border-violet-500/20 hover:from-violet-500/20 hover:to-purple-500/20 ${isActiveTab('/card-deck') ? 'shadow-[0_0_12px_2px_rgba(139,92,246,0.5)] border-violet-400/60' : ''}`}
                   >

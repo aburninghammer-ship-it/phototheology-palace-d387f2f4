@@ -99,6 +99,7 @@ const SermonArchive = lazy(() => import("./pages/SermonArchive"));
 const SeriesPresentationMode = lazy(() => import("./pages/SeriesPresentationMode"));
 const PublicSeriesBrowser = lazy(() => import("./pages/PublicSeriesBrowser"));
 const Flashcards = lazy(() => import("./pages/Flashcards"));
+const PhototheologyImageBible = lazy(() => import("./pages/PhototheologyImageBible"));
 const PowerOfTheLamb = lazy(() => import("./pages/PowerOfTheLamb"));
 const SpiritualTraining = lazy(() => import("./pages/SpiritualTraining"));
 const AppTour = lazy(() => import("./pages/AppTour"));
@@ -373,6 +374,7 @@ function App() {
             <Route path="/analyze-thoughts" element={<ProtectedRoute><AnalyzeThoughts /></ProtectedRoute>} />
             
             <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
+            <Route path="/image-bible" element={<ProtectedRoute><PhototheologyImageBible /></ProtectedRoute>} />
             <Route path="/bible/search" element={<ProtectedRoute><BibleSearch /></ProtectedRoute>} />
             <Route path="/bible/thematic-search" element={<ProtectedRoute><ThematicSearch /></ProtectedRoute>} />
             <Route path="/bible/:book/:chapter" element={<ProtectedRoute><BibleChapter /></ProtectedRoute>} />
