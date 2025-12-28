@@ -24,6 +24,9 @@ const roomEmojis: Record<string, string> = {
   frm: "🔥", mr: "🙏", srm: "⚡"
 };
 
+// Newly renovated rooms - show special badge
+const NEWLY_RENOVATED_ROOMS = new Set(["dc", "sr", "24fps", "st"]);
+
 // Unique gradients per room for visual distinction
 const roomGradients: Record<string, string> = {
   // Floor 1 - Furnishing
@@ -75,11 +78,12 @@ const roomGradients: Record<string, string> = {
 export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProps) => {
   const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
   const navigate = useNavigate();
-  
+
   const showLocked = loading || !isUnlocked;
   const roomEmoji = roomEmojis[room.id] || "⭐";
   // Use room-specific gradient if available, otherwise fall back to floor gradient
   const roomGradient = roomGradients[room.id] || gradient;
+  const isNewlyRenovated = NEWLY_RENOVATED_ROOMS.has(room.id);
 
   const handleClick = () => {
     if (loading) return;
@@ -132,9 +136,18 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
                         </Badge>
                       </div>
                     )}
-                    <Badge className={`${roomGradient} text-white shadow-lg font-mono tracking-wide`}>
-                      {room.tag}
-                    </Badge>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge className={`${roomGradient} text-white shadow-lg font-mono tracking-wide`}>
+                        {room.tag}
+                      </Badge>
+                      {isNewlyRenovated && (
+                        <Badge
+                          className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-amber-900 shadow-lg text-xs font-bold animate-pulse border-2 border-amber-500"
+                        >
+                          Newly Renovated
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
                 
