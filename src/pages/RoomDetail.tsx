@@ -63,6 +63,7 @@ import { getCardImage } from "@/data/cardImages";
 import { GenesisGalleryTour } from "@/components/onboarding/GenesisGalleryTour";
 import { use24FPSTour } from "@/hooks/use24FPSTour";
 import { StoryLibrary } from "@/components/story-room/StoryLibrary";
+import { SymbolLibrary } from "@/components/symbol-room/SymbolLibrary";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -506,11 +507,28 @@ export default function RoomDetail() {
                         Bible Story Library
                       </CardTitle>
                       <CardDescription>
-                        Explore 300+ stories across 12 books of the Bible. Search by story, character, or theme.
+                        Explore stories across all 66 books of the Bible. Search by story, character, or theme.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <StoryLibrary />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {room.id === "st" && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <span className="text-2xl">🔗</span>
+                        Bible Symbol Library
+                      </CardTitle>
+                      <CardDescription>
+                        Explore 100+ biblical symbols across 13 categories. Discover colors, numbers, objects, beasts, and more with their spiritual meanings.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <SymbolLibrary />
                     </CardContent>
                   </Card>
                 )}
