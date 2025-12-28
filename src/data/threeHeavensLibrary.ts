@@ -260,7 +260,7 @@ export const propheticPassages: PropheticPassage[] = [
         event: "Restoration after the locust plague",
         date: "c. 835-796 BC (uncertain dating of Joel)",
         description: "The immediate promise that God would restore what the locusts had eaten. 'Afterward' refers to after the repentance and restoration sequence. Spiritual renewal would accompany physical restoration.",
-        textualMarkers: ["Afterward", "Pour out my Spirit", "All flesh" (initially Israel)],
+        textualMarkers: ["Afterward", "Pour out my Spirit", "All flesh (initially Israel)"],
         historicalConnection: "Judah's repentance leads to God's intervention. Prophetic/spiritual gifts evident in the subsequent prophetic era.",
         spiritualSignificance: "Establishes the pattern: judgment leads to repentance, repentance leads to restoration, restoration includes spiritual empowerment.",
         proofTexts: ["Joel 2:25", "Joel 2:18-19", "2 Chronicles 24:17-22"]

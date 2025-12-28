@@ -110,49 +110,42 @@ export const DailyTraining = () => {
 
     const today = new Date().toISOString().split('T')[0];
 
-    // Fetch today's completed exercises
-    const { data: todayData } = await supabase
-      .from('dojo_daily_training')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('date', today)
-      .single();
-
-    if (todayData) {
-      setCompletedExercises(todayData.completed_exercises || []);
-      setTodayPoints(todayData.points || 0);
-      setReflection(todayData.reflection || "");
-    }
-
-    // Calculate streak
-    const { data: allDays } = await supabase
-      .from('dojo_daily_training')
-      .select('date')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
-
-    if (allDays && allDays.length > 0) {
-      let currentStreak = 0;
-      const dates = allDays.map(d => new Date(d.date));
-
-      for (let i = 0; i < dates.length; i++) {
-        const expectedDate = new Date();
-        expectedDate.setDate(expectedDate.getDate() - i);
-        expectedDate.setHours(0, 0, 0, 0);
-
-        const actualDate = new Date(dates[i]);
-        actualDate.setHours(0, 0, 0, 0);
-
-        if (actualDate.getTime() === expectedDate.getTime()) {
-          currentStreak++;
-        } else if (i === 0 && actualDate.getTime() < expectedDate.getTime()) {
-          // Today not yet logged - check if yesterday continues streak
-          continue;
-        } else {
-          break;
+    // Load from localStorage (since dojo_daily_training table may not exist)
+    const storageKey = `dojo_training_${user.id}`;
+    const savedData = localStorage.getItem(storageKey);
+    
+    if (savedData) {
+      try {
+        const allDays = JSON.parse(savedData);
+        const todayData = allDays[today];
+        
+        if (todayData) {
+          setCompletedExercises(todayData.completed_exercises || []);
+          setTodayPoints(todayData.points || 0);
+          setReflection(todayData.reflection || "");
         }
+
+        // Calculate streak
+        const dates = Object.keys(allDays).sort().reverse();
+        let currentStreak = 0;
+        
+        for (let i = 0; i < dates.length; i++) {
+          const expectedDate = new Date();
+          expectedDate.setDate(expectedDate.getDate() - i);
+          const expectedStr = expectedDate.toISOString().split('T')[0];
+          
+          if (dates.includes(expectedStr)) {
+            currentStreak++;
+          } else if (i === 0) {
+            continue;
+          } else {
+            break;
+          }
+        }
+        setStreak(currentStreak);
+      } catch (e) {
+        console.error('Error loading dojo progress:', e);
       }
-      setStreak(currentStreak);
     }
 
     setLoading(false);
@@ -179,25 +172,17 @@ export const DailyTraining = () => {
     setCompletedExercises(newCompleted);
     setTodayPoints(newPoints);
 
-    // Save to database
-    const { error } = await supabase
-      .from('dojo_daily_training')
-      .upsert({
-        user_id: userId,
-        date: today,
-        completed_exercises: newCompleted,
-        points: newPoints,
-        reflection: reflection,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id,date'
-      });
-
-    if (error) {
-      console.error('Error saving progress:', error);
-      toast.error("Failed to save progress");
-      return;
-    }
+    // Save to localStorage
+    const storageKey = `dojo_training_${userId}`;
+    const savedData = localStorage.getItem(storageKey);
+    const allDays = savedData ? JSON.parse(savedData) : {};
+    allDays[today] = {
+      completed_exercises: newCompleted,
+      points: newPoints,
+      reflection: reflection,
+      updated_at: new Date().toISOString()
+    };
+    localStorage.setItem(storageKey, JSON.stringify(allDays));
 
     if (isCompleting) {
       toast.success(`+${exercise.points} XP: ${exercise.name}`);
@@ -219,25 +204,20 @@ export const DailyTraining = () => {
 
     const today = new Date().toISOString().split('T')[0];
 
-    const { error } = await supabase
-      .from('dojo_daily_training')
-      .upsert({
-        user_id: userId,
-        date: today,
-        completed_exercises: completedExercises,
-        points: todayPoints,
-        reflection: reflection,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id,date'
-      });
-
-    if (error) {
-      toast.error("Failed to save reflection");
-    } else {
-      toast.success("Reflection saved!");
-      setShowReflection(false);
-    }
+    // Save to localStorage
+    const storageKey = `dojo_training_${userId}`;
+    const savedData = localStorage.getItem(storageKey);
+    const allDays = savedData ? JSON.parse(savedData) : {};
+    allDays[today] = {
+      completed_exercises: completedExercises,
+      points: todayPoints,
+      reflection: reflection,
+      updated_at: new Date().toISOString()
+    };
+    localStorage.setItem(storageKey, JSON.stringify(allDays));
+    
+    toast.success("Reflection saved!");
+    setShowReflection(false);
   };
 
   const getTimeOfDayIcon = (time?: string) => {

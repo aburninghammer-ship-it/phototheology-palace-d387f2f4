@@ -123,6 +123,7 @@ export default function BlueprintMarriage() {
             />
           </>
         ) : (
+          <>
           <Card variant="glass">
             <CardHeader>
               <Button 
@@ -265,6 +266,7 @@ export default function BlueprintMarriage() {
               "Showed intentional love/service"
             ]}
           />
+          </>
         )}
       </main>
     </div>

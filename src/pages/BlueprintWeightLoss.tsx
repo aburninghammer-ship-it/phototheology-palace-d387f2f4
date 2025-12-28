@@ -115,6 +115,7 @@ export default function BlueprintWeightLoss() {
             />
           </>
         ) : (
+          <>
           <Card>
             <CardHeader>
               <Button 
@@ -271,6 +272,7 @@ export default function BlueprintWeightLoss() {
               "Avoided emotional eating triggers"
             ]}
           />
+          </>
         )}
       </main>
     </div>
