@@ -216,14 +216,42 @@ export const Navigation = () => {
                   <div className="md:hidden">
                     <EnhancedMobileDrawer />
                   </div>
-                  
-                  {/* Enter App Button - Desktop Only */}
-                  <Button asChild className="hidden md:flex gradient-palace whitespace-nowrap">
-                    <Link to="/palace">
-                      <Building2 className="h-4 w-4 mr-2" />
-                      Enter App
-                    </Link>
-                  </Button>
+
+                  {/* User Menu - Desktop Only */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="hidden md:flex gradient-palace whitespace-nowrap">
+                        <User className="h-4 w-4 mr-2" />
+                        My Account
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 bg-card border-border z-50">
+                      <DropdownMenuItem asChild>
+                        <Link to="/palace" className="cursor-pointer">
+                          <Building2 className="h-4 w-4 mr-2" />
+                          Enter Palace
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile" className="cursor-pointer">
+                          <User className="h-4 w-4 mr-2" />
+                          Profile
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/pricing" className="cursor-pointer">
+                          <CreditCard className="h-4 w-4 mr-2" />
+                          Subscription
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive focus:text-destructive">
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               ) : (
                 <>

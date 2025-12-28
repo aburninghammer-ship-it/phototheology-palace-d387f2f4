@@ -62,6 +62,7 @@ import { RoomCard } from "@/components/palace/RoomCard";
 import { getCardImage } from "@/data/cardImages";
 import { GenesisGalleryTour } from "@/components/onboarding/GenesisGalleryTour";
 import { use24FPSTour } from "@/hooks/use24FPSTour";
+import { StoryLibrary } from "@/components/story-room/StoryLibrary";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -496,6 +497,23 @@ export default function RoomDetail() {
                     </CollapsibleContent>
                   </Card>
                 </Collapsible>
+
+                {room.id === "sr" && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <span className="text-2xl">📚</span>
+                        Bible Story Library
+                      </CardTitle>
+                      <CardDescription>
+                        Explore 300+ stories across 12 books of the Bible. Search by story, character, or theme.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <StoryLibrary />
+                    </CardContent>
+                  </Card>
+                )}
 
                 {room.id === "24fps" && (
                   <>
