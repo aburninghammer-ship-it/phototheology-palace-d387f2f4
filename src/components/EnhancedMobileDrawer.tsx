@@ -143,9 +143,22 @@ export const EnhancedMobileDrawer = () => {
   const { recentPages, clearRecentPages } = useRecentPages();
   const { bookmarks, isBookmarked, toggleBookmark } = usePageBookmarks();
   const [open, setOpen] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const handleLinkClick = () => {
     setOpen(false);
+  };
+
+  const toggleCategory = (key: string) => {
+    setExpandedCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
   };
 
   // Close drawer when auth state changes to force re-render with new state
@@ -156,56 +169,66 @@ export const EnhancedMobileDrawer = () => {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-5 w-5" />
+        <Button variant="ghost" size="icon" className="md:hidden h-10 w-10">
+          <Menu className="h-6 w-6" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="h-[90vh]">
-        <DrawerHeader className="border-b">
+      <DrawerContent className="h-[85vh] max-h-[85vh]">
+        <DrawerHeader className="border-b px-4 py-3">
           <DrawerTitle className="flex items-center justify-between">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
               onClick={handleLinkClick}
             >
-              <Building2 className="h-5 w-5 text-primary" />
-              <span className="bg-gradient-palace bg-clip-text text-transparent">
+              <Building2 className="h-6 w-6 text-primary" />
+              <span className="text-lg font-bold bg-gradient-palace bg-clip-text text-transparent">
                 Phototheology
               </span>
             </Link>
             <DrawerClose asChild>
-              <Button variant="ghost" size="sm">Close</Button>
+              <Button variant="ghost" size="sm" className="h-9 px-3">Close</Button>
             </DrawerClose>
           </DrawerTitle>
         </DrawerHeader>
-        
+
         <ScrollArea className="flex-1 px-4">
           {user ? (
-            <div className="py-4 space-y-6">
-              {/* Quick Actions - Home Button */}
-              <div className="space-y-2">
-                <Button 
-                  asChild 
-                  variant="default" 
-                  className="w-full justify-start gradient-palace"
+            <div className="py-4 space-y-4">
+              {/* Quick Actions Grid - Most used features */}
+              <div className="grid grid-cols-4 gap-2">
+                <Link
+                  to="/dashboard"
                   onClick={handleLinkClick}
+                  className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 active:scale-95 transition-transform"
                 >
-                  <Link to="/">
-                    <Home className="h-4 w-4 mr-2" />
-                    Back to Home
-                  </Link>
-                </Button>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="w-full justify-start"
+                  <Home className="h-5 w-5 text-primary mb-1" />
+                  <span className="text-[10px] font-medium text-center">Home</span>
+                </Link>
+                <Link
+                  to="/palace"
                   onClick={handleLinkClick}
+                  className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 active:scale-95 transition-transform"
                 >
-                  <Link to="/palace">
-                    <Building2 className="h-4 w-4 mr-2" />
-                    Enter Palace
-                  </Link>
-                </Button>
+                  <Building2 className="h-5 w-5 text-amber-500 mb-1" />
+                  <span className="text-[10px] font-medium text-center">Palace</span>
+                </Link>
+                <Link
+                  to="/bible"
+                  onClick={handleLinkClick}
+                  className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 active:scale-95 transition-transform"
+                >
+                  <BookOpen className="h-5 w-5 text-blue-500 mb-1" />
+                  <span className="text-[10px] font-medium text-center">Bible</span>
+                </Link>
+                <Link
+                  to="/games"
+                  onClick={handleLinkClick}
+                  className="flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-br from-fuchsia-500/10 to-pink-500/5 border border-fuchsia-500/20 active:scale-95 transition-transform"
+                >
+                  <Gamepad2 className="h-5 w-5 text-fuchsia-500 mb-1" />
+                  <span className="text-[10px] font-medium text-center">Games</span>
+                </Link>
               </div>
 
               {/* Recent Pages */}
@@ -311,107 +334,114 @@ export const EnhancedMobileDrawer = () => {
                 </>
               )}
 
-              {/* Categorized Navigation */}
-              {Object.entries(categoryConfig).map(([key, category]) => (
-                <div key={key}>
-                  <Separator className="mb-3" />
-                  <div className="flex items-center gap-2 mb-3">
-                    <category.icon className="h-4 w-4 text-primary" />
-                    <h3 className="text-sm font-semibold text-foreground">{category.title}</h3>
-                  </div>
-                  <div className="space-y-1">
-                    {category.links.map((link) => (
-                      <Button
-                        key={link.to}
-                        asChild
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "w-full justify-between",
-                          location.pathname === link.to && "bg-accent"
-                        )}
-                        onClick={handleLinkClick}
+              {/* Categorized Navigation - Collapsible */}
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Browse</p>
+                {Object.entries(categoryConfig).map(([key, category]) => {
+                  const isExpanded = expandedCategories.has(key);
+                  return (
+                    <div key={key} className="rounded-xl border border-border/50 overflow-hidden">
+                      <button
+                        onClick={() => toggleCategory(key)}
+                        className="w-full flex items-center justify-between p-3 bg-muted/30 hover:bg-muted/50 active:bg-muted/70 transition-colors"
                       >
-                        <Link to={link.to}>
-                          <span className="flex items-center gap-2">
-                            <span>{link.icon}</span>
-                            <span>{link.label}</span>
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              toggleBookmark({ path: link.to, title: link.label, icon: link.icon });
-                            }}
-                          >
-                            <Star
+                        <div className="flex items-center gap-2">
+                          <category.icon className="h-5 w-5 text-primary" />
+                          <span className="font-medium">{category.title}</span>
+                        </div>
+                        <svg
+                          className={cn(
+                            "h-4 w-4 text-muted-foreground transition-transform duration-200",
+                            isExpanded && "rotate-180"
+                          )}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      {isExpanded && (
+                        <div className="p-2 space-y-1 bg-background/50">
+                          {category.links.map((link) => (
+                            <Link
+                              key={link.to}
+                              to={link.to}
+                              onClick={handleLinkClick}
                               className={cn(
-                                "h-3 w-3",
-                                isBookmarked(link.to) && "fill-yellow-500 text-yellow-500"
+                                "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors active:scale-[0.98]",
+                                location.pathname === link.to
+                                  ? "bg-primary/10 text-primary"
+                                  : "hover:bg-muted/50 active:bg-muted"
                               )}
-                            />
-                          </Button>
-                        </Link>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                            >
+                              <span className="text-base">{link.icon}</span>
+                              <span className="text-sm font-medium flex-1">{link.label}</span>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  toggleBookmark({ path: link.to, title: link.label, icon: link.icon });
+                                }}
+                                className="p-1.5 rounded-full hover:bg-muted active:bg-muted/80"
+                              >
+                                <Star
+                                  className={cn(
+                                    "h-4 w-4",
+                                    isBookmarked(link.to)
+                                      ? "fill-yellow-500 text-yellow-500"
+                                      : "text-muted-foreground"
+                                  )}
+                                />
+                              </button>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
 
               {/* Account Section */}
-              <Separator />
-              <div className="space-y-1 pb-4">
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start"
-                  onClick={handleLinkClick}
-                >
-                  <Link to="/profile">
-                    <User className="h-4 w-4 mr-2" />
-                    My Profile
+              <div className="space-y-2 pb-6">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Account</p>
+                <div className="rounded-xl border border-border/50 overflow-hidden">
+                  <Link
+                    to="/profile"
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors border-b border-border/30"
+                  >
+                    <User className="h-5 w-5 text-primary" />
+                    <span className="font-medium">My Profile</span>
                   </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start"
-                  onClick={handleLinkClick}
-                >
-                  <Link to="/pricing">
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Pricing & Plans
+                  <Link
+                    to="/pricing"
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors border-b border-border/30"
+                  >
+                    <CreditCard className="h-5 w-5 text-emerald-500" />
+                    <span className="font-medium">Pricing & Plans</span>
                   </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start text-muted-foreground"
-                  onClick={handleLinkClick}
-                >
-                  <Link to="/manage-subscription">
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Cancel Subscription
+                  <Link
+                    to="/manage-subscription"
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 active:bg-muted transition-colors border-b border-border/30"
+                  >
+                    <CreditCard className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-muted-foreground">Manage Subscription</span>
                   </Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start text-destructive hover:text-destructive"
-                  onClick={() => {
-                    signOut();
-                    handleLinkClick();
-                  }}
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
+                  <button
+                    onClick={() => {
+                      signOut();
+                      handleLinkClick();
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-destructive/10 active:bg-destructive/20 transition-colors text-destructive"
+                  >
+                    <LogOut className="h-5 w-5" />
+                    <span className="font-medium">Sign Out</span>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (

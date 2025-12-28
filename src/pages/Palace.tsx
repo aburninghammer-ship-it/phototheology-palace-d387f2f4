@@ -70,49 +70,49 @@ const Palace = () => {
         <PalaceTour onComplete={handleTourComplete} onSkip={handleTourSkip} />
       )}
       
-      <div className="pt-24 pb-16 px-4">
+      <div className="pt-20 md:pt-24 pb-24 md:pb-16 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
           {/* Breadcrumbs */}
           <PalaceBreadcrumbs />
-          
-          {/* Hero Header */}
-          <div className="text-center mb-8">
-            <img 
-              src="/pwa-192x192.png" 
-              alt="Phototheology" 
-              className="h-20 w-20 rounded-2xl shadow-lg shadow-primary/20 mx-auto mb-4"
+
+          {/* Hero Header - Mobile Optimized */}
+          <div className="text-center mb-6 md:mb-8">
+            <img
+              src="/pwa-192x192.png"
+              alt="Phototheology"
+              className="h-16 w-16 md:h-20 md:w-20 rounded-2xl shadow-lg shadow-primary/20 mx-auto mb-3 md:mb-4"
             />
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-palace border border-white/20 mb-4 shadow-lg">
-              <Building2 className="h-5 w-5 text-white" />
-              <span className="text-sm font-semibold text-white">The Master System</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full gradient-palace border border-white/20 mb-3 md:mb-4 shadow-lg">
+              <Building2 className="h-4 w-4 md:h-5 md:w-5 text-white" />
+              <span className="text-xs md:text-sm font-semibold text-white">The Master System</span>
             </div>
-            
-            <h1 className="font-serif text-5xl md:text-6xl font-bold mb-4 bg-gradient-palace bg-clip-text text-transparent">
+
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 bg-gradient-palace bg-clip-text text-transparent leading-tight">
               The Eight-Floor Palace
             </h1>
-            
-            <p className="text-xl text-foreground max-w-2xl mx-auto mb-4">
+
+            <p className="text-base md:text-xl text-foreground max-w-2xl mx-auto mb-4 px-2">
               Master Bible typology through our revolutionary <strong>8-floor, 38-room memory system</strong>. See Christ everywhere in Scripture.
             </p>
-            
-            <div className="flex justify-center mb-6">
+
+            <div className="flex justify-center mb-4 md:mb-6">
               <HowItWorksDialog title="How to Use the Palace" steps={palaceSteps} />
             </div>
 
             {user && !loading && (
-              <Card variant="glass" className="max-w-md mx-auto mb-6">
-                <CardContent className="pt-6 relative z-10">
+              <Card variant="glass" className="max-w-md mx-auto mb-4 md:mb-6">
+                <CardContent className="p-4 md:pt-6 relative z-10">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-primary" />
-                      <span className="font-medium">Your Progress</span>
+                      <span className="font-medium text-sm md:text-base">Your Progress</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs md:text-sm text-muted-foreground">
                       {completedRooms} / {totalRooms} rooms
                     </span>
                   </div>
-                  <Progress value={progressPercentage} className="mb-2" />
-                  <p className="text-sm text-muted-foreground">
+                  <Progress value={progressPercentage} className="mb-2 h-2 md:h-2.5" />
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     {progressPercentage}% complete
                   </p>
                 </CardContent>
@@ -123,21 +123,22 @@ const Palace = () => {
               <VoiceChatWidget
                 roomType="palace"
                 roomId="main"
-                className="max-w-md mx-auto mb-6"
+                className="max-w-md mx-auto mb-4 md:mb-6"
               />
             )}
-            
-            <div className="flex gap-3 justify-center">
-              <Button asChild size="lg" className="gradient-palace text-white">
+
+            {/* Mobile-friendly button layout */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center px-4 sm:px-0">
+              <Button asChild size="lg" className="gradient-palace text-white h-12 md:h-11 text-base">
                 <Link to={user ? "/games/palace_quiz" : "/auth"}>
-                  <Building2 className="mr-2 h-4 w-4" />
+                  <Building2 className="mr-2 h-5 w-5 md:h-4 md:w-4" />
                   {user ? "Continue Learning" : "Start Your Journey"}
                 </Link>
               </Button>
               {completedRooms === totalRooms && (
-                <Button asChild size="lg" variant="outline">
+                <Button asChild size="lg" variant="outline" className="h-12 md:h-11 text-base">
                   <Link to="/certificates">
-                    <Award className="mr-2 h-4 w-4" />
+                    <Award className="mr-2 h-5 w-5 md:h-4 md:w-4" />
                     View Certificate
                   </Link>
                 </Button>
@@ -145,38 +146,38 @@ const Palace = () => {
             </div>
           </div>
 
-          {/* Palace Metaphor */}
-          <Card variant="glassSubtle" className="mb-8 p-6">
-            <h2 className="font-serif text-2xl font-semibold mb-4 text-center">
+          {/* Palace Metaphor - Mobile Optimized */}
+          <Card variant="glassSubtle" className="mb-6 md:mb-8 p-4 md:p-6">
+            <h2 className="font-serif text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-center">
               The Palace Metaphor
             </h2>
-            <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
-              <div>
-                <Link to="/palace/floor/1" id="floor-1" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
-                  <strong className="text-foreground">The 1st Floor</strong> fills your shelves with stories and images (width).
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 text-sm text-muted-foreground">
+              <div className="space-y-1 md:space-y-2">
+                <Link to="/palace/floor/1" id="floor-1" className="block scroll-mt-24 hover:bg-accent/50 active:bg-accent/70 p-3 md:p-2 rounded-lg md:rounded-md transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                  <strong className="text-foreground">1st Floor</strong> <span className="hidden sm:inline">-</span> <span className="block sm:inline mt-0.5 sm:mt-0">Stories and images (width)</span>
                 </Link>
-                <Link to="/palace/floor/2" id="floor-2" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
-                  <strong className="text-foreground">The 2nd Floor</strong> trains you as a detective with magnifying glass in hand.
+                <Link to="/palace/floor/2" id="floor-2" className="block scroll-mt-24 hover:bg-accent/50 active:bg-accent/70 p-3 md:p-2 rounded-lg md:rounded-md transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                  <strong className="text-foreground">2nd Floor</strong> <span className="hidden sm:inline">-</span> <span className="block sm:inline mt-0.5 sm:mt-0">Detective with magnifying glass</span>
                 </Link>
-                <Link to="/palace/floor/3" id="floor-3" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
-                  <strong className="text-foreground">The 3rd Floor</strong> teaches freestyle, spontaneous connections in daily life.
+                <Link to="/palace/floor/3" id="floor-3" className="block scroll-mt-24 hover:bg-accent/50 active:bg-accent/70 p-3 md:p-2 rounded-lg md:rounded-md transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                  <strong className="text-foreground">3rd Floor</strong> <span className="hidden sm:inline">-</span> <span className="block sm:inline mt-0.5 sm:mt-0">Freestyle, spontaneous connections</span>
                 </Link>
-                <Link to="/palace/floor/4" id="floor-4" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
-                  <strong className="text-foreground">The 4th Floor</strong> expands depth through Christ-centered, dimensional study.
+                <Link to="/palace/floor/4" id="floor-4" className="block scroll-mt-24 hover:bg-accent/50 active:bg-accent/70 p-3 md:p-2 rounded-lg md:rounded-md transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                  <strong className="text-foreground">4th Floor</strong> <span className="hidden sm:inline">-</span> <span className="block sm:inline mt-0.5 sm:mt-0">Christ-centered, dimensional study</span>
                 </Link>
               </div>
-              <div>
-                <Link to="/palace/floor/5" id="floor-5" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
-                  <strong className="text-foreground">The 5th Floor</strong> opens the prophetic telescope.
+              <div className="space-y-1 md:space-y-2">
+                <Link to="/palace/floor/5" id="floor-5" className="block scroll-mt-24 hover:bg-accent/50 active:bg-accent/70 p-3 md:p-2 rounded-lg md:rounded-md transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                  <strong className="text-foreground">5th Floor</strong> <span className="hidden sm:inline">-</span> <span className="block sm:inline mt-0.5 sm:mt-0">The prophetic telescope</span>
                 </Link>
-                <Link to="/palace/floor/6" id="floor-6" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
-                  <strong className="text-foreground">The 6th Floor</strong> situates everything in the cycles of history and the heavens.
+                <Link to="/palace/floor/6" id="floor-6" className="block scroll-mt-24 hover:bg-accent/50 active:bg-accent/70 p-3 md:p-2 rounded-lg md:rounded-md transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                  <strong className="text-foreground">6th Floor</strong> <span className="hidden sm:inline">-</span> <span className="block sm:inline mt-0.5 sm:mt-0">Cycles of history and heavens</span>
                 </Link>
-                <Link to="/palace/floor/7" id="floor-7" className="block mb-2 scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
-                  <strong className="text-foreground">The 7th Floor</strong> brings heart and soul into the fire of experience.
+                <Link to="/palace/floor/7" id="floor-7" className="block scroll-mt-24 hover:bg-accent/50 active:bg-accent/70 p-3 md:p-2 rounded-lg md:rounded-md transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                  <strong className="text-foreground">7th Floor</strong> <span className="hidden sm:inline">-</span> <span className="block sm:inline mt-0.5 sm:mt-0">Heart and soul into fire of experience</span>
                 </Link>
-                <Link to="/palace/floor/8" id="floor-8" className="block scroll-mt-24 hover:bg-accent/50 p-2 rounded-md transition-colors cursor-pointer">
-                  <strong className="text-foreground">The 8th Floor</strong> removes the scaffolding altogether: Phototheology becomes reflexive thought.
+                <Link to="/palace/floor/8" id="floor-8" className="block scroll-mt-24 hover:bg-accent/50 active:bg-accent/70 p-3 md:p-2 rounded-lg md:rounded-md transition-colors cursor-pointer border border-transparent hover:border-border/50">
+                  <strong className="text-foreground">8th Floor</strong> <span className="hidden sm:inline">-</span> <span className="block sm:inline mt-0.5 sm:mt-0">Reflexive thought mastery</span>
                 </Link>
               </div>
             </div>

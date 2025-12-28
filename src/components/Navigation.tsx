@@ -381,9 +381,9 @@ export const Navigation = () => {
             </div>
           </div>
           
-          {/* Horizontal Tab Navigation - Second row, only for authenticated users */}
+          {/* Horizontal Tab Navigation - Second row, only for authenticated users, hidden on mobile */}
           {user && (
-          <div className="border-t border-border/40">
+          <div className="border-t border-border/40 hidden md:block">
               <div className="max-w-7xl mx-auto overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-muted/30 [&::-webkit-scrollbar-thumb]:bg-primary/60 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-primary/80">
                 <div className="flex items-center gap-1 py-2 px-2 flex-nowrap min-w-max">
                   <Link 

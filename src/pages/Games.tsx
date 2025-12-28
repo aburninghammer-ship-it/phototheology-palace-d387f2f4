@@ -362,33 +362,32 @@ const Games = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated Background */}
+      {/* Animated Background - Simplified on mobile */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }} />
+        <div className="absolute top-20 left-10 w-48 md:w-72 h-48 md:h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-64 md:w-96 h-64 md:h-96 bg-accent/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="hidden md:block absolute top-1/2 left-1/3 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
       <Navigation />
-      <main className="container mx-auto px-4 py-8 max-w-7xl relative z-10">
-        {/* Header with How to Use */}
-        <motion.div 
+      <main className="container mx-auto px-3 md:px-4 py-4 md:py-8 pb-24 md:pb-8 max-w-7xl relative z-10">
+        {/* Header with How to Use - Mobile Optimized */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex justify-between items-center mb-6"
+          className="flex justify-between items-start md:items-center mb-4 md:mb-6"
         >
-          <div className="flex items-center gap-4">
-            <img 
-              src="/pwa-192x192.png" 
-              alt="Phototheology" 
-              className="h-12 w-12 rounded-xl shadow-lg shadow-primary/20"
+          <div className="flex items-center gap-3 md:gap-4">
+            <img
+              src="/pwa-192x192.png"
+              alt="Phototheology"
+              className="h-10 w-10 md:h-12 md:w-12 rounded-xl shadow-lg shadow-primary/20"
             />
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                 Games
               </h1>
-              <p className="text-muted-foreground">Learn through play with Phototheology games</p>
+              <p className="text-sm md:text-base text-muted-foreground">Learn through play</p>
             </div>
           </div>
           <HowItWorksDialog title="How to Use Games" steps={gamesSteps} />
@@ -445,35 +444,35 @@ const Games = () => {
         {/* Continue Playing Section */}
         {user && <ActiveGameSessions />}
 
-        {/* View Mode Tabs */}
-        <motion.div 
+        {/* View Mode Tabs - Horizontally scrollable on mobile */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="grid grid-cols-3 gap-4 mb-8"
+          className="flex gap-2 md:gap-4 mb-6 md:mb-8 overflow-x-auto pb-2 scrollbar-hide"
         >
           <Button
             variant={viewMode === "all" ? "default" : "outline"}
-            className={`h-14 text-base transition-all duration-300 ${viewMode === "all" ? "gradient-palace shadow-elegant" : "backdrop-blur-sm bg-background/50 hover:bg-primary/10"}`}
+            className={`h-11 md:h-14 text-sm md:text-base transition-all duration-300 flex-shrink-0 ${viewMode === "all" ? "gradient-palace shadow-elegant" : "backdrop-blur-sm bg-background/50 hover:bg-primary/10"}`}
             onClick={() => setViewMode("all")}
           >
-            <Gamepad2 className="mr-2 h-5 w-5" />
-            All Games
+            <Gamepad2 className="mr-1.5 md:mr-2 h-4 w-4 md:h-5 md:w-5" />
+            All
           </Button>
           <Button
             variant={viewMode === "floor" ? "default" : "outline"}
-            className={`h-14 text-base transition-all duration-300 ${viewMode === "floor" ? "gradient-palace shadow-elegant" : "backdrop-blur-sm bg-background/50 hover:bg-primary/10"}`}
+            className={`h-11 md:h-14 text-sm md:text-base transition-all duration-300 flex-shrink-0 ${viewMode === "floor" ? "gradient-palace shadow-elegant" : "backdrop-blur-sm bg-background/50 hover:bg-primary/10"}`}
             onClick={() => setViewMode("floor")}
           >
-            <MapPin className="mr-2 h-5 w-5" />
+            <MapPin className="mr-1.5 md:mr-2 h-4 w-4 md:h-5 md:w-5" />
             By Floor
           </Button>
           <Button
             variant={viewMode === "mode" ? "default" : "outline"}
-            className={`h-14 text-base transition-all duration-300 ${viewMode === "mode" ? "gradient-palace shadow-elegant" : "backdrop-blur-sm bg-background/50 hover:bg-primary/10"}`}
+            className={`h-11 md:h-14 text-sm md:text-base transition-all duration-300 flex-shrink-0 ${viewMode === "mode" ? "gradient-palace shadow-elegant" : "backdrop-blur-sm bg-background/50 hover:bg-primary/10"}`}
             onClick={() => setViewMode("mode")}
           >
-            <UsersRound className="mr-2 h-5 w-5" />
+            <UsersRound className="mr-1.5 md:mr-2 h-4 w-4 md:h-5 md:w-5" />
             By Mode
           </Button>
         </motion.div>
@@ -490,30 +489,30 @@ const Games = () => {
           <GroupEscapeRoom />
         </motion.div>
 
-        {/* Games Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Games Grid - Responsive with 1 col on mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {filteredGames.map((game, index) => (
             <motion.div
               key={game.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * index }}
+              transition={{ delay: Math.min(0.05 * index, 0.3) }}
             >
               <Card
                 variant="glass"
-                className="hover:shadow-elegant transition-all duration-300 cursor-pointer group overflow-hidden hover:-translate-y-1"
+                className="hover:shadow-elegant transition-all duration-300 cursor-pointer group overflow-hidden active:scale-[0.98] md:hover:-translate-y-1"
                 onClick={() => navigate(game.route)}
               >
-                <CardContent className="p-6">
+                <CardContent className="p-4 md:p-6">
                   {/* Top Row: Icon and Badges */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="text-5xl group-hover:scale-110 transition-transform duration-300">{game.icon}</div>
-                    <div className="flex flex-col items-end gap-2">
-                      <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
+                  <div className="flex items-start justify-between mb-3 md:mb-4">
+                    <div className="text-4xl md:text-5xl group-hover:scale-110 transition-transform duration-300">{game.icon}</div>
+                    <div className="flex flex-col items-end gap-1.5 md:gap-2">
+                      <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-[10px] md:text-xs">
                         Floor {game.floor}
                       </Badge>
                       {game.timed && (
-                        <Badge variant="outline" className="border-orange-500/50 text-orange-600 dark:border-orange-400/50 dark:text-orange-400 bg-orange-500/10">
+                        <Badge variant="outline" className="border-orange-500/50 text-orange-600 dark:border-orange-400/50 dark:text-orange-400 bg-orange-500/10 text-[10px] md:text-xs">
                           ⏱️ Timed
                         </Badge>
                       )}
@@ -521,41 +520,42 @@ const Games = () => {
                   </div>
 
                   {/* Title and Description */}
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+                  <h3 className="text-lg md:text-xl font-bold mb-1.5 md:mb-2 group-hover:text-primary transition-colors">
                     {game.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                  <p className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4 line-clamp-2">
                     {game.description}
                   </p>
 
-                  {/* Room Codes */}
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {game.rooms.map((room) => (
-                      <Badge key={room} variant="secondary" className="text-xs font-mono bg-accent/20 border-accent/30">
+                  {/* Room Codes and Modes - Combined row on mobile */}
+                  <div className="flex flex-wrap gap-1.5 md:gap-2 mb-2 md:mb-3">
+                    {game.rooms.slice(0, 3).map((room) => (
+                      <Badge key={room} variant="secondary" className="text-[10px] md:text-xs font-mono bg-accent/20 border-accent/30">
                         {room}
                       </Badge>
                     ))}
-                  </div>
-
-                  {/* Game Modes */}
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {game.modes.map((mode) => (
-                      <Badge key={mode} variant="outline" className="text-xs backdrop-blur-sm">
-                        {getModeIcon(mode)}
+                    {game.rooms.length > 3 && (
+                      <Badge variant="secondary" className="text-[10px] md:text-xs font-mono bg-accent/20 border-accent/30">
+                        +{game.rooms.length - 3}
                       </Badge>
-                    ))}
+                    )}
                   </div>
 
                   {/* Difficulty Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {game.difficulties.map((difficulty) => (
+                  <div className="flex flex-wrap gap-1.5 md:gap-2">
+                    {game.difficulties.slice(0, 3).map((difficulty) => (
                       <Badge
                         key={difficulty}
-                        className={`text-xs ${getDifficultyColor(difficulty)}`}
+                        className={`text-[10px] md:text-xs ${getDifficultyColor(difficulty)}`}
                       >
                         {difficulty}
                       </Badge>
                     ))}
+                    {game.modes.includes("2p") && (
+                      <Badge variant="outline" className="text-[10px] md:text-xs backdrop-blur-sm">
+                        👥 2P
+                      </Badge>
+                    )}
                   </div>
                 </CardContent>
               </Card>

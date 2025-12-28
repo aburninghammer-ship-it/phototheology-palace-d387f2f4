@@ -184,16 +184,17 @@ export default function Dashboard() {
     <div className="min-h-screen gradient-dreamy">
       {preferences.navigation_style === "simplified" ? <SimplifiedNav /> : <Navigation />}
       <JeevesWelcomeModal />
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8 flex items-center gap-4">
-          <img 
-            src="/pwa-192x192.png" 
-            alt="Phototheology" 
-            className="h-14 w-14 rounded-xl shadow-lg shadow-primary/20"
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 pb-24 md:pb-8 max-w-7xl">
+        {/* Mobile-optimized header */}
+        <div className="mb-6 md:mb-8 flex items-center gap-3 md:gap-4">
+          <img
+            src="/pwa-192x192.png"
+            alt="Phototheology"
+            className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-lg shadow-primary/20"
           />
           <div>
-            <h1 className="text-4xl font-bold mb-2">Welcome back! 👋</h1>
-            <p className="text-foreground/80">Here's your learning progress</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 md:mb-2">Welcome back!</h1>
+            <p className="text-sm md:text-base text-foreground/80">Here's your learning progress</p>
           </div>
         </div>
 
@@ -243,49 +244,49 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Main Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Main Stats Grid - Mobile Optimized with 2x2 layout */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
           <Card variant="glass">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Daily Streak</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between pb-1 md:pb-2 p-3 md:p-6">
+              <CardTitle className="text-xs md:text-sm font-medium">Daily Streak</CardTitle>
               <Flame className="h-4 w-4 text-orange-500" />
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.dailyStreak}</div>
-              <p className="text-xs text-muted-foreground mt-1">days in a row</p>
+            <CardContent className="pt-0 p-3 md:p-6 md:pt-0">
+              <div className="text-2xl md:text-3xl font-bold">{stats.dailyStreak}</div>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">days in a row</p>
             </CardContent>
           </Card>
 
           <Card variant="glass">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Points</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between pb-1 md:pb-2 p-3 md:p-6">
+              <CardTitle className="text-xs md:text-sm font-medium">Total Points</CardTitle>
               <Trophy className="h-4 w-4 text-yellow-500" />
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.totalPoints}</div>
-              <p className="text-xs text-muted-foreground mt-1">{pointsToNextLevel} to level {stats.level + 1}</p>
+            <CardContent className="pt-0 p-3 md:p-6 md:pt-0">
+              <div className="text-2xl md:text-3xl font-bold">{stats.totalPoints}</div>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">{pointsToNextLevel} to lvl {stats.level + 1}</p>
             </CardContent>
           </Card>
 
           <Card variant="glass">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Current Level</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between pb-1 md:pb-2 p-3 md:p-6">
+              <CardTitle className="text-xs md:text-sm font-medium">Level</CardTitle>
               <Award className="h-4 w-4 text-purple-500" />
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.level}</div>
-              <Progress value={levelProgress} className="mt-2" />
+            <CardContent className="pt-0 p-3 md:p-6 md:pt-0">
+              <div className="text-2xl md:text-3xl font-bold">{stats.level}</div>
+              <Progress value={levelProgress} className="mt-2 h-1.5 md:h-2" />
             </CardContent>
           </Card>
 
           <Card variant="glass">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Chess Streak</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between pb-1 md:pb-2 p-3 md:p-6">
+              <CardTitle className="text-xs md:text-sm font-medium">Chess Streak</CardTitle>
               <Target className="h-4 w-4 text-blue-500" />
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.chesStreak}</div>
-              <p className="text-xs text-muted-foreground mt-1">wins in a row</p>
+            <CardContent className="pt-0 p-3 md:p-6 md:pt-0">
+              <div className="text-2xl md:text-3xl font-bold">{stats.chesStreak}</div>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">wins in a row</p>
             </CardContent>
           </Card>
         </div>
