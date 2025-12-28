@@ -340,6 +340,18 @@ const Games = () => {
       difficulties: ["medium", "hard", "expert"],
       route: "/games/connection-dash"
     },
+    {
+      id: "phototheology_uno",
+      name: "🃏 Phototheology Uno",
+      description: "Biblical connections card game! Race to empty your hand by drawing meaningful theological connections. Jeeves judges your plays!",
+      icon: "🃏",
+      floor: 4,
+      timed: false,
+      rooms: ["CR", "P‖", "ST", "DR"],
+      modes: ["solo", "2p", "multiplayer"],
+      difficulties: ["easy", "medium"],
+      route: "/games/phototheology-uno"
+    },
   ];
 
   const filteredGames = allGames.filter(game => {
