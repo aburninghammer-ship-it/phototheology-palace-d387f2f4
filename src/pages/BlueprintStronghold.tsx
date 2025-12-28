@@ -115,6 +115,7 @@ export default function BlueprintStronghold() {
             />
           </>
         ) : (
+          <>
           <Card>
             <CardHeader>
               <Button 
@@ -246,6 +247,7 @@ export default function BlueprintStronghold() {
               "Shared a victory with an accountability partner"
             ]}
           />
+          </>
         )}
       </main>
     </div>

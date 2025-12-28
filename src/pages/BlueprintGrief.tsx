@@ -116,6 +116,7 @@ export default function BlueprintGrief() {
             />
           </>
         ) : (
+          <>
           <Card>
             <CardHeader>
               <Button 
@@ -247,6 +248,7 @@ export default function BlueprintGrief() {
               "Did one act of self-care"
             ]}
           />
+          </>
         )}
       </main>
     </div>

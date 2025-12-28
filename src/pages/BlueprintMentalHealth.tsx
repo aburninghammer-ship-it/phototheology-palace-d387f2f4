@@ -114,6 +114,7 @@ export default function BlueprintMentalHealth() {
             />
           </>
         ) : (
+          <>
           <Card>
             <CardHeader>
               <Button 
@@ -247,7 +248,7 @@ export default function BlueprintMentalHealth() {
             blueprintType="mentalhealth"
             currentArticleId={currentArticle?.id}
             currentArticleTitle={currentArticle?.name}
-            currentArticleContent={currentArticle?.detailedTeaching}
+            currentArticleContent={currentArticle?.teaching}
             dailyCheckItems={[
               "Read today's mental health article",
               "Practiced a coping strategy",
@@ -257,6 +258,7 @@ export default function BlueprintMentalHealth() {
               "Got adequate sleep (7-8 hrs)"
             ]}
           />
+          </>
         )}
       </main>
     </div>
