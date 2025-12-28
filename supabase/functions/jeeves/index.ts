@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
-import { 
-  PALACE_SCHEMA, 
+import {
+  PALACE_SCHEMA,
   MASTER_IDENTITY,
   THINKING_PROCESS,
   UNIVERSAL_RESPONSE_RULES,
@@ -16,7 +16,8 @@ import {
   FIVE_MASTERMIND_COUNCIL,
   FORMATTING_REQUIREMENTS,
   CLOSING_BEHAVIOR,
-  MASTER_PATTERNS
+  MASTER_PATTERNS,
+  SERMON_KNOWLEDGE_BANK
 } from './palace-schema.ts';
 
 const corsHeaders = {
@@ -591,7 +592,9 @@ ${pathTeachingStyle}
 
       ${FIVE_MASTERMIND_COUNCIL}
 
-      ${PALACE_SCHEMA}`;
+      ${PALACE_SCHEMA}
+
+      ${SERMON_KNOWLEDGE_BANK}`;
 
       userPrompt = message || "Tell me about Phototheology and how it helps with Bible study.";
     } else if (mode === "help") {
@@ -2949,7 +2952,9 @@ Be scholarly, compassionate, and clear. Cite specific verses.`;
         "5years": "last 5 years"
       };
       
-      systemPrompt = `You are Jeeves, a historicist prophecy scholar analyzing contemporary events through the lens of Matthew 24 and Revelation 13:11. You identify prophetic signals in current events.`;
+      systemPrompt = `You are Jeeves, a historicist prophecy scholar analyzing contemporary events through the lens of Matthew 24 and Revelation 13:11. You identify prophetic signals in current events.
+
+${SERMON_KNOWLEDGE_BANK}`;
 
       // First, search the web for relevant articles
       const searchQuery = scopeContext.includes("United States")
@@ -3092,7 +3097,9 @@ Structure your research:
 Include verse citations, cross-references, and scholarly depth. Make it comprehensive but accessible. Use ${greeting}'s name 2-3 times naturally.`;
     
     } else if (mode === "sermon-setup") {
-      systemPrompt = "You are Jeeves, a sermon preparation assistant. Help preachers organize their thoughts and structure powerful messages.";
+      systemPrompt = `You are Jeeves, a sermon preparation assistant. Help preachers organize their thoughts and structure powerful messages.
+
+${SERMON_KNOWLEDGE_BANK}`;
       userPrompt = `A preacher is preparing a sermon with this setup:
 Title: "${title}"
 Theme/Passage: "${theme}"
@@ -3107,7 +3114,9 @@ Provide guidance on:
 Be encouraging and practical. Help them think through the sermon, but don't write it for them.`;
 
     } else if (mode === "sermon-stones") {
-      systemPrompt = "You are Jeeves, helping identify powerful AHA moments (smooth stones) for sermons.";
+      systemPrompt = `You are Jeeves, helping identify powerful AHA moments (smooth stones) for sermons.
+
+${SERMON_KNOWLEDGE_BANK}`;
       userPrompt = `For a sermon on "${theme}", suggest 2-3 potential smooth stones (powerful Phototheology insights).
 ${existingStones && existingStones.length > 0 ? `\nThey already have: ${existingStones.join('; ')}` : ''}
 
@@ -3120,7 +3129,9 @@ Each stone should be:
 Present them as options, not mandates.`;
 
     } else if (mode === "sermon-bridges") {
-      systemPrompt = "You are Jeeves, helping create narrative bridges between sermon points.";
+      systemPrompt = `You are Jeeves, helping create narrative bridges between sermon points.
+
+${SERMON_KNOWLEDGE_BANK}`;
       userPrompt = `Help create bridges to connect these 5 smooth stones into a flowing narrative:
 ${stones.map((s: string, i: number) => `Stone ${i+1}: ${s}`).join('\n')}
 
@@ -3133,7 +3144,9 @@ Suggest 2-3 potential bridge transitions that:
 - Build toward a climax`;
 
     } else if (mode === "sermon-structure") {
-      systemPrompt = "You are Jeeves, helping structure sermons like movies.";
+      systemPrompt = `You are Jeeves, helping structure sermons like movies.
+
+${SERMON_KNOWLEDGE_BANK}`;
       userPrompt = `Given these sermon elements:
 Stones: ${stones.join('; ')}
 Bridges: ${bridges.join('; ')}
@@ -3149,6 +3162,8 @@ Be specific but flexible. Help them see the cinematic potential.`;
 
     } else if (mode === "generate-series-outline") {
       systemPrompt = `You are Jeeves, a Bible study expert specializing in creating Christ-centered, Palace-integrated lesson series. You design engaging, transformational series that teach people to see Jesus at the center of Scripture and apply Phototheology principles.
+
+${SERMON_KNOWLEDGE_BANK}
 
 Return your response as valid JSON only.`;
 

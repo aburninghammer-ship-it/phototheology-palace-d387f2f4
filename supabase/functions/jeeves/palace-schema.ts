@@ -2484,3 +2484,152 @@ Before responding with Palace content, verify:
 This reference is your guardrail against hallucination.
 Always double-check that the rooms you mention exist in this list and that you're using their exact methodologies.
 `;
+
+// ============================================================
+// SECTION — SERMON & TEACHING KNOWLEDGE BANK
+// ============================================================
+
+export const SERMON_KNOWLEDGE_BANK = `
+## PHOTOTHEOLOGY SERMON & TEACHING KNOWLEDGE BANK
+
+This section contains core theological teachings and sermon content for reference.
+
+---
+
+### SERMON: "I Unfriend You: Satan's Dehumanization Plot For the End Times"
+
+**Theme:** Dehumanization and the Great Controversy
+
+**Key Verses:**
+- John 15:12-14 - Love one another commandment
+- Genesis 1:26-27 - Made in God's image
+- 1 John 4:8 - God is love
+- Genesis 3:14-15 - Enmity between seeds
+- 1 John 3:11-15 - Love vs. murder
+- Ephesians 6:12 - Wrestling against principalities
+- Matthew 24:12 - Love waxing cold
+
+**Main Points:**
+1. God created humanity in His image - to love, not destroy
+2. Satan's strategy: Woman Seed (human/divine nature) vs Serpent Seed (animal/beastly nature)
+3. Cain was "of that wicked one" - representing the serpent's seed of hatred
+4. Sin at the door is like a crouching beast - the animal nature waiting to devour
+5. Dehumanization leads to persecution: "Dehumanized people dehumanize people"
+6. The papal system and religious persecution stems from the same dehumanizing spirit
+7. End-time warning: "Because iniquity shall abound, the love of many shall wax cold"
+8. Babylon makes nations "drunk with the wine of her fornication" - spiritual intoxication leading to persecution
+
+**Key Quotations:**
+- "Pilate was convinced that no evidence of the guilt of Christ could be substantiated... But the Jews were under the inspiration of Satan as was Cain and other murderers who have determined to destroy life rather than to save it." (CTr 270.2)
+- "The same master-spirit that urged in the Massacre of St. Bartholomew, led also in the scenes of the French Revolution... The work which the papacy had begun, atheism completed." (Great Controversy)
+
+**Application:** Recognize the beast nature in ourselves and others. Choose the divine nature of love over the animal nature of hatred. Stand for truth without dehumanizing opponents.
+
+---
+
+### DANIEL & REVELATION FRAMEWORK (Historicist SDA)
+
+#### Sanctuary Structure in Revelation
+
+**Overview:** Revelation is framed around the sanctuary system. Just as the earthly sanctuary revealed God's plan of salvation through its services, the book of Revelation unfolds through the sanctuary pattern.
+
+**Progression:**
+- Gospels → Altar of Sacrifice: The life, death, and resurrection of Christ fulfill the altar sacrifices (John 1:29; Luke 23:33)
+- Acts & Epistles → The Laver: The cleansing and purifying of believers through baptism and the Spirit (Acts 2:38)
+- Revelation → Holy & Most Holy Place: Candlesticks (Rev. 1), throne and table of shewbread (Rev. 4-5), altar of incense (Rev. 8), ark of the covenant (Rev. 11:19)
+
+**Feast Day Pattern:** Revelation's timeline parallels the feasts: Passover (Christ's sacrifice), Pentecost (Acts 2 outpouring), Trumpets (warnings), Day of Atonement (judgment, Rev. 11:19), Tabernacles (celebration, Rev. 21-22)
+
+---
+
+#### The Seven Churches (Christ as Man of Mercy)
+
+| Church | Period | Description |
+|--------|--------|-------------|
+| Ephesus | A.D. 31-100 | The apostolic church. Faithful in doctrine and missionary zeal but gradually lost its first love (Rev. 2:4). |
+| Smyrna | 100-313 | The persecuted church. Ten days of tribulation reflect the ten years of Diocletian's persecution (303-313). |
+| Pergamos | 313-538 | The compromising church. After Constantine's conversion, the church united with the state. "Satan's seat" indicates the infiltration of paganism. |
+| Thyatira | 538-1517 | The church under papal dominance. Jezebel symbolizes the papal system's corruption, persecuting dissenters. |
+| Sardis | 1517-1798 | The Reformation church. It began with spiritual vitality but settled into formality, "having a name that you live, but are dead" (Rev. 3:1). |
+| Philadelphia | 1798-1844 | The missionary and revival church. Christ sets before them an "open door" (Rev. 3:8), pointing to the Most Holy Place ministry opening in 1844. |
+| Laodicea | 1844-Second Coming | The end-time church. Lukewarm, self-sufficient, and in need of repentance. Yet Christ offers gold (faith), white raiment (righteousness), and eye salve (spiritual discernment). |
+
+---
+
+#### The Seven Seals (Christ as Man of Justice)
+
+| Seal | Symbol | Period | Meaning |
+|------|--------|--------|---------|
+| 1 | White Horse | A.D. 31-100 | The gospel goes forth in purity, conquering through truth (Rev. 6:2). |
+| 2 | Red Horse | 100-313 | Symbol of persecution and martyrdom. Peace removed, blood flows (Rev. 6:4). |
+| 3 | Black Horse | 313-538 | Compromise and famine of the Word. The church embraces worldly power (Rev. 6:5-6). |
+| 4 | Pale Horse | 538-1517 | Death dominates. The papal system spreads spiritual darkness (Rev. 6:8). |
+| 5 | Martyrs Cry | 1517-1798 | Souls under the altar cry for justice (Rev. 6:9-11). Reformation martyrs awaiting vindication. |
+| 6 | Signs of the End | 1755-1833 | Lisbon earthquake (1755), Dark Day (1780), and falling stars (1833) signal Christ's return. |
+| 7 | Silence in Heaven | 1844 onward | Silence represents the close of probation and Christ's transition into judgment (Rev. 8:1). |
+
+---
+
+#### The Seven Trumpets (Christ as Protector)
+
+| Trumpet | Event | Date/Period | Meaning |
+|---------|-------|-------------|---------|
+| 1 | Fall of Jerusalem | A.D. 70 | Roman armies destroy Jerusalem after the nation rejects Christ. Fire, hail, and blood symbolize destruction (Rev. 8:7). |
+| 2 | Fall of Rome | 476 | A burning mountain cast into the sea represents the collapse of the Western Roman Empire by barbarian invasions (Rev. 8:8-9). |
+| 3 | Wormwood | Dark Ages | A star falls, poisoning rivers and waters. Apostate Christianity corrupting pure doctrine (Rev. 8:10-11). |
+| 4 | Sun, Moon, Stars Darkened | Dark Ages | The Dark Ages obscure gospel light. Church traditions overshadow the Word of God (Rev. 8:12). |
+| 5 | First Woe - Locusts | 1299-1449 | Locusts symbolize the rise of Islam, tormenting apostate Christendom. 150 years fulfilled from July 27, 1299, to July 27, 1449 (Rev. 9:1-11). |
+| 6 | Second Woe - Euphrates Angels | 1449-1840 | Four angels at the Euphrates represent the Ottoman Turks. 391 years and 15 days culminates on August 11, 1840 (Rev. 9:13-21). |
+| 7 | Third Woe - Kingdom | 1844-End | Heaven opens to reveal the ark (Rev. 11:19). The judgment hour beginning in 1844. "The kingdoms of this world are become the kingdoms of our Lord" (Rev. 11:15). |
+
+---
+
+#### Parallel Structure of Revelation
+
+| Period | Churches | Seals | Trumpets |
+|--------|----------|-------|----------|
+| 1st | Ephesus - Apostolic purity | White Horse | Jerusalem destroyed |
+| 2nd | Smyrna - Persecuted | Red Horse | Fall of Rome |
+| 3rd-4th | Pergamos/Thyatira - Compromise/darkness | Black & Pale Horses | Wormwood & Dark Ages |
+| 5th-6th | Sardis/Philadelphia - Martyrs/Signs | Seals of witness | Islam & Ottoman woes |
+| 7th | Laodicea - Judgment | Silence in Heaven | Kingdom proclamation |
+
+---
+
+#### Christ's Four Roles in Revelation
+
+| Context | Role | Meaning |
+|---------|------|---------|
+| Churches | Mercy | Christ lovingly warns and corrects His people. |
+| Seals | Justice | Christ unveils the advance of evil and promises justice. |
+| Trumpets | Protection | Christ answers prayers through judgments that restrain enemies. |
+| Plagues | Vengeance | Christ executes final justice upon the unrepentant. |
+
+This progression reveals the full character of God: mercy offered, justice maintained, protection given, and vengeance against rebellion - all culminating in eternal restoration.
+
+---
+
+#### Day of Atonement Themes
+
+- Revelation 11:19 shows the Most Holy Place opened. The ark of God's covenant is seen, signaling judgment has begun.
+- The trumpets climax with the Day of Atonement, where God's wrath and mercy meet.
+- Plagues (Rev. 15-16) execute judgment on those who reject God's mercy.
+- Tabernacles (Rev. 21-22) fulfill the sanctuary cycle with eternal celebration, God dwelling with His people.
+
+---
+
+### TEACHING PRINCIPLES
+
+When teaching or answering questions about Phototheology content:
+
+1. Always center interpretation on Christ and His sanctuary ministry
+2. Use the historicist method: prophecy unfolds through history from the prophet's time to the end
+3. Connect Old Testament types to New Testament antitypes
+4. Show the parallel structure of Revelation's sevens (churches, seals, trumpets)
+5. Apply the 2D/3D principle: literal events point to spiritual realities
+6. Use the Time Zones principle: prophecy operates in different temporal dimensions
+7. Emphasize the Great Controversy theme: Christ vs. Satan, love vs. hatred
+8. Connect sanctuary furniture to Christ's progressive ministry
+9. Present the Day of Atonement as the climax of prophetic history (1844)
+10. Show how dehumanization is Satan's endgame strategy
+`;
