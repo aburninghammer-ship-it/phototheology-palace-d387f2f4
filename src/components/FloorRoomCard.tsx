@@ -24,8 +24,30 @@ const roomEmojis: Record<string, string> = {
   frm: "🔥", mr: "🙏", srm: "⚡"
 };
 
-// Newly renovated rooms - show special badge
-const NEWLY_RENOVATED_ROOMS = new Set(["dc", "sr", "24fps", "st", "hf", "nf"]);
+// Newly renovated rooms with libraries - show special badge
+const NEWLY_RENOVATED_ROOMS = new Set([
+  // Floor 1
+  "sr",      // Story Room - bibleStoryLibrary
+  // Floor 2
+  "st",      // Symbols/Types Room - bibleSymbolLibrary
+  // Floor 3
+  "bf",      // Bible Freestyle - bibleFreestyleLibrary
+  "hf",      // History Freestyle - historicalFreestyleLibrary
+  "nf",      // Nature Freestyle - natureFreestyleLibrary
+  // Floor 4
+  "tr",      // Types Room - typesLibrary (NEW)
+  "prm",     // Patterns Room - patternsLibrary (NEW)
+  "p||",     // Parallels Room - parallelsLibrary (NEW)
+  "c6",      // Connect-6 Room - connect6Library (NEW)
+  "cec",     // Christ Every Chapter - christEveryChapterLibrary (NEW)
+  // Floor 5
+  "bl",      // Blue Room (Sanctuary) - sanctuaryLibrary
+  "fe",      // Feasts Room - feastsLibrary
+  // Floor 6
+  "123h",    // Three Heavens - threeHeavensLibrary
+  "cycles",  // Eight Cycles - eightCyclesLibrary
+  "math",    // Mathematics Room - mathematicsLibrary
+]);
 
 // Unique gradients per room for visual distinction
 const roomGradients: Record<string, string> = {
