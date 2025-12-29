@@ -694,9 +694,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return;
     }
 
-    // Add timeout to TTS generation - longer for commentary (can be deep-drill which is very long)
-    const timeoutMs = 120000; // 120 seconds for potentially long commentary (increased from 90)
-    const timeoutPromise = new Promise<string | null>((_, reject) => 
+    // Add timeout to TTS generation - reasonable limit to prevent long hangs
+    const timeoutMs = 45000; // 45 seconds max for TTS generation (reduced from 120 to prevent long pauses)
+    const timeoutPromise = new Promise<string | null>((_, reject) =>
       setTimeout(() => reject(new Error('TTS generation timeout')), timeoutMs)
     );
 
@@ -755,19 +755,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
     // Critical: Prevent double-triggering by using a flag, but allow replay
     let hasEnded = false;
-    
-    // Reset flag when audio is seeked (for replay functionality)
-    audio.onseeked = () => {
-      hasEnded = false;
-    };
-    
-    audio.onended = () => {
+
+    const handleCommentaryComplete = () => {
       if (hasEnded) {
-        console.log("[Commentary] onended already fired, ignoring duplicate");
+        console.log("[Commentary] Already handled end, ignoring duplicate");
         return;
       }
       hasEnded = true;
       console.log("[Commentary] Finished playing");
+      audio.onended = null;
+      audio.ontimeupdate = null;
+      audio.onerror = null;
       audioRef.current = null;
       setIsPlayingCommentary(false);
       playingCommentaryRef.current = false;
@@ -776,8 +774,29 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       onComplete();
     };
 
+    // Reset flag when audio is seeked (for replay functionality)
+    audio.onseeked = () => {
+      hasEnded = false;
+    };
+
+    // Primary end handler
+    audio.onended = () => {
+      console.log("[Commentary] onended event fired");
+      handleCommentaryComplete();
+    };
+
+    // Fallback for mobile: check if audio is near end via timeupdate
+    audio.ontimeupdate = () => {
+      if (!hasEnded && audio.duration > 0 && audio.currentTime >= audio.duration - 0.1) {
+        console.log("[Commentary] timeupdate fallback triggered - audio complete");
+        handleCommentaryComplete();
+      }
+    };
+
     audio.onerror = (e) => {
       console.error("[Commentary] Audio error:", e);
+      audio.onended = null;
+      audio.ontimeupdate = null;
       audioRef.current = null;
       setIsPlayingCommentary(false);
       playingCommentaryRef.current = false;
@@ -791,7 +810,23 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     } catch (e) {
       console.warn("[Commentary] Play blocked, waiting for user interaction:", e);
 
+      // Set a timeout to auto-proceed if user doesn't interact within 10 seconds
+      const autoSkipTimeout = setTimeout(() => {
+        console.log("[Commentary] No user interaction, auto-skipping commentary");
+        document.body.removeEventListener('click', playOnInteraction);
+        document.body.removeEventListener('touchstart', playOnInteraction);
+        audio.onended = null;
+        audio.ontimeupdate = null;
+        audio.onerror = null;
+        audioRef.current = null;
+        setIsPlayingCommentary(false);
+        playingCommentaryRef.current = false;
+        setCommentaryText(null);
+        onComplete();
+      }, 10000);
+
       const playOnInteraction = async () => {
+        clearTimeout(autoSkipTimeout);
         try {
           await audio.play();
           setIsPlayingCommentary(true);
@@ -801,6 +836,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           document.body.removeEventListener('touchstart', playOnInteraction);
         } catch (err) {
           console.error("[Commentary] Play still failed:", err);
+          audio.onended = null;
+          audio.ontimeupdate = null;
+          audio.onerror = null;
           audioRef.current = null;
           setIsPlayingCommentary(false);
           playingCommentaryRef.current = false;

@@ -288,20 +288,20 @@ serve(async (req) => {
       : "";
 
     const systemPrompt = getSystemPrompt(depth as CommentaryDepth, userName, language as SupportedLanguage);
-    const userPrompt = `Provide ${depth} devotional commentary on this verse:
+    const userPrompt = `Provide ${depth} analytical commentary on this verse:
 
 **${book} ${chapter}:${verse}**
 "${verseText}"
 ${userStudiesSection}
-DEVOTIONAL GUIDANCE:
-- Speak to the HEART first, then the head
-- Remember the Fragments rule: even simple-seeming verses often carry profound significance when we dig deeper
-- If this verse doesn't warrant deep explanation, summarize warmly—but don't dismiss it without checking for hidden treasure
-- Use "you" and "your" to speak directly to the listener
-- End by drawing the listener closer to Christ
-${userStudiesContext ? "- BUILD UPON the user's previous study insights where relevant—acknowledge and extend their discoveries" : ""}
+COMMENTARY GUIDANCE:
+- Maintain third-person, scholarly commentary style throughout
+- Remember the Fragments rule: even simple-seeming verses often carry profound significance when examined carefully
+- If this verse doesn't warrant deep explanation, provide a concise analytical note
+- NEVER use second-person language (you, your, we, our)
+- NEVER reference or mention "the listener" or "the reader" directly
+${userStudiesContext ? "- BUILD UPON the previous study insights where relevant—acknowledge and extend those discoveries" : ""}
 
-Give commentary appropriate for audio narration that TRANSFORMS, not just informs. Do not include verse reference in your response—just the commentary. Apply Phototheology principles naturally without explicitly naming the rooms.`;
+Give commentary appropriate for audio narration. Do not include verse reference in your response—just the commentary. Apply Phototheology principles naturally without explicitly naming the rooms.`;
 
     console.log(`[Verse Commentary] Generating ${depth} commentary for ${book} ${chapter}:${verse}`);
 
