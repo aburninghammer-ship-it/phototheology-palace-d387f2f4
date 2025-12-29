@@ -24,29 +24,18 @@ const roomEmojis: Record<string, string> = {
   frm: "🔥", mr: "🙏", srm: "⚡"
 };
 
-// Newly renovated rooms with libraries - show special badge
+// Rooms with libraries - show "Newly Renovated" badge
 const NEWLY_RENOVATED_ROOMS = new Set([
-  // Floor 1
-  "sr",      // Story Room - bibleStoryLibrary
-  // Floor 2
-  "st",      // Symbols/Types Room - bibleSymbolLibrary
-  // Floor 3
-  "bf",      // Bible Freestyle - bibleFreestyleLibrary
-  "hf",      // History Freestyle - historicalFreestyleLibrary
-  "nf",      // Nature Freestyle - natureFreestyleLibrary
-  // Floor 4
-  "tr",      // Types Room - typesLibrary (NEW)
-  "prm",     // Patterns Room - patternsLibrary (NEW)
-  "p||",     // Parallels Room - parallelsLibrary (NEW)
-  "c6",      // Connect-6 Room - connect6Library (NEW)
-  "cec",     // Christ Every Chapter - christEveryChapterLibrary (NEW)
-  // Floor 5
-  "bl",      // Blue Room (Sanctuary) - sanctuaryLibrary
-  "fe",      // Feasts Room - feastsLibrary
-  // Floor 6
-  "123h",    // Three Heavens - threeHeavensLibrary
-  "cycles",  // Eight Cycles - eightCyclesLibrary
-  "math",    // Mathematics Room - mathematicsLibrary
+  "sr",     // Story Room - has bibleStoryLibrary
+  "24fps",  // 24FPS Room - has library
+  "st",     // Symbols Room - has bibleSymbolLibrary
+  "hf",     // Historical Freestyle Room - has historicalFreestyleLibrary
+  "nf",     // Nature Freestyle Room - has natureFreestyleLibrary
+  "bl",     // Blue Room - has sanctuaryLibrary
+  "fe",     // Feasts Room - has feastsLibrary
+  "123h",   // Three Heavens Room - has threeHeavensLibrary
+  "cycles", // Eight Cycles Room - has eightCyclesLibrary
+  "math",   // Mathematics Room - has mathematicsLibrary
 ]);
 
 // Unique gradients per room for visual distinction

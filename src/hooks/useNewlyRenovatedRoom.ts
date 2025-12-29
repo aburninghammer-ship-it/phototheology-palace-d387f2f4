@@ -2,22 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
-// List of recently renovated rooms (updated with new PT methodologies)
+// List of rooms with libraries (show "Newly Renovated" badge)
 const RENOVATED_ROOMS = [
-  "sr",   // Story Room - updated with beat methodology
-  "ir",   // Imagination Room - sensory immersion
-  "24fps", // 24FPS Room - visual GPS system
-  "br",   // Bible Rendered - 51 glyph system
-  "tr",   // Translation Room - verse to icon
-  "gr",   // Gems Room - mining methodology
-  "cr",   // Concentration Room - Christ-centered
-  "dr",   // Dimensions Room - 6 dimensions
-  "prm",  // Patterns Room - updated patterns
-  "bl",   // Blue Room - sanctuary pattern
-  "pr",   // Prophecy Room - telescope lens
-  "fe",   // Feasts Room - feast patterns
-  "cycles", // Cycles Room - 8 cycles
-  "123h", // Three Heavens - DoL framework
+  "sr",     // Story Room - has bibleStoryLibrary
+  "24fps",  // 24FPS Room - has library
+  "st",     // Symbols Room - has bibleSymbolLibrary
+  "hf",     // Historical Freestyle Room - has historicalFreestyleLibrary
+  "nf",     // Nature Freestyle Room - has natureFreestyleLibrary
+  "bl",     // Blue Room - has sanctuaryLibrary
+  "fe",     // Feasts Room - has feastsLibrary
+  "123h",   // Three Heavens Room - has threeHeavensLibrary
+  "cycles", // Eight Cycles Room - has eightCyclesLibrary
+  "math",   // Mathematics Room - has mathematicsLibrary
 ];
 
 // Renovation date - rooms updated after this date show the badge
