@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { ExportBibleAudioDialog } from "./ExportBibleAudioDialog";
+import { getCachedTTSAudio, cacheTTSAudio } from "@/services/offlineAudioCache";
 
 interface AudioControlsProps {
   verses: Verse[];
@@ -76,6 +77,58 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     prefetchCacheRef.current.forEach(url => URL.revokeObjectURL(url));
     prefetchCacheRef.current.clear();
   }, [selectedVoice]);
+
+  // Eager-load first 3 verses when component mounts for instant playback
+  const eagerLoadedRef = useRef(false);
+  useEffect(() => {
+    if (eagerLoadedRef.current || verses.length === 0) return;
+    eagerLoadedRef.current = true;
+
+    // Use requestIdleCallback for non-blocking prefetch, with timeout fallback
+    const prefetchFirst = () => {
+      // Prefetch first 3 verses in parallel
+      Promise.all([
+        generateTTSForEagerLoad(verses[0]?.text, selectedVoice, verses[0]?.verse),
+        verses[1] ? generateTTSForEagerLoad(verses[1].text, selectedVoice, verses[1].verse) : null,
+        verses[2] ? generateTTSForEagerLoad(verses[2].text, selectedVoice, verses[2].verse) : null,
+      ]).then(urls => {
+        urls.forEach((url, index) => {
+          if (url && !prefetchCacheRef.current.has(index)) {
+            prefetchCacheRef.current.set(index, url);
+          }
+        });
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(prefetchFirst, { timeout: 2000 });
+    } else {
+      setTimeout(prefetchFirst, 500);
+    }
+  }, [verses, selectedVoice]);
+
+  // Lightweight TTS call for eager loading (doesn't set loading state)
+  const generateTTSForEagerLoad = async (text: string | undefined, voice: VoiceId, verseNum?: number): Promise<string | null> => {
+    if (!text) return null;
+    try {
+      const { data, error } = await supabase.functions.invoke("text-to-speech", {
+        body: {
+          text,
+          voice,
+          returnType: "url",
+          book,
+          chapter,
+          verse: verseNum,
+          useCache: verseNum !== undefined,
+          provider: "openai",
+        },
+      });
+      if (error || !data?.audioUrl) return null;
+      return data.audioUrl as string;
+    } catch {
+      return null;
+    }
+  };
 
   const playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
@@ -149,6 +202,15 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
 
   const generateTTS = useCallback(async (text: string, voice: VoiceId, verseNum?: number): Promise<string | null> => {
     try {
+      // Check client-side cache first for instant playback
+      if (book && verseNum !== undefined) {
+        const cachedUrl = await getCachedTTSAudio(book, chapter, verseNum);
+        if (cachedUrl) {
+          console.log("[TTS] Using client-cached audio for", book, chapter, verseNum);
+          return cachedUrl;
+        }
+      }
+
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
         body: {
           text,
@@ -171,6 +233,13 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
 
       // Preferred path: URL (cached or freshly generated)
       if (data?.audioUrl) {
+        // Cache in client-side Cache API for faster repeat access
+        if (book && verseNum !== undefined) {
+          fetch(data.audioUrl)
+            .then(resp => resp.blob())
+            .then(blob => cacheTTSAudio(book, chapter, verseNum, blob))
+            .catch(() => {}); // Silent fail for caching
+        }
         return data.audioUrl as string;
       }
 
@@ -184,6 +253,10 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
         }
 
         const blob = new Blob([bytes], { type: "audio/mpeg" });
+        // Cache the blob for faster repeat access
+        if (book && verseNum !== undefined) {
+          cacheTTSAudio(book, chapter, verseNum, blob).catch(() => {});
+        }
         return URL.createObjectURL(blob);
       }
 
@@ -246,9 +319,14 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
       return;
     }
 
-    // Prefetch next 2 verses in the background for smooth playback
-    prefetchVerse(verseIndex + 1);
-    prefetchVerse(verseIndex + 2);
+    // Prefetch next 5 verses in parallel for smooth playback
+    Promise.all([
+      prefetchVerse(verseIndex + 1),
+      prefetchVerse(verseIndex + 2),
+      prefetchVerse(verseIndex + 3),
+      prefetchVerse(verseIndex + 4),
+      prefetchVerse(verseIndex + 5),
+    ]);
 
     // Revoke old URL
     if (audioUrlRef.current) {
