@@ -140,13 +140,13 @@ const Games = () => {
       id: "symbol_decoder",
       name: "Symbol Decoder",
       description: "Match biblical symbols to their meanings. Unlock typology patterns!",
-      icon: "🎯",
+      icon: "🔣",
       floor: 2,
       timed: false,
       rooms: ["ST", "CR"],
       modes: ["solo", "vs-ai", "2p"],
       difficulties: ["easy", "medium", "hard"],
-      route: "/training-drills"
+      route: "/games/symbol-decoder"
     },
     {
       id: "chef_challenge",
