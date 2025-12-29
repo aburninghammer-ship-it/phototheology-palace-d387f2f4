@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDevotionalPlan, useDevotionals } from "@/hooks/useDevotionals";
 import { ShareDevotionalDialog } from "@/components/devotionals/ShareDevotionalDialog";
@@ -344,8 +343,9 @@ export default function DevotionalView() {
       {/* Day Progress - Colorful Pills with Lock for Future Days */}
       <div className="bg-background/95 backdrop-blur border-b sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3">
-          <ScrollArea className="w-full">
-            <div className="flex gap-2 pb-2">
+          {/* Use native scroll for reliable mobile horizontal scrolling */}
+          <div className="overflow-x-auto overflow-y-hidden scrollbar-hide -mx-4 px-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="flex gap-2 pb-2 min-w-max">
               <TooltipProvider>
                 {days?.map((day, idx) => {
                   const dayNumber = idx + 1;
@@ -396,7 +396,7 @@ export default function DevotionalView() {
                 })}
               </TooltipProvider>
             </div>
-          </ScrollArea>
+          </div>
           {/* Show unlock info */}
           {plan?.started_at && unlockedDayNumber < (days?.length || 0) && (
             <p className="text-xs text-muted-foreground text-center mt-1">
