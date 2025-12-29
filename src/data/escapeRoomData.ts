@@ -330,7 +330,7 @@ export const escapeRooms: EscapeRoom[] = [
     description: "Decode Daniel's visions to discover the timeline of world history and the coming kingdom.",
     storyIntro: "You enter a chamber filled with ancient scrolls. Daniel's prophecies lie before you - sealed until the time of the end. Now that seal is broken. Decode the visions of beasts and kingdoms to discover what God has revealed about history's climax...",
     difficulty: "hard",
-    timeLimit: 35,
+    timeLimit: 75,
     backgroundGradient: "from-purple-900 via-indigo-800 to-blue-700",
     icon: "🔮",
     puzzles: [
@@ -384,6 +384,142 @@ export const escapeRooms: EscapeRoom[] = [
         correctOrder: [3, 4, 0, 2, 1],
         principle: principles.prophecy,
         clueRevealed: "All prophecy points to ONE event: The establishment of God's eternal kingdom through His Son.",
+        points: 15
+      },
+      {
+        id: "proph-6",
+        type: "match",
+        question: "Match the four beasts of Daniel 7 to their corresponding metals in Daniel 2:",
+        pairs: [
+          { left: "Lion with eagle's wings", right: "Gold" },
+          { left: "Bear raised on one side", right: "Silver" },
+          { left: "Leopard with four wings", right: "Bronze" },
+          { left: "Dreadful iron-toothed beast", right: "Iron" }
+        ],
+        principle: principles.parallels,
+        clueRevealed: "Daniel 2 and 7 tell the same story from different angles - confirming each other.",
+        points: 15
+      },
+      {
+        id: "proph-7",
+        type: "riddle",
+        question: "I am a beast in Daniel 8, with two horns of unequal height. I charge westward, northward, and southward. A goat with a notable horn defeats me. What animal am I?",
+        hint: "Think of the Persian military symbol...",
+        answer: "ram",
+        principle: principles.prophecy,
+        clueRevealed: "The ram is explicitly identified as Medo-Persia in Daniel 8:20.",
+        points: 10
+      },
+      {
+        id: "proph-8",
+        type: "multiple-choice",
+        question: "In Daniel 8, the 'he goat' from the west that shatters the ram represents which empire?",
+        options: ["Rome", "Babylon", "Egypt", "Greece"],
+        correctOption: 3,
+        principle: principles.prophecy,
+        clueRevealed: "Alexander the Great's rapid conquest is symbolized by the goat that doesn't touch the ground.",
+        points: 10
+      },
+      {
+        id: "proph-9",
+        type: "fill-blank",
+        question: "When the goat's 'great horn' was broken, four notable horns came up toward the four _______ of heaven.",
+        answer: "winds",
+        principle: principles.observation,
+        clueRevealed: "After Alexander's death, his empire was divided among his four generals.",
+        points: 10
+      },
+      {
+        id: "proph-10",
+        type: "cipher",
+        question: "Decode using Caesar cipher (shift 3 backward): 'PHQH PHQH WHNHO XSKDUVLQ'",
+        cipherText: "PHQH PHQH WHNHO XSKDUVLQ",
+        cipherKey: "Shift each letter 3 positions backward in alphabet",
+        answer: "mene mene tekel upharsin",
+        principle: principles.defCom,
+        clueRevealed: "The handwriting on the wall: numbered, numbered, weighed, divided - Babylon's judgment came that very night.",
+        points: 15
+      },
+      {
+        id: "proph-11",
+        type: "sequence",
+        question: "Arrange the events of Daniel's life in chronological order:",
+        items: ["Interpretation of Nebuchadnezzar's image dream", "The fiery furnace incident", "The handwriting on the wall", "Daniel in the lion's den", "Vision of the four beasts", "Vision of the ram and goat"],
+        correctOrder: [0, 1, 4, 5, 2, 3],
+        principle: principles.storyFlow,
+        clueRevealed: "Daniel's life spans from Babylon's supremacy to its fall and Medo-Persia's rise.",
+        points: 15
+      },
+      {
+        id: "proph-12",
+        type: "multiple-choice",
+        question: "According to Daniel 7:25, how long would the little horn power 'wear out the saints'?",
+        options: ["70 weeks", "2300 days", "Time, times, and half a time", "1000 years"],
+        correctOption: 2,
+        principle: principles.prophecy,
+        clueRevealed: "3.5 prophetic times = 1260 years of papal supremacy (538-1798 AD).",
+        points: 15
+      },
+      {
+        id: "proph-13",
+        type: "riddle",
+        question: "I am what the Ancient of Days takes His seat upon in Daniel 7. I am described as a fiery flame with wheels of burning fire. What am I?",
+        answer: "throne",
+        principle: principles.sanctuary,
+        clueRevealed: "The heavenly judgment scene reveals God seated in majesty, about to vindicate His people.",
+        points: 10
+      },
+      {
+        id: "proph-14",
+        type: "match",
+        question: "Match these Daniel prophecy terms to their meanings:",
+        pairs: [
+          { left: "Day = Year", right: "Prophetic time principle" },
+          { left: "Horn", right: "King or kingdom" },
+          { left: "Beast", right: "Empire or nation" },
+          { left: "Waters/Sea", right: "Peoples and nations" }
+        ],
+        principle: principles.defCom,
+        clueRevealed: "Understanding prophetic symbols unlocks the meaning of all apocalyptic prophecy.",
+        points: 15
+      },
+      {
+        id: "proph-15",
+        type: "fill-blank",
+        question: "Daniel 9:26 prophesied that after 62 weeks, Messiah shall be 'cut off, but not for _______.'",
+        answer: "himself",
+        principle: principles.christConcentration,
+        clueRevealed: "Christ died not for His own sins, but for ours - the substitutionary atonement.",
+        points: 10
+      },
+      {
+        id: "proph-16",
+        type: "sequence",
+        question: "Arrange the 70 weeks prophecy timeline correctly:",
+        items: ["Messiah anointed (baptism)", "Decree to restore Jerusalem", "Street and wall built in troublous times", "Messiah cut off (crucifixion)", "Confirmation of covenant", "Jerusalem destroyed (70 AD)"],
+        correctOrder: [1, 2, 0, 3, 4, 5],
+        principle: principles.timeZone,
+        clueRevealed: "The 70 weeks pinpoint Christ's baptism, death, and the Gospel going to Gentiles.",
+        points: 15
+      },
+      {
+        id: "proph-17",
+        type: "multiple-choice",
+        question: "In Daniel 12:4, what two things would increase in 'the time of the end'?",
+        options: ["Wealth and power", "Knowledge and travel", "Sin and wickedness", "Wars and famines"],
+        correctOption: 1,
+        principle: principles.timeZone,
+        clueRevealed: "The explosion of knowledge and global travel marks our era as the time of the end.",
+        points: 10
+      },
+      {
+        id: "proph-18",
+        type: "riddle",
+        question: "I appear in Daniel's night vision. One like the Son of Man comes to me to receive dominion, glory, and a kingdom. I am called 'The Ancient of Days.' Who am I?",
+        hint: "Consider who sits on the throne of heaven...",
+        answer: "god the father",
+        principle: principles.christConcentration,
+        clueRevealed: "The Son of Man (Christ) receives the kingdom from the Father - the coronation scene of Daniel 7.",
         points: 15
       }
     ],
@@ -552,7 +688,7 @@ export const escapeRooms: EscapeRoom[] = [
     description: "Enter the heavenly throne room and discover who is worthy to open the sealed book.",
     storyIntro: "A door opens in heaven. Before you is a throne with One seated upon it, surrounded by living creatures and 24 elders. A sealed book lies in the hand of Him who sits on the throne. No one is found worthy to open it - until... Solve the puzzles to discover who breaks the seals.",
     difficulty: "hard",
-    timeLimit: 30,
+    timeLimit: 70,
     backgroundGradient: "from-yellow-600 via-amber-500 to-orange-400",
     icon: "👑",
     puzzles: [
@@ -606,6 +742,131 @@ export const escapeRooms: EscapeRoom[] = [
         ],
         principle: principles.christConcentration,
         clueRevealed: "All titles point to ONE person who is both Sacrifice and Sovereign.",
+        points: 15
+      },
+      {
+        id: "thro-6",
+        type: "multiple-choice",
+        question: "What surrounds the throne of God in Revelation 4, appearing like an emerald?",
+        options: ["A wall of fire", "A rainbow", "A cloud", "Seven lamps"],
+        correctOption: 1,
+        principle: principles.observation,
+        clueRevealed: "The rainbow around the throne recalls God's covenant faithfulness - He remembers His promises.",
+        points: 10
+      },
+      {
+        id: "thro-7",
+        type: "match",
+        question: "Match each living creature's face to its symbolic meaning:",
+        pairs: [
+          { left: "Lion", right: "Royalty and courage" },
+          { left: "Ox/Calf", right: "Service and sacrifice" },
+          { left: "Man", right: "Intelligence and humanity" },
+          { left: "Eagle", right: "Swiftness and vision" }
+        ],
+        principle: principles.typology,
+        clueRevealed: "The four living creatures reflect aspects of Christ: King, Servant, Son of Man, and God.",
+        points: 15
+      },
+      {
+        id: "thro-8",
+        type: "fill-blank",
+        question: "The four living creatures cry day and night: 'Holy, holy, holy, Lord God _______, which was, and is, and is to come.'",
+        answer: "almighty",
+        principle: principles.sanctuary,
+        clueRevealed: "The threefold 'Holy' echoes Isaiah 6 - heaven continuously worships the eternal God.",
+        points: 10
+      },
+      {
+        id: "thro-9",
+        type: "riddle",
+        question: "We are twenty-four in number, seated on thrones around THE throne. We wear white robes and golden crowns. When the Lamb appears, we cast our crowns before Him. Who are we?",
+        answer: "elders",
+        principle: principles.observation,
+        clueRevealed: "The 24 elders may represent the redeemed from all ages - 12 tribes + 12 apostles.",
+        points: 10
+      },
+      {
+        id: "thro-10",
+        type: "sequence",
+        question: "Arrange the elements John sees as he enters the throne room (Revelation 4):",
+        items: ["24 elders on thrones", "Sea of glass like crystal", "One sitting on the throne", "Four living creatures", "Seven lamps of fire", "Rainbow around the throne"],
+        correctOrder: [2, 5, 4, 0, 3, 1],
+        principle: principles.storyFlow,
+        clueRevealed: "The throne room vision establishes God's sovereignty before the seals are opened.",
+        points: 15
+      },
+      {
+        id: "thro-11",
+        type: "multiple-choice",
+        question: "How many eyes do the four living creatures have?",
+        options: ["Four each", "Covered with eyes all around", "Seven each", "Two each"],
+        correctOption: 1,
+        principle: principles.observation,
+        clueRevealed: "Full of eyes = nothing escapes God's notice; He sees and knows all things.",
+        points: 10
+      },
+      {
+        id: "thro-12",
+        type: "cipher",
+        question: "Decode using A=1, B=2, etc.: '20-8-15-21 1-18-20 23-15-18-20-8-25'",
+        cipherText: "20-8-15-21 1-18-20 23-15-18-20-8-25",
+        cipherKey: "A=1, B=2, C=3... Z=26",
+        answer: "thou art worthy",
+        principle: principles.defCom,
+        clueRevealed: "The anthem of heaven: 'Thou art worthy!' - worship belongs to God alone.",
+        points: 15
+      },
+      {
+        id: "thro-13",
+        type: "fill-blank",
+        question: "Revelation 5:9 says the Lamb redeemed people 'out of every kindred, and tongue, and people, and _______.'",
+        answer: "nation",
+        principle: principles.threeAngels,
+        clueRevealed: "The Gospel reaches every nation - the scope of redemption is universal.",
+        points: 10
+      },
+      {
+        id: "thro-14",
+        type: "match",
+        question: "Match the heavenly imagery to its Old Testament parallel:",
+        pairs: [
+          { left: "Seven lamps of fire", right: "Seven-branched lampstand" },
+          { left: "Sea of glass", right: "Bronze laver" },
+          { left: "Golden bowls of incense", right: "Altar of incense" },
+          { left: "Ark of the covenant", right: "Mercy seat" }
+        ],
+        principle: principles.sanctuary,
+        clueRevealed: "Heaven contains the reality of which the earthly sanctuary was a shadow.",
+        points: 15
+      },
+      {
+        id: "thro-15",
+        type: "riddle",
+        question: "I am the number of spirits before the throne, the number of horns and eyes of the Lamb, the number of seals, trumpets, and bowls. I represent divine completeness. What number am I?",
+        answer: "seven",
+        principle: principles.patterns,
+        clueRevealed: "Seven appears over 50 times in Revelation - God's number of perfection and completion.",
+        points: 10
+      },
+      {
+        id: "thro-16",
+        type: "multiple-choice",
+        question: "According to Revelation 5:10, what has the Lamb made the redeemed to be?",
+        options: ["Angels and servants", "Kings and priests", "Prophets and teachers", "Warriors and judges"],
+        correctOption: 1,
+        principle: principles.typology,
+        clueRevealed: "The royal priesthood promised to Israel is fulfilled in Christ's redeemed people.",
+        points: 10
+      },
+      {
+        id: "thro-17",
+        type: "sequence",
+        question: "Arrange the expanding circles of praise in Revelation 5:",
+        items: ["Every creature in heaven, earth, under earth, and sea", "Four living creatures and 24 elders", "Angels numbering ten thousand times ten thousand", "All creation gives glory to Him who sits on the throne and to the Lamb"],
+        correctOrder: [1, 2, 0, 3],
+        principle: principles.patterns,
+        clueRevealed: "Praise expands from the throne outward until ALL creation joins the chorus.",
         points: 15
       }
     ],
@@ -774,7 +1035,7 @@ export const escapeRooms: EscapeRoom[] = [
     description: "Decode the first prophecy ever given and trace the conflict through Scripture.",
     storyIntro: "You stand in the Garden of Eden after the Fall. God speaks a curse upon the serpent, but hidden within is the first promise of salvation. This single verse - Genesis 3:15 - will echo through every book of the Bible. Decode the Protoevangelium to understand the cosmic conflict...",
     difficulty: "hard",
-    timeLimit: 30,
+    timeLimit: 65,
     backgroundGradient: "from-green-900 via-emerald-800 to-lime-700",
     icon: "🐍",
     puzzles: [
@@ -828,6 +1089,122 @@ export const escapeRooms: EscapeRoom[] = [
         correctOrder: [4, 2, 1, 0, 3],
         principle: principles.storyFlow,
         clueRevealed: "The seed promise narrows: Woman → Seth's line → Abraham → David → Mary → JESUS.",
+        points: 15
+      },
+      {
+        id: "serp-6",
+        type: "multiple-choice",
+        question: "What was the serpent's first tactic in deceiving Eve?",
+        options: ["He lied about God's goodness", "He questioned God's Word: 'Yea, hath God said?'", "He threatened her with death", "He offered her power"],
+        correctOption: 1,
+        principle: principles.observation,
+        clueRevealed: "Satan's first attack was on Scripture's authority - he still uses this tactic today.",
+        points: 10
+      },
+      {
+        id: "serp-7",
+        type: "fill-blank",
+        question: "The serpent told Eve, 'Ye shall not surely die: For God doth know that in the day ye eat thereof... ye shall be as _______.'",
+        answer: "gods",
+        principle: principles.defCom,
+        clueRevealed: "Satan's lie: you can become like God independently of God. This is the root of all sin.",
+        points: 10
+      },
+      {
+        id: "serp-8",
+        type: "riddle",
+        question: "After Adam and Eve sinned, God made these to cover their nakedness. An innocent animal died so they could be clothed. What were they covered with?",
+        hint: "Think of what animal skin provides...",
+        answer: "coats of skins",
+        principle: principles.typology,
+        clueRevealed: "The first sacrifice - an innocent died to cover the guilty. The Gospel in miniature.",
+        points: 10
+      },
+      {
+        id: "serp-9",
+        type: "match",
+        question: "Match the elements of the Fall to their Gospel parallels:",
+        pairs: [
+          { left: "Fig leaf covering", right: "Self-righteousness" },
+          { left: "Animal skin covering", right: "Christ's righteousness" },
+          { left: "Tree of Knowledge", right: "Place of temptation" },
+          { left: "Tree of Life", right: "Christ our life" }
+        ],
+        principle: principles.typology,
+        clueRevealed: "Adam's fig leaves fail; only God's covering (sacrifice) truly covers sin.",
+        points: 15
+      },
+      {
+        id: "serp-10",
+        type: "multiple-choice",
+        question: "Revelation 12:9 gives how many names for the serpent of Eden?",
+        options: ["Two", "Three", "Four", "Five"],
+        correctOption: 2,
+        principle: principles.parallels,
+        clueRevealed: "Dragon, that old serpent, the Devil, and Satan - four names revealing his nature.",
+        points: 10
+      },
+      {
+        id: "serp-11",
+        type: "sequence",
+        question: "Arrange these 'serpent battles' in biblical order:",
+        items: ["Christ bruised at Calvary", "Michael casts dragon from heaven", "Serpent deceives Eve", "Bronze serpent lifted", "Satan bound for 1000 years", "Serpent loosed then destroyed"],
+        correctOrder: [2, 3, 0, 1, 4, 5],
+        principle: principles.timeZone,
+        clueRevealed: "The great controversy spans from Eden to the lake of fire.",
+        points: 15
+      },
+      {
+        id: "serp-12",
+        type: "cipher",
+        question: "Decode using reverse alphabet (A=Z, B=Y, etc.): 'GSV HVVW LU GSV DLNZM'",
+        cipherText: "GSV HVVW LU GSV DLNZM",
+        cipherKey: "A=Z, B=Y, C=X... (reverse alphabet)",
+        answer: "the seed of the woman",
+        principle: principles.defCom,
+        clueRevealed: "This phrase is the key - Christ's unique birth fulfills the ancient promise.",
+        points: 15
+      },
+      {
+        id: "serp-13",
+        type: "riddle",
+        question: "I am what God placed at the east of Eden after the Fall. I turn every way, guarding the path to the tree of life. I am a flaming sword wielded by cherubim. What do I represent?",
+        answer: "judgment",
+        principle: principles.sanctuary,
+        clueRevealed: "Sin brought separation - but the cherubim on the ark show a way back through atonement.",
+        points: 10
+      },
+      {
+        id: "serp-14",
+        type: "multiple-choice",
+        question: "In John 3:14, Jesus compared Himself to what Old Testament symbol?",
+        options: ["The Passover lamb", "The bronze serpent lifted up", "The ark of Noah", "The burning bush"],
+        correctOption: 1,
+        principle: principles.typology,
+        clueRevealed: "As Moses lifted the serpent, so must the Son of Man be lifted up - that all who look may live.",
+        points: 10
+      },
+      {
+        id: "serp-15",
+        type: "fill-blank",
+        question: "Hebrews 2:14 says Christ became flesh 'that through death he might destroy him that had the power of death, that is, the _______.'",
+        answer: "devil",
+        principle: principles.christConcentration,
+        clueRevealed: "Christ's death was the serpent's defeat - the head-crushing blow of Genesis 3:15.",
+        points: 10
+      },
+      {
+        id: "serp-16",
+        type: "match",
+        question: "Match the cosmic conflict scenes:",
+        pairs: [
+          { left: "Genesis 3", right: "Conflict begins on Earth" },
+          { left: "Job 1-2", right: "Conflict in heavenly council" },
+          { left: "Zechariah 3", right: "Satan accuses Joshua" },
+          { left: "Revelation 12", right: "War in heaven - Satan cast out" }
+        ],
+        principle: principles.parallels,
+        clueRevealed: "The great controversy between Christ and Satan is revealed across all Scripture.",
         points: 15
       }
     ],
@@ -922,7 +1299,7 @@ export const escapeRooms: EscapeRoom[] = [
     description: "Sit with Jesus on the Mount of Olives and decode His prophecy about the end times.",
     storyIntro: "The disciples have just shown Jesus the magnificent temple stones. 'Not one shall be left upon another,' He says. Now, on the Mount of Olives overlooking Jerusalem, they ask privately: 'When shall these things be?' Jesus answers with the most detailed prophecy of the end times. Decode it to understand what's coming...",
     difficulty: "hard",
-    timeLimit: 35,
+    timeLimit: 75,
     backgroundGradient: "from-slate-800 via-gray-700 to-zinc-600",
     icon: "🌿",
     puzzles: [
@@ -977,6 +1354,141 @@ export const escapeRooms: EscapeRoom[] = [
         principle: principles.storyFlow,
         clueRevealed: "After tribulation, cosmic signs, then the SON OF MAN appears in glory.",
         points: 15
+      },
+      {
+        id: "oliv-6",
+        type: "multiple-choice",
+        question: "What THREE questions did the disciples ask Jesus on the Mount of Olives?",
+        options: ["When, where, and how", "When, what sign, and end of world", "Who, what, and why", "How long, how many, and when"],
+        correctOption: 1,
+        principle: principles.observation,
+        clueRevealed: "The disciples combined the temple's destruction with Christ's coming and the end of the age.",
+        points: 10
+      },
+      {
+        id: "oliv-7",
+        type: "fill-blank",
+        question: "Jesus warned that the love of many shall wax _______ because iniquity shall abound.",
+        answer: "cold",
+        principle: principles.fruit,
+        clueRevealed: "Spiritual coldness amid moral decay marks the end times.",
+        points: 10
+      },
+      {
+        id: "oliv-8",
+        type: "riddle",
+        question: "Jesus says His words shall not pass away, though heaven and earth pass away. But of the day and hour of His return, only One knows. Who alone knows?",
+        hint: "Not the Son, not the angels...",
+        answer: "the father",
+        principle: principles.christConcentration,
+        clueRevealed: "Even Jesus, in His humanity, submitted to the Father's timing - we must simply watch and be ready.",
+        points: 10
+      },
+      {
+        id: "oliv-9",
+        type: "match",
+        question: "Match the parables in Matthew 24-25 to their main lesson:",
+        pairs: [
+          { left: "Faithful vs evil servant", right: "Faithfulness in stewardship" },
+          { left: "Ten virgins", right: "Spiritual preparedness" },
+          { left: "Talents", right: "Using gifts for God" },
+          { left: "Sheep and goats", right: "Judgment by works of love" }
+        ],
+        principle: principles.connect6,
+        clueRevealed: "Each parable reveals a different aspect of readiness for Christ's return.",
+        points: 15
+      },
+      {
+        id: "oliv-10",
+        type: "sequence",
+        question: "Arrange the parables of Matthew 24-25 in order:",
+        items: ["Talents", "Sheep and goats", "Faithful servant", "Ten virgins", "Fig tree", "Thief in the night"],
+        correctOrder: [4, 5, 2, 3, 0, 1],
+        principle: principles.storyFlow,
+        clueRevealed: "Jesus builds from signs to warnings to preparedness to final judgment.",
+        points: 15
+      },
+      {
+        id: "oliv-11",
+        type: "multiple-choice",
+        question: "What did the wise virgins have that the foolish virgins lacked?",
+        options: ["Lamps", "Wicks", "Extra oil", "Invitations"],
+        correctOption: 2,
+        principle: principles.typology,
+        clueRevealed: "Oil = Holy Spirit. You cannot borrow another's relationship with God.",
+        points: 10
+      },
+      {
+        id: "oliv-12",
+        type: "fill-blank",
+        question: "Jesus warned: 'Pray ye that your flight be not in the winter, neither on the _______ day.'",
+        answer: "sabbath",
+        principle: principles.observation,
+        clueRevealed: "Jesus expected His followers to still be keeping the Sabbath after His death.",
+        points: 10
+      },
+      {
+        id: "oliv-13",
+        type: "cipher",
+        question: "Decode using Caesar cipher (shift 3 backward): 'ZDWFK DQG SUDBN'",
+        cipherText: "ZDWFK DQG SUDBN",
+        cipherKey: "Shift each letter 3 positions backward in alphabet",
+        answer: "watch and pray",
+        principle: principles.defCom,
+        clueRevealed: "The repeated command of the Olivet Discourse: vigilance and prayer.",
+        points: 15
+      },
+      {
+        id: "oliv-14",
+        type: "riddle",
+        question: "In the days of Noah, people were eating, drinking, and marrying. What does this represent about conditions before Christ's return?",
+        answer: "life as normal",
+        principle: principles.parallels,
+        clueRevealed: "Not sinful acts, but normal life oblivious to coming judgment - unprepared.",
+        points: 10
+      },
+      {
+        id: "oliv-15",
+        type: "match",
+        question: "Match the cosmic signs to their historical fulfillments:",
+        pairs: [
+          { left: "Sun darkened", right: "Dark Day - May 19, 1780" },
+          { left: "Moon as blood", right: "Night of May 19, 1780" },
+          { left: "Stars falling", right: "Leonid meteor storm - Nov 13, 1833" },
+          { left: "Powers of heaven shaken", right: "Still future" }
+        ],
+        principle: principles.timeZone,
+        clueRevealed: "The first cosmic signs have been fulfilled - we await the final events.",
+        points: 15
+      },
+      {
+        id: "oliv-16",
+        type: "multiple-choice",
+        question: "In the parable of the talents, what did the servant with one talent do wrong?",
+        options: ["Lost it gambling", "Gave it away", "Buried it out of fear", "Spent it on himself"],
+        correctOption: 2,
+        principle: principles.fruit,
+        clueRevealed: "Fear and inaction are condemned - God expects us to use what He gives.",
+        points: 10
+      },
+      {
+        id: "oliv-17",
+        type: "sequence",
+        question: "Arrange the progression of Jesus' discourse:",
+        items: ["Parables of readiness", "Signs in nature", "Cosmic disturbances", "Destruction of temple", "Final judgment", "Rise of false prophets"],
+        correctOrder: [3, 5, 1, 2, 0, 4],
+        principle: principles.storyFlow,
+        clueRevealed: "From near events to far, from temple destruction to final judgment.",
+        points: 15
+      },
+      {
+        id: "oliv-18",
+        type: "riddle",
+        question: "I am the sound that accompanies Christ's return. I am loud, and I gather the elect from the four winds. Angels use me. What am I?",
+        answer: "trumpet",
+        principle: principles.prophecy,
+        clueRevealed: "The great trumpet sound - unmistakable, unavoidable, glorious for the saved.",
+        points: 10
       }
     ],
     finalAnswer: {
@@ -996,7 +1508,7 @@ export const escapeRooms: EscapeRoom[] = [
     description: "Unseal the prophecies of Daniel that were closed until the time of the end.",
     storyIntro: "Daniel is told to 'shut up the words, and seal the book, even to the time of the end.' You have been given the key to unseal what was hidden. 'Many shall run to and fro, and knowledge shall be increased.' The time has come - decode the final prophecies of Daniel...",
     difficulty: "expert",
-    timeLimit: 40,
+    timeLimit: 90,
     backgroundGradient: "from-amber-900 via-orange-800 to-red-700",
     icon: "📜",
     puzzles: [
@@ -1050,6 +1562,160 @@ export const escapeRooms: EscapeRoom[] = [
         correctOrder: [3, 4, 5, 2, 1, 0],
         principle: principles.timeZone,
         clueRevealed: "The sealed prophecies have been unsealing in our time!",
+        points: 15
+      },
+      {
+        id: "seal-6",
+        type: "multiple-choice",
+        question: "What six things were to be accomplished during the 70 weeks according to Daniel 9:24?",
+        options: ["Build temple, restore walls, anoint priests, offer sacrifices, establish kingdom, destroy enemies", "Finish transgression, end sins, make reconciliation, bring everlasting righteousness, seal prophecy, anoint Most Holy", "Defeat Babylon, establish Israel, crown king, build city, restore priests, end exile", "Gather Jews, rebuild temple, restore worship, defeat enemies, anoint king, establish peace"],
+        correctOption: 1,
+        principle: principles.observation,
+        clueRevealed: "All six items point to Christ's work - He accomplished them all!",
+        points: 15
+      },
+      {
+        id: "seal-7",
+        type: "fill-blank",
+        question: "The 70 weeks are 'cut off' or 'determined' from the longer _______ days prophecy.",
+        answer: "2300",
+        principle: principles.parallels,
+        clueRevealed: "Both prophecies share the same starting point - 457 BC.",
+        points: 10
+      },
+      {
+        id: "seal-8",
+        type: "riddle",
+        question: "I am a Hebrew word meaning 'cut off' or 'determined.' In Daniel 9:24, 70 weeks of me are determined upon Daniel's people. What word am I?",
+        hint: "It sounds like 'Chathak'...",
+        answer: "chathak",
+        principle: principles.defCom,
+        clueRevealed: "The 70 weeks are literally 'cut off' from the 2300 days - they share a starting point.",
+        points: 15
+      },
+      {
+        id: "seal-9",
+        type: "sequence",
+        question: "Arrange the divisions of the 70 weeks in order:",
+        items: ["62 weeks - Jerusalem rebuilt", "1 week - Covenant confirmed", "7 weeks - Street and wall built", "Middle of week - Sacrifice ceased", "After 62+7 weeks - Messiah cut off"],
+        correctOrder: [2, 0, 4, 1, 3],
+        principle: principles.observation,
+        clueRevealed: "7 + 62 + 1 = 70 weeks, precisely fulfilled in Christ's ministry and death.",
+        points: 15
+      },
+      {
+        id: "seal-10",
+        type: "match",
+        question: "Match the prophetic dates to their fulfillments:",
+        pairs: [
+          { left: "457 BC + 7 weeks (49 years)", right: "408 BC - Jerusalem rebuilt" },
+          { left: "457 BC + 69 weeks (483 years)", right: "27 AD - Christ's baptism" },
+          { left: "27 AD + 3.5 years", right: "31 AD - Christ's crucifixion" },
+          { left: "31 AD + 3.5 years", right: "34 AD - Gospel to Gentiles" }
+        ],
+        principle: principles.timeZone,
+        clueRevealed: "Mathematical precision confirms the divine origin of these prophecies.",
+        points: 15
+      },
+      {
+        id: "seal-11",
+        type: "multiple-choice",
+        question: "What event in 34 AD marked the end of the 70 weeks and the special probation for Israel?",
+        options: ["Destruction of Jerusalem", "Stoning of Stephen", "Conversion of Paul", "Death of Herod"],
+        correctOption: 1,
+        principle: principles.storyFlow,
+        clueRevealed: "Stephen's martyrdom and the persecution that followed scattered the Gospel to Gentiles.",
+        points: 10
+      },
+      {
+        id: "seal-12",
+        type: "cipher",
+        question: "Decode using A=1, B=2, etc.: '21-14-20-15 20-23-15 20-8-15-21-19-1-14-4 20-8-18-5-5 8-21-14-4-18-5-4 4-1-25-19'",
+        cipherText: "21-14-20-15 20-23-15 20-8-15-21-19-1-14-4 20-8-18-5-5 8-21-14-4-18-5-4 4-1-25-19",
+        cipherKey: "A=1, B=2, C=3... Z=26",
+        answer: "unto two thousand three hundred days",
+        principle: principles.defCom,
+        clueRevealed: "The longest time prophecy in the Bible - reaching to 1844.",
+        points: 15
+      },
+      {
+        id: "seal-13",
+        type: "riddle",
+        question: "I am what happens in the Most Holy Place of the earthly sanctuary once a year. I involve two goats - one for the Lord, one for Azazel. What annual event am I?",
+        answer: "day of atonement",
+        principle: principles.sanctuary,
+        clueRevealed: "The Day of Atonement typifies the investigative judgment that began in 1844.",
+        points: 10
+      },
+      {
+        id: "seal-14",
+        type: "sequence",
+        question: "Arrange the Day of Atonement ceremonies in order:",
+        items: ["Sins transferred to scapegoat", "High priest enters Most Holy Place", "Scapegoat led into wilderness", "Sanctuary cleansed with blood", "Congregation afflicts souls", "High priest emerges with blessing"],
+        correctOrder: [4, 1, 3, 5, 0, 2],
+        principle: principles.sanctuary,
+        clueRevealed: "The earthly pattern reveals Christ's heavenly ministry.",
+        points: 15
+      },
+      {
+        id: "seal-15",
+        type: "fill-blank",
+        question: "Daniel 8:14 uses the Hebrew word 'tsadaq' for cleansed, which more literally means 'made _______ or vindicated.'",
+        answer: "right",
+        principle: principles.defCom,
+        clueRevealed: "The sanctuary is 'set right' - God's character and people vindicated before the universe.",
+        points: 10
+      },
+      {
+        id: "seal-16",
+        type: "match",
+        question: "Match the prophetic movements to their time periods:",
+        pairs: [
+          { left: "Great Disappointment", right: "October 22, 1844" },
+          { left: "Millerite Movement", right: "1831-1844" },
+          { left: "Time of the End begins", right: "1798" },
+          { left: "Advent Movement continues", right: "1844-present" }
+        ],
+        principle: principles.timeZone,
+        clueRevealed: "God raised up a movement to proclaim these unsealed prophecies.",
+        points: 15
+      },
+      {
+        id: "seal-17",
+        type: "multiple-choice",
+        question: "In Daniel 12:1, who stands up at the time of trouble?",
+        options: ["Gabriel", "Daniel", "Michael", "The little horn"],
+        correctOption: 2,
+        principle: principles.christConcentration,
+        clueRevealed: "Michael = Christ stands up when probation closes, signaling the end.",
+        points: 10
+      },
+      {
+        id: "seal-18",
+        type: "riddle",
+        question: "Daniel 12 mentions two time periods after the 1260 days: 1290 days and another number. What is the second number?",
+        answer: "1335",
+        principle: principles.observation,
+        clueRevealed: "Blessed is he who waits and comes to the 1335 days.",
+        points: 10
+      },
+      {
+        id: "seal-19",
+        type: "fill-blank",
+        question: "Daniel 12:2 describes a resurrection where some wake to everlasting life, and some to shame and everlasting _______.",
+        answer: "contempt",
+        principle: principles.timeZone,
+        clueRevealed: "Daniel's prophecy extends to the resurrection - the ultimate unsealing.",
+        points: 10
+      },
+      {
+        id: "seal-20",
+        type: "sequence",
+        question: "Arrange these end-time events from Daniel 12 in order:",
+        items: ["Special resurrection of some", "Michael stands up", "Daniel rests and rises to his lot", "Time of trouble like never before", "Those in the book are delivered", "Wise shine as stars forever"],
+        correctOrder: [1, 3, 4, 0, 2, 5],
+        principle: principles.storyFlow,
+        clueRevealed: "Daniel's final chapter outlines the last events of earth's history.",
         points: 15
       }
     ],
@@ -1144,7 +1810,7 @@ export const escapeRooms: EscapeRoom[] = [
     description: "Watch as the Lamb opens the seals and four horsemen ride through history.",
     storyIntro: "The Lamb takes the book sealed with seven seals. As each seal opens, a horse and rider emerge. White, Red, Black, Pale - each representing a phase of church history. Identify the horsemen to understand where we stand in prophecy...",
     difficulty: "hard",
-    timeLimit: 30,
+    timeLimit: 70,
     backgroundGradient: "from-gray-900 via-red-900 to-black",
     icon: "🐎",
     puzzles: [
@@ -1198,6 +1864,132 @@ export const escapeRooms: EscapeRoom[] = [
         correctOrder: [4, 6, 3, 5, 2, 0, 1],
         principle: principles.storyFlow,
         clueRevealed: "The seventh seal leads to the trumpets - but first, silence before the storm.",
+        points: 15
+      },
+      {
+        id: "hors-6",
+        type: "multiple-choice",
+        question: "What weapon does the rider of the white horse carry?",
+        options: ["A sword", "A bow", "A spear", "A staff"],
+        correctOption: 1,
+        principle: principles.observation,
+        clueRevealed: "The bow symbolizes conquest from a distance - the Gospel reaching far nations.",
+        points: 10
+      },
+      {
+        id: "hors-7",
+        type: "fill-blank",
+        question: "The rider of the red horse was given a great _______ and power to take peace from the earth.",
+        answer: "sword",
+        principle: principles.observation,
+        clueRevealed: "The sword of persecution - pagan Rome shed the blood of early Christians.",
+        points: 10
+      },
+      {
+        id: "hors-8",
+        type: "riddle",
+        question: "Under the third seal, a voice says not to hurt these two things. One is wine. What is the other?",
+        hint: "It comes from olive trees...",
+        answer: "oil",
+        principle: principles.observation,
+        clueRevealed: "Wine and oil were preserved - symbols of the Holy Spirit and blood of Christ remained.",
+        points: 10
+      },
+      {
+        id: "hors-9",
+        type: "match",
+        question: "Match each seal to its approximate historical period:",
+        pairs: [
+          { left: "First seal - White horse", right: "31-100 AD (Apostolic era)" },
+          { left: "Second seal - Red horse", right: "100-313 AD (Persecution)" },
+          { left: "Third seal - Black horse", right: "313-538 AD (Compromise)" },
+          { left: "Fourth seal - Pale horse", right: "538-1517 AD (Papal Dark Ages)" }
+        ],
+        principle: principles.timeZone,
+        clueRevealed: "Church history unfolds exactly as prophesied in the seals.",
+        points: 15
+      },
+      {
+        id: "hors-10",
+        type: "multiple-choice",
+        question: "The fourth horse is called 'pale' in English. What Greek word is used, and what does it literally mean?",
+        options: ["Leukos - white", "Chloros - green/yellowish", "Kokkinos - scarlet", "Melas - black"],
+        correctOption: 1,
+        principle: principles.defCom,
+        clueRevealed: "Chloros = sickly green, the color of death and decay.",
+        points: 15
+      },
+      {
+        id: "hors-11",
+        type: "sequence",
+        question: "Arrange the four methods by which the pale horse kills (Rev 6:8):",
+        items: ["Wild beasts of the earth", "Sword", "Hunger", "Death/Pestilence"],
+        correctOrder: [1, 2, 3, 0],
+        principle: principles.observation,
+        clueRevealed: "Four deadly instruments - the Inquisition used various means to destroy God's people.",
+        points: 15
+      },
+      {
+        id: "hors-12",
+        type: "riddle",
+        question: "At the sixth seal, the great men, rich men, and mighty men cry to the mountains and rocks. What do they ask the rocks to do?",
+        answer: "fall on us and hide us",
+        principle: principles.prophecy,
+        clueRevealed: "The wicked would rather be crushed than face the Lamb's wrath.",
+        points: 10
+      },
+      {
+        id: "hors-13",
+        type: "fill-blank",
+        question: "At the sixth seal, they ask to be hidden from the face of Him that sitteth on the throne, and from the wrath of the _______.",
+        answer: "lamb",
+        principle: principles.christConcentration,
+        clueRevealed: "The wrath of the Lamb - the rejected Savior becomes the terrifying Judge.",
+        points: 10
+      },
+      {
+        id: "hors-14",
+        type: "cipher",
+        question: "Decode using A=1, B=2, etc.: '23-8-15 9-19 1-2-12-5 20-15 19-20-1-14-4'",
+        cipherText: "23-8-15 9-19 1-2-12-5 20-15 19-20-1-14-4",
+        cipherKey: "A=1, B=2, C=3... Z=26",
+        answer: "who is able to stand",
+        principle: principles.defCom,
+        clueRevealed: "The great question of the sixth seal - answered in Revelation 7.",
+        points: 15
+      },
+      {
+        id: "hors-15",
+        type: "match",
+        question: "Match the Revelation 7 answer to 'Who shall stand?':",
+        pairs: [
+          { left: "144,000 sealed", right: "God's protected remnant" },
+          { left: "Great multitude", right: "Saved from all nations" },
+          { left: "Washed robes", right: "Made white in Lamb's blood" },
+          { left: "Before the throne", right: "Access to God's presence" }
+        ],
+        principle: principles.threeAngels,
+        clueRevealed: "Those sealed with God's mark survive the final crisis and stand at His coming.",
+        points: 15
+      },
+      {
+        id: "hors-16",
+        type: "multiple-choice",
+        question: "How long is the silence in heaven at the opening of the seventh seal?",
+        options: ["An hour", "Half an hour", "One hour", "Seven minutes"],
+        correctOption: 1,
+        principle: principles.observation,
+        clueRevealed: "Half an hour of prophetic time - all heaven pauses before the final events unfold.",
+        points: 10
+      },
+      {
+        id: "hors-17",
+        type: "sequence",
+        question: "Arrange the elements that follow the seventh seal:",
+        items: ["Seven trumpets given to angels", "Another angel with golden censer", "Incense offered with prayers of saints", "Fire from altar cast to earth", "Voices, thunderings, lightning, earthquake"],
+        correctOrder: [1, 2, 0, 3, 4],
+        principle: principles.storyFlow,
+        clueRevealed: "The seventh seal transitions to the seven trumpets - judgments upon the persecutors.",
         points: 15
       }
     ],
@@ -1292,7 +2084,7 @@ export const escapeRooms: EscapeRoom[] = [
     description: "Piece together the prophets' descriptions of the great and terrible Day of the Lord.",
     storyIntro: "The prophets spoke of a day - the Day of the Lord - a day of both terror and triumph. From Joel to Zechariah to Thessalonians, the pieces come together. This is not just any day - it is THE day. Assemble the prophecies to prepare for what's coming...",
     difficulty: "hard",
-    timeLimit: 30,
+    timeLimit: 65,
     backgroundGradient: "from-orange-600 via-red-700 to-purple-900",
     icon: "☀️",
     puzzles: [
@@ -1346,6 +2138,122 @@ export const escapeRooms: EscapeRoom[] = [
         correctOrder: [1, 2, 4, 3, 5, 0],
         principle: principles.observation,
         clueRevealed: "Shout, voice, trumpet, resurrection, translation - nothing secret about this!",
+        points: 15
+      },
+      {
+        id: "dlor-6",
+        type: "multiple-choice",
+        question: "In Acts 1:11, the angels told the disciples Jesus would return in what manner?",
+        options: ["Spiritually in their hearts", "Through His church", "The same way He ascended - visibly, bodily, in clouds", "As a different person"],
+        correctOption: 2,
+        principle: principles.parallels,
+        clueRevealed: "As they watched Him go up bodily into clouds, so He will return bodily in clouds.",
+        points: 10
+      },
+      {
+        id: "dlor-7",
+        type: "fill-blank",
+        question: "2 Peter 3:10 says the heavens shall pass away with a great _______, and the elements shall melt with fervent heat.",
+        answer: "noise",
+        principle: principles.observation,
+        clueRevealed: "Not silent, not secret - a GREAT NOISE accompanies the day of God.",
+        points: 10
+      },
+      {
+        id: "dlor-8",
+        type: "riddle",
+        question: "Joel describes locusts, fire, and cosmic signs before this day. He says it is 'great' and 'very _______'. What word completes this description?",
+        hint: "It describes how alarming the day will be...",
+        answer: "terrible",
+        principle: principles.prophecy,
+        clueRevealed: "Great and terrible - joyful for the saved, terrifying for the lost.",
+        points: 10
+      },
+      {
+        id: "dlor-9",
+        type: "match",
+        question: "Match these Old Testament prophets to their Day of the Lord themes:",
+        pairs: [
+          { left: "Joel", right: "Cosmic signs and Spirit outpouring" },
+          { left: "Zephaniah", right: "Day of wrath and destruction" },
+          { left: "Zechariah", right: "Christ's feet on Mount of Olives" },
+          { left: "Malachi", right: "Sun of righteousness with healing" }
+        ],
+        principle: principles.parallels,
+        clueRevealed: "Every prophet added details - together they reveal the full picture.",
+        points: 15
+      },
+      {
+        id: "dlor-10",
+        type: "sequence",
+        question: "Arrange the events of 1 Corinthians 15:51-54 in order:",
+        items: ["Mortality puts on immortality", "The trumpet sounds", "We shall all be changed", "Dead raised incorruptible", "Corruption puts on incorruption", "In a moment, in the twinkling of an eye"],
+        correctOrder: [1, 5, 2, 3, 4, 0],
+        principle: principles.storyFlow,
+        clueRevealed: "In the twinkling of an eye - instantaneous transformation at the last trump.",
+        points: 15
+      },
+      {
+        id: "dlor-11",
+        type: "cipher",
+        question: "Decode using Caesar cipher (shift 3 backward): 'HYHUB HBH VKDOO VHH KLP'",
+        cipherText: "HYHUB HBH VKDOO VHH KLP",
+        cipherKey: "Shift each letter 3 positions backward in alphabet",
+        answer: "every eye shall see him",
+        principle: principles.defCom,
+        clueRevealed: "Revelation 1:7 - His coming is visible to ALL, not just a few.",
+        points: 15
+      },
+      {
+        id: "dlor-12",
+        type: "multiple-choice",
+        question: "According to Zechariah 14:4, where will Jesus' feet stand when He returns?",
+        options: ["Mount Sinai", "Mount Zion", "Mount of Olives", "Mount Carmel"],
+        correctOption: 2,
+        principle: principles.prophecy,
+        clueRevealed: "The same mountain from which He ascended - the Mount of Olives.",
+        points: 10
+      },
+      {
+        id: "dlor-13",
+        type: "fill-blank",
+        question: "2 Thessalonians 2:8 says the Lord shall consume the wicked with the spirit of his mouth and destroy with the _______ of his coming.",
+        answer: "brightness",
+        principle: principles.christConcentration,
+        clueRevealed: "The brightness of His glory destroys sin and sinners - no one can hide from it.",
+        points: 10
+      },
+      {
+        id: "dlor-14",
+        type: "riddle",
+        question: "Jesus warned that false Christs would say 'Here is Christ' or 'There He is.' But the true coming needs no such announcement. Why? What is it compared to?",
+        answer: "lightning",
+        principle: principles.parallels,
+        clueRevealed: "As lightning flashes from east to west - unmistakable, visible to all.",
+        points: 10
+      },
+      {
+        id: "dlor-15",
+        type: "match",
+        question: "Match the response of different groups to Christ's return:",
+        pairs: [
+          { left: "The righteous", right: "Lo, this is our God; we have waited for Him" },
+          { left: "Kings of earth", right: "Hide us from the wrath of the Lamb" },
+          { left: "The wicked", right: "Woe unto us! Who can stand?" },
+          { left: "Angels", right: "Gather the elect from the four winds" }
+        ],
+        principle: principles.fruit,
+        clueRevealed: "The same event brings joy to the saved and terror to the lost.",
+        points: 15
+      },
+      {
+        id: "dlor-16",
+        type: "sequence",
+        question: "Arrange the cosmic signs before the Day of the Lord (based on Joel and Revelation):",
+        items: ["Moon becomes as blood", "Stars fall from heaven", "Sun turns to darkness", "Heavens depart as a scroll", "Mountains and islands moved", "Great earthquake"],
+        correctOrder: [2, 0, 1, 5, 3, 4],
+        principle: principles.storyFlow,
+        clueRevealed: "Sun, moon, stars, earthquake, heavens rolled up - the cosmos shakes at His coming.",
         points: 15
       }
     ],
@@ -1588,7 +2496,7 @@ export const escapeRooms: EscapeRoom[] = [
     description: "The ultimate challenge: find Christ hidden throughout the entire Bible.",
     storyIntro: "Jesus said, 'Search the scriptures; for in them ye think ye have eternal life: and they are they which testify of me.' Every book, every story, every prophecy points to ONE person. This is the master room - find the Master Key that unlocks all of Scripture...",
     difficulty: "expert",
-    timeLimit: 45,
+    timeLimit: 90,
     backgroundGradient: "from-yellow-600 via-amber-500 to-orange-600",
     icon: "🔑",
     puzzles: [
@@ -1667,6 +2575,146 @@ export const escapeRooms: EscapeRoom[] = [
         answer: "jesus christ the same yesterday today and forever",
         principle: principles.defCom,
         clueRevealed: "Hebrews 13:8 - He is the unchanging center of all Scripture.",
+        points: 15
+      },
+      {
+        id: "mast-8",
+        type: "match",
+        question: "Match these Pentateuch books to their primary Christ-type:",
+        pairs: [
+          { left: "Genesis", right: "Creator and Promised Seed" },
+          { left: "Exodus", right: "Passover Lamb and Deliverer" },
+          { left: "Leviticus", right: "High Priest and Sacrifice" },
+          { left: "Numbers", right: "Smitten Rock and Lifted Serpent" }
+        ],
+        principle: principles.typology,
+        clueRevealed: "Each book of Moses reveals a different facet of Christ's work.",
+        points: 15
+      },
+      {
+        id: "mast-9",
+        type: "multiple-choice",
+        question: "According to John 5:46, Moses wrote about whom?",
+        options: ["The prophets", "The judges", "Jesus Christ", "The kings"],
+        correctOption: 2,
+        principle: principles.christConcentration,
+        clueRevealed: "'For had ye believed Moses, ye would have believed me: for he wrote of me.'",
+        points: 10
+      },
+      {
+        id: "mast-10",
+        type: "sequence",
+        question: "Arrange these 'I AM' statements of Jesus in the order they appear in John:",
+        items: ["I am the resurrection and the life", "I am the bread of life", "I am the vine", "I am the good shepherd", "I am the way, truth, and life", "I am the light of the world", "I am the door"],
+        correctOrder: [1, 5, 6, 3, 0, 4, 2],
+        principle: principles.storyFlow,
+        clueRevealed: "Each 'I AM' connects Jesus to the 'I AM' of Exodus - He is Yahweh in flesh.",
+        points: 15
+      },
+      {
+        id: "mast-11",
+        type: "riddle",
+        question: "I am a tree mentioned in Genesis, forbidden in Paradise, but whose fruit brings life in Revelation. In between, I become a cross. What am I called in Revelation 22?",
+        answer: "tree of life",
+        principle: principles.parallels,
+        clueRevealed: "The tree of life frames Scripture - lost in Genesis 3, restored in Revelation 22.",
+        points: 10
+      },
+      {
+        id: "mast-12",
+        type: "fill-blank",
+        question: "Revelation 19:10 says 'the testimony of Jesus is the spirit of _________.'",
+        answer: "prophecy",
+        principle: principles.prophecy,
+        clueRevealed: "All true prophecy points to Jesus - He is its heart and purpose.",
+        points: 10
+      },
+      {
+        id: "mast-13",
+        type: "match",
+        question: "Match Christ-types from Joshua through Esther:",
+        pairs: [
+          { left: "Joshua", right: "Captain of Salvation leading to rest" },
+          { left: "Boaz", right: "Kinsman Redeemer" },
+          { left: "David", right: "Shepherd King anointed in youth" },
+          { left: "Esther", right: "Intercessor who risks all for people" }
+        ],
+        principle: principles.typology,
+        clueRevealed: "The historical books are filled with previews of Jesus.",
+        points: 15
+      },
+      {
+        id: "mast-14",
+        type: "multiple-choice",
+        question: "Which Psalm is called the 'Psalm of the Cross' because it describes crucifixion 1000 years before Christ?",
+        options: ["Psalm 1", "Psalm 22", "Psalm 23", "Psalm 119"],
+        correctOption: 1,
+        principle: principles.prophecy,
+        clueRevealed: "'My God, my God, why hast thou forsaken me?' - David prophetically spoke Christ's words.",
+        points: 10
+      },
+      {
+        id: "mast-15",
+        type: "sequence",
+        question: "Arrange these Messianic prophecies in their Old Testament order:",
+        items: ["The virgin shall conceive (Isaiah 7)", "Bethlehem birthplace (Micah 5)", "Pierced for transgressions (Isaiah 53)", "Sold for 30 silver (Zechariah 11)", "Born to die (Isaiah 53)", "Triumphal entry on donkey (Zechariah 9)"],
+        correctOrder: [0, 2, 4, 1, 5, 3],
+        principle: principles.storyFlow,
+        clueRevealed: "Hundreds of prophecies, written centuries apart, all fulfilled in one Person.",
+        points: 15
+      },
+      {
+        id: "mast-16",
+        type: "riddle",
+        question: "I am mentioned over 700 times in the New Testament. I am called the fulfillment of the Law. Paul says all God's promises find their 'Yes' in me. Who am I?",
+        hint: "Every answer leads to this Person...",
+        answer: "christ",
+        principle: principles.christConcentration,
+        clueRevealed: "Christ is the goal of the Law for righteousness to everyone who believes.",
+        points: 10
+      },
+      {
+        id: "mast-17",
+        type: "fill-blank",
+        question: "Colossians 2:17 says the Old Testament ceremonies are 'a shadow of things to come; but the _______ is of Christ.'",
+        answer: "body",
+        principle: principles.typology,
+        clueRevealed: "Shadows only exist because something real casts them - Christ is the reality.",
+        points: 10
+      },
+      {
+        id: "mast-18",
+        type: "match",
+        question: "Match Revelation's 'Alpha and Omega' descriptions:",
+        pairs: [
+          { left: "First and Last", right: "Eternal existence" },
+          { left: "Beginning and End", right: "Author and Finisher" },
+          { left: "Root and Offspring of David", right: "Creator and Creation" },
+          { left: "Bright and Morning Star", right: "Herald of new day" }
+        ],
+        principle: principles.christConcentration,
+        clueRevealed: "The titles span all of time and existence - He encompasses everything.",
+        points: 15
+      },
+      {
+        id: "mast-19",
+        type: "cipher",
+        question: "Decode using reverse alphabet (A=Z, B=Y, etc.): 'XSIRHG RM ZOO HXIRKGFIV'",
+        cipherText: "XSIRHG RM ZOO HXIRKGFIV",
+        cipherKey: "A=Z, B=Y, C=X... (reverse alphabet)",
+        answer: "christ in all scripture",
+        principle: principles.christConcentration,
+        clueRevealed: "This is the Master Key - finding Christ in ALL Scripture.",
+        points: 15
+      },
+      {
+        id: "mast-20",
+        type: "sequence",
+        question: "Arrange the 66 books into their Christ-revealing categories:",
+        items: ["Epistles - Christ explained and applied", "Gospels - Christ revealed in His life", "Prophecy - Christ anticipated", "Law - Christ foreshadowed", "History - Christ prepared for", "Poetry - Christ longed for", "Revelation - Christ triumphant"],
+        correctOrder: [3, 4, 5, 2, 1, 0, 6],
+        principle: principles.connect6,
+        clueRevealed: "From cover to cover, every section reveals a different aspect of Christ.",
         points: 15
       }
     ],
