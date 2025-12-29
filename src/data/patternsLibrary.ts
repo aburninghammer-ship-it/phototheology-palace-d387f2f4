@@ -778,6 +778,328 @@ export const getMultiBookPatternsSummary = () => {
     { pattern: 'Repeat and Enlarge', books: 'Daniel', elements: 'Visions that repeat with more detail' },
     { pattern: 'Seven Churches', books: 'Revelation 2-3 + Church history', elements: 'Churches parallel history' },
     { pattern: 'Time Prophecies', books: 'Daniel, Revelation', elements: '70 Weeks, 1260, 2300 structure' },
-    { pattern: 'Cyrus/Christ', books: 'Isaiah 44-45, Daniel 5, Ezra', elements: 'Cyrus as type of Christ' }
+    { pattern: 'Cyrus/Christ', books: 'Isaiah 44-45, Daniel 5, Ezra', elements: 'Cyrus as type of Christ' },
+    { pattern: 'Christ in Every Book', books: 'All 66 books', elements: 'Christ revealed from Genesis to Revelation' }
   ];
+};
+
+// ============================================
+// CHRIST IN EVERY BOOK - The Story Arc Through the Bible
+// "Beginning at Moses and all the prophets, He expounded unto them in all the scriptures the things concerning Himself." — Luke 24:27
+// ============================================
+
+export interface ChristInBook {
+  book: string;
+  section: 'pentateuch' | 'historical' | 'restoration' | 'wisdom' | 'major-prophets' | 'minor-prophets' | 'gospels' | 'acts' | 'epistles' | 'revelation';
+  christTitle: string;
+  pattern: string;
+  fulfillment: string;
+  keyTexts: string[];
+  propheticApplication?: string;
+}
+
+// THE PENTATEUCH: The Life of Christ Foreshadowed
+export const pentateuchChrist: ChristInBook[] = [
+  {
+    book: 'Genesis',
+    section: 'pentateuch',
+    christTitle: 'The Second Adam',
+    pattern: 'Adam was created from dust, given dominion, placed in a garden. Adam faced temptation, fell, and brought death. God promised a "Seed" who would crush the serpent\'s head (Genesis 3:15).',
+    fulfillment: 'Christ is the "last Adam" (1 Cor 15:45). Where Adam failed in a perfect garden, Christ overcame in a wilderness. Where Adam\'s disobedience brought death, Christ\'s obedience brings life. Christ is the promised Seed who crushes Satan.',
+    keyTexts: ['Genesis 1:26-28', 'Genesis 3:15', 'Romans 5:12-21', '1 Corinthians 15:22, 45-49']
+  },
+  {
+    book: 'Exodus',
+    section: 'pentateuch',
+    christTitle: 'Drawn from Waters, Wilderness, Deliverer',
+    pattern: 'Moses: name means "drawn out of water," fled to wilderness 40 years, returned to deliver God\'s people from bondage, led through Red Sea (baptism into freedom), gave law on mountain.',
+    fulfillment: 'Christ: baptized in Jordan ("drawn from waters"), led into wilderness 40 days of testing, came to deliver from bondage of sin, leads through baptism into new life, gave law\'s true meaning (Sermon on the Mount).',
+    keyTexts: ['Exodus 2:10', 'Exodus 3:1-10', 'Matthew 3:13-17', 'Matthew 4:1-11', 'Acts 7:35-37']
+  },
+  {
+    book: 'Leviticus',
+    section: 'pentateuch',
+    christTitle: 'The Priestly Work Begins',
+    pattern: 'The sacrificial system established. Day of Atonement—cleansing the sanctuary. High Priest entering Most Holy Place. Blood required for remission of sins.',
+    fulfillment: 'Christ is both Lamb and High Priest. He offered Himself once for all (Heb 9:12). He entered heavenly sanctuary with His own blood. He now ministers in Most Holy Place. Day of Atonement points to final judgment and cleansing.',
+    keyTexts: ['Leviticus 16', 'Leviticus 17:11', 'Hebrews 4:14-16', 'Hebrews 7:26-27', 'Hebrews 9:11-14, 24-28']
+  },
+  {
+    book: 'Numbers',
+    section: 'pentateuch',
+    christTitle: 'Leading the Twelve, Ordaining the Seventy',
+    pattern: 'Twelve tribes organized for journey. Seventy elders appointed (Numbers 11:16-17). Wilderness wanderings—testing and provision. Bronze serpent lifted up for healing (Numbers 21:8-9).',
+    fulfillment: 'Christ chose twelve apostles to lead new Israel. Appointed seventy others (Luke 10:1). Leads His people through wilderness of this world. Was "lifted up" on cross that all who look may live (John 3:14-15).',
+    keyTexts: ['Numbers 11:16-17', 'Numbers 21:8-9', 'Matthew 10:1-4', 'Luke 10:1-2', 'John 3:14-15']
+  },
+  {
+    book: 'Deuteronomy',
+    section: 'pentateuch',
+    christTitle: 'Final Words, the Song, Dies Alone',
+    pattern: 'Moses gave final words before Promised Land. Recounted God\'s faithfulness. Sang prophetic song (Deut 32). Went up mountain alone to die. Buried by God—no one knows where.',
+    fulfillment: 'Christ gave final words (John 14-17, Upper Room). Recounted God\'s love. Sang hymn before Gethsemane (Matt 26:30). Went to Calvary—ultimately alone, forsaken. Buried in tomb, but rose again.',
+    keyTexts: ['Deuteronomy 31-34', 'Matthew 26:30', 'John 13-17', 'Mark 15:34']
+  }
+];
+
+// THE HISTORICAL BOOKS: The Church's Journey
+export const historicalChrist: ChristInBook[] = [
+  {
+    book: 'Joshua',
+    section: 'historical',
+    christTitle: 'The Final Battle, Opening the Promised Land',
+    pattern: 'Joshua (Yeshua/Jesus) leads Israel into Promised Land. Crosses Jordan—second "Red Sea" experience. Jericho falls with shout and trumpets. Land divided as inheritance.',
+    fulfillment: 'Jesus (same name as Joshua) leads people to heavenly Canaan. We pass through baptism into new life. Satan\'s kingdom falls with shout at Christ\'s return (1 Thess 4:16). We receive inheritance—eternal life.',
+    keyTexts: ['Joshua 1:1-9', 'Joshua 6:1-20', '1 Thessalonians 4:16-17', '1 Corinthians 15:54-57', 'Hebrews 4:8-9']
+  },
+  {
+    book: 'Judges',
+    section: 'historical',
+    christTitle: 'The Church Advances, Conquering',
+    pattern: 'Cycles of apostasy, oppression, crying out, deliverance. God raises up judges (deliverers) in crises. Each judge partial, flawed, temporary. Refrain: "Everyone did what was right in his own eyes."',
+    fulfillment: 'Christ is perfect, final Judge/Deliverer. He breaks cycle of sin permanently. Where human deliverers failed, Christ succeeds. He establishes kingdom of righteousness.',
+    keyTexts: ['Judges 2:16-19', 'Judges 21:25', 'Acts 13:20-23', '2 Timothy 3:1-5'],
+    propheticApplication: 'Church experiences cycles of revival and apostasy. God raises reformers in every age. All point to final deliverance.'
+  },
+  {
+    book: 'Ruth',
+    section: 'historical',
+    christTitle: 'The Gentile Woman Working in the Field',
+    pattern: 'Ruth the Moabitess—Gentile outsider. Leaves homeland to follow God. Works in harvest field of Boaz. Boaz becomes kinsman-redeemer. Grafted into lineage of David and Christ.',
+    fulfillment: 'Christ is ultimate Kinsman-Redeemer. Redeems both Jew and Gentile. Gentiles grafted into Israel (Romans 11). Church is Bride, working in harvest field. Christ owns field, invites all.',
+    keyTexts: ['Ruth 2-4', 'Romans 11:17-24', 'Matthew 9:37-38', 'Matthew 13:38', 'Revelation 19:7-9'],
+    propheticApplication: 'Harvest field is the world. Church labors until Bridegroom comes. Gentile believers become covenant family.'
+  },
+  {
+    book: '1 Samuel - 2 Chronicles',
+    section: 'historical',
+    christTitle: 'Division, Civil War, Captivity',
+    pattern: 'United kingdom under Saul, David, Solomon. Division into Northern (Israel) and Southern (Judah). Progressive apostasy despite prophetic warnings. Captivity: Israel to Assyria (722 BC), Judah to Babylon (586 BC). 70 years captivity, then restoration.',
+    fulfillment: 'David is great type of Christ—shepherd, king, warrior. Solomon\'s temple foreshadows Christ\'s body (John 2:19-21). Division reflects division in church. Captivity foreshadows 1,260-year papal supremacy. Christ comes to reunite and restore.',
+    keyTexts: ['1 Kings 11-12', '2 Chronicles 36:15-21', 'Daniel 9:2', 'Revelation 17-18'],
+    propheticApplication: 'Early church united under apostolic leadership. Division and apostasy enter. Spiritual "Babylon" holds captive. Remnant preserved through dark ages. Reformation and restoration begin.'
+  }
+];
+
+// THE RESTORATION: Rebuilding What Was Lost
+export const restorationChrist: ChristInBook[] = [
+  {
+    book: 'Ezra',
+    section: 'restoration',
+    christTitle: 'Restoration of the Sanctuary and Worship',
+    pattern: 'First return under Zerubbabel—rebuild temple (536 BC). Second return under Ezra—restore worship and law (457 BC). Opposition from enemies, work continues. Focus: sanctuary and law of God.',
+    fulfillment: 'Christ is true Temple (John 2:19-21). Restores true worship "in spirit and truth" (John 4:23-24). Magnifies law and makes it honorable (Isaiah 42:21).',
+    keyTexts: ['Ezra 1:1-3', 'Ezra 6:14-15', 'Ezra 7:10', 'Daniel 8:14', 'Hebrews 8:1-2'],
+    propheticApplication: 'First Angel\'s Message (1840s)—attention to sanctuary. 2,300 days prophecy. Restoration of sanctuary truth—heavenly ministry of Christ. Restoration of law including fourth commandment.'
+  },
+  {
+    book: 'Nehemiah',
+    section: 'restoration',
+    christTitle: 'Rebuilding the Walls and the Street',
+    pattern: 'Fourth decree (445 BC)—rebuild walls and streets. Nehemiah leads focused, urgent work. Fierce opposition unsuccessful. Work completed in 52 days through unity. Sabbath reform central (Nehemiah 13:15-22). "No more a reproach."',
+    fulfillment: 'Christ came to "repair the breach" and "restore the paths" (Isaiah 58:12). He is true wall of protection (Zechariah 2:5). He is the Way—the street, the path (John 14:6).',
+    keyTexts: ['Nehemiah 2:17', 'Nehemiah 6:1-3', 'Nehemiah 13:15-22', 'Isaiah 58:12-14', 'Daniel 9:25', 'Revelation 18:1-4'],
+    propheticApplication: 'The Fourth Angel\'s Message (Rev 18:1). Repairing the breach—Sabbath reform, seal of God. Restoring the street—clear gospel proclamation. United, orchestrated effort. Preparing the way for Messiah\'s return.'
+  },
+  {
+    book: 'Esther',
+    section: 'restoration',
+    christTitle: 'The Death Decree and Deliverance',
+    pattern: 'Haman exalted—seat above all others. Mordecai refuses to bow—faithfulness to God alone. Haman\'s rage against God\'s people. Death decree issued. Esther: "If I perish, I perish." God reverses decree—deliverance.',
+    fulfillment: 'Haman is type of Satan—exalted, demanding worship. Mordecai represents faithful believers who will not bow. Christ faced ultimate death decree and overcame. Esther is type of church—interceding for her people.',
+    keyTexts: ['Esther 3-8', 'Revelation 12:17', 'Revelation 13:15-17', 'Revelation 14:12'],
+    propheticApplication: 'This cannot happen until Nehemiah is complete. Satan rises against prepared people. Death decree/Sunday law. God\'s people refuse to bow to beast. Esther\'s courage—church\'s final testimony. Divine deliverance at darkest hour.'
+  }
+];
+
+// WISDOM BOOKS: Songs of the Wilderness
+export const wisdomChrist: ChristInBook[] = [
+  {
+    book: 'Job',
+    section: 'wisdom',
+    christTitle: 'The Time of Trouble: "Consider My Servant"',
+    pattern: 'Satan accuses Job before God. God permits testing: "Have you considered my servant Job?" Job loses everything. Friends accuse and misunderstand. Job maintains integrity: "Though He slay me, yet will I trust Him." God vindicates and restores double.',
+    fulfillment: 'Christ tested in every way, yet without sin. Accused, forsaken, misunderstood. Maintained perfect trust: "Not my will, but Yours." God vindicated through resurrection.',
+    keyTexts: ['Job 1:8', 'Job 13:15', 'Job 19:25-27', 'Job 42:10-17', 'Jeremiah 30:7', 'Revelation 3:4-5', 'Revelation 14:1-5'],
+    propheticApplication: 'Time of Jacob\'s trouble. Satan accuses remnant before God. God permits final testing—144,000 proven faithful. "These are they who have not defiled their garments." Divine vindication at Christ\'s coming.'
+  },
+  {
+    book: 'Psalms',
+    section: 'wisdom',
+    christTitle: 'Deliverance from Enemies',
+    pattern: 'David composed many psalms while fleeing in wilderness. Full range of human experience—guilt, fear, praise, hope. Messianic psalms foretell Christ\'s suffering and glory. Songs of deliverance for those surrounded by enemies.',
+    fulfillment: 'Jesus quoted Psalms on cross (Psalm 22:1, 31:5). Psalms prophesy His betrayal, suffering, resurrection, ascension. Christ is true Shepherd (Psalm 23), King (Psalm 2), Priest (Psalm 110).',
+    keyTexts: ['Psalm 2', 'Psalm 22', 'Psalm 23', 'Psalm 31', 'Psalm 46', 'Psalm 91', 'Psalm 110', 'Revelation 14:3', 'Revelation 15:3'],
+    propheticApplication: 'Songs for wilderness experience of God\'s people. Remnant will sing during time of trouble. Songs of deliverance when surrounded. The "new song" of 144,000.'
+  },
+  {
+    book: 'Proverbs & Ecclesiastes',
+    section: 'wisdom',
+    christTitle: 'Wisdom for the End Time',
+    pattern: 'Wisdom vs. Folly personified as two women. "Strange woman" who leads astray. Virtuous woman of Proverbs 31—faithful, industrious, prepared. Ecclesiastes: "Fear God and keep His commandments."',
+    fulfillment: 'Christ is Wisdom of God (1 Cor 1:24, 30). He is Bridegroom seeking faithful bride. He separates wise from foolish.',
+    keyTexts: ['Proverbs 7-9', 'Proverbs 31:10-31', 'Ecclesiastes 12:13-14', 'Matthew 25:1-13', 'Revelation 14:7', 'Revelation 17-18'],
+    propheticApplication: 'Two women: Babylon (harlot) vs. true church (bride). Wise and foolish virgins. End-time wisdom: discerning truth from deception. Final choice: "Fear God and give glory to Him."'
+  },
+  {
+    book: 'Song of Solomon',
+    section: 'wisdom',
+    christTitle: 'The Bridegroom Coming for His Bride',
+    pattern: 'Love story between King and Shulamite. Bride searches for beloved. Beloved comes, leaping over mountains. Wedding feast and consummation of love.',
+    fulfillment: 'Christ is Bridegroom, church is Bride. Intimate love of Christ for His people. He is coming—"leaping over mountains" to claim bride.',
+    keyTexts: ['Song of Solomon 2:8-13', 'Song of Solomon 8:6-7', 'Matthew 25:6', 'Revelation 19:7-9', 'Revelation 22:17, 20'],
+    propheticApplication: 'Church longs for Christ\'s return: "Come, Lord Jesus." Midnight cry: "Behold, the Bridegroom comes!" Marriage supper of the Lamb. Union with Christ for eternity.'
+  }
+];
+
+// MAJOR PROPHETS: Judgment and the Coming Kingdom
+export const majorProphetsChrist: ChristInBook[] = [
+  {
+    book: 'Isaiah',
+    section: 'major-prophets',
+    christTitle: 'The Suffering Servant',
+    pattern: 'The suffering Servant (Isaiah 53). Earth utterly broken, prisoners in pit (Isaiah 24:19-22). New heavens and new earth (Isaiah 65:17).',
+    fulfillment: 'Christ is the Suffering Servant who bore our griefs and carried our sorrows. He was wounded for our transgressions. By His stripes we are healed.',
+    keyTexts: ['Isaiah 24:19-22', 'Isaiah 53', 'Isaiah 65:17']
+  },
+  {
+    book: 'Jeremiah',
+    section: 'major-prophets',
+    christTitle: 'The New Covenant',
+    pattern: 'Warnings ignored, judgment falls. Earth "without form and void"—returned to chaos (Jeremiah 4:23-26). New covenant written on hearts (Jeremiah 31:31-34).',
+    fulfillment: 'Christ establishes the new covenant in His blood. He writes the law on our hearts through the Holy Spirit.',
+    keyTexts: ['Jeremiah 4:23-26', 'Jeremiah 31:31-34']
+  },
+  {
+    book: 'Lamentations',
+    section: 'major-prophets',
+    christTitle: 'Weeping Over the Lost',
+    pattern: 'Weeping over destruction of Jerusalem. A type of Christ weeping over the lost (Luke 19:41). Remnant\'s sorrow during millennium—understanding the cost.',
+    fulfillment: 'Christ wept over Jerusalem: "How often I would have gathered your children together, as a hen gathers her brood under her wings, and you were not willing!"',
+    keyTexts: ['Lamentations 1-5', 'Luke 19:41']
+  },
+  {
+    book: 'Ezekiel',
+    section: 'major-prophets',
+    christTitle: 'The Glory Returns',
+    pattern: 'Glory departs, then returns (Ezekiel 10-11, 43). Valley of dry bones—resurrection (Ezekiel 37). New Jerusalem described (Ezekiel 40-48).',
+    fulfillment: 'Christ is the glory of God dwelling among us (John 1:14). He is the resurrection and the life. He prepares the New Jerusalem for His people.',
+    keyTexts: ['Ezekiel 10-11', 'Ezekiel 37', 'Ezekiel 40-48', 'Ezekiel 43']
+  },
+  {
+    book: 'Daniel',
+    section: 'major-prophets',
+    christTitle: 'The Stone Kingdom',
+    pattern: 'Rise and fall of empires. Stone that becomes mountain—God\'s eternal kingdom (Daniel 2:44-45). Judgment scene—books opened (Daniel 7:9-14). 2,300 days and cleansing of sanctuary (Daniel 8:14).',
+    fulfillment: 'Christ is the Stone cut without hands that becomes a great mountain filling the earth. He is the Son of Man who approaches the Ancient of Days to receive dominion.',
+    keyTexts: ['Daniel 2:44', 'Daniel 7:9-14', 'Daniel 8:14']
+  }
+];
+
+// MINOR PROPHETS: Justice, Judgment, and Restoration
+export const minorProphetsChrist: ChristInBook[] = [
+  { book: 'Hosea', section: 'minor-prophets', christTitle: 'The Faithful Husband', pattern: "God's love for adulterous people", fulfillment: "Christ's love for wayward church; final call to return", keyTexts: ['Hosea 1-3', 'Hosea 11:1'] },
+  { book: 'Joel', section: 'minor-prophets', christTitle: 'The Spirit Giver', pattern: 'Day of the Lord; outpouring of Spirit', fulfillment: 'The latter rain; the great and terrible day', keyTexts: ['Joel 2:28-32'] },
+  { book: 'Amos', section: 'minor-prophets', christTitle: 'The Righteous Judge', pattern: 'Justice and judgment coming', fulfillment: 'Social justice; the Day of Judgment', keyTexts: ['Amos 5:24', 'Amos 9:11-15'] },
+  { book: 'Obadiah', section: 'minor-prophets', christTitle: 'The Vindicator', pattern: 'Justice against Edom (enemies of God\'s people)', fulfillment: 'God will vindicate His persecuted people', keyTexts: ['Obadiah 1:15-21'] },
+  { book: 'Jonah', section: 'minor-prophets', christTitle: 'The Sign of Death and Resurrection', pattern: 'God saves even those we question', fulfillment: 'Gospel to all nations; no one beyond grace. Three days in fish = three days in tomb', keyTexts: ['Jonah 1:17', 'Matthew 12:40'] },
+  { book: 'Micah', section: 'minor-prophets', christTitle: 'The Ruler from Bethlehem', pattern: 'Judgment, then age of peace', fulfillment: 'From Bethlehem comes the Ruler; the millennium', keyTexts: ['Micah 5:2', 'Micah 4:1-5'] },
+  { book: 'Nahum', section: 'minor-prophets', christTitle: 'The Destroyer of Oppressors', pattern: 'Fall of Nineveh (oppressor)', fulfillment: 'Fall of spiritual Babylon', keyTexts: ['Nahum 1:7-8'] },
+  { book: 'Habakkuk', section: 'minor-prophets', christTitle: 'The Object of Faith', pattern: '"The just shall live by faith"', fulfillment: 'Faith during time of trouble', keyTexts: ['Habakkuk 2:4', 'Habakkuk 3:17-19'] },
+  { book: 'Zephaniah', section: 'minor-prophets', christTitle: 'The Mighty Warrior', pattern: 'Day of the Lord near; total destruction', fulfillment: 'Second coming; destruction of the wicked', keyTexts: ['Zephaniah 1:14-18', 'Zephaniah 3:17'] },
+  { book: 'Haggai', section: 'minor-prophets', christTitle: 'The Desire of All Nations', pattern: 'Rebuild temple; latter glory greater', fulfillment: "Final temple—Christ's people filled with glory", keyTexts: ['Haggai 2:6-9'] },
+  { book: 'Zechariah', section: 'minor-prophets', christTitle: 'The Returning King', pattern: 'The Branch; feet on Mount of Olives', fulfillment: "Christ's return to Mount of Olives (Acts 1:11)", keyTexts: ['Zechariah 14:4', 'Zechariah 9:9'] },
+  { book: 'Malachi', section: 'minor-prophets', christTitle: 'The Sun of Righteousness', pattern: 'Sun of Righteousness; Elijah to come', fulfillment: 'Final Elijah message; destruction of wicked by fire', keyTexts: ['Malachi 4:1-6'] }
+];
+
+// NEW TESTAMENT: Christ Revealed and Present
+export const gospelsChrist: ChristInBook[] = [
+  { book: 'Matthew', section: 'gospels', christTitle: 'Christ the King', pattern: 'Fulfillment of prophecy, Davidic lineage', fulfillment: 'The rightful King of Israel and all creation', keyTexts: ['Matthew 1:1', 'Matthew 1:23', 'Matthew 5:17'] },
+  { book: 'Mark', section: 'gospels', christTitle: 'Christ the Servant', pattern: 'Action and ministry, immediately serving', fulfillment: 'The Suffering Servant who came not to be served but to serve', keyTexts: ['Mark 10:45'] },
+  { book: 'Luke', section: 'gospels', christTitle: 'Christ the Son of Man', pattern: 'Humanity and compassion', fulfillment: 'The perfect Man who identifies with all humanity', keyTexts: ['Luke 19:10'] },
+  { book: 'John', section: 'gospels', christTitle: 'Christ the Son of God', pattern: 'Deity and eternal life', fulfillment: 'The Word made flesh, full of grace and truth', keyTexts: ['John 1:1-14', 'John 14:6', 'John 20:31'] }
+];
+
+export const actsChrist: ChristInBook = {
+  book: 'Acts',
+  section: 'acts',
+  christTitle: 'The Spirit Baptizer',
+  pattern: 'Pentecost: Spirit poured out (early rain). Tongues of fire—story finally understood. 3,000 baptized—church born. Gospel spreads: Jerusalem, Judea, Samaria, uttermost parts.',
+  fulfillment: 'Christ baptizes with the Holy Spirit and fire. He empowers the church to be His witnesses.',
+  keyTexts: ['Acts 1:8', 'Acts 2:1-4, 17-21', 'Revelation 18:1', 'Joel 2:28-32'],
+  propheticApplication: 'What happened at Pentecost will happen again—latter rain. Revelation 18:1—earth illuminated with glory. Final proclamation to all nations. Spirit empowers Fourth Decree work. Church finishes the story.'
+};
+
+export const epistlesChrist: ChristInBook[] = [
+  { book: 'Romans', section: 'epistles', christTitle: 'Our Righteousness', pattern: 'What new person in Christ looks like', fulfillment: 'Justified, sanctified, glorified in Christ', keyTexts: ['Romans 1:16-17', 'Romans 8:29'] },
+  { book: '1-2 Corinthians', section: 'epistles', christTitle: 'Head of the Body', pattern: "Church functioning as Christ's body", fulfillment: 'We are members of His body, He is the Head', keyTexts: ['1 Corinthians 12:12-27'] },
+  { book: 'Galatians', section: 'epistles', christTitle: 'Our Freedom', pattern: 'Freedom from legalism', fulfillment: 'Christ has set us free; fruit of the Spirit', keyTexts: ['Galatians 5:1', 'Galatians 5:22-23'] },
+  { book: 'Ephesians', section: 'epistles', christTitle: 'Our Bridegroom', pattern: "Church as Christ's bride; spiritual warfare", fulfillment: 'Christ loved the church and gave Himself for her', keyTexts: ['Ephesians 5:25-27'] },
+  { book: 'Philippians', section: 'epistles', christTitle: 'Our Joy', pattern: 'Joy and pressing toward prize', fulfillment: 'To live is Christ, to die is gain', keyTexts: ['Philippians 1:21', 'Philippians 3:14'] },
+  { book: 'Colossians', section: 'epistles', christTitle: 'Our All in All', pattern: 'Christ preeminent in all things', fulfillment: 'In Him all fullness dwells; He is all and in all', keyTexts: ['Colossians 1:15-20'] },
+  { book: '1-2 Thessalonians', section: 'epistles', christTitle: 'Our Coming King', pattern: 'Second coming and readiness', fulfillment: 'The Lord Himself will descend from heaven', keyTexts: ['1 Thessalonians 4:16-17'] },
+  { book: '1-2 Timothy, Titus', section: 'epistles', christTitle: 'Our Sound Doctrine', pattern: 'Church order for last days', fulfillment: 'The pillar and ground of truth', keyTexts: ['1 Timothy 3:15', '2 Timothy 3:16-17'] },
+  { book: 'Philemon', section: 'epistles', christTitle: 'Our Reconciler', pattern: 'Reconciliation and brotherhood', fulfillment: 'Christ reconciles us to God and one another', keyTexts: ['Philemon 1:15-16'] },
+  { book: 'Hebrews', section: 'epistles', christTitle: 'Our High Priest', pattern: 'Superior High Priest in heavenly sanctuary', fulfillment: 'He ever lives to make intercession for us', keyTexts: ['Hebrews 4:14-16', 'Hebrews 8:1-2', 'Hebrews 9:24'] },
+  { book: 'James', section: 'epistles', christTitle: 'Our Wisdom', pattern: 'Faith that works; practical Christianity', fulfillment: 'Faith without works is dead', keyTexts: ['James 1:5', 'James 2:17'] },
+  { book: '1-2 Peter', section: 'epistles', christTitle: 'Our Shepherd', pattern: 'Suffering, hope, Day of the Lord', fulfillment: 'Chief Shepherd who will appear in glory', keyTexts: ['1 Peter 5:4', '2 Peter 3:10'] },
+  { book: '1-3 John', section: 'epistles', christTitle: 'Our Love', pattern: 'Love, truth, overcoming antichrist', fulfillment: 'God is love; perfect love casts out fear', keyTexts: ['1 John 3:2-3', '1 John 4:8'] },
+  { book: 'Jude', section: 'epistles', christTitle: 'Our Keeper', pattern: 'Contending for faith in apostasy', fulfillment: 'Able to keep us from falling', keyTexts: ['Jude 1:24-25'] }
+];
+
+export const revelationChrist: ChristInBook = {
+  book: 'Revelation',
+  section: 'revelation',
+  christTitle: 'The Alpha and Omega',
+  pattern: 'Ch 1-3: Christ among churches. Ch 4-5: Throne room, Lamb worthy. Ch 6-7: Seals, 144,000 sealed. Ch 8-11: Trumpets, mystery of God finished. Ch 12-14: Great controversy, three angels. Ch 15-16: Seven last plagues. Ch 17-18: Fall of Babylon. Ch 19: Marriage supper, King of Kings returns. Ch 20: Millennium, final judgment. Ch 21-22: New heaven and earth, God dwelling with people forever.',
+  fulfillment: 'The story completed: Genesis began with creation—Revelation ends with re-creation. Genesis: tree of life lost—Revelation: tree of life restored. Genesis: sin enters—Revelation: sin ends forever. Genesis: "Where are you?"—Revelation: "Behold, the tabernacle of God is with men."',
+  keyTexts: ['Revelation 1:1', 'Revelation 14:6-12', 'Revelation 18:1-4', 'Revelation 19:6-9', 'Revelation 21:1-5', 'Revelation 22:20']
+};
+
+// The Bible Story Summary Table
+export interface BibleActSummary {
+  act: string;
+  books: string;
+  theme: string;
+}
+
+export const bibleStoryArc: BibleActSummary[] = [
+  { act: 'Creation & Fall', books: 'Genesis', theme: 'The problem introduced; the promise given' },
+  { act: 'Preparation', books: 'Exodus – Deuteronomy', theme: 'The Deliverer foreshadowed' },
+  { act: 'Conquest & Kingdom', books: 'Joshua – Chronicles', theme: 'The King foreshadowed; the nation tested' },
+  { act: 'Captivity & Restoration', books: 'Ezra – Esther', theme: 'The Restorer foreshadowed' },
+  { act: 'Testing & Wisdom', books: 'Job – Song of Solomon', theme: 'The Suffering Servant foreshadowed' },
+  { act: 'Warning & Hope', books: 'Isaiah – Malachi', theme: 'The Coming One proclaimed' },
+  { act: 'Arrival', books: 'Gospels', theme: 'The Messiah revealed' },
+  { act: 'Expansion', books: 'Acts', theme: 'The Spirit poured out' },
+  { act: 'Transformation', books: 'Epistles', theme: 'The new life explained' },
+  { act: 'Consummation', books: 'Revelation', theme: 'The King returns; the story ends' }
+];
+
+// Get all Christ in Every Book entries
+export const getAllChristInBooks = (): ChristInBook[] => {
+  return [
+    ...pentateuchChrist,
+    ...historicalChrist,
+    ...restorationChrist,
+    ...wisdomChrist,
+    ...majorProphetsChrist,
+    ...minorProphetsChrist,
+    ...gospelsChrist,
+    actsChrist,
+    ...epistlesChrist,
+    revelationChrist
+  ];
+};
+
+// Get Christ in Book by book name
+export const getChristInBook = (book: string): ChristInBook | undefined => {
+  return getAllChristInBooks().find(
+    b => b.book.toLowerCase().includes(book.toLowerCase())
+  );
+};
+
+// Get Christ in Books by section
+export const getChristInBooksBySection = (section: ChristInBook['section']): ChristInBook[] => {
+  return getAllChristInBooks().filter(b => b.section === section);
 };
