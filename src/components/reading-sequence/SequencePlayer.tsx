@@ -1980,19 +1980,20 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   // EAGER PRELOADING: Start preloading commentary as soon as chapter loads (before play is clicked)
   useEffect(() => {
-    if (chapterContent && !isLoading && currentSequence) {
-      const includeCommentary = currentSequence?.includeJeevesCommentary || false;
-      const commentaryMode = currentSequence?.commentaryMode || "chapter";
-      const commentaryVoice = currentSequence?.commentaryVoice || "daniel";
+    // Guard: only run if we have content and sequence
+    if (!chapterContent || isLoading || !currentSequence) return;
 
-      // Only preload if verse-by-verse commentary is enabled and we're online
-      if (includeCommentary && commentaryMode === "verse" && !offlineMode) {
-        console.log("[Eager Preload] Chapter loaded - starting background commentary preload...");
-        // Start from verse 0 to preload everything
-        prefetchAllChapterVerseCommentary(chapterContent, commentaryVoice, currentCommentaryDepth, 0);
-      }
+    const includeCommentary = currentSequence.includeJeevesCommentary || false;
+    const commentaryMode = currentSequence.commentaryMode || "chapter";
+    const commentaryVoice = currentSequence.commentaryVoice || "daniel";
+
+    // Only preload if verse-by-verse commentary is enabled and we're online
+    if (includeCommentary && commentaryMode === "verse" && !offlineMode) {
+      console.log("[Eager Preload] Chapter loaded - starting background commentary preload...");
+      // Start from verse 0 to preload everything
+      prefetchAllChapterVerseCommentary(chapterContent, commentaryVoice, currentCommentaryDepth, 0);
     }
-  }, [chapterContent?.book, chapterContent?.chapter, currentSequence?.includeJeevesCommentary, currentSequence?.commentaryMode, prefetchAllChapterVerseCommentary, currentCommentaryDepth, offlineMode]);
+  }, [chapterContent, isLoading, currentSequence, prefetchAllChapterVerseCommentary, currentCommentaryDepth, offlineMode]);
 
   // Auto-start on mount - runs once when autoPlay is true
   useEffect(() => {
