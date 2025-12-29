@@ -36,6 +36,8 @@ import {
 } from "lucide-react";
 import { XPSystem, BadgeSystem, WeeklyLeaderboard } from "@/components/gamification";
 import { IdentityLoopWidget } from "@/components/IdentityLoopWidget";
+import { StudyToolsQuickAccess } from "@/components/StudyToolsQuickAccess";
+import { FeatureHighlights } from "@/components/FeatureHighlights";
 
 interface DashboardStats {
   dailyStreak: number;
@@ -208,6 +210,16 @@ export default function Dashboard() {
         {/* Path Dashboard Widget */}
         <div className="mb-8">
           <PathDashboardWidget />
+        </div>
+
+        {/* Feature Highlights - Onboarding for new users */}
+        <div className="mb-8">
+          <FeatureHighlights />
+        </div>
+
+        {/* Study Tools Quick Access */}
+        <div className="mb-8">
+          <StudyToolsQuickAccess />
         </div>
 
         {/* Featured Today */}

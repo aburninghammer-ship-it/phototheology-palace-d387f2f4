@@ -259,7 +259,22 @@ const DevotionalRedirect = () => {
   return <Navigate to={`/devotionals/${planId}`} replace />;
 };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Data stays fresh for 5 minutes - reduces unnecessary refetches
+      staleTime: 5 * 60 * 1000,
+      // Cache persists for 30 minutes
+      gcTime: 30 * 60 * 1000,
+      // Don't refetch on window focus for better UX
+      refetchOnWindowFocus: false,
+      // Retry failed requests 2 times
+      retry: 2,
+      // Exponential backoff for retries
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+  },
+});
 
 function App() {
   // Skip splash for returning users (localStorage check)

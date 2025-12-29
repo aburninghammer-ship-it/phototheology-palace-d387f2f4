@@ -26,6 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { getAudioCacheSize, clearAudioCache, getCachedMusicTracks } from "@/services/offlineAudioCache";
 import { getCommentaryCacheStats, clearCommentaryCache } from "@/services/offlineCommentaryCache";
+import { OfflineDownloadManager } from "@/components/offline/OfflineDownloadManager";
 
 interface CacheStats {
   totalSize: number;
@@ -329,6 +330,16 @@ export default function OfflineContent() {
               </Button>
             </CardContent>
           </Card>
+        </motion.div>
+
+        {/* Download Manager */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-6"
+        >
+          <OfflineDownloadManager />
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6">
