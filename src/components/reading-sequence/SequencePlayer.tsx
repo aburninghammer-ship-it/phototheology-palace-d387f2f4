@@ -1083,6 +1083,49 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     }
   }, [generateCommentary, generateTTS]);
 
+  // AGGRESSIVE PRELOADING: Prefetch ALL verse commentary for entire chapter in background
+  // This runs when playback starts, ensuring commentary is ready before each verse
+  const prefetchAllChapterVerseCommentary = useCallback(async (
+    content: ChapterContent,
+    commentaryVoice: string,
+    depth: string = "surface",
+    startFromVerse: number = 0
+  ) => {
+    if (!content?.verses?.length) return;
+
+    console.log(`[Prefetch ALL] Starting background preload for ${content.book} ${content.chapter} (${content.verses.length} verses, starting from ${startFromVerse + 1})`);
+
+    // Stagger requests to avoid overwhelming the API - process in batches of 3
+    const BATCH_SIZE = 3;
+    const BATCH_DELAY = 1000; // 1 second between batches
+
+    for (let i = startFromVerse; i < content.verses.length; i += BATCH_SIZE) {
+      const batch = content.verses.slice(i, Math.min(i + BATCH_SIZE, content.verses.length));
+
+      // Fire off batch in parallel
+      const batchPromises = batch.map(verse =>
+        prefetchVerseCommentary(
+          content.book,
+          content.chapter,
+          verse.verse,
+          verse.text,
+          commentaryVoice,
+          depth
+        )
+      );
+
+      // Wait for batch to complete before starting next
+      await Promise.allSettled(batchPromises);
+
+      // Small delay between batches to be gentle on the API
+      if (i + BATCH_SIZE < content.verses.length) {
+        await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
+      }
+    }
+
+    console.log(`[Prefetch ALL] Completed background preload for ${content.book} ${content.chapter}`);
+  }, [prefetchVerseCommentary]);
+
   // Play commentary for a single verse (commentary-only mode)
   // NOTE: This must be defined BEFORE playCommentaryOnlyChapter to avoid temporal dead zone
   const playCommentaryOnlyVerse = useCallback(async (verseIdx: number, content: ChapterContent, sequence: ReadingSequenceBlock) => {
@@ -1912,7 +1955,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       shouldPlayNextRef.current = false;
       const voice = currentSequence?.voice || "daniel";
       continuePlayingRef.current = true;
-      
+
+      // Start background preloading for the new chapter
+      const includeCommentary = currentSequence?.includeJeevesCommentary || false;
+      const commentaryMode = currentSequence?.commentaryMode || "chapter";
+      const commentaryVoice = currentSequence?.commentaryVoice || "daniel";
+
+      if (includeCommentary && commentaryMode === "verse" && !offlineMode) {
+        console.log("[Preload] Auto-play transition - preloading ALL verse commentary...");
+        prefetchAllChapterVerseCommentary(chapterContent, commentaryVoice, currentCommentaryDepth, 0);
+      }
+
       // Check for commentary-only mode
       if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
         console.log("[Commentary Only] Skipping verse reading, playing commentary only");
@@ -1923,7 +1976,23 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         playVerseAtIndex(0, chapterContent, voice);
       }
     }
-  }, [chapterContent, isLoading, currentSequence, playVerseAtIndex]);
+  }, [chapterContent, isLoading, currentSequence, playVerseAtIndex, prefetchAllChapterVerseCommentary, currentCommentaryDepth, offlineMode]);
+
+  // EAGER PRELOADING: Start preloading commentary as soon as chapter loads (before play is clicked)
+  useEffect(() => {
+    if (chapterContent && !isLoading && currentSequence) {
+      const includeCommentary = currentSequence?.includeJeevesCommentary || false;
+      const commentaryMode = currentSequence?.commentaryMode || "chapter";
+      const commentaryVoice = currentSequence?.commentaryVoice || "daniel";
+
+      // Only preload if verse-by-verse commentary is enabled and we're online
+      if (includeCommentary && commentaryMode === "verse" && !offlineMode) {
+        console.log("[Eager Preload] Chapter loaded - starting background commentary preload...");
+        // Start from verse 0 to preload everything
+        prefetchAllChapterVerseCommentary(chapterContent, commentaryVoice, currentCommentaryDepth, 0);
+      }
+    }
+  }, [chapterContent?.book, chapterContent?.chapter, currentSequence?.includeJeevesCommentary, currentSequence?.commentaryMode, prefetchAllChapterVerseCommentary, currentCommentaryDepth, offlineMode]);
 
   // Auto-start on mount - runs once when autoPlay is true
   useEffect(() => {
@@ -2030,7 +2099,24 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       continuePlayingRef.current = true;
       setIsPlaying(true);
       setIsPaused(false);
-      
+
+      // AGGRESSIVE PRELOADING: Start background prefetch of ALL verse commentary
+      // This runs in the background while playback proceeds, ensuring commentary is ready
+      const includeCommentary = currentSequence?.includeJeevesCommentary || false;
+      const commentaryMode = currentSequence?.commentaryMode || "chapter";
+      const commentaryVoice = currentSequence?.commentaryVoice || "daniel";
+
+      if (includeCommentary && commentaryMode === "verse" && !offlineMode) {
+        console.log("[Preload] Starting background preload of ALL verse commentary...");
+        // Fire and forget - runs in background while playback starts
+        prefetchAllChapterVerseCommentary(
+          chapterContent,
+          commentaryVoice,
+          currentCommentaryDepth,
+          currentVerseIdx // Start from current verse
+        );
+      }
+
       // Check for commentary-only mode
       if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
         console.log("[Commentary Only] Starting with commentary only");
