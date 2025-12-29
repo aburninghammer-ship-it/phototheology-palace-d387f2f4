@@ -2587,16 +2587,22 @@ You MUST be specific. Never give a generic category without naming the specific 
         const usedChallengesText = usedChallenges && usedChallenges.length > 0
           ? `\n\n**IMPORTANT - DO NOT REPEAT THESE CHALLENGES (already used):** ${usedChallenges.join(", ")}`
           : "";
-        userPrompt = `You're starting a Chain Chess game! You go FIRST.
 
-**YOU CHOOSE THE OPENING VERSE!**
+        // Check if a verse was assigned by the client
+        const assignedVerse = body.assignedVerse;
 
-Pick any powerful, well-known Bible verse to start the game. This will be the foundation verse for the entire game.
+        if (assignedVerse) {
+          // Use the assigned verse - don't let AI choose
+          userPrompt = `You're starting a Chain Chess game! You go FIRST.
+
+**THE OPENING VERSE HAS BEEN SELECTED FOR YOU: ${assignedVerse}**
+
+You MUST use this verse: ${assignedVerse}
 
 Available categories for this game: ${categoriesText}${usedChallengesText}
 
 **YOUR CRITICAL TASK:**
-1. Choose an excellent opening verse (like John 3:16, Romans 8:28, Psalm 23:1, etc.)
+1. Use the assigned verse: ${assignedVerse}
 
 2. Give a 3-4 sentence exposition/build on that verse:
    - Explain what the verse means
@@ -2604,31 +2610,62 @@ Available categories for this game: ${categoriesText}${usedChallengesText}
    - Show why this verse is profound
    - Connect to theological truth
    - Be enthusiastic and scholarly!
-   
+
 3. Then challenge the player with a SPECIFIC challenge:
    - If using "Books of the Bible" → name a specific book: "Books of the Bible - Romans"
    - If using "Rooms of the Palace" → name a specific room: "Rooms of the Palace - Story Room"
    - If using "Principles of the Palace" → name a specific principle: "Principles of the Palace - 2D/3D"
 
-**IMPORTANT:** 
-- Choose a clear, powerful verse to start
+**IMPORTANT:**
+- You MUST use ${assignedVerse} as your verse
 - Your commentary should be an exposition/build that teaches about the verse
 - You MUST be specific in your challenge category
 
-**EXAMPLE FORMAT:**
-{
-  "verse": "John 3:16",
-  "commentary": "What a magnificent cornerstone to begin our theological exploration! John 3:16 encapsulates the very heart of the Gospel, articulating God's unconditional 'agape' love for a fallen world. The phrase 'only begotten Son' (Greek: monogenēs) emphasizes Christ's unique divine filiation. This verse frames salvation not as human achievement but as divine initiative, freely offered to 'whosoever believes.'",
-  "challengeCategory": "Books of the Bible - Romans"
-}
-
-**FOR THIS GAME:**
-NOW: Choose your opening verse, give an insightful exposition, then challenge them with a SPECIFIC challenge from these categories: ${categoriesText}
-
 Return ONLY valid JSON with:
-- verse: (your chosen verse reference)
+- verse: "${assignedVerse}" (use exactly this verse!)
 - commentary: (your insightful exposition on the verse)
 - challengeCategory: (specific challenge with book/room/principle name)`;
+        } else {
+          // No assigned verse - let AI choose (legacy behavior)
+          userPrompt = `You're starting a Chain Chess game! You go FIRST.
+
+**YOU CHOOSE THE OPENING VERSE!**
+
+Pick any powerful Bible verse to start the game. Be CREATIVE - don't always pick the same common verses! Consider choosing from:
+- Old Testament wisdom (Proverbs, Ecclesiastes, Job)
+- Prophetic passages (Isaiah, Jeremiah, Ezekiel, Daniel)
+- Historical narratives (Genesis, Exodus, Joshua, Ruth)
+- Psalms (there are 150 to choose from!)
+- Gospel teachings (parables, Sermon on the Mount)
+- Epistles (Romans, Corinthians, Ephesians, etc.)
+
+Available categories for this game: ${categoriesText}${usedChallengesText}
+
+**YOUR CRITICAL TASK:**
+1. Choose a UNIQUE opening verse (avoid John 3:16, Psalm 23:1, Romans 8:28 as they are overused - pick something fresh!)
+
+2. Give a 3-4 sentence exposition/build on that verse:
+   - Explain what the verse means
+   - Share biblical insight using original language (Greek/Hebrew) if relevant
+   - Show why this verse is profound
+   - Connect to theological truth
+   - Be enthusiastic and scholarly!
+
+3. Then challenge the player with a SPECIFIC challenge:
+   - If using "Books of the Bible" → name a specific book: "Books of the Bible - Romans"
+   - If using "Rooms of the Palace" → name a specific room: "Rooms of the Palace - Story Room"
+   - If using "Principles of the Palace" → name a specific principle: "Principles of the Palace - 2D/3D"
+
+**IMPORTANT:**
+- BE CREATIVE with your verse choice - surprise us!
+- Your commentary should be an exposition/build that teaches about the verse
+- You MUST be specific in your challenge category
+
+Return ONLY valid JSON with:
+- verse: (your chosen verse reference - be creative!)
+- commentary: (your insightful exposition on the verse)
+- challengeCategory: (specific challenge with book/room/principle name)`;
+        }
       } else {
         const lastMove = previousMoves[previousMoves.length - 1];
         const categoriesText = (availableCategories || ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"]).join(", ");

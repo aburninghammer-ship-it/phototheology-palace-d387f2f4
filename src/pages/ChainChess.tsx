@@ -56,15 +56,42 @@ const ChainChess = () => {
   const categories = ["Books of the Bible", "Rooms of the Palace", "Principles of the Palace"];
   const isVsJeeves = mode === "jeeves";
 
-  // Pool of verses to randomly select from
+  // Large pool of verses to randomly select from - ensures variety in every game
   const versePool = [
-    "John 3:16", "Psalm 23:1", "Romans 8:28", "Philippians 4:13", "Proverbs 3:5-6",
-    "Isaiah 40:31", "Jeremiah 29:11", "Matthew 6:33", "2 Timothy 3:16", "Hebrews 11:1",
-    "1 Corinthians 13:4", "Ephesians 2:8", "Romans 12:2", "Joshua 1:9", "Psalm 46:1",
-    "Matthew 28:19", "John 14:6", "Galatians 5:22", "Colossians 3:2", "James 1:2-3",
-    "1 Peter 5:7", "Revelation 21:4", "Genesis 1:1", "Exodus 20:3", "Deuteronomy 6:5",
-    "Psalm 119:105", "Isaiah 53:5", "Matthew 5:16", "Luke 6:31", "Acts 1:8",
-    "Romans 3:23", "1 John 4:8", "Revelation 3:20", "Mark 16:15", "John 1:1"
+    // Old Testament - Pentateuch
+    "Genesis 1:1", "Genesis 1:27", "Genesis 12:1", "Genesis 22:14", "Genesis 50:20",
+    "Exodus 3:14", "Exodus 14:14", "Exodus 20:3", "Leviticus 19:18",
+    "Numbers 6:24-26", "Deuteronomy 6:4-5", "Deuteronomy 31:6",
+    // Old Testament - Historical
+    "Joshua 1:9", "Joshua 24:15", "Ruth 1:16", "1 Samuel 16:7", "2 Samuel 22:2-3",
+    "1 Kings 19:12", "2 Chronicles 7:14", "Nehemiah 8:10", "Esther 4:14",
+    // Old Testament - Wisdom
+    "Job 19:25", "Psalm 1:1-2", "Psalm 23:1", "Psalm 27:1", "Psalm 34:8",
+    "Psalm 46:1", "Psalm 51:10", "Psalm 91:1-2", "Psalm 100:4-5", "Psalm 119:105",
+    "Psalm 139:14", "Proverbs 3:5-6", "Proverbs 4:23", "Proverbs 16:9", "Proverbs 22:6",
+    "Ecclesiastes 3:1", "Ecclesiastes 12:13", "Song of Solomon 8:6-7",
+    // Old Testament - Prophets
+    "Isaiah 6:8", "Isaiah 9:6", "Isaiah 40:31", "Isaiah 41:10", "Isaiah 53:5",
+    "Isaiah 55:8-9", "Jeremiah 1:5", "Jeremiah 29:11", "Jeremiah 33:3",
+    "Lamentations 3:22-23", "Ezekiel 36:26", "Daniel 3:17-18", "Hosea 6:6",
+    "Joel 2:28", "Amos 5:24", "Micah 6:8", "Habakkuk 2:4", "Zephaniah 3:17",
+    "Haggai 2:9", "Zechariah 4:6", "Malachi 3:10",
+    // New Testament - Gospels
+    "Matthew 5:14-16", "Matthew 6:33", "Matthew 7:7", "Matthew 11:28-30",
+    "Matthew 22:37-39", "Matthew 28:19-20", "Mark 10:45", "Mark 11:24",
+    "Luke 6:31", "Luke 9:23", "Luke 15:7", "John 1:1", "John 3:16", "John 8:32",
+    "John 10:10", "John 13:34-35", "John 14:6", "John 15:5",
+    // New Testament - Acts & Epistles
+    "Acts 1:8", "Acts 2:38", "Acts 17:28", "Romans 3:23", "Romans 5:8",
+    "Romans 6:23", "Romans 8:1", "Romans 8:28", "Romans 10:9", "Romans 12:1-2",
+    "1 Corinthians 10:13", "1 Corinthians 13:4-7", "1 Corinthians 15:55-57",
+    "2 Corinthians 5:17", "2 Corinthians 12:9", "Galatians 2:20", "Galatians 5:22-23",
+    "Ephesians 2:8-9", "Ephesians 3:20", "Ephesians 6:10-11", "Philippians 1:21",
+    "Philippians 4:6-7", "Philippians 4:13", "Colossians 3:2", "Colossians 3:23",
+    "1 Thessalonians 5:16-18", "2 Timothy 1:7", "2 Timothy 3:16-17",
+    "Hebrews 4:12", "Hebrews 11:1", "Hebrews 12:1-2", "James 1:2-3", "James 1:17",
+    "James 4:7", "1 Peter 2:9", "1 Peter 5:7", "2 Peter 3:9", "1 John 1:9",
+    "1 John 4:8", "1 John 4:19", "Revelation 3:20", "Revelation 21:4"
   ];
 
   const getRandomVerse = () => {
@@ -190,8 +217,10 @@ const ChainChess = () => {
           description: "Please wait while Jeeves crafts his first move",
         });
         console.log("=== Triggering Jeeves opening move (non-blocking) ===");
+        console.log("=== Passing random verse to Jeeves:", randomVerse);
         // Don't await - let it run in background
-        jeevesMove(newGame.id, true);
+        // Pass the randomly selected verse to Jeeves so it uses our selection
+        jeevesMove(newGame.id, true, undefined, randomVerse);
       } else {
         // Player goes first
         setIsMyTurn(true);
@@ -365,12 +394,16 @@ const ChainChess = () => {
     }
   };
 
-  const jeevesMove = async (currentGameId: string, isFirst = false, userChallenge?: string) => {
+  const jeevesMove = async (currentGameId: string, isFirst = false, userChallenge?: string, assignedVerse?: string) => {
     setProcessing(true);
     try {
+      // Use assigned verse if provided (for first move), otherwise use current verse
+      const verseToUse = assignedVerse || currentVerse;
+
       console.log("=== Jeeves Move Start ===");
       console.log("First move:", isFirst);
-      console.log("Current verse:", currentVerse);
+      console.log("Assigned verse:", assignedVerse);
+      console.log("Verse to use:", verseToUse);
       console.log("Game ID:", currentGameId);
       console.log("Available categories:", selectedGameCategories);
       console.log("User's challenge to Jeeves:", userChallenge);
@@ -406,12 +439,13 @@ const ChainChess = () => {
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "chain-chess",
-          verse: currentVerse,
+          verse: verseToUse, // Use the assigned/random verse, not the state variable
           isFirstMove: isFirst,
           previousMoves: formattedMoves,
           availableCategories: selectedGameCategories,
           usedChallenges: challengesUsedSoFar, // Pass used challenges to prevent repetition
           difficulty: game?.game_state?.difficulty || difficultyLevel,
+          assignedVerse: assignedVerse, // Tell Jeeves if we assigned a specific verse
         },
       });
 
@@ -466,9 +500,11 @@ const ChainChess = () => {
       }
 
       console.log("=== Creating Jeeves Move ===");
+      // For first move, use assigned verse; otherwise use Jeeves' response or current verse
+      const moveVerse = isFirst ? (assignedVerse || data.verse || verseToUse) : (data.verse || verseToUse);
       const move = {
         player: "jeeves",
-        verse: data.verse || currentVerse,
+        verse: moveVerse,
         commentary: data.commentary,
         challengeCategory: data.challengeCategory || "Books of the Bible",
         score: data.score || 8,
@@ -488,18 +524,19 @@ const ChainChess = () => {
         throw insertError;
       }
 
-      // If this is the first move and Jeeves chose a verse, update the game verse
-      if (isFirst && data.verse) {
-        setCurrentVerse(data.verse);
-        await fetchVerseText(data.verse);
-        
-        // Update game state with Jeeves' chosen verse
+      // If this is the first move, use the assigned verse (or Jeeves' chosen verse as fallback)
+      if (isFirst) {
+        const finalVerse = assignedVerse || data.verse || verseToUse;
+        setCurrentVerse(finalVerse);
+        await fetchVerseText(finalVerse);
+
+        // Update game state with the verse
         await supabase
           .from("games")
           .update({
             game_state: {
               categories: selectedGameCategories,
-              verse: data.verse,
+              verse: finalVerse,
               difficulty: game?.game_state?.difficulty || difficultyLevel,
               whoStarts: "jeeves"
             }
