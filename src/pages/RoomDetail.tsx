@@ -64,6 +64,7 @@ import { GenesisGalleryTour } from "@/components/onboarding/GenesisGalleryTour";
 import { use24FPSTour } from "@/hooks/use24FPSTour";
 import { StoryLibrary } from "@/components/story-room/StoryLibrary";
 import { SymbolLibrary } from "@/components/symbol-room/SymbolLibrary";
+import { PatternsLibrary } from "@/components/patterns-room/PatternsLibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 
 // Room IDs that have quick start guides
@@ -617,6 +618,13 @@ export default function RoomDetail() {
                 {room.id === "123h" && (
                   <RoomLibrary roomId="123h">
                     <ThreeHeavensRoomDrill />
+                  </RoomLibrary>
+                )}
+
+                {/* Parallels Room - Biblical Patterns Library */}
+                {room.id === "p||" && (
+                  <RoomLibrary roomId="p||">
+                    <PatternsLibrary />
                   </RoomLibrary>
                 )}
 
