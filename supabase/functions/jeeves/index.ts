@@ -2957,7 +2957,156 @@ Respond in this JSON format:
 }
 
 Be genuinely excited about good insights! ${difficultyContext}`;
-    
+
+    } else if (mode === "chain-chess-v2-opening") {
+      // New Chain Chess V2 - Opening Move
+      const difficultyContext = difficulty === "kids"
+        ? "Use simpler language and shorter sentences. Make it encouraging and fun for children."
+        : "Use scholarly language with depth. Make it theologically rich for adult learners.";
+
+      systemPrompt = `You are Jeeves, an expert Phototheology scholar playing Chain Chess V2!
+Your role is to make insightful biblical connections using PT Rooms, Biblical Books, and PT Principles.
+${difficultyContext}
+
+**PT ROOMS you can challenge with:**
+- Story Room (SR): Transform biblical events into memorable scenes
+- Imagination Room (IR): Experience Scripture with all five senses
+- Concentration Room (CR): Find Christ in every text
+- Questions Room (QR): Three-tiered interrogation method
+- Def-Com Room (DC): Definitions and commentary
+- Parallels Room (P‖): Mirrored actions across Scripture
+- Blue Room/Sanctuary (BL): Connect to Sanctuary furniture/services
+- Time Zone Room (TZ): Six temporal-spatial zones
+- Patterns Room (PRm): Track recurring biblical motifs
+- Fruit Room (FRt): Test interpretation by spiritual fruit
+- Meditation Room (MR): Slow, phrase-by-phrase immersion
+- Dimensions Room (DR): Apply the 5D framework
+
+**PT PRINCIPLES:**
+- Three Heavens (1H, 2H, 3H): DoL horizons across Scripture
+- Eight Cycles (@Ed, @No, @Ab, @Mo, @Da, @Ex, @CyC, @Re)
+- Five Dimensions (1D-5D)
+- Type & Antitype
+- Repeat & Enlarge
+- Sanctuary Hermeneutic`;
+
+      userPrompt = `You're starting Chain Chess V2! Create an opening move.
+
+1. Choose a powerful, interesting verse (avoid overused ones like John 3:16)
+2. Give a 3-4 sentence exposition demonstrating PT methodology
+3. Challenge the player with a specific PT Room, Biblical Book, or PT Principle
+
+Return JSON:
+{
+  "verse": "Book chapter:verse",
+  "verseText": "The verse text from KJV",
+  "comment": "Your 3-4 sentence exposition using PT insights",
+  "challengeType": "room" | "book" | "principle",
+  "challengeId": "the specific id (e.g., 'ir' for Imagination Room, 'romans' for Romans, 'three-heavens' for Three Heavens)",
+  "challengeName": "The full name (e.g., 'The Imagination Room', 'Romans', 'The Three Heavens Principle')"
+}`;
+
+    } else if (mode === "chain-chess-v2-judge") {
+      // New Chain Chess V2 - Judge Player Connection
+      const difficultyContext = difficulty === "kids"
+        ? "Be generous but still check for genuine engagement. Score 6-8 for good effort, 9-10 for excellent."
+        : "Be rigorous. Score 4-6 for decent, 7-8 for strong, 9-10 for exceptional only.";
+
+      const challengeDetails = body.challengeDetails || {};
+      const challengeMethodology = challengeDetails.methodology || challengeDetails.description || "";
+      const challengeCriteria = challengeDetails.validationCriteria || [];
+
+      systemPrompt = `You are Jeeves, the official judge for Chain Chess V2!
+${difficultyContext}
+
+**VALIDATION CRITERIA for ${body.challengeName || "this challenge"}:**
+${challengeCriteria.map((c: string) => `- ${c}`).join("\n") || "Standard PT methodology required"}
+
+${challengeMethodology ? `**Methodology:** ${challengeMethodology}` : ""}
+
+**APPROVAL requires:**
+1. Genuinely engages the assigned Room, Book, or Principle (not surface mention)
+2. Extends or deepens the previous comment (not merely restates)
+3. Demonstrates actual PT methodology (not generic Bible study)
+
+**DENIAL (Strike) for:**
+1. Only name-drops without substantive use
+2. Contradicts PT guardrails (missing Christ-centeredness, wrong placement)
+3. Fails to logically bridge from previous comment
+
+**BONUS POINTS for:**
+- Exceptional synthesis across multiple PT elements (+1)
+- Discovering an unexpected but valid connection (+1)
+- Completing a cycle through all categories without strikes (+1)`;
+
+      userPrompt = `JUDGE this Chain Chess V2 move:
+
+**Challenge Given:** ${body.challengeName} (${body.challengeType})
+${challengeMethodology ? `**Challenge Method:** ${challengeMethodology}` : ""}
+
+**Player's Response:**
+- Verse: ${verse}
+- Verse Text: ${body.verseText || ""}
+- Connection: ${body.connection || ""}
+- Comment: ${body.comment || ""}
+
+**Previous moves context:** ${JSON.stringify(previousMoves?.slice(-3) || [])}
+
+**EVALUATE:**
+1. Does the verse genuinely relate to "${body.challengeName}"?
+2. Does the connection demonstrate proper ${body.challengeType === "room" ? "room methodology" : body.challengeType === "book" ? "book engagement" : "principle application"}?
+3. Is the comment biblically sound and insightful?
+4. Does it build on previous moves, not just restate?
+
+Return JSON:
+{
+  "approved": true/false,
+  "explanation": "2-3 sentences explaining your ruling - be specific about what worked or what was missing",
+  "score": 0-10 (0 if denied),
+  "bonusPoints": 0-3 (only if exceptional)
+}`;
+
+    } else if (mode === "chain-chess-v2-response") {
+      // New Chain Chess V2 - Jeeves Response Move
+      const difficultyContext = difficulty === "kids"
+        ? "Use simpler language. Be encouraging."
+        : "Use scholarly language with depth.";
+
+      const challengeDetails = body.challengeDetails || {};
+
+      systemPrompt = `You are Jeeves responding in Chain Chess V2!
+${difficultyContext}
+
+You must respond to the challenge "${body.challengeName}" using proper PT methodology.
+Show masterful use of the ${body.challengeType === "room" ? "room's methodology" : body.challengeType === "book" ? "book's themes" : "principle's framework"}.`;
+
+      userPrompt = `Respond to this Chain Chess V2 challenge:
+
+**Challenge:** ${body.challengeName} (${body.challengeType})
+${challengeDetails.methodology ? `**Method required:** ${challengeDetails.methodology}` : ""}
+${challengeDetails.themes ? `**Book themes:** ${challengeDetails.themes.join(", ")}` : ""}
+${challengeDetails.description ? `**Principle:** ${challengeDetails.description}` : ""}
+
+**Previous moves:** ${JSON.stringify(previousMoves?.slice(-3) || [])}
+
+**YOUR TASK:**
+1. Find a verse that genuinely engages this challenge
+2. Write a connection demonstrating proper methodology
+3. Add a 3-4 sentence comment with biblical insight
+4. Challenge back with a DIFFERENT element (room, book, or principle)
+
+Return JSON:
+{
+  "verse": "Book chapter:verse",
+  "verseText": "The verse text",
+  "connection": "How your verse connects using the required methodology",
+  "comment": "Your 3-4 sentence biblical exposition",
+  "challengeType": "room" | "book" | "principle",
+  "challengeId": "specific id",
+  "challengeName": "Full name",
+  "score": 1
+}`;
+
     } else if (mode === "culture-controversy") {
       systemPrompt = `You are Jeeves, a biblical scholar analyzing cultural issues through Jesus' teachings.
 Be balanced, compassionate, and grounded in Scripture. Address both sides with grace while maintaining biblical truth.`;
@@ -5428,9 +5577,139 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
         );
       } catch {
         return new Response(
-          JSON.stringify({ 
-            feedback: content, 
-            score: 7 
+          JSON.stringify({
+            feedback: content,
+            score: 7
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } else if (mode === "chain-chess-v2-opening") {
+      // Parse opening move from Jeeves
+      console.log("=== PARSING CHAIN CHESS V2 OPENING ===");
+      try {
+        let cleanedContent = content.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+        const jsonBlockMatch = cleanedContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+        if (jsonBlockMatch) {
+          cleanedContent = jsonBlockMatch[1].trim();
+        }
+        const jsonObjectMatch = cleanedContent.match(/\{[\s\S]*\}/);
+        if (jsonObjectMatch) {
+          cleanedContent = jsonObjectMatch[0];
+        }
+
+        const parsed = JSON.parse(cleanedContent);
+        console.log("Parsed opening:", parsed);
+
+        return new Response(
+          JSON.stringify({
+            verse: parsed.verse || "Genesis 1:1",
+            comment: parsed.comment || parsed.commentary || "Let's explore the typological connections together!",
+            challengeType: parsed.challengeType || "room",
+            challengeId: parsed.challengeId || "story-room",
+            challengeName: parsed.challengeName || "Story Room"
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (parseError) {
+        console.error("Error parsing chain-chess-v2-opening:", parseError);
+        return new Response(
+          JSON.stringify({
+            verse: "Genesis 1:1",
+            comment: "In the beginning, God created the heavens and the earth. This foundational verse establishes the Story Room pattern - God as the Author of all creation, setting the stage for the redemption narrative.",
+            challengeType: "room",
+            challengeId: "story-room",
+            challengeName: "Story Room"
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } else if (mode === "chain-chess-v2-judge") {
+      // Parse judgment of player's connection
+      console.log("=== PARSING CHAIN CHESS V2 JUDGE ===");
+      try {
+        let cleanedContent = content.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+        const jsonBlockMatch = cleanedContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+        if (jsonBlockMatch) {
+          cleanedContent = jsonBlockMatch[1].trim();
+        }
+        const jsonObjectMatch = cleanedContent.match(/\{[\s\S]*\}/);
+        if (jsonObjectMatch) {
+          cleanedContent = jsonObjectMatch[0];
+        }
+
+        const parsed = JSON.parse(cleanedContent);
+        console.log("Parsed judgment:", parsed);
+
+        // Determine if approved based on ruling field
+        const ruling = (parsed.ruling || "").toUpperCase();
+        const approved = ruling.includes("APPROVED") || ruling.includes("APPROVE");
+
+        return new Response(
+          JSON.stringify({
+            approved,
+            ruling: parsed.ruling || (approved ? "APPROVED" : "DENIED"),
+            reason: parsed.reason || parsed.explanation || "Connection evaluated.",
+            pointsAwarded: approved ? (parsed.pointsAwarded || parsed.points || 10) : 0,
+            bonusPoints: parsed.bonusPoints || 0,
+            feedback: parsed.feedback || parsed.reason || ""
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (parseError) {
+        console.error("Error parsing chain-chess-v2-judge:", parseError);
+        // Try to determine approval from raw content
+        const contentUpper = content.toUpperCase();
+        const approved = contentUpper.includes("APPROVED") && !contentUpper.includes("DENIED");
+        return new Response(
+          JSON.stringify({
+            approved,
+            ruling: approved ? "APPROVED" : "DENIED",
+            reason: content.substring(0, 200),
+            pointsAwarded: approved ? 10 : 0,
+            bonusPoints: 0,
+            feedback: content
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } else if (mode === "chain-chess-v2-response") {
+      // Parse Jeeves' response move
+      console.log("=== PARSING CHAIN CHESS V2 RESPONSE ===");
+      try {
+        let cleanedContent = content.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+        const jsonBlockMatch = cleanedContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+        if (jsonBlockMatch) {
+          cleanedContent = jsonBlockMatch[1].trim();
+        }
+        const jsonObjectMatch = cleanedContent.match(/\{[\s\S]*\}/);
+        if (jsonObjectMatch) {
+          cleanedContent = jsonObjectMatch[0];
+        }
+
+        const parsed = JSON.parse(cleanedContent);
+        console.log("Parsed response:", parsed);
+
+        return new Response(
+          JSON.stringify({
+            verse: parsed.verse || "John 1:1",
+            comment: parsed.comment || parsed.commentary || "Building on the connection...",
+            challengeType: parsed.challengeType || "book",
+            challengeId: parsed.challengeId || "john",
+            challengeName: parsed.challengeName || "John"
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (parseError) {
+        console.error("Error parsing chain-chess-v2-response:", parseError);
+        // Fallback response
+        return new Response(
+          JSON.stringify({
+            verse: "John 1:1",
+            comment: "In the beginning was the Word. This connects beautifully to Genesis, showing Christ as the eternal Word present at creation.",
+            challengeType: "book",
+            challengeId: "john",
+            challengeName: "John"
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
