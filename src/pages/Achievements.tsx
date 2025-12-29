@@ -34,12 +34,20 @@ const Achievements = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
 const [certificateAchievement, setCertificateAchievement] = useState<any>(null);
   const [mainTab, setMainTab] = useState<"gallery" | "roadmap">("gallery");
-  const [userStats, setUserStats] = useState({
-    roomsCompleted: 0,
-    drillsCompleted: 0,
-    perfectDrills: 0,
-    studyStreak: 0,
-    floorsCompleted: 0,
+  const [userStats, setUserStats] = useState<Record<string, number>>({
+    rooms_completed: 0,
+    drills_completed: 0,
+    perfect_drills: 0,
+    study_streak: 0,
+    floors_completed: 0,
+    chapters_read: 0,
+    verses_memorized: 0,
+    challenges_completed: 0,
+    devotional_days: 0,
+    escape_rooms_completed: 0,
+    games_completed: 0,
+    posts_created: 0,
+    comments_created: 0,
   });
 
   useEffect(() => {
@@ -64,37 +72,67 @@ const [certificateAchievement, setCertificateAchievement] = useState<any>(null);
       .from("user_achievements")
       .select("achievement_id")
       .eq("user_id", user!.id);
-    
+
     setUserAchievements(new Set(data?.map(a => a.achievement_id) || []));
     setUserAchievementData(data || []);
 
-    // Fetch user stats
-    const { data: roomProgress } = await supabase
-      .from("room_progress")
-      .select("floor_number")
-      .eq("user_id", user!.id)
-      .not("completed_at", "is", null);
+    // Fetch all user stats for achievement progress tracking
+    const [
+      roomProgressRes,
+      drillResultsRes,
+      profileRes,
+      readingLogsRes,
+      memorizationRes,
+      challengesRes,
+      devotionalsRes,
+      escapeRoomsRes,
+      gameSessionsRes,
+      postsRes,
+      commentsRes,
+    ] = await Promise.all([
+      supabase.from("room_progress").select("floor_number").eq("user_id", user!.id).not("completed_at", "is", null),
+      supabase.from("drill_results").select("score, max_score").eq("user_id", user!.id),
+      supabase.from("profiles").select("daily_study_streak, longest_study_streak").eq("id", user!.id).single(),
+      supabase.from("daily_reading_log").select("id").eq("user_id", user!.id),
+      supabase.from("memorization_verses").select("id, mastery_level").eq("user_id", user!.id),
+      supabase.from("challenge_submissions").select("id").eq("user_id", user!.id),
+      supabase.from("devotional_progress").select("id").eq("user_id", user!.id),
+      supabase.from("escape_room_attempts").select("id").eq("user_id", user!.id).eq("completed", true),
+      supabase.from("game_sessions").select("id").eq("user_id", user!.id).not("completed_at", "is", null),
+      supabase.from("community_posts").select("id").eq("user_id", user!.id),
+      supabase.from("community_comments").select("id").eq("user_id", user!.id),
+    ]);
 
-    const { data: drillResults } = await supabase
-      .from("drill_results")
-      .select("score, max_score")
-      .eq("user_id", user!.id);
+    const roomProgress = roomProgressRes.data || [];
+    const drillResults = drillResultsRes.data || [];
+    const profile = profileRes.data;
+    const readingLogs = readingLogsRes.data || [];
+    const memorization = memorizationRes.data || [];
+    const challenges = challengesRes.data || [];
+    const devotionals = devotionalsRes.data || [];
+    const escapeRooms = escapeRoomsRes.data || [];
+    const gameSessions = gameSessionsRes.data || [];
+    const posts = postsRes.data || [];
+    const comments = commentsRes.data || [];
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("daily_study_streak")
-      .eq("id", user!.id)
-      .single();
-
-    const uniqueFloors = new Set(roomProgress?.map(r => r.floor_number) || []);
-    const perfectCount = drillResults?.filter(d => d.score === d.max_score).length || 0;
+    const uniqueFloors = new Set(roomProgress.map(r => r.floor_number));
+    const perfectCount = drillResults.filter(d => d.score === d.max_score).length;
+    const memorizedVerses = memorization.filter(v => (v.mastery_level || 0) >= 3).length;
 
     setUserStats({
-      roomsCompleted: roomProgress?.length || 0,
-      drillsCompleted: drillResults?.length || 0,
-      perfectDrills: perfectCount,
-      studyStreak: profile?.daily_study_streak || 0,
-      floorsCompleted: uniqueFloors.size,
+      rooms_completed: roomProgress.length,
+      drills_completed: drillResults.length,
+      perfect_drills: perfectCount,
+      study_streak: profile?.daily_study_streak || 0,
+      floors_completed: uniqueFloors.size,
+      chapters_read: readingLogs.length,
+      verses_memorized: memorizedVerses,
+      challenges_completed: challenges.length,
+      devotional_days: devotionals.length,
+      escape_rooms_completed: escapeRooms.length,
+      games_completed: gameSessions.length,
+      posts_created: posts.length,
+      comments_created: comments.length,
     });
   };
 
@@ -384,17 +422,8 @@ const [certificateAchievement, setCertificateAchievement] = useState<any>(null);
               const route = requirementRoutes[achievement.requirement_type];
               
               // Calculate progress for locked achievements
-              let current = 0;
               const target = achievement.requirement_count || 1;
-              if (!isUnlocked) {
-                switch (achievement.requirement_type) {
-                  case "rooms_completed": current = userStats.roomsCompleted; break;
-                  case "drills_completed": current = userStats.drillsCompleted; break;
-                  case "perfect_drills": current = userStats.perfectDrills; break;
-                  case "study_streak": current = userStats.studyStreak; break;
-                  case "floors_completed": current = userStats.floorsCompleted; break;
-                }
-              }
+              const current = !isUnlocked ? (userStats[achievement.requirement_type] || 0) : target;
               const percentage = Math.min((current / target) * 100, 100);
 
               return (
@@ -500,17 +529,8 @@ const [certificateAchievement, setCertificateAchievement] = useState<any>(null);
               const route = requirementRoutes[achievement.requirement_type];
               
               // Calculate progress for locked achievements
-              let current = 0;
               const target = achievement.requirement_count || 1;
-              if (!isUnlocked) {
-                switch (achievement.requirement_type) {
-                  case "rooms_completed": current = userStats.roomsCompleted; break;
-                  case "drills_completed": current = userStats.drillsCompleted; break;
-                  case "perfect_drills": current = userStats.perfectDrills; break;
-                  case "study_streak": current = userStats.studyStreak; break;
-                  case "floors_completed": current = userStats.floorsCompleted; break;
-                }
-              }
+              const current = !isUnlocked ? (userStats[achievement.requirement_type] || 0) : target;
               const percentage = Math.min((current / target) * 100, 100);
 
               return (

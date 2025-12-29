@@ -91,7 +91,7 @@ export default function Streaks() {
           currentStreak: userData.chain_chess_streak || 0,
           longestStreak: userData.longest_chess_streak || 0,
           description: "Winning at least one game of Chain Chess per day.",
-          color: userData.chain_chess_streak > 0 ? "border-gray-400" : "border-gray-400"
+          color: userData.chain_chess_streak > 0 ? "border-purple-500" : "border-gray-400"
         },
         {
           activity: "Equations",
@@ -99,7 +99,7 @@ export default function Streaks() {
           currentStreak: userData.equations_streak || 0,
           longestStreak: userData.longest_equations_streak || 0,
           description: "Completing one round of the Equations game per day.",
-          color: userData.equations_streak > 0 ? "border-gray-400" : "border-gray-400"
+          color: userData.equations_streak > 0 ? "border-blue-500" : "border-gray-400"
         }
       ]);
     }
