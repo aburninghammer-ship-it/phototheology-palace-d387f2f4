@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus, GraduationCap, Home, HeartHandshake, Sun, Church } from "lucide-react";
+import { Book, Plus, Sparkles, Clock, Calendar, ChevronRight, Trash2, Gift, Heart, Star, Zap, Users, UserPlus, GraduationCap, Home, HeartHandshake, Sun, Church, GraduationCap as StudyIcon } from "lucide-react";
+import { TodaysStudy } from "@/components/studies/TodaysStudy";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { devotionalsSteps } from "@/config/howItWorksSteps";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
@@ -228,21 +229,29 @@ export default function Devotionals() {
           />
         )}
 
-        {/* Tabs for Personal vs Church */}
+        {/* Tabs for Personal vs Church vs Study */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-lg grid-cols-3">
             <TabsTrigger value="personal" className="flex items-center gap-2">
               <Book className="h-4 w-4" />
               Personal
             </TabsTrigger>
             <TabsTrigger value="church" className="flex items-center gap-2">
               <Church className="h-4 w-4" />
-              Church Ministry
+              Church
+            </TabsTrigger>
+            <TabsTrigger value="study" className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4" />
+              Study
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="church" className="mt-6">
             <ChurchDevotionalTab onCreateNew={() => setShowChurchWizard(true)} />
+          </TabsContent>
+
+          <TabsContent value="study" className="mt-6">
+            <TodaysStudy />
           </TabsContent>
 
           <TabsContent value="personal" className="mt-6 space-y-8">
