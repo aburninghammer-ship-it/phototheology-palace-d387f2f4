@@ -177,6 +177,196 @@ const easyStudies: DailyStudy[] = [
     ],
     keyInsight: 'Every covenant in the Bible is really about Jesus. The rainbow points to God\'s faithfulness in Christ. Abraham\'s seed is Christ (Galatians 3:16). The new covenant is written on our hearts through Jesus!',
     practiceActivity: 'List the major covenants: Adam, Noah, Abraham, Moses, David, New Covenant. What does each one promise?'
+  },
+
+  // MORE EASY STUDIES - Noah's Ark
+  {
+    id: 'easy-noah-1',
+    title: 'Christ in Noah\'s Ark',
+    level: 'easy',
+    palacePrinciple: 'Christ Pattern (First Wall)',
+    principleDescription: 'Noah\'s ark is a powerful picture of salvation in Christ.',
+    room: 'studies',
+    introduction: 'The story of Noah is more than history — it\'s a picture of how Christ saves us from judgment!',
+    focusScripture: 'Genesis 6-8',
+    questions: [
+      { question: 'What was the only way to be saved from the flood?', hint: 'Being inside the ark' },
+      { question: 'Who closed the door of the ark?', scripture: 'Genesis 7:16' },
+      { question: 'How is the ark like Christ?', scripture: '1 Peter 3:20-21' }
+    ],
+    keyInsight: 'Just as the ark was the ONLY way of salvation in Noah\'s day, Jesus is the ONLY way of salvation today (John 14:6). God Himself closed the door — showing that salvation is entirely God\'s work!',
+    practiceActivity: 'Read 1 Peter 3:20-21. How does Peter connect Noah\'s flood to baptism?'
+  },
+
+  // Ruth and the Kinsman Redeemer
+  {
+    id: 'easy-ruth-1',
+    title: 'Boaz: A Picture of Jesus',
+    level: 'easy',
+    palacePrinciple: 'Christ Pattern (First Wall)',
+    principleDescription: 'The kinsman-redeemer is one of the clearest Christ-types in Scripture.',
+    room: 'studies',
+    introduction: 'Ruth was a poor, foreign widow. Boaz was a wealthy landowner. Their story is a beautiful picture of Christ and His church!',
+    focusScripture: 'Ruth 2-4',
+    questions: [
+      { question: 'What does "kinsman-redeemer" mean?', hint: 'A family member who could buy back what was lost' },
+      { question: 'What did Boaz redeem for Ruth?', scripture: 'Ruth 4:9-10' },
+      { question: 'How is this like what Jesus did for us?', scripture: 'Galatians 3:13' }
+    ],
+    keyInsight: 'Boaz redeemed Ruth (a Gentile) and bought back the family inheritance. Jesus redeems us (sinners) and restores our lost inheritance — eternal life!',
+    practiceActivity: 'Ruth was a Moabite (outsider) who became part of Jesus\' family line (Matthew 1:5). What does this teach about who Jesus saves?'
+  },
+
+  // Elijah and Elisha
+  {
+    id: 'easy-elijah-1',
+    title: 'Elijah to Elisha — The Transition',
+    level: 'easy',
+    palacePrinciple: 'Biblical Parallels',
+    principleDescription: 'The transition from Elijah to Elisha pictures John the Baptist and Jesus.',
+    room: 'p||',
+    introduction: 'At the Jordan River, something amazing happened: Elijah\'s ministry ended and Elisha\'s began. This same pattern repeated with John the Baptist and Jesus!',
+    focusScripture: '2 Kings 2:1-15',
+    questions: [
+      { question: 'Where did the transition happen between Elijah and Elisha?', hint: 'At the Jordan River' },
+      { question: 'What happened to Elijah\'s ministry after this?', hint: 'He was taken up' },
+      { question: 'How does this parallel John the Baptist and Jesus?', scripture: 'John 3:30' }
+    ],
+    keyInsight: '"He must increase, I must decrease" — John said this at the Jordan! Just as Elijah decreased and Elisha increased at the Jordan, John decreased and Jesus increased after the baptism at the same river!',
+    practiceActivity: 'Read John 3:22-30. What does John say about himself compared to Jesus?'
+  },
+
+  // The Bronze Serpent
+  {
+    id: 'easy-serpent-1',
+    title: 'Look and Live!',
+    level: 'easy',
+    palacePrinciple: 'Christ Pattern (First Wall)',
+    principleDescription: 'The bronze serpent Jesus used to explain salvation.',
+    room: 'studies',
+    introduction: 'When poisonous snakes attacked Israel, God gave a strange solution — look at a bronze serpent on a pole. Jesus said this was about HIM!',
+    focusScripture: 'Numbers 21:4-9; John 3:14-15',
+    questions: [
+      { question: 'What did the people have to do to be healed?', hint: 'Numbers 21:8-9' },
+      { question: 'Who did Jesus say the bronze serpent represented?', scripture: 'John 3:14-15' },
+      { question: 'Why do you think a serpent — symbol of sin — was used?' }
+    ],
+    keyInsight: 'Jesus became sin for us (2 Corinthians 5:21). Just as the bronze serpent was lifted up, Jesus was lifted up on the cross. And just as looking brought healing, believing in Jesus brings eternal life!',
+    practiceActivity: 'Jesus used this story with Nicodemus. Why was "looking" enough to save?'
+  },
+
+  // The Good Shepherd
+  {
+    id: 'easy-shepherd-1',
+    title: 'Jesus the Good Shepherd',
+    level: 'easy',
+    palacePrinciple: 'Christ Pattern (First Wall)',
+    principleDescription: 'The shepherd imagery runs throughout Scripture.',
+    room: 'studies',
+    introduction: 'David was a shepherd. Jesus called Himself the Good Shepherd. This connection runs deep throughout the Bible!',
+    focusScripture: 'Psalm 23; John 10:1-18',
+    questions: [
+      { question: 'In Psalm 23, who is "my shepherd"?', hint: 'The LORD' },
+      { question: 'What does the Good Shepherd do for His sheep?', scripture: 'John 10:11' },
+      { question: 'What does "I shall not want" mean in your life?' }
+    ],
+    keyInsight: 'The same LORD who is David\'s shepherd is Jesus! He leads us through dark valleys, prepares a table in enemy territory, and gives us eternal security. We follow Him because we know His voice.',
+    practiceActivity: 'Read Psalm 23 slowly. Personalize each verse: "He makes ME lie down... He leads ME..."'
+  },
+
+  // The Word Made Flesh
+  {
+    id: 'easy-word-1',
+    title: 'The Living Word',
+    level: 'easy',
+    palacePrinciple: 'Christ Pattern (First Wall)',
+    principleDescription: 'Jesus is the Word of God made flesh.',
+    room: 'studies',
+    introduction: 'John begins his Gospel with incredible words: "In the beginning was the Word..." What does it mean that Jesus IS the Word?',
+    focusScripture: 'John 1:1-14',
+    questions: [
+      { question: 'When did the Word exist?', hint: 'John 1:1 — "In the beginning"' },
+      { question: 'What did the Word become?', scripture: 'John 1:14' },
+      { question: 'If Jesus is the Word, what does reading the Bible really mean?' }
+    ],
+    keyInsight: 'Jesus is the Word because He is God\'s complete message to us. When you read Scripture, you are meeting Jesus! The Bible isn\'t just information — it\'s encounter with the Living Word.',
+    practiceActivity: 'Before your next Bible reading, pray: "Jesus, reveal Yourself to me in these words."'
+  },
+
+  // Gospel Floor - Grace
+  {
+    id: 'easy-gospel-1',
+    title: 'The Foundation of Grace',
+    level: 'easy',
+    palacePrinciple: 'Gospel Floor (Fifth Wall)',
+    principleDescription: 'Every Bible passage rests on the foundation of salvation by grace.',
+    room: 'studies',
+    introduction: 'The palace has a floor — and that floor is the Gospel! No matter what passage you study, underneath it all is the good news of grace.',
+    focusScripture: 'Ephesians 2:8-9',
+    questions: [
+      { question: 'By what are we saved?', hint: 'Verse 8 — grace through faith' },
+      { question: 'Can we earn salvation by works?', scripture: 'Ephesians 2:9' },
+      { question: 'If salvation is a gift, what is our response?', scripture: 'Ephesians 2:10' }
+    ],
+    keyInsight: 'The Gospel Floor means that EVERY Bible story rests on grace. Even the law, the sanctuary, and prophecy — all of it points to God\'s free gift in Christ. We don\'t earn it; we receive it!',
+    practiceActivity: 'When studying any Bible passage, ask: "Where is the grace here? What is the good news?"'
+  },
+
+  // Fruit of the Spirit
+  {
+    id: 'easy-fruit-1',
+    title: 'The Character of Christ',
+    level: 'easy',
+    palacePrinciple: 'Fruit Room Pattern',
+    principleDescription: 'The fruit of the Spirit is the character of Jesus reproduced in us.',
+    room: 'frt',
+    introduction: 'Paul lists nine "fruits" of the Spirit. But really, they\'re all describing Jesus! The Spirit\'s work is to make us like Christ.',
+    focusScripture: 'Galatians 5:22-23',
+    questions: [
+      { question: 'How many fruits are listed? Is this one fruit or nine?', hint: 'Notice "fruit" is singular' },
+      { question: 'Which fruit do you most need right now?' },
+      { question: 'How is this fruit different from trying harder?', scripture: 'John 15:4-5' }
+    ],
+    keyInsight: 'It\'s "fruit" (singular) because it\'s describing ONE thing — the character of Christ! All nine qualities are different aspects of Jesus. The Spirit doesn\'t just give us patience; He gives us JESUS who is patient.',
+    practiceActivity: 'Pick one fruit. Find a story where Jesus displayed that quality. Ask the Spirit to grow that in you.'
+  },
+
+  // Heaven Ceiling
+  {
+    id: 'easy-heaven-1',
+    title: 'The Heavenly Perspective',
+    level: 'easy',
+    palacePrinciple: 'Heaven Ceiling (Sixth Wall)',
+    principleDescription: 'Every passage connects to heavenly realities.',
+    room: 'studies',
+    introduction: 'The palace has a ceiling — and that ceiling is Heaven! Every Bible story has a heavenly dimension if we look for it.',
+    focusScripture: 'Hebrews 8:1-5',
+    questions: [
+      { question: 'Where is Jesus now?', scripture: 'Hebrews 8:1' },
+      { question: 'What was the earthly sanctuary a copy of?', scripture: 'Hebrews 8:5' },
+      { question: 'If the earthly was a "copy," what is the real thing?' }
+    ],
+    keyInsight: 'The Heaven Ceiling reminds us that earthly things point to heavenly realities. The sanctuary was a copy of heaven! When we study Scripture, we\'re learning about what\'s happening in heaven right now.',
+    practiceActivity: 'Ask about any Bible passage: "What heavenly reality does this point to?"'
+  },
+
+  // Symbols and Types
+  {
+    id: 'easy-symbols-1',
+    title: 'Reading God\'s Picture Language',
+    level: 'easy',
+    palacePrinciple: 'Symbols and Types',
+    principleDescription: 'God uses consistent symbols throughout Scripture.',
+    room: 'st',
+    introduction: 'God speaks in pictures! Water, fire, bread, light — these symbols mean the same thing throughout the Bible.',
+    focusScripture: 'John 4:10-14; 7:37-39',
+    questions: [
+      { question: 'What does Jesus offer the woman at the well?', hint: 'Living water' },
+      { question: 'What does water represent in John 7:38-39?', scripture: 'John 7:39' },
+      { question: 'Where else in the Bible do you see water as a symbol of the Spirit?' }
+    ],
+    keyInsight: 'Water = Spirit/Life throughout Scripture. From Genesis 1 (Spirit hovering over waters) to Revelation 22 (river of life), water consistently represents the Holy Spirit\'s life-giving presence!',
+    practiceActivity: 'Make a list of Bible symbols you know: lamb, fire, oil, bread, wine. What does each represent?'
   }
 ];
 
@@ -333,6 +523,216 @@ const intermediateStudies: DailyStudy[] = [
     keyInsight: 'Moses\' life was a prophetic preview of Christ: Birth threat, Egypt, water passage, wilderness, mountain revelation, rejection by his people, but ultimately bringing them to the Promised Land!',
     practiceActivity: 'Continue the parallel: How did Moses\' final song and death (Deuteronomy 31-34) parallel Jesus\' last week?',
     relatedPrinciples: ['Pentateuch Patterns', 'Deliverance Pattern', 'Prophet Office']
+  },
+
+  // MORE INTERMEDIATE STUDIES - David Pattern
+  {
+    id: 'int-david-pattern',
+    title: 'The David-Christ Pattern',
+    level: 'intermediate',
+    palacePrinciple: 'Christ Pattern in Historical Books',
+    principleDescription: 'David\'s life and kingdom prophesy Christ\'s life and eternal kingdom.',
+    room: 'p||',
+    introduction: 'David is called "a man after God\'s own heart." His reign foreshadowed Christ\'s kingdom. But the parallels go much deeper.',
+    focusScripture: '1 Samuel 16-17; 2 Samuel 5-7',
+    questions: [
+      { question: 'David was anointed king but didn\'t reign immediately. How does this parallel Christ?', scripture: 'Daniel 7:13-14' },
+      { question: 'David defeated Goliath by unexpected means. How did Christ defeat Satan?', scripture: 'Colossians 2:15' },
+      { question: 'David\'s kingdom was promised to last forever (2 Samuel 7:16). Who fulfills this?', scripture: 'Luke 1:32-33' },
+      { question: 'David was rejected by Saul but eventually reigned. How does this parallel Christ?' }
+    ],
+    keyInsight: 'David was anointed (1 Samuel 16) but spent years in hiding before reigning. Jesus was anointed at baptism, spent years in ministry, was "hidden" in death, and will reign eternally. The rejected becomes the ruler!',
+    practiceActivity: 'Compare David\'s escape from Saul in the wilderness with Jesus\' rejection by the religious leaders.',
+    relatedPrinciples: ['Kingdom Pattern', 'Rejected-then-Exalted', 'King Office']
+  },
+
+  // Jonah Pattern
+  {
+    id: 'int-jonah-pattern',
+    title: 'The Sign of Jonah',
+    level: 'intermediate',
+    palacePrinciple: 'Death and Resurrection Pattern',
+    principleDescription: 'Jesus Himself used Jonah as a sign of His death and resurrection.',
+    room: 'p||',
+    introduction: 'When asked for a sign, Jesus pointed to Jonah. This Old Testament prophet is one of the clearest resurrection types.',
+    focusScripture: 'Jonah 1-2; Matthew 12:38-41',
+    questions: [
+      { question: 'How long was Jonah in the fish?', scripture: 'Jonah 1:17' },
+      { question: 'How long was Jesus in the tomb?', scripture: 'Matthew 12:40' },
+      { question: 'Jonah\'s "death" led to salvation for pagan sailors and Ninevites. How does this parallel the cross?', scripture: 'John 12:32' },
+      { question: 'Why did Jesus call Jonah the ONLY sign for that generation?' }
+    ],
+    keyInsight: 'Jonah = Christ in death. Three days in the belly of the earth (fish/tomb), then emergence to bring salvation to Gentiles! The resurrection is the ultimate sign that validates everything Jesus claimed.',
+    practiceActivity: 'Read Jonah 2 — Jonah\'s prayer from the fish. How does it sound like Christ\'s experience in the tomb?',
+    relatedPrinciples: ['Resurrection Pattern', 'Three Days Pattern', 'Gentile Mission']
+  },
+
+  // Temple 46 Years
+  {
+    id: 'int-temple-46',
+    title: 'The 46-Year Temple Pattern',
+    level: 'intermediate',
+    palacePrinciple: 'Christ-Church Parallel',
+    principleDescription: 'A fascinating numeric parallel between Christ, His temple, and the church.',
+    room: 'studies',
+    introduction: 'When Jesus cleansed the temple, the Jews mentioned it had been 46 years in building. This number appears again in church history!',
+    focusScripture: 'John 2:13-21',
+    questions: [
+      { question: 'How old was the temple when Jesus cleansed it?', scripture: 'John 2:20' },
+      { question: 'What did Jesus mean by "Destroy this temple"?', scripture: 'John 2:21' },
+      { question: 'The church came out of the "wilderness" in 1798. What happened 46 years later?', hint: '1798 + 46 = 1844' },
+      { question: 'How does the "cleansing" pattern repeat?' }
+    ],
+    keyInsight: 'Jesus cleansed the 46-year-old temple. The church emerged from the wilderness in 1798, and 46 years later (1844) the heavenly sanctuary cleansing began! The church relives Christ\'s experience.',
+    practiceActivity: 'Research what began in 1844. How is this a "temple cleansing" for the church?',
+    relatedPrinciples: ['1844', 'Sanctuary Cleansing', 'Christ-Church Parallel']
+  },
+
+  // Elijah Message
+  {
+    id: 'int-elijah-message',
+    title: 'The Elijah Message',
+    level: 'intermediate',
+    palacePrinciple: 'Three Angels\' Messages Pattern',
+    principleDescription: 'Elijah\'s message to Israel parallels the end-time message to the world.',
+    room: '3a',
+    introduction: 'Malachi prophesied that Elijah would come before "the great and dreadful day of the Lord." John the Baptist was one fulfillment. Is there another?',
+    focusScripture: 'Malachi 4:5-6; 1 Kings 18; Revelation 14:6-12',
+    questions: [
+      { question: 'What was Elijah\'s message on Mount Carmel?', hint: '1 Kings 18:21 — "How long will you waver?"' },
+      { question: 'How does "Choose you this day" parallel the First Angel\'s Message?', scripture: 'Revelation 14:7' },
+      { question: 'Elijah confronted Baal worship (false worship). What does the Third Angel warn against?', scripture: 'Revelation 14:9-10' },
+      { question: 'What "Elijah message" is needed today?' }
+    ],
+    keyInsight: 'Elijah called Israel to choose between the true God and Baal. The Three Angels call the world to choose between worshiping the Creator and worshiping the beast. Same message, final application!',
+    practiceActivity: 'Compare the Elijah story with the Three Angels\' Messages. List the parallels.',
+    relatedPrinciples: ['Three Angels\' Messages', 'True vs. False Worship', 'Final Crisis']
+  },
+
+  // Abraham\'s Two Sons
+  {
+    id: 'int-abraham-sons',
+    title: 'Ishmael and Isaac: Two Covenants',
+    level: 'intermediate',
+    palacePrinciple: 'Covenant Pattern',
+    principleDescription: 'Paul uses Abraham\'s two sons to teach about law and grace.',
+    room: 'studies',
+    introduction: 'Abraham had two sons — one by a slave woman, one by a free woman. Paul says this is an allegory about two covenants!',
+    focusScripture: 'Galatians 4:21-31',
+    questions: [
+      { question: 'Who was born according to the flesh?', hint: 'Ishmael — born through human effort' },
+      { question: 'Who was born according to the promise?', hint: 'Isaac — born by God\'s power' },
+      { question: 'What do the two women represent?', scripture: 'Galatians 4:24-25' },
+      { question: 'Which son are we if we are born of the Spirit?', scripture: 'Galatians 4:28' }
+    ],
+    keyInsight: 'Ishmael = trying to produce God\'s promises by human effort (law). Isaac = receiving God\'s promises by faith (grace). We are children of promise, not children of human effort!',
+    practiceActivity: 'Are you trying to earn God\'s favor (Ishmael) or receiving it by faith (Isaac)?',
+    relatedPrinciples: ['Law and Grace', 'Promise vs. Works', 'Covenant Theology']
+  },
+
+  // Daniel and Revelation Connection
+  {
+    id: 'int-dan-rev-connection',
+    title: 'Daniel and Revelation: Twin Books',
+    level: 'intermediate',
+    palacePrinciple: 'Prophetic Pattern',
+    principleDescription: 'Daniel and Revelation are meant to be studied together.',
+    room: 'pr',
+    introduction: 'Revelation cannot be understood without Daniel, and Daniel is "unsealed" by Revelation. These are twin books!',
+    focusScripture: 'Daniel 7; Revelation 13',
+    questions: [
+      { question: 'Daniel 7 has four beasts. Revelation 13 has a composite beast. What animals do you see in both?', hint: 'Lion, bear, leopard' },
+      { question: 'Daniel 7:25 mentions "time, times, half a time." Where does Revelation mention 42 months?', scripture: 'Revelation 13:5' },
+      { question: 'Daniel\'s book was sealed (Daniel 12:4). When was it unsealed?', hint: '"Time of the end"' },
+      { question: 'What does studying these together reveal about our time?' }
+    ],
+    keyInsight: 'Revelation combines Daniel\'s four beasts into one (Rev 13:2), showing that all those empires culminate in one final power. The 1260 days/42 months/3.5 times are the same period in both books!',
+    practiceActivity: 'Create a chart comparing Daniel 7 and Revelation 13. What symbols appear in both?',
+    relatedPrinciples: ['1260 Days', 'Four Kingdoms', 'Time of the End']
+  },
+
+  // The Shaking
+  {
+    id: 'int-shaking',
+    title: 'The Great Shaking',
+    level: 'intermediate',
+    palacePrinciple: 'Historic Pattern (Fourth Wall)',
+    principleDescription: 'Israel\'s shaking in the wilderness is a pattern for the church\'s final shaking.',
+    room: 'studies',
+    introduction: 'Hebrews speaks of a coming "shaking" when everything that can be shaken will be removed. This pattern appears throughout Scripture.',
+    focusScripture: 'Hebrews 12:25-29; Numbers 14',
+    questions: [
+      { question: 'What caused the shaking in Israel at Kadesh-Barnea?', hint: 'Numbers 14 — Fear and unbelief' },
+      { question: 'What "cannot be shaken" according to Hebrews 12:28?', hint: 'The kingdom we receive' },
+      { question: 'If trial "shakes" us, what does it reveal?' },
+      { question: 'How should we prepare for the shaking?', scripture: 'Hebrews 12:28' }
+    ],
+    keyInsight: 'Israel was "shaken" at Kadesh — the faithless fell, but the faithful remained. The church will be shaken — chaff will blow away, but wheat will remain. The shaking purifies, it doesn\'t destroy true faith!',
+    practiceActivity: 'Read Numbers 13-14. What caused some to fall and others to stand? Apply this to your life.',
+    relatedPrinciples: ['Faith vs. Fear', 'Remnant', 'Final Crisis']
+  },
+
+  // Nebuchadnezzar\'s Dream
+  {
+    id: 'int-nebuchadnezzar',
+    title: 'The Statue of World Empires',
+    level: 'intermediate',
+    palacePrinciple: 'Prophetic Pattern (Third Wall)',
+    principleDescription: 'Daniel 2 gives us the prophetic framework of world history.',
+    room: 'pr',
+    introduction: 'Nebuchadnezzar\'s dream of a great statue outlines history from Babylon to the Second Coming. Understanding this framework unlocks all prophecy!',
+    focusScripture: 'Daniel 2:31-45',
+    questions: [
+      { question: 'What were the four metals of the statue?', hint: 'Gold, silver, bronze, iron' },
+      { question: 'What kingdom was the "head of gold"?', scripture: 'Daniel 2:38' },
+      { question: 'What does the stone that crushes the statue represent?', scripture: 'Daniel 2:44-45' },
+      { question: 'We live in the "feet" era. What does iron mixed with clay mean?', scripture: 'Daniel 2:43' }
+    ],
+    keyInsight: 'Gold = Babylon, Silver = Medo-Persia, Bronze = Greece, Iron = Rome, Iron/Clay = Divided Europe. The stone = God\'s eternal kingdom. We are living in the toes — the next event is the stone!',
+    practiceActivity: 'History confirms: Babylon fell 539 BC, Persia fell 331 BC, Greece divided after Alexander, Rome fell 476 AD. What does this accuracy tell us about the stone?',
+    relatedPrinciples: ['Four Kingdoms', 'Second Coming', 'God\'s Kingdom']
+  },
+
+  // Wilderness Pattern
+  {
+    id: 'int-wilderness-pattern',
+    title: 'The Wilderness Experience',
+    level: 'intermediate',
+    palacePrinciple: 'Historic Pattern (Fourth Wall)',
+    principleDescription: 'The wilderness is a consistent pattern for testing and preparation.',
+    room: 'studies',
+    introduction: 'Israel in the wilderness. Jesus in the wilderness. The church in the wilderness. This pattern repeats because God uses wilderness to prepare His people.',
+    focusScripture: 'Deuteronomy 8:2-5; Matthew 4:1-11; Revelation 12:6',
+    questions: [
+      { question: 'Why did God lead Israel through the wilderness for 40 years?', scripture: 'Deuteronomy 8:2' },
+      { question: 'Jesus was in the wilderness for 40 days. What was He being prepared for?', hint: 'His ministry' },
+      { question: 'The woman (church) fled to the wilderness for 1260 days. What protected her?', scripture: 'Revelation 12:6' },
+      { question: 'What "wilderness" might God use in your life?' }
+    ],
+    keyInsight: 'Wilderness = testing ground, not punishment. God tests to reveal what\'s in our hearts, to humble us, and to teach us to depend on Him alone. Every wilderness prepares us for a "promised land"!',
+    practiceActivity: 'Identify a "wilderness season" in your past. How did God use it to prepare you?',
+    relatedPrinciples: ['Testing Pattern', '40-Day/Year Pattern', 'Preparation Pattern']
+  },
+
+  // Esther Pattern
+  {
+    id: 'int-esther-pattern',
+    title: 'The Esther Crisis',
+    level: 'intermediate',
+    palacePrinciple: 'End-Time Pattern',
+    principleDescription: 'Esther\'s story is a preview of the final crisis for God\'s people.',
+    room: 'studies',
+    introduction: 'A death decree against God\'s people. Fasting and prayer. Last-minute deliverance. Esther\'s story will repeat at the end of time.',
+    focusScripture: 'Esther 3-8',
+    questions: [
+      { question: 'What triggered Haman\'s fury against all Jews?', hint: 'One man (Mordecai) refused to bow' },
+      { question: 'What did Esther and the Jews do when facing the death decree?', scripture: 'Esther 4:16' },
+      { question: 'How did God reverse the situation?', hint: 'The very day meant for destruction became a day of victory' },
+      { question: 'How might this pattern repeat in the end times?', scripture: 'Revelation 13:15' }
+    ],
+    keyInsight: 'Death decree (Esther 3:13) → God\'s people fast and pray (Esther 4) → Deliverance at the last moment (Esther 8). This will repeat: Sunday law → Time of Jacob\'s trouble → Deliverance at the Second Coming!',
+    practiceActivity: 'Read Esther looking for end-time parallels. Who is Haman today? Who is Mordecai? Who is Esther?',
+    relatedPrinciples: ['Death Decree', 'Jacob\'s Time of Trouble', 'Final Deliverance']
   }
 ];
 
@@ -497,6 +897,229 @@ const deepStudies: DailyStudy[] = [
     keyInsight: 'Jacob\'s wrestling is one of the richest six-dimensional passages. It\'s about surrender (personal), Gethsemane (Christ), end-time crisis (church), final deliverance (future), and shows the opposite of Lucifer\'s grasp for power (past). When we cling to God in helplessness, we prevail!',
     practiceActivity: 'Choose a challenging Old Testament narrative. Write a full six-dimensional analysis (one paragraph for each dimension).',
     relatedPrinciples: ['Jacob\'s Time of Trouble', 'Gethsemane', 'Final Crisis', 'Great Controversy']
+  },
+
+  // MORE DEEP STUDIES - The 144,000
+  {
+    id: 'deep-144000',
+    title: 'The 144,000 Sealed Ones',
+    level: 'deep',
+    palacePrinciple: 'End-Time Pattern',
+    principleDescription: 'Understanding the 144,000 through Phototheology\'s multi-dimensional lens.',
+    room: 'studies',
+    introduction: 'Who are the 144,000? This has puzzled many, but using our dimensional approach, we can find profound truths about this special group.',
+    focusScripture: 'Revelation 7:1-8; 14:1-5',
+    questions: [
+      { question: 'LITERAL: 12,000 from each tribe — what is the literal significance of 12 × 12,000?', hint: 'Complete organization' },
+      { question: 'CHRIST: The 144,000 "follow the Lamb wherever He goes." How did Jesus model this lifestyle?' },
+      { question: 'PERSONAL: They have "no guile" (Rev 14:5). Where else in Scripture is "no guile" used?', scripture: 'John 1:47' },
+      { question: 'CHURCH: These are "firstfruits" (Rev 14:4). What does firstfruits mean in feast typology?' },
+      { question: 'HEAVEN FUTURE: They stand on Mount Zion (Rev 14:1). What/where is this Mount Zion?', scripture: 'Hebrews 12:22' },
+      { question: 'HEAVEN PAST: How does this perfect number contrast with the third of angels who fell (Rev 12:4)?' }
+    ],
+    keyInsight: 'The 144,000 are the end-time "firstfruits" — living saints who demonstrate that God\'s law CAN be kept through His power. They contrast with the angels who fell; they represent the restored 12 tribes; they reflect Christ\'s character fully.',
+    practiceActivity: 'Study the characteristics of the 144,000 (Rev 14:1-5). Which characteristics are you developing now?',
+    relatedPrinciples: ['Sealed Saints', 'Character Perfection', 'Firstfruits', 'Final Generation']
+  },
+
+  // Sealing Pattern
+  {
+    id: 'deep-sealing',
+    title: 'The Sealing of God\'s People',
+    level: 'deep',
+    palacePrinciple: 'End-Time Pattern',
+    principleDescription: 'The sealing process is found throughout Scripture, culminating in the final sealing.',
+    room: 'studies',
+    introduction: 'From Ezekiel\'s mark to Revelation\'s seal, God marks His people for protection. This pattern reveals crucial end-time truth.',
+    focusScripture: 'Ezekiel 9:1-6; Revelation 7:1-3',
+    questions: [
+      { question: 'In Ezekiel 9, who received the mark on the forehead?', hint: 'Those who "sighed and cried" over abominations' },
+      { question: 'What happened to those without the mark?', scripture: 'Ezekiel 9:5-6' },
+      { question: 'What is the seal of God in Revelation 7?', hint: 'What is placed on foreheads in Rev 14:1?' },
+      { question: 'How does this contrast with the mark of the beast (Rev 13:16)?', hint: 'Same location — forehead' },
+      { question: 'What does receiving a seal "in the forehead" versus "in the hand" represent?' }
+    ],
+    keyInsight: 'Ezekiel\'s mark was on those who grieved over sin. God\'s end-time seal is on those who choose His character (forehead = mind). The beast\'s mark is on those who worship the beast (forehead) or go along (hand). The sealing is character development!',
+    practiceActivity: 'Read Ezekiel 9. What caused people to receive or not receive the mark? How does this apply today?',
+    relatedPrinciples: ['Character Development', 'Mark of the Beast', 'Close of Probation']
+  },
+
+  // Melchizedek Pattern
+  {
+    id: 'deep-melchizedek',
+    title: 'The Melchizedek Mystery',
+    level: 'deep',
+    palacePrinciple: 'Christ Pattern in Priesthood',
+    principleDescription: 'Melchizedek is one of the most profound Christ-types in Scripture.',
+    room: 'studies',
+    introduction: 'This mysterious figure appears suddenly, blessed Abraham, and is called a type of Christ. Who was he? What does he teach us?',
+    focusScripture: 'Genesis 14:18-20; Hebrews 5-7',
+    questions: [
+      { question: 'What two offices did Melchizedek hold?', hint: 'King of Salem and priest of God Most High' },
+      { question: 'Why is it significant that he was BOTH king and priest?', scripture: 'Zechariah 6:12-13' },
+      { question: 'Hebrews says Melchizedek had no genealogy recorded. Why does this matter?', scripture: 'Hebrews 7:3' },
+      { question: 'How is Jesus a priest "after the order of Melchizedek" different from "after the order of Aaron"?', scripture: 'Hebrews 7:11-17' },
+      { question: 'What does Melchizedek\'s bread and wine offering preview?', hint: 'Think Lord\'s Supper' }
+    ],
+    keyInsight: 'Melchizedek = King-Priest, eternal priesthood, superior to Aaron. Jesus is the true Melchizedek — King of Righteousness, King of Peace, offering bread and wine, with an eternal priesthood not based on human genealogy!',
+    practiceActivity: 'Read Hebrews 7 slowly. List every way Jesus is superior to the Levitical priesthood.',
+    relatedPrinciples: ['Eternal Priesthood', 'King-Priest', 'Heavenly Sanctuary']
+  },
+
+  // The Sabbath in All Dimensions
+  {
+    id: 'deep-sabbath-dimensions',
+    title: 'The Sabbath Through Six Lenses',
+    level: 'deep',
+    palacePrinciple: 'Six Dimensions Applied to Sabbath',
+    principleDescription: 'Applying all six dimensions to the Sabbath reveals its full significance.',
+    room: 'studies',
+    introduction: 'The Sabbath is much more than a weekly rest. Let\'s explore it through all six dimensions of Phototheology.',
+    focusScripture: 'Genesis 2:1-3; Exodus 20:8-11; Hebrews 4:1-11',
+    questions: [
+      { question: 'LITERAL: What did God literally do on the seventh day? Why?', scripture: 'Genesis 2:2-3' },
+      { question: 'CHRIST: Jesus said He is "Lord of the Sabbath." What does this mean?', scripture: 'Mark 2:28' },
+      { question: 'PERSONAL: How is Sabbath rest a picture of salvation rest?', scripture: 'Hebrews 4:9-10' },
+      { question: 'CHURCH: What role has Sabbath played in church history, especially during the 1260 years?' },
+      { question: 'HEAVEN FUTURE: Will Sabbath be kept in eternity?', scripture: 'Isaiah 66:22-23' },
+      { question: 'HEAVEN PAST: God rested on Sabbath in Eden. What does this tell us about heaven BEFORE sin?' }
+    ],
+    keyInsight: 'Sabbath spans all dimensions: Eden creation (literal), Christ\'s lordship (Christ), rest from works-righteousness (personal), seal vs. mark (church), eternal worship (future), God\'s original order (past). It\'s a multi-dimensional truth!',
+    practiceActivity: 'How do you experience each dimension of Sabbath? Write a paragraph on each.',
+    relatedPrinciples: ['Creation', 'Rest', 'Seal of God', 'Eternal Worship']
+  },
+
+  // Day of Atonement Deep
+  {
+    id: 'deep-atonement',
+    title: 'The Day of Atonement: Then and Now',
+    level: 'deep',
+    palacePrinciple: 'Sanctuary Pattern Applied',
+    principleDescription: 'The Day of Atonement is being fulfilled NOW — understanding its significance is vital.',
+    room: 'sanctuary',
+    introduction: 'Since 1844, the heavenly Day of Atonement has been in progress. What does this mean for us living in this time?',
+    focusScripture: 'Leviticus 16; Daniel 8:14; Hebrews 9:23-28',
+    questions: [
+      { question: 'What happened in the earthly sanctuary on the Day of Atonement?', hint: 'Cleansing of the sanctuary' },
+      { question: 'What were the people to do while the high priest was in the Most Holy?', scripture: 'Leviticus 16:29-31' },
+      { question: 'When did Daniel 8:14\'s 2300 days end?', hint: '1844' },
+      { question: 'If the judgment began in 1844, what should be our response?', scripture: 'Revelation 14:7' },
+      { question: 'How does the scapegoat (Azazel) fit into the end-time picture?', hint: 'Leviticus 16:20-22' }
+    ],
+    keyInsight: 'We are living in the antitypical Day of Atonement! The judgment began in 1844, Christ is in the Most Holy Place, our sins are being reviewed, and we should be "afflicting our souls" (deep heart-searching). The scapegoat (Satan) will bear the blame after the Millennium.',
+    practiceActivity: 'Read Leviticus 16 as if it\'s describing what\'s happening in heaven RIGHT NOW. What is Christ doing? What should YOU be doing?',
+    relatedPrinciples: ['1844', 'Investigative Judgment', 'Sanctuary Cleansing', 'Close of Probation']
+  },
+
+  // The Two Witnesses
+  {
+    id: 'deep-two-witnesses',
+    title: 'The Two Witnesses of Revelation',
+    level: 'deep',
+    palacePrinciple: 'Prophetic Pattern',
+    principleDescription: 'Revelation\'s two witnesses have prophetic and historical significance.',
+    room: 'pr',
+    introduction: 'Revelation 11 describes two witnesses who prophesy, are killed, and rise again. Who are they? What does their story mean?',
+    focusScripture: 'Revelation 11:1-13; Zechariah 4',
+    questions: [
+      { question: 'The two witnesses are called "two olive trees" and "two candlesticks." What does Zechariah 4 say about olive trees?', scripture: 'Zechariah 4:2-6' },
+      { question: 'They prophesy 1260 days in sackcloth. What period is this?', hint: '538-1798 AD' },
+      { question: 'They have power to bring plagues. What two OT prophets did similar things?', hint: 'Moses and Elijah' },
+      { question: 'They are killed in "the great city... where also our Lord was crucified" (Rev 11:8). Where is this spiritually?', hint: 'Not literal Jerusalem' },
+      { question: 'After 3.5 days, they rise. What historical event might this refer to?', hint: 'French Revolution era' }
+    ],
+    keyInsight: 'The two witnesses = Old and New Testaments (Word of God). They prophesied "in sackcloth" during papal supremacy (1260 years). The French Revolution attempted to kill the Bible (1793-1797 = ~3.5 years), but Scripture rose again stronger than ever!',
+    practiceActivity: 'Research the French Revolution\'s attack on the Bible. How did Scripture "rise again"?',
+    relatedPrinciples: ['Word of God', '1260 Days', 'French Revolution', 'Scripture Vindicated']
+  },
+
+  // Chiastic Structure
+  {
+    id: 'deep-chiasm',
+    title: 'Chiastic Patterns in Scripture',
+    level: 'deep',
+    palacePrinciple: 'Literary Structures',
+    principleDescription: 'Chiasm is a Hebrew literary pattern where ideas mirror each other (A-B-C-B\'-A\').',
+    room: 'studies',
+    introduction: 'Ancient Hebrew writers used chiasm (X-pattern) to structure their work. The center of the chiasm is the main point. This unlocks Scripture!',
+    focusScripture: 'Genesis 6-9; Psalm 67',
+    questions: [
+      { question: 'In a chiasm, where is the most important point?', hint: 'The center' },
+      { question: 'The flood narrative (Genesis 6-9) is a chiasm. What\'s at the center?', hint: 'Genesis 8:1 — "God remembered Noah"' },
+      { question: 'Psalm 67 has 7 verses. Verse 4 is the center. Read it — what\'s the main point?', scripture: 'Psalm 67:4' },
+      { question: 'If Revelation is structured chiastically, where would the most important message be?' },
+      { question: 'How does knowing about chiasm change how you find the "main point" of a passage?' }
+    ],
+    keyInsight: 'Hebrews thought differently than Greeks. In chiasm, the MIDDLE is the key, not the end. The flood story\'s center is "God remembered" — covenant faithfulness! Understanding structure reveals meaning.',
+    practiceActivity: 'Look up the chiastic structure of Genesis 6-9 online. Can you find other chiasms in Scripture?',
+    relatedPrinciples: ['Hebrew Thought', 'Literary Structure', 'Biblical Interpretation']
+  },
+
+  // The Remnant Through History
+  {
+    id: 'deep-remnant-history',
+    title: 'The Remnant Through Ages',
+    level: 'deep',
+    palacePrinciple: 'Historic Pattern',
+    principleDescription: 'God has always had a remnant — tracing this pattern reveals our identity.',
+    room: 'studies',
+    introduction: 'In every generation, a faithful remnant preserved truth. Understanding this pattern helps us understand who we are today.',
+    focusScripture: 'Romans 11:1-5; Revelation 12:17',
+    questions: [
+      { question: 'In Elijah\'s day, how many had not bowed to Baal?', scripture: '1 Kings 19:18' },
+      { question: 'Paul applies this to his day. Who was the remnant then?', scripture: 'Romans 11:5' },
+      { question: 'What two characteristics identify the end-time remnant?', scripture: 'Revelation 12:17' },
+      { question: 'During the 1260 years, who was the remnant?', hint: 'Waldensians, etc.' },
+      { question: 'How does being a "remnant" change how we view our mission?' }
+    ],
+    keyInsight: '7,000 in Elijah\'s day → Jewish believers in Paul\'s day → Waldensians during papal supremacy → End-time remnant keeping commandments and having Jesus\' testimony. The remnant is always small but preserves truth for the next generation!',
+    practiceActivity: 'Research the Waldensians. How did they preserve Scripture during the Dark Ages?',
+    relatedPrinciples: ['Remnant Church', 'Preserving Truth', 'Cloud of Witnesses']
+  },
+
+  // The Image of the Beast
+  {
+    id: 'deep-image-beast',
+    title: 'The Image to the Beast',
+    level: 'deep',
+    palacePrinciple: 'End-Time Pattern',
+    principleDescription: 'Understanding the "image of the beast" requires understanding church-state relations.',
+    room: 'studies',
+    introduction: 'Revelation 13 describes an "image to the beast." This is one of the most important end-time prophecies to understand.',
+    focusScripture: 'Revelation 13:11-18',
+    questions: [
+      { question: 'The first beast (Rev 13:1-10) represents what power?', hint: 'Papal Rome' },
+      { question: 'The second beast rises from the "earth" and has "two horns like a lamb." What nation fits?', hint: 'A Protestant nation, rises after 1798, from sparsely populated area' },
+      { question: 'What made the first beast a "beast" (oppressive)?', hint: 'Union of church and state' },
+      { question: 'If the second beast makes an "image" (copy) of the first, what would that involve?' },
+      { question: 'How could this be forming today?' }
+    ],
+    keyInsight: 'The first beast = Papacy (church-state union). The second beast = USA (Protestant, two-horned). The "image" = when America creates a similar church-state union, enforcing religious observance by law. This is forming now!',
+    practiceActivity: 'Watch for signs of religious legislation in America. How might church-state union develop?',
+    relatedPrinciples: ['Sunday Law', 'Religious Liberty', 'Mark of the Beast', 'Final Crisis']
+  },
+
+  // Pearl of Great Price Six Dimensions
+  {
+    id: 'deep-pearl',
+    title: 'The Pearl of Great Price — Six Dimensions',
+    level: 'deep',
+    palacePrinciple: 'Six Dimensions Applied',
+    principleDescription: 'Jesus\' parables have profound multi-dimensional meaning.',
+    room: 'studies',
+    introduction: 'The parable of the Pearl of Great Price is usually applied one way. But Phototheology opens it up in all six dimensions!',
+    focusScripture: 'Matthew 13:45-46',
+    questions: [
+      { question: 'LITERAL: In the surface story, who is the merchant and what is the pearl?' },
+      { question: 'CHRIST: What if Jesus is the merchant? What does He give up to obtain the pearl?', scripture: 'Philippians 2:5-8' },
+      { question: 'PERSONAL: We usually think WE are the merchant and Jesus is the pearl. How does this work?' },
+      { question: 'CHURCH: Could the pearl represent the church Jesus purchased?', scripture: 'Acts 20:28' },
+      { question: 'HEAVEN: What is the "pearl" in the New Jerusalem?', scripture: 'Revelation 21:21' },
+      { question: 'Which interpretation captures the gospel better — us seeking Christ, or Christ seeking us?' }
+    ],
+    keyInsight: 'Usually we\'re told WE seek the pearl (Christ). But the gospel is that CHRIST gave up everything to purchase US (the pearl)! Both are true, but the Christ-dimension captures grace. We are the pearl He died to obtain!',
+    practiceActivity: 'Meditate on Christ as the merchant. What did He "sell" to purchase you?',
+    relatedPrinciples: ['Gospel Grace', 'Parables', 'Multi-dimensional Study', 'Christ\'s Sacrifice']
   }
 ];
 
@@ -539,10 +1162,18 @@ export const getTodaysStudy = (level: StudyLevel): DailyStudy => {
   return levelStudies[index];
 };
 
-// Study counts
-export const studyCounts = {
+// Study counts - computed lazily to avoid initialization issues
+export const getStudyCounts = () => ({
   easy: easyStudies.length,
   intermediate: intermediateStudies.length,
   deep: deepStudies.length,
   total: allStudies.length
+});
+
+// For backwards compatibility
+export const studyCounts = {
+  get easy() { return easyStudies.length; },
+  get intermediate() { return intermediateStudies.length; },
+  get deep() { return deepStudies.length; },
+  get total() { return allStudies.length; }
 };
