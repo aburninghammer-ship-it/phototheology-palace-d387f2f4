@@ -669,6 +669,21 @@ export function AmbientMusicPlayer({
     }
   };
 
+  // Get ordered tracks (only selected ones, in user-defined order)
+  const orderedPlayableTracks = useMemo(() => {
+    // First, get all tracks that are selected
+    const selected = allTracks.filter(t => selectedTracks.has(t.id));
+    // Sort by trackOrder, putting tracks not in order at the end
+    return selected.sort((a, b) => {
+      const aIdx = trackOrder.indexOf(a.id);
+      const bIdx = trackOrder.indexOf(b.id);
+      // If not in order, put at end
+      const aOrder = aIdx === -1 ? Infinity : aIdx;
+      const bOrder = bIdx === -1 ? Infinity : bIdx;
+      return aOrder - bOrder;
+    });
+  }, [allTracks, selectedTracks, trackOrder]);
+
   const nextTrack = useCallback(() => {
     // Use orderedPlayableTracks for custom order
     if (orderedPlayableTracks.length === 0) return;
@@ -748,21 +763,6 @@ export function AmbientMusicPlayer({
       return newOrder;
     });
   };
-
-  // Get ordered tracks (only selected ones, in user-defined order)
-  const orderedPlayableTracks = useMemo(() => {
-    // First, get all tracks that are selected
-    const selected = allTracks.filter(t => selectedTracks.has(t.id));
-    // Sort by trackOrder, putting tracks not in order at the end
-    return selected.sort((a, b) => {
-      const aIdx = trackOrder.indexOf(a.id);
-      const bIdx = trackOrder.indexOf(b.id);
-      // If not in order, put at end
-      const aOrder = aIdx === -1 ? Infinity : aIdx;
-      const bOrder = bIdx === -1 ? Infinity : bIdx;
-      return aOrder - bOrder;
-    });
-  }, [allTracks, selectedTracks, trackOrder]);
 
   const handleVolumeChange = useCallback((value: number[]) => {
     const newVolume = value[0];
