@@ -4,12 +4,12 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { 
-  Music, 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
+import {
+  Music,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
   SkipForward,
   Settings,
   X,
@@ -22,7 +22,10 @@ import {
   Loader2,
   ChevronDown,
   Smartphone,
-  ListMusic
+  ListMusic,
+  GripVertical,
+  ArrowUp,
+  ArrowDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -201,6 +204,17 @@ export function AmbientMusicPlayer({
     }
     return new Set(AMBIENT_TRACKS.map(t => t.id));
   });
+  const [trackOrder, setTrackOrder] = useState<string[]>(() => {
+    const saved = localStorage.getItem("pt-ambient-track-order");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return AMBIENT_TRACKS.map(t => t.id);
+      }
+    }
+    return AMBIENT_TRACKS.map(t => t.id);
+  });
   const [showPlaylist, setShowPlaylist] = useState(false);
 
   // Audio ducking - reduce volume when TTS is playing
@@ -299,42 +313,54 @@ export function AmbientMusicPlayer({
   const playbackStateRef = useRef<{
     allTracks: typeof allTracks;
     selectedTracks: Set<string>;
+    trackOrder: string[];
     currentTrackId: string;
     shuffleMode: boolean;
     loopMode: "none" | "one" | "all";
   }>({
     allTracks,
     selectedTracks,
+    trackOrder,
     currentTrackId,
     shuffleMode,
     loopMode
   });
-  
+
   // Keep ref updated with latest values
   useEffect(() => {
     playbackStateRef.current = {
       allTracks,
       selectedTracks,
+      trackOrder,
       currentTrackId,
       shuffleMode,
       loopMode
     };
-  }, [allTracks, selectedTracks, currentTrackId, shuffleMode, loopMode]);
+  }, [allTracks, selectedTracks, trackOrder, currentTrackId, shuffleMode, loopMode]);
 
   // Function to play next track - extracted for reuse
   const playNextTrackFromState = useCallback(() => {
     const state = playbackStateRef.current;
     console.log('[AmbientMusic] Playing next track, loopMode:', state.loopMode, 'currentTrackId:', state.currentTrackId);
-    
-    const playableTracks = state.allTracks.filter(t => state.selectedTracks.has(t.id));
+
+    // Get playable tracks in custom order
+    const selectedList = state.allTracks.filter(t => state.selectedTracks.has(t.id));
+    const playableTracks = selectedList.sort((a, b) => {
+      const aIdx = state.trackOrder.indexOf(a.id);
+      const bIdx = state.trackOrder.indexOf(b.id);
+      const aOrder = aIdx === -1 ? Infinity : aIdx;
+      const bOrder = bIdx === -1 ? Infinity : bIdx;
+      return aOrder - bOrder;
+    });
+
     if (playableTracks.length === 0) {
       console.log('[AmbientMusic] No playable tracks');
       setIsPlaying(false);
       return;
     }
-    
-    console.log('[AmbientMusic] Playable tracks:', playableTracks.map(t => t.id));
-    
+
+    console.log('[AmbientMusic] Playable tracks (ordered):', playableTracks.map(t => t.id));
+
     let nextTrackToPlay;
     if (state.shuffleMode) {
       const otherTracks = playableTracks.filter(t => t.id !== state.currentTrackId);
@@ -644,26 +670,25 @@ export function AmbientMusicPlayer({
   };
 
   const nextTrack = useCallback(() => {
-    // Filter to only selected tracks
-    const playableTracks = allTracks.filter(t => selectedTracks.has(t.id));
-    if (playableTracks.length === 0) return;
-    
+    // Use orderedPlayableTracks for custom order
+    if (orderedPlayableTracks.length === 0) return;
+
     let nextTrackToPlay;
     if (shuffleMode) {
       // Random track (different from current)
-      const otherTracks = playableTracks.filter(t => t.id !== currentTrackId);
+      const otherTracks = orderedPlayableTracks.filter(t => t.id !== currentTrackId);
       if (otherTracks.length > 0) {
         const randomIndex = Math.floor(Math.random() * otherTracks.length);
         nextTrackToPlay = otherTracks[randomIndex];
       } else {
-        nextTrackToPlay = playableTracks[0];
+        nextTrackToPlay = orderedPlayableTracks[0];
       }
     } else {
-      const currentIndex = playableTracks.findIndex(t => t.id === currentTrackId);
-      const nextIndex = (currentIndex + 1) % playableTracks.length;
-      nextTrackToPlay = playableTracks[nextIndex];
+      const currentIndex = orderedPlayableTracks.findIndex(t => t.id === currentTrackId);
+      const nextIndex = (currentIndex + 1) % orderedPlayableTracks.length;
+      nextTrackToPlay = orderedPlayableTracks[nextIndex];
     }
-    
+
     if (nextTrackToPlay && audioRef.current) {
       console.log('[AmbientMusic] Skipping to track:', nextTrackToPlay.name);
       // Directly set src and play to avoid state timing issues
@@ -674,7 +699,7 @@ export function AmbientMusicPlayer({
       }
       setCurrentTrackId(nextTrackToPlay.id);
     }
-  }, [allTracks, selectedTracks, currentTrackId, shuffleMode, isPlaying]);
+  }, [orderedPlayableTracks, currentTrackId, shuffleMode, isPlaying]);
 
   const toggleShuffle = () => {
     setShuffleMode(prev => {
@@ -699,6 +724,45 @@ export function AmbientMusicPlayer({
       return newSet;
     });
   };
+
+  // Move track up in the playlist order
+  const moveTrackUp = (trackId: string) => {
+    setTrackOrder(prev => {
+      const idx = prev.indexOf(trackId);
+      if (idx <= 0) return prev;
+      const newOrder = [...prev];
+      [newOrder[idx - 1], newOrder[idx]] = [newOrder[idx], newOrder[idx - 1]];
+      localStorage.setItem("pt-ambient-track-order", JSON.stringify(newOrder));
+      return newOrder;
+    });
+  };
+
+  // Move track down in the playlist order
+  const moveTrackDown = (trackId: string) => {
+    setTrackOrder(prev => {
+      const idx = prev.indexOf(trackId);
+      if (idx < 0 || idx >= prev.length - 1) return prev;
+      const newOrder = [...prev];
+      [newOrder[idx], newOrder[idx + 1]] = [newOrder[idx + 1], newOrder[idx]];
+      localStorage.setItem("pt-ambient-track-order", JSON.stringify(newOrder));
+      return newOrder;
+    });
+  };
+
+  // Get ordered tracks (only selected ones, in user-defined order)
+  const orderedPlayableTracks = useMemo(() => {
+    // First, get all tracks that are selected
+    const selected = allTracks.filter(t => selectedTracks.has(t.id));
+    // Sort by trackOrder, putting tracks not in order at the end
+    return selected.sort((a, b) => {
+      const aIdx = trackOrder.indexOf(a.id);
+      const bIdx = trackOrder.indexOf(b.id);
+      // If not in order, put at end
+      const aOrder = aIdx === -1 ? Infinity : aIdx;
+      const bOrder = bIdx === -1 ? Infinity : bIdx;
+      return aOrder - bOrder;
+    });
+  }, [allTracks, selectedTracks, trackOrder]);
 
   const handleVolumeChange = useCallback((value: number[]) => {
     const newVolume = value[0];
@@ -911,7 +975,7 @@ export function AmbientMusicPlayer({
               {showPlaylist && (
                 <div className="space-y-1 max-h-48 overflow-y-auto border-t pt-2">
                   <div className="flex items-center justify-between px-1 pb-1">
-                    <span className="text-xs text-muted-foreground">Select songs to include:</span>
+                    <span className="text-xs text-muted-foreground">Select & reorder songs:</span>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -925,31 +989,65 @@ export function AmbientMusicPlayer({
                       Select All
                     </Button>
                   </div>
-                  {localTracks.length > 0 && (
+                  {/* Show tracks in custom order with reorder controls */}
+                  {orderedPlayableTracks.length > 0 && (
+                    <div className="text-xs font-medium text-primary px-1 flex items-center gap-1">
+                      <ListMusic className="h-3 w-3" />
+                      Your Playlist Order ({orderedPlayableTracks.length} songs)
+                    </div>
+                  )}
+                  {orderedPlayableTracks.map((track, idx) => (
+                    <div key={track.id} className="flex items-center gap-1 px-1 py-1 hover:bg-muted/50 rounded group">
+                      <GripVertical className="h-3 w-3 text-muted-foreground" />
+                      <Checkbox
+                        checked={selectedTracks.has(track.id)}
+                        onCheckedChange={() => toggleTrackSelection(track.id)}
+                      />
+                      {track.isLocal && <Heart className="h-3 w-3 text-primary" />}
+                      <span className={cn(
+                        "text-xs truncate flex-1",
+                        currentTrackId === track.id && "text-primary font-medium"
+                      )}>
+                        {track.name}
+                      </span>
+                      <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5"
+                          onClick={(e) => { e.stopPropagation(); moveTrackUp(track.id); }}
+                          disabled={idx === 0}
+                        >
+                          <ArrowUp className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5"
+                          onClick={(e) => { e.stopPropagation(); moveTrackDown(track.id); }}
+                          disabled={idx === orderedPlayableTracks.length - 1}
+                        >
+                          <ArrowDown className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {/* Unselected tracks */}
+                  {allTracks.filter(t => !selectedTracks.has(t.id)).length > 0 && (
                     <>
-                      <div className="text-xs font-medium text-primary px-1">🔒 Your Private Music</div>
-                      {allTracks.filter(t => t.isLocal).map(track => (
-                        <label key={track.id} className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted/50 rounded cursor-pointer">
+                      <div className="text-xs font-medium text-muted-foreground px-1 pt-2 border-t mt-2">Available to Add</div>
+                      {allTracks.filter(t => !selectedTracks.has(t.id)).map(track => (
+                        <label key={track.id} className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted/50 rounded cursor-pointer opacity-60">
                           <Checkbox
-                            checked={selectedTracks.has(track.id)}
+                            checked={false}
                             onCheckedChange={() => toggleTrackSelection(track.id)}
                           />
-                          <Heart className="h-3 w-3 text-primary" />
+                          {track.isLocal && <Heart className="h-3 w-3 text-primary" />}
                           <span className="text-xs truncate flex-1">{track.name}</span>
                         </label>
                       ))}
                     </>
                   )}
-                  <div className="text-xs font-medium text-muted-foreground px-1 pt-1">Preset Tracks</div>
-                  {AMBIENT_TRACKS.map(track => (
-                    <label key={track.id} className="flex items-center gap-2 px-2 py-1.5 hover:bg-muted/50 rounded cursor-pointer">
-                      <Checkbox
-                        checked={selectedTracks.has(track.id)}
-                        onCheckedChange={() => toggleTrackSelection(track.id)}
-                      />
-                      <span className="text-xs truncate flex-1">{track.name}</span>
-                    </label>
-                  ))}
                 </div>
               )}
             </div>

@@ -64,6 +64,7 @@ import { GenesisGalleryTour } from "@/components/onboarding/GenesisGalleryTour";
 import { use24FPSTour } from "@/hooks/use24FPSTour";
 import { StoryLibrary } from "@/components/story-room/StoryLibrary";
 import { SymbolLibrary } from "@/components/symbol-room/SymbolLibrary";
+import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -405,6 +406,20 @@ export default function RoomDetail() {
                 {showQuickStart && <ValueProposition roomId={room.id} />}
                 {showQuickStart && <QuickStartGuide roomId={room.id} roomName={room.name} />}
 
+                {/* Prominent Library Banner for rooms with libraries */}
+                {hasLibrary(room.id) && !["sr", "st", "24fps", "gr", "cycles", "123h", "math", "jr", "dc", "cr"].includes(room.id) && (
+                  <LibraryBanner
+                    roomId={room.id}
+                    onExplore={() => {
+                      // Scroll to the library section when available
+                      const librarySection = document.querySelector('[data-library-section]');
+                      if (librarySection) {
+                        librarySection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  />
+                )}
+
                 <Card variant="glass" className="relative">
                   <CardHeader className="relative z-10">
                     <div className="flex items-center justify-between">
@@ -500,57 +515,24 @@ export default function RoomDetail() {
                 </Collapsible>
 
                 {room.id === "sr" && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <span className="text-2xl">📚</span>
-                        Bible Story Library
-                      </CardTitle>
-                      <CardDescription>
-                        Explore stories across all 66 books of the Bible. Search by story, character, or theme.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <StoryLibrary />
-                    </CardContent>
-                  </Card>
+                  <RoomLibrary roomId="sr">
+                    <StoryLibrary />
+                  </RoomLibrary>
                 )}
 
                 {room.id === "st" && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <span className="text-2xl">🔗</span>
-                        Bible Symbol Library
-                      </CardTitle>
-                      <CardDescription>
-                        Explore 100+ biblical symbols across 13 categories. Discover colors, numbers, objects, beasts, and more with their spiritual meanings.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <SymbolLibrary />
-                    </CardContent>
-                  </Card>
+                  <RoomLibrary roomId="st">
+                    <SymbolLibrary />
+                  </RoomLibrary>
                 )}
 
                 {room.id === "24fps" && (
                   <>
                     {/* Complete 24FPS Bible Browser - All 50 Sets */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <span className="text-2xl">🎬</span>
-                          24FPS Bible Sets
-                        </CardTitle>
-                        <CardDescription>
-                          All 50 memorization sets covering every chapter of the Bible. Click a set to explore its chapters.
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <Bible24FPSBrowser />
-                      </CardContent>
-                    </Card>
-                    
+                    <RoomLibrary roomId="24fps">
+                      <Bible24FPSBrowser />
+                    </RoomLibrary>
+
                     {/* Exodus 1-24 Memorization Drill */}
                     <Card>
                       <CardHeader>
@@ -570,19 +552,21 @@ export default function RoomDetail() {
                 )}
 
                 {room.id === "gr" && (
-                  <>
-                    <GemGenerator 
-                      floorNumber={floor.number} 
-                      roomId={room.id} 
-                      onGemSaved={() => {
-                        // Trigger refresh of gems list
-                        const event = new CustomEvent('gems-updated');
-                        window.dispatchEvent(event);
-                      }}
-                    />
-                    <UserGemsList floorNumber={floor.number} roomId={room.id} />
-                    <SermonTitlesList />
-                  </>
+                  <RoomLibrary roomId="gr">
+                    <div className="space-y-6">
+                      <GemGenerator
+                        floorNumber={floor.number}
+                        roomId={room.id}
+                        onGemSaved={() => {
+                          // Trigger refresh of gems list
+                          const event = new CustomEvent('gems-updated');
+                          window.dispatchEvent(event);
+                        }}
+                      />
+                      <UserGemsList floorNumber={floor.number} roomId={room.id} />
+                      <SermonTitlesList />
+                    </div>
+                  </RoomLibrary>
                 )}
 
                 {/* Freestyle Game for Floor 3 rooms (except BF which has its own) */}
@@ -596,17 +580,9 @@ export default function RoomDetail() {
                 )}
 
                 {room.id === "cec" && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Your Christ-in-Every-Chapter Findings</CardTitle>
-                      <CardDescription>
-                        Record Christ's presence in each chapter: His name, His action, and NT crosslinks
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ChristChapterFindings />
-                    </CardContent>
-                  </Card>
+                  <RoomLibrary roomId="cec">
+                    <ChristChapterFindings />
+                  </RoomLibrary>
                 )}
 
                 {/* Speed Room Drill - The core exercise for SRm */}
@@ -618,9 +594,11 @@ export default function RoomDetail() {
 
                 {/* Mathematics Room Drill - Time Prophecy Training */}
                 {room.id === "math" && (
-                  <MathematicsRoomDrill onComplete={(score) => {
-                    toast.success(`Mathematics Drill complete! Average: ${score}/100`);
-                  }} />
+                  <RoomLibrary roomId="math">
+                    <MathematicsRoomDrill onComplete={(score) => {
+                      toast.success(`Mathematics Drill complete! Average: ${score}/100`);
+                    }} />
+                  </RoomLibrary>
                 )}
 
                 {/* Juice Room Drill - Meaning Extraction Training */}
@@ -630,12 +608,16 @@ export default function RoomDetail() {
 
                 {/* 8-Cycle Room Drill - Covenant Discernment Training */}
                 {room.id === "cycles" && (
-                  <CyclesRoomDrill />
+                  <RoomLibrary roomId="cycles">
+                    <CyclesRoomDrill />
+                  </RoomLibrary>
                 )}
 
                 {/* Three Heavens Room Drill - Prophetic Horizon Discernment */}
                 {room.id === "123h" && (
-                  <ThreeHeavensRoomDrill />
+                  <RoomLibrary roomId="123h">
+                    <ThreeHeavensRoomDrill />
+                  </RoomLibrary>
                 )}
 
                 {/* Def-Com Room - Word Study & Commentary Tools */}

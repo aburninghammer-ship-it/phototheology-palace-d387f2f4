@@ -4,15 +4,34 @@ import { useAuth } from "./useAuth";
 
 // List of rooms with libraries (show "Newly Renovated" badge)
 const RENOVATED_ROOMS = [
+  // Floor 1 - Furnishing
   "sr",     // Story Room - has bibleStoryLibrary
   "24fps",  // 24FPS Room - has library
+  "gr",     // Gems Room - has gemsLibrary
+
+  // Floor 2 - Investigation
   "st",     // Symbols Room - has bibleSymbolLibrary
+  "qa",     // Q&A Room - has questionAnswerLibrary
+
+  // Floor 3 - Freestyle
   "hf",     // Historical Freestyle Room - has historicalFreestyleLibrary
   "nf",     // Nature Freestyle Room - has natureFreestyleLibrary
-  "bl",     // Blue Room - has sanctuaryLibrary
+
+  // Floor 4 - Next Level
+  "trm",    // Theme Room - has themesLibrary (6 walls/floor/ceiling)
+  "p||",    // Parallels Room - has parallelsLibrary
+  "cec",    // Christ Every Chapter - has christTypesLibrary
+
+  // Floor 5 - Vision
+  "bl",     // Blue Room (Sanctuary) - has sanctuaryLibrary
+  "pr",     // Prophecy Room - has prophecyLibrary
   "fe",     // Feasts Room - has feastsLibrary
+
+  // Floor 6 - Three Heavens
   "123h",   // Three Heavens Room - has threeHeavensLibrary
-  "cycles", // Eight Cycles Room - has eightCyclesLibrary
+  "cycles", // Eight Cycles Room - has cyclesLibrary
+
+  // Other
   "math",   // Mathematics Room - has mathematicsLibrary
 ];
 
