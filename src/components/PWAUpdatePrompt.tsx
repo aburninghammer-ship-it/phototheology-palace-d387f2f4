@@ -124,22 +124,22 @@ export function PWAUpdatePrompt() {
   return (
     <div className="fixed bottom-24 md:bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-[100] sm:max-w-md animate-in slide-in-from-bottom-4">
       {offlineReady && !showReload && (
-        <Alert className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-primary/20">
-          <Download className="h-4 w-4 text-primary" />
-          <AlertTitle className="text-foreground">App ready for offline use</AlertTitle>
+        <Alert className="bg-gradient-to-br from-emerald-500/15 via-green-500/10 to-teal-500/15 backdrop-blur-xl border-2 border-emerald-500/40 shadow-[0_8px_32px_-4px_rgba(16,185,129,0.4),0_0_0_1px_rgba(255,255,255,0.1)_inset] rounded-2xl">
+          <Download className="h-4 w-4 text-emerald-500" />
+          <AlertTitle className="text-foreground font-bold">✅ App ready for offline use</AlertTitle>
           <AlertDescription className="mt-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
             <span className="flex-1 text-sm text-muted-foreground">The app is now available offline</span>
-            <Button onClick={close} variant="outline" size="sm" className="w-full sm:w-auto">
+            <Button onClick={close} variant="outline" size="sm" className="w-full sm:w-auto border-emerald-500/40 hover:bg-emerald-500/10">
               Dismiss
             </Button>
           </AlertDescription>
         </Alert>
       )}
-      
+
       {showReload && (
-        <Alert className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-primary/20">
-          <RefreshCw className="h-4 w-4 text-primary" />
-          <AlertTitle className="text-foreground">New version available</AlertTitle>
+        <Alert className="bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-violet-500/15 backdrop-blur-xl border-2 border-blue-500/40 shadow-[0_8px_32px_-4px_rgba(59,130,246,0.4),0_0_0_1px_rgba(255,255,255,0.1)_inset] rounded-2xl">
+          <RefreshCw className="h-4 w-4 text-blue-500" />
+          <AlertTitle className="text-foreground font-bold">🚀 New version available</AlertTitle>
           <AlertDescription className="mt-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
             <span className="flex-1 text-sm text-muted-foreground">Click reload to update to the latest version</span>
             <div className="flex gap-2 w-full sm:w-auto">
