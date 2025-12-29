@@ -20,6 +20,7 @@ const RENOVATED_ROOMS = [
   // Floor 4 - Next Level
   "trm",    // Theme Room - has themesLibrary (6 walls/floor/ceiling)
   "p||",    // Parallels Room - has parallelsLibrary
+  "ptn",    // Patterns Room - has patternsLibrary
   "cec",    // Christ Every Chapter - has christTypesLibrary
 
   // Floor 5 - Vision

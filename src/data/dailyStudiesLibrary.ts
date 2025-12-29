@@ -1127,28 +1127,42 @@ const deepStudies: DailyStudy[] = [
 // STUDY LIBRARY EXPORT
 // ============================================
 
-export const allStudies: DailyStudy[] = [
-  ...easyStudies,
-  ...intermediateStudies,
-  ...deepStudies
-];
+// Lazy initialization to avoid bundler issues with large arrays
+let _allStudies: DailyStudy[] | null = null;
+
+const getAllStudies = (): DailyStudy[] => {
+  if (_allStudies === null) {
+    _allStudies = [...easyStudies, ...intermediateStudies, ...deepStudies];
+  }
+  return _allStudies;
+};
+
+// Export for direct access (uses lazy initialization)
+export const allStudies = {
+  get length() { return getAllStudies().length; },
+  filter: (fn: (study: DailyStudy) => boolean) => getAllStudies().filter(fn),
+  find: (fn: (study: DailyStudy) => boolean) => getAllStudies().find(fn),
+  map: <T>(fn: (study: DailyStudy) => T) => getAllStudies().map(fn),
+  forEach: (fn: (study: DailyStudy) => void) => getAllStudies().forEach(fn),
+  [Symbol.iterator]: () => getAllStudies()[Symbol.iterator](),
+};
 
 export const getStudiesByLevel = (level: StudyLevel): DailyStudy[] => {
-  return allStudies.filter(study => study.level === level);
+  return getAllStudies().filter(study => study.level === level);
 };
 
 export const getStudyById = (id: string): DailyStudy | undefined => {
-  return allStudies.find(study => study.id === id);
+  return getAllStudies().find(study => study.id === id);
 };
 
 export const getStudyByPrinciple = (principle: string): DailyStudy[] => {
-  return allStudies.filter(study =>
+  return getAllStudies().filter(study =>
     study.palacePrinciple.toLowerCase().includes(principle.toLowerCase())
   );
 };
 
 export const getRandomStudy = (level?: StudyLevel): DailyStudy => {
-  const pool = level ? getStudiesByLevel(level) : allStudies;
+  const pool = level ? getStudiesByLevel(level) : getAllStudies();
   return pool[Math.floor(Math.random() * pool.length)];
 };
 
@@ -1167,7 +1181,7 @@ export const getStudyCounts = () => ({
   easy: easyStudies.length,
   intermediate: intermediateStudies.length,
   deep: deepStudies.length,
-  total: allStudies.length
+  total: getAllStudies().length
 });
 
 // For backwards compatibility
@@ -1175,5 +1189,5 @@ export const studyCounts = {
   get easy() { return easyStudies.length; },
   get intermediate() { return intermediateStudies.length; },
   get deep() { return deepStudies.length; },
-  get total() { return allStudies.length; }
+  get total() { return getAllStudies().length; }
 };

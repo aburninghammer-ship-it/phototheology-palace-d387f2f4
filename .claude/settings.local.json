@@ -26,7 +26,8 @@
       "WebFetch(domain:phototheology-palace.lovable.app)",
       "Bash(find:*)",
       "Bash(wc:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []
