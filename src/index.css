@@ -730,3 +730,38 @@ All colors MUST be HSL.
     transform: scale(1.01);
   }
 }
+
+/* Mobile scrolling fixes */
+@media (max-width: 768px) {
+  /* Ensure the main content area scrolls properly on mobile */
+  main {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
+
+  /* Prevent touch event blocking on scrollable areas */
+  .min-h-screen {
+    touch-action: pan-y pan-x;
+  }
+
+  /* Ensure room pages and all card content can scroll */
+  [class*="TabsContent"],
+  .container,
+  .space-y-6,
+  .space-y-4 {
+    touch-action: pan-y pan-x;
+  }
+
+  /* Fix for iOS Safari momentum scrolling */
+  .overflow-y-auto,
+  .overflow-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ensure cards and collapsible content don't block scrolling */
+  .card,
+  [data-radix-collapsible-content],
+  [data-radix-accordion-content] {
+    touch-action: pan-y pan-x;
+  }
+}

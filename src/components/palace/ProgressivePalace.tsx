@@ -304,7 +304,7 @@ interface RoomCardProps {
 
 const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
   const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
-  const { showBadge: showRenovatedBadge } = useNewlyRenovatedRoom(room.id);
+  const { isRenovated } = useNewlyRenovatedRoom(room.id);
   const roomImage = getRoomImage(room.id, floorNumber);
 
   return (
@@ -317,18 +317,18 @@ const RoomCard = ({ room, floorNumber, gradient }: RoomCardProps) => {
         "flex flex-col items-end justify-end text-center relative shadow-lg"
       )}>
         {/* Background image */}
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
           style={{ backgroundImage: `url(${roomImage})` }}
         />
-        
+
         {/* Gradient overlay for text readability */}
         <div className={cn(
           "absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"
         )} />
-        
-        {/* Newly Renovated Badge */}
-        {showRenovatedBadge && (
+
+        {/* Newly Renovated Badge - always show for rooms with libraries */}
+        {isRenovated && (
           <div className="absolute top-2 left-2 z-20">
             <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-[10px] px-1.5 py-0.5 animate-pulse shadow-lg">
               <Star className="h-2.5 w-2.5 mr-0.5 fill-current" />
