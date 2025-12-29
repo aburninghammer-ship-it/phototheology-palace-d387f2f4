@@ -164,23 +164,25 @@ PHOTOTHEOLOGY MASTER FRAMEWORK (INVISIBLE TO USER)
 - 3H (DoL³/NE³): Final judgment → Literal new heaven/earth
 
 BOOK-LEVEL CHRIST PATTERNS (Use for verse selection):
-- Genesis: Creator, Promised Seed, Provider
-- Exodus: Passover Lamb, Deliverer, I AM
-- Leviticus: High Priest, Sacrifice, Holy One
-- Numbers: Lifted Serpent, Rock, Star of Jacob
-- Deuteronomy: Prophet like Moses, Word Made Flesh
-- Joshua: Captain of Lord's Host, Conqueror
-- Ruth: Kinsman Redeemer, Bridegroom
-- Psalms: Anointed King, Shepherd, Suffering Servant
-- Proverbs: Wisdom of God, Teacher
-- Isaiah: Suffering Servant, Mighty God, Prince of Peace
-- Daniel: Son of Man, Ancient of Days, Stone Kingdom
-- Jonah: Three Days in the Earth, Reluctant Witness
-- Matthew: King of the Jews, Son of David
-- John: Word, Life, Light, Bread, Door, Shepherd, Resurrection
-- Romans: Justifier, Righteousness of God
-- Hebrews: Better Covenant, Eternal Priest
-- Revelation: Alpha & Omega, Lamb on Throne, Coming King
+- Genesis: Second Adam, Promised Seed—Joseph sent ahead to prepare a place (John 14:2-3)
+- Exodus: Drawn from Waters—Moses pattern: birth, baptism, sent, preaching, ascension, return
+- Leviticus: Priestly Work—sacrificial system → Christ's sacrifice; Day of Atonement → judgment
+- Numbers: Leading the Twelve—Korah rebellion (hijacking priesthood) → papal authority; bronze serpent → Christ lifted
+- Deuteronomy: Final Words—Christ's final discourse (John 14-17), sings hymn, goes alone to die
+- Joshua: Final Battle with Shout—Jericho falls with loud cry → Satan's kingdom falls at cross
+- Judges: Church Advances Then Compromises—Samson/Delilah → harlot church seduces true church
+- Ruth: Gentile Woman in Field—works harvest, attracts Boaz → true church attracts Christ
+- 1 Samuel: Priesthood Transition—David receives kingdom though not yet ruling → Christ 1844
+- Esther: Death Decree and Deliverance—Haman's decree → Sunday law; Mordecai exalted → Christ honored
+- Job: Great Controversy on Trial—attempts to prove Job/Christ/Church guilty; go through Job/Christ for forgiveness
+- Psalms: Five Books of Christ's Journey—Book 1: Protection, Book 2: Sufferings, Book 3: Sanctuary, Book 4: Kingdom, Book 5: Praise
+- Proverbs: Wisdom and Two Women—Strange Woman = Babylon; Virtuous Woman = true church
+- Song of Solomon: Bridegroom Comes—Ch 3 cannot find Him = 1844 Great Disappointment
+- Isaiah: Suffering Servant (53), earth broken/prisoners (24:19-22), new heavens/earth (65:17)
+- Jeremiah: Persecution and New Covenant—prophesies against Israel, persecuted, buys field → purchases earth
+- Ezekiel: Glory Departs/Returns—Ch 10-11 glory leaves → Matthew 23:38 Jesus leaves temple desolate; Ch 37 dry bones → resurrection
+- Daniel: Kingdom Not Pass Away—Ch 1-6 parallels Matthew; Ch 7-12 parallels Revelation; 2300 days → 1844
+- Minor Prophets: Hosea (love for unfaithful), Joel (early/latter rain), Amos (judgment/shaking), Jonah (death/resurrection), Malachi (Three Angels pattern)
 
 WATERS PATTERN (13 appearances - use when water appears):
 1. Creation waters (Gen 1) → Chaos to order
@@ -205,6 +207,41 @@ Day 4 (Luminaries) → Christ as Sun, Church as Moon
 Day 5 (Fish/Birds) → Gospel to waters and sky
 Day 6 (Animals/Man) → New creation in Christ
 Day 7 (Rest) → Sabbath rest in Christ
+
+DIMENSIONAL EXAMPLES (Apply these 6-dimensional patterns):
+- The Sanctuary: Literal (Levites served) → Christ (our High Priest) → Me (I am priest, 1 Pet 2:9) → Church (priesthood of believers) → Heaven (actual priesthood now)
+- Jacob and Esau: Literal (younger blessed) → Christ (gains blessing over Satan, original "firstborn") → Me (new man over old) → Church (spiritual over literal Israel) → Heaven (born twice inherit)
+- The Exodus: Literal (Egypt) → Christ (from grave) → Me (from sin) → Church (from Babylon) → Heaven (from this world)
+- Joseph: Literal (hated, they bow) → Christ (hated, every knee bows) → Me (hated but faithful) → Church (hated, vindicated) → Heaven (wicked bow before saints)
+- Noah's Ark: Literal (flood) → Christ (is the Ark) → Me (must be in Ark) → Church (invites to safety) → Heaven (old world to new)
+- Pearl of Great Price: Literal (sells all) → Christ (sold all in heaven for earth) → Me (sell all for kingdom) → Church (we want the field!) → Heaven (gaining heaven)
+
+CHRIST-CHURCH PARALLELS (Church relives Christ's life):
+- Birth of Christ → Birth of church at Pentecost
+- Baptism of Christ → Baptism of church at Pentecost
+- Wilderness, sorely tried → Church wilderness 1260 years
+- Cleanses temple (46 years old) → Church emerges with sanctuary message (1798-1844 = 46 years)
+- Preaching, teaching, healing → Church preaches Three Angels, health message
+- Persecution because of Sabbath (Mt 12:14) → Persecution will come because of Sabbath
+- Transfigured, strengthened → Final Spirit outpouring
+- Temple left desolate → Babylon declared desolate
+- Death, burial, resurrection → Death decree, death, resurrection of saints
+
+SANCTUARY DIMENSIONAL PATTERN:
+| Station | Christ | Me | Church | Heaven |
+| Altar | Lamb slain | Die to self | Built on sacrifice | Self-sacrificing love |
+| Laver | Christ's baptism | Be born again | Pentecost | Purity |
+| Shewbread | Bread from Heaven | Study Word | Conflict over Word | Word as basis |
+| Incense | Christ's righteousness | Pray | Prayer | Communion |
+| Candlestick | Light of World | Let light shine | City on hill | Light |
+| Ark | Perfection | Keep commandments | 1844 | Law as basis of heaven |
+
+KEY VERSES BY BOOK (Christ connections):
+- Genesis 3:15 (Seed of woman), Exodus 12:13 (Blood on doorpost), Leviticus 17:11 (Life in blood)
+- Numbers 21:9 (Look and live), Deuteronomy 18:15 (Prophet like Moses), Joshua 5:14 (Commander)
+- Ruth 4:14 (Redeemer), Job 19:25 (I know my Redeemer lives), Psalm 23:1/24:10 (Shepherd/Lord of Hosts)
+- Isaiah 53:5 (Wounded for transgressions), Daniel 7:13-14 (Everlasting dominion)
+- Zechariah 12:10 (Look on Me whom pierced), Malachi 4:2 (Sun of Righteousness)
 
 ═══════════════════════════════════════════════════════════════
 
