@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -14,7 +15,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Shuffle, Check, X, RefreshCw, Zap, Users,
   HelpCircle, Trophy, Clock, Loader2, BookOpen, Sparkles,
-  RotateCcw, Target, Shield, HandHelping
+  RotateCcw, Target, Shield, HandHelping, Copy, UserPlus,
+  Monitor, Wifi, Share2, Eye, EyeOff
 } from "lucide-react";
 import {
   Dialog,
@@ -25,6 +27,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Connection Card types
 interface ConnectionCard {
@@ -54,28 +65,38 @@ interface ConnectionOption {
   type: ConnectionType;
 }
 
+interface LocalPlayer {
+  id: string;
+  name: string;
+  hand: ConnectionCard[];
+  score: number;
+  isAI: boolean;
+  color: string;
+}
+
 interface GameState {
   mode: "classic" | "easy";
+  playMode: "solo" | "local" | "online";
   currentPlayer: number;
-  players: Array<{
-    id: string;
-    name: string;
-    hand: ConnectionCard[];
-    score: number;
-  }>;
+  players: LocalPlayer[];
   anchorCard: AnchorCard | null;
   anchorDeck: AnchorCard[];
   connectionDeck: ConnectionCard[];
   discardPile: ConnectionCard[];
   roundsWon: number[];
-  gamePhase: "setup" | "playing" | "evaluating" | "roundEnd" | "gameEnd";
+  gamePhase: "setup" | "playing" | "evaluating" | "roundEnd" | "gameEnd" | "playerTurn" | "waitingForPlayer";
   turnPhase: "selectCard" | "makeConnection" | "awaitRuling";
   selectedCard: ConnectionCard | null;
   connectionText: string;
   easyModeOptions: ConnectionOption[];
   selectedOption: string;
   jeevesRuling: { approved: boolean; reasoning: string } | null;
+  roomCode?: string;
+  showCurrentHand: boolean;
 }
+
+// Player colors for local multiplayer
+const PLAYER_COLORS = ["#8b5cf6", "#ec4899", "#10b981", "#f59e0b"];
 
 // Sample Anchor Cards
 const ANCHOR_CARDS: AnchorCard[] = [
@@ -197,6 +218,7 @@ const PhototheologyUno = () => {
 
   const [gameState, setGameState] = useState<GameState>({
     mode: "easy",
+    playMode: "solo",
     currentPlayer: 0,
     players: [],
     anchorCard: null,
@@ -211,11 +233,27 @@ const PhototheologyUno = () => {
     easyModeOptions: [],
     selectedOption: "",
     jeevesRuling: null,
+    showCurrentHand: true,
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [playerCount, setPlayerCount] = useState(2);
+  const [localPlayerNames, setLocalPlayerNames] = useState<string[]>(["", "", "", ""]);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [showPassDeviceAlert, setShowPassDeviceAlert] = useState(false);
+  const [nextPlayerName, setNextPlayerName] = useState("");
+
+  // Generate room code for online play
+  const generateRoomCode = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return code;
+  };
 
   // Shuffle array helper
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -228,27 +266,57 @@ const PhototheologyUno = () => {
   };
 
   // Initialize game
-  const startGame = (mode: "classic" | "easy", numPlayers: number) => {
+  const startGame = (mode: "classic" | "easy", playMode: "solo" | "local" | "online", numPlayers: number) => {
     const shuffledAnchors = shuffleArray(ANCHOR_CARDS);
     const shuffledConnections = shuffleArray(CONNECTION_CARDS);
 
     // Deal 7 cards to each player
-    const players: GameState["players"] = [];
+    const players: LocalPlayer[] = [];
     let deckIndex = 0;
 
     for (let i = 0; i < numPlayers; i++) {
       const hand = shuffledConnections.slice(deckIndex, deckIndex + 7);
       deckIndex += 7;
-      players.push({
-        id: i === 0 ? (user?.id || `player-${i}`) : `player-${i}`,
-        name: i === 0 ? (user?.email?.split("@")[0] || "You") : `Player ${i + 1}`,
-        hand,
-        score: 0
-      });
+
+      if (playMode === "solo") {
+        // Solo mode: Player 1 is human, rest are AI
+        players.push({
+          id: i === 0 ? (user?.id || `player-${i}`) : `ai-${i}`,
+          name: i === 0 ? (user?.email?.split("@")[0] || "You") : `AI ${i}`,
+          hand,
+          score: 0,
+          isAI: i !== 0,
+          color: PLAYER_COLORS[i],
+        });
+      } else if (playMode === "local") {
+        // Local mode: All players are human, taking turns on same device
+        const playerName = localPlayerNames[i] || `Player ${i + 1}`;
+        players.push({
+          id: `local-${i}`,
+          name: playerName,
+          hand,
+          score: 0,
+          isAI: false,
+          color: PLAYER_COLORS[i],
+        });
+      } else {
+        // Online mode (future implementation)
+        players.push({
+          id: i === 0 ? (user?.id || `player-${i}`) : `online-${i}`,
+          name: i === 0 ? (user?.email?.split("@")[0] || "You") : `Waiting...`,
+          hand,
+          score: 0,
+          isAI: false,
+          color: PLAYER_COLORS[i],
+        });
+      }
     }
+
+    const roomCode = playMode === "online" ? generateRoomCode() : undefined;
 
     setGameState({
       mode,
+      playMode,
       currentPlayer: 0,
       players,
       anchorCard: shuffledAnchors[0],
@@ -256,19 +324,41 @@ const PhototheologyUno = () => {
       connectionDeck: shuffledConnections.slice(deckIndex),
       discardPile: [],
       roundsWon: Array(numPlayers).fill(0),
-      gamePhase: "playing",
+      gamePhase: playMode === "local" ? "playerTurn" : "playing",
       turnPhase: "selectCard",
       selectedCard: null,
       connectionText: "",
       easyModeOptions: [],
       selectedOption: "",
       jeevesRuling: null,
+      roomCode,
+      showCurrentHand: playMode !== "local", // Hide hand initially for local multiplayer
     });
+
+    if (playMode === "local") {
+      // Show whose turn it is
+      setNextPlayerName(players[0].name);
+      setShowPassDeviceAlert(true);
+    }
 
     toast({
       title: `${mode === "classic" ? "Classic" : "Easy"} Mode Started!`,
-      description: `${numPlayers} players. First to empty their hand wins!`,
+      description: playMode === "local"
+        ? `${numPlayers} local players. Pass the device after each turn!`
+        : playMode === "online"
+        ? `Room code: ${roomCode}. Share with friends!`
+        : `${numPlayers} players. First to empty their hand wins!`,
     });
+  };
+
+  // Handle local player turn start
+  const startPlayerTurn = () => {
+    setGameState(prev => ({
+      ...prev,
+      gamePhase: "playing",
+      showCurrentHand: true,
+    }));
+    setShowPassDeviceAlert(false);
   };
 
   // Select a card from hand
@@ -356,7 +446,9 @@ Keep descriptions under 100 characters each. Focus on meaningful theological con
 
     const connectionExplanation = gameState.mode === "classic"
       ? gameState.connectionText
-      : gameState.easyModeOptions.find(o => o.label === gameState.selectedOption)?.description || "";
+      : gameState.selectedOption === "D"
+        ? gameState.connectionText
+        : gameState.easyModeOptions.find(o => o.label === gameState.selectedOption)?.description || "";
 
     try {
       const { data, error } = await supabase.functions.invoke("jeeves", {
@@ -480,12 +572,22 @@ Return ONLY valid JSON:
       newState.selectedOption = "";
       newState.jeevesRuling = null;
       newState.turnPhase = "selectCard";
-      newState.gamePhase = "playing";
 
-      // Simple AI turn for non-human players
-      if (newState.currentPlayer !== 0 && newState.gamePhase === "playing") {
-        // AI plays automatically after a delay
-        setTimeout(() => simulateAITurn(), 1500);
+      // Handle different play modes
+      if (newState.playMode === "local") {
+        // Local multiplayer: Show pass device alert
+        newState.gamePhase = "playerTurn";
+        newState.showCurrentHand = false;
+        setNextPlayerName(newState.players[newState.currentPlayer].name);
+        setTimeout(() => setShowPassDeviceAlert(true), 300);
+      } else if (newState.playMode === "solo") {
+        newState.gamePhase = "playing";
+        // AI turn
+        if (newState.players[newState.currentPlayer].isAI && newState.gamePhase === "playing") {
+          setTimeout(() => simulateAITurn(), 1500);
+        }
+      } else {
+        newState.gamePhase = "playing";
       }
 
       return newState;
@@ -543,7 +645,7 @@ Return ONLY valid JSON:
       newState.currentPlayer = (newState.currentPlayer + 1) % newState.players.length;
 
       // If next player is also AI, continue
-      if (newState.currentPlayer !== 0 && newState.gamePhase === "playing") {
+      if (newState.players[newState.currentPlayer].isAI && newState.gamePhase === "playing") {
         setTimeout(() => simulateAITurn(), 1500);
       }
 
@@ -572,7 +674,6 @@ Return ONLY valid JSON:
           toast({ title: "New Anchor!", description: "A new Anchor Card has been drawn!" });
         }
         break;
-      // Add other special card handlers as needed
     }
   };
 
@@ -594,7 +695,7 @@ Return ONLY valid JSON:
       anchorDeck: shuffledAnchors.slice(1),
       connectionDeck: shuffledConnections.slice(deckIndex),
       discardPile: [],
-      gamePhase: "playing",
+      gamePhase: prev.playMode === "local" ? "playerTurn" : "playing",
       turnPhase: "selectCard",
       selectedCard: null,
       connectionText: "",
@@ -602,7 +703,45 @@ Return ONLY valid JSON:
       selectedOption: "",
       jeevesRuling: null,
       currentPlayer: 0,
+      showCurrentHand: prev.playMode !== "local",
     }));
+
+    if (gameState.playMode === "local") {
+      setNextPlayerName(gameState.players[0].name);
+      setShowPassDeviceAlert(true);
+    }
+  };
+
+  // Send invite
+  const sendInvite = async () => {
+    if (!inviteEmail || !gameState.roomCode) return;
+
+    try {
+      // In a full implementation, this would send an email or push notification
+      toast({
+        title: "Invite Sent!",
+        description: `Invitation sent to ${inviteEmail} with room code ${gameState.roomCode}`,
+      });
+      setInviteEmail("");
+      setShowInviteDialog(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send invite",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Copy room code
+  const copyRoomCode = () => {
+    if (gameState.roomCode) {
+      navigator.clipboard.writeText(gameState.roomCode);
+      toast({
+        title: "Copied!",
+        description: "Room code copied to clipboard",
+      });
+    }
   };
 
   // Get card category color
@@ -629,6 +768,11 @@ Return ONLY valid JSON:
     }
   };
 
+  const currentPlayer = gameState.players[gameState.currentPlayer];
+  const isCurrentPlayersTurn = gameState.playMode === "solo"
+    ? gameState.currentPlayer === 0
+    : true;
+
   if (!user) {
     return (
       <div className="min-h-screen bg-background">
@@ -650,46 +794,57 @@ Return ONLY valid JSON:
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Games
           </Button>
-          <Dialog open={showRules} onOpenChange={setShowRules}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <HelpCircle className="mr-2 h-4 w-4" />
-                Rules
+          <div className="flex gap-2">
+            {gameState.roomCode && (
+              <Button variant="outline" onClick={copyRoomCode}>
+                <Copy className="mr-2 h-4 w-4" />
+                {gameState.roomCode}
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Phototheology Uno Rules</DialogTitle>
-                <DialogDescription>The Biblical Connections Game</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 text-sm">
-                <div>
-                  <h4 className="font-semibold mb-1">Objective</h4>
-                  <p>Be the first to empty your hand by drawing meaningful connections between your cards and the Anchor Text. Jeeves (AI) judges each connection.</p>
+            )}
+            <Dialog open={showRules} onOpenChange={setShowRules}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Rules
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Phototheology Uno Rules</DialogTitle>
+                  <DialogDescription>The Biblical Connections Game</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <h4 className="font-semibold mb-1">Objective</h4>
+                    <p>Be the first to empty your hand by drawing meaningful connections between your cards and the Anchor Text. Jeeves (AI) judges each connection.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Play Modes</h4>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li><strong>Solo:</strong> Play against AI opponents</li>
+                      <li><strong>Local:</strong> Pass and play with friends on the same device</li>
+                      <li><strong>Online:</strong> Invite friends to play remotely</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Valid Connection Types</h4>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li><strong>Typological:</strong> OT foreshadowing NT fulfillment</li>
+                      <li><strong>Thematic:</strong> Shared theological themes</li>
+                      <li><strong>Contrast:</strong> Meaningful opposition</li>
+                      <li><strong>Parallel:</strong> Similar narrative structures</li>
+                      <li><strong>Interpretive:</strong> One passage explains another</li>
+                      <li><strong>Ethical:</strong> Shared moral teaching</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Winning</h4>
+                    <p>First to discard all cards shouts "Sola Scriptura!" and wins the round. Win 3 rounds to win the match!</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Valid Connection Types</h4>
-                  <ul className="list-disc pl-5 space-y-1">
-                    <li><strong>Typological:</strong> OT foreshadowing NT fulfillment</li>
-                    <li><strong>Thematic:</strong> Shared theological themes</li>
-                    <li><strong>Contrast:</strong> Meaningful opposition</li>
-                    <li><strong>Parallel:</strong> Similar narrative structures</li>
-                    <li><strong>Interpretive:</strong> One passage explains another</li>
-                    <li><strong>Ethical:</strong> Shared moral teaching</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Classic vs Easy Mode</h4>
-                  <p><strong>Classic:</strong> Explain your own connection (deeper study)</p>
-                  <p><strong>Easy:</strong> Choose from multiple-choice options (faster play)</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Winning</h4>
-                  <p>First to discard all cards shouts "Sola Scriptura!" and wins the round. Win 3 rounds to win the match!</p>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         {/* Game Title */}
@@ -700,19 +855,82 @@ Return ONLY valid JSON:
           <p className="text-muted-foreground mt-2">The Biblical Connections Game</p>
         </div>
 
+        {/* Pass Device Alert for Local Multiplayer */}
+        <AlertDialog open={showPassDeviceAlert} onOpenChange={setShowPassDeviceAlert}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-center text-2xl">
+                Pass the Device!
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-center text-lg py-4">
+                <div
+                  className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold"
+                  style={{ backgroundColor: PLAYER_COLORS[gameState.currentPlayer] }}
+                >
+                  {nextPlayerName.charAt(0)}
+                </div>
+                <span className="font-bold text-xl">{nextPlayerName}</span>, it's your turn!
+                <br />
+                <span className="text-sm">Make sure only you can see the screen.</span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="justify-center">
+              <AlertDialogAction onClick={startPlayerTurn} className="min-w-[150px]">
+                <Eye className="mr-2 h-4 w-4" />
+                Show My Cards
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         {/* Setup Phase */}
         {gameState.gamePhase === "setup" && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-md mx-auto"
+            className="max-w-lg mx-auto"
           >
             <Card className="border-2 border-primary/20">
               <CardHeader className="text-center">
                 <CardTitle>Start New Game</CardTitle>
-                <CardDescription>Choose your game mode and players</CardDescription>
+                <CardDescription>Choose your play mode, game mode, and players</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Play Mode Selection */}
+                <div>
+                  <Label className="text-base font-semibold mb-3 block">Play Mode</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <Button
+                      variant={gameState.playMode === "solo" ? "default" : "outline"}
+                      className="flex flex-col h-auto py-4"
+                      onClick={() => setGameState(prev => ({ ...prev, playMode: "solo" }))}
+                    >
+                      <Monitor className="h-6 w-6 mb-1" />
+                      <span className="text-xs">Solo</span>
+                      <span className="text-[10px] text-muted-foreground">vs AI</span>
+                    </Button>
+                    <Button
+                      variant={gameState.playMode === "local" ? "default" : "outline"}
+                      className="flex flex-col h-auto py-4"
+                      onClick={() => setGameState(prev => ({ ...prev, playMode: "local" }))}
+                    >
+                      <Users className="h-6 w-6 mb-1" />
+                      <span className="text-xs">Local</span>
+                      <span className="text-[10px] text-muted-foreground">Same Device</span>
+                    </Button>
+                    <Button
+                      variant={gameState.playMode === "online" ? "default" : "outline"}
+                      className="flex flex-col h-auto py-4"
+                      onClick={() => setGameState(prev => ({ ...prev, playMode: "online" }))}
+                    >
+                      <Wifi className="h-6 w-6 mb-1" />
+                      <span className="text-xs">Online</span>
+                      <span className="text-[10px] text-muted-foreground">Invite Friends</span>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Game Mode Selection */}
                 <div>
                   <Label className="text-base font-semibold mb-3 block">Game Mode</Label>
                   <Tabs defaultValue="easy" className="w-full">
@@ -727,7 +945,7 @@ Return ONLY valid JSON:
                           <span className="font-semibold text-green-700 dark:text-green-400">Easy Mode</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          Choose from multiple-choice connection options. Great for beginners and faster games!
+                          Choose from multiple-choice connection options. Great for beginners!
                         </p>
                       </div>
                     </TabsContent>
@@ -738,13 +956,14 @@ Return ONLY valid JSON:
                           <span className="font-semibold text-purple-700 dark:text-purple-400">Classic Mode</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          Explain your own connections. Best for deeper theological discussion!
+                          Explain your own connections. Best for deeper study!
                         </p>
                       </div>
                     </TabsContent>
                   </Tabs>
                 </div>
 
+                {/* Player Count */}
                 <div>
                   <Label className="text-base font-semibold mb-3 block">Number of Players</Label>
                   <div className="flex gap-2">
@@ -762,18 +981,45 @@ Return ONLY valid JSON:
                   </div>
                 </div>
 
+                {/* Player Names for Local Mode */}
+                {gameState.playMode === "local" && (
+                  <div className="space-y-3">
+                    <Label className="text-base font-semibold block">Player Names</Label>
+                    {Array.from({ length: playerCount }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
+                          style={{ backgroundColor: PLAYER_COLORS[i] }}
+                        >
+                          {i + 1}
+                        </div>
+                        <Input
+                          placeholder={`Player ${i + 1}`}
+                          value={localPlayerNames[i]}
+                          onChange={(e) => {
+                            const newNames = [...localPlayerNames];
+                            newNames[i] = e.target.value;
+                            setLocalPlayerNames(newNames);
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Start Buttons */}
                 <div className="flex gap-3 pt-4">
                   <Button
                     className="flex-1 h-12"
                     variant="outline"
-                    onClick={() => startGame("easy", playerCount)}
+                    onClick={() => startGame("easy", gameState.playMode, playerCount)}
                   >
                     <Sparkles className="mr-2 h-5 w-5" />
                     Easy Mode
                   </Button>
                   <Button
                     className="flex-1 h-12"
-                    onClick={() => startGame("classic", playerCount)}
+                    onClick={() => startGame("classic", gameState.playMode, playerCount)}
                   >
                     <BookOpen className="mr-2 h-5 w-5" />
                     Classic Mode
@@ -785,18 +1031,80 @@ Return ONLY valid JSON:
         )}
 
         {/* Playing Phase */}
-        {(gameState.gamePhase === "playing" || gameState.gamePhase === "evaluating") && (
+        {(gameState.gamePhase === "playing" || gameState.gamePhase === "evaluating" || gameState.gamePhase === "playerTurn") && (
           <div className="space-y-6">
+            {/* Online Game Controls */}
+            {gameState.playMode === "online" && gameState.roomCode && (
+              <div className="flex justify-center gap-3">
+                <Button variant="outline" onClick={copyRoomCode}>
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copy Code: {gameState.roomCode}
+                </Button>
+                <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Invite Player
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Invite a Player</DialogTitle>
+                      <DialogDescription>
+                        Send an invitation with the room code
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-4">
+                      <div>
+                        <Label>Room Code</Label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Input value={gameState.roomCode} readOnly />
+                          <Button variant="outline" onClick={copyRoomCode}>
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Invite by Email</Label>
+                        <Input
+                          type="email"
+                          placeholder="friend@example.com"
+                          value={inviteEmail}
+                          onChange={(e) => setInviteEmail(e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+                      <Button className="w-full" onClick={sendInvite}>
+                        <Share2 className="mr-2 h-4 w-4" />
+                        Send Invite
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
+
             {/* Scoreboard */}
             <div className="flex gap-4 justify-center flex-wrap">
               {gameState.players.map((player, idx) => (
                 <Card
                   key={player.id}
-                  className={`px-4 py-2 ${idx === gameState.currentPlayer ? "border-primary border-2 bg-primary/5" : ""}`}
+                  className={`px-4 py-2 ${idx === gameState.currentPlayer ? "border-2 ring-2 ring-offset-2" : ""}`}
+                  style={{
+                    borderColor: idx === gameState.currentPlayer ? player.color : undefined,
+                    '--tw-ring-color': player.color,
+                  } as React.CSSProperties}
                 >
                   <div className="text-center">
-                    <p className="font-semibold">{player.name}</p>
-                    <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center justify-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: player.color }}
+                      />
+                      <p className="font-semibold">{player.name}</p>
+                      {player.isAI && <Badge variant="outline" className="text-[10px]">AI</Badge>}
+                    </div>
+                    <div className="flex items-center gap-2 text-sm mt-1">
                       <Badge variant="secondary">{player.hand.length} cards</Badge>
                       <Badge variant="outline">{gameState.roundsWon[idx]} wins</Badge>
                     </div>
@@ -829,22 +1137,41 @@ Return ONLY valid JSON:
             </motion.div>
 
             {/* Current Turn Info */}
-            {gameState.currentPlayer === 0 && (
+            {gameState.showCurrentHand && isCurrentPlayersTurn && (
               <div className="text-center">
-                <Badge className="text-base px-4 py-1" variant="default">
-                  Your Turn - {gameState.turnPhase === "selectCard" ? "Select a Card" :
-                               gameState.turnPhase === "makeConnection" ? "Make Your Connection" :
-                               "Awaiting Ruling..."}
+                <Badge
+                  className="text-base px-4 py-1"
+                  style={{ backgroundColor: currentPlayer?.color }}
+                >
+                  {gameState.playMode === "local" ? `${currentPlayer?.name}'s Turn` : "Your Turn"} - {
+                    gameState.turnPhase === "selectCard" ? "Select a Card" :
+                    gameState.turnPhase === "makeConnection" ? "Make Your Connection" :
+                    "Awaiting Ruling..."
+                  }
                 </Badge>
               </div>
             )}
 
             {/* Player's Hand */}
-            {gameState.currentPlayer === 0 && (
+            {gameState.showCurrentHand && isCurrentPlayersTurn && currentPlayer && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-center">Your Hand</h3>
+                <div className="flex items-center justify-center gap-2">
+                  <h3 className="text-lg font-semibold">
+                    {gameState.playMode === "local" ? `${currentPlayer.name}'s Hand` : "Your Hand"}
+                  </h3>
+                  {gameState.playMode === "local" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setGameState(prev => ({ ...prev, showCurrentHand: false }))}
+                    >
+                      <EyeOff className="h-4 w-4 mr-1" />
+                      Hide
+                    </Button>
+                  )}
+                </div>
                 <div className="flex flex-wrap gap-3 justify-center">
-                  {gameState.players[0]?.hand.map((card) => (
+                  {currentPlayer.hand.map((card) => (
                     <motion.div
                       key={card.id}
                       whileHover={{ scale: 1.05, y: -5 }}
@@ -890,7 +1217,7 @@ Return ONLY valid JSON:
             )}
 
             {/* Connection Input */}
-            {gameState.turnPhase === "makeConnection" && gameState.selectedCard && gameState.currentPlayer === 0 && (
+            {gameState.turnPhase === "makeConnection" && gameState.selectedCard && gameState.showCurrentHand && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1034,11 +1361,11 @@ Return ONLY valid JSON:
             )}
 
             {/* AI Turn Indicator */}
-            {gameState.currentPlayer !== 0 && gameState.gamePhase === "playing" && (
+            {gameState.playMode === "solo" && currentPlayer?.isAI && gameState.gamePhase === "playing" && (
               <div className="text-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
                 <p className="text-muted-foreground">
-                  {gameState.players[gameState.currentPlayer]?.name} is thinking...
+                  {currentPlayer.name} is thinking...
                 </p>
               </div>
             )}
@@ -1059,7 +1386,13 @@ Return ONLY valid JSON:
                 <div className="space-y-2 mb-6">
                   {gameState.players.map((player, idx) => (
                     <div key={player.id} className="flex justify-between items-center">
-                      <span>{player.name}</span>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: player.color }}
+                        />
+                        <span>{player.name}</span>
+                      </div>
                       <Badge variant={gameState.roundsWon[idx] > 0 ? "default" : "outline"}>
                         {gameState.roundsWon[idx]} wins
                       </Badge>
@@ -1092,7 +1425,13 @@ Return ONLY valid JSON:
                 <div className="space-y-2 mb-6">
                   {gameState.players.map((player, idx) => (
                     <div key={player.id} className="flex justify-between items-center p-2 bg-background/50 rounded">
-                      <span className="font-semibold">{player.name}</span>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: player.color }}
+                        />
+                        <span className="font-semibold">{player.name}</span>
+                      </div>
                       <div className="flex gap-2">
                         <Badge>{player.score} pts</Badge>
                         <Badge variant="outline">{gameState.roundsWon[idx]} wins</Badge>

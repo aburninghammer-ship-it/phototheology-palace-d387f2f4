@@ -185,6 +185,12 @@ const ObservationGame = lazy(() => import("./pages/games/ObservationGame"));
 const ConcentrationRoom = lazy(() => import("./pages/games/ConcentrationRoom"));
 const DimensionsRoom = lazy(() => import("./pages/games/DimensionsRoom"));
 const BlueRoomGame = lazy(() => import("./pages/games/BlueRoomGame"));
+const PhototheologyJeopardy = lazy(() => import("./pages/games/PhototheologyJeopardy"));
+const PhototheologyChess = lazy(() => import("./pages/games/PhototheologyChess"));
+const PhototheologyCheckers = lazy(() => import("./pages/games/PhototheologyCheckers"));
+const PhototheologyTicTacToe = lazy(() => import("./pages/games/PhototheologyTicTacToe"));
+const PhototheologyConnectFour = lazy(() => import("./pages/games/PhototheologyConnectFour"));
+const PrinciplesClassification = lazy(() => import("./pages/games/PrinciplesClassification"));
 const PublicImageLibrary = lazy(() => import("./pages/PublicImageLibrary"));
 const BibleStudySeriesBuilder = lazy(() => import("./pages/BibleStudySeriesBuilder"));
 const SeriesLessonEditor = lazy(() => import("./pages/SeriesLessonEditor"));
@@ -423,6 +429,12 @@ function App() {
             <Route path="/games/concentration-room" element={<ProtectedRoute><ConcentrationRoom /></ProtectedRoute>} />
             <Route path="/games/dimensions-room" element={<ProtectedRoute><DimensionsRoom /></ProtectedRoute>} />
             <Route path="/games/blue-room" element={<ProtectedRoute><BlueRoomGame /></ProtectedRoute>} />
+            <Route path="/games/jeopardy" element={<ProtectedRoute><PhototheologyJeopardy /></ProtectedRoute>} />
+            <Route path="/games/chess" element={<ProtectedRoute><PhototheologyChess /></ProtectedRoute>} />
+            <Route path="/games/checkers" element={<ProtectedRoute><PhototheologyCheckers /></ProtectedRoute>} />
+            <Route path="/games/tic-tac-toe" element={<ProtectedRoute><PhototheologyTicTacToe /></ProtectedRoute>} />
+            <Route path="/games/connect-four" element={<ProtectedRoute><PhototheologyConnectFour /></ProtectedRoute>} />
+            <Route path="/games/principles-classification" element={<ProtectedRoute><PrinciplesClassification /></ProtectedRoute>} />
             <Route path="/games/principle-cards" element={<ProtectedRoute><PrincipleCards /></ProtectedRoute>} />
             <Route path="/games/principle-cards/game/:gameId" element={<ProtectedRoute><PrincipleCardsGame /></ProtectedRoute>} />
             <Route path="/games/principle-cards/tournaments" element={<ProtectedRoute><PrincipleTournaments /></ProtectedRoute>} />
