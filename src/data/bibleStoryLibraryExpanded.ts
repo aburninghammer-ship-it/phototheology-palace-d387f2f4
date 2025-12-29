@@ -450,7 +450,7 @@ export const bibleStoryLibraryExpanded: BookStories[] = [
     ]
   },
 
-  // NEW TESTAMENT - Sample
+  // NEW TESTAMENT
   {
     book: "Matthew",
     testament: "new",
@@ -494,6 +494,263 @@ export const bibleStoryLibraryExpanded: BookStories[] = [
         christConnection: "Jesus identifies with sinners in baptism though sinless. The Trinity is fully revealed: Son baptized, Spirit descending, Father speaking. This inaugurates Christ's public ministry.",
         lessonLearned: "Jesus fulfilled all righteousness for us. Baptism publicly identifies us with Christ's death and resurrection.",
         applicationPoints: ["Follow Jesus in baptism", "Seek God's approval, not human approval", "The Trinity works together for our salvation"]
+      },
+      {
+        id: "mat-4",
+        title: "Temptation in the Wilderness",
+        reference: "Matthew 4:1-11",
+        summary: "After 40 days of fasting, Jesus is tempted three times by Satan and overcomes each temptation with Scripture.",
+        detailedNarrative: "The Spirit led Jesus into the wilderness to be tempted by the devil. After fasting forty days and nights, He was hungry. Satan came: 'If thou be the Son of God, command that these stones be made bread.' Jesus answered: 'Man shall not live by bread alone, but by every word that proceedeth out of the mouth of God.' Satan took Him to the temple pinnacle: 'Cast thyself down: for it is written, He shall give his angels charge concerning thee.' Jesus replied: 'Thou shalt not tempt the Lord thy God.' Finally, Satan showed Him all kingdoms and their glory: 'All these things will I give thee, if thou wilt fall down and worship me.' Jesus commanded: 'Get thee hence, Satan: for it is written, Thou shalt worship the Lord thy God, and him only shalt thou serve.' Then the devil departed, and angels came and ministered to Him.",
+        characters: ["Jesus", "Satan", "Angels"],
+        themes: ["Temptation", "Scripture", "Victory", "Dependence on God"],
+        keyVerse: "It is written, Man shall not live by bread alone, but by every word that proceedeth out of the mouth of God. (Matthew 4:4)",
+        christConnection: "Where Adam failed in the garden of plenty, Jesus succeeds in the wilderness of deprivation. He is the Last Adam who overcomes for us. He defeats Satan with Scripture.",
+        lessonLearned: "Scripture is our weapon against temptation. Jesus shows us how to resist the devil.",
+        applicationPoints: ["Know Scripture to fight temptation", "Trust God's provision, not shortcuts", "Only God is worthy of worship"]
+      },
+      {
+        id: "mat-5",
+        title: "Sermon on the Mount",
+        reference: "Matthew 5-7",
+        summary: "Jesus teaches the Beatitudes, the higher law of the kingdom, prayer, and the two foundations.",
+        detailedNarrative: "Seeing the multitudes, Jesus went up on a mountain and taught His disciples. He began with the Beatitudes: blessed are the poor in spirit, those who mourn, the meek, those who hunger for righteousness, the merciful, pure in heart, peacemakers, and those persecuted for righteousness. 'Ye are the salt of the earth...the light of the world.' He did not abolish the law but fulfilled it, raising the standard: not just no murder but no anger; not just no adultery but no lust. 'Love your enemies, bless them that curse you.' He taught how to give, pray (including the Lord's Prayer), and fast—in secret, not for show. 'Lay up treasures in heaven...where your treasure is, there will your heart be also.' 'Judge not, that ye be not judged.' 'Ask, and it shall be given you; seek, and ye shall find; knock, and it shall be opened.' He concluded with two builders: wise builds on rock (obeys His words), foolish on sand. When He finished, the people were astonished at His authority.",
+        characters: ["Jesus", "Disciples", "Multitudes"],
+        themes: ["Kingdom Ethics", "Heart Righteousness", "Prayer", "Obedience"],
+        keyVerse: "But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you. (Matthew 6:33)",
+        christConnection: "Jesus is the new Moses, giving the law of the kingdom from a mountain. But He is greater—He fulfills the law perfectly and enables us to do the same.",
+        lessonLearned: "The kingdom of God requires inward righteousness, not just outward conformity. Build your life on Jesus' words.",
+        applicationPoints: ["Live from the heart, not just behavior", "Pray the Lord's Prayer pattern", "Build your life on obedience to Christ's words"]
+      },
+      {
+        id: "mat-6",
+        title: "Peter's Confession and Transfiguration",
+        reference: "Matthew 16:13-28; 17:1-13",
+        summary: "Peter confesses Jesus as Christ; Jesus predicts His death. On a mountain, Jesus is transfigured in glory before three disciples.",
+        detailedNarrative: "At Caesarea Philippi, Jesus asked: 'Whom do men say that I the Son of man am?' They reported various opinions—John the Baptist, Elijah, Jeremiah. 'But whom say ye that I am?' Peter answered: 'Thou art the Christ, the Son of the living God.' Jesus blessed him: 'Flesh and blood hath not revealed it unto thee, but my Father which is in heaven...upon this rock I will build my church; and the gates of hell shall not prevail against it.' From then on, Jesus began to show that He must go to Jerusalem, suffer, be killed, and rise the third day. Peter rebuked Him; Jesus replied: 'Get thee behind me, Satan.' Six days later, Jesus took Peter, James, and John up a high mountain. 'And was transfigured before them: and his face did shine as the sun, and his raiment was white as the light.' Moses and Elijah appeared talking with Him. Peter offered to build three tabernacles. A bright cloud overshadowed them; a voice spoke: 'This is my beloved Son, in whom I am well pleased; hear ye him.' They fell on their faces; Jesus touched them: 'Arise, and be not afraid.' Coming down, He charged them to tell no one until after His resurrection.",
+        characters: ["Jesus", "Peter", "James", "John", "Moses", "Elijah", "The Father"],
+        themes: ["Revelation", "Messiahship", "Glory", "Suffering", "Resurrection"],
+        keyVerse: "Thou art the Christ, the Son of the living God. (Matthew 16:16)",
+        christConnection: "Peter's confession is the rock of the church. The Transfiguration reveals Christ's pre-incarnate glory and shows Moses (Law) and Elijah (Prophets) yielding to Him.",
+        lessonLearned: "Jesus is the Christ, the Son of God. His path to glory goes through the cross. We must listen to Him.",
+        applicationPoints: ["Declare who Jesus is", "Accept that the way up is down (suffering before glory)", "Listen to Jesus above all others"]
+      }
+    ]
+  },
+
+  // LUKE
+  {
+    book: "Luke",
+    testament: "new",
+    bookOverview: "Luke presents Jesus as the Son of Man, the compassionate Savior who seeks and saves the lost, emphasizing His humanity, prayer life, and concern for outcasts.",
+    stories: [
+      {
+        id: "luk-1",
+        title: "The Good Samaritan",
+        reference: "Luke 10:25-37",
+        summary: "Jesus tells of a Samaritan who helps a beaten man when religious leaders pass by, teaching true neighbor-love.",
+        detailedNarrative: "A lawyer tested Jesus: 'What shall I do to inherit eternal life?' Jesus turned it back: 'What is written in the law?' The lawyer answered correctly: Love God completely and your neighbor as yourself. 'Do this, and thou shalt live.' But the lawyer, justifying himself, asked: 'And who is my neighbour?' Jesus answered with a parable: A man went from Jerusalem to Jericho and fell among thieves, who stripped and wounded him, leaving him half dead. A priest came, saw him, and passed by on the other side. A Levite likewise looked and passed by. But a Samaritan—despised by Jews—had compassion. He bound his wounds with oil and wine, set him on his own beast, brought him to an inn, and cared for him. The next day he gave the innkeeper two pence: 'Take care of him; and whatsoever thou spendest more, when I come again, I will repay thee.' Jesus asked: 'Which of these three was neighbour?' The lawyer answered: 'He that shewed mercy.' Jesus said: 'Go, and do thou likewise.'",
+        characters: ["Jesus", "Lawyer", "Priest", "Levite", "Samaritan", "Wounded Man", "Innkeeper"],
+        themes: ["Compassion", "Neighbor Love", "Mercy", "Action Over Religion"],
+        keyVerse: "Go, and do thou likewise. (Luke 10:37)",
+        christConnection: "Jesus is the true Good Samaritan. We were robbed and left for dead by sin. He (despised by the world) came to us, healed us with His blood (wine) and Spirit (oil), and will return to settle accounts.",
+        lessonLearned: "Love is shown in action, not words. Your neighbor is anyone in need, regardless of background.",
+        applicationPoints: ["Don't let religious busyness prevent compassion", "Cross social barriers to help those in need", "True faith produces practical love"]
+      },
+      {
+        id: "luk-2",
+        title: "The Prodigal Son",
+        reference: "Luke 15:11-32",
+        summary: "A son wastes his inheritance in reckless living, returns home in shame, and is joyfully received by his father.",
+        detailedNarrative: "A man had two sons. The younger demanded his inheritance, went to a far country, and wasted it in riotous living. A famine arose; he joined himself to a citizen who sent him to feed pigs. He would have eaten the husks pigs ate, but no one gave him anything. 'And when he came to himself,' he remembered his father's servants had bread enough while he perished with hunger. He decided to return: 'I will arise and go to my father, and will say unto him, Father, I have sinned against heaven, and before thee, and am no more worthy to be called thy son: make me as one of thy hired servants.' While he was yet a great way off, his father saw him, had compassion, ran, fell on his neck, and kissed him. The son began his confession, but the father interrupted: 'Bring forth the best robe, and put it on him; and put a ring on his hand, and shoes on his feet: And bring hither the fatted calf.' The elder son, coming from the field, heard music and dancing. Told of his brother's return, he was angry and refused to go in. The father came out and entreated him. The elder complained: 'I never transgressed thy commandment: yet thou never gavest me a kid.' The father replied: 'Son, thou art ever with me, and all that I have is thine. It was meet that we should make merry, and be glad: for this thy brother was dead, and is alive again; and was lost, and is found.'",
+        characters: ["Father", "Prodigal Son", "Elder Brother", "Servants"],
+        themes: ["Repentance", "Grace", "Restoration", "Self-Righteousness", "Joy"],
+        keyVerse: "For this my son was dead, and is alive again; he was lost, and is found. (Luke 15:24)",
+        christConnection: "The Father pictures God, who runs to receive returning sinners. The elder brother represents religious self-righteousness that resents grace. Christ IS the Father's 'best robe' given to the returning sinner.",
+        lessonLearned: "God joyfully receives repentant sinners. Self-righteousness is as dangerous as open rebellion.",
+        applicationPoints: ["Return to God no matter how far you've wandered", "Don't resent grace given to others", "Celebrate when the lost come home"]
+      },
+      {
+        id: "luk-3",
+        title: "The Rich Man and Lazarus",
+        reference: "Luke 16:19-31",
+        summary: "A rich man ignores a beggar at his gate. After death, their fortunes are reversed—Lazarus comforted, the rich man tormented.",
+        detailedNarrative: "A rich man dressed in purple and fine linen, feasting sumptuously daily. At his gate lay Lazarus, a beggar full of sores, desiring crumbs from the rich man's table. Dogs came and licked his sores. The beggar died and was carried by angels to Abraham's bosom. The rich man also died and was buried. In hell, being in torments, he lifted up his eyes and saw Abraham afar off, and Lazarus in his bosom. He cried: 'Father Abraham, have mercy on me, and send Lazarus, that he may dip the tip of his finger in water, and cool my tongue; for I am tormented in this flame.' Abraham replied: 'Son, remember that thou in thy lifetime receivedst thy good things, and likewise Lazarus evil things: but now he is comforted, and thou art tormented.' A great gulf fixed between them prevented crossing. The rich man begged to send Lazarus to warn his five brothers. Abraham answered: 'They have Moses and the prophets; let them hear them.' The rich man insisted: 'If one went unto them from the dead, they will repent.' Abraham concluded: 'If they hear not Moses and the prophets, neither will they be persuaded, though one rose from the dead.'",
+        characters: ["Rich Man", "Lazarus", "Abraham", "Angels"],
+        themes: ["Eternal Judgment", "Wealth and Poverty", "Hearing Scripture", "No Second Chances"],
+        keyVerse: "If they hear not Moses and the prophets, neither will they be persuaded, though one rose from the dead. (Luke 16:31)",
+        christConnection: "Even Christ's resurrection doesn't convince those who reject Scripture. The great reversal shows God's economy differs from the world's. Christ crossed the 'gulf' to reach us.",
+        lessonLearned: "Earthly status means nothing in eternity. Scripture is sufficient for salvation—heed it now.",
+        applicationPoints: ["Use earthly resources for eternal purposes", "Listen to Scripture while you can", "Death fixes destiny—no second chances"]
+      },
+      {
+        id: "luk-4",
+        title: "Zacchaeus",
+        reference: "Luke 19:1-10",
+        summary: "A despised tax collector climbs a tree to see Jesus, who invites Himself to dinner, transforming Zacchaeus's life.",
+        detailedNarrative: "Jesus entered and passed through Jericho. A man named Zacchaeus, chief among the publicans and rich, sought to see Jesus but could not for the crowd—he was short in stature. He ran ahead and climbed a sycamore tree. When Jesus came to the place, He looked up and said: 'Zacchaeus, make haste, and come down; for to day I must abide at thy house.' Zacchaeus made haste, came down, and received Him joyfully. The people murmured: 'He is gone to be guest with a man that is a sinner.' But Zacchaeus stood and said: 'Behold, Lord, the half of my goods I give to the poor; and if I have taken any thing from any man by false accusation, I restore him fourfold.' Jesus said: 'This day is salvation come to this house, forsomuch as he also is a son of Abraham. For the Son of man is come to seek and to save that which was lost.'",
+        characters: ["Jesus", "Zacchaeus", "Crowd"],
+        themes: ["Salvation", "Repentance", "Restoration", "Seeking Jesus"],
+        keyVerse: "For the Son of man is come to seek and to save that which was lost. (Luke 19:10)",
+        christConnection: "Jesus seeks us out, knows our names, and invites Himself into our lives. Zacchaeus's four-fold restoration echoes the law (Exodus 22:1), showing true repentance.",
+        lessonLearned: "No one is beyond Jesus' reach. True salvation produces radical generosity and restitution.",
+        applicationPoints: ["Overcome obstacles to see Jesus", "Receive Jesus joyfully into your life", "Let salvation transform how you handle money"]
+      }
+    ]
+  },
+
+  // JOHN
+  {
+    book: "John",
+    testament: "new",
+    bookOverview: "John presents Jesus as the Son of God, the eternal Word who became flesh, emphasizing His deity through seven 'I AM' statements and seven sign miracles.",
+    stories: [
+      {
+        id: "joh-1",
+        title: "Wedding at Cana",
+        reference: "John 2:1-11",
+        summary: "At a wedding feast, Jesus turns water into wine—His first miracle, revealing His glory.",
+        detailedNarrative: "On the third day, a marriage took place in Cana of Galilee. Jesus' mother was there, and Jesus with His disciples were invited. When the wine ran out, Mary told Jesus: 'They have no wine.' Jesus replied: 'Woman, what have I to do with thee? mine hour is not yet come.' Mary told the servants: 'Whatsoever he saith unto you, do it.' Six stone waterpots stood there for Jewish purification, holding two or three firkins apiece. Jesus said: 'Fill the waterpots with water.' They filled them to the brim. 'Draw out now, and bear unto the governor of the feast.' The governor tasted the water now become wine. Not knowing its source, he called the bridegroom: 'Every man at the beginning doth set forth good wine; and when men have well drunk, then that which is worse: but thou hast kept the good wine until now.' This beginning of miracles Jesus did in Cana of Galilee, and manifested forth his glory; and his disciples believed on him.",
+        characters: ["Jesus", "Mary", "Servants", "Governor of Feast", "Bridegroom", "Disciples"],
+        themes: ["Glory", "Transformation", "Abundance", "Obedience"],
+        keyVerse: "This beginning of miracles did Jesus in Cana of Galilee, and manifested forth his glory. (John 2:11)",
+        christConnection: "Jesus is the true Bridegroom providing the wine of the kingdom. The water of Jewish purification becomes the wine of the new covenant. 'On the third day' hints at resurrection.",
+        lessonLearned: "Jesus transforms the ordinary into the extraordinary. Obedience to His word brings miraculous results.",
+        applicationPoints: ["Do whatever He tells you", "Trust Jesus when the situation seems hopeless", "The best is yet to come in Christ"]
+      },
+      {
+        id: "joh-2",
+        title: "Nicodemus",
+        reference: "John 3:1-21",
+        summary: "A Pharisee comes to Jesus by night and learns about being born again and God's love for the world.",
+        detailedNarrative: "Nicodemus, a Pharisee and ruler of the Jews, came to Jesus by night: 'Rabbi, we know that thou art a teacher come from God: for no man can do these miracles that thou doest, except God be with him.' Jesus answered: 'Except a man be born again, he cannot see the kingdom of God.' Nicodemus asked: 'How can a man be born when he is old?' Jesus explained: 'Except a man be born of water and of the Spirit, he cannot enter into the kingdom of God. That which is born of the flesh is flesh; and that which is born of the Spirit is spirit. Marvel not that I said unto thee, Ye must be born again. The wind bloweth where it listeth, and thou hearest the sound thereof, but canst not tell whence it cometh, and whither it goeth: so is every one that is born of the Spirit.' Nicodemus asked: 'How can these things be?' Jesus answered: 'Art thou a master of Israel, and knowest not these things?' He spoke of heavenly things, then declared: 'As Moses lifted up the serpent in the wilderness, even so must the Son of man be lifted up: That whosoever believeth in him should not perish, but have eternal life. For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.'",
+        characters: ["Jesus", "Nicodemus"],
+        themes: ["New Birth", "Spirit", "Belief", "God's Love", "Eternal Life"],
+        keyVerse: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life. (John 3:16)",
+        christConnection: "Jesus is the serpent lifted up—He becomes sin for us so we can have eternal life by looking to Him in faith. John 3:16 is the gospel in one verse.",
+        lessonLearned: "Religious knowledge is not enough—you must be born again. God's love sent His Son for the world.",
+        applicationPoints: ["You must be born again to see God's kingdom", "Believe on Jesus to have eternal life", "Don't let religious pride blind you to spiritual reality"]
+      },
+      {
+        id: "joh-3",
+        title: "Woman at the Well",
+        reference: "John 4:1-42",
+        summary: "Jesus breaks social barriers to offer living water to a Samaritan woman, who becomes an evangelist to her town.",
+        detailedNarrative: "Jesus needed to go through Samaria. Wearied, He sat on Jacob's well at Sychar. A woman came to draw water at the sixth hour (noon). Jesus asked: 'Give me to drink.' His disciples had gone to buy food. She replied: 'How is it that thou, being a Jew, askest drink of me, which am a woman of Samaria?' Jews had no dealings with Samaritans. Jesus answered: 'If thou knewest the gift of God, and who it is that saith to thee, Give me to drink; thou wouldest have asked of him, and he would have given thee living water.' She noted He had no bucket; the well was deep. He replied: 'Whosoever drinketh of this water shall thirst again: But whosoever drinketh of the water that I shall give him shall never thirst; but the water that I shall give him shall be in him a well of water springing up into everlasting life.' She asked for this water. Jesus said: 'Go, call thy husband.' She had no husband—actually five husbands, and now living with a man not her husband. She recognized Him as a prophet and raised the worship controversy between Gerizim and Jerusalem. Jesus declared: 'The hour cometh, when ye shall neither in this mountain, nor yet at Jerusalem, worship the Father...But the hour cometh, and now is, when the true worshippers shall worship the Father in spirit and in truth.' She mentioned Messiah was coming. Jesus declared: 'I that speak unto thee am he.' The disciples returned, marveling He talked with a woman. She left her waterpot, went to the city, and said: 'Come, see a man, which told me all things that ever I did: is not this the Christ?' Many Samaritans believed because of her testimony and then heard Jesus themselves for two days: 'Now we believe...this is indeed the Christ, the Saviour of the world.'",
+        characters: ["Jesus", "Samaritan Woman", "Disciples", "Samaritans"],
+        themes: ["Living Water", "Worship", "Breaking Barriers", "Evangelism", "Messiah"],
+        keyVerse: "Whosoever drinketh of the water that I shall give him shall never thirst. (John 4:14)",
+        christConnection: "Jesus is the living water who satisfies eternally. He breaks every barrier—gender, race, religion—to reach the lost. He reveals Himself as Messiah.",
+        lessonLearned: "Jesus offers living water that satisfies forever. True worship is in spirit and truth, not in locations.",
+        applicationPoints: ["Come to Jesus for living water", "Worship God in spirit and truth", "Share your testimony—even imperfect people can lead others to Christ"]
+      },
+      {
+        id: "joh-4",
+        title: "Raising of Lazarus",
+        reference: "John 11:1-44",
+        summary: "Jesus deliberately delays, then raises His friend Lazarus from the dead after four days, declaring 'I am the resurrection.'",
+        detailedNarrative: "Lazarus of Bethany was sick—brother of Mary and Martha. They sent word to Jesus, whom he loved. Jesus said: 'This sickness is not unto death, but for the glory of God, that the Son of God might be glorified thereby.' Though He loved them, He stayed two more days. Then He told disciples: 'Let us go into Judaea again.' They objected—Jews sought to stone Him. Jesus said: 'Our friend Lazarus sleepeth; but I go, that I may awake him out of sleep.' They thought natural sleep; Jesus spoke plainly: 'Lazarus is dead. And I am glad for your sakes that I was not there, to the intent ye may believe.' Thomas said: 'Let us also go, that we may die with him.' Jesus arrived to find Lazarus four days in the grave. Martha came to meet Him: 'Lord, if thou hadst been here, my brother had not died. But I know, that even now, whatsoever thou wilt ask of God, God will give it thee.' Jesus said: 'Thy brother shall rise again.' Martha affirmed: 'I know that he shall rise again in the resurrection at the last day.' Jesus declared: 'I am the resurrection, and the life: he that believeth in me, though he were dead, yet shall he live: And whosoever liveth and believeth in me shall never die. Believest thou this?' She affirmed: 'Yea, Lord: I believe that thou art the Christ, the Son of God.' Mary came weeping. Jesus saw the mourners; He groaned in spirit and was troubled. 'Where have ye laid him?' They brought Him to the cave. 'Jesus wept.' Some said: 'Behold how he loved him!' Others questioned: 'Could not this man...have caused that even this man should not have died?' Jesus, groaning again, came to the grave—a cave with a stone. 'Take ye away the stone.' Martha objected: 'Lord, by this time he stinketh: for he hath been dead four days.' Jesus answered: 'Said I not unto thee, that, if thou wouldest believe, thou shouldest see the glory of God?' They removed the stone. Jesus lifted His eyes: 'Father, I thank thee that thou hast heard me...because of the people which stand by I said it, that they may believe that thou hast sent me.' Then He cried with a loud voice: 'Lazarus, come forth!' He that was dead came forth, bound hand and foot with graveclothes. Jesus said: 'Loose him, and let him go.'",
+        characters: ["Jesus", "Lazarus", "Martha", "Mary", "Disciples", "Thomas", "Mourners"],
+        themes: ["Resurrection", "Life", "Faith", "Glory", "Grief", "Love"],
+        keyVerse: "I am the resurrection, and the life: he that believeth in me, though he were dead, yet shall he live. (John 11:25)",
+        christConnection: "Jesus IS the Resurrection and the Life—not just the one who gives these gifts but the embodiment of them. Lazarus's raising prefigures Christ's own resurrection and ours.",
+        lessonLearned: "Jesus' delays have purpose. He is the Resurrection itself. Those who believe in Him never truly die.",
+        applicationPoints: ["Trust Jesus' timing, even when He seems late", "Believe He is the resurrection and life", "Remove the stones that block resurrection in your life"]
+      }
+    ]
+  },
+
+  // ACTS
+  {
+    book: "Acts",
+    testament: "new",
+    bookOverview: "Acts records the birth and spread of the early church from Jerusalem to Rome through the power of the Holy Spirit, featuring the apostles' bold witness.",
+    stories: [
+      {
+        id: "act-1",
+        title: "Pentecost",
+        reference: "Acts 2:1-41",
+        summary: "The Holy Spirit descends with tongues of fire. Peter preaches, and 3,000 are baptized—the church is born.",
+        detailedNarrative: "When Pentecost was fully come, the disciples were with one accord in one place. Suddenly a sound like rushing mighty wind filled the house. Cloven tongues like fire sat upon each of them. They were all filled with the Holy Ghost and began to speak with other tongues as the Spirit gave them utterance. Jews from every nation were in Jerusalem for the feast. Hearing the sound, they gathered, confounded—every man heard them speak in his own language. Amazed, they asked: 'Are not all these which speak Galilaeans? And how hear we every man in our own tongue?' Others mocked: 'These men are full of new wine.' Peter stood with the eleven and proclaimed: 'This is that which was spoken by the prophet Joel; And it shall come to pass in the last days, saith God, I will pour out of my Spirit upon all flesh.' He preached Jesus of Nazareth—His miracles, crucifixion, and resurrection—proven by Psalm 16 and 110. 'Therefore let all the house of Israel know assuredly, that God hath made that same Jesus, whom ye have crucified, both Lord and Christ.' Pricked in their hearts, they asked: 'What shall we do?' Peter answered: 'Repent, and be baptized every one of you in the name of Jesus Christ for the remission of sins, and ye shall receive the gift of the Holy Ghost.' That day about 3,000 souls were added.",
+        characters: ["Disciples", "Peter", "Holy Spirit", "Jewish Pilgrims", "3000 Converts"],
+        themes: ["Holy Spirit", "Power", "Preaching", "Repentance", "Baptism", "Church Birth"],
+        keyVerse: "Repent, and be baptized every one of you in the name of Jesus Christ for the remission of sins, and ye shall receive the gift of the Holy Ghost. (Acts 2:38)",
+        christConnection: "Pentecost reverses Babel—languages reunited in the gospel. The Spirit glorifies Christ, convicts of sin, and empowers witness. Peter preaches Christ crucified and risen.",
+        lessonLearned: "The Holy Spirit empowers the church for witness. Repentance and baptism are the response to the gospel.",
+        applicationPoints: ["Seek the filling of the Holy Spirit", "Boldly proclaim Christ crucified and risen", "Repent and be baptized"]
+      },
+      {
+        id: "act-2",
+        title: "Conversion of Saul",
+        reference: "Acts 9:1-31",
+        summary: "The chief persecutor of Christians encounters the risen Christ on the Damascus road and becomes His greatest apostle.",
+        detailedNarrative: "Saul, still breathing threats and slaughter against the disciples, obtained letters from the high priest to arrest believers in Damascus. As he journeyed, suddenly a light from heaven shone around him. He fell to the earth and heard a voice: 'Saul, Saul, why persecutest thou me?' He asked: 'Who art thou, Lord?' The answer: 'I am Jesus whom thou persecutest: it is hard for thee to kick against the pricks.' Trembling and astonished: 'Lord, what wilt thou have me to do?' He was told to go into the city. Saul arose but saw nothing; they led him by hand to Damascus, where for three days he was blind, neither eating nor drinking. The Lord spoke to Ananias in a vision, sending him to Saul. Ananias objected—this man had done much evil to the saints. But the Lord said: 'Go thy way: for he is a chosen vessel unto me, to bear my name before the Gentiles, and kings, and the children of Israel: For I will shew him how great things he must suffer for my name's sake.' Ananias went, laid hands on him: 'Brother Saul, the Lord, even Jesus, that appeared unto thee in the way as thou camest, hath sent me, that thou mightest receive thy sight, and be filled with the Holy Ghost.' Immediately something like scales fell from his eyes; he received sight, arose, and was baptized. Saul spent days with the disciples in Damascus and immediately preached Christ in the synagogues—that He is the Son of God. All were amazed: 'Is not this he that destroyed them which called on this name in Jerusalem?'",
+        characters: ["Saul/Paul", "Jesus", "Ananias", "Damascus Disciples"],
+        themes: ["Conversion", "Grace", "Calling", "Transformation", "Persecution"],
+        keyVerse: "He is a chosen vessel unto me, to bear my name before the Gentiles. (Acts 9:15)",
+        christConnection: "The risen Christ personally converts His greatest enemy, demonstrating that no one is beyond grace. Saul's life will display Christ's power to transform completely.",
+        lessonLearned: "No one is too far gone for God's grace. The greatest enemies can become the greatest apostles.",
+        applicationPoints: ["Never give up on anyone's salvation", "Obey immediately when God speaks", "Let your past testimony glorify Christ's transforming power"]
+      },
+      {
+        id: "act-3",
+        title: "Peter's Vision and Cornelius",
+        reference: "Acts 10:1-48",
+        summary: "Through a vision of unclean animals, Peter learns the gospel is for all nations. He preaches to Cornelius, and Gentiles receive the Spirit.",
+        detailedNarrative: "Cornelius, a devout centurion in Caesarea who feared God and prayed always, saw an angel who told him to send for Peter in Joppa. Meanwhile, Peter was on the housetop praying at the sixth hour. He fell into a trance and saw heaven opened, a great sheet descending with all manner of four-footed beasts, creeping things, and fowls. A voice said: 'Rise, Peter; kill, and eat.' Peter objected: 'Not so, Lord; for I have never eaten any thing that is common or unclean.' The voice replied: 'What God hath cleansed, that call not thou common.' This happened three times. While Peter wondered, Cornelius's men arrived. The Spirit said: 'Behold, three men seek thee. Arise therefore, and get thee down, and go with them, doubting nothing: for I have sent them.' The next day Peter went. At Cornelius's house, many were gathered. Peter declared: 'Ye know how that it is an unlawful thing for a man that is a Jew to keep company, or come unto one of another nation; but God hath shewed me that I should not call any man common or unclean.' He preached Jesus—His ministry, death, and resurrection: 'Whosoever believeth in him shall receive remission of sins.' While Peter was speaking, the Holy Ghost fell on all who heard. The Jewish believers were astonished that on the Gentiles also was poured out the gift of the Holy Ghost. Peter commanded them to be baptized in the name of the Lord.",
+        characters: ["Peter", "Cornelius", "Holy Spirit", "Cornelius's Household", "Jewish Believers"],
+        themes: ["Gospel to Gentiles", "Vision", "Clean and Unclean", "Spirit Baptism", "Unity"],
+        keyVerse: "Of a truth I perceive that God is no respecter of persons: But in every nation he that feareth him, and worketh righteousness, is accepted with him. (Acts 10:34-35)",
+        christConnection: "Jesus is Lord of all—Jews and Gentiles. The sheet vision shows Christ has made all peoples clean. The gospel is for everyone.",
+        lessonLearned: "God shows no favoritism. The gospel breaks every barrier between peoples.",
+        applicationPoints: ["Don't call anyone unclean whom God has cleansed", "Be ready to share the gospel across cultural barriers", "The Spirit confirms who belongs to Christ"]
+      }
+    ]
+  },
+
+  // REVELATION
+  {
+    book: "Revelation",
+    testament: "new",
+    bookOverview: "Revelation unveils the consummation of history through visions given to John on Patmos, revealing Christ as the victorious Lamb and King who makes all things new.",
+    stories: [
+      {
+        id: "rev-1",
+        title: "Vision of the Glorified Christ",
+        reference: "Revelation 1:9-20",
+        summary: "John, exiled on Patmos, sees the risen Christ in blinding glory among seven lampstands.",
+        detailedNarrative: "John, a brother and companion in tribulation, was on the isle of Patmos for the word of God and testimony of Jesus Christ. On the Lord's day, in the Spirit, he heard behind him a great voice as of a trumpet saying: 'I am Alpha and Omega, the first and the last: and, What thou seest, write in a book, and send it unto the seven churches.' He turned to see the voice and saw seven golden candlesticks. In their midst, one like unto the Son of man, clothed with a garment down to the foot, girt about the paps with a golden girdle. His head and hairs were white like wool, as white as snow; His eyes as a flame of fire; His feet like unto fine brass, as if they burned in a furnace; His voice as the sound of many waters. He had in His right hand seven stars, and out of His mouth went a sharp two-edged sword, and His countenance was as the sun shineth in his strength. When John saw Him, he fell at His feet as dead. But He laid His right hand upon him, saying: 'Fear not; I am the first and the last: I am he that liveth, and was dead; and, behold, I am alive for evermore, Amen; and have the keys of hell and of death.'",
+        characters: ["John", "Jesus Christ (Glorified)"],
+        themes: ["Glory", "Majesty", "Sovereignty", "Resurrection", "Fear Not"],
+        keyVerse: "I am he that liveth, and was dead; and, behold, I am alive for evermore. (Revelation 1:18)",
+        christConnection: "The humble Carpenter of Nazareth is revealed in His true glory—the eternal, sovereign Lord of life and death who holds the keys to hell and death.",
+        lessonLearned: "The risen Christ is majestic beyond imagination yet says 'Fear not' to His servants. He holds the keys.",
+        applicationPoints: ["Remember Christ's true glory in trials", "He holds the keys to death—trust Him", "He walks among His churches today"]
+      },
+      {
+        id: "rev-2",
+        title: "The Lamb and the Scroll",
+        reference: "Revelation 5:1-14",
+        summary: "Only the Lamb who was slain is worthy to open the sealed scroll. Heaven erupts in worship of the Lamb.",
+        detailedNarrative: "John saw in the right hand of Him who sat on the throne a scroll written within and on the backside, sealed with seven seals. A strong angel proclaimed: 'Who is worthy to open the book, and to loose the seals thereof?' No one in heaven, earth, or under the earth could open it or look upon it. John wept much because no one was found worthy. One of the elders said: 'Weep not: behold, the Lion of the tribe of Juda, the Root of David, hath prevailed to open the book.' John looked—and in the midst of the throne stood a Lamb as it had been slain, having seven horns and seven eyes. He came and took the scroll from Him who sat on the throne. The four living creatures and twenty-four elders fell down before the Lamb, having harps and golden vials full of odours, which are the prayers of saints. They sang a new song: 'Thou art worthy to take the book, and to open the seals thereof: for thou wast slain, and hast redeemed us to God by thy blood out of every kindred, and tongue, and people, and nation; And hast made us unto our God kings and priests: and we shall reign on the earth.' Ten thousand times ten thousand angels cried with a loud voice: 'Worthy is the Lamb that was slain to receive power, and riches, and wisdom, and strength, and honour, and glory, and blessing!' Every creature in heaven and on earth worshipped.",
+        characters: ["God the Father", "The Lamb (Christ)", "Four Living Creatures", "24 Elders", "Angels", "John"],
+        themes: ["Worthiness", "Redemption", "Blood", "Worship", "Sovereignty"],
+        keyVerse: "Worthy is the Lamb that was slain to receive power, and riches, and wisdom, and strength, and honour, and glory, and blessing. (Revelation 5:12)",
+        christConnection: "Jesus is both Lion (conquering King) and Lamb (sacrificial Savior). His death and resurrection qualify Him alone to unfold history's culmination.",
+        lessonLearned: "Only Jesus is worthy. His shed blood redeems people from every nation. He is the center of all heaven's worship.",
+        applicationPoints: ["Worship the Lamb who was slain", "Your prayers are precious incense before the throne", "Christ's redemption makes you a king and priest"]
+      },
+      {
+        id: "rev-3",
+        title: "New Heaven and New Earth",
+        reference: "Revelation 21:1-22:5",
+        summary: "God creates a new heaven and earth. The New Jerusalem descends. God dwells with His people—no more death, tears, or pain.",
+        detailedNarrative: "John saw a new heaven and a new earth, for the first had passed away; there was no more sea. He saw the holy city, New Jerusalem, coming down from God out of heaven, prepared as a bride adorned for her husband. A great voice from heaven declared: 'Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people, and God himself shall be with them, and be their God. And God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying, neither shall there be any more pain: for the former things are passed away.' He that sat upon the throne said: 'Behold, I make all things new...I am Alpha and Omega, the beginning and the end.' The city had the glory of God, light like jasper clear as crystal, twelve gates with names of Israel's tribes, twelve foundations with names of apostles. Its measurement: 12,000 furlongs cubed—symbolic of perfection. The wall was jasper; the city pure gold like clear glass; the foundations garnished with precious stones; the gates were pearls; the street pure gold like transparent glass. 'And I saw no temple therein: for the Lord God Almighty and the Lamb are the temple of it.' The glory of God lit it; the Lamb is the light. Nations shall walk in its light; kings bring their glory into it. Its gates shall never be shut by day, and there shall be no night. Nothing defiled shall enter, only those written in the Lamb's book of life. A pure river of water of life, clear as crystal, proceeded from the throne of God and of the Lamb. On either side of the river, the tree of life, bearing twelve manner of fruits, yielding its fruit every month. The leaves were for the healing of the nations. There shall be no more curse. His servants shall serve Him and see His face. His name shall be in their foreheads. 'And they shall reign for ever and ever.'",
+        characters: ["God", "The Lamb", "The Redeemed", "John"],
+        themes: ["New Creation", "God's Presence", "No More Pain", "Eternal Life", "Glory"],
+        keyVerse: "And God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying, neither shall there be any more pain: for the former things are passed away. (Revelation 21:4)",
+        christConnection: "Christ IS the temple, the light, and the center of the New Jerusalem. What was lost in Eden is more than restored—face-to-face fellowship with God forever.",
+        lessonLearned: "God makes all things new. His ultimate purpose is to dwell with His people eternally. This is our hope.",
+        applicationPoints: ["Live in hope of the new creation", "Nothing unclean enters—pursue holiness", "The Tree of Life is restored—our access to God is eternal"]
       }
     ]
   }
