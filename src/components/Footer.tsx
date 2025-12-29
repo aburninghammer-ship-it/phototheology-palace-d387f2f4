@@ -3,7 +3,7 @@ import { Building2, Mail, MessageSquare, FileText } from "lucide-react";
 
 export const Footer = () => {
   return (
-    <footer className="border-t border-border bg-card/50 backdrop-blur-sm mt-auto pb-20 md:pb-0">
+    <footer className="border-t border-border bg-card/50 backdrop-blur-sm mt-auto pb-28 md:pb-0">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}

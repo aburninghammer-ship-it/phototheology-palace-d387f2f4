@@ -572,9 +572,9 @@ All colors MUST be HSL.
     padding-top: env(safe-area-inset-top, 0px);
   }
 
-  /* Mobile bottom nav spacing helper - accounts for 72px nav + safe area */
+  /* Mobile bottom nav spacing helper - accounts for 72px nav + safe area + extra breathing room */
   .pb-mobile-nav {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 8px));
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 16px));
   }
 
   @media (min-width: 768px) {
