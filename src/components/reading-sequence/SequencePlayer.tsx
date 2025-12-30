@@ -91,10 +91,48 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const [offlineMode, setOfflineMode] = useState(!isOnline());
   const [commentaryText, setCommentaryText] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
-  
+  const [savedPosition, setSavedPosition] = useState<{ seqIdx: number; itemIdx: number; verseIdx: number } | null>(null);
+  const [showResumeOption, setShowResumeOption] = useState(false);
+
   // Get active sequences first
   const activeSequences = sequences.filter((s) => s.enabled && s.items.length > 0);
-  
+
+  // LocalStorage key for saving position - use sequenceName or a hash of sequences
+  const positionStorageKey = `pt-audio-position-${sequenceName || 'default'}`;
+
+  // Load saved position from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(positionStorageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Validate the saved position is still valid for current sequences
+        if (
+          parsed.seqIdx < activeSequences.length &&
+          parsed.itemIdx < activeSequences[parsed.seqIdx]?.items?.length
+        ) {
+          setSavedPosition(parsed);
+          setShowResumeOption(true);
+        } else {
+          // Saved position no longer valid, clear it
+          localStorage.removeItem(positionStorageKey);
+        }
+      }
+    } catch (e) {
+      console.log('[SequencePlayer] Could not load saved position:', e);
+    }
+  }, [positionStorageKey, activeSequences.length]);
+
+  // Save current position to localStorage whenever it changes during playback
+  const saveCurrentPosition = useCallback((seqIdx: number, itemIdx: number, verseIdx: number) => {
+    try {
+      const position = { seqIdx, itemIdx, verseIdx, timestamp: Date.now() };
+      localStorage.setItem(positionStorageKey, JSON.stringify(position));
+    } catch (e) {
+      console.log('[SequencePlayer] Could not save position:', e);
+    }
+  }, [positionStorageKey]);
+
   const [currentVoice, setCurrentVoice] = useState<VoiceId>(() => {
     return (activeSequences[currentSeqIdx]?.voice as VoiceId) || 'onyx';
   });
@@ -206,6 +244,27 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       console.log('[SequencePlayer] Volume ref sync - applied to audioRef:', isMuted ? 0 : volume / 100);
     }
   }, [volume, isMuted]);
+
+  // Resume from saved position
+  const handleResume = useCallback(() => {
+    if (savedPosition) {
+      setCurrentSeqIdx(savedPosition.seqIdx);
+      setCurrentItemIdx(savedPosition.itemIdx);
+      setCurrentVerseIdx(savedPosition.verseIdx);
+      setShowResumeOption(false);
+      // Reset chapter content to trigger reload
+      setChapterContent(null);
+      lastFetchedRef.current = null;
+    }
+  }, [savedPosition]);
+
+  // Start fresh (clear saved position)
+  const handleStartFresh = useCallback(() => {
+    setShowResumeOption(false);
+    localStorage.removeItem(positionStorageKey);
+    setSavedPosition(null);
+  }, [positionStorageKey]);
+
   useEffect(() => {
     const keepAlive = () => {
       if (isPlaying && !isPaused && speechSynthesis.speaking) {
@@ -1279,9 +1338,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
     const verse = content.verses[verseIdx];
     const cacheKey = `${content.book}-${content.chapter}-${verseIdx}-${voice}`;
-    
+
     setCurrentVerseIdx(verseIdx);
-    
+
+    // Save reading position for "resume" feature
+    saveCurrentPosition(currentSeqIdx, currentItemIdx, verseIdx);
+
     // Find current sequence for settings (needed early for offline mode)
     const currentSeq = activeSequences.find((seq, idx) => {
       const itemsBefore = activeSequences.slice(0, idx).reduce((acc, s) => acc + s.items.length, 0);
@@ -1873,7 +1935,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         setIsPlaying(false);
       }
     }
-  }, [volume, isMuted, totalItems, generateTTS, prefetchVerse, activeSequences, currentItemIdx, generateCommentary, playCommentary, moveToNextChapter, handleChapterCompleteWithCommentary, prefetchNextChapter, offlineMode, speakWithBrowserTTS]);
+  }, [volume, isMuted, totalItems, generateTTS, prefetchVerse, activeSequences, currentItemIdx, currentSeqIdx, generateCommentary, playCommentary, moveToNextChapter, handleChapterCompleteWithCommentary, prefetchNextChapter, offlineMode, speakWithBrowserTTS, saveCurrentPosition]);
 
   // Play current verse (wrapper for playVerseAtIndex)
   const playCurrentVerse = useCallback(() => {
@@ -2505,6 +2567,40 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Resume Option - shown when user has a saved position */}
+        {showResumeOption && savedPosition && (
+          <div className="rounded-xl border-2 border-blue-500/30 overflow-hidden bg-gradient-to-br from-blue-500/10 via-sky-500/5 to-blue-500/10 shadow-lg shadow-blue-500/10 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <Play className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-blue-600 dark:text-blue-400">Continue Where You Left Off?</h3>
+                <p className="text-xs text-muted-foreground">
+                  You were on Chapter {savedPosition.itemIdx + 1}, Verse {savedPosition.verseIdx + 1}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleResume}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white"
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Resume
+              </Button>
+              <Button
+                onClick={handleStartFresh}
+                variant="outline"
+                className="flex-1 border-blue-500/30 hover:bg-blue-500/10"
+              >
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Start Fresh
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Commentary Display - shown when Jeeves is commenting */}
         {isPlayingCommentary && commentaryText && (
           <div className="rounded-xl border-2 border-amber-500/30 overflow-hidden bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-amber-500/10 shadow-lg shadow-amber-500/10">
