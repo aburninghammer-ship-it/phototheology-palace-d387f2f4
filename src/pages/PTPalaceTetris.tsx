@@ -1379,12 +1379,34 @@ const PTPalaceTetris: React.FC = () => {
         )}
 
         <div className="bg-gray-800 rounded-xl p-4 mb-6">
-          <h2 className="font-bold text-lg mb-2">How to Play:</h2>
-          <ol className="text-sm text-gray-300 space-y-2">
-            <li>1. <span className="text-green-400">TAP blocks that FIT the room's rule</span></li>
-            <li>2. <span className="text-red-400">LET traps FALL</span></li>
-            <li>3. Each room teaches a PT principle</li>
-          </ol>
+          <h2 className="font-bold text-lg mb-3">🎮 How to Play:</h2>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-start gap-3 p-2 bg-green-900/30 rounded-lg border border-green-700/50">
+              <span className="text-2xl">✅</span>
+              <div>
+                <div className="font-bold text-green-400">TAP GREEN BLOCKS</div>
+                <div className="text-gray-300 text-xs">These FIT the room's rule - they match what you should "CATCH"</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-2 bg-red-900/30 rounded-lg border border-red-700/50">
+              <span className="text-2xl">❌</span>
+              <div>
+                <div className="font-bold text-red-400">AVOID RED BLOCKS</div>
+                <div className="text-gray-300 text-xs">These are TRAPS - interpretations, theology, or wrong approaches. Let them fall!</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-2 bg-yellow-900/30 rounded-lg border border-yellow-700/50">
+              <span className="text-2xl">⭐</span>
+              <div>
+                <div className="font-bold text-yellow-400">BONUS BLOCKS = Extra Points!</div>
+                <div className="text-gray-300 text-xs">Golden blocks give 25 pts instead of 10</div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 p-3 bg-gray-700/50 rounded-lg">
+            <div className="text-xs text-gray-400 mb-2">💡 <strong>THE KEY:</strong></div>
+            <div className="text-xs text-gray-300">Each Palace room has a specific RULE. Read the "CATCH" and "AVOID" hints to know which blocks fit!</div>
+          </div>
         </div>
 
         {/* FULL PALACE MODE */}
@@ -1496,15 +1518,20 @@ const PTPalaceTetris: React.FC = () => {
           </div>
         </div>
 
-        {/* Room Rule Banner */}
-        <div className={`mx-2 mb-2 p-2 rounded-lg bg-gradient-to-r ${room?.color} text-center`}>
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-lg">{room?.icon}</span>
-            <div>
-              <div className="text-xs opacity-80">
-                {gameMode === 'palace' ? `ROOM: ${room?.name}` : 'CATCH:'}
-              </div>
-              <div className="font-bold text-sm">{room?.rule}</div>
+        {/* Room Rule Banner - Enhanced */}
+        <div className={`mx-2 mb-2 p-3 rounded-lg bg-gradient-to-r ${room?.color}`}>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="text-xl">{room?.icon}</span>
+            <div className="font-bold">{room?.name}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="bg-green-500/30 rounded p-2 border border-green-400/50">
+              <div className="font-bold text-green-300">✅ CATCH:</div>
+              <div className="opacity-90">{room?.catch}</div>
+            </div>
+            <div className="bg-red-500/30 rounded p-2 border border-red-400/50">
+              <div className="font-bold text-red-300">❌ AVOID:</div>
+              <div className="opacity-90">{room?.avoid}</div>
             </div>
           </div>
         </div>
@@ -1546,12 +1573,12 @@ const PTPalaceTetris: React.FC = () => {
             <button
               key={block.id}
               onClick={() => catchBlock(block)}
-              className={`absolute px-3 py-2 rounded-lg text-xs font-medium transition-transform hover:scale-105 active:scale-95 shadow-lg max-w-44 text-left leading-tight ${
+              className={`absolute px-3 py-2 rounded-lg text-xs font-medium transition-transform hover:scale-105 active:scale-95 shadow-lg max-w-48 text-left leading-tight ${
                 block.type === 'valid'
                   ? block.bonus
-                    ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-black ring-2 ring-yellow-300'
-                    : 'bg-gradient-to-br from-blue-500 to-blue-700 text-white'
-                  : 'bg-gradient-to-br from-gray-600 to-gray-800 text-gray-200 border border-dashed border-gray-400'
+                    ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-black ring-2 ring-yellow-300 animate-pulse'
+                    : 'bg-gradient-to-br from-green-500 to-green-700 text-white border-2 border-green-400'
+                  : 'bg-gradient-to-br from-red-600 to-red-800 text-white border-2 border-red-400'
               }`}
               style={{
                 left: `${block.x}%`,
@@ -1559,6 +1586,14 @@ const PTPalaceTetris: React.FC = () => {
                 transform: 'translateX(-50%)'
               }}
             >
+              {/* Block type indicator */}
+              <div className={`text-xs mb-1 font-bold ${
+                block.type === 'valid'
+                  ? block.bonus ? 'text-black/70' : 'text-green-200'
+                  : 'text-red-200'
+              }`}>
+                {block.type === 'valid' ? (block.bonus ? '⭐ BONUS' : '✅ CATCH') : '❌ TRAP'}
+              </div>
               {gameMode === 'palace' && (
                 <div className="text-xs opacity-70 mb-0.5">{block.roomIcon} {block.roomCode}</div>
               )}
@@ -1573,12 +1608,15 @@ const PTPalaceTetris: React.FC = () => {
           )}
         </div>
 
-        {/* Instructions */}
-        <div className="mx-2 mt-2 text-center">
-          <div className="text-xs text-gray-500">
-            <span className="text-blue-400">🟦</span> Fits |
-            <span className="text-yellow-400 ml-1">🟨</span> Bonus |
-            <span className="text-gray-400 ml-1">⬜</span> Trap
+        {/* Instructions Legend */}
+        <div className="mx-2 mt-2 p-2 bg-gray-800/50 rounded-lg">
+          <div className="text-xs text-center space-y-1">
+            <div className="flex justify-center gap-4">
+              <span><span className="inline-block w-3 h-3 bg-green-500 rounded mr-1"></span> <span className="text-green-400">TAP to catch!</span></span>
+              <span><span className="inline-block w-3 h-3 bg-yellow-400 rounded mr-1"></span> <span className="text-yellow-400">Bonus +25</span></span>
+              <span><span className="inline-block w-3 h-3 bg-red-500 rounded mr-1"></span> <span className="text-red-400">Let fall!</span></span>
+            </div>
+            <div className="text-gray-500 text-xs">Tapping a trap loses a life ❤️</div>
           </div>
         </div>
       </div>
