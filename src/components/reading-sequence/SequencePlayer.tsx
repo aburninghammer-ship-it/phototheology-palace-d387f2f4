@@ -100,8 +100,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // LocalStorage key for saving position - use sequenceName or a hash of sequences
   const positionStorageKey = `pt-audio-position-${sequenceName || 'default'}`;
 
-  // Load saved position from localStorage on mount
+  // Load saved position from localStorage on mount (only show resume option if NOT autoPlay)
   useEffect(() => {
+    // If autoPlay is enabled, don't show resume option - just start fresh
+    if (autoPlay) {
+      console.log('[SequencePlayer] AutoPlay enabled, skipping resume prompt');
+      return;
+    }
+
     try {
       const saved = localStorage.getItem(positionStorageKey);
       if (saved) {
@@ -121,7 +127,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     } catch (e) {
       console.log('[SequencePlayer] Could not load saved position:', e);
     }
-  }, [positionStorageKey, activeSequences.length]);
+  }, [positionStorageKey, activeSequences.length, autoPlay]);
 
   // Save current position to localStorage whenever it changes during playback
   const saveCurrentPosition = useCallback((seqIdx: number, itemIdx: number, verseIdx: number) => {
