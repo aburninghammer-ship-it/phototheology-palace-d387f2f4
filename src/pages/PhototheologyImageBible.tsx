@@ -385,12 +385,16 @@ export default function PhototheologyImageBible() {
               ))}
             </div>
 
-            {/* Coming Soon */}
-            <Card className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200">
+            {/* Complete Bible Badge */}
+            <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200">
               <CardContent className="py-8 text-center">
-                <h3 className="text-xl font-bold mb-2">More Books Coming Soon!</h3>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Sparkles className="h-6 w-6 text-green-600" />
+                  <h3 className="text-xl font-bold text-green-700 dark:text-green-400">Complete 66-Book Bible!</h3>
+                  <Sparkles className="h-6 w-6 text-green-600" />
+                </div>
                 <p className="text-muted-foreground">
-                  Joshua through Revelation will be added to complete the entire Bible.
+                  All 1,189 chapters from Genesis to Revelation with unique visual memory icons.
                 </p>
               </CardContent>
             </Card>

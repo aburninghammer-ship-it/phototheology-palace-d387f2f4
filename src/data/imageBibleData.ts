@@ -225,13 +225,24 @@ const deuteronomyChapters: ChapterCard[] = [
   { book: "Deuteronomy", chapter: 34, theme: "Moses Dies", summary: "Moses views Promised Land from Nebo. Dies at 120, eyes not dim, strength not gone. God buries him, location unknown. Joshua filled with wisdom. No prophet like Moses.", visualIcon: "🏔️👀⚰️", keyVerse: "Deuteronomy 34:10", memoryHook: "No prophet like Moses" },
 ];
 
-// Export all books
-export const imageBibleBooks: BookData[] = [
+// Import remaining Bible books (Joshua through Revelation)
+import { extendedOTBooks, extendedNTBooks } from './imageBibleComplete';
+
+// Pentateuch books (Genesis - Deuteronomy, original data in this file)
+const pentateuchBooks: BookData[] = [
   { name: "Genesis", testament: "OT", chapters: genesisChapters, totalChapters: 50 },
   { name: "Exodus", testament: "OT", chapters: exodusChapters, totalChapters: 40 },
   { name: "Leviticus", testament: "OT", chapters: leviticusChapters, totalChapters: 27 },
   { name: "Numbers", testament: "OT", chapters: numbersChapters, totalChapters: 36 },
   { name: "Deuteronomy", testament: "OT", chapters: deuteronomyChapters, totalChapters: 34 },
+];
+
+// Export complete 66-book Bible
+// Pentateuch (5) + Extended OT (34 - Joshua to Malachi) + NT (27)
+export const imageBibleBooks: BookData[] = [
+  ...pentateuchBooks,
+  ...extendedOTBooks,
+  ...extendedNTBooks,
 ];
 
 // Helper functions
