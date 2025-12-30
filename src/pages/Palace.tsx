@@ -1,10 +1,11 @@
 import { Navigation } from "@/components/Navigation";
 import { VisualPalace } from "@/components/VisualPalace";
 import { ProgressivePalace } from "@/components/palace/ProgressivePalace";
+import { Palace3DViewer } from "@/components/palace/Palace3DViewer";
 import { PalaceBreadcrumbs } from "@/components/palace/PalaceBreadcrumbs";
 import { PalaceTour } from "@/components/onboarding/PalaceTour";
 import { palaceFloors } from "@/data/palaceData";
-import { Building2, Award, TrendingUp, BookOpen, Target, LayoutGrid, List } from "lucide-react";
+import { Building2, Award, TrendingUp, BookOpen, Target, LayoutGrid, List, Box } from "lucide-react";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { palaceSteps } from "@/config/howItWorksSteps";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ const Palace = () => {
   const { showTour, loading: tourLoading, completeTour, skipTour } = usePalaceTour();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<"explore" | "progress">("explore");
-  const [viewMode, setViewMode] = useState<"visual" | "list">("list"); // Default to progressive list for new users
+  const [viewMode, setViewMode] = useState<"visual" | "list" | "3d">("list"); // Default to progressive list for new users
 
   const handleTourComplete = () => {
     completeTour();
@@ -205,7 +206,7 @@ const Palace = () => {
                   onClick={() => setViewMode("list")}
                 >
                   <List className="h-4 w-4 mr-2" />
-                  Guided View
+                  Guided
                 </Button>
                 <Button
                   variant={viewMode === "visual" ? "default" : "outline"}
@@ -213,7 +214,16 @@ const Palace = () => {
                   onClick={() => setViewMode("visual")}
                 >
                   <LayoutGrid className="h-4 w-4 mr-2" />
-                  Full Palace
+                  Full
+                </Button>
+                <Button
+                  variant={viewMode === "3d" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("3d")}
+                  className={viewMode === "3d" ? "bg-purple-600 hover:bg-purple-700" : ""}
+                >
+                  <Box className="h-4 w-4 mr-2" />
+                  3D
                 </Button>
               </div>
               
@@ -221,8 +231,15 @@ const Palace = () => {
               <div className="mb-12">
                 {viewMode === "list" ? (
                   <ProgressivePalace showStartHere={progressPercentage < 20} />
-                ) : (
+                ) : viewMode === "visual" ? (
                   <VisualPalace />
+                ) : (
+                  <div className="h-[700px]">
+                    <Palace3DViewer
+                      unlockedRooms={new Set(completedRooms)}
+                      onClose={() => setViewMode("list")}
+                    />
+                  </div>
                 )}
               </div>
             </TabsContent>
