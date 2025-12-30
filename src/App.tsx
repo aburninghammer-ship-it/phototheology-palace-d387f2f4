@@ -81,7 +81,6 @@ const UserAnalytics = lazy(() => import("./pages/UserAnalytics"));
 const KidsGamePlay = lazy(() => import("./pages/KidsGamePlay"));
 const GamePlay = lazy(() => import("./pages/GamePlay"));
 const PalaceQuiz = lazy(() => import("./pages/PalaceQuiz"));
-const VerseMatch = lazy(() => import("./pages/VerseMatch"));
 const PrinciplePuzzle = lazy(() => import("./pages/PrinciplePuzzle"));
 const PTKidsGames = lazy(() => import("./pages/PTKidsGames"));
 const PTKidsGamePlay = lazy(() => import("./pages/PTKidsGamePlay"));
@@ -469,7 +468,6 @@ function App() {
             <Route path="/games/concentration" element={<ProtectedRoute><ConcentrationGame /></ProtectedRoute>} />
             <Route path="/games/palace-cards" element={<ProtectedRoute><PalaceCardGame /></ProtectedRoute>} />
             <Route path="/games/palace_quiz/:mode?" element={<ProtectedRoute><PalaceQuiz /></ProtectedRoute>} />
-            <Route path="/games/verse_match/:mode?" element={<ProtectedRoute><VerseMatch /></ProtectedRoute>} />
             <Route path="/games/principle_puzzle/:mode?" element={<ProtectedRoute><PrinciplePuzzle /></ProtectedRoute>} />
             <Route path="/games/room-game/:gameId" element={<ProtectedRoute><RoomGamePlay /></ProtectedRoute>} />
             <Route path="/games/:gameId/:mode?" element={<ProtectedRoute><GamePlay /></ProtectedRoute>} />

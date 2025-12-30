@@ -105,18 +105,6 @@ const Games = () => {
       route: "/games/verse_match"
     },
     {
-      id: "verse_match",
-      name: "Verse Memory Match",
-      description: "Match Bible verses with their references in this classic memory card game!",
-      icon: "🔢",
-      floor: 1,
-      timed: true,
-      rooms: ["BR"],
-      modes: ["solo", "custom"],
-      difficulties: ["easy", "medium", "hard"],
-      route: "/games/verse_match"
-    },
-    {
       id: "principle-cards",
       name: "Principle Cards",
       description: "Multiplayer card game where principles become cards! Match them to scenarios and compete.",
