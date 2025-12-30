@@ -734,21 +734,34 @@ All colors MUST be HSL.
 /* Mobile scrolling fixes */
 @media (max-width: 768px) {
   /* Ensure the main content area scrolls properly on mobile */
+  html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    height: auto;
+    min-height: 100%;
+  }
+
   main {
     -webkit-overflow-scrolling: touch;
     overflow-y: auto;
+    overflow-x: hidden;
   }
 
   /* Prevent touch event blocking on scrollable areas */
   .min-h-screen {
     touch-action: pan-y pan-x;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Ensure room pages and all card content can scroll */
   [class*="TabsContent"],
+  [class*="TabsList"],
   .container,
   .space-y-6,
-  .space-y-4 {
+  .space-y-4,
+  .space-y-8 {
     touch-action: pan-y pan-x;
   }
 
@@ -761,7 +774,27 @@ All colors MUST be HSL.
   /* Ensure cards and collapsible content don't block scrolling */
   .card,
   [data-radix-collapsible-content],
-  [data-radix-accordion-content] {
+  [data-radix-accordion-content],
+  [data-radix-tabs-content] {
+    touch-action: pan-y pan-x;
+  }
+
+  /* Floor 6 specific room drill fixes */
+  [class*="RoomDrill"],
+  [class*="CardContent"],
+  [class*="CardHeader"] {
+    touch-action: pan-y pan-x;
+  }
+
+  /* Fix for buttons and interactive elements blocking scroll */
+  button:not(:active),
+  [role="button"]:not(:active),
+  [role="tab"]:not(:active) {
+    touch-action: pan-y pan-x;
+  }
+
+  /* Ensure grid layouts don't block scroll */
+  .grid {
     touch-action: pan-y pan-x;
   }
 }
