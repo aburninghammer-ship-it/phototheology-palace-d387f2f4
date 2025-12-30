@@ -549,24 +549,17 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     const index = startVerseIndex ?? verses.findIndex(v => v.verse === currentVerse);
     const verseIdx = index >= 0 ? index : 0;
 
-    // On mobile, try browser TTS first for reliability
-    if (isMobile() && 'speechSynthesis' in window) {
-      console.log('[AudioControls] Mobile detected, using browser speechSynthesis');
-      setIsPlaying(true);
-      isPlayingRef.current = true;
-      setUseBrowserTTS(true);
-      playVerseBrowserTTS(verseIdx);
-      return;
-    }
-
-    // Unlock audio on iOS first
+    // Unlock audio on iOS/mobile first (critical for cloud TTS playback)
     await unlockAudio();
+
+    // On mobile, use cloud TTS for reliability (browser speechSynthesis is unreliable on iOS/Android)
+    console.log('[AudioControls] Starting playback, mobile:', isMobile());
 
     setIsPlaying(true);
     isPlayingRef.current = true;
     setUseBrowserTTS(false);
     playVerseAtIndex(verseIdx);
-  }, [currentVerse, verses, playVerseAtIndex, unlockAudio, playVerseBrowserTTS]);
+  }, [currentVerse, verses, playVerseAtIndex, unlockAudio]);
 
   const pause = useCallback(() => {
     if (useBrowserTTS && 'speechSynthesis' in window) {
