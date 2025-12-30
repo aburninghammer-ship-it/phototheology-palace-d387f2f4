@@ -180,7 +180,7 @@ const BranchStudy = lazy(() => import("./pages/BranchStudy"));
 const FrameSnapshot = lazy(() => import("./pages/games/FrameSnapshot"));
 const RoomGamePlay = lazy(() => import("./components/games/RoomGamePlay"));
 const StoryRoomGame = lazy(() => import("./pages/games/StoryRoomGame"));
-const ObservationGame = lazy(() => import("./pages/games/ObservationGame"));
+const ObservationFlux = lazy(() => import("./pages/games/ObservationFlux"));
 const ConcentrationRoom = lazy(() => import("./pages/games/ConcentrationRoom"));
 const DimensionsRoom = lazy(() => import("./pages/games/DimensionsRoom"));
 const BlueRoomGame = lazy(() => import("./pages/games/BlueRoomGame"));
@@ -444,7 +444,7 @@ function App() {
             <Route path="/games/phototheology-uno" element={<ProtectedRoute><PhototheologyUno /></ProtectedRoute>} />
             <Route path="/games/frame-snapshot" element={<ProtectedRoute><FrameSnapshot /></ProtectedRoute>} />
             <Route path="/games/story-room" element={<ProtectedRoute><StoryRoomGame /></ProtectedRoute>} />
-            <Route path="/games/observation-room" element={<ProtectedRoute><ObservationGame /></ProtectedRoute>} />
+            <Route path="/games/observation-room" element={<ProtectedRoute><ObservationFlux /></ProtectedRoute>} />
             <Route path="/games/concentration-room" element={<ProtectedRoute><ConcentrationRoom /></ProtectedRoute>} />
             <Route path="/games/dimensions-room" element={<ProtectedRoute><DimensionsRoom /></ProtectedRoute>} />
             <Route path="/games/blue-room" element={<ProtectedRoute><BlueRoomGame /></ProtectedRoute>} />
