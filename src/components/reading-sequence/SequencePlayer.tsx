@@ -100,7 +100,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // LocalStorage key for saving position - use sequenceName or a hash of sequences
   const positionStorageKey = `pt-audio-position-${sequenceName || 'default'}`;
 
-  // Load saved position from localStorage AND Supabase (use most recent)
+  // Load saved position from localStorage AND Supabase user metadata (use most recent)
   useEffect(() => {
     // If autoPlay is enabled, don't show resume option - just start fresh
     if (autoPlay) {
@@ -122,25 +122,15 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         console.log('[SequencePlayer] Could not load local position:', e);
       }
 
-      // Try Supabase for cross-device sync (if logged in)
+      // Try Supabase Auth user_metadata for cross-device sync (no database changes needed!)
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('last_audio_position')
-            .eq('id', user.id)
-            .single();
-
-          if (profile?.last_audio_position) {
-            const cloudData = typeof profile.last_audio_position === 'string'
-              ? JSON.parse(profile.last_audio_position)
-              : profile.last_audio_position;
-            // Only use cloud position if it's for the same sequence
-            if (cloudData.sequenceName === sequenceName) {
-              cloudPosition = cloudData;
-              console.log('[SequencePlayer] Found cloud position:', cloudPosition);
-            }
+        if (user?.user_metadata?.audio_position) {
+          const cloudData = user.user_metadata.audio_position;
+          // Only use cloud position if it's for the same sequence
+          if (cloudData.sequenceName === sequenceName) {
+            cloudPosition = cloudData;
+            console.log('[SequencePlayer] Found cloud position:', cloudPosition);
           }
         }
       } catch (e) {
@@ -172,7 +162,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     loadPosition();
   }, [positionStorageKey, activeSequences.length, autoPlay, sequenceName]);
 
-  // Save current position to localStorage AND Supabase (for cross-device sync)
+  // Save current position to localStorage AND Supabase user metadata (for cross-device sync)
   const saveCurrentPosition = useCallback(async (seqIdx: number, itemIdx: number, verseIdx: number) => {
     const position = { seqIdx, itemIdx, verseIdx, timestamp: Date.now(), sequenceName };
 
@@ -183,14 +173,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       console.log('[SequencePlayer] Could not save local position:', e);
     }
 
-    // Save to Supabase for cross-device sync (if logged in)
+    // Save to Supabase Auth user_metadata for cross-device sync (no database changes needed!)
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        await supabase
-          .from('profiles')
-          .update({ last_audio_position: JSON.stringify(position) })
-          .eq('id', user.id);
+        await supabase.auth.updateUser({
+          data: { audio_position: position }
+        });
         console.log('[SequencePlayer] Saved position to cloud');
       }
     } catch (e) {
