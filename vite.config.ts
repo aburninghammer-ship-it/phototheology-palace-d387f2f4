@@ -5,6 +5,7 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
+// PWA Cache Version: 2024-12-29-v2 (force update for game badges and libraries)
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
