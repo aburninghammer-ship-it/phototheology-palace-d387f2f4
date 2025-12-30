@@ -5605,9 +5605,10 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
         return new Response(
           JSON.stringify({
             verse: parsed.verse || "Genesis 1:1",
+            verseText: parsed.verseText || "",
             comment: parsed.comment || parsed.commentary || "Let's explore the typological connections together!",
             challengeType: parsed.challengeType || "room",
-            challengeId: parsed.challengeId || "story-room",
+            challengeId: parsed.challengeId || "sr",
             challengeName: parsed.challengeName || "Story Room"
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -5617,9 +5618,10 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
         return new Response(
           JSON.stringify({
             verse: "Genesis 1:1",
+            verseText: "In the beginning God created the heaven and the earth.",
             comment: "In the beginning, God created the heavens and the earth. This foundational verse establishes the Story Room pattern - God as the Author of all creation, setting the stage for the redemption narrative.",
             challengeType: "room",
-            challengeId: "story-room",
+            challengeId: "sr",
             challengeName: "Story Room"
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }

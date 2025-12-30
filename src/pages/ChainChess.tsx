@@ -213,6 +213,7 @@ const ChainChess = () => {
   const jeevesOpeningMove = async (currentGameId: string) => {
     setProcessing(true);
     try {
+      console.log("[ChainChess] Requesting Jeeves opening move...");
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "chain-chess-v2-opening",
@@ -220,17 +221,27 @@ const ChainChess = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("[ChainChess] Jeeves function error:", error);
+        throw error;
+      }
+
+      if (!data) {
+        console.error("[ChainChess] No data returned from Jeeves");
+        throw new Error("No response from Jeeves");
+      }
+
+      console.log("[ChainChess] Jeeves opening response:", data);
 
       const newMove: Move = {
         id: crypto.randomUUID(),
         player: "jeeves",
-        verse: data.verse,
-        verseText: data.verseText,
-        comment: data.comment,
-        challengeType: data.challengeType,
-        challengeId: data.challengeId,
-        challengeName: data.challengeName,
+        verse: data.verse || "Genesis 1:1",
+        verseText: data.verseText || "",
+        comment: data.comment || "Let's begin our exploration of Scripture!",
+        challengeType: data.challengeType || "room",
+        challengeId: data.challengeId || "sr",
+        challengeName: data.challengeName || "Story Room",
         score: 0,
         timestamp: new Date().toISOString()
       };
