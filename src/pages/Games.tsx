@@ -18,6 +18,10 @@ import { UnifiedGameRankings } from "@/components/games/UnifiedGameRankings";
 import { ActiveGameSessions } from "@/components/games/ActiveGameSessions";
 import { usePreservePageState, usePreserveFormState } from "@/contexts/PageStateContext";
 
+// Games with special badges
+const NEW_GAMES = ["pt_tetris", "symbol_decoder"]; // Completely new games
+const RENOVATED_GAMES = ["chain_chess", "escape_room"]; // Rebuilt/improved games
+
 // Bible translations available for games
 const BIBLE_TRANSLATIONS = [
   { id: "kjv", name: "KJV", description: "King James Version" },
@@ -364,6 +368,18 @@ const Games = () => {
       difficulties: ["easy", "medium"],
       route: "/games/phototheology-uno"
     },
+    {
+      id: "pt_tetris",
+      name: "🧱 PT Palace Tetris",
+      description: "Stack biblical knowledge blocks! Clear lines by matching Palace room concepts in this addictive puzzle game with all 38 rooms.",
+      icon: "🧱",
+      floor: 0,
+      timed: true,
+      rooms: ["All"],
+      modes: ["solo"],
+      difficulties: ["easy", "medium", "hard", "endless"],
+      route: "/games/pt-palace-tetris"
+    },
   ];
 
   const filteredGames = allGames.filter(game => {
@@ -589,6 +605,16 @@ const Games = () => {
                       {game.timed && (
                         <Badge variant="outline" className="border-orange-500/50 text-orange-600 dark:border-orange-400/50 dark:text-orange-400 bg-orange-500/10 text-[10px] md:text-xs">
                           ⏱️ Timed
+                        </Badge>
+                      )}
+                      {NEW_GAMES.includes(game.id) && (
+                        <Badge className="bg-green-500 text-white border-green-600 text-[10px] md:text-xs animate-pulse">
+                          ✨ New
+                        </Badge>
+                      )}
+                      {RENOVATED_GAMES.includes(game.id) && (
+                        <Badge className="bg-amber-500 text-white border-amber-600 text-[10px] md:text-xs animate-pulse">
+                          🔧 Renovated
                         </Badge>
                       )}
                     </div>
