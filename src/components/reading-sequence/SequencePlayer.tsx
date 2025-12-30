@@ -2876,25 +2876,45 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         )}
 
         {/* Mobile Tap to Start - required on mobile due to browser audio restrictions */}
-        {waitingForMobileTap && chapterContent && (
+        {waitingForMobileTap && (
           <div className="rounded-xl border-2 border-green-500/30 overflow-hidden bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10 shadow-lg shadow-green-500/10 p-6 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="h-16 w-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30 animate-pulse">
-                <Play className="h-8 w-8 text-white ml-1" />
+                {isLoading ? (
+                  <Loader2 className="h-8 w-8 text-white animate-spin" />
+                ) : (
+                  <Play className="h-8 w-8 text-white ml-1" />
+                )}
               </div>
               <div>
-                <h3 className="font-bold text-green-600 dark:text-green-400 text-lg">Ready to Play</h3>
+                <h3 className="font-bold text-green-600 dark:text-green-400 text-lg">
+                  {isLoading ? "Loading Audio..." : "Ready to Play"}
+                </h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {chapterContent.book} {chapterContent.chapter} • {chapterContent.verses.length} verses
+                  {chapterContent 
+                    ? `${chapterContent.book} ${chapterContent.chapter} • ${chapterContent.verses.length} verses`
+                    : currentItem 
+                      ? `${currentItem.book} ${currentItem.chapter}`
+                      : "Preparing..."}
                 </p>
               </div>
               <Button
                 onClick={handleMobileTapToStart}
                 size="lg"
                 className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-lg"
+                disabled={isLoading || !chapterContent}
               >
-                <Play className="h-5 w-5 mr-2" />
-                Tap to Start
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-5 w-5 mr-2" />
+                    Tap to Start
+                  </>
+                )}
               </Button>
             </div>
           </div>
