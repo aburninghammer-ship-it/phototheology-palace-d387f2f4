@@ -561,25 +561,40 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // Fetch chapter content (with caching)
   const fetchChapter = useCallback(async (book: string, chapter: number) => {
     const cacheKey = `${book}-${chapter}`;
-    
+
     // Check cache first
     if (chapterCache.current.has(cacheKey)) {
       console.log("[Chapter] Using cached:", cacheKey);
       return chapterCache.current.get(cacheKey)!;
     }
-    
+
     try {
-      console.log("[Chapter] Fetching:", cacheKey);
+      console.log("[Chapter] Fetching from API:", cacheKey);
       const { data, error } = await supabase.functions.invoke("bible-api", {
         body: { book, chapter, version: "kjv" },
       });
 
-      if (error) throw error;
+      console.log("[Chapter] API Response:", { hasData: !!data, hasError: !!error, versesCount: data?.verses?.length });
+
+      if (error) {
+        console.error("[Chapter] API Error:", error);
+        toast.error(`Failed to load ${book} ${chapter}. Please try again.`);
+        throw error;
+      }
+
+      if (!data || !data.verses || data.verses.length === 0) {
+        console.error("[Chapter] No verses in response:", data);
+        toast.error(`No verses found for ${book} ${chapter}`);
+        return null;
+      }
+
       const verses = data.verses as { verse: number; text: string }[];
+      console.log("[Chapter] Successfully loaded", verses.length, "verses");
       chapterCache.current.set(cacheKey, verses);
       return verses;
     } catch (e) {
-      console.error("Error fetching chapter:", e);
+      console.error("[Chapter] Error fetching:", e);
+      toast.error(`Error loading chapter. Please check your connection.`);
       return null;
     }
   }, []);
