@@ -236,11 +236,11 @@ const ChainChess = () => {
       };
 
       // Save move to database
-      await supabase.from("game_moves").insert({
+      await supabase.from("game_moves").insert([{
         game_id: currentGameId,
         player_id: null,
-        move_data: newMove
-      });
+        move_data: JSON.parse(JSON.stringify(newMove))
+      }]);
 
       setMoves([newMove]);
       setGameState(prev => ({
@@ -328,11 +328,11 @@ const ChainChess = () => {
       };
 
       // Save move
-      await supabase.from("game_moves").insert({
+      await supabase.from("game_moves").insert([{
         game_id: gameId,
         player_id: user!.id,
-        move_data: newMove
-      });
+        move_data: JSON.parse(JSON.stringify(newMove))
+      }]);
 
       const newMoves = [...moves, newMove];
       setMoves(newMoves);
@@ -445,11 +445,11 @@ const ChainChess = () => {
       };
 
       // Save move
-      await supabase.from("game_moves").insert({
+      await supabase.from("game_moves").insert([{
         game_id: gameId,
         player_id: null,
-        move_data: newMove
-      });
+        move_data: JSON.parse(JSON.stringify(newMove))
+      }]);
 
       setMoves(prev => [...prev, newMove]);
 
@@ -532,7 +532,7 @@ const ChainChess = () => {
           .order("created_at", { ascending: true });
 
         if (movesData) {
-          setMoves(movesData.map(m => m.move_data as Move));
+          setMoves(movesData.map(m => m.move_data as unknown as Move));
         }
       }
     } catch (error) {

@@ -96,7 +96,7 @@ export default function UserAnalytics() {
       // Get devotional progress with date for weekly filter
       const { data: devotionalsWithDate } = await supabase
         .from("devotional_progress")
-        .select("*, created_at")
+        .select("*, completed_at")
         .eq("user_id", user.id);
 
       // Get memorization verses count
@@ -128,8 +128,8 @@ export default function UserAnalytics() {
       }) || [];
 
       const weeklyDevotionals = devotionalsWithDate?.filter(d => {
-        if (!d.created_at) return false;
-        const date = parseISO(d.created_at);
+        if (!d.completed_at) return false;
+        const date = parseISO(d.completed_at);
         return isWithinInterval(date, { start: weekStart, end: weekEnd });
       }) || [];
 
@@ -167,8 +167,8 @@ export default function UserAnalytics() {
       });
 
       devotionalsWithDate?.forEach(d => {
-        if (d.created_at) {
-          const dateStr = d.created_at.split('T')[0];
+        if (d.completed_at) {
+          const dateStr = d.completed_at.split('T')[0];
           devotionalsByDate.set(dateStr, (devotionalsByDate.get(dateStr) || 0) + 1);
         }
       });

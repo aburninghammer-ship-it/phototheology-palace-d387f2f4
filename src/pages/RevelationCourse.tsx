@@ -198,7 +198,7 @@ const RevelationCourse = () => {
           courseType="revelation"
           currentDayId={currentLesson}
           currentDayTitle={lesson?.title}
-          currentDayContent={lesson?.description}
+          currentDayContent={lesson?.unlockingInsight}
         />
       </main>
     </div>
