@@ -287,6 +287,71 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     isPlayingRef.current = isPlaying;
     isPausedRef.current = isPaused;
   }, [isPlaying, isPaused]);
+
+  // Media Session API - enables background playback and lock screen controls
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+
+    // Update media metadata when chapter changes
+    if (chapterContent && isPlaying) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: `${chapterContent.book} ${chapterContent.chapter}:${currentVerseIdx + 1}`,
+        artist: 'Phototheology Bible Reader',
+        album: sequenceName || 'Bible Reading',
+      });
+
+      // Set playback state
+      navigator.mediaSession.playbackState = isPaused ? 'paused' : 'playing';
+    }
+  }, [chapterContent, currentVerseIdx, isPlaying, isPaused, sequenceName]);
+
+  // Media Session action handlers - for lock screen / notification controls
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+
+    const handleMediaPlay = () => {
+      if (isPaused && audioRef.current) {
+        audioRef.current.play();
+        setIsPaused(false);
+        setIsPlaying(true);
+      } else if (browserUtteranceRef.current) {
+        speechSynthesis.resume();
+        setIsPaused(false);
+      }
+    };
+
+    const handleMediaPause = () => {
+      if (audioRef.current && !audioRef.current.paused) {
+        audioRef.current.pause();
+        setIsPaused(true);
+      } else if (speechSynthesis.speaking) {
+        speechSynthesis.pause();
+        setIsPaused(true);
+      }
+    };
+
+    const handleMediaStop = () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      speechSynthesis.cancel();
+      setIsPlaying(false);
+      setIsPaused(false);
+    };
+
+    // Register handlers
+    navigator.mediaSession.setActionHandler('play', handleMediaPlay);
+    navigator.mediaSession.setActionHandler('pause', handleMediaPause);
+    navigator.mediaSession.setActionHandler('stop', handleMediaStop);
+
+    return () => {
+      // Clean up handlers
+      navigator.mediaSession.setActionHandler('play', null);
+      navigator.mediaSession.setActionHandler('pause', null);
+      navigator.mediaSession.setActionHandler('stop', null);
+    };
+  }, [isPaused]);
   
   // Keep volume refs in sync
   useEffect(() => {
@@ -319,18 +384,47 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     setSavedPosition(null);
   }, [positionStorageKey]);
 
+  // Keep audio playing when tab is hidden (background playback)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && isPlayingRef.current && !isPausedRef.current) {
+        console.log('[SequencePlayer] Tab hidden - keeping audio alive');
+        // Resume speech synthesis if it was paused by the browser
+        if (speechSynthesis.paused && browserUtteranceRef.current) {
+          speechSynthesis.resume();
+        }
+        // Ensure audio element keeps playing
+        if (audioRef.current && audioRef.current.paused && audioRef.current.src) {
+          audioRef.current.play().catch(() => {
+            console.log('[SequencePlayer] Could not resume audio in background');
+          });
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  // Keep-alive interval for background playback
   useEffect(() => {
     const keepAlive = () => {
-      if (isPlaying && !isPaused && speechSynthesis.speaking) {
-        if (speechSynthesis.paused) {
+      if (isPlaying && !isPaused) {
+        // Keep speech synthesis alive
+        if (speechSynthesis.speaking && speechSynthesis.paused) {
           console.log('[SequencePlayer] Resuming suspended speech');
           speechSynthesis.resume();
+        }
+        // Keep audio element alive
+        if (audioRef.current && audioRef.current.paused && audioRef.current.src && audioRef.current.currentTime > 0) {
+          console.log('[SequencePlayer] Resuming paused audio');
+          audioRef.current.play().catch(() => {});
         }
       }
     };
 
     if (isPlaying && !isPaused) {
-      keepAliveIntervalRef.current = window.setInterval(keepAlive, 5000);
+      keepAliveIntervalRef.current = window.setInterval(keepAlive, 3000);
     }
 
     return () => {
