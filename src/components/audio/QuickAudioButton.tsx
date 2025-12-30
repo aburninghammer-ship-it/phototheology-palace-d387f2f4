@@ -103,57 +103,104 @@ export function QuickAudioButton({
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.9;
         utterance.pitch = 1;
-        utterance.lang = 'en-US'; // Set language explicitly for better mobile support
+        utterance.lang = 'en-US';
 
-        // Get available voices - may need to wait for voiceschanged on some browsers
+        // Wait for voices to load with proper event handling
         let voices = speechSynthesis.getVoices();
 
-        // If voices not loaded yet, try to trigger load and wait briefly
         if (voices.length === 0) {
-          console.log('[QuickAudio] Voices not loaded, attempting to trigger...');
-          // Some browsers need this to trigger voice loading
-          speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-          speechSynthesis.cancel();
-          // Wait a moment for voices to load
-          await new Promise(resolve => setTimeout(resolve, 100));
-          voices = speechSynthesis.getVoices();
+          console.log('[QuickAudio] Voices not loaded, waiting for voiceschanged event...');
+
+          // Wait for voices with timeout
+          voices = await new Promise<SpeechSynthesisVoice[]>((resolve) => {
+            const onVoicesChanged = () => {
+              const loadedVoices = speechSynthesis.getVoices();
+              if (loadedVoices.length > 0) {
+                speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged);
+                resolve(loadedVoices);
+              }
+            };
+
+            speechSynthesis.addEventListener('voiceschanged', onVoicesChanged);
+
+            // Trigger voice loading
+            speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+            speechSynthesis.cancel();
+
+            // Timeout after 2 seconds
+            setTimeout(() => {
+              speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged);
+              resolve(speechSynthesis.getVoices());
+            }, 2000);
+          });
+
+          console.log('[QuickAudio] Loaded', voices.length, 'voices');
         }
 
         if (voices.length > 0) {
           const englishVoice = voices.find(v =>
-            v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google'))
-          ) || voices.find(v => v.lang.startsWith('en'));
+            v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google') || v.name.includes('Premium'))
+          ) || voices.find(v => v.lang.startsWith('en') && !v.localService)
+            || voices.find(v => v.lang.startsWith('en'));
 
           if (englishVoice) {
             utterance.voice = englishVoice;
             console.log('[QuickAudio] Using voice:', englishVoice.name);
           }
         } else {
-          console.log('[QuickAudio] No voices available, using default');
+          console.warn('[QuickAudio] No voices available, using system default');
         }
 
         // Set state immediately for better UX
         setIsPlaying(true);
         notifyTTSStarted();
 
+        // Safety timeout in case onend never fires
+        const estimatedDuration = Math.max(10000, text.length * 60);
+        let safetyTimeout: NodeJS.Timeout | null = setTimeout(() => {
+          console.warn('[QuickAudio] Safety timeout triggered');
+          if (speechSynthesis.speaking || speechSynthesis.pending) {
+            speechSynthesis.cancel();
+          }
+          setIsPlaying(false);
+          notifyTTSStopped();
+        }, estimatedDuration);
+
+        const cleanup = () => {
+          if (safetyTimeout) {
+            clearTimeout(safetyTimeout);
+            safetyTimeout = null;
+          }
+        };
+
         utterance.onend = () => {
+          cleanup();
           console.log('[QuickAudio] Speech ended');
           setIsPlaying(false);
           notifyTTSStopped();
         };
 
         utterance.onerror = (e) => {
+          cleanup();
           console.error('[QuickAudio] Speech synthesis error:', e);
           setIsPlaying(false);
           notifyTTSStopped();
-          // Don't show toast on 'interrupted' or 'canceled' errors
           if (e.error !== 'interrupted' && e.error !== 'canceled') {
-            toast.error("Speech failed, try again");
+            toast.error("Speech failed, try cloud audio");
           }
         };
 
         speechSynthesis.speak(utterance);
-        console.log('[QuickAudio] Speaking started');
+        console.log('[QuickAudio] Speaking started, estimated duration:', estimatedDuration, 'ms');
+
+        // iOS fix: Check if speaking actually started
+        setTimeout(() => {
+          if (isPlaying && !speechSynthesis.speaking && !speechSynthesis.pending) {
+            console.warn('[QuickAudio] Speech did not start - retrying');
+            speechSynthesis.speak(utterance);
+          }
+        }, 300);
+
         return;
       } catch (err) {
         console.error('[QuickAudio] Browser TTS failed, trying cloud TTS:', err);

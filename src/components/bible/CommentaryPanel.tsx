@@ -206,7 +206,14 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
     const checkAvailability = async () => {
       setCheckingAvailability(true);
       try {
-        const { data, error } = await supabase.functions.invoke("jeeves", {
+        console.log("[Commentary] Checking availability for", book, chapter, ":", verse);
+
+        // Add timeout for availability check
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Availability check timed out")), 15000)
+        );
+
+        const fetchPromise = supabase.functions.invoke("jeeves", {
           body: {
             mode: "check-commentary-availability",
             book,
@@ -215,17 +222,24 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
           },
         });
 
-        if (error) throw error;
+        const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+
+        if (error) {
+          console.warn("[Commentary] Availability check error:", error);
+          throw error;
+        }
+
+        console.log("[Commentary] Available commentaries:", data.available);
         setAvailableCommentaries(data.available || []);
       } catch (error) {
-        console.error("Error checking commentary availability:", error);
-        // Default to all if check fails
+        console.error("[Commentary] Error checking commentary availability:", error);
+        // Default to all if check fails - don't block the user
         setAvailableCommentaries(COMMENTARY_OPTIONS.map(c => c.value));
       } finally {
         setCheckingAvailability(false);
       }
     };
-    
+
     checkAvailability();
   }, [book, chapter, verse, verseText]);
 
@@ -269,32 +283,75 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
 
       const lengthConfig = WORD_LENGTH_OPTIONS.find(l => l.value === deepPalaceLength);
 
-      const { data, error } = await supabase.functions.invoke("jeeves", {
-        body: {
-          mode,
-          book,
-          chapter,
-          verseText: { verse, text: verseText },
-          selectedPrinciples: (analysisMode === "applied" && !refresh && !useClassicCommentary) 
-            ? selectedPrinciples.map(id => PRINCIPLE_OPTIONS.find(p => p.id === id)?.label)
-            : undefined,
-          classicCommentary: useClassicCommentary && selectedCommentary !== "sop" ? selectedCommentary : undefined,
-          // Deep Palace specific options
-          maxWords: analysisMode === "deep-palace" ? lengthConfig?.maxWords : undefined,
-          showHiddenStructure: analysisMode === "deep-palace" ? showHiddenStructure : undefined,
-          // 5-Dimension Filter - pass active dimensions to filter commentary layers
-          activeDimensions: activeDimensions.length > 0 ? activeDimensions : undefined,
-        },
-      });
+      console.log("[Commentary] Calling Jeeves with mode:", mode);
 
-      if (error) throw error;
-      setCommentary(data.content);
-      setUsedPrinciples(data.principlesUsed || []);
+      // Use AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+
+      try {
+        const { data, error } = await supabase.functions.invoke("jeeves", {
+          body: {
+            mode,
+            book,
+            chapter,
+            verseText: { verse, text: verseText },
+            selectedPrinciples: (analysisMode === "applied" && !refresh && !useClassicCommentary)
+              ? selectedPrinciples.map(id => PRINCIPLE_OPTIONS.find(p => p.id === id)?.label)
+              : undefined,
+            classicCommentary: useClassicCommentary && selectedCommentary !== "sop" ? selectedCommentary : undefined,
+            // Deep Palace specific options
+            maxWords: analysisMode === "deep-palace" ? lengthConfig?.maxWords : undefined,
+            showHiddenStructure: analysisMode === "deep-palace" ? showHiddenStructure : undefined,
+            // 5-Dimension Filter - pass active dimensions to filter commentary layers
+            activeDimensions: activeDimensions.length > 0 ? activeDimensions : undefined,
+          },
+        });
+
+        clearTimeout(timeoutId);
+
+        if (error) {
+          console.error("[Commentary] Jeeves error:", error);
+          throw new Error(error.message || "Jeeves service error");
+        }
+
+        if (!data) {
+          throw new Error("No response from commentary service");
+        }
+
+        if (!data.content) {
+          console.warn("[Commentary] Empty content in response:", data);
+          throw new Error("Commentary service returned empty content");
+        }
+
+        console.log("[Commentary] Success - received", data.content.length, "characters");
+        setCommentary(data.content);
+        setUsedPrinciples(data.principlesUsed || []);
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError') {
+          throw new Error("Request timed out - please try again");
+        }
+        throw fetchError;
+      }
     } catch (error: any) {
-      console.error("Commentary error:", error);
+      console.error("[Commentary] Error:", error);
+
+      // Provide more helpful error messages
+      let errorMessage = "Failed to generate commentary";
+      if (error.message?.includes("timeout") || error.message?.includes("timed out")) {
+        errorMessage = "Request timed out - the server may be busy. Please try again.";
+      } else if (error.message?.includes("rate limit")) {
+        errorMessage = "Too many requests - please wait a moment and try again.";
+      } else if (error.message?.includes("network") || error.message?.includes("fetch")) {
+        errorMessage = "Network error - please check your connection.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       toast({
-        title: "Error",
-        description: error.message || "Failed to generate commentary",
+        title: "Commentary Error",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

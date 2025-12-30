@@ -376,9 +376,47 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     prefetchCacheRef.current.clear();
   }, []);
 
+  // Wait for voices to load with timeout
+  const waitForVoices = useCallback((): Promise<SpeechSynthesisVoice[]> => {
+    return new Promise((resolve) => {
+      let voices = speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        resolve(voices);
+        return;
+      }
+
+      // Set up listener for voiceschanged event
+      const onVoicesChanged = () => {
+        voices = speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged);
+          resolve(voices);
+        }
+      };
+
+      speechSynthesis.addEventListener('voiceschanged', onVoicesChanged);
+
+      // Trigger voice loading on some browsers
+      speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+      speechSynthesis.cancel();
+
+      // Timeout after 2 seconds - use default voice if voices still don't load
+      setTimeout(() => {
+        speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged);
+        resolve(speechSynthesis.getVoices());
+      }, 2000);
+    });
+  }, []);
+
   // Browser TTS playback for mobile fallback
   const playVerseBrowserTTS = useCallback(async (verseIndex: number) => {
-    if (!('speechSynthesis' in window)) return;
+    if (!('speechSynthesis' in window)) {
+      console.error('[AudioControls] speechSynthesis not available');
+      toast.error("Speech synthesis not supported on this device");
+      setIsPlaying(false);
+      isPlayingRef.current = false;
+      return;
+    }
 
     const verse = versesRef.current[verseIndex];
     if (!verse) {
@@ -393,37 +431,47 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     setCurrentVerse(verse.verse);
     onVerseHighlight?.(verse.verse);
 
+    // Cancel any existing speech
     speechSynthesis.cancel();
+
     const utterance = new SpeechSynthesisUtterance(verse.text);
     utterance.rate = playbackRateRef.current;
     utterance.pitch = 1;
-    utterance.lang = 'en-US'; // Set language explicitly for better mobile support
+    utterance.lang = 'en-US';
 
-    // Get available voices - may need to wait for voiceschanged on some browsers
-    let voices = speechSynthesis.getVoices();
-
-    // If voices not loaded yet, try to trigger load and wait briefly
-    if (voices.length === 0) {
-      console.log('[AudioControls] Voices not loaded, attempting to trigger...');
-      speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-      speechSynthesis.cancel();
-      await new Promise(resolve => setTimeout(resolve, 100));
-      voices = speechSynthesis.getVoices();
-    }
+    // Wait for voices to load with proper timeout
+    console.log('[AudioControls] Waiting for voices to load...');
+    const voices = await waitForVoices();
+    console.log('[AudioControls] Loaded', voices.length, 'voices');
 
     if (voices.length > 0) {
+      // Prefer high-quality voices
       const englishVoice = voices.find(v =>
-        v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google'))
-      ) || voices.find(v => v.lang.startsWith('en'));
+        v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google') || v.name.includes('Premium'))
+      ) || voices.find(v => v.lang.startsWith('en') && !v.localService) // Prefer non-local voices
+        || voices.find(v => v.lang.startsWith('en'));
+
       if (englishVoice) {
         utterance.voice = englishVoice;
         console.log('[AudioControls] Using voice:', englishVoice.name);
       }
     } else {
-      console.log('[AudioControls] No voices available, using default');
+      console.warn('[AudioControls] No voices available, using system default');
     }
 
+    // Set up a safety timeout in case onend never fires (common iOS issue)
+    let safetyTimeout: NodeJS.Timeout | null = null;
+    const estimatedDuration = Math.max(5000, verse.text.length * 80); // Rough estimate: 80ms per character
+
+    const cleanup = () => {
+      if (safetyTimeout) {
+        clearTimeout(safetyTimeout);
+        safetyTimeout = null;
+      }
+    };
+
     utterance.onend = () => {
+      cleanup();
       if (!isPlayingRef.current) return;
       const nextIndex = verseIndex + 1;
       if (nextIndex < versesRef.current.length) {
@@ -442,20 +490,60 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     };
 
     utterance.onerror = (e) => {
+      cleanup();
       console.error('[AudioControls] Speech synthesis error:', e);
       setIsPlaying(false);
       isPlayingRef.current = false;
       notifyTTSStopped();
       // Don't show toast on 'interrupted' or 'canceled' errors
       if ((e as any).error !== 'interrupted' && (e as any).error !== 'canceled') {
-        toast.error("Speech synthesis error");
+        toast.error("Speech synthesis error - try cloud audio instead");
       }
     };
 
+    // Safety timeout - if speech takes too long, assume it's stuck
+    safetyTimeout = setTimeout(() => {
+      console.warn('[AudioControls] Safety timeout triggered - speech may be stuck');
+      // Check if speech is still pending
+      if (speechSynthesis.speaking || speechSynthesis.pending) {
+        console.log('[AudioControls] Canceling stuck speech');
+        speechSynthesis.cancel();
+        // Move to next verse anyway
+        if (isPlayingRef.current) {
+          const nextIndex = verseIndex + 1;
+          if (nextIndex < versesRef.current.length) {
+            setTimeout(() => playVerseBrowserTTS(nextIndex), 100);
+          } else {
+            setIsPlaying(false);
+            isPlayingRef.current = false;
+            notifyTTSStopped();
+          }
+        }
+      }
+    }, estimatedDuration);
+
     notifyTTSStarted();
-    speechSynthesis.speak(utterance);
-    console.log('[AudioControls] Speaking verse', verse.verse);
-  }, [onVerseHighlight]);
+
+    try {
+      speechSynthesis.speak(utterance);
+      console.log('[AudioControls] Speaking verse', verse.verse, '- estimated duration:', estimatedDuration, 'ms');
+
+      // iOS fix: Check if speaking actually started after a short delay
+      setTimeout(() => {
+        if (isPlayingRef.current && !speechSynthesis.speaking && !speechSynthesis.pending) {
+          console.warn('[AudioControls] Speech did not start - trying again');
+          speechSynthesis.speak(utterance);
+        }
+      }, 200);
+    } catch (err) {
+      cleanup();
+      console.error('[AudioControls] Failed to speak:', err);
+      setIsPlaying(false);
+      isPlayingRef.current = false;
+      notifyTTSStopped();
+      toast.error("Failed to start speech - try cloud audio");
+    }
+  }, [onVerseHighlight, waitForVoices]);
 
   const play = useCallback(async (startVerseIndex?: number) => {
     const index = startVerseIndex ?? verses.findIndex(v => v.verse === currentVerse);
