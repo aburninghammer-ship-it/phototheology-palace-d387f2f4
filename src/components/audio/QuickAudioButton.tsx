@@ -103,23 +103,41 @@ export function QuickAudioButton({
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.9;
         utterance.pitch = 1;
+        utterance.lang = 'en-US'; // Set language explicitly for better mobile support
 
-        // Get available voices and try to pick a good one
-        const voices = speechSynthesis.getVoices();
-        const englishVoice = voices.find(v =>
-          v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google'))
-        ) || voices.find(v => v.lang.startsWith('en'));
+        // Get available voices - may need to wait for voiceschanged on some browsers
+        let voices = speechSynthesis.getVoices();
 
-        if (englishVoice) {
-          utterance.voice = englishVoice;
+        // If voices not loaded yet, try to trigger load and wait briefly
+        if (voices.length === 0) {
+          console.log('[QuickAudio] Voices not loaded, attempting to trigger...');
+          // Some browsers need this to trigger voice loading
+          speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+          speechSynthesis.cancel();
+          // Wait a moment for voices to load
+          await new Promise(resolve => setTimeout(resolve, 100));
+          voices = speechSynthesis.getVoices();
         }
 
-        utterance.onstart = () => {
-          setIsPlaying(true);
-          notifyTTSStarted();
-        };
+        if (voices.length > 0) {
+          const englishVoice = voices.find(v =>
+            v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google'))
+          ) || voices.find(v => v.lang.startsWith('en'));
+
+          if (englishVoice) {
+            utterance.voice = englishVoice;
+            console.log('[QuickAudio] Using voice:', englishVoice.name);
+          }
+        } else {
+          console.log('[QuickAudio] No voices available, using default');
+        }
+
+        // Set state immediately for better UX
+        setIsPlaying(true);
+        notifyTTSStarted();
 
         utterance.onend = () => {
+          console.log('[QuickAudio] Speech ended');
           setIsPlaying(false);
           notifyTTSStopped();
         };
@@ -128,12 +146,18 @@ export function QuickAudioButton({
           console.error('[QuickAudio] Speech synthesis error:', e);
           setIsPlaying(false);
           notifyTTSStopped();
+          // Don't show toast on 'interrupted' or 'canceled' errors
+          if (e.error !== 'interrupted' && e.error !== 'canceled') {
+            toast.error("Speech failed, try again");
+          }
         };
 
         speechSynthesis.speak(utterance);
+        console.log('[QuickAudio] Speaking started');
         return;
       } catch (err) {
         console.error('[QuickAudio] Browser TTS failed, trying cloud TTS:', err);
+        setIsPlaying(false);
       }
     }
 

@@ -377,13 +377,14 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
   }, []);
 
   // Browser TTS playback for mobile fallback
-  const playVerseBrowserTTS = useCallback((verseIndex: number) => {
+  const playVerseBrowserTTS = useCallback(async (verseIndex: number) => {
     if (!('speechSynthesis' in window)) return;
 
     const verse = versesRef.current[verseIndex];
     if (!verse) {
       setIsPlaying(false);
       isPlayingRef.current = false;
+      notifyTTSStopped();
       toast.success("Finished reading chapter");
       return;
     }
@@ -396,13 +397,31 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     const utterance = new SpeechSynthesisUtterance(verse.text);
     utterance.rate = playbackRateRef.current;
     utterance.pitch = 1;
+    utterance.lang = 'en-US'; // Set language explicitly for better mobile support
 
-    // Try to get a good voice
-    const voices = speechSynthesis.getVoices();
-    const englishVoice = voices.find(v =>
-      v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google'))
-    ) || voices.find(v => v.lang.startsWith('en'));
-    if (englishVoice) utterance.voice = englishVoice;
+    // Get available voices - may need to wait for voiceschanged on some browsers
+    let voices = speechSynthesis.getVoices();
+
+    // If voices not loaded yet, try to trigger load and wait briefly
+    if (voices.length === 0) {
+      console.log('[AudioControls] Voices not loaded, attempting to trigger...');
+      speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+      speechSynthesis.cancel();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      voices = speechSynthesis.getVoices();
+    }
+
+    if (voices.length > 0) {
+      const englishVoice = voices.find(v =>
+        v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google'))
+      ) || voices.find(v => v.lang.startsWith('en'));
+      if (englishVoice) {
+        utterance.voice = englishVoice;
+        console.log('[AudioControls] Using voice:', englishVoice.name);
+      }
+    } else {
+      console.log('[AudioControls] No voices available, using default');
+    }
 
     utterance.onend = () => {
       if (!isPlayingRef.current) return;
@@ -417,18 +436,25 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
       } else {
         setIsPlaying(false);
         isPlayingRef.current = false;
+        notifyTTSStopped();
         toast.success("Finished reading chapter");
       }
     };
 
-    utterance.onerror = () => {
+    utterance.onerror = (e) => {
+      console.error('[AudioControls] Speech synthesis error:', e);
       setIsPlaying(false);
       isPlayingRef.current = false;
-      toast.error("Speech synthesis error");
+      notifyTTSStopped();
+      // Don't show toast on 'interrupted' or 'canceled' errors
+      if ((e as any).error !== 'interrupted' && (e as any).error !== 'canceled') {
+        toast.error("Speech synthesis error");
+      }
     };
 
     notifyTTSStarted();
     speechSynthesis.speak(utterance);
+    console.log('[AudioControls] Speaking verse', verse.verse);
   }, [onVerseHighlight]);
 
   const play = useCallback(async (startVerseIndex?: number) => {
