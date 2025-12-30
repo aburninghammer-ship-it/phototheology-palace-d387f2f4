@@ -2590,7 +2590,7 @@ You MUST be specific. Never give a generic category without naming the specific 
           : "";
 
         // Check if a verse was assigned by the client
-        const assignedVerse = body.assignedVerse;
+        const assignedVerse = requestBody.assignedVerse;
 
         if (assignedVerse) {
           // Use the assigned verse - don't let AI choose
@@ -2682,7 +2682,7 @@ Return ONLY valid JSON with:
             const books = ["Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings", "Isaiah", "Jeremiah", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos", "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "Revelation"];
             // Filter out already used books
             const availableBooks = usedChallenges && usedChallenges.length > 0
-              ? books.filter(b => !usedChallenges.some(used => used.includes(b)))
+              ? books.filter(b => !usedChallenges.some((used: string) => used.includes(b)))
               : books;
             const randomBook = availableBooks.length > 0
               ? availableBooks[Math.floor(Math.random() * availableBooks.length)]
@@ -2692,7 +2692,7 @@ Return ONLY valid JSON with:
             const rooms = ["Story Room", "Observation Room", "Gems Room", "Concentration Room", "Sanctuary (Blue Room)", "Theme Room", "Patterns Room"];
             // Filter out already used rooms
             const availableRooms = usedChallenges && usedChallenges.length > 0
-              ? rooms.filter(r => !usedChallenges.some(used => used.includes(r)))
+              ? rooms.filter(r => !usedChallenges.some((used: string) => used.includes(r)))
               : rooms;
             const randomRoom = availableRooms.length > 0
               ? availableRooms[Math.floor(Math.random() * availableRooms.length)]
@@ -2702,7 +2702,7 @@ Return ONLY valid JSON with:
             const principles = ["2D/3D", "Time Zones", "Repeat & Enlarge", "Heaven Ceiling", "Gospel Floor"];
             // Filter out already used principles
             const availablePrinciples = usedChallenges && usedChallenges.length > 0
-              ? principles.filter(p => !usedChallenges.some(used => used.includes(p)))
+              ? principles.filter(p => !usedChallenges.some((used: string) => used.includes(p)))
               : principles;
             const randomPrinciple = availablePrinciples.length > 0
               ? availablePrinciples[Math.floor(Math.random() * availablePrinciples.length)]
@@ -3013,14 +3013,14 @@ Return JSON:
         ? "Be generous but still check for genuine engagement. Score 6-8 for good effort, 9-10 for excellent."
         : "Be rigorous. Score 4-6 for decent, 7-8 for strong, 9-10 for exceptional only.";
 
-      const challengeDetails = body.challengeDetails || {};
+      const challengeDetails = requestBody.challengeDetails || {};
       const challengeMethodology = challengeDetails.methodology || challengeDetails.description || "";
       const challengeCriteria = challengeDetails.validationCriteria || [];
 
       systemPrompt = `You are Jeeves, the official judge for Chain Chess V2!
 ${difficultyContext}
 
-**VALIDATION CRITERIA for ${body.challengeName || "this challenge"}:**
+**VALIDATION CRITERIA for ${requestBody.challengeName || "this challenge"}:**
 ${challengeCriteria.map((c: string) => `- ${c}`).join("\n") || "Standard PT methodology required"}
 
 ${challengeMethodology ? `**Methodology:** ${challengeMethodology}` : ""}
@@ -3042,20 +3042,20 @@ ${challengeMethodology ? `**Methodology:** ${challengeMethodology}` : ""}
 
       userPrompt = `JUDGE this Chain Chess V2 move:
 
-**Challenge Given:** ${body.challengeName} (${body.challengeType})
+**Challenge Given:** ${requestBody.challengeName} (${requestBody.challengeType})
 ${challengeMethodology ? `**Challenge Method:** ${challengeMethodology}` : ""}
 
 **Player's Response:**
 - Verse: ${verse}
-- Verse Text: ${body.verseText || ""}
-- Connection: ${body.connection || ""}
-- Comment: ${body.comment || ""}
+- Verse Text: ${requestBody.verseText || ""}
+- Connection: ${requestBody.connection || ""}
+- Comment: ${requestBody.comment || ""}
 
 **Previous moves context:** ${JSON.stringify(previousMoves?.slice(-3) || [])}
 
 **EVALUATE:**
-1. Does the verse genuinely relate to "${body.challengeName}"?
-2. Does the connection demonstrate proper ${body.challengeType === "room" ? "room methodology" : body.challengeType === "book" ? "book engagement" : "principle application"}?
+1. Does the verse genuinely relate to "${requestBody.challengeName}"?
+2. Does the connection demonstrate proper ${requestBody.challengeType === "room" ? "room methodology" : requestBody.challengeType === "book" ? "book engagement" : "principle application"}?
 3. Is the comment biblically sound and insightful?
 4. Does it build on previous moves, not just restate?
 
@@ -3073,17 +3073,17 @@ Return JSON:
         ? "Use simpler language. Be encouraging."
         : "Use scholarly language with depth.";
 
-      const challengeDetails = body.challengeDetails || {};
+      const challengeDetails = requestBody.challengeDetails || {};
 
       systemPrompt = `You are Jeeves responding in Chain Chess V2!
 ${difficultyContext}
 
-You must respond to the challenge "${body.challengeName}" using proper PT methodology.
-Show masterful use of the ${body.challengeType === "room" ? "room's methodology" : body.challengeType === "book" ? "book's themes" : "principle's framework"}.`;
+You must respond to the challenge "${requestBody.challengeName}" using proper PT methodology.
+Show masterful use of the ${requestBody.challengeType === "room" ? "room's methodology" : requestBody.challengeType === "book" ? "book's themes" : "principle's framework"}.`;
 
       userPrompt = `Respond to this Chain Chess V2 challenge:
 
-**Challenge:** ${body.challengeName} (${body.challengeType})
+**Challenge:** ${requestBody.challengeName} (${requestBody.challengeType})
 ${challengeDetails.methodology ? `**Method required:** ${challengeDetails.methodology}` : ""}
 ${challengeDetails.themes ? `**Book themes:** ${challengeDetails.themes.join(", ")}` : ""}
 ${challengeDetails.description ? `**Principle:** ${challengeDetails.description}` : ""}

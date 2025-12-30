@@ -77,31 +77,17 @@ const [certificateAchievement, setCertificateAchievement] = useState<any>(null);
     setUserAchievementData(data || []);
 
     // Fetch all user stats for achievement progress tracking
-    const [
-      roomProgressRes,
-      drillResultsRes,
-      profileRes,
-      readingLogsRes,
-      memorizationRes,
-      challengesRes,
-      devotionalsRes,
-      escapeRoomsRes,
-      gameSessionsRes,
-      postsRes,
-      commentsRes,
-    ] = await Promise.all([
-      supabase.from("room_progress").select("floor_number").eq("user_id", user!.id).not("completed_at", "is", null),
-      supabase.from("drill_results").select("score, max_score").eq("user_id", user!.id),
-      supabase.from("profiles").select("daily_study_streak, longest_study_streak").eq("id", user!.id).single(),
-      supabase.from("daily_reading_log").select("id").eq("user_id", user!.id),
-      supabase.from("memorization_verses").select("id, mastery_level").eq("user_id", user!.id),
-      supabase.from("challenge_submissions").select("id").eq("user_id", user!.id),
-      supabase.from("devotional_progress").select("id").eq("user_id", user!.id),
-      supabase.from("escape_room_attempts").select("id").eq("user_id", user!.id).eq("completed", true),
-      supabase.from("game_sessions").select("id").eq("user_id", user!.id).not("completed_at", "is", null),
-      supabase.from("community_posts").select("id").eq("user_id", user!.id),
-      supabase.from("community_comments").select("id").eq("user_id", user!.id),
-    ]);
+    const roomProgressRes = await supabase.from("room_progress").select("floor_number").eq("user_id", user!.id).not("completed_at", "is", null);
+    const drillResultsRes = await supabase.from("drill_results").select("score, max_score").eq("user_id", user!.id);
+    const profileRes = await supabase.from("profiles").select("daily_study_streak, longest_study_streak").eq("id", user!.id).single();
+    const readingLogsRes = await supabase.from("daily_reading_log").select("id").eq("user_id", user!.id) as any;
+    const memorizationRes = await supabase.from("memorization_verses").select("id, mastery_level").eq("user_id", user!.id) as any;
+    const challengesRes = await supabase.from("challenge_submissions").select("id").eq("user_id", user!.id) as any;
+    const devotionalsRes = await supabase.from("devotional_progress").select("id").eq("user_id", user!.id);
+    const escapeRoomsRes = await supabase.from("escape_room_attempts").select("id").eq("user_id", user!.id).eq("completed", true);
+    const gameSessionsRes = await supabase.from("game_sessions").select("id").eq("user_id", user!.id).not("completed_at", "is", null);
+    const postsRes = await supabase.from("community_posts").select("id").eq("user_id", user!.id);
+    const commentsRes = await supabase.from("community_comments").select("id").eq("user_id", user!.id);
 
     const roomProgress = roomProgressRes.data || [];
     const drillResults = drillResultsRes.data || [];
@@ -276,7 +262,13 @@ const [certificateAchievement, setCertificateAchievement] = useState<any>(null);
           <AchievementRoadmap
             achievements={achievements}
             userAchievements={userAchievements}
-            userStats={userStats}
+            userStats={{
+              roomsCompleted: userStats.rooms_completed || 0,
+              drillsCompleted: userStats.drills_completed || 0,
+              perfectDrills: userStats.perfect_drills || 0,
+              studyStreak: userStats.study_streak || 0,
+              floorsCompleted: userStats.floors_completed || 0,
+            }}
           />
         ) : (
           <>
@@ -332,7 +324,13 @@ const [certificateAchievement, setCertificateAchievement] = useState<any>(null);
           <AchievementProgress 
             achievements={achievements}
             userAchievements={userAchievementData}
-            userStats={userStats}
+            userStats={{
+              roomsCompleted: userStats.rooms_completed || 0,
+              drillsCompleted: userStats.drills_completed || 0,
+              perfectDrills: userStats.perfect_drills || 0,
+              studyStreak: userStats.study_streak || 0,
+              floorsCompleted: userStats.floors_completed || 0,
+            }}
           />
         </div>
 

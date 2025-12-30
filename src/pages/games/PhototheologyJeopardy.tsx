@@ -813,8 +813,6 @@ export default function PhototheologyJeopardy() {
                         size="sm"
                         className="bg-green-600 hover:bg-green-700"
                         onClick={() => {
-                          const results = { ...finalWagers };
-                          Object.keys(results).forEach(id => results[id] = id === player.id);
                           judgeFinalAnswers({ [player.id]: true });
                         }}
                       >
