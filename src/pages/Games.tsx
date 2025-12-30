@@ -392,6 +392,18 @@ const Games = () => {
       difficulties: ["beginner", "intermediate", "master"],
       route: "/games/bible-tetris"
     },
+    {
+      id: "christ_in_focus",
+      name: "✝️ Christ in Focus",
+      description: "Concentration Room motion game! Drag verse elements toward Christ to reveal the true center. Only Christ-consistent connections stabilize. Avoid false centers!",
+      icon: "✝️",
+      floor: 4,
+      timed: false,
+      rooms: ["CR"],
+      modes: ["solo"],
+      difficulties: ["beginner", "intermediate", "master"],
+      route: "/games/christ-in-focus"
+    },
   ];
 
   const filteredGames = allGames.filter(game => {
