@@ -1176,17 +1176,14 @@ const PTPalaceTetris: React.FC = () => {
     return Object.values(rooms).filter(r => r.floor === floor);
   };
 
-  // Get all rooms for palace mode (randomized order)
-  const getAllRooms = useCallback(() => {
-    return Object.values(rooms);
-  }, []);
+  // Get all rooms as array (stable reference)
+  const allRoomsArray = Object.values(rooms);
 
   // Get current room for palace mode
   const getCurrentRoom = useCallback((): Room | null => {
     if (gameMode === 'single') return currentRoom;
-    const allRooms = getAllRooms();
-    return allRooms[palaceRoomIndex % allRooms.length];
-  }, [gameMode, currentRoom, palaceRoomIndex, getAllRooms]);
+    return allRoomsArray[palaceRoomIndex % allRoomsArray.length];
+  }, [gameMode, currentRoom, palaceRoomIndex, allRoomsArray]);
 
   // Get current verse based on room and index
   const getCurrentVerse = useCallback((): Verse | null => {
@@ -1195,7 +1192,7 @@ const PTPalaceTetris: React.FC = () => {
     const verses = verseDatabase[room.code];
     if (!verses || verses.length === 0) return null;
     return verses[currentVerseIndex % verses.length];
-  }, [getCurrentRoom, currentVerseIndex]);
+  }, [getCurrentRoom, currentVerseIndex, verseDatabase]);
 
   // Spawn a new block
   const spawnBlock = useCallback(() => {
@@ -1263,8 +1260,7 @@ const PTPalaceTetris: React.FC = () => {
 
       if (gameMode === 'palace') {
         setPalaceRoomIndex(prev => prev + 1);
-        const allRooms = getAllRooms();
-        const nextRoom = allRooms[(palaceRoomIndex + 1) % allRooms.length];
+        const nextRoom = allRoomsArray[(palaceRoomIndex + 1) % allRoomsArray.length];
         setFeedback({
           type: 'info',
           title: `🏛️ NEW ROOM: ${nextRoom.icon} ${nextRoom.name}`,
@@ -1275,7 +1271,7 @@ const PTPalaceTetris: React.FC = () => {
         setFeedback({ type: 'info', title: '📖 NEW VERSE!', duration: 2000 });
       }
     }
-  }, [score, blocksProcessed, gameState, gameMode, palaceRoomIndex, getAllRooms]);
+  }, [score, blocksProcessed, gameState, gameMode, palaceRoomIndex, allRoomsArray]);
 
   // Catch a block
   const catchBlock = (block: FallingBlock) => {
