@@ -74,6 +74,8 @@ const ObservationFlux = () => {
   const [missedVerbs, setMissedVerbs] = useState(0);
   const [verbsSpawned, setVerbsSpawned] = useState(0);
   const [scoreSaved, setScoreSaved] = useState(false);
+  const [caughtDecoys, setCaughtDecoys] = useState(0);
+  const [wrongClicks, setWrongClicks] = useState(0);
 
   // Refs for game loop
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
@@ -175,6 +177,8 @@ const ObservationFlux = () => {
     setInputText("");
     setMissedVerbs(0);
     setVerbsSpawned(0);
+    setCaughtDecoys(0);
+    setWrongClicks(0);
     verbIndexRef.current = 0;
     setScoreSaved(false);
   }, []);
@@ -183,6 +187,33 @@ const ObservationFlux = () => {
   const togglePause = useCallback(() => {
     setGameState(prev => prev === "playing" ? "paused" : "playing");
   }, []);
+
+  // Handle clicking on a falling block - catch decoys!
+  const handleBlockClick = useCallback((block: FallingBlock) => {
+    if (gameState !== "playing") return;
+
+    // Remove the clicked block
+    setFallingBlocks(prev => prev.filter(b => b.id !== block.id));
+
+    if (block.isDecoy) {
+      // Correctly identified a decoy - bonus points!
+      setCaughtDecoys(prev => prev + 1);
+      setScore(prev => prev + 20);
+      toast({
+        title: "Decoy Caught!",
+        description: `"${block.text}" is NOT in the verse! +20 points`,
+      });
+    } else {
+      // Incorrectly clicked a real verb - penalty!
+      setWrongClicks(prev => prev + 1);
+      setScore(prev => Math.max(0, prev - 10));
+      toast({
+        title: "That's a Real Verb!",
+        description: `"${block.text}" IS in the verse. -10 points`,
+        variant: "destructive",
+      });
+    }
+  }, [gameState, toast]);
 
   // Handle observation input
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -384,7 +415,11 @@ const ObservationFlux = () => {
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex gap-2">
                       <Zap className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
-                      Verb blocks fall from the top - these are actual verbs from the verse
+                      Verb blocks fall - some are REAL verbs, some are DECOYS (fake verbs not in the verse)
+                    </li>
+                    <li className="flex gap-2">
+                      <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <strong>TAP/CLICK decoys to catch them!</strong> +20 pts for catching fakes, -10 for wrong clicks
                     </li>
                     <li className="flex gap-2">
                       <Eye className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
@@ -418,9 +453,9 @@ const ObservationFlux = () => {
                       >
                         <span className="font-semibold">{diff.name}</span>
                         <span className="text-xs text-muted-foreground">
-                          {diff.id === "beginner" && "Slow speed, subject colors"}
-                          {diff.id === "intermediate" && "Medium speed, no colors"}
-                          {diff.id === "master" && "Fast speed, decoy verbs"}
+                          {diff.id === "beginner" && "Slow speed, colors + decoys"}
+                          {diff.id === "intermediate" && "Medium speed, decoys only"}
+                          {diff.id === "master" && "Fast + fading, all decoys"}
                         </span>
                       </Button>
                     ))}
@@ -472,11 +507,23 @@ const ObservationFlux = () => {
                       </div>
                       <p className="text-sm text-muted-foreground">Valid Observations</p>
                     </div>
+                    <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3">
+                      <div className="text-2xl font-bold text-amber-600">
+                        {caughtDecoys}
+                      </div>
+                      <p className="text-sm text-muted-foreground">Decoys Caught</p>
+                    </div>
                     <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3">
                       <div className="text-2xl font-bold text-red-600">
                         {observations.filter(o => !o.result.valid).length}
                       </div>
                       <p className="text-sm text-muted-foreground">Interpretations Caught</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-900/20 rounded-lg p-3">
+                      <div className="text-2xl font-bold text-gray-600">
+                        {wrongClicks}
+                      </div>
+                      <p className="text-sm text-muted-foreground">Wrong Clicks</p>
                     </div>
                   </div>
 
@@ -598,7 +645,7 @@ const ObservationFlux = () => {
                 </p>
               </div>
 
-              {/* Falling Blocks */}
+              {/* Falling Blocks - Click to catch decoys! */}
               <div className="absolute inset-0 pt-16">
                 <AnimatePresence>
                   {fallingBlocks.map((block) => (
@@ -607,7 +654,10 @@ const ObservationFlux = () => {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: block.opacity, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.5 }}
-                      className={`absolute px-3 py-2 rounded-lg text-white font-medium text-sm shadow-lg bg-gradient-to-br ${getBlockStyle(block)}`}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleBlockClick(block)}
+                      className={`absolute px-3 py-2 rounded-lg text-white font-medium text-sm shadow-lg cursor-pointer select-none transition-shadow hover:shadow-xl hover:ring-2 hover:ring-white/50 bg-gradient-to-br ${getBlockStyle(block)}`}
                       style={{
                         left: `${block.x}%`,
                         top: `${block.y}%`,
@@ -726,7 +776,7 @@ const ObservationFlux = () => {
             </Card>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               <Card className="p-3 text-center">
                 <div className="text-lg font-bold text-green-600">
                   {observations.filter(o => o.result.valid).length}
@@ -734,7 +784,19 @@ const ObservationFlux = () => {
                 <p className="text-xs text-muted-foreground">Valid</p>
               </Card>
               <Card className="p-3 text-center">
+                <div className="text-lg font-bold text-amber-600">
+                  {caughtDecoys}
+                </div>
+                <p className="text-xs text-muted-foreground">Caught</p>
+              </Card>
+              <Card className="p-3 text-center">
                 <div className="text-lg font-bold text-red-600">
+                  {wrongClicks}
+                </div>
+                <p className="text-xs text-muted-foreground">Wrong</p>
+              </Card>
+              <Card className="p-3 text-center">
+                <div className="text-lg font-bold text-gray-600">
                   {missedVerbs}
                 </div>
                 <p className="text-xs text-muted-foreground">Missed</p>

@@ -352,29 +352,29 @@ export const DIFFICULTIES: DifficultySettings[] = [
   {
     id: "beginner",
     name: "Beginner",
-    fallSpeed: 0.3,
-    spawnInterval: 3000,
+    fallSpeed: 0.4,
+    spawnInterval: 2500,
     showSubjectColors: true,
-    showDecoys: false,
+    showDecoys: true, // Decoys in all modes now
     verbFadeDelay: 0,
   },
   {
     id: "intermediate",
     name: "Intermediate",
-    fallSpeed: 0.5,
-    spawnInterval: 2000,
+    fallSpeed: 0.6,
+    spawnInterval: 1800,
     showSubjectColors: false,
-    showDecoys: false,
+    showDecoys: true,
     verbFadeDelay: 0,
   },
   {
     id: "master",
     name: "Master",
-    fallSpeed: 0.8,
-    spawnInterval: 1500,
+    fallSpeed: 0.9,
+    spawnInterval: 1200,
     showSubjectColors: false,
     showDecoys: true,
-    verbFadeDelay: 2000,
+    verbFadeDelay: 1500,
   },
 ];
 
