@@ -58,36 +58,38 @@ const [certificateAchievement, setCertificateAchievement] = useState<any>(null);
   }, [user]);
 
   const fetchAchievements = async () => {
-    const { data } = await supabase
+    const { data } = await (supabase
       .from("achievements")
       .select("*")
       .order("category", { ascending: true })
-      .order("points", { ascending: false });
+      .order("points", { ascending: false }) as any);
     
     setAchievements(data || []);
   };
 
   const fetchUserAchievements = async () => {
-    const { data } = await supabase
+    const { data } = await (supabase
       .from("user_achievements")
       .select("achievement_id")
-      .eq("user_id", user!.id);
+      .eq("user_id", user!.id) as any);
 
     setUserAchievements(new Set(data?.map(a => a.achievement_id) || []));
     setUserAchievementData(data || []);
 
-    // Fetch all user stats for achievement progress tracking
-    const roomProgressRes = await supabase.from("room_progress").select("floor_number").eq("user_id", user!.id).not("completed_at", "is", null);
-    const drillResultsRes = await supabase.from("drill_results").select("score, max_score").eq("user_id", user!.id);
-    const profileRes = await supabase.from("profiles").select("daily_study_streak, longest_study_streak").eq("id", user!.id).single();
-    const readingLogsRes = await supabase.from("daily_reading_log").select("id").eq("user_id", user!.id) as any;
-    const memorizationRes = await supabase.from("memorization_verses").select("id, mastery_level").eq("user_id", user!.id) as any;
-    const challengesRes = await supabase.from("challenge_submissions").select("id").eq("user_id", user!.id) as any;
-    const devotionalsRes = await supabase.from("devotional_progress").select("id").eq("user_id", user!.id);
-    const escapeRoomsRes = await supabase.from("escape_room_attempts").select("id").eq("user_id", user!.id).eq("completed", true);
-    const gameSessionsRes = await supabase.from("game_sessions").select("id").eq("user_id", user!.id).not("completed_at", "is", null);
-    const postsRes = await supabase.from("community_posts").select("id").eq("user_id", user!.id);
-    const commentsRes = await supabase.from("community_comments").select("id").eq("user_id", user!.id);
+    // Fetch all user stats for achievement progress tracking (as any to avoid deep type instantiation)
+    const roomProgressRes: any = await supabase.from("room_progress").select("floor_number").eq("user_id", user!.id).not("completed_at", "is", null);
+    const drillResultsRes: any = await supabase.from("drill_results").select("score, max_score").eq("user_id", user!.id);
+    const profileRes: any = await supabase.from("profiles").select("daily_study_streak, longest_study_streak").eq("id", user!.id).single();
+    const readingLogsRes: any = await supabase.from("daily_reading_log").select("id").eq("user_id", user!.id);
+    const memorizationRes: any = await supabase.from("memorization_verses").select("id, mastery_level").eq("user_id", user!.id);
+    const challengesRes: any = await supabase.from("challenge_submissions").select("id").eq("user_id", user!.id);
+    const devotionalsRes: any = await supabase.from("devotional_progress").select("id").eq("user_id", user!.id);
+    const escapeRoomsQuery = supabase.from("escape_room_attempts" as any).select("id").eq("user_id", user!.id).eq("completed", true);
+    const escapeRoomsRes: any = await escapeRoomsQuery;
+    const gameSessionsQuery = supabase.from("game_sessions" as any).select("id").eq("user_id", user!.id).not("completed_at", "is", null);
+    const gameSessionsRes: any = await gameSessionsQuery;
+    const postsRes: any = await supabase.from("community_posts").select("id").eq("user_id", user!.id);
+    const commentsRes: any = await supabase.from("community_comments").select("id").eq("user_id", user!.id);
 
     const roomProgress = roomProgressRes.data || [];
     const drillResults = drillResultsRes.data || [];
