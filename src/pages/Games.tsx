@@ -378,7 +378,7 @@ const Games = () => {
       rooms: ["All"],
       modes: ["solo"],
       difficulties: ["easy", "medium", "hard", "endless"],
-      route: "/games/pt-palace-tetris"
+      route: "/games/palace-tetris"
     },
   ];
 
