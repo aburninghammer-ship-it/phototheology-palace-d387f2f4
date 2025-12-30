@@ -65,6 +65,9 @@ import { use24FPSTour } from "@/hooks/use24FPSTour";
 import { StoryLibrary } from "@/components/story-room/StoryLibrary";
 import { SymbolLibrary } from "@/components/symbol-room/SymbolLibrary";
 import { ParallelsLibrary } from "@/components/parallels-room/ParallelsLibrary";
+import { NatureFreestyleLibrary } from "@/components/nature-freestyle/NatureFreestyleLibrary";
+import { HistoricalFreestyleLibrary } from "@/components/historical-freestyle/HistoricalFreestyleLibrary";
+import { GemsLibrary } from "@/components/gems-room/GemsLibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 
 // Room IDs that have quick start guides
@@ -555,6 +558,7 @@ export default function RoomDetail() {
                 {room.id === "gr" && (
                   <RoomLibrary roomId="gr">
                     <div className="space-y-6">
+                      <GemsLibrary />
                       <GemGenerator
                         floorNumber={floor.number}
                         roomId={room.id}
@@ -567,6 +571,20 @@ export default function RoomDetail() {
                       <UserGemsList floorNumber={floor.number} roomId={room.id} />
                       <SermonTitlesList />
                     </div>
+                  </RoomLibrary>
+                )}
+
+                {/* Nature Freestyle Library */}
+                {room.id === "nf" && (
+                  <RoomLibrary roomId="nf">
+                    <NatureFreestyleLibrary />
+                  </RoomLibrary>
+                )}
+
+                {/* Historical Freestyle Library */}
+                {room.id === "hf" && (
+                  <RoomLibrary roomId="hf">
+                    <HistoricalFreestyleLibrary />
                   </RoomLibrary>
                 )}
 
