@@ -47,7 +47,7 @@ function InteractiveObject({
   onClick,
   label
 }: InteractiveObjectProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
 
   // Hover animation
