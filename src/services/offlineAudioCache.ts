@@ -80,21 +80,22 @@ export const isMusicTrackCached = async (url: string): Promise<boolean> => {
   }
 };
 
-// Cache TTS audio for a verse
+// Cache TTS audio for a verse (includes voice in key for multi-voice support)
 export const cacheTTSAudio = async (
-  book: string, 
-  chapter: number, 
-  verse: number, 
-  audioBlob: Blob
+  book: string,
+  chapter: number,
+  verse: number,
+  audioBlob: Blob,
+  voice: string = 'default'
 ): Promise<boolean> => {
   try {
     const cache = await caches.open(TTS_CACHE_NAME);
-    const key = `tts://${book}/${chapter}/${verse}`;
-    
+    const key = `tts://${book}/${chapter}/${verse}/${voice}`;
+
     const response = new Response(audioBlob, {
       headers: { 'Content-Type': 'audio/mpeg' }
     });
-    
+
     await cache.put(key, response);
     console.log('[OfflineAudio] Cached TTS:', key);
     return true;
@@ -106,15 +107,16 @@ export const cacheTTSAudio = async (
 
 // Get cached TTS audio
 export const getCachedTTSAudio = async (
-  book: string, 
-  chapter: number, 
-  verse: number
+  book: string,
+  chapter: number,
+  verse: number,
+  voice: string = 'default'
 ): Promise<string | null> => {
   try {
     const cache = await caches.open(TTS_CACHE_NAME);
-    const key = `tts://${book}/${chapter}/${verse}`;
+    const key = `tts://${book}/${chapter}/${verse}/${voice}`;
     const response = await cache.match(key);
-    
+
     if (response) {
       const blob = await response.blob();
       return URL.createObjectURL(blob);
@@ -122,6 +124,133 @@ export const getCachedTTSAudio = async (
     return null;
   } catch {
     return null;
+  }
+};
+
+// Cache commentary audio (chapter-level commentary)
+export const cacheCommentaryAudio = async (
+  book: string,
+  chapter: number,
+  depth: string,
+  voice: string,
+  audioBlob: Blob
+): Promise<boolean> => {
+  try {
+    const cache = await caches.open(TTS_CACHE_NAME);
+    const key = `commentary://${book}/${chapter}/${depth}/${voice}`;
+
+    const response = new Response(audioBlob, {
+      headers: { 'Content-Type': 'audio/mpeg' }
+    });
+
+    await cache.put(key, response);
+    console.log('[OfflineAudio] Cached commentary:', key, `(${(audioBlob.size / 1024).toFixed(1)}KB)`);
+    return true;
+  } catch (e) {
+    console.error('[OfflineAudio] Error caching commentary:', e);
+    return false;
+  }
+};
+
+// Get cached commentary audio
+export const getCachedCommentaryAudio = async (
+  book: string,
+  chapter: number,
+  depth: string,
+  voice: string
+): Promise<string | null> => {
+  try {
+    const cache = await caches.open(TTS_CACHE_NAME);
+    const key = `commentary://${book}/${chapter}/${depth}/${voice}`;
+    const response = await cache.match(key);
+
+    if (response) {
+      const blob = await response.blob();
+      console.log('[OfflineAudio] Using cached commentary:', key);
+      return URL.createObjectURL(blob);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+// Cache verse commentary audio
+export const cacheVerseCommentaryAudio = async (
+  book: string,
+  chapter: number,
+  verse: number,
+  depth: string,
+  voice: string,
+  audioBlob: Blob
+): Promise<boolean> => {
+  try {
+    const cache = await caches.open(TTS_CACHE_NAME);
+    const key = `verse-commentary://${book}/${chapter}/${verse}/${depth}/${voice}`;
+
+    const response = new Response(audioBlob, {
+      headers: { 'Content-Type': 'audio/mpeg' }
+    });
+
+    await cache.put(key, response);
+    console.log('[OfflineAudio] Cached verse commentary:', key);
+    return true;
+  } catch (e) {
+    console.error('[OfflineAudio] Error caching verse commentary:', e);
+    return false;
+  }
+};
+
+// Get cached verse commentary audio
+export const getCachedVerseCommentaryAudio = async (
+  book: string,
+  chapter: number,
+  verse: number,
+  depth: string,
+  voice: string
+): Promise<string | null> => {
+  try {
+    const cache = await caches.open(TTS_CACHE_NAME);
+    const key = `verse-commentary://${book}/${chapter}/${verse}/${depth}/${voice}`;
+    const response = await cache.match(key);
+
+    if (response) {
+      const blob = await response.blob();
+      console.log('[OfflineAudio] Using cached verse commentary:', key);
+      return URL.createObjectURL(blob);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+// Cache audio from URL (fetches and caches)
+export const cacheAudioFromUrl = async (
+  url: string,
+  cacheKey: string
+): Promise<boolean> => {
+  try {
+    const cache = await caches.open(TTS_CACHE_NAME);
+
+    // Check if already cached
+    const existing = await cache.match(cacheKey);
+    if (existing) {
+      return true;
+    }
+
+    // Fetch and cache
+    const response = await fetch(url);
+    if (!response.ok) {
+      return false;
+    }
+
+    await cache.put(cacheKey, response.clone());
+    console.log('[OfflineAudio] Cached audio from URL:', cacheKey);
+    return true;
+  } catch (e) {
+    console.error('[OfflineAudio] Error caching from URL:', e);
+    return false;
   }
 };
 

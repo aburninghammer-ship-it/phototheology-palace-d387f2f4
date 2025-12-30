@@ -45,7 +45,16 @@ import { OfflineModeToggle } from "./OfflineModeToggle";
 import { CommentaryPDFExport } from "./CommentaryPDFExport";
 import { ExportCommentaryDialog } from "./ExportCommentaryDialog";
 import { ExportToStudyButton } from "@/components/ExportToStudyButton";
-import { isOnline, getCachedMusicTrack } from "@/services/offlineAudioCache";
+import {
+  isOnline,
+  getCachedMusicTrack,
+  cacheTTSAudio,
+  getCachedTTSAudio,
+  cacheCommentaryAudio,
+  getCachedCommentaryAudio,
+  cacheVerseCommentaryAudio,
+  getCachedVerseCommentaryAudio
+} from "@/services/offlineAudioCache";
 import { 
   getCachedChapterCommentary, 
   cacheChapterCommentary,
@@ -1238,32 +1247,58 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   // Prefetch verse commentary (text + TTS) while verse is playing
   const prefetchVerseCommentary = useCallback(async (
-    book: string, 
-    chapter: number, 
-    verse: number, 
-    verseText: string, 
+    book: string,
+    chapter: number,
+    verse: number,
+    verseText: string,
     commentaryVoice: string,
     depth: string = "surface"
   ) => {
     const cacheKey = `verse-${book}-${chapter}-${verse}-${commentaryVoice}`;
-    
+
     // Skip if already cached or being prefetched
     if (commentaryCache.current.has(cacheKey) || prefetchingCommentaryRef.current.has(cacheKey)) {
       return;
     }
-    
+
+    // Check offline audio cache first
+    const offlineCachedAudio = await getCachedVerseCommentaryAudio(book, chapter, verse, depth, commentaryVoice);
+    if (offlineCachedAudio) {
+      // Also check if we have the text cached (text cache doesn't include voice)
+      const cachedText = getCachedVerseCommentary(book, chapter, verse, depth);
+      if (cachedText) {
+        commentaryCache.current.set(cacheKey, { text: cachedText, audioUrl: offlineCachedAudio });
+        console.log("[Prefetch Commentary] Using OFFLINE cached audio for", book, chapter + ":" + verse);
+        return;
+      }
+    }
+
     prefetchingCommentaryRef.current.add(cacheKey);
     console.log("[Prefetch Commentary] Starting for", book, chapter + ":" + verse);
-    
+
     try {
       // Generate commentary text
       const commentary = await generateVerseCommentary(book, chapter, verse, verseText, depth);
-      
+
       if (commentary) {
         // Generate TTS for commentary
         const audioUrl = await generateTTS(commentary, commentaryVoice);
         commentaryCache.current.set(cacheKey, { text: commentary, audioUrl: audioUrl || undefined });
         console.log("[Prefetch Commentary] Cached for", book, chapter + ":" + verse);
+
+        // Cache audio blob for offline use
+        if (audioUrl) {
+          try {
+            const response = await fetch(audioUrl);
+            if (response.ok) {
+              const blob = await response.blob();
+              await cacheVerseCommentaryAudio(book, chapter, verse, depth, commentaryVoice, blob);
+              console.log("[Prefetch Commentary] Cached audio OFFLINE for", book, chapter + ":" + verse);
+            }
+          } catch (e) {
+            console.warn("[Prefetch Commentary] Failed to cache audio offline:", e);
+          }
+        }
       }
     } catch (e) {
       console.error("[Prefetch Commentary] Error:", e);
@@ -1274,29 +1309,55 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   // Prefetch chapter commentary while chapter is playing
   const prefetchChapterCommentary = useCallback(async (
-    book: string, 
-    chapter: number, 
+    book: string,
+    chapter: number,
     chapterText: string,
     commentaryVoice: string,
     depth: string = "surface"
   ) => {
     const cacheKey = `chapter-${book}-${chapter}-${commentaryVoice}`;
-    
+
     if (commentaryCache.current.has(cacheKey) || prefetchingCommentaryRef.current.has(cacheKey)) {
       return;
     }
-    
+
+    // Check offline audio cache first
+    const offlineCachedAudio = await getCachedCommentaryAudio(book, chapter, depth, commentaryVoice);
+    if (offlineCachedAudio) {
+      // Also check if we have the text cached (text cache doesn't include voice)
+      const cachedText = getCachedChapterCommentary(book, chapter, depth);
+      if (cachedText) {
+        commentaryCache.current.set(cacheKey, { text: cachedText, audioUrl: offlineCachedAudio });
+        console.log("[Prefetch Chapter Commentary] Using OFFLINE cached audio for", book, chapter);
+        return;
+      }
+    }
+
     prefetchingCommentaryRef.current.add(cacheKey);
     console.log("[Prefetch Chapter Commentary] Starting for", book, chapter);
-    
+
     try {
       const result = await generateCommentary(book, chapter, chapterText, depth, commentaryVoice);
-      
+
       if (result?.text) {
         // If audioUrl came from server cache, use it; otherwise generate TTS
         const audioUrl = result.audioUrl || await generateTTS(result.text, commentaryVoice);
         commentaryCache.current.set(cacheKey, { text: result.text, audioUrl: audioUrl || undefined });
         console.log("[Prefetch Chapter Commentary] Cached for", book, chapter, "hasAudioUrl:", !!result.audioUrl);
+
+        // Cache audio blob for offline use
+        if (audioUrl) {
+          try {
+            const response = await fetch(audioUrl);
+            if (response.ok) {
+              const blob = await response.blob();
+              await cacheCommentaryAudio(book, chapter, depth, commentaryVoice, blob);
+              console.log("[Prefetch Chapter Commentary] Cached audio OFFLINE for", book, chapter);
+            }
+          } catch (e) {
+            console.warn("[Prefetch Chapter Commentary] Failed to cache audio offline:", e);
+          }
+        }
       }
     } catch (e) {
       console.error("[Prefetch Chapter Commentary] Error:", e);
@@ -1541,25 +1602,44 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       }
     }
     const playbackSpeed = currentSeq?.playbackSpeed || 1;
-    
-    // Check cache first (only for online mode)
-    let url = !offlineMode ? ttsCache.current.get(cacheKey) : null;
-    
+
+    // Check offline cache first (persists across sessions)
+    let url = await getCachedTTSAudio(content.book, content.chapter, verse.verse, voice);
+
     if (url) {
-      console.log("[PlayVerse] Using cached TTS for verse:", verseIdx + 1);
-    } else if (!offlineMode && isOnline()) {
-      // Generate TTS via API (online mode)
-      isGeneratingRef.current = true;
-      console.log("[PlayVerse] Generating TTS for verse:", verseIdx + 1, "text:", verse.text.substring(0, 50));
-      setIsLoading(true);
-      
-      url = await generateTTS(verse.text, voice);
-      
-      isGeneratingRef.current = false;
-      setIsLoading(false);
-      
+      console.log("[PlayVerse] Using OFFLINE cached TTS for verse:", verseIdx + 1);
+    } else if (!offlineMode) {
+      // Check in-memory cache next
+      url = ttsCache.current.get(cacheKey) || null;
+
       if (url) {
-        ttsCache.current.set(cacheKey, url);
+        console.log("[PlayVerse] Using in-memory cached TTS for verse:", verseIdx + 1);
+      } else if (isOnline()) {
+        // Generate TTS via API (online mode)
+        isGeneratingRef.current = true;
+        console.log("[PlayVerse] Generating TTS for verse:", verseIdx + 1, "text:", verse.text.substring(0, 50));
+        setIsLoading(true);
+
+        url = await generateTTS(verse.text, voice);
+
+        isGeneratingRef.current = false;
+        setIsLoading(false);
+
+        if (url) {
+          ttsCache.current.set(cacheKey, url);
+
+          // Cache audio blob for offline use (fire and forget)
+          try {
+            const response = await fetch(url);
+            if (response.ok) {
+              const blob = await response.blob();
+              await cacheTTSAudio(content.book, content.chapter, verse.verse, blob, voice);
+              console.log("[PlayVerse] Cached TTS for offline use:", content.book, content.chapter, verse.verse);
+            }
+          } catch (e) {
+            console.warn("[PlayVerse] Failed to cache TTS for offline:", e);
+          }
+        }
       }
     }
     
