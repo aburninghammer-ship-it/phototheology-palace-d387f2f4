@@ -7966,6 +7966,7 @@ export type Database = {
           is_recurring: boolean | null
           is_student: boolean | null
           last_activity_date: string | null
+          last_audio_position: Json | null
           last_seen: string | null
           learning_style: string | null
           level: number | null
@@ -8040,6 +8041,7 @@ export type Database = {
           is_recurring?: boolean | null
           is_student?: boolean | null
           last_activity_date?: string | null
+          last_audio_position?: Json | null
           last_seen?: string | null
           learning_style?: string | null
           level?: number | null
@@ -8114,6 +8116,7 @@ export type Database = {
           is_recurring?: boolean | null
           is_student?: boolean | null
           last_activity_date?: string | null
+          last_audio_position?: Json | null
           last_seen?: string | null
           learning_style?: string | null
           level?: number | null

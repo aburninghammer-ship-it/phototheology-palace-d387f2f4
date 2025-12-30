@@ -100,7 +100,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // LocalStorage key for saving position - use sequenceName or a hash of sequences
   const positionStorageKey = `pt-audio-position-${sequenceName || 'default'}`;
 
-  // Load saved position from localStorage on mount (only show resume option if NOT autoPlay)
+  // Load saved position from localStorage AND Supabase (use most recent)
   useEffect(() => {
     // If autoPlay is enabled, don't show resume option - just start fresh
     if (autoPlay) {
@@ -108,36 +108,95 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return;
     }
 
-    try {
-      const saved = localStorage.getItem(positionStorageKey);
-      if (saved) {
-        const parsed = JSON.parse(saved);
+    const loadPosition = async () => {
+      let localPosition: { seqIdx: number; itemIdx: number; verseIdx: number; timestamp: number } | null = null;
+      let cloudPosition: { seqIdx: number; itemIdx: number; verseIdx: number; timestamp: number } | null = null;
+
+      // Try localStorage first
+      try {
+        const saved = localStorage.getItem(positionStorageKey);
+        if (saved) {
+          localPosition = JSON.parse(saved);
+        }
+      } catch (e) {
+        console.log('[SequencePlayer] Could not load local position:', e);
+      }
+
+      // Try Supabase for cross-device sync (if logged in)
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('last_audio_position')
+            .eq('id', user.id)
+            .single();
+
+          if (profile?.last_audio_position) {
+            const cloudData = typeof profile.last_audio_position === 'string'
+              ? JSON.parse(profile.last_audio_position)
+              : profile.last_audio_position;
+            // Only use cloud position if it's for the same sequence
+            if (cloudData.sequenceName === sequenceName) {
+              cloudPosition = cloudData;
+              console.log('[SequencePlayer] Found cloud position:', cloudPosition);
+            }
+          }
+        }
+      } catch (e) {
+        console.log('[SequencePlayer] Could not load cloud position:', e);
+      }
+
+      // Use the most recent position (comparing timestamps)
+      let bestPosition = localPosition;
+      if (cloudPosition && (!localPosition || cloudPosition.timestamp > localPosition.timestamp)) {
+        bestPosition = cloudPosition;
+        console.log('[SequencePlayer] Using cloud position (more recent)');
+      }
+
+      if (bestPosition) {
         // Validate the saved position is still valid for current sequences
         if (
-          parsed.seqIdx < activeSequences.length &&
-          parsed.itemIdx < activeSequences[parsed.seqIdx]?.items?.length
+          bestPosition.seqIdx < activeSequences.length &&
+          bestPosition.itemIdx < activeSequences[bestPosition.seqIdx]?.items?.length
         ) {
-          setSavedPosition(parsed);
+          setSavedPosition(bestPosition);
           setShowResumeOption(true);
         } else {
           // Saved position no longer valid, clear it
           localStorage.removeItem(positionStorageKey);
         }
       }
-    } catch (e) {
-      console.log('[SequencePlayer] Could not load saved position:', e);
-    }
-  }, [positionStorageKey, activeSequences.length, autoPlay]);
+    };
 
-  // Save current position to localStorage whenever it changes during playback
-  const saveCurrentPosition = useCallback((seqIdx: number, itemIdx: number, verseIdx: number) => {
+    loadPosition();
+  }, [positionStorageKey, activeSequences.length, autoPlay, sequenceName]);
+
+  // Save current position to localStorage AND Supabase (for cross-device sync)
+  const saveCurrentPosition = useCallback(async (seqIdx: number, itemIdx: number, verseIdx: number) => {
+    const position = { seqIdx, itemIdx, verseIdx, timestamp: Date.now(), sequenceName };
+
+    // Save to localStorage (always)
     try {
-      const position = { seqIdx, itemIdx, verseIdx, timestamp: Date.now() };
       localStorage.setItem(positionStorageKey, JSON.stringify(position));
     } catch (e) {
-      console.log('[SequencePlayer] Could not save position:', e);
+      console.log('[SequencePlayer] Could not save local position:', e);
     }
-  }, [positionStorageKey]);
+
+    // Save to Supabase for cross-device sync (if logged in)
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ last_audio_position: JSON.stringify(position) })
+          .eq('id', user.id);
+        console.log('[SequencePlayer] Saved position to cloud');
+      }
+    } catch (e) {
+      console.log('[SequencePlayer] Could not save cloud position:', e);
+    }
+  }, [positionStorageKey, sequenceName]);
 
   const [currentVoice, setCurrentVoice] = useState<VoiceId>(() => {
     return (activeSequences[currentSeqIdx]?.voice as VoiceId) || 'onyx';
@@ -2078,11 +2137,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     }
   }, [chapterContent, isLoading, currentSequence, prefetchAllChapterVerseCommentary, currentCommentaryDepth, offlineMode]);
 
+  // Track if we're waiting for user tap on mobile
+  const [waitingForMobileTap, setWaitingForMobileTap] = useState(false);
+
   // Auto-start on mount - runs once when autoPlay is true
+  // On mobile, we can't auto-start due to browser restrictions - show tap prompt instead
   useEffect(() => {
-    console.log("[AutoStart Effect] autoPlay:", autoPlay, "hasStarted:", hasStarted);
+    console.log("[AutoStart Effect] autoPlay:", autoPlay, "hasStarted:", hasStarted, "isMobile:", isMobile);
     if (!autoPlay || hasStarted) return;
-    
+
+    // On mobile, don't auto-start - wait for user tap
+    if (isMobile) {
+      console.log("[AutoStart] Mobile detected - waiting for user tap to start");
+      setWaitingForMobileTap(true);
+      return;
+    }
+
     // Wait for content to be ready, then start
     const checkAndStart = () => {
       console.log("[AutoStart] Checking:", {
@@ -2092,13 +2162,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         isGenerating: isGeneratingRef.current,
         hasAudio: !!audioRef.current
       });
-      
+
       if (chapterContent && chapterContent.verses && chapterContent.verses.length > 0 && !isLoading && !isGeneratingRef.current && !audioRef.current) {
         console.log("[AutoStart] Starting playback with", chapterContent.verses.length, "verses");
         setHasStarted(true);
         const voice = currentSequence?.voice || "daniel";
         continuePlayingRef.current = true;
-        
+
         // Check for commentary-only mode
         if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
           console.log("[Commentary Only] Auto-starting with commentary only");
@@ -2113,28 +2183,48 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       }
       return false;
     };
-    
+
     // Try immediately
     if (checkAndStart()) return;
-    
+
     // If not ready, poll briefly
     const interval = setInterval(() => {
       if (checkAndStart()) {
         clearInterval(interval);
       }
     }, 300);
-    
+
     // Clean up after 10 seconds
     const timeout = setTimeout(() => {
       clearInterval(interval);
       console.log("[AutoStart] Timeout - content never became ready");
     }, 10000);
-    
+
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [autoPlay, hasStarted, chapterContent, isLoading, currentSequence, playVerseAtIndex]);
+  }, [autoPlay, hasStarted, chapterContent, isLoading, currentSequence, playVerseAtIndex, isMobile]);
+
+  // Handle mobile tap to start - this provides the user gesture needed for audio
+  const handleMobileTapToStart = useCallback(() => {
+    console.log("[Mobile] User tapped to start playback");
+    setWaitingForMobileTap(false);
+    setHasStarted(true);
+    ensureAudioUnlocked();
+
+    if (chapterContent && chapterContent.verses && chapterContent.verses.length > 0) {
+      const voice = currentSequence?.voice || "daniel";
+      continuePlayingRef.current = true;
+
+      if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
+        playCommentaryOnlyChapter(chapterContent, currentSequence);
+      } else {
+        notifyTTSStarted();
+        playVerseAtIndex(0, chapterContent, voice);
+      }
+    }
+  }, [chapterContent, currentSequence, playVerseAtIndex, ensureAudioUnlocked]);
 
   const handlePlay = () => {
     console.log("handlePlay called - isPaused:", isPaused, "hasAudio:", !!audioRef.current, "speechPaused:", speechSynthesis.paused);
@@ -2617,6 +2707,31 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Start Fresh
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Tap to Start - required on mobile due to browser audio restrictions */}
+        {waitingForMobileTap && chapterContent && (
+          <div className="rounded-xl border-2 border-green-500/30 overflow-hidden bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10 shadow-lg shadow-green-500/10 p-6 text-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-16 w-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30 animate-pulse">
+                <Play className="h-8 w-8 text-white ml-1" />
+              </div>
+              <div>
+                <h3 className="font-bold text-green-600 dark:text-green-400 text-lg">Ready to Play</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {chapterContent.book} {chapterContent.chapter} • {chapterContent.verses.length} verses
+                </p>
+              </div>
+              <Button
+                onClick={handleMobileTapToStart}
+                size="lg"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-lg"
+              >
+                <Play className="h-5 w-5 mr-2" />
+                Tap to Start
               </Button>
             </div>
           </div>

@@ -28,7 +28,10 @@
       "Bash(wc:*)",
       "Bash(node -e:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(timeout 30 npm run dev)",
+      "Bash(mkdir:*)",
+      "WebFetch(domain:thephototheologyapp.com)"
     ],
     "deny": [],
     "ask": []
