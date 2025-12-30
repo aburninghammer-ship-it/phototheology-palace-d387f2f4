@@ -102,17 +102,40 @@ export function QuickAudioButton({
     setIsLoading(true);
 
     try {
+      console.log('[QuickAudio] Calling text-to-speech, mobile:', isMobile());
+
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
         body: { text, voice: "daniel", returnType: "url" }
       });
 
       if (error) throw error;
 
-      // Prefer URL response (better for mobile)
-      const audioUrl = data?.audioUrl || (data?.audioContent ? `data:audio/mpeg;base64,${data.audioContent}` : null);
-
-      if (!audioUrl) {
+      if (!data?.audioUrl && !data?.audioContent) {
         throw new Error("No audio content returned");
+      }
+
+      let audioSrc: string;
+
+      // Fetch as blob for reliable mobile playback
+      if (data?.audioUrl) {
+        console.log('[QuickAudio] Got audio URL, fetching as blob for reliable mobile playback...');
+        try {
+          const response = await fetch(data.audioUrl);
+          if (response.ok) {
+            const blob = await response.blob();
+            audioSrc = URL.createObjectURL(blob);
+            console.log('[QuickAudio] Created blob URL for playback');
+          } else {
+            console.warn('[QuickAudio] Failed to fetch blob, using URL directly');
+            audioSrc = data.audioUrl;
+          }
+        } catch (fetchErr) {
+          console.warn('[QuickAudio] Blob fetch failed, using URL directly:', fetchErr);
+          audioSrc = data.audioUrl;
+        }
+      } else {
+        console.log('[QuickAudio] Using base64 fallback');
+        audioSrc = `data:audio/mpeg;base64,${data.audioContent}`;
       }
 
       if (!audioRef.current) {
@@ -120,7 +143,7 @@ export function QuickAudioButton({
       }
 
       const audio = audioRef.current;
-      audio.src = audioUrl;
+      audio.src = audioSrc;
       audio.volume = volumeRef.current / 100;
       console.log('[QuickAudio] Volume set to:', volumeRef.current, '%');
 
@@ -149,14 +172,24 @@ export function QuickAudioButton({
       };
 
       try {
+        console.log('[QuickAudio] Attempting to play audio...');
         await audio.play();
+        console.log('[QuickAudio] Audio playing successfully');
         setIsPlaying(true);
         notifyTTSStarted();
-      } catch (playErr) {
-        console.warn("[QuickAudio] Play blocked, falling back to browser TTS:", playErr);
+      } catch (playErr: any) {
+        console.warn("[QuickAudio] Play error:", playErr?.name, playErr?.message);
 
-        // On mobile, fallback immediately to browser TTS instead of waiting
+        // Handle autoplay blocked specifically
+        if (playErr?.name === 'NotAllowedError') {
+          toast.info('Tap the play button again to start audio');
+          setIsPlaying(false);
+          return;
+        }
+
+        // For other errors, try browser TTS as fallback
         if ('speechSynthesis' in window) {
+          console.log('[QuickAudio] Falling back to browser TTS');
           const utterance = new SpeechSynthesisUtterance(text);
           utterance.onend = () => {
             setIsPlaying(false);
@@ -166,21 +199,7 @@ export function QuickAudioButton({
           setIsPlaying(true);
           notifyTTSStarted();
         } else {
-          toast.info('Tap anywhere to start audio');
-          const playOnInteraction = async () => {
-            try {
-              await audio.play();
-              setIsPlaying(true);
-              notifyTTSStarted();
-              document.body.removeEventListener('click', playOnInteraction);
-              document.body.removeEventListener('touchstart', playOnInteraction);
-            } catch (err) {
-              console.error("[QuickAudio] Play still failed:", err);
-            }
-          };
-
-          document.body.addEventListener('click', playOnInteraction, { once: true });
-          document.body.addEventListener('touchstart', playOnInteraction, { once: true });
+          toast.error('Audio playback failed');
         }
       }
     } catch (err) {

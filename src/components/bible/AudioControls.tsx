@@ -218,6 +218,8 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
         }
       }
 
+      console.log("[TTS] Calling text-to-speech function, mobile:", isMobile());
+
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
         body: {
           text,
@@ -240,18 +242,35 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
 
       // Preferred path: URL (cached or freshly generated)
       if (data?.audioUrl) {
-        // Cache in client-side Cache API for faster repeat access
-        if (book && verseNum !== undefined) {
-          fetch(data.audioUrl)
-            .then(resp => resp.blob())
-            .then(blob => cacheTTSAudio(book, chapter, verseNum, blob))
-            .catch(() => {}); // Silent fail for caching
+        console.log("[TTS] Got audio URL, fetching as blob for reliable mobile playback...");
+
+        // On mobile, always fetch as blob for more reliable playback
+        // Direct URL playback can fail due to CORS/autoplay policies
+        try {
+          const response = await fetch(data.audioUrl);
+          if (!response.ok) {
+            console.warn("[TTS] Failed to fetch audio blob, using URL directly");
+            return data.audioUrl as string;
+          }
+          const blob = await response.blob();
+
+          // Cache the blob for faster repeat access
+          if (book && verseNum !== undefined) {
+            cacheTTSAudio(book, chapter, verseNum, blob).catch(() => {});
+          }
+
+          const blobUrl = URL.createObjectURL(blob);
+          console.log("[TTS] Created blob URL for playback");
+          return blobUrl;
+        } catch (fetchErr) {
+          console.warn("[TTS] Blob fetch failed, using URL directly:", fetchErr);
+          return data.audioUrl as string;
         }
-        return data.audioUrl as string;
       }
 
       // Fallback: base64
       if (data?.audioContent) {
+        console.log("[TTS] Using base64 fallback");
         const binaryString = atob(data.audioContent);
         const len = binaryString.length;
         const bytes = new Uint8Array(len);
@@ -344,12 +363,30 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     // Update existing audio element instead of creating new one
     audio.src = url;
     audio.playbackRate = playbackRateRef.current;
-    
+
     try {
+      console.log("[AudioControls] Attempting to play audio...");
       await audio.play();
+      console.log("[AudioControls] Audio playing successfully");
       notifyTTSStarted();
-    } catch (err) {
-      console.error("Play error:", err);
+    } catch (err: any) {
+      console.error("[AudioControls] Play error:", err?.name, err?.message);
+
+      // On mobile, if autoplay is blocked, try to recover
+      if (err?.name === 'NotAllowedError') {
+        console.log("[AudioControls] Autoplay blocked, showing user prompt");
+        toast.info("Tap play again to start audio");
+        setIsPlaying(false);
+        isPlayingRef.current = false;
+        return;
+      }
+
+      // Check if it's a media error
+      if (err?.name === 'AbortError') {
+        console.log("[AudioControls] Play aborted, possibly due to source change");
+        return;
+      }
+
       toast.error("Could not play audio. Please try again.");
       setIsPlaying(false);
       isPlayingRef.current = false;
