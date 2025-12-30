@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useOutputSpark } from "@/hooks/useOutputSpark";
-import { Flame, BookOpen, ChefHat, Calculator, Brain, Target, Lightbulb, Zap } from "lucide-react";
+import { Flame, BookOpen, ChefHat, Calculator, Brain, Target, Lightbulb, Zap, Archive, CheckCircle2, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { HowItWorksDialog } from "@/components/HowItWorksDialog";
 import { EnhancedSocialShare } from "@/components/EnhancedSocialShare";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
@@ -24,6 +24,26 @@ import { EquationDecodeChallenge } from "@/components/challenges/EquationDecodeC
 import { SeventyQuestionsChallenge } from "@/components/challenges/SeventyQuestionsChallenge";
 import { PrincipleStudyChallenge } from "@/components/challenges/PrincipleStudyChallenge";
 
+interface ChallengeSubmission {
+  id: string;
+  challenge_id: string;
+  user_id: string;
+  content: string;
+  submission_data: any;
+  principle_applied: string;
+  time_spent: number;
+  created_at: string;
+  challenge?: {
+    id: string;
+    title: string;
+    description: string;
+    challenge_subtype: string;
+    challenge_tier: string;
+    principle_used: string;
+    day_in_rotation: number;
+  };
+}
+
 const DailyChallenges = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -32,6 +52,9 @@ const DailyChallenges = () => {
   const [dailyChallenge, setDailyChallenge] = useState<any>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [startTime] = useState(Date.now());
+  const [archiveSubmissions, setArchiveSubmissions] = useState<ChallengeSubmission[]>([]);
+  const [archiveLoading, setArchiveLoading] = useState(false);
+  const [archiveMonth, setArchiveMonth] = useState(new Date());
 
   useEffect(() => {
     if (user) {
@@ -72,6 +95,78 @@ const DailyChallenges = () => {
 
       setHasSubmitted(!!submission);
     }
+  };
+
+  const fetchArchiveSubmissions = async () => {
+    if (!user) return;
+
+    setArchiveLoading(true);
+    try {
+      const startOfMonth = new Date(archiveMonth.getFullYear(), archiveMonth.getMonth(), 1);
+      const endOfMonth = new Date(archiveMonth.getFullYear(), archiveMonth.getMonth() + 1, 0, 23, 59, 59);
+
+      const { data, error } = await supabase
+        .from("challenge_submissions")
+        .select(`
+          id,
+          challenge_id,
+          user_id,
+          content,
+          submission_data,
+          principle_applied,
+          time_spent,
+          created_at,
+          challenges:challenge_id (
+            id,
+            title,
+            description,
+            challenge_subtype,
+            challenge_tier,
+            principle_used,
+            day_in_rotation
+          )
+        `)
+        .eq("user_id", user.id)
+        .gte("created_at", startOfMonth.toISOString())
+        .lte("created_at", endOfMonth.toISOString())
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      // Transform the data to flatten the challenges relation
+      const transformedData = (data || []).map((item: any) => ({
+        ...item,
+        challenge: item.challenges
+      }));
+
+      setArchiveSubmissions(transformedData);
+    } catch (error) {
+      console.error("Error fetching archive:", error);
+    } finally {
+      setArchiveLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArchiveSubmissions();
+  }, [archiveMonth, user]);
+
+  const goToPreviousMonth = () => {
+    setArchiveMonth(new Date(archiveMonth.getFullYear(), archiveMonth.getMonth() - 1, 1));
+  };
+
+  const goToNextMonth = () => {
+    const nextMonth = new Date(archiveMonth.getFullYear(), archiveMonth.getMonth() + 1, 1);
+    if (nextMonth <= new Date()) {
+      setArchiveMonth(nextMonth);
+    }
+  };
+
+  const formatTimeSpent = (seconds: number) => {
+    if (seconds < 60) return `${seconds}s`;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`;
   };
 
   const handleChallengeSubmit = async (submissionData: any) => {
@@ -270,18 +365,22 @@ const DailyChallenges = () => {
           )}
 
           <Tabs defaultValue="daily" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="daily" className="gap-2">
                 <Flame className="h-4 w-4" />
-                Daily Challenge
+                Daily
               </TabsTrigger>
               <TabsTrigger value="chef" className="gap-2">
                 <ChefHat className="h-4 w-4" />
-                Chef Challenge
+                Chef
               </TabsTrigger>
               <TabsTrigger value="equations" className="gap-2">
                 <Calculator className="h-4 w-4" />
                 Equations
+              </TabsTrigger>
+              <TabsTrigger value="archive" className="gap-2">
+                <Archive className="h-4 w-4" />
+                Archive
               </TabsTrigger>
             </TabsList>
 
@@ -391,6 +490,137 @@ const DailyChallenges = () => {
                   View Full Equations Challenge Mode
                 </Button>
               </div>
+            </TabsContent>
+
+            <TabsContent value="archive" className="space-y-6">
+              <div className="bg-gradient-to-r from-purple-500/10 to-violet-500/5 p-4 rounded-lg border border-purple-500/20">
+                <h2 className="font-semibold mb-2 flex items-center gap-2">
+                  <Archive className="h-5 w-5 text-purple-600" />
+                  Challenge Archive
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Review your past challenge submissions and track your progress over time.
+                  See how you've grown in your Phototheology skills!
+                </p>
+              </div>
+
+              {/* Month Navigation */}
+              <div className="flex items-center justify-between">
+                <Button variant="outline" onClick={goToPreviousMonth}>
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Previous
+                </Button>
+                <h3 className="text-lg font-semibold">
+                  {archiveMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </h3>
+                <Button
+                  variant="outline"
+                  onClick={goToNextMonth}
+                  disabled={archiveMonth.getFullYear() === new Date().getFullYear() && archiveMonth.getMonth() === new Date().getMonth()}
+                >
+                  Next
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+
+              {archiveLoading ? (
+                <div className="text-center py-12">Loading archive...</div>
+              ) : archiveSubmissions.length > 0 ? (
+                <div className="grid gap-4">
+                  {archiveSubmissions.map((submission) => (
+                    <Card key={submission.id} className="hover:border-primary/50 transition-colors">
+                      <CardContent className="py-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge variant="outline">
+                                {new Date(submission.created_at).toLocaleDateString('en-US', {
+                                  weekday: 'short',
+                                  month: 'short',
+                                  day: 'numeric'
+                                })}
+                              </Badge>
+                              {submission.challenge?.challenge_tier && (
+                                <Badge variant={
+                                  submission.challenge.challenge_tier === "Quick" ? "default" :
+                                  submission.challenge.challenge_tier === "Core" ? "secondary" :
+                                  "outline"
+                                }>
+                                  {submission.challenge.challenge_tier}
+                                </Badge>
+                              )}
+                              <Badge variant="secondary" className="text-xs">
+                                <CheckCircle2 className="mr-1 h-3 w-3" />
+                                Completed
+                              </Badge>
+                            </div>
+                            <h4 className="font-semibold text-lg">
+                              {submission.challenge?.title || 'Challenge'}
+                            </h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {submission.challenge?.description?.slice(0, 150) || 'No description'}
+                              {(submission.challenge?.description?.length || 0) > 150 ? '...' : ''}
+                            </p>
+                            <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
+                              {submission.principle_applied && (
+                                <span className="flex items-center gap-1">
+                                  <Brain className="h-4 w-4" />
+                                  {submission.principle_applied}
+                                </span>
+                              )}
+                              {submission.time_spent > 0 && (
+                                <span className="flex items-center gap-1">
+                                  <Clock className="h-4 w-4" />
+                                  {formatTimeSpent(submission.time_spent)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Show submission preview */}
+                        {submission.submission_data && (
+                          <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                            <p className="text-xs text-muted-foreground mb-1">Your Response:</p>
+                            <p className="text-sm line-clamp-3">
+                              {typeof submission.submission_data === 'string'
+                                ? submission.submission_data
+                                : submission.submission_data.answer ||
+                                  submission.submission_data.response ||
+                                  submission.submission_data.insights?.join(', ') ||
+                                  JSON.stringify(submission.submission_data).slice(0, 200)}
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="text-center py-12">
+                    <Archive className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-muted-foreground">No challenges completed this month.</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Complete daily challenges to build your archive!
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        const tabs = document.querySelector('[data-state="active"][value="archive"]');
+                        if (tabs) {
+                          const dailyTab = document.querySelector('[value="daily"]') as HTMLElement;
+                          dailyTab?.click();
+                        }
+                      }}
+                      className="mt-4"
+                    >
+                      <Flame className="mr-2 h-4 w-4" />
+                      Start Today's Challenge
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
           </Tabs>
         </div>

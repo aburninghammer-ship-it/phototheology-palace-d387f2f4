@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Book, Sparkles, CheckCircle2, Calendar, Share2 } from "lucide-react";
+import { Book, Sparkles, CheckCircle2, Calendar, Share2, Archive, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
@@ -47,6 +48,9 @@ export default function DailyVerse() {
     appUrl: string;
   } | null>(null);
   const [isGeneratingShare, setIsGeneratingShare] = useState(false);
+  const [activeTab, setActiveTab] = useState<"today" | "archive">("today");
+  const [selectedArchiveVerse, setSelectedArchiveVerse] = useState<DailyVerse | null>(null);
+  const [archiveMonth, setArchiveMonth] = useState(new Date());
   
   const { data: todayVerse, isLoading, refetch } = useQuery({
     queryKey: ['daily-verse', new Date().toISOString().split('T')[0]],
@@ -77,6 +81,41 @@ export default function DailyVerse() {
       return !!data;
     },
     enabled: !!todayVerse && !!user,
+  });
+
+  // Archive queries
+  const { data: archiveVerses, isLoading: archiveLoading } = useQuery({
+    queryKey: ['archive-verses', archiveMonth.getFullYear(), archiveMonth.getMonth()],
+    queryFn: async () => {
+      const startOfMonth = new Date(archiveMonth.getFullYear(), archiveMonth.getMonth(), 1);
+      const endOfMonth = new Date(archiveMonth.getFullYear(), archiveMonth.getMonth() + 1, 0);
+
+      const { data, error } = await supabase
+        .from('daily_verses')
+        .select('*')
+        .gte('date', startOfMonth.toISOString().split('T')[0])
+        .lte('date', endOfMonth.toISOString().split('T')[0])
+        .order('date', { ascending: false });
+
+      if (error) throw error;
+      return data as unknown as DailyVerse[];
+    },
+    enabled: activeTab === "archive",
+  });
+
+  const { data: userReadVerses } = useQuery({
+    queryKey: ['user-read-verses', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('user_verse_readings')
+        .select('verse_id')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      return data.map(r => r.verse_id);
+    },
+    enabled: !!user && activeTab === "archive",
   });
 
   const markAsReadMutation = useMutation({
@@ -145,6 +184,118 @@ export default function DailyVerse() {
     const text = encodeURIComponent(`${shareData.summary}\n\n${shareData.appUrl}`);
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
+
+  const goToPreviousMonth = () => {
+    setArchiveMonth(new Date(archiveMonth.getFullYear(), archiveMonth.getMonth() - 1, 1));
+    setSelectedArchiveVerse(null);
+  };
+
+  const goToNextMonth = () => {
+    const nextMonth = new Date(archiveMonth.getFullYear(), archiveMonth.getMonth() + 1, 1);
+    if (nextMonth <= new Date()) {
+      setArchiveMonth(nextMonth);
+      setSelectedArchiveVerse(null);
+    }
+  };
+
+  const isVerseRead = (verseId: string) => {
+    return userReadVerses?.includes(verseId) || false;
+  };
+
+  // Component to render verse details (reused for both today and archive)
+  const VerseDetails = ({ verse, showMarkAsRead = false }: { verse: DailyVerse; showMarkAsRead?: boolean }) => (
+    <div className="space-y-4">
+      {/* Verse Display */}
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl text-center flex-1">{verse.verse_reference}</CardTitle>
+            <QuickAudioButton
+              text={`${verse.verse_reference}. ${verse.verse_text}`}
+              variant="outline"
+              size="sm"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <blockquote className="text-xl text-center italic leading-relaxed px-6">
+            "{verse.verse_text}"
+          </blockquote>
+        </CardContent>
+      </Card>
+
+      {/* Principles */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Book className="h-5 w-5" />
+            Palace Principles
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <h4 className="font-semibold mb-2 text-sm">Principle Revealed (Verse Category)</h4>
+            <Badge variant="secondary" className="text-lg px-4 py-2">
+              {verse.breakdown?.verse_genre || 'Loading...'}
+            </Badge>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2 text-sm">7 Principles Applied</h4>
+            <div className="flex flex-wrap gap-2">
+              {verse.breakdown?.breakdown?.map((item, idx) => (
+                <Badge key={`applied-${idx}`} variant="outline">
+                  {item.principle_applied}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Breakdown */}
+      <div className="space-y-4">
+        {verse.breakdown?.breakdown
+          ?.sort((a, b) => {
+            const floorA = parseInt(a.floor?.match(/\d+/)?.[0] || '0');
+            const floorB = parseInt(b.floor?.match(/\d+/)?.[0] || '0');
+            return floorA - floorB;
+          })
+          .map((item, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    {item.floor && (
+                      <Badge variant="secondary" className="text-xs">
+                        {item.floor}
+                      </Badge>
+                    )}
+                    <Badge className="w-fit">{item.principle_applied}</Badge>
+                  </div>
+                  <CardTitle className="text-lg">
+                    {item.principle_name}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2 text-sm text-primary">Application</h4>
+                  <p className="text-sm leading-relaxed">{item.application}</p>
+                </div>
+                <div className="bg-accent/10 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2 text-sm text-primary">Key Insight</h4>
+                  <p className="text-sm">{item.key_insight}</p>
+                </div>
+                <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+                  <h4 className="font-semibold mb-2 text-sm text-primary">Practical Takeaway</h4>
+                  <p className="text-sm">{item.practical_takeaway}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+      </div>
+    </div>
+  );
 
   if (isLoading) {
     return (
@@ -285,95 +436,123 @@ export default function DailyVerse() {
           </Card>
         )}
 
-        {/* Verse Display */}
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl text-center flex-1">{todayVerse.verse_reference}</CardTitle>
-              <QuickAudioButton 
-                text={`${todayVerse.verse_reference}. ${todayVerse.verse_text}`} 
-                variant="outline"
-                size="sm"
-              />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <blockquote className="text-xl text-center italic leading-relaxed px-6">
-              "{todayVerse.verse_text}"
-            </blockquote>
-          </CardContent>
-        </Card>
+        {/* Tabs for Today / Archive */}
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "today" | "archive")} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="today" className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4" />
+              Today's Verse
+            </TabsTrigger>
+            <TabsTrigger value="archive" className="flex items-center gap-2">
+              <Archive className="h-4 w-4" />
+              Archive
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Principles */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Book className="h-5 w-5" />
-              Palace Principles
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h4 className="font-semibold mb-2 text-sm">Principle Revealed (Verse Category)</h4>
-              <Badge variant="secondary" className="text-lg px-4 py-2">
-                {todayVerse.breakdown?.verse_genre || 'Loading...'}
-              </Badge>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-2 text-sm">7 Principles Applied</h4>
-              <div className="flex flex-wrap gap-2">
-                {todayVerse.breakdown?.breakdown?.map((item, idx) => (
-                  <Badge key={`applied-${idx}`} variant="outline">
-                    {item.principle_applied}
-                  </Badge>
-                ))}
+          <TabsContent value="today" className="space-y-4">
+            <VerseDetails verse={todayVerse} showMarkAsRead={true} />
+          </TabsContent>
+
+          <TabsContent value="archive" className="space-y-4">
+            {selectedArchiveVerse ? (
+              <div className="space-y-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedArchiveVerse(null)}
+                  className="mb-4"
+                >
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Back to Archive
+                </Button>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {new Date(selectedArchiveVerse.date).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                  {isVerseRead(selectedArchiveVerse.id) && (
+                    <Badge variant="secondary" className="ml-2">
+                      <CheckCircle2 className="mr-1 h-3 w-3" />
+                      Read
+                    </Badge>
+                  )}
+                </p>
+                <VerseDetails verse={selectedArchiveVerse} />
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            ) : (
+              <div className="space-y-4">
+                {/* Month Navigation */}
+                <div className="flex items-center justify-between">
+                  <Button variant="outline" onClick={goToPreviousMonth}>
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Previous
+                  </Button>
+                  <h3 className="text-lg font-semibold">
+                    {archiveMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </h3>
+                  <Button
+                    variant="outline"
+                    onClick={goToNextMonth}
+                    disabled={archiveMonth.getFullYear() === new Date().getFullYear() && archiveMonth.getMonth() === new Date().getMonth()}
+                  >
+                    Next
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
 
-        {/* Breakdown */}
-        <div className="space-y-4">
-          {todayVerse.breakdown?.breakdown
-            ?.sort((a, b) => {
-              const floorA = parseInt(a.floor?.match(/\d+/)?.[0] || '0');
-              const floorB = parseInt(b.floor?.match(/\d+/)?.[0] || '0');
-              return floorA - floorB;
-            })
-            .map((item, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    {item.floor && (
-                      <Badge variant="secondary" className="text-xs">
-                        {item.floor}
-                      </Badge>
-                    )}
-                    <Badge className="w-fit">{item.principle_applied}</Badge>
+                {archiveLoading ? (
+                  <div className="text-center py-12">Loading archive...</div>
+                ) : archiveVerses && archiveVerses.length > 0 ? (
+                  <div className="grid gap-3">
+                    {archiveVerses.map((verse) => (
+                      <Card
+                        key={verse.id}
+                        className="cursor-pointer hover:border-primary/50 transition-colors"
+                        onClick={() => setSelectedArchiveVerse(verse)}
+                      >
+                        <CardContent className="py-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="outline">
+                                  {new Date(verse.date).toLocaleDateString('en-US', {
+                                    weekday: 'short',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </Badge>
+                                {isVerseRead(verse.id) && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    <CheckCircle2 className="mr-1 h-3 w-3" />
+                                    Read
+                                  </Badge>
+                                )}
+                              </div>
+                              <h4 className="font-semibold text-lg">{verse.verse_reference}</h4>
+                              <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                                {verse.verse_text}
+                              </p>
+                            </div>
+                            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                  <CardTitle className="text-lg">
-                    {item.principle_name}
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-2 text-sm text-primary">Application</h4>
-                  <p className="text-sm leading-relaxed">{item.application}</p>
-                </div>
-                <div className="bg-accent/10 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2 text-sm text-primary">💎 Key Insight</h4>
-                  <p className="text-sm">{item.key_insight}</p>
-                </div>
-                <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
-                  <h4 className="font-semibold mb-2 text-sm text-primary">✨ Practical Takeaway</h4>
-                  <p className="text-sm">{item.practical_takeaway}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                ) : (
+                  <Card>
+                    <CardContent className="text-center py-12">
+                      <Archive className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                      <p className="text-muted-foreground">No verses found for this month.</p>
+                      <p className="text-sm text-muted-foreground mt-2">Try navigating to a different month.</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
