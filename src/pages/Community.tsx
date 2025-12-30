@@ -47,6 +47,9 @@ const Community = () => {
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
   const [editingComment, setEditingComment] = useState<string | null>(null);
   const [editContent, setEditContent] = useState<string>("");
+  const [editingPost, setEditingPost] = useState<string | null>(null);
+  const [editPostTitle, setEditPostTitle] = useState<string>("");
+  const [editPostContent, setEditPostContent] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortOption>("latest");
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -341,6 +344,93 @@ const Community = () => {
       toast({
         title: "Error updating comment",
         description: error.message || "Failed to update comment",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const startEditPost = (post: any) => {
+    setEditingPost(post.id);
+    setEditPostTitle(post.title);
+    setEditPostContent(post.content);
+  };
+
+  const cancelEditPost = () => {
+    setEditingPost(null);
+    setEditPostTitle("");
+    setEditPostContent("");
+  };
+
+  const saveEditPost = async (postId: string) => {
+    if (!editPostTitle.trim() || !editPostContent.trim()) {
+      toast({
+        title: "Error",
+        description: "Title and content cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const sanitizedTitle = sanitizeHtml(editPostTitle);
+      const sanitizedContent = sanitizeHtml(editPostContent);
+
+      const { error } = await supabase
+        .from("community_posts")
+        .update({
+          title: sanitizedTitle,
+          content: sanitizedContent,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", postId)
+        .eq("user_id", user!.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Post updated",
+        description: "Your post has been updated successfully.",
+      });
+
+      setEditingPost(null);
+      setEditPostTitle("");
+      setEditPostContent("");
+      fetchPosts();
+    } catch (error: any) {
+      console.error("Error updating post:", error);
+      toast({
+        title: "Error updating post",
+        description: error.message || "Failed to update post",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deletePost = async (postId: string) => {
+    if (!confirm("Are you sure you want to delete this post? This will also delete all comments.")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("community_posts")
+        .delete()
+        .eq("id", postId)
+        .eq("user_id", user!.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Post deleted",
+        description: "Your post has been deleted.",
+      });
+
+      fetchPosts();
+    } catch (error: any) {
+      console.error("Error deleting post:", error);
+      toast({
+        title: "Error deleting post",
+        description: error.message || "Failed to delete post",
         variant: "destructive",
       });
     }
@@ -692,19 +782,63 @@ const Community = () => {
                 const isExpanded = expandedPosts[post.id];
 
                 return (
-                  <CommunityPostCard
-                    key={post.id}
-                    post={post}
-                    commentCount={postComments.length}
-                    currentUserId={user?.id}
-                    isExpanded={isExpanded}
-                    onExpand={() =>
-                      setExpandedPosts({
-                        ...expandedPosts,
-                        [post.id]: !isExpanded,
-                      })
-                    }
-                  >
+                  <div key={post.id} id={`post-${post.id}`}>
+                    {/* Edit Post Form */}
+                    {editingPost === post.id ? (
+                      <Card className="border-primary/20 shadow-lg">
+                        <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
+                          <CardTitle className="flex items-center gap-2">
+                            <Pencil className="h-5 w-5 text-primary" />
+                            Edit Post
+                          </CardTitle>
+                          <CardDescription>Update your post</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4 pt-6">
+                          <Input
+                            placeholder="Post title..."
+                            value={editPostTitle}
+                            onChange={(e) => setEditPostTitle(e.target.value)}
+                            maxLength={200}
+                            className="text-lg font-medium"
+                          />
+                          <div className="space-y-2">
+                            <Textarea
+                              placeholder="Post content..."
+                              value={editPostContent}
+                              onChange={(e) => setEditPostContent(e.target.value)}
+                              rows={6}
+                              maxLength={10000}
+                              className="resize-none"
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              {editPostContent.length}/10,000 characters
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button onClick={() => saveEditPost(post.id)} className="flex-1">
+                              Save Changes
+                            </Button>
+                            <Button variant="outline" onClick={cancelEditPost}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <CommunityPostCard
+                        post={post}
+                        commentCount={postComments.length}
+                        currentUserId={user?.id}
+                        isExpanded={isExpanded}
+                        onExpand={() =>
+                          setExpandedPosts({
+                            ...expandedPosts,
+                            [post.id]: !isExpanded,
+                          })
+                        }
+                        onEdit={() => startEditPost(post)}
+                        onDelete={() => deletePost(post.id)}
+                      >
                     {/* Comments Section */}
                     {postComments.length > 0 && (
                       <div className="space-y-3">
@@ -1014,7 +1148,9 @@ const Community = () => {
                         </div>
                       </div>
                     )}
-                  </CommunityPostCard>
+                      </CommunityPostCard>
+                    )}
+                  </div>
                 );
               })
             )}

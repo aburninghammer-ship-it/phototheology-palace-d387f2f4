@@ -438,7 +438,7 @@ export const PrinciplePanel = ({ book, chapter, verse, verseText, onClose, onHig
             </TabsTrigger>
           </TabsList>
           
-          <ScrollArea className="h-[500px] mt-4">
+          <ScrollArea className="h-[300px] lg:h-[400px] mt-4">
             <TabsContent value="lenses" className="space-y-4 mt-0">
               {/* Room Analysis Summary */}
               {annotation.roomsUsed && annotation.roomsUsed.length > 0 && (

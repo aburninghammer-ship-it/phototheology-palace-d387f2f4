@@ -43,6 +43,12 @@ interface AudioControlsProps {
 // Tiny silent WAV as data URI to unlock iOS audio
 const SILENT_AUDIO = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
 
+// Detect if we're on mobile/Capacitor
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    (window as any).Capacitor?.isNativePlatform?.();
+};
+
 export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight, className }: AudioControlsProps) => {
   const [showSettings, setShowSettings] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -51,6 +57,7 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
   const [selectedVoice, setSelectedVoice] = useState<VoiceId>("onyx");
   const [playbackRate, setPlaybackRate] = useState(1);
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [useBrowserTTS, setUseBrowserTTS] = useState(false); // Fallback for mobile
   
   // Use a persistent audio element to avoid iOS autoplay restrictions
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -369,26 +376,99 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     prefetchCacheRef.current.clear();
   }, []);
 
+  // Browser TTS playback for mobile fallback
+  const playVerseBrowserTTS = useCallback((verseIndex: number) => {
+    if (!('speechSynthesis' in window)) return;
+
+    const verse = versesRef.current[verseIndex];
+    if (!verse) {
+      setIsPlaying(false);
+      isPlayingRef.current = false;
+      toast.success("Finished reading chapter");
+      return;
+    }
+
+    currentIndexRef.current = verseIndex;
+    setCurrentVerse(verse.verse);
+    onVerseHighlight?.(verse.verse);
+
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(verse.text);
+    utterance.rate = playbackRateRef.current;
+    utterance.pitch = 1;
+
+    // Try to get a good voice
+    const voices = speechSynthesis.getVoices();
+    const englishVoice = voices.find(v =>
+      v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google'))
+    ) || voices.find(v => v.lang.startsWith('en'));
+    if (englishVoice) utterance.voice = englishVoice;
+
+    utterance.onend = () => {
+      if (!isPlayingRef.current) return;
+      const nextIndex = verseIndex + 1;
+      if (nextIndex < versesRef.current.length) {
+        // Small pause between verses
+        setTimeout(() => {
+          if (isPlayingRef.current) {
+            playVerseBrowserTTS(nextIndex);
+          }
+        }, 300);
+      } else {
+        setIsPlaying(false);
+        isPlayingRef.current = false;
+        toast.success("Finished reading chapter");
+      }
+    };
+
+    utterance.onerror = () => {
+      setIsPlaying(false);
+      isPlayingRef.current = false;
+      toast.error("Speech synthesis error");
+    };
+
+    notifyTTSStarted();
+    speechSynthesis.speak(utterance);
+  }, [onVerseHighlight]);
+
   const play = useCallback(async (startVerseIndex?: number) => {
+    const index = startVerseIndex ?? verses.findIndex(v => v.verse === currentVerse);
+    const verseIdx = index >= 0 ? index : 0;
+
+    // On mobile, try browser TTS first for reliability
+    if (isMobile() && 'speechSynthesis' in window) {
+      console.log('[AudioControls] Mobile detected, using browser speechSynthesis');
+      setIsPlaying(true);
+      isPlayingRef.current = true;
+      setUseBrowserTTS(true);
+      playVerseBrowserTTS(verseIdx);
+      return;
+    }
+
     // Unlock audio on iOS first
     await unlockAudio();
-    
-    const index = startVerseIndex ?? verses.findIndex(v => v.verse === currentVerse);
+
     setIsPlaying(true);
     isPlayingRef.current = true;
-    playVerseAtIndex(index >= 0 ? index : 0);
-  }, [currentVerse, verses, playVerseAtIndex, unlockAudio]);
+    setUseBrowserTTS(false);
+    playVerseAtIndex(verseIdx);
+  }, [currentVerse, verses, playVerseAtIndex, unlockAudio, playVerseBrowserTTS]);
 
   const pause = useCallback(() => {
-    if (audioRef.current) {
+    if (useBrowserTTS && 'speechSynthesis' in window) {
+      speechSynthesis.pause();
+    } else if (audioRef.current) {
       audioRef.current.pause();
     }
     setIsPlaying(false);
     isPlayingRef.current = false;
     notifyTTSStopped();
-  }, []);
+  }, [useBrowserTTS]);
 
   const stop = useCallback(() => {
+    if (useBrowserTTS && 'speechSynthesis' in window) {
+      speechSynthesis.cancel();
+    }
     cleanupAudio();
     clearPrefetchCache();
     setIsPlaying(false);
@@ -396,33 +476,47 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
     notifyTTSStopped();
     setCurrentVerse(1);
     onVerseHighlight?.(1);
-  }, [cleanupAudio, clearPrefetchCache, onVerseHighlight]);
+  }, [cleanupAudio, clearPrefetchCache, onVerseHighlight, useBrowserTTS]);
 
   const nextVerse = useCallback(() => {
     const currentIndex = verses.findIndex(v => v.verse === currentVerse);
     if (currentIndex < verses.length - 1) {
+      if (useBrowserTTS && 'speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
       cleanupAudio();
       if (isPlaying) {
-        playVerseAtIndex(currentIndex + 1);
+        if (useBrowserTTS) {
+          playVerseBrowserTTS(currentIndex + 1);
+        } else {
+          playVerseAtIndex(currentIndex + 1);
+        }
       } else {
         setCurrentVerse(verses[currentIndex + 1].verse);
         onVerseHighlight?.(verses[currentIndex + 1].verse);
       }
     }
-  }, [verses, currentVerse, isPlaying, cleanupAudio, playVerseAtIndex, onVerseHighlight]);
+  }, [verses, currentVerse, isPlaying, cleanupAudio, playVerseAtIndex, playVerseBrowserTTS, onVerseHighlight, useBrowserTTS]);
 
   const previousVerse = useCallback(() => {
     const currentIndex = verses.findIndex(v => v.verse === currentVerse);
     if (currentIndex > 0) {
+      if (useBrowserTTS && 'speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
       cleanupAudio();
       if (isPlaying) {
-        playVerseAtIndex(currentIndex - 1);
+        if (useBrowserTTS) {
+          playVerseBrowserTTS(currentIndex - 1);
+        } else {
+          playVerseAtIndex(currentIndex - 1);
+        }
       } else {
         setCurrentVerse(verses[currentIndex - 1].verse);
         onVerseHighlight?.(verses[currentIndex - 1].verse);
       }
     }
-  }, [verses, currentVerse, isPlaying, cleanupAudio, playVerseAtIndex, onVerseHighlight]);
+  }, [verses, currentVerse, isPlaying, cleanupAudio, playVerseAtIndex, playVerseBrowserTTS, onVerseHighlight, useBrowserTTS]);
 
   const changePlaybackRate = useCallback((rate: number) => {
     setPlaybackRate(rate);

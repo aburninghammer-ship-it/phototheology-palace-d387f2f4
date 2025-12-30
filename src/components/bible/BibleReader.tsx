@@ -540,7 +540,7 @@ export const BibleReader = () => {
         </div>
 
         {/* Right Panel - Dynamic based on mode - Floating/Sticky */}
-        <div className="lg:col-span-1 space-y-6 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto" ref={jeevesRef}>
+        <div className="lg:col-span-1 space-y-4 lg:space-y-6 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto" ref={jeevesRef}>
           {chainReferenceMode ? (
             <div className="space-y-6">
               <PTChainReferenceBox />

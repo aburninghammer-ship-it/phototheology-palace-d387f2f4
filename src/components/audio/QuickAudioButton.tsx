@@ -6,7 +6,14 @@ import { toast } from "sonner";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { getGlobalMusicVolume, subscribeToMusicVolume } from "@/hooks/useMusicVolumeControl";
 
-const SILENT_AUDIO = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAbD/rU9UAAAAAAAAAAAAAAAAAAAAAP/jOMAAABQAJQCAAAhDAH+AIACQA/xQAP/zDAIAAAFPAQD/8wgD/+M4wAAAGMAlAAA';
+// Longer silent audio that works more reliably on iOS
+const SILENT_AUDIO = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+
+// Detect if we're on mobile/Capacitor
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    (window as any).Capacitor?.isNativePlatform?.();
+};
 
 interface QuickAudioButtonProps {
   text: string;
@@ -73,9 +80,61 @@ export function QuickAudioButton({
       return;
     }
 
+    // Also stop any browser speech synthesis
+    if (isPlaying && 'speechSynthesis' in window) {
+      speechSynthesis.cancel();
+      setIsPlaying(false);
+      notifyTTSStopped();
+      return;
+    }
+
     if (!text.trim()) {
       toast.error("No text to read");
       return;
+    }
+
+    // On mobile, try browser TTS first as it's more reliable
+    if (isMobile() && 'speechSynthesis' in window) {
+      console.log('[QuickAudio] Mobile detected, using browser speechSynthesis');
+      try {
+        // Cancel any existing speech
+        speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+
+        // Get available voices and try to pick a good one
+        const voices = speechSynthesis.getVoices();
+        const englishVoice = voices.find(v =>
+          v.lang.startsWith('en') && (v.name.includes('Daniel') || v.name.includes('Samantha') || v.name.includes('Google'))
+        ) || voices.find(v => v.lang.startsWith('en'));
+
+        if (englishVoice) {
+          utterance.voice = englishVoice;
+        }
+
+        utterance.onstart = () => {
+          setIsPlaying(true);
+          notifyTTSStarted();
+        };
+
+        utterance.onend = () => {
+          setIsPlaying(false);
+          notifyTTSStopped();
+        };
+
+        utterance.onerror = (e) => {
+          console.error('[QuickAudio] Speech synthesis error:', e);
+          setIsPlaying(false);
+          notifyTTSStopped();
+        };
+
+        speechSynthesis.speak(utterance);
+        return;
+      } catch (err) {
+        console.error('[QuickAudio] Browser TTS failed, trying cloud TTS:', err);
+      }
     }
 
     // CRITICAL: Unlock audio BEFORE async work to preserve user gesture on mobile
@@ -85,42 +144,70 @@ export function QuickAudioButton({
 
     try {
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
-        body: { text, voice: "daniel" }
+        body: { text, voice: "daniel", returnType: "url" }
       });
 
       if (error) throw error;
 
-      if (data?.audioContent) {
-        const audioUrl = `data:audio/mpeg;base64,${data.audioContent}`;
-        
-        if (!audioRef.current) {
-          audioRef.current = new Audio();
-        }
-        
-        const audio = audioRef.current;
-        audio.src = audioUrl;
-        audio.volume = volumeRef.current / 100; // Apply volume from 0-100 scale
-        console.log('[QuickAudio] Volume set to:', volumeRef.current, '%');
-        
-        audio.onended = () => {
-          setIsPlaying(false);
-          notifyTTSStopped();
-        };
+      // Prefer URL response (better for mobile)
+      const audioUrl = data?.audioUrl || (data?.audioContent ? `data:audio/mpeg;base64,${data.audioContent}` : null);
 
-        audio.onerror = (e) => {
-          console.error("Audio playback error:", e);
-          setIsPlaying(false);
-          notifyTTSStopped();
-          toast.error("Audio playback failed");
-        };
+      if (!audioUrl) {
+        throw new Error("No audio content returned");
+      }
 
-        try {
-          await audio.play();
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+      }
+
+      const audio = audioRef.current;
+      audio.src = audioUrl;
+      audio.volume = volumeRef.current / 100;
+      console.log('[QuickAudio] Volume set to:', volumeRef.current, '%');
+
+      audio.onended = () => {
+        setIsPlaying(false);
+        notifyTTSStopped();
+      };
+
+      audio.onerror = (e) => {
+        console.error("Audio playback error:", e);
+        setIsPlaying(false);
+        notifyTTSStopped();
+        // Fallback to browser TTS on error
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.onend = () => {
+            setIsPlaying(false);
+            notifyTTSStopped();
+          };
+          speechSynthesis.speak(utterance);
           setIsPlaying(true);
           notifyTTSStarted();
-        } catch (playErr) {
-          console.warn("[QuickAudio] Play blocked, waiting for interaction:", playErr);
-          
+        } else {
+          toast.error("Audio playback failed");
+        }
+      };
+
+      try {
+        await audio.play();
+        setIsPlaying(true);
+        notifyTTSStarted();
+      } catch (playErr) {
+        console.warn("[QuickAudio] Play blocked, falling back to browser TTS:", playErr);
+
+        // On mobile, fallback immediately to browser TTS instead of waiting
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.onend = () => {
+            setIsPlaying(false);
+            notifyTTSStopped();
+          };
+          speechSynthesis.speak(utterance);
+          setIsPlaying(true);
+          notifyTTSStarted();
+        } else {
+          toast.info('Tap anywhere to start audio');
           const playOnInteraction = async () => {
             try {
               await audio.play();
@@ -132,13 +219,10 @@ export function QuickAudioButton({
               console.error("[QuickAudio] Play still failed:", err);
             }
           };
-          
+
           document.body.addEventListener('click', playOnInteraction, { once: true });
           document.body.addEventListener('touchstart', playOnInteraction, { once: true });
-          toast.info('Tap anywhere to start audio');
         }
-      } else {
-        throw new Error("No audio content returned");
       }
     } catch (err) {
       console.error("TTS error:", err);

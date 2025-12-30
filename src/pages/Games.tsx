@@ -380,6 +380,18 @@ const Games = () => {
       difficulties: ["easy", "medium", "hard", "endless"],
       route: "/games/palace-tetris"
     },
+    {
+      id: "bible_tetris",
+      name: "📖 Bible Tetris",
+      description: "Match biblical patterns to clear rows! Combine STORY, SYMBOL, LAW, and CHRIST_KEY pieces according to Phototheology rules. Watch out for deception pieces!",
+      icon: "📖",
+      floor: 0,
+      timed: true,
+      rooms: ["All"],
+      modes: ["solo"],
+      difficulties: ["beginner", "intermediate", "master"],
+      route: "/games/bible-tetris"
+    },
   ];
 
   const filteredGames = allGames.filter(game => {
