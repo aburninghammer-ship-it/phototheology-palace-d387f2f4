@@ -23,7 +23,8 @@ import {
   BookOpen,
   Zap,
   Crown,
-  Medal
+  Medal,
+  Box
 } from "lucide-react";
 import {
   escapeRooms,
@@ -356,12 +357,32 @@ export default function EscapeRoomRenovated() {
                       </div>
                     )}
 
-                    <Button className="w-full group-hover:bg-primary" variant="outline">
-                      <span className="flex items-center gap-2">
-                        {isCompleted ? 'Play Again' : 'Enter Room'}
-                        <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </span>
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        className="flex-1 group-hover:bg-primary"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/escape-room/play/${room.id}`);
+                        }}
+                      >
+                        <span className="flex items-center gap-2">
+                          {isCompleted ? 'Play Again' : 'Enter Room'}
+                          <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                      </Button>
+                      <Button
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/escape-room/3d/${room.id}`);
+                        }}
+                        title="Play in 3D"
+                      >
+                        <Box className="h-4 w-4" />
+                        <span className="ml-1 hidden sm:inline">3D</span>
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
