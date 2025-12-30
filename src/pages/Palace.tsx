@@ -24,7 +24,7 @@ import { toast } from "sonner";
 const Palace = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { completedRooms, totalRooms, progressPercentage, loading } = usePalaceProgress();
+  const { completedRooms, completedRoomIds, totalRooms, progressPercentage, loading } = usePalaceProgress();
   const { showTour, loading: tourLoading, completeTour, skipTour } = usePalaceTour();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<"explore" | "progress">("explore");
@@ -236,7 +236,7 @@ const Palace = () => {
                 ) : (
                   <div className="h-[700px]">
                     <Palace3DViewer
-                      unlockedRooms={new Set(completedRooms)}
+                      unlockedRooms={new Set(completedRoomIds)}
                       onClose={() => setViewMode("list")}
                     />
                   </div>

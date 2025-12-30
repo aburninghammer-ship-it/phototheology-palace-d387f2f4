@@ -209,30 +209,112 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const musicAudioRef = useRef<HTMLAudioElement | null>(null); // Background music audio
   const audioUnlockedRef = useRef(false); // Track if audio has been unlocked by user gesture
   
+  // Get or create the persistent audio element (NEVER set to null after creation)
+  const getOrCreateAudio = useCallback((): HTMLAudioElement => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.preload = 'auto';
+      console.log('[PersistentAudio] Created audio element');
+    }
+    return audioRef.current;
+  }, []);
+  
   // Create and unlock audio element on first user interaction (iOS requirement)
   const ensureAudioUnlocked = useCallback(() => {
     if (audioUnlockedRef.current) return;
     
-    // Create a persistent audio element that we'll reuse
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.preload = 'auto';
-    }
+    const audio = getOrCreateAudio();
     
     // Play a silent audio to "unlock" the audio context on iOS
     // This must happen during a user gesture (click/tap)
-    const audio = audioRef.current;
     audio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAbD/rU9UAAAAAAAAAAAAAAAAAAAAAP/jOMAAABQAJQCAAAhDAH+AIACQA/xQAP/zDAIAAAFPAQD/8wgD/+M4wAAAGMAlAAA';
     audio.volume = 0.01;
     audio.play().then(() => {
       audio.pause();
       audio.currentTime = 0;
+      audio.src = ''; // Clear but keep element
       audioUnlockedRef.current = true;
       console.log('[iOS] Audio element unlocked for future playback');
     }).catch(e => {
       console.log('[iOS] Audio unlock attempt (expected to fail on first load):', e.message);
     });
+  }, [getOrCreateAudio]);
+  
+  // Helper to safely stop audio without destroying the element
+  const stopAudio = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.onended = null;
+      audio.ontimeupdate = null;
+      audio.onerror = null;
+      audio.onplay = null;
+      // DON'T set audioRef.current = null - keep the unlocked element!
+    }
   }, []);
+  
+  // Helper to play audio URL using the persistent element
+  const playAudioUrl = useCallback(async (
+    url: string, 
+    options: {
+      volume?: number;
+      playbackRate?: number;
+      onEnded?: () => void;
+      onError?: (e: Event) => void;
+      onTimeUpdate?: () => void;
+    } = {}
+  ): Promise<boolean> => {
+    const audio = getOrCreateAudio();
+    
+    // Stop any current playback
+    audio.pause();
+    audio.onended = null;
+    audio.ontimeupdate = null;
+    audio.onerror = null;
+    
+    // Configure
+    audio.src = url;
+    audio.volume = options.volume ?? (isMutedRef.current ? 0 : volumeRef.current / 100);
+    audio.playbackRate = options.playbackRate ?? 1;
+    audio.currentTime = 0;
+    
+    // Flag to prevent double-triggering
+    let hasEnded = false;
+    
+    const handleEnded = () => {
+      if (hasEnded) return;
+      hasEnded = true;
+      console.log('[PersistentAudio] Audio ended');
+      options.onEnded?.();
+    };
+    
+    audio.onended = handleEnded;
+    audio.onerror = (e: Event | string) => {
+      console.error('[PersistentAudio] Audio error:', e);
+      if (typeof e !== 'string') {
+        options.onError?.(e);
+      }
+    };
+    audio.ontimeupdate = () => {
+      options.onTimeUpdate?.();
+      // Fallback end detection for mobile
+      if (!hasEnded && audio.duration > 0 && audio.currentTime >= audio.duration - 0.1) {
+        handleEnded();
+      }
+    };
+    // Allow replay after seek
+    audio.onseeked = () => { hasEnded = false; };
+    
+    try {
+      await audio.play();
+      console.log('[PersistentAudio] Playback started');
+      return true;
+    } catch (e) {
+      console.error('[PersistentAudio] Play failed:', e);
+      return false;
+    }
+  }, [getOrCreateAudio]);
   
   // Fetch user's display name for personalized commentary
   // Extract first name from display_name for more personal address
@@ -1705,34 +1787,20 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       prefetchChapterCommentary(content.book, content.chapter, chapterText, commentaryVoice, commentaryDepth);
     }
 
-    // Stop any existing audio BEFORE setting up new one
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.onended = null;
-      audioRef.current.onerror = null;
-    }
+    // Stop any existing audio BEFORE setting up new one (but keep element alive)
+    stopAudio();
     
     // Clean up previous audio URL (but not if it's cached)
     if (audioUrl && !Array.from(ttsCache.current.values()).includes(audioUrl)) {
       URL.revokeObjectURL(audioUrl);
     }
 
-    // CRITICAL: Reuse existing audio element if unlocked (iOS), otherwise create new
-    // This is required because iOS blocks new Audio() created after async operations
+    // CRITICAL: Always use the persistent audio element (iOS requirement)
     const currentVolume = isMutedRef.current ? 0 : volumeRef.current / 100;
     console.log("[PlayVerse] Setting up audio with volume:", currentVolume);
     
-    let audio: HTMLAudioElement;
-    if (audioUnlockedRef.current && audioRef.current) {
-      // Reuse the unlocked audio element
-      audio = audioRef.current;
-      audio.src = url;
-    } else {
-      // Fallback: create new audio element (works on desktop, may fail on iOS after async)
-      audio = new Audio(url);
-      audioRef.current = audio;
-    }
-    
+    const audio = getOrCreateAudio();
+    audio.src = url;
     audio.volume = currentVolume;
     audio.preload = 'auto';
     audio.playbackRate = playbackSpeed;
@@ -1754,11 +1822,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       
       console.log("[Audio] <<< Completed verse:", verseIdx + 1, "| continue:", continuePlayingRef.current, "| isPlayingRef:", isPlayingRef.current, "| isPausedRef:", isPausedRef.current);
       
-      // Clean up event listeners
+      // Clean up event listeners but DON'T destroy the audio element
       audio.onended = null;
       audio.ontimeupdate = null;
       audio.onerror = null;
-      audioRef.current = null;
+      // DON'T set audioRef.current = null - keep the unlocked element!
       
       if (!continuePlayingRef.current) {
         console.log("[Audio] ❌ continuePlayingRef is false - checking refs for recovery");
@@ -2178,7 +2246,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         setIsPlaying(false);
       }
     }
-  }, [volume, isMuted, totalItems, generateTTS, prefetchVerse, activeSequences, currentItemIdx, currentSeqIdx, generateCommentary, playCommentary, moveToNextChapter, handleChapterCompleteWithCommentary, prefetchNextChapter, offlineMode, speakWithBrowserTTS, saveCurrentPosition]);
+  }, [volume, isMuted, totalItems, generateTTS, prefetchVerse, activeSequences, currentItemIdx, currentSeqIdx, generateCommentary, playCommentary, moveToNextChapter, handleChapterCompleteWithCommentary, prefetchNextChapter, offlineMode, speakWithBrowserTTS, saveCurrentPosition, stopAudio, getOrCreateAudio]);
 
   // Play current verse (wrapper for playVerseAtIndex)
   const playCurrentVerse = useCallback(() => {
