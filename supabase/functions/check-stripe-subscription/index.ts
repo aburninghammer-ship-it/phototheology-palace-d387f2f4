@@ -110,7 +110,8 @@ serve(async (req) => {
 
     // Get the most recent active subscription
     const subscription = allSubs[0];
-    const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+    const periodEnd = subscription.current_period_end;
+    const subscriptionEnd = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
     const priceId = subscription.items.data[0]?.price?.id;
     const tier = priceToTier[priceId] || 'premium'; // Default to premium if unknown price
     
