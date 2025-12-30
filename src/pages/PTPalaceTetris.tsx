@@ -1377,31 +1377,31 @@ const PTPalaceTetris: React.FC = () => {
         <div className="bg-gray-800 rounded-xl p-4 mb-6">
           <h2 className="font-bold text-lg mb-3">🎮 How to Play:</h2>
           <div className="space-y-3 text-sm">
+            <div className="flex items-start gap-3 p-2 bg-blue-900/30 rounded-lg border border-blue-700/50">
+              <span className="text-2xl">🧠</span>
+              <div>
+                <div className="font-bold text-blue-400">READ EACH BLOCK CAREFULLY</div>
+                <div className="text-gray-300 text-xs">Decide if it matches what the room wants you to "CATCH"</div>
+              </div>
+            </div>
             <div className="flex items-start gap-3 p-2 bg-green-900/30 rounded-lg border border-green-700/50">
               <span className="text-2xl">✅</span>
               <div>
-                <div className="font-bold text-green-400">TAP GREEN BLOCKS</div>
-                <div className="text-gray-300 text-xs">These FIT the room's rule - they match what you should "CATCH"</div>
+                <div className="font-bold text-green-400">TAP blocks that FIT the room's rule</div>
+                <div className="text-gray-300 text-xs">+10 points for correct catches, bonus blocks give +25</div>
               </div>
             </div>
             <div className="flex items-start gap-3 p-2 bg-red-900/30 rounded-lg border border-red-700/50">
               <span className="text-2xl">❌</span>
               <div>
-                <div className="font-bold text-red-400">AVOID RED BLOCKS</div>
-                <div className="text-gray-300 text-xs">These are TRAPS - interpretations, theology, or wrong approaches. Let them fall!</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-2 bg-yellow-900/30 rounded-lg border border-yellow-700/50">
-              <span className="text-2xl">⭐</span>
-              <div>
-                <div className="font-bold text-yellow-400">BONUS BLOCKS = Extra Points!</div>
-                <div className="text-gray-300 text-xs">Golden blocks give 25 pts instead of 10</div>
+                <div className="font-bold text-red-400">LET TRAPS FALL - don't tap them!</div>
+                <div className="text-gray-300 text-xs">Tapping a trap loses a life. Traps are wrong approaches (interpretations when you need facts, etc.)</div>
               </div>
             </div>
           </div>
-          <div className="mt-4 p-3 bg-gray-700/50 rounded-lg">
-            <div className="text-xs text-gray-400 mb-2">💡 <strong>THE KEY:</strong></div>
-            <div className="text-xs text-gray-300">Each Palace room has a specific RULE. Read the "CATCH" and "AVOID" hints to know which blocks fit!</div>
+          <div className="mt-4 p-3 bg-amber-900/30 rounded-lg border border-amber-700/50">
+            <div className="text-xs text-amber-400 mb-2">⚠️ <strong>THE CHALLENGE:</strong></div>
+            <div className="text-xs text-gray-300">All blocks look the same! You must READ the content and THINK about whether it matches the room's CATCH rule or is something to AVOID.</div>
           </div>
         </div>
 
@@ -1569,27 +1569,13 @@ const PTPalaceTetris: React.FC = () => {
             <button
               key={block.id}
               onClick={() => catchBlock(block)}
-              className={`absolute px-3 py-2 rounded-lg text-xs font-medium transition-transform hover:scale-105 active:scale-95 shadow-lg max-w-48 text-left leading-tight ${
-                block.type === 'valid'
-                  ? block.bonus
-                    ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-black ring-2 ring-yellow-300 animate-pulse'
-                    : 'bg-gradient-to-br from-green-500 to-green-700 text-white border-2 border-green-400'
-                  : 'bg-gradient-to-br from-red-600 to-red-800 text-white border-2 border-red-400'
-              }`}
+              className="absolute px-3 py-2 rounded-lg text-xs font-medium transition-transform hover:scale-105 active:scale-95 shadow-lg max-w-48 text-left leading-tight bg-gradient-to-br from-slate-600 to-slate-800 text-white border-2 border-slate-500 hover:border-blue-400"
               style={{
                 left: `${block.x}%`,
                 top: `${block.y}%`,
                 transform: 'translateX(-50%)'
               }}
             >
-              {/* Block type indicator */}
-              <div className={`text-xs mb-1 font-bold ${
-                block.type === 'valid'
-                  ? block.bonus ? 'text-black/70' : 'text-green-200'
-                  : 'text-red-200'
-              }`}>
-                {block.type === 'valid' ? (block.bonus ? '⭐ BONUS' : '✅ CATCH') : '❌ TRAP'}
-              </div>
               {gameMode === 'palace' && (
                 <div className="text-xs opacity-70 mb-0.5">{block.roomIcon} {block.roomCode}</div>
               )}
@@ -1607,12 +1593,10 @@ const PTPalaceTetris: React.FC = () => {
         {/* Instructions Legend */}
         <div className="mx-2 mt-2 p-2 bg-gray-800/50 rounded-lg">
           <div className="text-xs text-center space-y-1">
-            <div className="flex justify-center gap-4">
-              <span><span className="inline-block w-3 h-3 bg-green-500 rounded mr-1"></span> <span className="text-green-400">TAP to catch!</span></span>
-              <span><span className="inline-block w-3 h-3 bg-yellow-400 rounded mr-1"></span> <span className="text-yellow-400">Bonus +25</span></span>
-              <span><span className="inline-block w-3 h-3 bg-red-500 rounded mr-1"></span> <span className="text-red-400">Let fall!</span></span>
+            <div className="text-gray-300">
+              <span className="text-blue-400 font-bold">READ</span> each block → <span className="text-green-400 font-bold">TAP</span> if it matches CATCH → <span className="text-red-400 font-bold">IGNORE</span> if it matches AVOID
             </div>
-            <div className="text-gray-500 text-xs">Tapping a trap loses a life ❤️</div>
+            <div className="text-gray-500 text-xs">Tapping a trap loses a life ❤️ • Bonus blocks give +25</div>
           </div>
         </div>
       </div>
