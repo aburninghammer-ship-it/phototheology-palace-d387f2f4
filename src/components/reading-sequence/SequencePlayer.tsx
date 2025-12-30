@@ -1049,120 +1049,37 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return;
     }
 
-    // Stop any existing audio
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.onended = null;
-      audioRef.current = null;
-    }
-
-    const audio = new Audio(url);
-    // Use refs for volume to avoid stale closures on mobile
-    audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
-    console.log('[Commentary] Audio created with volume:', audio.volume);
-    // Apply playback speed from current sequence
-    const playbackSpeed = currentSequence?.playbackSpeed || 1;
-    audio.playbackRate = playbackSpeed;
-    audioRef.current = audio;
+    // Stop any existing audio using persistent element
+    stopAudio();
     setAudioUrl(url);
-
-    // Critical: Prevent double-triggering by using a flag, but allow replay
-    let hasEnded = false;
-
-    const handleCommentaryComplete = () => {
-      if (hasEnded) {
-        console.log("[Commentary] Already handled end, ignoring duplicate");
-        return;
-      }
-      hasEnded = true;
-      console.log("[Commentary] Finished playing");
-      audio.onended = null;
-      audio.ontimeupdate = null;
-      audio.onerror = null;
-      audioRef.current = null;
-      setIsPlayingCommentary(false);
-      playingCommentaryRef.current = false;
-      setCommentaryText(null);
-      if (url) URL.revokeObjectURL(url);
-      onComplete();
-    };
-
-    // Reset flag when audio is seeked (for replay functionality)
-    audio.onseeked = () => {
-      hasEnded = false;
-    };
-
-    // Primary end handler
-    audio.onended = () => {
-      console.log("[Commentary] onended event fired");
-      handleCommentaryComplete();
-    };
-
-    // Fallback for mobile: check if audio is near end via timeupdate
-    audio.ontimeupdate = () => {
-      if (!hasEnded && audio.duration > 0 && audio.currentTime >= audio.duration - 0.1) {
-        console.log("[Commentary] timeupdate fallback triggered - audio complete");
-        handleCommentaryComplete();
-      }
-    };
-
-    audio.onerror = (e) => {
-      console.error("[Commentary] Audio error:", e);
-      audio.onended = null;
-      audio.ontimeupdate = null;
-      audioRef.current = null;
-      setIsPlayingCommentary(false);
-      playingCommentaryRef.current = false;
-      setCommentaryText(null);
-      toast.error("Commentary playback error, continuing", { duration: 2000 });
-      onComplete();
-    };
-
-    try {
-      await audio.play();
-    } catch (e) {
-      console.warn("[Commentary] Play blocked, waiting for user interaction:", e);
-
-      // Set a timeout to auto-proceed if user doesn't interact within 10 seconds
-      const autoSkipTimeout = setTimeout(() => {
-        console.log("[Commentary] No user interaction, auto-skipping commentary");
-        document.body.removeEventListener('click', playOnInteraction);
-        document.body.removeEventListener('touchstart', playOnInteraction);
-        audio.onended = null;
-        audio.ontimeupdate = null;
-        audio.onerror = null;
-        audioRef.current = null;
+    
+    const playbackSpeed = currentSequence?.playbackSpeed || 1;
+    
+    // Use the persistent audio element (iOS-safe)
+    const playSuccess = await playAudioUrl(url, {
+      volume: isMutedRef.current ? 0 : volumeRef.current / 100,
+      playbackRate: playbackSpeed,
+      onEnded: () => {
+        console.log("[Commentary] Finished playing");
         setIsPlayingCommentary(false);
         playingCommentaryRef.current = false;
         setCommentaryText(null);
+        if (url) URL.revokeObjectURL(url);
         onComplete();
-      }, 10000);
-
-      const playOnInteraction = async () => {
-        clearTimeout(autoSkipTimeout);
-        try {
-          await audio.play();
-          setIsPlayingCommentary(true);
-          playingCommentaryRef.current = true;
-          console.log("[Commentary] Audio playing after user interaction");
-          document.body.removeEventListener('click', playOnInteraction);
-          document.body.removeEventListener('touchstart', playOnInteraction);
-        } catch (err) {
-          console.error("[Commentary] Play still failed:", err);
-          audio.onended = null;
-          audio.ontimeupdate = null;
-          audio.onerror = null;
-          audioRef.current = null;
-          setIsPlayingCommentary(false);
-          playingCommentaryRef.current = false;
-          setCommentaryText(null);
-          toast.error("Commentary playback failed, continuing", { duration: 2000 });
-          onComplete();
-        }
-      };
-
-      document.body.addEventListener('click', playOnInteraction, { once: true });
-      document.body.addEventListener('touchstart', playOnInteraction, { once: true });
+      },
+      onError: (e) => {
+        console.error("[Commentary] Audio error:", e);
+        setIsPlayingCommentary(false);
+        playingCommentaryRef.current = false;
+        setCommentaryText(null);
+        toast.error("Commentary playback error, continuing", { duration: 2000 });
+        onComplete();
+      }
+    });
+    
+    if (!playSuccess) {
+      console.warn("[Commentary] Play blocked, user may need to interact first");
+      // With persistent audio, this should be rare after initial unlock
       toast.info('Tap anywhere to start commentary audio');
     }
   }, [generateTTS, isMuted, volume, currentSequence]);
@@ -1193,57 +1110,29 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         setIsPlayingCommentary(true);
         playingCommentaryRef.current = true;
         
-        const audio = new Audio(cached.audioUrl);
-        // Use refs for volume to avoid stale closures on mobile
-        audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
-        console.log('[ChapterComplete] Audio created with volume:', audio.volume);
-        // Apply playback speed from sequence
         const playbackSpeed = currentSeq?.playbackSpeed || 1;
-        audio.playbackRate = playbackSpeed;
-        audioRef.current = audio;
         
-          // Critical: Prevent double-triggering, but allow replay
-          let hasEnded = false;
-          audio.onseeked = () => { hasEnded = false; };
-          audio.onended = () => {
-            if (hasEnded) return;
-            hasEnded = true;
-            audioRef.current = null;
+        playAudioUrl(cached.audioUrl, {
+          volume: isMutedRef.current ? 0 : volumeRef.current / 100,
+          playbackRate: playbackSpeed,
+          onEnded: () => {
+            console.log("[ChapterComplete] Audio ended");
             setIsPlayingCommentary(false);
             playingCommentaryRef.current = false;
             setCommentaryText(null);
             moveToNextChapter();
-          };
-        
-        audio.onerror = () => {
-          audioRef.current = null;
-          setIsPlayingCommentary(false);
-          playingCommentaryRef.current = false;
-          setCommentaryText(null);
-          moveToNextChapter();
-        };
-        
-        audio.play().catch((e) => {
-          console.warn("[ChapterComplete] Play blocked, waiting for user interaction:", e);
-          
-          const playOnInteraction = async () => {
-            try {
-              await audio.play();
-              document.removeEventListener('touchstart', playOnInteraction);
-              document.removeEventListener('click', playOnInteraction);
-            } catch (retryError) {
-              console.error("[ChapterComplete] Retry play failed:", retryError);
-              setIsPlayingCommentary(false);
-              playingCommentaryRef.current = false;
-              setCommentaryText(null);
-              moveToNextChapter();
-            }
-          };
-          
-          document.addEventListener('touchstart', playOnInteraction, { once: true });
-          document.addEventListener('click', playOnInteraction, { once: true });
-          
-          toast.info("Tap to continue audio", { duration: 3000 });
+          },
+          onError: () => {
+            setIsPlayingCommentary(false);
+            playingCommentaryRef.current = false;
+            setCommentaryText(null);
+            moveToNextChapter();
+          }
+        }).then(success => {
+          if (!success) {
+            console.warn("[ChapterComplete] Play blocked, waiting for interaction");
+            toast.info("Tap to continue audio", { duration: 3000 });
+          }
         });
       } else if (cached?.text) {
         console.log("[ChapterComplete] Using cached chapter commentary text");
@@ -1265,24 +1154,21 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                 playingCommentaryRef.current = true;
                 setIsLoading(false);
                 
-                const audio = new Audio(result.audioUrl);
-                audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
-                audioRef.current = audio;
-                audio.onended = () => {
-                  audioRef.current = null;
-                  setIsPlayingCommentary(false);
-                  playingCommentaryRef.current = false;
-                  setCommentaryText(null);
-                  moveToNextChapter();
-                };
-                audio.onerror = () => {
-                  audioRef.current = null;
-                  setIsPlayingCommentary(false);
-                  playingCommentaryRef.current = false;
-                  setCommentaryText(null);
-                  moveToNextChapter();
-                };
-                audio.play().catch(() => moveToNextChapter());
+                playAudioUrl(result.audioUrl, {
+                  volume: isMutedRef.current ? 0 : volumeRef.current / 100,
+                  onEnded: () => {
+                    setIsPlayingCommentary(false);
+                    playingCommentaryRef.current = false;
+                    setCommentaryText(null);
+                    moveToNextChapter();
+                  },
+                  onError: () => {
+                    setIsPlayingCommentary(false);
+                    playingCommentaryRef.current = false;
+                    setCommentaryText(null);
+                    moveToNextChapter();
+                  }
+                }).catch(() => moveToNextChapter());
               } else {
                 playCommentary(result.text, commentaryVoice, moveToNextChapter);
               }
@@ -1576,28 +1462,25 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             setIsPlayingCommentary(true);
             playingCommentaryRef.current = true;
             
-            const audio = new Audio(result.audioUrl);
-            audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
-            audioRef.current = audio;
-            audio.onended = () => {
-              audioRef.current = null;
-              setIsPlayingCommentary(false);
-              playingCommentaryRef.current = false;
-              setCommentaryText(null);
-              if (continuePlayingRef.current) {
+            playAudioUrl(result.audioUrl, {
+              volume: isMutedRef.current ? 0 : volumeRef.current / 100,
+              onEnded: () => {
+                setIsPlayingCommentary(false);
+                playingCommentaryRef.current = false;
+                setCommentaryText(null);
+                if (continuePlayingRef.current) {
+                  moveToNextChapter();
+                } else {
+                  setIsPlaying(false);
+                }
+              },
+              onError: () => {
+                setIsPlayingCommentary(false);
+                playingCommentaryRef.current = false;
+                setCommentaryText(null);
                 moveToNextChapter();
-              } else {
-                setIsPlaying(false);
               }
-            };
-            audio.onerror = () => {
-              audioRef.current = null;
-              setIsPlayingCommentary(false);
-              playingCommentaryRef.current = false;
-              setCommentaryText(null);
-              moveToNextChapter();
-            };
-            audio.play().catch(() => moveToNextChapter());
+            }).catch(() => moveToNextChapter());
           } else {
             playCommentary(result.text, commentaryVoice, () => {
               // Move to next chapter after commentary
@@ -1938,52 +1821,33 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             }, 500);
           }
           
-          const commentaryAudio = new Audio(cached.audioUrl);
-          // Use refs for volume to avoid stale closures on mobile
-          commentaryAudio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
-          commentaryAudio.preload = 'auto';
           const playbackSpeed = currentSeq?.playbackSpeed || 1;
-          commentaryAudio.playbackRate = playbackSpeed;
-          audioRef.current = commentaryAudio;
           
-          // Mobile-reliable completion handler
-          let commentaryEnded = false;
-          const handleCommentaryComplete = () => {
-            if (commentaryEnded) return;
-            commentaryEnded = true;
-            console.log("[Verse Commentary] Cached audio ended");
-            commentaryAudio.onended = null;
-            commentaryAudio.ontimeupdate = null;
-            audioRef.current = null;
-            setIsPlayingCommentary(false);
-            playingCommentaryRef.current = false;
-            setCommentaryText(null);
-            proceedAfterCommentary();
-          };
-          
-          commentaryAudio.onended = handleCommentaryComplete;
-          commentaryAudio.ontimeupdate = () => {
-            if (!commentaryEnded && commentaryAudio.duration > 0 && commentaryAudio.currentTime >= commentaryAudio.duration - 0.1) {
-              handleCommentaryComplete();
+          playAudioUrl(cached.audioUrl, {
+            volume: isMutedRef.current ? 0 : volumeRef.current / 100,
+            playbackRate: playbackSpeed,
+            onEnded: () => {
+              console.log("[Verse Commentary] Cached audio ended");
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
+              proceedAfterCommentary();
+            },
+            onError: () => {
+              console.error("[Verse Commentary] Cached audio error");
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
+              proceedAfterCommentary();
             }
-          };
-          commentaryAudio.onerror = (e) => {
-            console.error("[Verse Commentary] Cached audio error:", e);
-            if (commentaryEnded) return;
-            commentaryEnded = true;
-            audioRef.current = null;
-            setIsPlayingCommentary(false);
-            playingCommentaryRef.current = false;
-            setCommentaryText(null);
-            proceedAfterCommentary();
-          };
-          
-          commentaryAudio.play().catch((e) => {
-            console.error("[Verse Commentary] Cached audio play failed:", e);
-            setIsPlayingCommentary(false);
-            playingCommentaryRef.current = false;
-            setCommentaryText(null);
-            proceedAfterCommentary();
+          }).then(success => {
+            if (!success) {
+              console.error("[Verse Commentary] Cached audio play failed");
+              setIsPlayingCommentary(false);
+              playingCommentaryRef.current = false;
+              setCommentaryText(null);
+              proceedAfterCommentary();
+            }
           });
           return;
         } else if (cached?.text) {
@@ -2063,66 +1927,29 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             setIsPlayingCommentary(true);
             playingCommentaryRef.current = true;
             
-            const chapterCommentaryAudio = new Audio(cached.audioUrl);
-            // Use refs for volume to avoid stale closures on mobile
-            chapterCommentaryAudio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
-            chapterCommentaryAudio.preload = 'auto';
             const playbackSpeed = currentSeq?.playbackSpeed || 1;
-            chapterCommentaryAudio.playbackRate = playbackSpeed;
-            audioRef.current = chapterCommentaryAudio;
             
-            // Mobile-reliable completion handler
-            let chapterCommentaryEnded = false;
-            const handleChapterCommentaryComplete = () => {
-              if (chapterCommentaryEnded) return;
-              chapterCommentaryEnded = true;
-              console.log("[Chapter Commentary] Cached audio ended");
-              chapterCommentaryAudio.onended = null;
-              chapterCommentaryAudio.ontimeupdate = null;
-              audioRef.current = null;
-              setIsPlayingCommentary(false);
-              playingCommentaryRef.current = false;
-              setCommentaryText(null);
-              moveToNextChapter();
-            };
-            
-            chapterCommentaryAudio.onended = handleChapterCommentaryComplete;
-            chapterCommentaryAudio.ontimeupdate = () => {
-              if (!chapterCommentaryEnded && chapterCommentaryAudio.duration > 0 && chapterCommentaryAudio.currentTime >= chapterCommentaryAudio.duration - 0.1) {
-                handleChapterCommentaryComplete();
+            playAudioUrl(cached.audioUrl, {
+              volume: isMutedRef.current ? 0 : volumeRef.current / 100,
+              playbackRate: playbackSpeed,
+              onEnded: () => {
+                console.log("[Chapter Commentary] Cached audio ended");
+                setIsPlayingCommentary(false);
+                playingCommentaryRef.current = false;
+                setCommentaryText(null);
+                moveToNextChapter();
+              },
+              onError: () => {
+                setIsPlayingCommentary(false);
+                playingCommentaryRef.current = false;
+                setCommentaryText(null);
+                moveToNextChapter();
               }
-            };
-            chapterCommentaryAudio.onerror = () => {
-              if (chapterCommentaryEnded) return;
-              chapterCommentaryEnded = true;
-              audioRef.current = null;
-              setIsPlayingCommentary(false);
-              playingCommentaryRef.current = false;
-              setCommentaryText(null);
-              moveToNextChapter();
-            };
-            
-            chapterCommentaryAudio.play().catch((e) => {
-              console.warn("[Chapter Commentary] Play blocked, waiting for user interaction:", e);
-              
-              const playOnInteraction = async () => {
-                try {
-                  await chapterCommentaryAudio.play();
-                  document.removeEventListener('touchstart', playOnInteraction);
-                  document.removeEventListener('click', playOnInteraction);
-                } catch (retryError) {
-                  console.error("[Chapter Commentary] Retry play failed:", retryError);
-                  setIsPlayingCommentary(false);
-                  playingCommentaryRef.current = false;
-                  setCommentaryText(null);
-                  moveToNextChapter();
-                }
-              };
-              
-              document.addEventListener('touchstart', playOnInteraction, { once: true });
-              document.addEventListener('click', playOnInteraction, { once: true });
-              
-              toast.info("Tap to continue audio", { duration: 3000 });
+            }).then(success => {
+              if (!success) {
+                console.warn("[Chapter Commentary] Play blocked, waiting for user interaction");
+                toast.info("Tap to continue audio", { duration: 3000 });
+              }
             });
           } else if (cached?.text) {
             // Have text but no audio
@@ -2143,24 +1970,21 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                     playingCommentaryRef.current = true;
                     setIsLoading(false);
                     
-                    const audio = new Audio(result.audioUrl);
-                    audio.volume = isMutedRef.current ? 0 : volumeRef.current / 100;
-                    audioRef.current = audio;
-                    audio.onended = () => {
-                      audioRef.current = null;
-                      setIsPlayingCommentary(false);
-                      playingCommentaryRef.current = false;
-                      setCommentaryText(null);
-                      moveToNextChapter();
-                    };
-                    audio.onerror = () => {
-                      audioRef.current = null;
-                      setIsPlayingCommentary(false);
-                      playingCommentaryRef.current = false;
-                      setCommentaryText(null);
-                      moveToNextChapter();
-                    };
-                    audio.play().catch(() => moveToNextChapter());
+                    playAudioUrl(result.audioUrl, {
+                      volume: isMutedRef.current ? 0 : volumeRef.current / 100,
+                      onEnded: () => {
+                        setIsPlayingCommentary(false);
+                        playingCommentaryRef.current = false;
+                        setCommentaryText(null);
+                        moveToNextChapter();
+                      },
+                      onError: () => {
+                        setIsPlayingCommentary(false);
+                        playingCommentaryRef.current = false;
+                        setCommentaryText(null);
+                        moveToNextChapter();
+                      }
+                    }).catch(() => moveToNextChapter());
                   } else {
                     playCommentary(result.text, commentaryVoice, moveToNextChapter);
                   }
@@ -2189,7 +2013,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         message: error?.message,
         verseIdx: verseIdx + 1
       });
-      audioRef.current = null;
+      stopAudio();
       isGeneratingRef.current = false;
       
       // Retry logic - try up to 2 times, then fall back to browser TTS
@@ -2229,7 +2053,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       pausedVerseRef.current = { verseIdx, content, voice };
     } catch (e) {
       console.error("[Audio] play() failed:", e);
-      audioRef.current = null;
+      stopAudio();
       isGeneratingRef.current = false;
       
       // Try browser TTS fallback instead of giving up
@@ -2598,11 +2422,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     pendingVerseRef.current = null;
     pausedVerseRef.current = null;
     
-    // Stop HTML Audio
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
+    // Stop HTML Audio using persistent helper (don't null the ref)
+    stopAudio();
     
     // Stop browser speech synthesis
     speechSynthesis.cancel();
@@ -2622,10 +2443,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   const handleSkipNext = () => {
     pendingVerseRef.current = null;
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
+    stopAudio();
     speechSynthesis.cancel();
     browserUtteranceRef.current = null;
     
@@ -2655,10 +2473,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   const handleSkipPrev = () => {
     pendingVerseRef.current = null;
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
+    stopAudio();
     speechSynthesis.cancel();
     browserUtteranceRef.current = null;
     
@@ -2813,10 +2628,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         clearInterval(keepAliveIntervalRef.current);
       }
       continuePlayingRef.current = false;
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
+      stopAudio();
       // Cancel browser speech synthesis on unmount
       speechSynthesis.cancel();
       browserUtteranceRef.current = null;
