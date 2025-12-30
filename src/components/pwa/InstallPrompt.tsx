@@ -58,7 +58,7 @@ export const InstallPrompt = () => {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50"
+        className="fixed bottom-24 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50"
       >
         <Card className="bg-gradient-to-br from-violet-500/15 via-purple-500/10 to-fuchsia-500/15 backdrop-blur-xl border-2 border-violet-500/40 shadow-[0_8px_32px_-4px_rgba(139,92,246,0.5),0_0_0_1px_rgba(255,255,255,0.1)_inset] rounded-2xl">
           <CardContent className="p-4 relative">

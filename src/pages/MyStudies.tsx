@@ -364,13 +364,13 @@ const [sortOption, setSortOption] = useState<SortOption>("updated");
       )}
 
       {/* Spark Settings */}
-      <div className="fixed bottom-4 right-4 z-40">
+      <div className="fixed bottom-24 md:bottom-4 right-4 z-40">
         <SparkSettings
           preferences={sparkPreferences}
           onUpdate={updateSparkPreferences}
         />
       </div>
-      
+
       <div className="container mx-auto px-4 py-8 pt-24">
         {/* Header - Glass Card */}
         <Card variant="glass" className="mb-8 p-6">

@@ -657,7 +657,7 @@ const AnalyzeThoughts = () => {
       )}
 
       {/* Spark Settings */}
-      <div className="fixed bottom-4 right-4 z-40">
+      <div className="fixed bottom-24 md:bottom-4 right-4 z-40">
         <SparkSettings
           preferences={sparkPreferences}
           onUpdate={updateSparkPreferences}
