@@ -195,6 +195,7 @@ const PTPalaceTetris = lazy(() => import("./pages/PTPalaceTetris"));
 const SymbolDecoder = lazy(() => import("./pages/games/SymbolDecoder"));
 const BibleTetris = lazy(() => import("./pages/games/BibleTetris"));
 const ChristInFocus = lazy(() => import("./pages/games/ChristInFocus"));
+const EscapeRoom3D = lazy(() => import("./pages/games/EscapeRoom3D"));
 const PublicImageLibrary = lazy(() => import("./pages/PublicImageLibrary"));
 const BibleStudySeriesBuilder = lazy(() => import("./pages/BibleStudySeriesBuilder"));
 const SeriesLessonEditor = lazy(() => import("./pages/SeriesLessonEditor"));
@@ -478,6 +479,7 @@ function App() {
             <Route path="/treasure-hunt/:huntId" element={<ProtectedRoute><TreasureHuntPlay /></ProtectedRoute>} />
             <Route path="/escape-room" element={<ProtectedRoute><EscapeRoom /></ProtectedRoute>} />
             <Route path="/escape-room/play/:roomId" element={<ProtectedRoute><EscapeRoomPlay /></ProtectedRoute>} />
+            <Route path="/escape-room/3d/:roomId" element={<ProtectedRoute><EscapeRoom3D /></ProtectedRoute>} />
             <Route path="/training-drills" element={<ProtectedRoute><TrainingDrills /></ProtectedRoute>} />
             <Route path="/drill-drill" element={<ProtectedRoute><DrillDrill /></ProtectedRoute>} />
             <Route path="/live-study" element={<ProtectedRoute><LiveStudy /></ProtectedRoute>} />
