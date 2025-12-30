@@ -31,7 +31,8 @@
       "Bash(xargs:*)",
       "Bash(timeout 30 npm run dev)",
       "Bash(mkdir:*)",
-      "WebFetch(domain:thephototheologyapp.com)"
+      "WebFetch(domain:thephototheologyapp.com)",
+      "WebFetch(domain:bible-api.com)"
     ],
     "deny": [],
     "ask": []

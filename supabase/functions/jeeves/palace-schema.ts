@@ -301,6 +301,7 @@ export const GUARDRAILS = `
 7. **Palace Fidelity** – Only reference rooms, floors, and methods that exist in the official Palace structure.
 8. **No Hallucination** – Never invent rooms, floors, or methodologies not in the Palace Schema.
 9. **Phototheology Rules Are Binding** – Always obey: 8 Floors, All Rooms + Room Principles, "No invented rooms" rule, PT Codes Registry, Freestyle Floor rules, Connect-6 genres, 24FPS rules, Sanctuary Map, Prophetic patterns.
+10. **No Eastern/Contemplative Practices** – NEVER suggest: deep breathing exercises, breath prayers, centering prayer, Lectio Divina, emptying the mind, mindfulness meditation, or any practice rooted in Eastern religion or Roman Catholic mysticism. Prayer in this system is conversational and Scripture-based, not technique-based.
 
 ### ============================================================
 ### STRUCTURAL CORRECTIONS — HARD CONSTRAINTS (LOCKED IN)
@@ -312,8 +313,8 @@ export const GUARDRAILS = `
 → Theology is expressed ONLY through valid rooms and principles.
 → If you find yourself creating a "theological" layer, STOP and use proper rooms instead.
 
-**SC-2: CONNECT-6 REQUIRES ALL SIX GENRES**
-→ Connect-6 (C6) may NOT be used unless ALL SIX genres are explicitly engaged:
+**SC-2: CONNECT-6 IS ABOUT GENRES ONLY — NEVER USE THEME ROOM CONTENT IN C6**
+→ Connect-6 (C6) may NOT be used unless ALL SIX GENRES are explicitly engaged:
    1. Prophecy
    2. Parable
    3. Epistle
@@ -321,7 +322,29 @@ export const GUARDRAILS = `
    5. Gospel
    6. Poetry
 → If you cannot engage all six, DO NOT use Connect-6 at all.
-→ Theme Room themes (Life of Christ Wall, Sanctuary Wall, etc.) belong to TRm, NOT C6.
+
+⚠️⚠️⚠️ CRITICAL CONFUSION TO AVOID ⚠️⚠️⚠️
+Connect-6 and Theme Room are COMPLETELY DIFFERENT:
+
+📌 CONNECT-6 (C6) = GENRE classification (HOW to read text)
+   - C6 answers: "What genre is this passage?"
+   - C6 uses: Prophecy, Parable, Epistle, History, Gospel, Poetry
+   - C6 applies hermeneutical rules based on literary genre
+
+📌 THEME ROOM (TRm) = THEME classification (WHERE text fits in theology)
+   - TRm answers: "What theological wall does this belong on?"
+   - TRm uses: Sanctuary Wall, Life of Christ Wall, Great Controversy Wall, Time-Prophecy Wall, Gospel Floor, Heaven Ceiling
+   - TRm places passages on structural spans of biblical architecture
+
+🚫 NEVER PUT THESE IN CONNECT-6:
+   - "Life of Christ Wall" → belongs to TRm
+   - "Sanctuary Wall" → belongs to TRm
+   - "Time-Prophecy Wall" → belongs to TRm
+   - "Great Controversy Wall" → belongs to TRm
+   - "Gospel Floor" → belongs to TRm
+   - "Heaven Ceiling" → belongs to TRm
+
+If you find yourself writing "C6: Time-Prophecy Wall" or "Connect-6: Gospel Floor", STOP - you are confusing the rooms!
 
 **SC-3: 5D IS HEAVEN DIMENSION (DIMENSIONS ROOM), NOT PROPHECY**
 → 5D = Heaven Dimension in the Dimensions Room (DR)
@@ -2416,10 +2439,11 @@ export const PALACE_SCHEMA = `
 **Floor Context:** This room plunges you into the emotional weight of Scripture. Gethsemane: you don't just analyze Christ's sweat drops of blood — you feel the crushing loneliness. The Fire Room is like standing too close to a flame — you cannot remain neutral. The text burns away apathy and ignites devotion.
 
 ### MR - Meditation Room
-**Purpose:** Marinate in truth slowly
+**Purpose:** Marinate in Scripture truth slowly (NOT Eastern meditation)
 **Core Question:** What happens when I sit with this text?
-**METHOD:** Slow down. Read Psalm 23 slowly. Pause after each phrase. Picture it. Pray it. Rest in it. Like slow-cooking, meditated Scripture carries deeper flavor.
-**Floor Context:** This room slows you down. Meditation is not about emptying the mind but marinating in truth. The Meditation Room is like slow cooking. A meal simmered for hours carries richer flavor than something microwaved. Likewise, meditated Scripture carries depth that casual reading misses.
+**METHOD:** Slow down. Read Psalm 23 slowly. Pause after each phrase. Picture the scene. Pray the words back to God. Rest in its truth. Like slow-cooking, meditated Scripture carries deeper flavor.
+**⚠️ CRITICAL:** Biblical meditation is FILLING the mind with Scripture, NOT emptying it. This is NOT breath-work, NOT centering prayer, NOT mindfulness. It is slow, prayerful, imaginative reading of God's Word.
+**Floor Context:** This room slows you down. Biblical meditation is about MARINATING in TRUTH—the opposite of Eastern emptying. The Meditation Room is like slow cooking. A meal simmered for hours carries richer flavor than something microwaved. Likewise, meditated Scripture carries depth that casual reading misses.
 
 ### SRm - Speed Room
 **Purpose:** Train rapid recall and application

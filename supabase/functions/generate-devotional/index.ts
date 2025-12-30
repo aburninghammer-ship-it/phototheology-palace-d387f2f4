@@ -143,9 +143,9 @@ const CADE_ISSUE_GUIDANCE: Record<string, { sanctuary: Record<string, string>; h
       "Peter began to sink when he took his eyes off Jesus (Matthew 14:30) - the key is where we focus."
     ],
     actionSteps: [
-      "Breath prayer: Inhale 'Fear not,' exhale 'I am with you'",
+      "Claim a promise: Memorize a specific 'Fear not' verse to speak aloud when anxiety rises",
       "Scripture reframing: When a fearful thought comes, counter it with a specific Bible verse",
-      "Physical grounding: Feel your feet on the floor, remind yourself you are safe in this moment",
+      "Prayer journal: Write out your fears before God, then write His promises back to yourself",
       "Name the fear specifically - vague fears are harder to fight than named ones"
     ]
   }

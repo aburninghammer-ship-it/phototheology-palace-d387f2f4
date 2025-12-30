@@ -35,11 +35,31 @@ function normalizeBookName(book: string): string {
   return bookMap[normalized] || book;
 }
 
+// Single-chapter books in the Bible (need special handling for bible-api.com)
+const SINGLE_CHAPTER_BOOKS: Record<string, number> = {
+  'obadiah': 21,
+  'philemon': 25,
+  '2 john': 13,
+  '3 john': 14,
+  'jude': 25,
+};
+
 // Primary API: bible-api.com
 async function fetchFromBibleApi(book: string, chapter: number, version: string): Promise<Response> {
   const normalizedBook = normalizeBookName(book);
-  // In URL paths, "+" is literal; bible-api.com expects a space between book and chapter.
-  const reference = `${normalizedBook} ${chapter}`;
+  const normalizedLower = book.toLowerCase().trim();
+
+  // For single-chapter books, bible-api.com interprets "Book 1" as "Book 1:1" (just verse 1)
+  // We need to specify a verse range to get all verses: "Book 1:1-25"
+  let reference: string;
+  if (SINGLE_CHAPTER_BOOKS[normalizedLower] && chapter === 1) {
+    const verseCount = SINGLE_CHAPTER_BOOKS[normalizedLower];
+    reference = `${normalizedBook} 1:1-${verseCount}`;
+    console.log(`[Primary API] Single-chapter book detected, using range: ${reference}`);
+  } else {
+    reference = `${normalizedBook} ${chapter}`;
+  }
+
   const url = `https://bible-api.com/${encodeURIComponent(reference)}?translation=${version}`;
   console.log(`[Primary API] Fetching: ${url}`);
   return fetch(url, {

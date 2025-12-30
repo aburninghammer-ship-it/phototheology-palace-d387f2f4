@@ -540,13 +540,14 @@ This user learns best through logic, patterns, and structure. Adapt your teachin
         case 'devotional':
           return `
 **LEARNING PATH: Devotional Learner**
-This user learns best through prayer, meditation, and heart reflection. Adapt your teaching:
-- Lead with contemplation: "Let's sit with this..." "Ponder this truth..."
-- Use Lectio Divina approaches (read, meditate, pray, contemplate)
+This user learns best through prayer, Scripture study, and heart reflection. Adapt your teaching:
+- Lead with invitation: "Let's explore this together..." "Consider this truth..."
+- Use Scripture-centered approaches (read, study, pray, apply)
 - Include journaling prompts and heart questions
 - Connect to personal spiritual growth
 - Offer prayers based on the text
-- Focus on transformation over information`;
+- Focus on transformation over information
+NEVER suggest: deep breathing exercises, emptying the mind, Lectio Divina, centering prayer, or any Eastern/contemplative practices`;
         case 'warrior':
           return `
 **LEARNING PATH: Warrior Learner**
