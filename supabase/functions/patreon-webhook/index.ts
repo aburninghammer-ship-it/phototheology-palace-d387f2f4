@@ -1,0 +1,194 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createHmac } from "https://deno.land/std@0.168.0/crypto/mod.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-patreon-signature, x-patreon-event",
+};
+
+// Minimum pledge for premium access: $20/month = 2000 cents
+const MINIMUM_PLEDGE_CENTS = 2000;
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const webhookSecret = Deno.env.get("PATREON_WEBHOOK_SECRET");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!webhookSecret) {
+      console.error("PATREON_WEBHOOK_SECRET not configured");
+      throw new Error("Webhook secret not configured");
+    }
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error("Supabase credentials not configured");
+    }
+
+    // Get the raw body for signature verification
+    const rawBody = await req.text();
+    const signature = req.headers.get("x-patreon-signature");
+    const eventType = req.headers.get("x-patreon-event");
+
+    console.log("Received Patreon webhook:", eventType);
+
+    // Verify signature (MD5 HMAC)
+    if (signature) {
+      const encoder = new TextEncoder();
+      const key = encoder.encode(webhookSecret);
+      const data = encoder.encode(rawBody);
+
+      // Patreon uses MD5 HMAC
+      const hmac = createHmac("md5", key);
+      hmac.update(data);
+      const expectedSignature = hmac.digest("hex");
+
+      if (signature !== expectedSignature) {
+        console.error("Invalid webhook signature");
+        return new Response(JSON.stringify({ error: "Invalid signature" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    const payload = JSON.parse(rawBody);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Extract member data from webhook payload
+    const memberData = payload.data;
+    const attributes = memberData?.attributes || {};
+    const relationships = memberData?.relationships || {};
+
+    // Get the user from included data
+    const included = payload.included || [];
+    const userData = included.find((item: any) => item.type === "user");
+    const patreonUserId = userData?.id || relationships?.user?.data?.id;
+    const patreonEmail = userData?.attributes?.email;
+
+    console.log("Processing webhook for Patreon user:", patreonUserId, "Event:", eventType);
+
+    // Get pledge info
+    const patronStatus = attributes.patron_status;
+    const entitledCents = attributes.currently_entitled_amount_cents || 0;
+    const willPayCents = attributes.will_pay_amount_cents || 0;
+    const lastChargeStatus = attributes.last_charge_status;
+    const pledgeAmount = Math.max(entitledCents, willPayCents);
+
+    // Determine if still active patron with minimum pledge
+    const isActivePatron =
+      patronStatus === "active_patron" ||
+      (lastChargeStatus === "Paid" && pledgeAmount > 0) ||
+      willPayCents > 0;
+
+    const meetsMinimumPledge = pledgeAmount >= MINIMUM_PLEDGE_CENTS;
+    const hasAccess = isActivePatron && meetsMinimumPledge;
+
+    console.log("Patron status:", {
+      patronStatus,
+      entitledCents,
+      willPayCents,
+      isActivePatron,
+      meetsMinimumPledge,
+      hasAccess
+    });
+
+    // Find the user in our database by Patreon user ID
+    const { data: connection, error: findError } = await supabase
+      .from("patreon_connections")
+      .select("user_id")
+      .eq("patreon_user_id", patreonUserId)
+      .single();
+
+    if (findError || !connection) {
+      // Try finding by email if we have it
+      if (patreonEmail) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("email", patreonEmail)
+          .single();
+
+        if (profile) {
+          // Create/update the connection
+          await supabase.from("patreon_connections").upsert({
+            user_id: profile.id,
+            patreon_user_id: patreonUserId,
+            patreon_email: patreonEmail,
+            is_active_patron: isActivePatron,
+            entitled_cents: pledgeAmount,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "user_id" });
+
+          // Update profile subscription
+          await updateUserAccess(supabase, profile.id, hasAccess, pledgeAmount);
+        }
+      }
+
+      console.log("No existing connection found for Patreon user:", patreonUserId);
+      return new Response(JSON.stringify({ success: true, message: "No matching user found" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = connection.user_id;
+
+    // Update the Patreon connection
+    await supabase.from("patreon_connections").update({
+      is_active_patron: isActivePatron,
+      entitled_cents: pledgeAmount,
+      updated_at: new Date().toISOString(),
+    }).eq("user_id", userId);
+
+    // Update user access based on new status
+    await updateUserAccess(supabase, userId, hasAccess, pledgeAmount);
+
+    console.log("Successfully processed webhook for user:", userId);
+
+    return new Response(
+      JSON.stringify({ success: true, userId, hasAccess }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (error: unknown) {
+    console.error("Patreon webhook error:", error);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return new Response(
+      JSON.stringify({ error: message }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});
+
+async function updateUserAccess(supabase: any, userId: string, hasAccess: boolean, pledgeAmount: number) {
+  if (hasAccess) {
+    // Grant/maintain premium access
+    await supabase.from("profiles").update({
+      subscription_tier: "premium",
+      subscription_status: "active",
+      payment_source: "patreon",
+      updated_at: new Date().toISOString(),
+    }).eq("id", userId);
+    console.log("Granted/maintained premium access for user:", userId);
+  } else {
+    // Check current status - only downgrade if they were using Patreon
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("payment_source, subscription_tier")
+      .eq("id", userId)
+      .single();
+
+    if (profile?.payment_source === "patreon") {
+      // Revoke access - they were on Patreon and no longer qualify
+      await supabase.from("profiles").update({
+        subscription_tier: "free",
+        subscription_status: pledgeAmount > 0 ? "active" : "cancelled",
+        updated_at: new Date().toISOString(),
+      }).eq("id", userId);
+      console.log("Revoked premium access for user:", userId, "- pledge dropped below minimum");
+    }
+  }
+}
