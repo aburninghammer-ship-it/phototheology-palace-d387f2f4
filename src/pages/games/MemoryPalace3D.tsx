@@ -63,8 +63,8 @@ function Room3D({ location, roomIndex, isActive, isVisited, showVerse, totalRoom
 
   return (
     <group ref={groupRef} position={[x, 0, z]}>
-      {/* Room platform */}
-      <Cylinder args={[2, 2.2, 0.3, 8]} position={[0, 0.15, 0]}>
+      {/* Room platform - thicker and more substantial */}
+      <Cylinder args={[2, 2.3, 0.5, 8]} position={[0, 0.25, 0]}>
         <meshStandardMaterial
           color={getBaseColor()}
           roughness={0.5}
@@ -73,19 +73,28 @@ function Room3D({ location, roomIndex, isActive, isVisited, showVerse, totalRoom
           emissiveIntensity={isActive ? 0.3 : 0}
         />
       </Cylinder>
+      {/* Platform edge trim */}
+      <Cylinder args={[2.05, 2.35, 0.12, 8]} position={[0, 0.06, 0]}>
+        <meshStandardMaterial color="#d4af37" metalness={0.5} roughness={0.4} />
+      </Cylinder>
 
-      {/* Room pillars */}
+      {/* Room pillars - thicker and more proportional */}
       {[0, 1, 2, 3].map((i) => {
         const pillarAngle = (i / 4) * Math.PI * 2;
         const px = Math.sin(pillarAngle) * 1.7;
         const pz = Math.cos(pillarAngle) * 1.7;
         return (
           <group key={i} position={[px, 1.5, pz]}>
-            <Cylinder args={[0.15, 0.18, 2.5, 12]}>
+            {/* Pillar base */}
+            <Cylinder args={[0.25, 0.28, 0.2, 12]} position={[0, -1.15, 0]}>
               <meshStandardMaterial color="#d4af37" metalness={0.6} roughness={0.3} />
             </Cylinder>
-            {/* Pillar cap */}
-            <Box args={[0.4, 0.15, 0.4]} position={[0, 1.3, 0]}>
+            {/* Main pillar shaft - thicker */}
+            <Cylinder args={[0.2, 0.23, 2.3, 12]}>
+              <meshStandardMaterial color="#d4af37" metalness={0.6} roughness={0.3} />
+            </Cylinder>
+            {/* Pillar cap - thicker */}
+            <Box args={[0.5, 0.2, 0.5]} position={[0, 1.25, 0]}>
               <meshStandardMaterial color="#d4af37" metalness={0.6} roughness={0.3} />
             </Box>
           </group>
@@ -112,17 +121,19 @@ function Room3D({ location, roomIndex, isActive, isVisited, showVerse, totalRoom
         </Text>
       </group>
 
-      {/* Floating scroll for the verse */}
+      {/* Floating scroll for the verse - thicker and more visible */}
       {isActive && (
-        <group position={[0, 2.2, 0]}>
-          <Cylinder args={[0.1, 0.1, 0.6, 12]} rotation={[0, 0, Math.PI / 2]}>
+        <group position={[0, 2.4, 0]}>
+          {/* Scroll body */}
+          <Cylinder args={[0.15, 0.15, 0.8, 12]} rotation={[0, 0, Math.PI / 2]}>
             <meshStandardMaterial color="#f5deb3" roughness={0.6} />
           </Cylinder>
-          <Cylinder args={[0.13, 0.13, 0.08, 12]} position={[-0.34, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <meshStandardMaterial color="#8B4513" />
+          {/* Scroll end caps - thicker */}
+          <Cylinder args={[0.2, 0.2, 0.12, 12]} position={[-0.46, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <meshStandardMaterial color="#8B4513" roughness={0.5} />
           </Cylinder>
-          <Cylinder args={[0.13, 0.13, 0.08, 12]} position={[0.34, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <meshStandardMaterial color="#8B4513" />
+          <Cylinder args={[0.2, 0.2, 0.12, 12]} position={[0.46, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <meshStandardMaterial color="#8B4513" roughness={0.5} />
           </Cylinder>
         </group>
       )}
@@ -163,13 +174,17 @@ function CentralMonument({ progress }: { progress: number }) {
 
   return (
     <group ref={monumentRef} position={[0, 0, 0]}>
-      {/* Base */}
-      <Cylinder args={[1.5, 2, 0.5, 8]} position={[0, 0.25, 0]}>
+      {/* Base - thicker and more substantial */}
+      <Cylinder args={[1.8, 2.2, 0.7, 8]} position={[0, 0.35, 0]}>
         <meshStandardMaterial color="#1a1a2e" metalness={0.5} roughness={0.3} />
       </Cylinder>
+      {/* Base decorative ring */}
+      <Cylinder args={[1.9, 2.3, 0.15, 8]} position={[0, 0.08, 0]}>
+        <meshStandardMaterial color="#d4af37" metalness={0.6} roughness={0.3} />
+      </Cylinder>
 
-      {/* Progress pillar */}
-      <Cylinder args={[0.3, 0.3, progress * 4, 16]} position={[0, progress * 2 + 0.5, 0]}>
+      {/* Progress pillar - thicker */}
+      <Cylinder args={[0.5, 0.5, progress * 4, 16]} position={[0, progress * 2 + 0.7, 0]}>
         <meshStandardMaterial
           color="#8b5cf6"
           emissive="#8b5cf6"
@@ -178,11 +193,21 @@ function CentralMonument({ progress }: { progress: number }) {
           opacity={0.8}
         />
       </Cylinder>
+      {/* Inner glow pillar */}
+      <Cylinder args={[0.35, 0.35, progress * 4, 16]} position={[0, progress * 2 + 0.7, 0]}>
+        <meshStandardMaterial
+          color="#a78bfa"
+          emissive="#a78bfa"
+          emissiveIntensity={0.8}
+          transparent
+          opacity={0.6}
+        />
+      </Cylinder>
 
       {/* Crown */}
       {progress >= 1 && (
-        <group position={[0, 4.5, 0]}>
-          <Sphere args={[0.5, 16, 16]}>
+        <group position={[0, 4.7, 0]}>
+          <Sphere args={[0.6, 16, 16]}>
             <meshStandardMaterial
               color="#fbbf24"
               emissive="#fbbf24"

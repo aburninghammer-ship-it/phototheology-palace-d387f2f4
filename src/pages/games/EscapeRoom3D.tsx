@@ -138,22 +138,35 @@ function InteractiveObject({
       case 'lampstand':
         return (
           <group>
-            {/* Base */}
-            <Cylinder args={[0.3, 0.4, 0.1, 16]}>
+            {/* Base - wider and taller */}
+            <Cylinder args={[0.35, 0.45, 0.15, 16]}>
               <meshStandardMaterial color="#FFD700" metalness={0.8} roughness={0.2} />
             </Cylinder>
-            {/* Main stem */}
-            <Cylinder args={[0.05, 0.05, 1.5, 8]} position={[0, 0.8, 0]}>
+            {/* Base ring decoration */}
+            <Cylinder args={[0.38, 0.38, 0.05, 16]} position={[0, 0.1, 0]}>
+              <meshStandardMaterial color="#DAA520" metalness={0.7} roughness={0.3} />
+            </Cylinder>
+            {/* Main stem - thicker and more proportional */}
+            <Cylinder args={[0.1, 0.12, 1.5, 12]} position={[0, 0.8, 0]}>
               <meshStandardMaterial color="#FFD700" metalness={0.8} roughness={0.2} />
             </Cylinder>
-            {/* Branches - simplified menorah */}
+            {/* Stem decorative bulge */}
+            <Sphere args={[0.14, 12, 12]} position={[0, 0.6, 0]}>
+              <meshStandardMaterial color="#FFD700" metalness={0.8} roughness={0.2} />
+            </Sphere>
+            {/* Branches - simplified menorah with holders */}
             {[-0.4, -0.2, 0, 0.2, 0.4].map((x, i) => (
               <group key={i}>
-                <Sphere args={[0.08, 16, 16]} position={[x, 1.5, 0]}>
+                {/* Lamp holder cup */}
+                <Cylinder args={[0.1, 0.08, 0.08, 12]} position={[x, 1.45, 0]}>
+                  <meshStandardMaterial color="#FFD700" metalness={0.8} roughness={0.2} />
+                </Cylinder>
+                {/* Lamp flame bowl */}
+                <Sphere args={[0.1, 16, 16]} position={[x, 1.55, 0]}>
                   <meshStandardMaterial color={getObjectColor()} emissive={isSolved ? "#ffaa00" : "#000"} emissiveIntensity={isSolved ? 0.5 : 0} />
                 </Sphere>
                 {isSolved && (
-                  <pointLight position={[x, 1.6, 0]} color="#ffaa00" intensity={0.5} distance={2} />
+                  <pointLight position={[x, 1.7, 0]} color="#ffaa00" intensity={0.5} distance={2} />
                 )}
               </group>
             ))}

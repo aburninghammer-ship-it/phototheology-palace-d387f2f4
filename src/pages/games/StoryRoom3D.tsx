@@ -232,16 +232,16 @@ function LibraryEnvironment() {
           {/* Shelf dividers */}
           {[0, 1, 2, 3, 4].map((shelf) => (
             <mesh key={shelf} position={[0, shelf * 1.5 - 3, 0.1]}>
-              <boxGeometry args={[2.6, 0.1, 0.9]} />
+              <boxGeometry args={[2.6, 0.12, 0.9]} />
               <meshStandardMaterial color="#3d2817" />
             </mesh>
           ))}
-          {/* Books on each shelf */}
+          {/* Books on each shelf - properly spaced */}
           {[0, 1, 2, 3, 4].map((shelf) => (
             <group key={shelf} position={[0, shelf * 1.5 - 2.3, 0.2]}>
-              {[-1, -0.65, -0.3, 0.05, 0.4, 0.75, 1.1].map((bx, bi) => (
-                <mesh key={bi} position={[bx, Math.random() * 0.1, 0]} rotation={[0, 0, (Math.random() - 0.5) * 0.1]}>
-                  <boxGeometry args={[0.25 + Math.random() * 0.1, 0.8 + Math.random() * 0.3, 0.35]} />
+              {[-1.05, -0.7, -0.35, 0, 0.35, 0.7, 1.05].map((bx, bi) => (
+                <mesh key={bi} position={[bx, 0, 0]} rotation={[0, 0, (bi % 3 - 1) * 0.03]}>
+                  <boxGeometry args={[0.28, 0.85 + (bi % 3) * 0.15, 0.4]} />
                   <meshStandardMaterial color={bookColors[(i + bi + shelf) % bookColors.length]} roughness={0.8} />
                 </mesh>
               ))}
@@ -259,9 +259,9 @@ function LibraryEnvironment() {
           </mesh>
           {[0, 1, 2, 3].map((shelf) => (
             <group key={shelf} position={[0, shelf * 1.5 - 2, 0.2]}>
-              {[-0.8, -0.4, 0, 0.4, 0.8].map((bx, bi) => (
-                <mesh key={bi} position={[bx, 0, 0]}>
-                  <boxGeometry args={[0.3, 0.7 + Math.random() * 0.2, 0.35]} />
+              {[-0.9, -0.45, 0, 0.45, 0.9].map((bx, bi) => (
+                <mesh key={bi} position={[bx, 0, 0]} rotation={[0, 0, (bi % 2 - 0.5) * 0.02]}>
+                  <boxGeometry args={[0.35, 0.75 + (bi % 2) * 0.2, 0.38]} />
                   <meshStandardMaterial color={bookColors[(i + bi + shelf + 3) % bookColors.length]} />
                 </mesh>
               ))}
@@ -279,9 +279,9 @@ function LibraryEnvironment() {
           </mesh>
           {[0, 1, 2, 3].map((shelf) => (
             <group key={shelf} position={[0, shelf * 1.5 - 2, 0.2]}>
-              {[-0.8, -0.4, 0, 0.4, 0.8].map((bx, bi) => (
-                <mesh key={bi} position={[bx, 0, 0]}>
-                  <boxGeometry args={[0.3, 0.7 + Math.random() * 0.2, 0.35]} />
+              {[-0.9, -0.45, 0, 0.45, 0.9].map((bx, bi) => (
+                <mesh key={bi} position={[bx, 0, 0]} rotation={[0, 0, (bi % 2 - 0.5) * 0.02]}>
+                  <boxGeometry args={[0.35, 0.75 + (bi % 2) * 0.2, 0.38]} />
                   <meshStandardMaterial color={bookColors[(i + bi + shelf + 5) % bookColors.length]} />
                 </mesh>
               ))}
@@ -297,28 +297,33 @@ function LibraryEnvironment() {
       </mesh>
       {/* Stage edge trim */}
       <mesh position={[0, 0.35, -1.05]}>
-        <boxGeometry args={[16, 0.1, 0.1]} />
+        <boxGeometry args={[16, 0.15, 0.2]} />
         <meshStandardMaterial color="#8B7355" metalness={0.3} />
       </mesh>
 
       {/* Reading tables on sides */}
       {[[-7, 0.6, 4], [7, 0.6, 4]].map((pos, i) => (
         <group key={i} position={pos as [number, number, number]}>
+          {/* Table top */}
           <mesh castShadow>
-            <boxGeometry args={[2, 0.1, 1.2]} />
+            <boxGeometry args={[2.2, 0.15, 1.4]} />
             <meshStandardMaterial color="#5c4033" roughness={0.6} />
           </mesh>
-          {/* Table legs */}
-          {[[-0.8, -0.35, 0.4], [0.8, -0.35, 0.4], [-0.8, -0.35, -0.4], [0.8, -0.35, -0.4]].map((legPos, li) => (
+          {/* Table legs - thicker and sturdier */}
+          {[[-0.9, -0.4, 0.5], [0.9, -0.4, 0.5], [-0.9, -0.4, -0.5], [0.9, -0.4, -0.5]].map((legPos, li) => (
             <mesh key={li} position={legPos as [number, number, number]}>
-              <boxGeometry args={[0.08, 0.6, 0.08]} />
+              <boxGeometry args={[0.15, 0.7, 0.15]} />
               <meshStandardMaterial color="#4a3020" />
             </mesh>
           ))}
-          {/* Books on table */}
-          <mesh position={[0.3, 0.15, 0]}>
-            <boxGeometry args={[0.5, 0.15, 0.35]} />
+          {/* Books on table - stacked */}
+          <mesh position={[0.3, 0.18, 0]}>
+            <boxGeometry args={[0.5, 0.12, 0.35]} />
             <meshStandardMaterial color="#8B4513" />
+          </mesh>
+          <mesh position={[0.25, 0.32, 0.05]} rotation={[0, 0.1, 0]}>
+            <boxGeometry args={[0.45, 0.1, 0.32]} />
+            <meshStandardMaterial color="#654321" />
           </mesh>
         </group>
       ))}
@@ -334,26 +339,42 @@ function LibraryEnvironment() {
 
       {/* Grand Chandelier */}
       <group position={[0, 8.5, 0]}>
-        {/* Chain */}
+        {/* Chain - thicker and more substantial */}
         <mesh position={[0, 0.8, 0]}>
-          <cylinderGeometry args={[0.05, 0.05, 1.5]} />
+          <cylinderGeometry args={[0.12, 0.12, 1.5]} />
           <meshStandardMaterial color="#8B7355" metalness={0.7} />
         </mesh>
-        {/* Main ring */}
+        {/* Chain mount at ceiling */}
+        <mesh position={[0, 1.55, 0]}>
+          <cylinderGeometry args={[0.2, 0.18, 0.15]} />
+          <meshStandardMaterial color="#8B7355" metalness={0.6} />
+        </mesh>
+        {/* Main ring - thicker tube */}
         <mesh>
-          <torusGeometry args={[1.5, 0.1, 16, 32]} />
+          <torusGeometry args={[1.5, 0.18, 16, 32]} />
           <meshStandardMaterial color="#8B7355" metalness={0.6} roughness={0.4} />
         </mesh>
-        {/* Candle holders */}
+        {/* Inner decorative ring */}
+        <mesh position={[0, 0.1, 0]}>
+          <torusGeometry args={[1.2, 0.08, 16, 32]} />
+          <meshStandardMaterial color="#a08050" metalness={0.5} roughness={0.5} />
+        </mesh>
+        {/* Candle holders - thicker and sturdier */}
         {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
           const angle = (i / 8) * Math.PI * 2;
           return (
             <group key={i} position={[Math.cos(angle) * 1.5, -0.2, Math.sin(angle) * 1.5]}>
-              <mesh>
-                <cylinderGeometry args={[0.03, 0.04, 0.15]} />
+              {/* Candle cup */}
+              <mesh position={[0, 0, 0]}>
+                <cylinderGeometry args={[0.1, 0.08, 0.1]} />
+                <meshStandardMaterial color="#8B7355" metalness={0.6} />
+              </mesh>
+              {/* Candle */}
+              <mesh position={[0, 0.12, 0]}>
+                <cylinderGeometry args={[0.06, 0.07, 0.2]} />
                 <meshStandardMaterial color="#f5f5dc" />
               </mesh>
-              <pointLight position={[0, 0.2, 0]} intensity={0.3} distance={6} color="#ffcc88" />
+              <pointLight position={[0, 0.3, 0]} intensity={0.3} distance={6} color="#ffcc88" />
             </group>
           );
         })}

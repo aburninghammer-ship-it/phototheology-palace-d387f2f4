@@ -133,15 +133,15 @@ function TrackEnvironment() {
       </mesh>
 
       {/* Golden track extending into distance */}
-      <mesh position={[0, -0.8, -25]} receiveShadow>
-        <boxGeometry args={[6, 0.2, 50]} />
+      <mesh position={[0, -0.7, -25]} receiveShadow>
+        <boxGeometry args={[6, 0.5, 50]} />
         <meshStandardMaterial color="#daa520" roughness={0.4} metalness={0.6} />
       </mesh>
 
       {/* Track edges/rails */}
-      {[-3.2, 3.2].map((x, i) => (
-        <mesh key={i} position={[x, -0.5, -25]}>
-          <boxGeometry args={[0.3, 0.4, 50]} />
+      {[-3.3, 3.3].map((x, i) => (
+        <mesh key={i} position={[x, -0.35, -25]}>
+          <boxGeometry args={[0.5, 0.6, 50]} />
           <meshStandardMaterial color="#b8860b" roughness={0.5} metalness={0.5} />
         </mesh>
       ))}
@@ -150,17 +150,27 @@ function TrackEnvironment() {
       <group position={[0, 3, 2]}>
         {/* Left pillar */}
         <mesh position={[-4, 0, 0]} castShadow>
-          <cylinderGeometry args={[0.5, 0.6, 8]} />
+          <cylinderGeometry args={[0.6, 0.8, 8]} />
           <meshStandardMaterial color="#daa520" roughness={0.3} metalness={0.8} />
+        </mesh>
+        {/* Left pillar capital */}
+        <mesh position={[-4, 4.2, 0]} castShadow>
+          <boxGeometry args={[1.8, 0.5, 1.8]} />
+          <meshStandardMaterial color="#ffd700" roughness={0.2} metalness={0.9} />
         </mesh>
         {/* Right pillar */}
         <mesh position={[4, 0, 0]} castShadow>
-          <cylinderGeometry args={[0.5, 0.6, 8]} />
+          <cylinderGeometry args={[0.6, 0.8, 8]} />
           <meshStandardMaterial color="#daa520" roughness={0.3} metalness={0.8} />
         </mesh>
+        {/* Right pillar capital */}
+        <mesh position={[4, 4.2, 0]} castShadow>
+          <boxGeometry args={[1.8, 0.5, 1.8]} />
+          <meshStandardMaterial color="#ffd700" roughness={0.2} metalness={0.9} />
+        </mesh>
         {/* Arch top */}
-        <mesh position={[0, 4, 0]} castShadow>
-          <boxGeometry args={[9, 1, 1]} />
+        <mesh position={[0, 4.5, 0]} castShadow>
+          <boxGeometry args={[10, 1.5, 1.5]} />
           <meshStandardMaterial color="#ffd700" roughness={0.2} metalness={0.9} />
         </mesh>
         {/* Gate glow */}
@@ -226,7 +236,7 @@ function WordBlock({ word, position, isCorrect, isTarget, onClick, speed }: Word
         onPointerOut={() => setHovered(false)}
         castShadow
       >
-        <boxGeometry args={[2.5, 1.2, 0.4]} />
+        <boxGeometry args={[2.4, 1.4, 0.6]} />
         <meshStandardMaterial
           color={color}
           roughness={0.3}
@@ -328,33 +338,48 @@ function TimerHourglass({ timeRemaining, totalTime }: { timeRemaining: number; t
   return (
     <group position={[-7, 2, 0]} ref={glassRef}>
       {/* Top bulb */}
-      <mesh position={[0, 1.5, 0]}>
-        <sphereGeometry args={[0.8, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+      <mesh position={[0, 1.8, 0]}>
+        <sphereGeometry args={[1.2, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
         <meshStandardMaterial color="#87ceeb" transparent opacity={0.6} />
       </mesh>
 
       {/* Bottom bulb */}
-      <mesh position={[0, -1.5, 0]} rotation={[Math.PI, 0, 0]}>
-        <sphereGeometry args={[0.8, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+      <mesh position={[0, -1.8, 0]} rotation={[Math.PI, 0, 0]}>
+        <sphereGeometry args={[1.2, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
         <meshStandardMaterial color="#87ceeb" transparent opacity={0.6} />
       </mesh>
 
       {/* Sand remaining (top) */}
-      <mesh position={[0, 1.2 + ratio * 0.3, 0]}>
-        <coneGeometry args={[0.5 * ratio, ratio * 0.8, 16]} />
+      <mesh position={[0, 1.4 + ratio * 0.4, 0]}>
+        <coneGeometry args={[0.7 * ratio, ratio * 1.2, 16]} />
         <meshStandardMaterial color="#daa520" />
       </mesh>
 
       {/* Sand accumulated (bottom) */}
-      <mesh position={[0, -1.8 + (1 - ratio) * 0.3, 0]} rotation={[Math.PI, 0, 0]}>
-        <coneGeometry args={[0.5 * (1 - ratio), (1 - ratio) * 0.8, 16]} />
+      <mesh position={[0, -2.2 + (1 - ratio) * 0.4, 0]} rotation={[Math.PI, 0, 0]}>
+        <coneGeometry args={[0.7 * (1 - ratio), (1 - ratio) * 1.2, 16]} />
         <meshStandardMaterial color="#daa520" />
       </mesh>
 
-      {/* Frame */}
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.1, 0.1, 4]} />
+      {/* Frame - left */}
+      <mesh position={[-0.9, 0, 0]}>
+        <cylinderGeometry args={[0.15, 0.15, 4.5]} />
         <meshStandardMaterial color="#8b4513" />
+      </mesh>
+      {/* Frame - right */}
+      <mesh position={[0.9, 0, 0]}>
+        <cylinderGeometry args={[0.15, 0.15, 4.5]} />
+        <meshStandardMaterial color="#8b4513" />
+      </mesh>
+      {/* Frame - top cap */}
+      <mesh position={[0, 2.25, 0]}>
+        <boxGeometry args={[2.2, 0.3, 0.5]} />
+        <meshStandardMaterial color="#5c3317" />
+      </mesh>
+      {/* Frame - bottom cap */}
+      <mesh position={[0, -2.25, 0]}>
+        <boxGeometry args={[2.2, 0.3, 0.5]} />
+        <meshStandardMaterial color="#5c3317" />
       </mesh>
 
       {/* Time display */}

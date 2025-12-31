@@ -260,10 +260,15 @@ function ActiveFrameParticles({ position, color }: { position: [number, number, 
         color={color}
         opacity={0.8}
       />
-      {/* Glowing ring */}
+      {/* Outer glowing ring - thicker tube */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -5]}>
-        <torusGeometry args={[3.5, 0.05, 16, 64]} />
+        <torusGeometry args={[3.5, 0.15, 16, 64]} />
         <meshBasicMaterial color={color} transparent opacity={0.6} />
+      </mesh>
+      {/* Inner accent ring */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -5]}>
+        <torusGeometry args={[3.2, 0.08, 16, 64]} />
+        <meshBasicMaterial color={color} transparent opacity={0.3} />
       </mesh>
     </group>
   );
@@ -329,25 +334,35 @@ function CameraController({ targetChapter }: { targetChapter: number }) {
 function FilmStrip() {
   return (
     <group>
-      {/* Top rail */}
+      {/* Top rail - thicker and more substantial */}
       <mesh position={[55, 4, -5]}>
-        <boxGeometry args={[130, 0.3, 0.5]} />
+        <boxGeometry args={[130, 0.5, 0.7]} />
         <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.3} />
       </mesh>
-      {/* Bottom rail */}
+      {/* Top rail accent strip */}
+      <mesh position={[55, 3.6, -4.6]}>
+        <boxGeometry args={[130, 0.15, 0.15]} />
+        <meshStandardMaterial color="#333333" metalness={0.6} />
+      </mesh>
+      {/* Bottom rail - thicker */}
       <mesh position={[55, -4, -5]}>
-        <boxGeometry args={[130, 0.3, 0.5]} />
+        <boxGeometry args={[130, 0.5, 0.7]} />
         <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.3} />
       </mesh>
-      {/* Sprocket holes */}
+      {/* Bottom rail accent strip */}
+      <mesh position={[55, -3.6, -4.6]}>
+        <boxGeometry args={[130, 0.15, 0.15]} />
+        <meshStandardMaterial color="#333333" metalness={0.6} />
+      </mesh>
+      {/* Sprocket holes - larger and more visible */}
       {Array.from({ length: 50 }).map((_, i) => (
         <group key={i}>
-          <mesh position={[i * 2.5 - 2, 3.5, -4.7]}>
-            <boxGeometry args={[0.4, 0.6, 0.3]} />
+          <mesh position={[i * 2.5 - 2, 3.5, -4.5]}>
+            <boxGeometry args={[0.5, 0.7, 0.4]} />
             <meshStandardMaterial color="#0a0a0a" />
           </mesh>
-          <mesh position={[i * 2.5 - 2, -3.5, -4.7]}>
-            <boxGeometry args={[0.4, 0.6, 0.3]} />
+          <mesh position={[i * 2.5 - 2, -3.5, -4.5]}>
+            <boxGeometry args={[0.5, 0.7, 0.4]} />
             <meshStandardMaterial color="#0a0a0a" />
           </mesh>
         </group>
