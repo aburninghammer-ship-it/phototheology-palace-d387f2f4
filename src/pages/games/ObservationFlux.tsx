@@ -86,17 +86,39 @@ const ObservationFlux = () => {
   const currentLevel: VerseLevel | undefined = PACK_A.levels[currentLevelIndex];
   const totalLevels = PACK_A.levels.length;
 
-  // Get all verbs including decoys for current difficulty
+  // Shuffle helper
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
+  // Ref to store shuffled blocks for the current level (so they don't re-shuffle mid-game)
+  const shuffledBlocksRef = useRef<VerbBlock[]>([]);
+  const lastLevelRef = useRef<number>(-1);
+
+  // Get all verbs including decoys for current difficulty - SHUFFLED for fair gameplay
   const getAllBlocks = useCallback((): VerbBlock[] => {
     if (!currentLevel) return [];
-    const blocks = [...currentLevel.verbs];
-    if (difficulty.showDecoys && currentLevel.decoyVerbs) {
-      currentLevel.decoyVerbs.forEach(decoy => {
-        blocks.push({ text: decoy, isPhrase: false });
-      });
+
+    // Only re-shuffle when level changes (not on every call)
+    if (lastLevelRef.current !== currentLevelIndex || shuffledBlocksRef.current.length === 0) {
+      const blocks = [...currentLevel.verbs];
+      if (difficulty.showDecoys && currentLevel.decoyVerbs) {
+        currentLevel.decoyVerbs.forEach(decoy => {
+          blocks.push({ text: decoy, isPhrase: false });
+        });
+      }
+      // Shuffle so correct and decoy verbs are mixed together
+      shuffledBlocksRef.current = shuffleArray(blocks);
+      lastLevelRef.current = currentLevelIndex;
     }
-    return blocks;
-  }, [currentLevel, difficulty]);
+
+    return shuffledBlocksRef.current;
+  }, [currentLevel, difficulty, currentLevelIndex]);
 
   // Spawn a new falling block
   const spawnBlock = useCallback(() => {
@@ -181,6 +203,9 @@ const ObservationFlux = () => {
     setWrongClicks(0);
     verbIndexRef.current = 0;
     setScoreSaved(false);
+    // Reset shuffled blocks to force re-shuffle
+    shuffledBlocksRef.current = [];
+    lastLevelRef.current = -1;
   }, []);
 
   // Pause/resume game
@@ -345,6 +370,8 @@ const ObservationFlux = () => {
     setMissedVerbs(0);
     setVerbsSpawned(0);
     verbIndexRef.current = 0;
+    // Reset shuffled blocks to force re-shuffle for new level
+    shuffledBlocksRef.current = [];
     setGameState("playing");
   }, []);
 
@@ -354,6 +381,9 @@ const ObservationFlux = () => {
     setGameState("menu");
     setScore(0);
     setScoreSaved(false);
+    // Reset shuffled blocks
+    shuffledBlocksRef.current = [];
+    lastLevelRef.current = -1;
   }, []);
 
   // Get block style
