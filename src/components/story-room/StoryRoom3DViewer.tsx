@@ -1,17 +1,17 @@
 import { Suspense, useState, useRef, useCallback } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
   Environment, 
   PerspectiveCamera,
   Html,
   Float,
-  Text
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, X, BookOpen, RotateCcw } from 'lucide-react';
+import { BookOpen, RotateCcw, X } from 'lucide-react';
+import { PalaceRoom3D } from '@/components/3d/PalaceRoom3D';
 
 // Bible books organized by section
 const BIBLE_SECTIONS = [
@@ -176,8 +176,14 @@ function Bookshelf({ section, position, selectedBook, onBookSelect }: BookshelfP
         <meshStandardMaterial color="#3d2817" roughness={0.9} />
       </mesh>
 
+      {/* Ornate top trim */}
+      <mesh position={[0, shelves * 1.5 + 0.15, 0]}>
+        <boxGeometry args={[3.4, 0.2, 1.1]} />
+        <meshStandardMaterial color="#DAA520" metalness={0.6} roughness={0.4} />
+      </mesh>
+
       {/* Section label */}
-      <Html position={[0, shelves * 1.5 + 0.3, 0]} center distanceFactor={8}>
+      <Html position={[0, shelves * 1.5 + 0.5, 0]} center distanceFactor={8}>
         <div 
           style={{
             background: section.color,
@@ -186,7 +192,8 @@ function Bookshelf({ section, position, selectedBook, onBookSelect }: BookshelfP
             borderRadius: '4px',
             fontSize: '12px',
             fontWeight: 'bold',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
           }}
         >
           {section.name}
@@ -214,83 +221,63 @@ function Bookshelf({ section, position, selectedBook, onBookSelect }: BookshelfP
   );
 }
 
-// Library environment
-function LibraryRoom() {
-  return (
-    <group>
-      {/* Floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[40, 30]} />
-        <meshStandardMaterial color="#2d1f14" roughness={0.9} />
-      </mesh>
-
-      {/* Back wall */}
-      <mesh position={[0, 6, -12]} receiveShadow>
-        <planeGeometry args={[40, 12]} />
-        <meshStandardMaterial color="#3d2817" roughness={0.8} />
-      </mesh>
-
-      {/* Side walls */}
-      <mesh position={[-20, 6, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-        <planeGeometry args={[24, 12]} />
-        <meshStandardMaterial color="#3d2817" roughness={0.8} />
-      </mesh>
-      <mesh position={[20, 6, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
-        <planeGeometry args={[24, 12]} />
-        <meshStandardMaterial color="#3d2817" roughness={0.8} />
-      </mesh>
-
-      {/* Ceiling */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 12, 0]}>
-        <planeGeometry args={[40, 24]} />
-        <meshStandardMaterial color="#1a1209" />
-      </mesh>
-
-      {/* Central chandelier light */}
-      <pointLight position={[0, 10, 0]} intensity={0.5} color="#ffcc88" distance={30} />
-      
-      {/* Wall sconces */}
-      {[[-18, 5, -10], [18, 5, -10], [-18, 5, 5], [18, 5, 5]].map((pos, i) => (
-        <pointLight 
-          key={i} 
-          position={pos as [number, number, number]} 
-          intensity={0.3} 
-          color="#ff9933" 
-          distance={10}
-        />
-      ))}
-    </group>
-  );
-}
-
 // Reading desk with selected book info
 function ReadingDesk({ book, stories }: { book: string | null; stories: string[] }) {
   if (!book) return null;
 
   return (
     <group position={[0, 0, 5]}>
-      {/* Desk */}
+      {/* Ornate desk */}
       <mesh position={[0, 0.8, 0]} castShadow>
-        <boxGeometry args={[3, 0.1, 2]} />
-        <meshStandardMaterial color="#654321" roughness={0.6} />
+        <boxGeometry args={[3, 0.15, 2]} />
+        <meshStandardMaterial color="#654321" roughness={0.5} />
       </mesh>
-      {/* Legs */}
+      {/* Gold inlay on desk */}
+      <mesh position={[0, 0.81, 0]}>
+        <boxGeometry args={[2.8, 0.01, 1.8]} />
+        <meshStandardMaterial color="#DAA520" metalness={0.7} roughness={0.3} />
+      </mesh>
+      {/* Carved legs */}
       {[[-1.3, 0.4, -0.8], [1.3, 0.4, -0.8], [-1.3, 0.4, 0.8], [1.3, 0.4, 0.8]].map((pos, i) => (
         <mesh key={i} position={pos as [number, number, number]} castShadow>
-          <cylinderGeometry args={[0.05, 0.05, 0.8]} />
+          <cylinderGeometry args={[0.08, 0.06, 0.8, 8]} />
           <meshStandardMaterial color="#654321" />
         </mesh>
       ))}
 
-      {/* Open book */}
+      {/* Open book with gentle float */}
       <Float speed={1} rotationIntensity={0.02}>
         <group position={[0, 1.2, 0]} rotation={[-0.3, 0, 0]}>
           <mesh>
             <boxGeometry args={[2, 0.05, 1.5]} />
             <meshStandardMaterial color="#f5f5dc" />
           </mesh>
+          {/* Book pages texture lines */}
+          {Array.from({ length: 10 }).map((_, i) => (
+            <mesh key={i} position={[0, 0.03, -0.6 + i * 0.12]}>
+              <boxGeometry args={[1.8, 0.01, 0.01]} />
+              <meshStandardMaterial color="#666" />
+            </mesh>
+          ))}
         </group>
       </Float>
+
+      {/* Desk lamp */}
+      <group position={[1.2, 0.9, -0.5]}>
+        <mesh>
+          <cylinderGeometry args={[0.15, 0.2, 0.1, 8]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 0.3, 0]}>
+          <cylinderGeometry args={[0.02, 0.02, 0.5, 8]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 0.55, 0]} rotation={[Math.PI, 0, 0]}>
+          <coneGeometry args={[0.2, 0.15, 8, 1, true]} />
+          <meshStandardMaterial color="#DAA520" side={THREE.DoubleSide} />
+        </mesh>
+        <pointLight position={[0, 0.4, 0]} intensity={0.5} distance={3} color="#ffcc88" />
+      </group>
 
       {/* Book info panel */}
       <Html position={[0, 2.5, 0]} center distanceFactor={6}>
@@ -313,48 +300,72 @@ function ReadingDesk({ book, stories }: { book: string | null; stories: string[]
   );
 }
 
+// Library room contents (bookshelves arranged in semicircle)
+function LibraryContents({ selectedBook, onBookSelect }: {
+  selectedBook: string | null;
+  onBookSelect: (book: string) => void;
+}) {
+  const selectedStories = selectedBook ? (BOOK_STORIES[selectedBook] || ['Explore this book to discover its stories']) : [];
+
+  return (
+    <>
+      {/* Bookshelves arranged in a semicircle against the back wall */}
+      {BIBLE_SECTIONS.map((section, i) => {
+        const angle = (i / (BIBLE_SECTIONS.length - 1)) * Math.PI - Math.PI / 2;
+        const radius = 12;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius - 8;
+        
+        return (
+          <Bookshelf
+            key={section.name}
+            section={section}
+            position={[x, 0, z]}
+            selectedBook={selectedBook}
+            onBookSelect={onBookSelect}
+          />
+        );
+      })}
+
+      {/* Central reading desk */}
+      <ReadingDesk book={selectedBook} stories={selectedStories} />
+
+      {/* Decorative rug */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 2]}>
+        <circleGeometry args={[6, 32]} />
+        <meshStandardMaterial color="#8B0000" roughness={0.9} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 2]}>
+        <ringGeometry args={[4, 5.8, 32]} />
+        <meshStandardMaterial color="#DAA520" roughness={0.9} />
+      </mesh>
+    </>
+  );
+}
+
 interface StoryRoom3DViewerProps {
   onClose?: () => void;
 }
 
 export function StoryRoom3DViewer({ onClose }: StoryRoom3DViewerProps) {
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
-  const [cameraPosition, setCameraPosition] = useState<[number, number, number]>([0, 4, 15]);
 
   const handleBookSelect = useCallback((book: string) => {
     setSelectedBook(book === selectedBook ? null : book);
   }, [selectedBook]);
 
-  const selectedStories = selectedBook ? (BOOK_STORIES[selectedBook] || ['Explore this book to discover its stories']) : [];
-
   return (
     <div className="relative w-full h-[600px] rounded-xl overflow-hidden border border-border">
       <Canvas shadows>
         <Suspense fallback={null}>
-          <PerspectiveCamera makeDefault position={cameraPosition} fov={50} />
+          <PerspectiveCamera makeDefault position={[0, 4, 15]} fov={50} />
           
-          <LibraryRoom />
-          
-          {/* Bookshelves arranged in a semicircle */}
-          {BIBLE_SECTIONS.map((section, i) => {
-            const angle = (i / (BIBLE_SECTIONS.length - 1)) * Math.PI - Math.PI / 2;
-            const radius = 10;
-            const x = Math.cos(angle) * radius;
-            const z = Math.sin(angle) * radius - 5;
-            
-            return (
-              <Bookshelf
-                key={section.name}
-                section={section}
-                position={[x, 0, z]}
-                selectedBook={selectedBook}
-                onBookSelect={handleBookSelect}
-              />
-            );
-          })}
-
-          {/* Reading desk */}
-          <ReadingDesk book={selectedBook} stories={selectedStories} />
+          <PalaceRoom3D theme="library" width={40} height={12} depth={30}>
+            <LibraryContents 
+              selectedBook={selectedBook} 
+              onBookSelect={handleBookSelect} 
+            />
+          </PalaceRoom3D>
           
           <OrbitControls 
             enableZoom={true}
@@ -363,9 +374,9 @@ export function StoryRoom3DViewer({ onClose }: StoryRoom3DViewerProps) {
             maxDistance={25}
             minPolarAngle={Math.PI / 6}
             maxPolarAngle={Math.PI / 2.2}
+            target={[0, 2, 0]}
           />
           <Environment preset="apartment" />
-          <ambientLight intensity={0.2} />
         </Suspense>
       </Canvas>
 
@@ -375,7 +386,7 @@ export function StoryRoom3DViewer({ onClose }: StoryRoom3DViewerProps) {
           <CardContent className="p-4">
             <h3 className="font-bold text-lg flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
-              Story Room Library
+              📖 Story Room Library
             </h3>
             <p className="text-sm text-muted-foreground">
               Click books to explore their stories

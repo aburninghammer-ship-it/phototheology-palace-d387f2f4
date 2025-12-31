@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { X, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { PalaceRoom3D } from "@/components/3d/PalaceRoom3D";
 
 // Prophecy timeline data - key prophetic periods
 const PROPHECY_TIMELINE = [
@@ -14,7 +15,7 @@ const PROPHECY_TIMELINE = [
     years: "605-539 BC",
     symbol: "🦁",
     color: "#FFD700",
-    position: [-12, 0, 0],
+    position: [-10, 0, 0],
     description: "Head of Gold - Nebuchadnezzar's kingdom",
     danielRef: "Daniel 2:37-38",
     duration: 66,
@@ -25,7 +26,7 @@ const PROPHECY_TIMELINE = [
     years: "539-331 BC",
     symbol: "🐻",
     color: "#C0C0C0",
-    position: [-8, 0, 0],
+    position: [-6, 0, 0],
     description: "Chest of Silver - Cyrus conquers Babylon",
     danielRef: "Daniel 2:39, 8:20",
     duration: 208,
@@ -36,7 +37,7 @@ const PROPHECY_TIMELINE = [
     years: "331-168 BC",
     symbol: "🐆",
     color: "#CD7F32",
-    position: [-4, 0, 0],
+    position: [-2, 0, 0],
     description: "Thighs of Bronze - Alexander's swift conquest",
     danielRef: "Daniel 2:39, 8:21",
     duration: 163,
@@ -47,7 +48,7 @@ const PROPHECY_TIMELINE = [
     years: "168 BC - 476 AD",
     symbol: "🦅",
     color: "#4A4A4A",
-    position: [0, 0, 0],
+    position: [2, 0, 0],
     description: "Legs of Iron - The iron monarchy",
     danielRef: "Daniel 2:40",
     duration: 644,
@@ -58,7 +59,7 @@ const PROPHECY_TIMELINE = [
     years: "476 AD - Present",
     symbol: "👑",
     color: "#8B4513",
-    position: [4, 0, 0],
+    position: [6, 0, 0],
     description: "Feet of Iron & Clay - Nations never reunited",
     danielRef: "Daniel 2:41-43",
     duration: 1548,
@@ -69,7 +70,7 @@ const PROPHECY_TIMELINE = [
     years: "Future",
     symbol: "⛰️",
     color: "#00BFFF",
-    position: [8, 0, 0],
+    position: [10, 0, 0],
     description: "The Stone Kingdom - Christ's eternal reign",
     danielRef: "Daniel 2:44-45",
     duration: null,
@@ -86,7 +87,7 @@ function KingdomPillar({ kingdom, isSelected, onClick }: {
   const glowRef = useRef<THREE.Mesh>(null);
   
   // Pillar height based on duration (scaled)
-  const height = kingdom.duration ? Math.min(Math.log(kingdom.duration) * 1.5, 6) : 5;
+  const height = kingdom.duration ? Math.min(Math.log(kingdom.duration) * 1.2, 5) : 4;
   
   useFrame((state) => {
     if (meshRef.current) {
@@ -103,9 +104,19 @@ function KingdomPillar({ kingdom, isSelected, onClick }: {
   
   return (
     <group position={kingdom.position as [number, number, number]}>
+      {/* Pedestal base */}
+      <mesh position={[0, 0.15, 0]} castShadow>
+        <boxGeometry args={[2, 0.3, 2]} />
+        <meshStandardMaterial color="#1a1a2e" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 0.35, 0]} castShadow>
+        <boxGeometry args={[1.8, 0.1, 1.8]} />
+        <meshStandardMaterial color="#DAA520" metalness={0.8} roughness={0.2} />
+      </mesh>
+      
       {/* Glow effect for selected */}
       {isSelected && (
-        <mesh ref={glowRef} position={[0, height / 2, 0]}>
+        <mesh ref={glowRef} position={[0, height / 2 + 0.5, 0]}>
           <cylinderGeometry args={[1.2, 1.2, height + 0.5, 32]} />
           <meshBasicMaterial color={kingdom.color} transparent opacity={0.2} />
         </mesh>
@@ -115,9 +126,10 @@ function KingdomPillar({ kingdom, isSelected, onClick }: {
       <mesh
         ref={meshRef}
         onClick={onClick}
-        position={[0, height / 2, 0]}
+        position={[0, height / 2 + 0.5, 0]}
+        castShadow
       >
-        <cylinderGeometry args={[0.8, 1, height, 8]} />
+        <cylinderGeometry args={[0.7, 0.9, height, 8]} />
         <meshStandardMaterial
           color={kingdom.color}
           metalness={0.6}
@@ -128,8 +140,8 @@ function KingdomPillar({ kingdom, isSelected, onClick }: {
       </mesh>
       
       {/* Top cap */}
-      <mesh position={[0, height + 0.2, 0]}>
-        <cylinderGeometry args={[0.9, 0.8, 0.4, 8]} />
+      <mesh position={[0, height + 0.7, 0]}>
+        <cylinderGeometry args={[0.8, 0.7, 0.4, 8]} />
         <meshStandardMaterial
           color={kingdom.color}
           metalness={0.8}
@@ -139,8 +151,8 @@ function KingdomPillar({ kingdom, isSelected, onClick }: {
       
       {/* Kingdom name */}
       <Text
-        position={[0, height + 1.2, 0]}
-        fontSize={0.5}
+        position={[0, height + 1.5, 0]}
+        fontSize={0.4}
         color="white"
         anchorX="center"
         anchorY="middle"
@@ -152,8 +164,8 @@ function KingdomPillar({ kingdom, isSelected, onClick }: {
       
       {/* Symbol */}
       <Text
-        position={[0, -1, 0]}
-        fontSize={1}
+        position={[0, -0.5, 1.2]}
+        fontSize={0.8}
         anchorX="center"
         anchorY="middle"
       >
@@ -162,8 +174,8 @@ function KingdomPillar({ kingdom, isSelected, onClick }: {
       
       {/* Years */}
       <Text
-        position={[0, -1.8, 0]}
-        fontSize={0.3}
+        position={[0, -1.2, 1.2]}
+        fontSize={0.25}
         color="#aaa"
         anchorX="center"
         anchorY="middle"
@@ -187,8 +199,8 @@ function TimelineBeam() {
   });
   
   return (
-    <mesh ref={beamRef} position={[0, -0.5, 0]} rotation={[0, 0, Math.PI / 2]}>
-      <cylinderGeometry args={[0.1, 0.1, 24, 16]} />
+    <mesh ref={beamRef} position={[0, 0.3, 0]} rotation={[0, 0, Math.PI / 2]}>
+      <cylinderGeometry args={[0.08, 0.08, 24, 16]} />
       <meshStandardMaterial
         color="#4488ff"
         transparent
@@ -205,17 +217,26 @@ function ProphecyScroll({ position, text }: { position: [number, number, number]
   return (
     <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
       <group position={position}>
-        <mesh>
-          <boxGeometry args={[2, 0.1, 0.5]} />
+        <mesh castShadow>
+          <boxGeometry args={[2.5, 0.08, 0.6]} />
           <meshStandardMaterial color="#d4a574" />
         </mesh>
+        {/* Scroll ends */}
+        <mesh position={[-1.3, 0, 0]}>
+          <cylinderGeometry args={[0.08, 0.08, 0.7, 8]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[1.3, 0, 0]}>
+          <cylinderGeometry args={[0.08, 0.08, 0.7, 8]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
         <Text
-          position={[0, 0.1, 0]}
-          fontSize={0.15}
+          position={[0, 0.05, 0]}
+          fontSize={0.12}
           color="#4a3728"
           anchorX="center"
           anchorY="middle"
-          maxWidth={1.8}
+          maxWidth={2.2}
         >
           {text}
         </Text>
@@ -233,7 +254,7 @@ function FallingStone() {
       // Floating and rotating
       stoneRef.current.rotation.x += 0.005;
       stoneRef.current.rotation.y += 0.01;
-      stoneRef.current.position.y = 8 + Math.sin(state.clock.elapsedTime * 0.5) * 0.5;
+      stoneRef.current.position.y = 7 + Math.sin(state.clock.elapsedTime * 0.5) * 0.5;
     }
   });
   
@@ -244,8 +265,8 @@ function FallingStone() {
       color="#00BFFF"
       attenuation={(t) => t * t}
     >
-      <mesh ref={stoneRef} position={[8, 8, 0]}>
-        <dodecahedronGeometry args={[1, 0]} />
+      <mesh ref={stoneRef} position={[10, 7, 0]}>
+        <dodecahedronGeometry args={[0.8, 0]} />
         <meshStandardMaterial
           color="#00BFFF"
           emissive="#00BFFF"
@@ -258,21 +279,20 @@ function FallingStone() {
   );
 }
 
-// Main scene
-function ProphecyScene({ selectedKingdom, onSelectKingdom }: {
+// Oracle room contents
+function OracleContents({ selectedKingdom, onSelectKingdom }: {
   selectedKingdom: string | null;
   onSelectKingdom: (id: string) => void;
 }) {
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[10, 10, 5]} intensity={1} color="#ffffff" />
-      <directionalLight position={[-10, 5, -5]} intensity={0.5} color="#4488ff" />
-      <pointLight position={[0, 10, 0]} intensity={0.5} color="#ffd700" />
+      {/* Extra mystical lighting */}
+      <directionalLight position={[10, 10, 5]} intensity={0.8} color="#ffffff" />
+      <directionalLight position={[-10, 5, -5]} intensity={0.4} color="#4488ff" />
+      <pointLight position={[0, 8, 0]} intensity={0.4} color="#8b5cf6" />
       
-      {/* Stars background */}
-      <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+      {/* Stars visible through mystical ceiling */}
+      <Stars radius={50} depth={30} count={2000} factor={3} saturation={0} fade speed={1} />
       
       {/* Timeline beam */}
       <TimelineBeam />
@@ -291,24 +311,8 @@ function ProphecyScene({ selectedKingdom, onSelectKingdom }: {
       <FallingStone />
       
       {/* Floating scrolls with key verses */}
-      <ProphecyScroll position={[-10, 5, -3]} text="Daniel 2:28 - There is a God in heaven that revealeth secrets" />
-      <ProphecyScroll position={[10, 6, -4]} text="Daniel 2:44 - The God of heaven shall set up a kingdom" />
-      
-      {/* Ground plane */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -3, 0]}>
-        <planeGeometry args={[40, 20]} />
-        <meshStandardMaterial color="#1a1a2e" transparent opacity={0.8} />
-      </mesh>
-      
-      {/* Camera controls */}
-      <OrbitControls
-        enablePan={true}
-        enableZoom={true}
-        enableRotate={true}
-        minDistance={8}
-        maxDistance={35}
-        maxPolarAngle={Math.PI / 2.1}
-      />
+      <ProphecyScroll position={[-8, 6, -8]} text="Daniel 2:28 - There is a God in heaven that revealeth secrets" />
+      <ProphecyScroll position={[8, 6.5, -8]} text="Daniel 2:44 - The God of heaven shall set up a kingdom" />
     </>
   );
 }
@@ -347,7 +351,7 @@ export function Prophecy3DViewer({ onClose }: Prophecy3DViewerProps) {
   };
 
   return (
-    <div className="relative w-full h-[600px] bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900 rounded-xl overflow-hidden">
+    <div className="relative w-full h-[600px] rounded-xl overflow-hidden border border-border">
       {/* Close button */}
       {onClose && (
         <Button
@@ -363,20 +367,29 @@ export function Prophecy3DViewer({ onClose }: Prophecy3DViewerProps) {
       {/* Title */}
       <div className="absolute top-4 left-4 z-20">
         <h3 className="text-xl font-bold text-white drop-shadow-lg">
-          🔮 Daniel's Prophecy Timeline
+          🔮 Prophecy Room - Daniel's Timeline
         </h3>
         <p className="text-sm text-white/70">Click pillars to explore • Drag to rotate</p>
       </div>
       
       {/* 3D Canvas */}
-      <Canvas
-        camera={{ position: [0, 8, 20], fov: 60 }}
-        gl={{ antialias: true }}
-      >
+      <Canvas shadows gl={{ antialias: true }}>
         <Suspense fallback={<LoadingFallback />}>
-          <ProphecyScene
-            selectedKingdom={selectedKingdom}
-            onSelectKingdom={setSelectedKingdom}
+          <PalaceRoom3D theme="oracle" width={35} height={10} depth={25}>
+            <OracleContents
+              selectedKingdom={selectedKingdom}
+              onSelectKingdom={setSelectedKingdom}
+            />
+          </PalaceRoom3D>
+          
+          <OrbitControls
+            enablePan={true}
+            enableZoom={true}
+            enableRotate={true}
+            minDistance={8}
+            maxDistance={28}
+            maxPolarAngle={Math.PI / 2.1}
+            target={[0, 2, 0]}
           />
         </Suspense>
       </Canvas>
@@ -412,7 +425,7 @@ export function Prophecy3DViewer({ onClose }: Prophecy3DViewerProps) {
       )}
       
       {/* Kingdom selector pills */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:bottom-auto md:top-4 md:left-1/2 flex gap-2 z-20 flex-wrap justify-center max-w-md">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:bottom-auto md:top-16 md:left-1/2 flex gap-2 z-20 flex-wrap justify-center max-w-lg">
         {PROPHECY_TIMELINE.map((k) => (
           <button
             key={k.id}
