@@ -19,7 +19,7 @@ import { ActiveGameSessions } from "@/components/games/ActiveGameSessions";
 import { usePreservePageState, usePreserveFormState } from "@/contexts/PageStateContext";
 
 // Games with special badges
-const NEW_GAMES = ["pt_tetris", "symbol_decoder"]; // Completely new games
+const NEW_GAMES = ["pt_tetris", "symbol_decoder", "story_room_3d", "speed_verse_3d"]; // Completely new games
 const RENOVATED_GAMES = ["chain_chess", "escape_room"]; // Rebuilt/improved games
 
 // Bible translations available for games
@@ -81,6 +81,18 @@ const Games = () => {
       route: "/games/story-room"
     },
     {
+      id: "story_room_3d",
+      name: "Story Room 3D",
+      description: "Immersive 3D library experience! Arrange story tablets in an ancient theater to unlock biblical narratives.",
+      icon: "📚",
+      floor: 1,
+      timed: false,
+      rooms: ["SR"],
+      modes: ["solo"],
+      difficulties: ["easy", "medium", "hard"],
+      route: "/games/story-room-3d"
+    },
+    {
       id: "palace_cards",
       name: "Parallels Match",
       description: "Match biblical parallels across Scripture! Discover how events echo each other: Elijah→Elisha, Jonah→Jesus, Passover→Calvary.",
@@ -103,6 +115,18 @@ const Games = () => {
       modes: ["solo", "vs-ai", "2p"],
       difficulties: ["easy", "medium", "hard", "expert"],
       route: "/games/verse_match"
+    },
+    {
+      id: "speed_verse_3d",
+      name: "Speed Verse 3D",
+      description: "Race against time on a celestial track! Click correct words as verse blocks fly toward you on a golden pathway.",
+      icon: "⚡",
+      floor: 1,
+      timed: true,
+      rooms: ["BR"],
+      modes: ["solo"],
+      difficulties: ["easy", "medium", "hard"],
+      route: "/games/speed-verse-3d"
     },
     {
       id: "principle-cards",

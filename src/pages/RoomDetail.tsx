@@ -68,6 +68,7 @@ import { ParallelsLibrary } from "@/components/parallels-room/ParallelsLibrary";
 import { NatureFreestyleLibrary } from "@/components/nature-freestyle/NatureFreestyleLibrary";
 import { HistoricalFreestyleLibrary } from "@/components/historical-freestyle/HistoricalFreestyleLibrary";
 import { GemsLibrary } from "@/components/gems-room/GemsLibrary";
+import { QALibrary } from "@/components/qa-room/QALibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 
 // Room IDs that have quick start guides
@@ -411,7 +412,7 @@ export default function RoomDetail() {
                 {showQuickStart && <QuickStartGuide roomId={room.id} roomName={room.name} />}
 
                 {/* Prominent Library Banner for rooms with libraries */}
-                {hasLibrary(room.id) && !["sr", "st", "24fps", "gr", "cycles", "123h", "math", "jr", "dc", "cr"].includes(room.id) && (
+                {hasLibrary(room.id) && !["sr", "st", "qa", "24fps", "gr", "cycles", "123h", "math", "jr", "dc", "cr"].includes(room.id) && (
                   <LibraryBanner
                     roomId={room.id}
                     onExplore={() => {
@@ -527,6 +528,12 @@ export default function RoomDetail() {
                 {room.id === "st" && (
                   <RoomLibrary roomId="st">
                     <SymbolLibrary />
+                  </RoomLibrary>
+                )}
+
+                {room.id === "qa" && (
+                  <RoomLibrary roomId="qa">
+                    <QALibrary />
                   </RoomLibrary>
                 )}
 

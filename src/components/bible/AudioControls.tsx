@@ -143,21 +143,45 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
   useEffect(() => {
     if (!audioRef.current) {
       const audio = new Audio();
+      let isProcessingEnded = false; // Prevent double-firing
+
       audio.onended = () => {
-        if (!isPlayingRef.current) return;
-        
+        console.log("[AudioControls] onended fired, isPlaying:", isPlayingRef.current, "currentIndex:", currentIndexRef.current);
+
+        if (!isPlayingRef.current) {
+          console.log("[AudioControls] Not playing, ignoring onended");
+          return;
+        }
+
+        // Prevent double-firing
+        if (isProcessingEnded) {
+          console.log("[AudioControls] Already processing onended, ignoring");
+          return;
+        }
+        isProcessingEnded = true;
+
         const nextIndex = currentIndexRef.current + 1;
+        console.log("[AudioControls] Moving to next verse:", nextIndex, "of", versesRef.current.length);
+
         if (nextIndex < versesRef.current.length) {
-          playVerseAtIndexRef.current?.(nextIndex);
+          // Small delay to prevent race conditions
+          setTimeout(() => {
+            isProcessingEnded = false;
+            if (isPlayingRef.current) {
+              playVerseAtIndexRef.current?.(nextIndex);
+            }
+          }, 100);
         } else {
+          isProcessingEnded = false;
           setIsPlaying(false);
           isPlayingRef.current = false;
           notifyTTSStopped();
           toast.success("Finished reading chapter");
         }
       };
-      
+
       audio.onerror = () => {
+        isProcessingEnded = false;
         const mediaError = audio?.error;
         console.error("[Audio] Playback error:", {
           code: mediaError?.code,
@@ -314,14 +338,20 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
   const playVerseAtIndex = useCallback(async (verseIndex: number) => {
     const currentVerses = versesRef.current;
     const audio = audioRef.current;
-    
+
+    console.log("[AudioControls] playVerseAtIndex called with index:", verseIndex, "total verses:", currentVerses.length);
+
     if (verseIndex < 0 || verseIndex >= currentVerses.length || !audio) {
+      console.log("[AudioControls] Invalid index or no audio element, stopping");
       setIsPlaying(false);
       isPlayingRef.current = false;
       return;
     }
 
+    // Update index BEFORE doing anything else
     currentIndexRef.current = verseIndex;
+    console.log("[AudioControls] Set currentIndexRef to:", verseIndex);
+
     const verse = currentVerses[verseIndex];
     setCurrentVerse(verse.verse);
     onVerseHighlight?.(verse.verse);

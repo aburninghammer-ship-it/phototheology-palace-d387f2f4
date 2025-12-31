@@ -183,20 +183,22 @@ const ChainChess = () => {
 
       if (error) throw error;
 
-      // Navigate to game
-      const newUrl = `/games/chain-chess/${newGame.id}${isVsJeeves ? "/jeeves" : ""}`;
-      navigate(newUrl, { replace: true });
-
+      // Update state FIRST
       setGameState(prev => ({
         ...prev,
         status: "in_progress",
         currentTurn: whoStarts === "player" ? "player" : "opponent"
       }));
 
-      // If Jeeves starts, trigger first move
+      // If Jeeves starts, trigger first move BEFORE navigation
       if (whoStarts === "jeeves" && isVsJeeves) {
+        console.log("[ChainChess] Jeeves starts - calling opening move before navigation");
         await jeevesOpeningMove(newGame.id);
       }
+
+      // Navigate to game AFTER Jeeves move completes
+      const newUrl = `/games/chain-chess/${newGame.id}${isVsJeeves ? "/jeeves" : ""}`;
+      navigate(newUrl, { replace: true });
 
     } catch (error: any) {
       toast({
