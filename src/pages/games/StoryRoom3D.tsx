@@ -218,13 +218,15 @@ interface SceneTabletProps {
 
 function SceneTablet({ text, position, isSelected, isPlaced, orderNumber, onClick }: SceneTabletProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
+    if (groupRef.current) {
+      // Floating animation on the group
+      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2 + position[0]) * 0.05;
+    }
     if (meshRef.current) {
-      // Floating animation
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2 + position[0]) * 0.05;
-
       // Scale on hover
       const targetScale = hovered ? 1.1 : 1;
       meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
@@ -234,39 +236,47 @@ function SceneTablet({ text, position, isSelected, isPlaced, orderNumber, onClic
   const color = isPlaced ? "#2d5a27" : isSelected ? "#c9a227" : hovered ? "#6b5b3d" : "#4a3728";
 
   return (
-    <group position={position}>
+    <group ref={groupRef} position={[position[0], position[1], position[2]]}>
+      {/* Clickable mesh - made larger for easier clicking */}
       <mesh
         ref={meshRef}
         onClick={(e) => { e.stopPropagation(); onClick(); }}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
+        onPointerOut={(e) => { e.stopPropagation(); setHovered(false); document.body.style.cursor = 'auto'; }}
         castShadow
       >
-        <boxGeometry args={[2.5, 1.5, 0.15]} />
+        <boxGeometry args={[2.5, 1.5, 0.3]} />
         <meshStandardMaterial color={color} roughness={0.6} />
       </mesh>
 
-      {/* Text on tablet */}
+      {/* Text on tablet - positioned in front and non-interactive */}
       <Html
-        position={[0, 0, 0.1]}
+        position={[0, 0, 0.2]}
         center
         distanceFactor={8}
+        occlude={false}
+        zIndexRange={[0, 0]}
         style={{
           pointerEvents: 'none',
           userSelect: 'none',
         }}
       >
         <div
+          onClick={(e) => { e.stopPropagation(); onClick(); }}
           style={{
-            background: 'rgba(0,0,0,0.7)',
+            background: hovered ? 'rgba(201, 162, 39, 0.9)' : 'rgba(0,0,0,0.8)',
             color: 'white',
-            padding: '8px 16px',
+            padding: '10px 20px',
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: 'bold',
             whiteSpace: 'nowrap',
             maxWidth: '200px',
             textAlign: 'center',
+            cursor: 'pointer',
+            pointerEvents: 'auto',
+            transition: 'all 0.2s ease',
+            border: hovered ? '2px solid #ffd700' : '2px solid transparent',
           }}
         >
           {orderNumber !== undefined && (
@@ -314,7 +324,7 @@ function AnswerSlot({ index, position, scene, onRemove }: AnswerSlotProps) {
       </mesh>
 
       {/* Number marker */}
-      <Html position={[-1.2, 0.2, 0]} center distanceFactor={10}>
+      <Html position={[-1.2, 0.2, 0]} center distanceFactor={10} style={{ pointerEvents: 'none' }}>
         <div
           style={{
             background: '#c9a227',
@@ -327,38 +337,51 @@ function AnswerSlot({ index, position, scene, onRemove }: AnswerSlotProps) {
             justifyContent: 'center',
             fontWeight: 'bold',
             fontSize: '14px',
+            pointerEvents: 'none',
           }}
         >
           {index + 1}
         </div>
       </Html>
 
-      {/* Scene text if filled */}
+      {/* Scene text if filled - clickable to remove */}
       {scene && (
         <group>
           <mesh
             position={[0, 0.5, 0]}
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
-            onPointerOver={() => setHovered(true)}
-            onPointerOut={() => setHovered(false)}
+            onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
+            onPointerOut={(e) => { e.stopPropagation(); setHovered(false); document.body.style.cursor = 'auto'; }}
           >
-            <boxGeometry args={[2.4, 0.8, 0.1]} />
-            <meshStandardMaterial color={hovered ? "#4a8a42" : "#3d6b35"} />
+            <boxGeometry args={[2.4, 0.8, 0.2]} />
+            <meshStandardMaterial color={hovered ? "#5a9a52" : "#3d6b35"} />
           </mesh>
-          <Html position={[0, 0.5, 0.1]} center distanceFactor={10}>
+          <Html
+            position={[0, 0.5, 0.15]}
+            center
+            distanceFactor={10}
+            occlude={false}
+            zIndexRange={[0, 0]}
+            style={{ pointerEvents: 'none' }}
+          >
             <div
+              onClick={(e) => { e.stopPropagation(); onRemove(); }}
               style={{
-                background: 'rgba(0,0,0,0.8)',
+                background: hovered ? 'rgba(255,100,100,0.9)' : 'rgba(0,0,0,0.8)',
                 color: 'white',
-                padding: '4px 12px',
+                padding: '6px 14px',
                 borderRadius: '4px',
                 fontSize: '12px',
                 maxWidth: '180px',
                 textAlign: 'center',
                 cursor: 'pointer',
+                pointerEvents: 'auto',
+                transition: 'all 0.2s ease',
+                border: hovered ? '2px solid #ff6666' : '2px solid transparent',
               }}
             >
               {scene}
+              {hovered && <span style={{ marginLeft: '8px', fontSize: '10px' }}>✕</span>}
             </div>
           </Html>
         </group>
