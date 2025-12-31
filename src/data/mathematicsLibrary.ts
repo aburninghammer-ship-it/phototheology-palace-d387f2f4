@@ -633,3 +633,282 @@ export const prophecyTimeline = [
   { code: "@1260", event: "Papal wound", date: "AD 1798" },
   { code: "@2300", event: "Sanctuary cleansing begins", date: "AD 1844" }
 ];
+
+// ============================================
+// 6×6 SCRIPTURE CONNECTION GRID
+// Time prophecies belong to FUNCTIONS, not books
+// ============================================
+
+export type ScriptureGenre = "torah" | "history" | "wisdom" | "prophets" | "gospels" | "epistles";
+
+export interface ScriptureConnection {
+  reference: string;
+  description?: string;
+}
+
+export interface ProphecyScriptureGrid {
+  code: ProphecyCode;
+  name: string;
+  function: string;
+  keyInsight: string;
+  corridors: Record<ScriptureGenre, ScriptureConnection[]>;
+  whyItFits: string;
+  whyOthersDontFit: string;
+}
+
+export const scriptureConnectionGrid: ProphecyScriptureGrid[] = [
+  {
+    code: "@120",
+    name: "120 Years — Probation Before Judgment",
+    function: "Mercy window before irreversible judgment",
+    keyInsight: "@120 shows up wherever God warns before closing access.",
+    corridors: {
+      torah: [
+        { reference: "Genesis 6–7", description: "Noah's 120 years of warning before the Flood" },
+        { reference: "Numbers 14", description: "Wilderness generation given time to repent" }
+      ],
+      history: [
+        { reference: "Judges cycles", description: "Grace → warning → collapse pattern repeated" },
+        { reference: "1 Samuel 13–15", description: "Saul's probation before rejection" }
+      ],
+      wisdom: [
+        { reference: "Proverbs 29:1", description: "He that being often reproved hardeneth his neck shall suddenly be destroyed" },
+        { reference: "Ecclesiastes 8:11", description: "Because sentence is not executed speedily, hearts are set to do evil" }
+      ],
+      prophets: [
+        { reference: "Jonah 3–4", description: "Nineveh given 40 days of probation" },
+        { reference: "Ezekiel 33", description: "Watchman logic — warn before judgment falls" }
+      ],
+      gospels: [
+        { reference: "Matthew 23–24", description: "Jesus' warnings to Jerusalem before destruction" },
+        { reference: "Luke 13:6-9", description: "Parable of the fig tree — one more year of grace" }
+      ],
+      epistles: [
+        { reference: "Hebrews 3–4", description: "Today, if ye will hear His voice, harden not your hearts" },
+        { reference: "Revelation 2–3", description: "Church probation — repent or face consequences" }
+      ]
+    },
+    whyItFits: "All these texts feature a limited window of mercy before judgment closes. God always warns before acting.",
+    whyOthersDontFit: "Unlike @400 (affliction) or @1260 (suppression), this is about open opportunity, not persecution."
+  },
+  {
+    code: "@400",
+    name: "400 Years — Affliction Before Deliverance",
+    function: "Promise delayed under oppression",
+    keyInsight: "@400 always precedes inheritance.",
+    corridors: {
+      torah: [
+        { reference: "Genesis 15:13", description: "God tells Abraham his seed will be strangers and afflicted 400 years" },
+        { reference: "Exodus 1–12", description: "Israel's bondage in Egypt culminating in deliverance" }
+      ],
+      history: [
+        { reference: "Judges", description: "Cycles of foreign oppression before judges arise" },
+        { reference: "1 Samuel 16 – 2 Samuel 5", description: "David hunted and afflicted before receiving the throne" }
+      ],
+      wisdom: [
+        { reference: "Psalm 105:17-22", description: "Joseph's affliction before exaltation" },
+        { reference: "Psalm 66:10-12", description: "Tried through fire and water, then brought to wealthy place" }
+      ],
+      prophets: [
+        { reference: "Isaiah 40–52", description: "Comfort after bondage — affliction then restoration" },
+        { reference: "Hosea 6:1-2", description: "After two days (affliction period) He will revive us" }
+      ],
+      gospels: [
+        { reference: "Luke 2:25-32", description: "Israel under Rome, waiting for consolation" },
+        { reference: "Matthew 4:1-11", description: "Jesus tempted 40 days before ministry begins" }
+      ],
+      epistles: [
+        { reference: "Acts 7:6-7", description: "Stephen reviews the 400-year affliction pattern" },
+        { reference: "Revelation 12:6,14", description: "Woman (church) persecuted before vindication" }
+      ]
+    },
+    whyItFits: "Every text shows suffering that precedes promised deliverance and inheritance.",
+    whyOthersDontFit: "Unlike @120 (warning period), this is about enduring hardship while awaiting God's promise."
+  },
+  {
+    code: "@70y",
+    name: "70 Years — Captivity → Restoration",
+    function: "Reset of land, people, worship",
+    keyInsight: "@70y governs covenant discipline, not annihilation.",
+    corridors: {
+      torah: [
+        { reference: "Leviticus 26:33-35", description: "Land shall enjoy sabbaths during captivity" },
+        { reference: "Deuteronomy 28–30", description: "Curses of exile, then promise of return when hearts turn" }
+      ],
+      history: [
+        { reference: "2 Kings 24–25", description: "Jerusalem falls, temple destroyed, captivity begins" },
+        { reference: "Ezra–Nehemiah", description: "Return from Babylon, temple and walls rebuilt" }
+      ],
+      wisdom: [
+        { reference: "Lamentations", description: "Grief over destruction, hope in God's faithfulness" },
+        { reference: "Psalm 137", description: "By the rivers of Babylon — exile's sorrow" }
+      ],
+      prophets: [
+        { reference: "Jeremiah 25:11-12", description: "These nations shall serve Babylon 70 years" },
+        { reference: "Daniel 9:2", description: "Daniel understood from Jeremiah the 70 years" }
+      ],
+      gospels: [
+        { reference: "Luke 19:41-44", description: "Jesus weeping over Jerusalem's coming desolation" },
+        { reference: "Matthew 23:37-38", description: "Your house is left unto you desolate" }
+      ],
+      epistles: [
+        { reference: "Hebrews 8–10", description: "Old covenant system becoming obsolete" },
+        { reference: "Revelation 18", description: "Babylon fallen — end of spiritual captivity" }
+      ]
+    },
+    whyItFits: "Each passage involves exile/captivity followed by restoration at God's appointed time.",
+    whyOthersDontFit: "Unlike @1260 (truth suppressed), @70y is restorative discipline — God brings His people back."
+  },
+  {
+    code: "@490",
+    name: "490 Years — Covenant Confirmation (Messiah)",
+    function: "Final probation for covenant people",
+    keyInsight: "@490 is Christ-centered time, not ethnic privilege.",
+    corridors: {
+      torah: [
+        { reference: "Exodus 19–24", description: "Covenant framework established at Sinai" },
+        { reference: "Leviticus 25", description: "Jubilee logic — 7×7 years leading to release" }
+      ],
+      history: [
+        { reference: "Ezra 7", description: "Artaxerxes' decree — starting point of 70 weeks" },
+        { reference: "Nehemiah 2", description: "Jerusalem's walls to be restored — decree confirmed" }
+      ],
+      wisdom: [
+        { reference: "Psalm 40:6-8", description: "I come to do thy will — Messiah's mission" },
+        { reference: "Psalm 110", description: "Priest forever after order of Melchizedek" }
+      ],
+      prophets: [
+        { reference: "Daniel 9:24-27", description: "70 weeks determined upon thy people — the prophecy itself" },
+        { reference: "Isaiah 53", description: "He was cut off out of the land of the living" }
+      ],
+      gospels: [
+        { reference: "Luke 3:1-23", description: "Jesus baptized — ministry begins at 'about 30'" },
+        { reference: "Matthew 15:24", description: "I am not sent but unto the lost sheep of Israel — probation focus" }
+      ],
+      epistles: [
+        { reference: "Hebrews 8–10", description: "New covenant confirmed, old passing away" },
+        { reference: "Acts 7", description: "Stephen's martyrdom — probation closing on nation" }
+      ]
+    },
+    whyItFits: "All texts connect to Messiah's coming, covenant confirmation, and Israel's probationary period.",
+    whyOthersDontFit: "This is specifically about Christ's atoning work and covenant transition, not general judgment patterns."
+  },
+  {
+    code: "@1260",
+    name: "1260 Years — Suppressed Truth Under Counterfeit Authority",
+    function: "Long-term distortion of worship and law",
+    keyInsight: "@1260 always involves authority replacing truth.",
+    corridors: {
+      torah: [
+        { reference: "Numbers 16", description: "Korah rebellion — false priesthood attempting to usurp" },
+        { reference: "Deuteronomy 13", description: "Warnings against prophets who lead away from God's law" }
+      ],
+      history: [
+        { reference: "1 Kings 18–19", description: "Elijah vs Ahab/Jezebel — truth suppressed by state religion" },
+        { reference: "2 Chronicles 24:17-22", description: "Apostasy after Jehoiada dies — truth replaced" }
+      ],
+      wisdom: [
+        { reference: "Psalm 94", description: "How long shall the wicked triumph? — cry against oppression" },
+        { reference: "Psalm 82", description: "God stands in congregation — judges judged" }
+      ],
+      prophets: [
+        { reference: "Daniel 7:25", description: "Speak words against Most High, wear out saints, change times and laws" },
+        { reference: "Daniel 11:31-35", description: "Abomination set up, truth cast down, wise understand" }
+      ],
+      gospels: [
+        { reference: "Matthew 24:15,24", description: "Abomination of desolation, false Christs deceive" },
+        { reference: "Luke 21:24", description: "Jerusalem trodden down until times of Gentiles fulfilled" }
+      ],
+      epistles: [
+        { reference: "2 Thessalonians 2:3-4", description: "Man of sin exalts himself above God in temple" },
+        { reference: "Revelation 12–13", description: "Dragon, beast, 42 months — war on remnant" }
+      ]
+    },
+    whyItFits: "Every passage shows counterfeit authority suppressing truth and persecuting faithful witnesses.",
+    whyOthersDontFit: "Unlike @120 (warning before judgment), @1260 is about enduring through distortion until God vindicates."
+  },
+  {
+    code: "@2300",
+    name: "2300 Years — Cosmic Judgment & Cleansing",
+    function: "Final moral accounting before restoration",
+    keyInsight: "@2300 governs vindication, not fear.",
+    corridors: {
+      torah: [
+        { reference: "Leviticus 16", description: "Day of Atonement — sanctuary cleansed, sins removed" },
+        { reference: "Leviticus 23:27-32", description: "Afflict your souls — judgment day solemnity" }
+      ],
+      history: [
+        { reference: "2 Kings 22–23", description: "Josiah's reforms — discovery of law, cleansing of worship" },
+        { reference: "Ezra 9–10", description: "Covenant renewal — separation from defilement" }
+      ],
+      wisdom: [
+        { reference: "Ecclesiastes 12:14", description: "God shall bring every work into judgment" },
+        { reference: "Psalm 73:16-17", description: "Until I went into the sanctuary — judgment understood" }
+      ],
+      prophets: [
+        { reference: "Daniel 8:14", description: "Unto 2300 days, then shall the sanctuary be cleansed" },
+        { reference: "Daniel 12:1-2", description: "Time of trouble, then deliverance for those in the book" }
+      ],
+      gospels: [
+        { reference: "Matthew 22:11-14", description: "King examines guests — investigative judgment language" },
+        { reference: "Matthew 25:31-46", description: "Separation of sheep and goats — judgment before kingdom" }
+      ],
+      epistles: [
+        { reference: "Hebrews 9:23-28", description: "Heavenly things purified — Christ appears in presence of God" },
+        { reference: "Revelation 14:6-7", description: "Fear God, the hour of His judgment is come" }
+      ]
+    },
+    whyItFits: "All texts deal with final judgment, sanctuary cleansing, and the resolution of the sin problem.",
+    whyOthersDontFit: "This is the culminating judgment phase, not probation (@120) or persecution (@1260)."
+  }
+];
+
+// Helper functions for Scripture Grid
+export const getScriptureGridByCode = (code: ProphecyCode): ProphecyScriptureGrid | undefined => {
+  return scriptureConnectionGrid.find(g => g.code === code);
+};
+
+export const getAllScriptureConnections = (code: ProphecyCode): ScriptureConnection[] => {
+  const grid = getScriptureGridByCode(code);
+  if (!grid) return [];
+  return Object.values(grid.corridors).flat();
+};
+
+export const getConnectionsByGenre = (code: ProphecyCode, genre: ScriptureGenre): ScriptureConnection[] => {
+  const grid = getScriptureGridByCode(code);
+  return grid?.corridors[genre] || [];
+};
+
+export const genreLabels: Record<ScriptureGenre, { name: string; icon: string }> = {
+  torah: { name: "Torah", icon: "📜" },
+  history: { name: "Historical Books", icon: "📚" },
+  wisdom: { name: "Wisdom / Poetry", icon: "💎" },
+  prophets: { name: "Major Prophets", icon: "🔮" },
+  gospels: { name: "Gospels", icon: "✝️" },
+  epistles: { name: "Epistles & Revelation", icon: "📖" }
+};
+
+// Prophecy Function Questions
+export interface ProphecyQuestion {
+  question: string;
+  explanation: string;
+}
+
+export const functionQuestions: ProphecyQuestion[] = [
+  { 
+    question: "Is probation open or closing?", 
+    explanation: "If open → @120 pattern. If closing → @490 or @2300 territory." 
+  },
+  { 
+    question: "Is truth being restored or suppressed?", 
+    explanation: "Suppressed → @1260. Restored → @70y or @2300 cleansing." 
+  },
+  { 
+    question: "Is this before, during, or after judgment?", 
+    explanation: "Before → @120 warning. During → @2300 investigation. After → New creation." 
+  },
+  { 
+    question: "Which time-function explains this best?", 
+    explanation: "Match the pattern: probation, affliction, captivity, covenant, suppression, or judgment." 
+  }
+];

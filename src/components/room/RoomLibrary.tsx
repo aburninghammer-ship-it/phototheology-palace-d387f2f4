@@ -101,7 +101,7 @@ const ROOM_LIBRARIES: Record<string, {
   },
   math: {
     title: "Mathematics Library",
-    description: "6 prophetic time structures and calculations",
+    description: "6 time prophecies with 6×6 Scripture Connection Grid",
     icon: "🔢",
     gradient: "from-blue-600 to-indigo-700"
   },

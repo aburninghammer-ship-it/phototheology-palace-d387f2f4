@@ -70,6 +70,7 @@ import { HistoricalFreestyleLibrary } from "@/components/historical-freestyle/Hi
 import { GemsLibrary } from "@/components/gems-room/GemsLibrary";
 import { QALibrary } from "@/components/qa-room/QALibrary";
 import { FeastsLibrary } from "@/components/feasts-room/FeastsLibrary";
+import { MathematicsLibrary } from "@/components/mathematics-room/MathematicsLibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 
 // Room IDs that have quick start guides
@@ -658,6 +659,13 @@ export default function RoomDetail() {
                 {room.id === "fe" && (
                   <RoomLibrary roomId="fe">
                     <FeastsLibrary />
+                  </RoomLibrary>
+                )}
+
+                {/* Mathematics Room - Time Prophecy Scripture Grid */}
+                {room.id === "math" && (
+                  <RoomLibrary roomId="math">
+                    <MathematicsLibrary />
                   </RoomLibrary>
                 )}
 
