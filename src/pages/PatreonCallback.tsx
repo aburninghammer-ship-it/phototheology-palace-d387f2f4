@@ -62,12 +62,20 @@ export default function PatreonCallback() {
 
         if (fnError) throw fnError;
 
-        if (data.isActivePatron) {
+        if (data.hasAccess) {
+          // Active patron at $20/month or higher
           toast.success(`Welcome, ${data.patreonName}! Your Patron benefits are now active.`);
           navigate("/dashboard");
+        } else if (data.isActivePatron && !data.meetsMinimumPledge) {
+          // Active patron but below $20/month minimum
+          const currentPledge = (data.entitledCents / 100).toFixed(2);
+          const minimumPledge = (data.minimumPledgeCents / 100).toFixed(2);
+          toast.info(`Thanks for your support, ${data.patreonName}! Your current pledge is $${currentPledge}/month. Upgrade to $${minimumPledge}/month on Patreon to unlock full app access.`);
+          navigate("/pricing");
         } else {
-          toast.info("Connected to Patreon, but no active patronage found. Consider becoming a Patron for full access!");
-          navigate("/auth?patreon=true");
+          // Not an active patron
+          toast.info("Connected to Patreon, but no active patronage found. Become a Patron at $20/month for full access!");
+          navigate("/pricing");
         }
       } catch (err) {
         console.error("Patreon callback error:", err);

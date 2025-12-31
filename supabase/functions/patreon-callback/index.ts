@@ -111,12 +111,16 @@ serve(async (req) => {
       0
     );
 
-    console.log("Final determination - isActivePatron:", isActivePatron, "entitledCents:", entitledCents);
+    // Minimum pledge required for premium access: $20/month = 2000 cents
+    const MINIMUM_PLEDGE_CENTS = 2000;
+    const meetsMinimumPledge = entitledCents >= MINIMUM_PLEDGE_CENTS;
+
+    console.log("Final determination - isActivePatron:", isActivePatron, "entitledCents:", entitledCents, "meetsMinimumPledge:", meetsMinimumPledge);
 
     // Store connection in database
     if (userId && supabaseUrl && supabaseServiceKey) {
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
-      
+
       // Encrypt tokens before storing
       const { data: encryptedAccess } = await supabase
         .rpc('encrypt_token', { plain_token: tokens.access_token });
@@ -145,17 +149,20 @@ serve(async (req) => {
         throw new Error("Failed to save Patreon connection");
       }
 
-      // If active patron, grant premium access (use 'premium' as valid tier)
-      if (isActivePatron) {
+      // Only grant premium access if active patron AND meets $20/month minimum
+      if (isActivePatron && meetsMinimumPledge) {
         await supabase
           .from("profiles")
-          .update({ 
+          .update({
             subscription_tier: "premium",
             subscription_status: "active",
+            payment_source: "patreon",
             updated_at: new Date().toISOString()
           })
           .eq("id", userId);
-        console.log("Granted premium access to user:", userId);
+        console.log("Granted premium access to user:", userId, "- pledge:", entitledCents, "cents");
+      } else if (isActivePatron && !meetsMinimumPledge) {
+        console.log("User is patron but below $20/month minimum:", userId, "- pledge:", entitledCents, "cents");
       }
     }
 
@@ -164,6 +171,9 @@ serve(async (req) => {
         success: true,
         isActivePatron,
         entitledCents,
+        meetsMinimumPledge,
+        minimumPledgeCents: MINIMUM_PLEDGE_CENTS,
+        hasAccess: isActivePatron && meetsMinimumPledge,
         patreonName: patreonUser.attributes?.full_name,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
