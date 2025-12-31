@@ -71,6 +71,9 @@ import { GemsLibrary } from "@/components/gems-room/GemsLibrary";
 import { QALibrary } from "@/components/qa-room/QALibrary";
 import { FeastsLibrary } from "@/components/feasts-room/FeastsLibrary";
 import { MathematicsLibrary } from "@/components/mathematics-room/MathematicsLibrary";
+import { SanctuaryLibrary } from "@/components/sanctuary-room/SanctuaryLibrary";
+import { ProphecyLibrary } from "@/components/prophecy-room/ProphecyLibrary";
+import { ThemesLibrary } from "@/components/themes-room/ThemesLibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 
 // Room IDs that have quick start guides
@@ -414,7 +417,7 @@ export default function RoomDetail() {
                 {showQuickStart && <QuickStartGuide roomId={room.id} roomName={room.name} />}
 
                 {/* Prominent Library Banner for rooms with libraries */}
-                {hasLibrary(room.id) && !["sr", "st", "qa", "24fps", "gr", "cycles", "123h", "math", "jr", "dc", "cr"].includes(room.id) && (
+                {hasLibrary(room.id) && !["sr", "st", "qa", "24fps", "gr", "cycles", "123h", "math", "jr", "dc", "cr", "bl", "pr", "trm", "fe"].includes(room.id) && (
                   <LibraryBanner
                     roomId={room.id}
                     onExplore={() => {
@@ -659,6 +662,27 @@ export default function RoomDetail() {
                 {room.id === "fe" && (
                   <RoomLibrary roomId="fe">
                     <FeastsLibrary />
+                  </RoomLibrary>
+                )}
+
+                {/* Blue Room (Sanctuary) - Sanctuary Elements & Symbolism */}
+                {room.id === "bl" && (
+                  <RoomLibrary roomId="bl">
+                    <SanctuaryLibrary />
+                  </RoomLibrary>
+                )}
+
+                {/* Prophecy Room - Biblical Prophecies & Fulfillments */}
+                {room.id === "pr" && (
+                  <RoomLibrary roomId="pr">
+                    <ProphecyLibrary />
+                  </RoomLibrary>
+                )}
+
+                {/* Theme Room - 6 Walls of Biblical Truth */}
+                {room.id === "trm" && (
+                  <RoomLibrary roomId="trm">
+                    <ThemesLibrary />
                   </RoomLibrary>
                 )}
 
