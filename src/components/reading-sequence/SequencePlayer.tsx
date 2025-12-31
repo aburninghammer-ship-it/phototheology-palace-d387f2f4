@@ -785,7 +785,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, [totalItems]);
 
 
-  // Fetch chapter content (with caching)
+  // Fetch chapter content (with caching) - MOBILE-OPTIMIZED with aggressive timeouts
   const fetchChapter = useCallback(async (book: string, chapter: number) => {
     const cacheKey = `${book}-${chapter}`;
 
@@ -795,10 +795,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return chapterCache.current.get(cacheKey)!;
     }
 
-    const timeoutMs = 15000;
+    // MOBILE: Use shorter timeout (10s instead of 15s) to fail faster
+    const timeoutMs = isMobile ? 10000 : 15000;
 
     try {
-      console.log("[Chapter] Fetching from API:", cacheKey);
+      console.log("[Chapter] Fetching from API:", cacheKey, "timeout:", timeoutMs, "ms");
 
       const invokePromise = supabase.functions.invoke("bible-api", {
         body: { book, chapter, version: "kjv" },
@@ -837,13 +838,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       console.error("[Chapter] Error fetching:", e);
       const msg = String(e?.message || "");
       if (msg.toLowerCase().includes("timeout")) {
-        toast.error(`Timed out loading ${book} ${chapter}. Tap Retry.`);
+        console.error("[Chapter] TIMEOUT - mobile:", isMobile);
+        toast.error(`Connection timeout. Tap Retry to load ${book} ${chapter}.`, { duration: 5000 });
       } else {
-        toast.error(`Error loading ${book} ${chapter}. Please try again.`);
+        toast.error(`Failed to load ${book} ${chapter}. Check your connection.`, { duration: 5000 });
       }
       return null;
     }
-  }, []);
+  }, [isMobile]);
 
   // Prefetch next chapter in background
   const prefetchNextChapter = useCallback((currentIdx: number) => {
@@ -2146,24 +2148,32 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           setIsLoading(false);
           console.log("[ChapterLoad] SUCCESS - Chapter content set:", filteredVerses.length, "verses");
         } else if (retryCount < 3) {
-          // Retry on mobile - network can be flaky, increase retries to 3
-          console.log("[ChapterLoad] No verses returned, retrying in 1.5s... (attempt", retryCount + 1, "of 3)");
+          // MOBILE: More aggressive retry - shorter delay (1s instead of 1.5s)
+          const retryDelay = isMobile ? 1000 : 1500;
+          console.log("[ChapterLoad] No verses returned, retrying in", retryDelay, "ms... (attempt", retryCount + 1, "of 3)");
           isFetchingChapterRef.current = false;
-          await new Promise(resolve => setTimeout(resolve, 1500));
+          setIsLoading(false); // Show "Tap to Retry" instead of infinite spinner
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
           return loadChapter(retryCount + 1);
         } else {
           console.error("[ChapterLoad] FAILED after all retries:", cacheKey);
+          isFetchingChapterRef.current = false;
           setIsLoading(false);
+          // Show clear error message to user
+          toast.error(`Unable to load ${currentItem.book} ${currentItem.chapter}. Please check your connection and tap Retry.`, { duration: 8000 });
         }
       } catch (e) {
         console.error("[ChapterLoad] Error:", e);
         isFetchingChapterRef.current = false;
+        setIsLoading(false); // Critical: ensure loading state is cleared on error
         if (retryCount < 3) {
-          console.log("[ChapterLoad] Error occurred, retrying in 1.5s... (attempt", retryCount + 1, "of 3)");
-          await new Promise(resolve => setTimeout(resolve, 1500));
+          const retryDelay = isMobile ? 1000 : 1500;
+          console.log("[ChapterLoad] Error occurred, retrying in", retryDelay, "ms... (attempt", retryCount + 1, "of 3)");
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
           return loadChapter(retryCount + 1);
+        } else {
+          toast.error(`Failed to load chapter after 3 attempts. Please check your connection.`, { duration: 8000 });
         }
-        setIsLoading(false);
       }
     };
 
