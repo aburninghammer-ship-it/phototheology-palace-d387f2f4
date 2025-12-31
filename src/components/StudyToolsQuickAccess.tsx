@@ -11,10 +11,21 @@ import {
   Library,
   Sparkles,
   ChevronRight,
-  BookMarked
+  BookMarked,
+  Lightbulb
 } from "lucide-react";
 
 const studyTools = [
+  {
+    id: "analyze-thoughts",
+    name: "Analyze My Thoughts",
+    description: "Let Jeeves analyze your thoughts through the Phototheology lens",
+    icon: Lightbulb,
+    path: "/analyze-thoughts",
+    gradient: "from-yellow-500 to-amber-500",
+    badge: "AI",
+    tip: "Get personalized insights on your spiritual reflections"
+  },
   {
     id: "greek-hebrew",
     name: "Greek/Hebrew Analysis",
