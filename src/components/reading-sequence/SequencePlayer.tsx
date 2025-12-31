@@ -2856,55 +2856,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           </div>
         )}
 
-        {/* Mobile Debug Panel - shows state machine values for diagnosis */}
-        {isMobile && waitingForMobileTap && (
-          <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-xs font-mono space-y-1">
-            <div className="font-bold text-red-400 mb-2">🔧 Debug Panel</div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-              <span className="text-muted-foreground">isLoading:</span>
-              <span className={isLoading ? "text-yellow-400" : "text-green-400"}>{String(isLoading)}</span>
-              
-              <span className="text-muted-foreground">chapterContent:</span>
-              <span className={chapterContent ? "text-green-400" : "text-red-400"}>
-                {chapterContent ? `${chapterContent.verses?.length || 0} verses` : "null"}
-              </span>
-              
-              <span className="text-muted-foreground">hasStarted:</span>
-              <span className={hasStarted ? "text-green-400" : "text-yellow-400"}>{String(hasStarted)}</span>
-              
-              <span className="text-muted-foreground">isPlaying:</span>
-              <span className={isPlaying ? "text-green-400" : "text-yellow-400"}>{String(isPlaying)}</span>
-              
-              <span className="text-muted-foreground">isPaused:</span>
-              <span>{String(isPaused)}</span>
-              
-              <span className="text-muted-foreground">audioState:</span>
-              <span className={mobileAudioEngine.isPlaying() ? "text-green-400" : "text-yellow-400"}>
-                {mobileAudioEngine.getState()}
-              </span>
-
-              <span className="text-muted-foreground">audioUnlocked:</span>
-              <span className={mobileAudioEngine.isUnlocked() ? "text-green-400" : "text-red-400"}>
-                {String(mobileAudioEngine.isUnlocked())}
-              </span>
-              
-              <span className="text-muted-foreground">currentItem:</span>
-              <span>{currentItem ? `${currentItem.book} ${currentItem.chapter}` : "null"}</span>
-              
-              <span className="text-muted-foreground">isFetching:</span>
-              <span className={isFetchingChapterRef.current ? "text-yellow-400" : "text-green-400"}>
-                {String(isFetchingChapterRef.current)}
-              </span>
-              
-              <span className="text-muted-foreground">lastFetched:</span>
-              <span>{lastFetchedRef.current || "null"}</span>
-            </div>
-            <div className="pt-2 border-t border-red-500/30 mt-2">
-              <span className="text-muted-foreground">waitingForMobileTap:</span>
-              <span className="ml-2 text-green-400">{String(waitingForMobileTap)}</span>
-            </div>
-          </div>
-        )}
 
         {/* Commentary Display - shown when Jeeves is commenting */}
         {isPlayingCommentary && commentaryText && (
