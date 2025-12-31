@@ -1,16 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, ArrowLeft, Sparkles } from "lucide-react";
+import { Trophy, ArrowLeft, Sparkles, Boxes, BookOpen, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { GameLeaderboard } from "@/components/GameLeaderboard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const Dimensions3DGame = lazy(() => import("@/components/games/Dimensions3DGame"));
 
 const passages = [
   {
@@ -52,6 +55,7 @@ export default function DimensionsRoom() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const [view, setView] = useState<"2d" | "3d">("2d");
   const [currentPassage, setCurrentPassage] = useState(0);
   const [currentDimension, setCurrentDimension] = useState<keyof typeof passages[0]['dimensions']>("literal");
   const [userAnswer, setUserAnswer] = useState("");
@@ -189,9 +193,44 @@ export default function DimensionsRoom() {
             <CardDescription>
               View Scripture like a diamond under five different lights. Each dimension reveals a unique sparkle!
             </CardDescription>
-            <Progress value={progress} className="mt-4" />
+            
+            {/* 2D/3D Toggle */}
+            <Tabs value={view} onValueChange={(v) => setView(v as "2d" | "3d")} className="mt-4">
+              <TabsList className="grid w-full max-w-md grid-cols-2">
+                <TabsTrigger value="2d" className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  Classic Mode
+                </TabsTrigger>
+                <TabsTrigger value="3d" className="flex items-center gap-2">
+                  <Boxes className="h-4 w-4" />
+                  3D Chamber
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            
+            {view === "2d" && <Progress value={progress} className="mt-4" />}
           </CardHeader>
         </Card>
+
+        {view === "3d" ? (
+          <Suspense fallback={
+            <Card className="min-h-[600px] flex items-center justify-center">
+              <div className="flex flex-col items-center gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-muted-foreground">Loading 3D Chamber...</p>
+              </div>
+            </Card>
+          }>
+            <Dimensions3DGame onComplete={(finalScore) => {
+              setScore(finalScore);
+              // Trigger completion state
+              setCompletedDimensions(new Set(["0-literal", "0-christ", "0-me", "0-church", "0-heaven", 
+                "1-literal", "1-christ", "1-me", "1-church", "1-heaven",
+                "2-literal", "2-christ", "2-me", "2-church", "2-heaven"]));
+            }} />
+          </Suspense>
+        ) : (
+          <>
 
         <Card className="mb-6">
           <CardHeader>
@@ -275,6 +314,8 @@ export default function DimensionsRoom() {
             </p>
           </CardContent>
         </Card>
+        </>
+        )}
       </main>
     </div>
   );
