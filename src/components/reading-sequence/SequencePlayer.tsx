@@ -399,6 +399,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // Hook for fetching user's relevant studies to incorporate into commentary
   const { fetchRelevantStudies, formatStudiesForPrompt } = useUserStudiesContext();
   const isGeneratingRef = useRef(false); // Prevent concurrent TTS requests
+  const isSettingUpPlaybackRef = useRef(false); // Prevent duplicate playVerseAtIndex calls during setup
   const isFetchingChapterRef = useRef(false); // Prevent concurrent chapter fetches
   const lastFetchedRef = useRef<string | null>(null); // Track last fetched chapter
   const shouldPlayNextRef = useRef(false); // Signal to play next chapter
@@ -1586,15 +1587,29 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // Play a specific verse by index - using a stable ref to avoid stale closures
   const playVerseAtIndex = useCallback(async (verseIdx: number, content: ChapterContent, voice: string) => {
     console.log("[PlayVerse] Called with:", { verseIdx, versesCount: content?.verses?.length, voice, offlineMode });
-    
+
+    // CRITICAL: Multiple guards to prevent duplicate playback calls
+    // This fixes bug where verse plays 3x due to useEffect re-running
+    if (isSettingUpPlaybackRef.current) {
+      console.log("[PlayVerse] Already setting up playback, skipping duplicate call for verse:", verseIdx + 1);
+      return;
+    }
     if (isGeneratingRef.current) {
       console.log("[PlayVerse] Already generating TTS, skipping verse:", verseIdx + 1);
+      return;
+    }
+    // Prevent duplicate calls while audio is playing
+    if (audioRef.current && !audioRef.current.paused && audioRef.current.src) {
+      console.log("[PlayVerse] Audio already playing, skipping duplicate call for verse:", verseIdx + 1);
       return;
     }
     if (!content || !content.verses || verseIdx >= content.verses.length) {
       console.log("[PlayVerse] Invalid verse index or content:", { hasContent: !!content, verseIdx });
       return;
     }
+
+    // Set the setup flag immediately to prevent race conditions
+    isSettingUpPlaybackRef.current = true;
 
     const verse = content.verses[verseIdx];
     const cacheKey = `${content.book}-${content.chapter}-${verseIdx}-${voice}`;
@@ -1682,8 +1697,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     // OFFLINE MODE: Use browser speech synthesis
     if (!url && (offlineMode || !isOnline())) {
       console.log("[PlayVerse] Using browser speech synthesis (offline mode)");
+      isSettingUpPlaybackRef.current = false; // Clear setup flag - switching to browser TTS
       notifyTTSStarted();
-      
+
       speakWithBrowserTTS(verse.text, playbackSpeed, () => {
         // On speech end, continue to next verse or chapter
         if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
@@ -1699,11 +1715,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       });
       return;
     }
-    
+
     console.log("[PlayVerse] TTS result:", url ? "URL ready" : "FAILED");
 
     if (!url) {
       console.error("[PlayVerse] Failed to generate TTS URL - falling back to browser TTS");
+      isSettingUpPlaybackRef.current = false; // Clear setup flag - switching to browser TTS
       // Fallback to browser TTS even if online mode failed
       speakWithBrowserTTS(verse.text, playbackSpeed, () => {
         if (continuePlayingRef.current && verseIdx < content.verses.length - 1) {
@@ -2086,7 +2103,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       });
       stopAudio();
       isGeneratingRef.current = false;
-      
+      isSettingUpPlaybackRef.current = false; // Clear setup flag on error
+
       // Retry logic - try up to 2 times, then fall back to browser TTS
       if (retryCountRef.current < 2 && continuePlayingRef.current) {
         retryCountRef.current++;
@@ -2118,6 +2136,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       await audio.play();
       console.log("[Audio] play() succeeded for verse:", verseIdx + 1);
       retryCountRef.current = 0; // Reset retry count on success
+      isSettingUpPlaybackRef.current = false; // Clear setup flag - audio is now playing
       setIsPlaying(true);
       setIsPaused(false);
       // Store current position for potential resume
@@ -2126,7 +2145,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       console.error("[Audio] play() failed:", e);
       stopAudio();
       isGeneratingRef.current = false;
-      
+      isSettingUpPlaybackRef.current = false; // Clear setup flag on error
+
       // Try browser TTS fallback instead of giving up
       if (continuePlayingRef.current) {
         console.log("[Audio] play() failed, falling back to browser TTS");
@@ -2546,6 +2566,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     lastFetchedRef.current = null;
     shouldPlayNextRef.current = false;
     retryCountRef.current = 0;
+    isSettingUpPlaybackRef.current = false; // Clear setup flag on stop
     // Always stop music ducking when stopping playback
     notifyTTSStopped();
   };
