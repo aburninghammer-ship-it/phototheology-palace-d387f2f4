@@ -423,6 +423,12 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
   // Sanitize text for TTS - expand abbreviations and remove patterns that would be read literally
   const sanitizeTextForTTS = (text: string): string => {
     return text
+      // REMOVE UNWANTED PHRASES - banned expressions that AI might still generate
+      .replace(/\bmy dear friend,?\s*/gi, '')
+      .replace(/\bdear friend,?\s*/gi, '')
+      .replace(/\bmy dear student,?\s*/gi, '')
+      .replace(/\bdear student,?\s*/gi, '')
+      .replace(/\bmy friend,?\s*/gi, '')
       // EXPAND ABBREVIATIONS - prevent "dot" being spoken
       .replace(/\bRev\.\s*/gi, 'Revelation ')
       .replace(/\bGen\.\s*/gi, 'Genesis ')
