@@ -1,4 +1,4 @@
-import { useState, useRef, Suspense, useEffect, useMemo } from "react";
+import { useState, useRef, Suspense, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
@@ -10,13 +10,21 @@ import {
   Cylinder,
   Sphere,
   Float,
-  Stars
+  Stars,
+  useProgress,
+  PerformanceMonitor
 } from "@react-three/drei";
 import * as THREE from "three";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { palaceFloors as floors } from "@/data/palaceData";
-import { ChevronUp, ChevronDown, Home, Info } from "lucide-react";
+import { ChevronUp, ChevronDown, Home, Info, Loader2, Smartphone, Monitor } from "lucide-react";
+
+// Detect mobile device for performance optimization
+const isMobile = typeof window !== 'undefined' && (
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+  window.innerWidth < 768
+);
 
 // Floor color schemes
 const floorColors: Record<number, { primary: string; secondary: string; accent: string }> = {
@@ -229,10 +237,24 @@ function FloorPlatform({ floorNumber, yPosition, rooms, onRoomClick, unlockedRoo
   );
 }
 
-// Camera controller with floor focus
-function CameraController({ targetFloor }: { targetFloor: number }) {
+// Loading indicator component
+function Loader() {
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div className="flex flex-col items-center gap-2 text-white">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
+        <p className="text-sm">{progress.toFixed(0)}% loaded</p>
+      </div>
+    </Html>
+  );
+}
+
+// Camera controller with floor focus and smooth transitions
+function CameraController({ targetFloor, onFloorChange }: { targetFloor: number; onFloorChange?: (floor: number) => void }) {
   const { camera } = useThree();
   const targetY = useRef((targetFloor - 1) * 8);
+  const transitionSpeed = isMobile ? 0.03 : 0.05; // Slower on mobile for smoothness
 
   useEffect(() => {
     targetY.current = (targetFloor - 1) * 8 + 4;
@@ -243,11 +265,48 @@ function CameraController({ targetFloor }: { targetFloor: number }) {
     const currentY = camera.position.y;
     const diff = targetY.current - currentY;
     if (Math.abs(diff) > 0.1) {
-      camera.position.y += diff * 0.05;
+      camera.position.y += diff * transitionSpeed;
     }
   });
 
   return null;
+}
+
+// Swipe gesture handler for mobile floor navigation
+function useSwipeGesture(onSwipeUp: () => void, onSwipeDown: () => void) {
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
+    if (touchStartY.current === null) return;
+
+    const touchEndY = e.changedTouches[0].clientY;
+    const diff = touchStartY.current - touchEndY;
+    const threshold = 50; // Minimum swipe distance
+
+    if (diff > threshold) {
+      onSwipeUp();
+    } else if (diff < -threshold) {
+      onSwipeDown();
+    }
+
+    touchStartY.current = null;
+  }, [onSwipeUp, onSwipeDown]);
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [handleTouchStart, handleTouchEnd]);
 }
 
 interface Palace3DViewerProps {
@@ -259,6 +318,12 @@ export function Palace3DViewer({ unlockedRooms = new Set(), onClose }: Palace3DV
   const navigate = useNavigate();
   const [currentFloor, setCurrentFloor] = useState(1);
   const [showHelp, setShowHelp] = useState(true);
+  const [dpr, setDpr] = useState(isMobile ? 1 : 1.5); // Device pixel ratio for performance
+
+  // Swipe gesture for mobile floor navigation
+  const goUp = useCallback(() => setCurrentFloor(f => Math.min(8, f + 1)), []);
+  const goDown = useCallback(() => setCurrentFloor(f => Math.max(1, f - 1)), []);
+  useSwipeGesture(goUp, goDown);
 
   // Auto-hide help after 5 seconds
   useEffect(() => {
@@ -339,8 +404,24 @@ export function Palace3DViewer({ unlockedRooms = new Set(), onClose }: Palace3DV
       {/* Help tooltip */}
       {showHelp && (
         <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 bg-black/80 text-white px-4 py-3 rounded-lg max-w-xs text-center">
-          <p className="text-sm">Drag to look around • Scroll to zoom</p>
-          <p className="text-sm">Click room doors to enter • Use floor buttons to navigate</p>
+          {isMobile ? (
+            <>
+              <p className="text-sm flex items-center justify-center gap-2">
+                <Smartphone className="h-4 w-4" /> Mobile Controls:
+              </p>
+              <p className="text-sm">Pinch to zoom • Drag to look around</p>
+              <p className="text-sm">Swipe up/down to change floors</p>
+              <p className="text-sm">Tap doors to enter rooms</p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm flex items-center justify-center gap-2">
+                <Monitor className="h-4 w-4" /> Desktop Controls:
+              </p>
+              <p className="text-sm">Drag to look around • Scroll to zoom</p>
+              <p className="text-sm">Click room doors to enter • Use floor buttons to navigate</p>
+            </>
+          )}
           <Button
             variant="ghost"
             size="sm"
@@ -353,13 +434,22 @@ export function Palace3DViewer({ unlockedRooms = new Set(), onClose }: Palace3DV
       )}
 
       {/* 3D Canvas */}
-      <Canvas shadows camera={{ fov: 60, position: [15, 8, 20] }}>
-        <Suspense fallback={null}>
+      <Canvas
+        shadows={!isMobile}
+        camera={{ fov: 60, position: [15, 8, 20] }}
+        dpr={dpr}
+        performance={{ min: 0.5 }}
+      >
+        <PerformanceMonitor
+          onDecline={() => setDpr(1)}
+          onIncline={() => setDpr(isMobile ? 1 : 1.5)}
+        />
+        <Suspense fallback={<Loader />}>
           <CameraController targetFloor={currentFloor} />
 
           {/* Sky/background */}
           <color attach="background" args={["#0a0a1a"]} />
-          <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+          <Stars radius={100} depth={50} count={isMobile ? 1000 : 3000} factor={4} saturation={0} fade speed={1} />
 
           {/* Ambient lighting */}
           <ambientLight intensity={0.2} />
