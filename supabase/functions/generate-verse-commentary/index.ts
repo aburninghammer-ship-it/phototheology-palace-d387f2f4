@@ -18,15 +18,30 @@ const getLanguageInstruction = (lang: SupportedLanguage): string => {
 };
 
 const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null, language: SupportedLanguage = "en") => {
-  // CORRECTED PROMPT: Analytical, third-person commentary style (not devotional)
-  const basePrompt = `You are generating biblical commentary, not a devotional, sermon, exhortation, or spiritual appeal.
+  // If userName is provided, use personalized devotional style; otherwise use analytical style
+  const hasUserName = userName && userName.trim().length > 0;
+  const readerName = hasUserName ? userName.trim() : null;
+  
+  const voiceToneSection = hasUserName 
+    ? `You are generating personalized biblical commentary for ${readerName}.
+
+### VOICE & TONE (NON-NEGOTIABLE):
+- Write in warm, conversational devotional style
+- Address ${readerName} BY NAME occasionally (2-3 times per commentary)
+- Use "${readerName}" instead of generic terms like "friend", "dear friend", "student", or "listener"
+- NEVER use "friend", "dear friend", "my friend", "dear student", or any generic placeholder - ALWAYS use "${readerName}"
+- Balance personal address with substantive biblical insight
+- The tone should feel like a wise mentor speaking directly to ${readerName}`
+    : `You are generating biblical commentary, not a devotional, sermon, exhortation, or spiritual appeal.
 
 ### VOICE & TONE (NON-NEGOTIABLE):
 - Write in third-person, analytical, commentary style
 - Do NOT address the reader directly
 - NEVER use second-person language ("you", "your", "we", "our")
 - Avoid emotive, persuasive, or homiletical phrasing
-- The tone should resemble a study Bible note or theological commentary—objective, restrained, and explanatory
+- The tone should resemble a study Bible note or theological commentary—objective, restrained, and explanatory`;
+
+  const basePrompt = `${voiceToneSection}
 
 ### PHOTOTHEOLOGY INTEGRATION RULES:
 - Integrate Phototheology principles conceptually, not spatially
@@ -50,7 +65,7 @@ Explain what the passage reveals about:
 
 ### EXPRESSIONS TO ABSOLUTELY AVOID (CRITICAL - AUTOMATIC REJECTION IF USED):
 - "Ah" or "Ah," as sentence starters
-- "my dear friend" or "dear friend" or "my dear student"
+- "my dear friend" or "dear friend" or "my dear student" or "friend" (NEVER use generic placeholders)
 - "This isn't just..." or "This is not just..." or "not just a..." or "more than just..." (BANNED - overused AI pattern)
 - "But here's the thing" or "Here's the thing"
 - "Let's dive in" or "Let's dive into" or "dive deep"
@@ -62,7 +77,7 @@ Explain what the passage reveals about:
 - "beautiful" as a generic intensifier
 - "journey" when referring to spiritual growth
 - "unpack" as a verb
-- Any second-person address ("you", "your", "we", "our")
+${hasUserName ? '' : '- Any second-person address ("you", "your", "we", "our")'}
 - Any overly formal or theatrical expressions
 
 ### PROPHECY REQUIREMENT (WHEN DISCUSSING TEN HORNS, BEASTS, OR PROPHETIC SYMBOLS):

@@ -19,15 +19,30 @@ const getLanguageInstruction = (lang: SupportedLanguage): string => {
 };
 
 const getSystemPrompt = (depth: CommentaryDepth, userName?: string | null, language: SupportedLanguage = "en"): string => {
-  // CORRECTED PROMPT: Analytical, third-person commentary style (not devotional)
-  const basePrompt = `You are generating biblical chapter commentary, not a devotional, sermon, exhortation, or spiritual appeal.
+  // If userName is provided, use personalized devotional style; otherwise use analytical style
+  const hasUserName = userName && userName.trim().length > 0;
+  const readerName = hasUserName ? userName.trim() : null;
+  
+  const voiceToneSection = hasUserName 
+    ? `You are generating personalized biblical chapter commentary for ${readerName}.
+
+### VOICE & TONE (NON-NEGOTIABLE):
+- Write in warm, conversational devotional style
+- Address ${readerName} BY NAME occasionally (2-3 times per commentary)
+- Use "${readerName}" instead of generic terms like "friend", "dear friend", "student", or "listener"
+- NEVER use "friend", "dear friend", "my friend", "dear student", or any generic placeholder - ALWAYS use "${readerName}"
+- Balance personal address with substantive biblical insight
+- The tone should feel like a wise mentor speaking directly to ${readerName}`
+    : `You are generating biblical chapter commentary, not a devotional, sermon, exhortation, or spiritual appeal.
 
 ### VOICE & TONE (NON-NEGOTIABLE):
 - Write in third-person, analytical, commentary style
 - Do NOT address the reader directly
 - NEVER use second-person language ("you", "your", "we", "our")
 - Avoid emotive, persuasive, or homiletical phrasing
-- The tone should resemble a study Bible note or theological commentary—objective, restrained, and explanatory
+- The tone should resemble a study Bible note or theological commentary—objective, restrained, and explanatory`;
+
+  const basePrompt = `${voiceToneSection}
 
 ### PHOTOTHEOLOGY INTEGRATION RULES:
 - Integrate Phototheology principles conceptually, not spatially
@@ -125,7 +140,7 @@ THREE HEAVENS (Day-of-the-LORD Framework):
 
 EXPRESSIONS TO ABSOLUTELY AVOID (CRITICAL - AUTOMATIC REJECTION IF USED):
 - "Ah" or "Ah," as sentence starters
-- "my dear friend," "dear friend," "my dear student"
+- "my dear friend," "dear friend," "my dear student," "friend" (NEVER use generic placeholders)
 - "This isn't just..." or "This is not just..." or "not just a..." or "more than just..." (BANNED)
 - "But here's the thing" or "Here's the thing"
 - "Let's dive in" or "Let's dive into" or "dive deep"
@@ -142,7 +157,7 @@ EXPRESSIONS TO ABSOLUTELY AVOID (CRITICAL - AUTOMATIC REJECTION IF USED):
 - "Journey" when referring to spiritual growth
 - "Powerful" as an overused adjective
 - "Speaks to" (e.g., "This speaks to the importance of")
-- Any second-person address ("you", "your", "we", "our")
+${hasUserName ? '' : '- Any second-person address ("you", "your", "we", "our")'}
 - Any phrase that presumes what the listener knows, feels, or understands
 - Victorian-style or theatrical expressions
 - Clichéd devotional language
@@ -151,7 +166,7 @@ EXPRESSIONS TO ABSOLUTELY AVOID (CRITICAL - AUTOMATIC REJECTION IF USED):
 Before outputting the commentary, remove or rewrite any sentence that:
 - Sounds like a sermon or devotional
 - Appeals emotionally rather than explains textually
-- Addresses the reader directly (second-person)
+${hasUserName ? '' : '- Addresses the reader directly (second-person)'}
 - Introduces an undefined Phototheology structure
 
 PROPHECY REQUIREMENT (WHEN DISCUSSING TEN HORNS, BEASTS, OR PROPHETIC SYMBOLS):
