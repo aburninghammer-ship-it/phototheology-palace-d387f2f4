@@ -120,8 +120,8 @@ export function SymbolsTypesConcept() {
       <g transform="translate(70, 350)">
         {[
           { symbol: '🌊 Water', meanings: 'Life, cleansing, chaos, Holy Spirit, nations' },
-          { symbol: '🔥 Fire', meanings: 'Judgment, purification, God's presence, trial' },
-          { symbol: '⛰️ Mountain', meanings: 'Kingdom, God's dwelling, obstacle, worship' },
+          { symbol: '🔥 Fire', meanings: "Judgment, purification, God's presence, trial" },
+          { symbol: '⛰️ Mountain', meanings: "Kingdom, God's dwelling, obstacle, worship" },
           { symbol: '🌲 Tree', meanings: 'Life, righteous person, nation, cross' },
           { symbol: '🐑 Lamb', meanings: 'Sacrifice, innocence, Christ, believer' },
           { symbol: '💨 Wind', meanings: 'Spirit, judgment, change, breath of God' },

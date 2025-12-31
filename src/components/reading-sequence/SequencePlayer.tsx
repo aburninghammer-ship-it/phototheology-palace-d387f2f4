@@ -214,10 +214,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, []);
   
   // Create and unlock audio element on first user interaction (iOS requirement)
-  const ensureAudioUnlocked = useCallback(() => {
-    if (audioUnlockedRef.current) return;
+  // CRITICAL: Returns a promise so callers can await the unlock before proceeding
+  const ensureAudioUnlocked = useCallback(async (): Promise<boolean> => {
+    console.log('[iOS] ensureAudioUnlocked called, already unlocked:', audioUnlockedRef.current);
+    
+    if (audioUnlockedRef.current) {
+      console.log('[iOS] Already unlocked, returning true');
+      return true;
+    }
 
     const audio = getOrCreateAudio();
+    console.log('[iOS] Audio element created/retrieved:', !!audio);
 
     // Play a silent WAV to "unlock" the audio context on iOS/mobile
     // Using WAV format which is more universally supported than MP3
@@ -227,21 +234,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     audio.volume = 0.5; // Use audible volume to ensure iOS registers the unlock
     audio.muted = false;
 
-    const unlockAttempt = audio.play();
-    if (unlockAttempt) {
-      unlockAttempt.then(() => {
-        // Successfully played - audio is now unlocked
-        audio.pause();
-        audio.currentTime = 0;
-        audio.volume = 1; // Reset to full volume
-        audio.src = ''; // Clear but keep element
-        audioUnlockedRef.current = true;
-        console.log('[iOS] Audio element unlocked successfully');
-      }).catch(e => {
-        console.log('[iOS] Audio unlock attempt failed:', e.message);
-        // Even if play() fails, mark as attempted so we don't block forever
-        // The next user gesture will try again
-      });
+    try {
+      console.log('[iOS] Attempting to play silent audio for unlock...');
+      await audio.play();
+      // Successfully played - audio is now unlocked
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = 1; // Reset to full volume
+      audio.src = ''; // Clear but keep element
+      audioUnlockedRef.current = true;
+      console.log('[iOS] ✅ Audio element unlocked successfully');
+      return true;
+    } catch (e: any) {
+      console.log('[iOS] ❌ Audio unlock attempt failed:', e?.message || e);
+      // Mark as attempted anyway to prevent blocking - the actual play() might still work
+      audioUnlockedRef.current = true; // Optimistic - allow playback to try
+      return false;
     }
   }, [getOrCreateAudio]);
   
@@ -2361,32 +2369,46 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, [autoPlay, hasStarted, chapterContent, isLoading, currentSequence, playVerseAtIndex, isMobile]);
 
   // Handle mobile tap to start - this provides the user gesture needed for audio
-  const handleMobileTapToStart = useCallback(() => {
+  // CRITICAL: Must await audio unlock before starting playback on iOS
+  const handleMobileTapToStart = useCallback(async () => {
     console.log("[Mobile] User tapped to start playback");
+    console.log("[Mobile] Chapter content:", chapterContent ? `${chapterContent.book} ${chapterContent.chapter} (${chapterContent.verses?.length} verses)` : "NULL");
+    
+    // STEP 1: Unlock audio FIRST (must be synchronous with user gesture)
+    console.log("[Mobile] Step 1: Unlocking audio...");
+    const unlocked = await ensureAudioUnlocked();
+    console.log("[Mobile] Audio unlock result:", unlocked, "audioRef:", !!audioRef.current);
+    
+    // STEP 2: Update state after unlock
     setWaitingForMobileTap(false);
     setHasStarted(true);
-    ensureAudioUnlocked();
 
+    // STEP 3: Start playback
     if (chapterContent && chapterContent.verses && chapterContent.verses.length > 0) {
       const voice = currentSequence?.voice || "daniel";
       continuePlayingRef.current = true;
+      console.log("[Mobile] Step 3: Starting playback with voice:", voice);
 
       if (currentSequence?.commentaryOnly && currentSequence?.includeJeevesCommentary) {
+        console.log("[Mobile] Commentary-only mode");
         playCommentaryOnlyChapter(chapterContent, currentSequence);
       } else {
+        console.log("[Mobile] Normal verse playback mode");
         notifyTTSStarted();
         playVerseAtIndex(0, chapterContent, voice);
       }
+    } else {
+      console.log("[Mobile] ❌ No chapter content available for playback!");
     }
-  }, [chapterContent, currentSequence, playVerseAtIndex, ensureAudioUnlocked]);
+  }, [chapterContent, currentSequence, playVerseAtIndex, ensureAudioUnlocked, playCommentaryOnlyChapter]);
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
     console.log("handlePlay called - isPaused:", isPaused, "hasAudio:", !!audioRef.current, "speechPaused:", speechSynthesis.paused);
     console.log("[handlePlay] chapterContent:", chapterContent ? `${chapterContent.book} ${chapterContent.chapter} (${chapterContent.verses?.length} verses)` : "NULL");
     console.log("[handlePlay] currentVerseIdx:", currentVerseIdx, "currentSequence:", currentSequence?.sequenceNumber);
     
     // CRITICAL: Unlock audio on first user interaction (iOS requirement)
-    ensureAudioUnlocked();
+    await ensureAudioUnlocked();
     
     // Resume paused HTML Audio
     if (isPaused && audioRef.current) {

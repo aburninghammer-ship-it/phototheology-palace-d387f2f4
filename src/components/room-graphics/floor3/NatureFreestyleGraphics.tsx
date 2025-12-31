@@ -126,10 +126,10 @@ export function NatureFreestyleConcept() {
       </text>
       <g transform="translate(70, 375)">
         {[
-          { nature: 'Lilies', lesson: '"Consider the lilies" → God's provision' },
+          { nature: 'Lilies', lesson: '"Consider the lilies" → God\'s provision' },
           { nature: 'Sparrows', lesson: '"Two sparrows for a penny" → Your value to God' },
           { nature: 'Wheat', lesson: '"Unless a grain of wheat falls and dies" → Resurrection' },
-          { nature: 'Storms', lesson: '"Peace, be still" → Christ's authority over chaos' },
+          { nature: 'Storms', lesson: '"Peace, be still" → Christ\'s authority over chaos' },
         ].map((item, i) => (
           <g key={i} transform={`translate(${i * 165}, 0)`}>
             <text x="80" y="15" textAnchor="middle" fill="#78350F" fontSize="11" fontWeight="bold">{item.nature}</text>
