@@ -10,6 +10,7 @@ const Gems3DViewer = lazy(() => import("@/components/gems-room/Gems3DViewer").th
 const Symbols3DViewer = lazy(() => import("@/components/symbol-room/Symbols3DViewer").then(m => ({ default: m.Symbols3DViewer })));
 const Prophecy3DViewer = lazy(() => import("@/components/prophecy-room/Prophecy3DViewer").then(m => ({ default: m.Prophecy3DViewer })));
 const ThreeHeavens3DViewer = lazy(() => import("@/components/three-heavens-room/ThreeHeavens3DViewer").then(m => ({ default: m.ThreeHeavens3DViewer })));
+const Sanctuary3DViewer = lazy(() => import("@/components/sanctuary/Sanctuary3DViewer").then(m => ({ default: m.Sanctuary3DViewer })));
 
 // Map of room IDs to their 3D viewer components
 const ROOM_3D_VIEWERS: Record<string, { component: React.LazyExoticComponent<any>; name: string }> = {
@@ -19,6 +20,7 @@ const ROOM_3D_VIEWERS: Record<string, { component: React.LazyExoticComponent<any
   st: { component: Symbols3DViewer, name: "Symbols Room" },
   pr: { component: Prophecy3DViewer, name: "Prophecy Room" },
   "123h": { component: ThreeHeavens3DViewer, name: "Three Heavens Room" },
+  bl: { component: Sanctuary3DViewer, name: "Blue Room (Sanctuary)" },
 };
 
 // Check if a room has a 3D viewer available
