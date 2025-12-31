@@ -1,11 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Lock, Sparkles } from "lucide-react";
-import { useRoomUnlock } from "@/hooks/useRoomUnlock";
+import { ChevronRight, Sparkles } from "lucide-react";
 import { Room } from "@/data/palaceData";
 import { motion } from "framer-motion";
-import { toast } from "sonner";
 
 interface FloorRoomCardProps {
   room: Room;
@@ -106,26 +104,16 @@ const roomGradients: Record<string, string> = {
 };
 
 export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProps) => {
-  const { isUnlocked, loading } = useRoomUnlock(floorNumber, room.id);
   const navigate = useNavigate();
 
-  const showLocked = loading || !isUnlocked;
+  // Rooms are never locked - always show as unlocked
+  const showLocked = false;
   const roomEmoji = roomEmojis[room.id] || "⭐";
   // Use room-specific gradient if available, otherwise fall back to floor gradient
   const roomGradient = roomGradients[room.id] || gradient;
   const isNewlyRenovated = NEWLY_RENOVATED_ROOMS.has(room.id);
 
   const handleClick = () => {
-    if (loading) return;
-    
-    if (!isUnlocked) {
-      toast.error("🔒 Room Locked", {
-        description: `Complete the previous floors to unlock Floor ${floorNumber}. Progress through each floor in order to access new rooms.`,
-        duration: 4000,
-      });
-      return;
-    }
-    
     navigate(`/palace/floor/${floorNumber}/room/${room.id}`);
   };
 
