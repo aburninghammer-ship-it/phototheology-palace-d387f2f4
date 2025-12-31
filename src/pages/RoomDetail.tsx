@@ -69,6 +69,7 @@ import { NatureFreestyleLibrary } from "@/components/nature-freestyle/NatureFree
 import { HistoricalFreestyleLibrary } from "@/components/historical-freestyle/HistoricalFreestyleLibrary";
 import { GemsLibrary } from "@/components/gems-room/GemsLibrary";
 import { QALibrary } from "@/components/qa-room/QALibrary";
+import { FeastsLibrary } from "@/components/feasts-room/FeastsLibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 
 // Room IDs that have quick start guides
@@ -653,7 +654,13 @@ export default function RoomDetail() {
                   </RoomLibrary>
                 )}
 
-                {/* Def-Com Room - Word Study & Commentary Tools */}
+                {/* Feasts Room - Biblical Feasts & Prophetic Calendar */}
+                {room.id === "fe" && (
+                  <RoomLibrary roomId="fe">
+                    <FeastsLibrary />
+                  </RoomLibrary>
+                )}
+
                 {room.id === "dc" && (
                   <DefComRoomDrill />
                 )}
