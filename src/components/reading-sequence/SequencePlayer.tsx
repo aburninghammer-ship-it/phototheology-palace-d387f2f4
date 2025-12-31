@@ -1473,11 +1473,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       console.log("[PlayVerse] Already generating TTS, skipping verse:", verseIdx + 1);
       return;
     }
-    // Prevent duplicate calls while audio is playing
-    if (mobileAudioEngine.isPlaying()) {
-      console.log("[PlayVerse] Audio already playing, skipping duplicate call for verse:", verseIdx + 1);
-      return;
-    }
+    // Validate content before proceeding
     if (!content || !content.verses || verseIdx >= content.verses.length) {
       console.log("[PlayVerse] Invalid verse index or content:", { hasContent: !!content, verseIdx });
       return;
@@ -1485,6 +1481,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
     // Set the setup flag immediately to prevent race conditions
     isSettingUpPlaybackRef.current = true;
+    
+    // Stop any existing audio BEFORE proceeding (moved earlier to prevent race conditions)
+    // This ensures we can always start fresh playback
+    if (mobileAudioEngine.isPlaying() || mobileAudioEngine.getState() === 'loading') {
+      console.log("[PlayVerse] Stopping existing audio before verse:", verseIdx + 1);
+      mobileAudioEngine.stop();
+    }
 
     const verse = content.verses[verseIdx];
     const cacheKey = `${content.book}-${content.chapter}-${verseIdx}-${voice}`;
@@ -1633,8 +1636,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       prefetchChapterCommentary(content.book, content.chapter, chapterText, commentaryVoice, commentaryDepth);
     }
 
-    // Stop any existing audio BEFORE setting up new one
-    stopAudio();
+    // Note: Audio already stopped at start of function if needed
 
     // Clean up previous audio URL (but not if it's cached)
     if (audioUrl && !Array.from(ttsCache.current.values()).includes(audioUrl)) {

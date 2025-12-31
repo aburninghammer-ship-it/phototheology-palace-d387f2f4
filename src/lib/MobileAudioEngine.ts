@@ -216,8 +216,20 @@ class MobileAudioEngine {
 
   /**
    * Play audio from URL
+   * Automatically attempts unlock if needed (important for mobile)
    */
   async play(url: string, options: PlayOptions = {}): Promise<boolean> {
+    // CRITICAL: Auto-unlock on mobile if not already unlocked
+    // This ensures playback works even if the component didn't call unlock() first
+    if (!this.isUnlocked) {
+      console.log('[MobileAudioEngine] Not unlocked, attempting auto-unlock before play...');
+      const unlockResult = await this.unlock();
+      if (!unlockResult) {
+        console.warn('[MobileAudioEngine] Auto-unlock failed - playback may fail');
+        // Continue anyway - might work on some browsers
+      }
+    }
+
     const audio = this.getAudio();
 
     // Store callbacks for this playback
