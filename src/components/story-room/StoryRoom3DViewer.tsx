@@ -1,4 +1,4 @@
-import { Suspense, useState, useRef, useCallback } from 'react';
+import { Suspense, useState, useRef, useCallback, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookOpen, RotateCcw, X } from 'lucide-react';
 import { PalaceRoom3D } from '@/components/3d/PalaceRoom3D';
+import { bibleStoryLibrary } from '@/data/bibleStoryLibrary';
 
 // Bible books organized by section
 const BIBLE_SECTIONS = [
@@ -57,16 +58,14 @@ const BIBLE_SECTIONS = [
   }
 ];
 
-// Book with story highlights
-const BOOK_STORIES: Record<string, string[]> = {
-  'Genesis': ['Creation', 'Fall', 'Flood', 'Tower of Babel', 'Abraham\'s Call', 'Isaac\'s Birth', 'Jacob\'s Ladder', 'Joseph\'s Dreams'],
-  'Exodus': ['Burning Bush', 'Ten Plagues', 'Red Sea Crossing', 'Mount Sinai', 'Golden Calf', 'Tabernacle Built'],
-  'Daniel': ['Refuses King\'s Table', 'Fiery Furnace', 'Lions\' Den', 'Vision of Beasts'],
-  'Matthew': ['Birth of Jesus', 'Sermon on the Mount', 'Miracles', 'Parables', 'Crucifixion', 'Resurrection'],
-  'John': ['Word Made Flesh', 'Water to Wine', 'Nicodemus', 'Woman at Well', 'Lazarus', 'Last Supper', 'Crucifixion', 'Resurrection'],
-  'Acts': ['Pentecost', 'Stephen\'s Martyrdom', 'Paul\'s Conversion', 'Cornelius', 'Missionary Journeys', 'Shipwreck'],
-  'Revelation': ['Seven Churches', 'Throne Room', 'Seven Seals', 'Seven Trumpets', 'Woman & Dragon', 'Seven Plagues', 'New Jerusalem']
-};
+// Helper function to get stories for a book from the library
+function getBookStories(bookName: string): string[] {
+  const bookData = bibleStoryLibrary.find(b => b.book === bookName);
+  if (bookData && bookData.stories.length > 0) {
+    return bookData.stories.map(s => s.title);
+  }
+  return [];
+}
 
 // 3D Book component
 interface Book3DProps {
@@ -305,7 +304,7 @@ function LibraryContents({ selectedBook, onBookSelect }: {
   selectedBook: string | null;
   onBookSelect: (book: string) => void;
 }) {
-  const selectedStories = selectedBook ? (BOOK_STORIES[selectedBook] || ['Explore this book to discover its stories']) : [];
+  const selectedStories = selectedBook ? getBookStories(selectedBook) : [];
 
   return (
     <>
