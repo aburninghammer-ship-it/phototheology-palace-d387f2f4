@@ -1,10 +1,11 @@
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Text, Float, Stars, Sphere } from "@react-three/drei";
+import { OrbitControls, Text, Float, Sphere } from "@react-three/drei";
 import { Suspense, useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { X, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { PalaceRoom3D } from "@/components/3d/PalaceRoom3D";
 
 // Three Heavens data based on Phototheology
 const THREE_HEAVENS_DATA = [
@@ -14,8 +15,8 @@ const THREE_HEAVENS_DATA = [
     subtitle: "DoL¹ → NE¹",
     period: "586 BC Babylon → Cyrusic Restoration",
     color: "#4A90A4",
-    position: [0, -4, 0],
-    radius: 3,
+    position: [-6, 2, 0],
+    radius: 1.5,
     description: "The first Day of the LORD culminates in Jerusalem's destruction by Babylon, followed by post-exilic restoration under Cyrus.",
     keyEvent: "Babylonian Exile → Return",
     scripture: "Isaiah 65-66, Ezra-Nehemiah",
@@ -27,8 +28,8 @@ const THREE_HEAVENS_DATA = [
     subtitle: "DoL² → NE²",
     period: "70 AD → New Covenant Order",
     color: "#9B59B6",
-    position: [0, 0, 0],
-    radius: 4,
+    position: [0, 3, 0],
+    radius: 1.8,
     description: "The second Day of the LORD is Jerusalem's destruction in 70 AD. The 'new heavens and earth' is the New-Covenant order—Christ's heavenly sanctuary.",
     keyEvent: "Temple Destroyed → Heavenly Ministry",
     scripture: "Matthew 24, Hebrews 8-12",
@@ -40,8 +41,8 @@ const THREE_HEAVENS_DATA = [
     subtitle: "DoL³ → NE³",
     period: "Final Judgment → Eternal Kingdom",
     color: "#F39C12",
-    position: [0, 4, 0],
-    radius: 5,
+    position: [6, 2, 0],
+    radius: 2,
     description: "The third Day of the LORD is the final, universal judgment culminating in the literal New Heavens and New Earth—eternal creation.",
     keyEvent: "Second Coming → New Creation",
     scripture: "2 Peter 3, Revelation 21-22",
@@ -49,8 +50,116 @@ const THREE_HEAVENS_DATA = [
   },
 ];
 
-// Rotating heaven sphere
-function HeavenSphere({ heaven, isSelected, onClick }: {
+// Telescope prop
+function Telescope({ position }: { position: [number, number, number] }) {
+  return (
+    <group position={position}>
+      {/* Tripod */}
+      <mesh position={[0.3, 0.5, 0.3]} rotation={[0.3, 0, 0.3]}>
+        <cylinderGeometry args={[0.03, 0.03, 1.2, 8]} />
+        <meshStandardMaterial color="#4a3728" />
+      </mesh>
+      <mesh position={[-0.3, 0.5, 0.3]} rotation={[-0.3, 0, -0.3]}>
+        <cylinderGeometry args={[0.03, 0.03, 1.2, 8]} />
+        <meshStandardMaterial color="#4a3728" />
+      </mesh>
+      <mesh position={[0, 0.5, -0.4]} rotation={[0.3, 0, 0]}>
+        <cylinderGeometry args={[0.03, 0.03, 1.2, 8]} />
+        <meshStandardMaterial color="#4a3728" />
+      </mesh>
+      {/* Telescope body */}
+      <mesh position={[0, 1.1, 0]} rotation={[0.3, 0.5, 0]}>
+        <cylinderGeometry args={[0.08, 0.15, 0.8, 16]} />
+        <meshStandardMaterial color="#8B7355" metalness={0.6} roughness={0.3} />
+      </mesh>
+      {/* Lens */}
+      <mesh position={[0.35, 1.25, -0.2]} rotation={[0.3, 0.5, 0]}>
+        <cylinderGeometry args={[0.12, 0.12, 0.05, 16]} />
+        <meshStandardMaterial color="#4A90A4" metalness={0.8} roughness={0.2} transparent opacity={0.7} />
+      </mesh>
+    </group>
+  );
+}
+
+// Orrery (planetary model)
+function Orrery({ position }: { position: [number, number, number] }) {
+  const groupRef = useRef<THREE.Group>(null);
+  
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.2;
+    }
+  });
+  
+  return (
+    <group position={position}>
+      {/* Base */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.4, 0.5, 0.1, 16]} />
+        <meshStandardMaterial color="#8B7355" metalness={0.5} roughness={0.4} />
+      </mesh>
+      {/* Central pillar */}
+      <mesh position={[0, 0.4, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 0.7, 8]} />
+        <meshStandardMaterial color="#D4A574" metalness={0.6} />
+      </mesh>
+      {/* Rotating arm group */}
+      <group ref={groupRef} position={[0, 0.7, 0]}>
+        {/* Sun */}
+        <mesh>
+          <sphereGeometry args={[0.12, 16, 16]} />
+          <meshStandardMaterial color="#F39C12" emissive="#F39C12" emissiveIntensity={0.5} />
+        </mesh>
+        {/* Planet 1 arm */}
+        <mesh rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.01, 0.01, 0.5, 8]} />
+          <meshStandardMaterial color="#D4A574" metalness={0.6} />
+        </mesh>
+        <mesh position={[0.25, 0, 0]}>
+          <sphereGeometry args={[0.05, 12, 12]} />
+          <meshStandardMaterial color="#4A90A4" />
+        </mesh>
+        {/* Planet 2 arm */}
+        <mesh rotation={[0, Math.PI / 3, Math.PI / 2]}>
+          <cylinderGeometry args={[0.01, 0.01, 0.7, 8]} />
+          <meshStandardMaterial color="#D4A574" metalness={0.6} />
+        </mesh>
+        <mesh position={[-0.2, 0, 0.28]}>
+          <sphereGeometry args={[0.06, 12, 12]} />
+          <meshStandardMaterial color="#9B59B6" />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+// Star chart on wall
+function StarChart({ position, rotation }: { position: [number, number, number]; rotation: [number, number, number] }) {
+  return (
+    <group position={position} rotation={rotation}>
+      {/* Frame */}
+      <mesh>
+        <boxGeometry args={[1.5, 1, 0.05]} />
+        <meshStandardMaterial color="#4a3728" />
+      </mesh>
+      {/* Chart surface */}
+      <mesh position={[0, 0, 0.03]}>
+        <planeGeometry args={[1.3, 0.85]} />
+        <meshStandardMaterial color="#1a1a2e" />
+      </mesh>
+      {/* Constellation dots */}
+      {[...Array(12)].map((_, i) => (
+        <mesh key={i} position={[(Math.random() - 0.5) * 1.1, (Math.random() - 0.5) * 0.7, 0.04]}>
+          <sphereGeometry args={[0.02, 8, 8]} />
+          <meshStandardMaterial color="#FFD700" emissive="#FFD700" emissiveIntensity={0.5} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// Heaven orb display
+function HeavenOrb({ heaven, isSelected, onClick }: {
   heaven: typeof THREE_HEAVENS_DATA[0];
   isSelected: boolean;
   onClick: () => void;
@@ -60,10 +169,7 @@ function HeavenSphere({ heaven, isSelected, onClick }: {
   
   useFrame((state) => {
     if (sphereRef.current) {
-      // Slow rotation
-      sphereRef.current.rotation.y += 0.002;
-      
-      // Pulse when selected
+      sphereRef.current.rotation.y += 0.005;
       if (isSelected) {
         const scale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.05;
         sphereRef.current.scale.setScalar(scale);
@@ -71,111 +177,77 @@ function HeavenSphere({ heaven, isSelected, onClick }: {
         sphereRef.current.scale.setScalar(1);
       }
     }
-    
     if (ringRef.current) {
-      ringRef.current.rotation.z += 0.005;
-      ringRef.current.rotation.x = Math.PI / 2 + Math.sin(state.clock.elapsedTime) * 0.1;
+      ringRef.current.rotation.z += 0.01;
     }
   });
   
   return (
     <group position={heaven.position as [number, number, number]}>
-      {/* Outer glow ring when selected */}
+      {/* Display pedestal */}
+      <mesh position={[0, -1.5, 0]}>
+        <cylinderGeometry args={[0.4, 0.5, 0.3, 16]} />
+        <meshStandardMaterial color="#2a2a3e" metalness={0.4} roughness={0.6} />
+      </mesh>
+      <mesh position={[0, -1.2, 0]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.5, 8]} />
+        <meshStandardMaterial color="#4a4a5e" metalness={0.5} />
+      </mesh>
+      
+      {/* Glow ring when selected */}
       {isSelected && (
         <mesh ref={ringRef}>
-          <torusGeometry args={[heaven.radius + 0.8, 0.1, 16, 100]} />
-          <meshBasicMaterial color={heaven.color} transparent opacity={0.5} />
+          <torusGeometry args={[heaven.radius + 0.3, 0.05, 16, 100]} />
+          <meshBasicMaterial color={heaven.color} transparent opacity={0.6} />
         </mesh>
       )}
       
-      {/* Main sphere */}
+      {/* Main orb */}
       <mesh ref={sphereRef} onClick={onClick}>
         <sphereGeometry args={[heaven.radius, 64, 64]} />
         <meshStandardMaterial
           color={heaven.color}
           transparent
-          opacity={isSelected ? 0.9 : 0.6}
+          opacity={isSelected ? 0.9 : 0.7}
           metalness={0.3}
           roughness={0.7}
           emissive={heaven.color}
-          emissiveIntensity={isSelected ? 0.4 : 0.1}
+          emissiveIntensity={isSelected ? 0.4 : 0.15}
         />
       </mesh>
       
       {/* Inner glow */}
-      <Sphere args={[heaven.radius * 0.8, 32, 32]}>
-        <meshBasicMaterial
-          color={heaven.color}
-          transparent
-          opacity={0.2}
-        />
+      <Sphere args={[heaven.radius * 0.7, 32, 32]}>
+        <meshBasicMaterial color={heaven.color} transparent opacity={0.15} />
       </Sphere>
       
-      {/* Heaven label */}
+      {/* Label */}
       <Text
-        position={[heaven.radius + 1.5, 0, 0]}
-        fontSize={0.6}
+        position={[0, heaven.radius + 0.5, 0]}
+        fontSize={0.25}
         color="white"
-        anchorX="left"
+        anchorX="center"
         anchorY="middle"
-        outlineWidth={0.02}
+        outlineWidth={0.01}
         outlineColor="black"
       >
-        {heaven.name}
-      </Text>
-      
-      {/* Period text */}
-      <Text
-        position={[heaven.radius + 1.5, -0.7, 0]}
-        fontSize={0.3}
-        color="#aaaaaa"
-        anchorX="left"
-        anchorY="middle"
-      >
-        {heaven.subtitle}
+        {heaven.id.toUpperCase()}
       </Text>
     </group>
   );
 }
 
-// Connecting beam between heavens
-function ConnectorBeam({ from, to, color }: { from: [number, number, number]; to: [number, number, number]; color: string }) {
-  const beamRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (beamRef.current) {
-      const material = beamRef.current.material as THREE.MeshBasicMaterial;
-      material.opacity = 0.3 + Math.sin(state.clock.elapsedTime * 2) * 0.2;
-    }
-  });
-  
-  const direction = new THREE.Vector3(to[0] - from[0], to[1] - from[1], to[2] - from[2]);
-  const length = direction.length();
-  const midpoint: [number, number, number] = [
-    (from[0] + to[0]) / 2,
-    (from[1] + to[1]) / 2,
-    (from[2] + to[2]) / 2,
-  ];
-  
-  return (
-    <mesh ref={beamRef} position={midpoint} rotation={[Math.PI / 2, 0, 0]}>
-      <cylinderGeometry args={[0.05, 0.05, length, 8]} />
-      <meshBasicMaterial color={color} transparent opacity={0.4} />
-    </mesh>
-  );
-}
-
-// Floating scripture reference
+// Floating scripture
 function FloatingScripture({ position, text }: { position: [number, number, number]; text: string }) {
   return (
     <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.3}>
       <Text
         position={position}
-        fontSize={0.25}
+        fontSize={0.15}
         color="#888888"
         anchorX="center"
         anchorY="middle"
-        maxWidth={4}
+        maxWidth={3}
       >
         {text}
       </Text>
@@ -183,58 +255,27 @@ function FloatingScripture({ position, text }: { position: [number, number, numb
   );
 }
 
-// Cycle badges floating around heavens
-function CycleBadge({ position, cycle, color }: { position: [number, number, number]; cycle: string; color: string }) {
-  const badgeRef = useRef<THREE.Group>(null);
-  
-  useFrame((state) => {
-    if (badgeRef.current) {
-      // Orbit around center
-      const angle = state.clock.elapsedTime * 0.3 + position[0];
-      badgeRef.current.position.x = Math.cos(angle) * 2 + position[0];
-      badgeRef.current.position.z = Math.sin(angle) * 2;
-    }
-  });
-  
-  return (
-    <group ref={badgeRef} position={position}>
-      <mesh>
-        <boxGeometry args={[1.2, 0.4, 0.1]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-      <Text
-        position={[0, 0, 0.1]}
-        fontSize={0.2}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-      >
-        {cycle}
-      </Text>
-    </group>
-  );
-}
-
-// Main scene
-function ThreeHeavensScene({ selectedHeaven, onSelectHeaven }: {
+// Main scene content
+function ObservatoryContent({ selectedHeaven, onSelectHeaven }: {
   selectedHeaven: string | null;
   onSelectHeaven: (id: string) => void;
 }) {
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.2} />
-      <directionalLight position={[10, 10, 5]} intensity={0.8} color="#ffffff" />
-      <pointLight position={[0, 10, 5]} intensity={0.5} color="#F39C12" />
-      <pointLight position={[0, 0, 5]} intensity={0.5} color="#9B59B6" />
-      <pointLight position={[0, -10, 5]} intensity={0.5} color="#4A90A4" />
+      {/* Observatory props */}
+      <Telescope position={[-4, 0, 4]} />
+      <Telescope position={[4, 0, -3]} />
+      <Orrery position={[0, 0.5, 5]} />
+      <Orrery position={[-5, 0.5, -2]} />
       
-      {/* Stars background */}
-      <Stars radius={150} depth={60} count={5000} factor={4} saturation={0} fade speed={0.5} />
+      {/* Star charts on walls */}
+      <StarChart position={[-5.9, 2.5, 0]} rotation={[0, Math.PI / 2, 0]} />
+      <StarChart position={[5.9, 2.5, -2]} rotation={[0, -Math.PI / 2, 0]} />
+      <StarChart position={[0, 2.5, -5.9]} rotation={[0, 0, 0]} />
       
-      {/* Heaven spheres */}
+      {/* Heaven orbs */}
       {THREE_HEAVENS_DATA.map((heaven) => (
-        <HeavenSphere
+        <HeavenOrb
           key={heaven.id}
           heaven={heaven}
           isSelected={selectedHeaven === heaven.id}
@@ -242,47 +283,50 @@ function ThreeHeavensScene({ selectedHeaven, onSelectHeaven }: {
         />
       ))}
       
-      {/* Connecting beams */}
-      <ConnectorBeam
-        from={[0, -4, 0]}
-        to={[0, 0, 0]}
-        color="#6B7A8C"
-      />
-      <ConnectorBeam
-        from={[0, 0, 0]}
-        to={[0, 4, 0]}
-        color="#8B6B9C"
-      />
-      
       {/* Floating scriptures */}
-      <FloatingScripture position={[-6, -4, 2]} text="Isaiah 65:17 - 'New heavens and new earth'" />
-      <FloatingScripture position={[-6, 0, 2]} text="Hebrews 12:28 - 'Kingdom which cannot be moved'" />
-      <FloatingScripture position={[-6, 4, 2]} text="Revelation 21:1 - 'I saw a new heaven'" />
+      <FloatingScripture position={[-6, 4.5, 0]} text="Isaiah 65:17" />
+      <FloatingScripture position={[0, 5, 0]} text="Hebrews 12:28" />
+      <FloatingScripture position={[6, 4.5, 0]} text="Revelation 21:1" />
       
-      {/* Cycle badges */}
-      {THREE_HEAVENS_DATA.map((heaven) =>
-        heaven.cycles.map((cycle, i) => (
-          <CycleBadge
-            key={`${heaven.id}-${cycle}`}
-            position={[
-              heaven.position[0] - 3 - i * 0.5,
-              heaven.position[1],
-              heaven.position[2],
-            ]}
-            cycle={cycle}
-            color={heaven.color}
-          />
-        ))
-      )}
+      {/* Cycle badges beneath orbs */}
+      {THREE_HEAVENS_DATA.map((heaven) => (
+        <group key={`cycles-${heaven.id}`} position={[heaven.position[0], -0.5, heaven.position[2]]}>
+          {heaven.cycles.map((cycle, i) => (
+            <Text
+              key={cycle}
+              position={[(i - (heaven.cycles.length - 1) / 2) * 0.8, 0, 0.5]}
+              fontSize={0.15}
+              color={heaven.color}
+              anchorX="center"
+            >
+              {cycle}
+            </Text>
+          ))}
+        </group>
+      ))}
+    </>
+  );
+}
+
+// Main scene with room
+function ThreeHeavensScene({ selectedHeaven, onSelectHeaven }: {
+  selectedHeaven: string | null;
+  onSelectHeaven: (id: string) => void;
+}) {
+  return (
+    <>
+      <PalaceRoom3D theme="observatory" width={12} depth={12}>
+        <ObservatoryContent selectedHeaven={selectedHeaven} onSelectHeaven={onSelectHeaven} />
+      </PalaceRoom3D>
       
-      {/* Camera controls */}
       <OrbitControls
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
-        minDistance={10}
-        maxDistance={40}
-        target={[0, 0, 0]}
+        minDistance={6}
+        maxDistance={18}
+        maxPolarAngle={Math.PI / 2.1}
+        target={[0, 2, 0]}
       />
     </>
   );
@@ -323,7 +367,6 @@ export function ThreeHeavens3DViewer({ onClose }: ThreeHeavens3DViewerProps) {
 
   return (
     <div className="relative w-full h-[600px] bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950 rounded-xl overflow-hidden">
-      {/* Close button */}
       {onClose && (
         <Button
           variant="ghost"
@@ -335,28 +378,19 @@ export function ThreeHeavens3DViewer({ onClose }: ThreeHeavens3DViewerProps) {
         </Button>
       )}
       
-      {/* Title */}
       <div className="absolute top-4 left-4 z-20">
         <h3 className="text-xl font-bold text-white drop-shadow-lg">
-          ☁️ Three Heavens Framework
+          🔭 Observatory of the Heavens
         </h3>
         <p className="text-sm text-white/70">Day of the LORD → New Heavens & Earth cycles</p>
       </div>
       
-      {/* 3D Canvas */}
-      <Canvas
-        camera={{ position: [12, 2, 12], fov: 50 }}
-        gl={{ antialias: true }}
-      >
+      <Canvas camera={{ position: [0, 4, 12], fov: 50 }} gl={{ antialias: true }}>
         <Suspense fallback={<LoadingFallback />}>
-          <ThreeHeavensScene
-            selectedHeaven={selectedHeaven}
-            onSelectHeaven={setSelectedHeaven}
-          />
+          <ThreeHeavensScene selectedHeaven={selectedHeaven} onSelectHeaven={setSelectedHeaven} />
         </Suspense>
       </Canvas>
       
-      {/* Info panel */}
       {selectedData && (
         <Card className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-[420px] bg-background/90 backdrop-blur-md border-primary/30 z-20">
           <div className="p-4">
@@ -372,10 +406,7 @@ export function ThreeHeavens3DViewer({ onClose }: ThreeHeavens3DViewerProps) {
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </div>
-            <div
-              className="h-1 rounded-full mb-3"
-              style={{ backgroundColor: selectedData.color }}
-            />
+            <div className="h-1 rounded-full mb-3" style={{ backgroundColor: selectedData.color }} />
             <p className="text-xs text-muted-foreground mb-2">{selectedData.period}</p>
             <p className="text-sm mb-3">{selectedData.description}</p>
             <div className="flex flex-wrap gap-2 mb-2">
@@ -397,7 +428,6 @@ export function ThreeHeavens3DViewer({ onClose }: ThreeHeavens3DViewerProps) {
         </Card>
       )}
       
-      {/* Heaven selector */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
         {THREE_HEAVENS_DATA.map((h) => (
           <button

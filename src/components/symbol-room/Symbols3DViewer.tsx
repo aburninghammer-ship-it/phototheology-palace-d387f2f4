@@ -1,10 +1,11 @@
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Text, Float, Stars, useTexture } from "@react-three/drei";
+import { OrbitControls, Text, Float } from "@react-three/drei";
 import { Suspense, useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { X, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { PalaceRoom3D } from "@/components/3d/PalaceRoom3D";
 
 // Biblical symbols library
 const BIBLICAL_SYMBOLS = [
@@ -118,7 +119,6 @@ const BIBLICAL_SYMBOLS = [
   },
 ];
 
-// Category colors
 const CATEGORY_COLORS: Record<string, string> = {
   "Christ Types": "#E74C3C",
   "Truth & Spirit": "#3498DB",
@@ -127,106 +127,178 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Warfare": "#1ABC9C",
 };
 
-// Floating symbol orb
-function SymbolOrb({ symbol, position, isSelected, onClick }: {
-  symbol: typeof BIBLICAL_SYMBOLS[0];
+// Painting frame on wall
+function PaintingFrame({ position, rotation, symbol, isSelected, onClick }: {
   position: [number, number, number];
+  rotation: [number, number, number];
+  symbol: typeof BIBLICAL_SYMBOLS[0];
   isSelected: boolean;
   onClick: () => void;
 }) {
-  const orbRef = useRef<THREE.Mesh>(null);
-  const glowRef = useRef<THREE.Mesh>(null);
+  const frameRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
-    if (orbRef.current) {
-      // Gentle floating
-      orbRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.2;
-      
-      // Slow rotation
-      orbRef.current.rotation.y += 0.005;
-      
-      // Pulse when selected
-      if (isSelected && glowRef.current) {
-        const scale = 1.3 + Math.sin(state.clock.elapsedTime * 3) * 0.1;
-        glowRef.current.scale.setScalar(scale);
-      }
+    if (frameRef.current && isSelected) {
+      // Subtle glow pulse
+      const scale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.02;
+      frameRef.current.scale.setScalar(scale);
+    } else if (frameRef.current) {
+      frameRef.current.scale.setScalar(1);
     }
   });
   
   return (
-    <group position={position}>
-      {/* Selection glow */}
-      {isSelected && (
-        <mesh ref={glowRef}>
-          <sphereGeometry args={[1.2, 32, 32]} />
-          <meshBasicMaterial
-            color={symbol.color}
-            transparent
-            opacity={0.3}
-          />
-        </mesh>
-      )}
-      
-      {/* Main orb */}
-      <mesh ref={orbRef} onClick={onClick}>
-        <sphereGeometry args={[0.8, 32, 32]} />
-        <meshStandardMaterial
-          color={symbol.color}
-          metalness={0.3}
-          roughness={0.6}
-          emissive={symbol.color}
-          emissiveIntensity={isSelected ? 0.5 : 0.2}
+    <group ref={frameRef} position={position} rotation={rotation} onClick={onClick}>
+      {/* Ornate frame */}
+      <mesh>
+        <boxGeometry args={[1.4, 1.8, 0.15]} />
+        <meshStandardMaterial color={isSelected ? "#D4A574" : "#4a3728"} metalness={0.3} roughness={0.7} />
+      </mesh>
+      {/* Inner frame detail */}
+      <mesh position={[0, 0, 0.05]}>
+        <boxGeometry args={[1.2, 1.6, 0.05]} />
+        <meshStandardMaterial color="#2a1a0a" />
+      </mesh>
+      {/* Canvas background */}
+      <mesh position={[0, 0, 0.08]}>
+        <planeGeometry args={[1, 1.4]} />
+        <meshStandardMaterial 
+          color={CATEGORY_COLORS[symbol.category] || "#333333"} 
+          transparent 
+          opacity={0.3} 
         />
       </mesh>
-      
       {/* Symbol emoji */}
       <Text
-        position={[0, 0, 1]}
-        fontSize={0.6}
+        position={[0, 0.2, 0.1]}
+        fontSize={0.5}
         anchorX="center"
         anchorY="middle"
       >
         {symbol.emoji}
       </Text>
-      
       {/* Symbol name */}
       <Text
-        position={[0, -1.3, 0]}
-        fontSize={0.25}
+        position={[0, -0.4, 0.1]}
+        fontSize={0.12}
         color="white"
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.01}
+        outlineWidth={0.005}
         outlineColor="black"
       >
         {symbol.name}
       </Text>
+      {/* Selection glow */}
+      {isSelected && (
+        <mesh position={[0, 0, -0.1]}>
+          <boxGeometry args={[1.6, 2, 0.05]} />
+          <meshBasicMaterial color={symbol.color} transparent opacity={0.3} />
+        </mesh>
+      )}
     </group>
   );
 }
 
-// Category platform
-function CategoryPlatform({ category, position, color }: {
-  category: string;
+// Gallery bench
+function GalleryBench({ position, rotation }: { position: [number, number, number]; rotation?: [number, number, number] }) {
+  return (
+    <group position={position} rotation={rotation}>
+      {/* Seat */}
+      <mesh position={[0, 0.4, 0]}>
+        <boxGeometry args={[2, 0.1, 0.6]} />
+        <meshStandardMaterial color="#4a3728" />
+      </mesh>
+      {/* Legs */}
+      <mesh position={[-0.8, 0.2, 0]}>
+        <boxGeometry args={[0.1, 0.4, 0.5]} />
+        <meshStandardMaterial color="#3a2718" />
+      </mesh>
+      <mesh position={[0.8, 0.2, 0]}>
+        <boxGeometry args={[0.1, 0.4, 0.5]} />
+        <meshStandardMaterial color="#3a2718" />
+      </mesh>
+    </group>
+  );
+}
+
+// Sculpture pedestal with rotating symbol
+function SymbolSculpture({ position, symbol, isSelected, onClick }: {
   position: [number, number, number];
+  symbol: typeof BIBLICAL_SYMBOLS[0];
+  isSelected: boolean;
+  onClick: () => void;
+}) {
+  const sculptureRef = useRef<THREE.Group>(null);
+  
+  useFrame((state) => {
+    if (sculptureRef.current) {
+      sculptureRef.current.rotation.y = state.clock.elapsedTime * 0.3;
+      if (isSelected) {
+        sculptureRef.current.position.y = 1.2 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
+      } else {
+        sculptureRef.current.position.y = 1.2;
+      }
+    }
+  });
+  
+  return (
+    <group position={position} onClick={onClick}>
+      {/* Pedestal */}
+      <mesh position={[0, 0.3, 0]}>
+        <cylinderGeometry args={[0.3, 0.4, 0.6, 16]} />
+        <meshStandardMaterial color="#f5f5f5" metalness={0.1} roughness={0.8} />
+      </mesh>
+      <mesh position={[0, 0.65, 0]}>
+        <cylinderGeometry args={[0.35, 0.3, 0.1, 16]} />
+        <meshStandardMaterial color="#e0e0e0" />
+      </mesh>
+      
+      {/* Floating symbol orb */}
+      <group ref={sculptureRef} position={[0, 1.2, 0]}>
+        <mesh>
+          <sphereGeometry args={[0.4, 32, 32]} />
+          <meshStandardMaterial 
+            color={symbol.color} 
+            metalness={0.4} 
+            roughness={0.5}
+            emissive={symbol.color}
+            emissiveIntensity={isSelected ? 0.3 : 0.1}
+            transparent
+            opacity={0.8}
+          />
+        </mesh>
+        <Text
+          position={[0, 0, 0.45]}
+          fontSize={0.3}
+          anchorX="center"
+          anchorY="middle"
+        >
+          {symbol.emoji}
+        </Text>
+      </group>
+      
+      {/* Spotlight from above */}
+      <pointLight position={[0, 3, 0]} intensity={isSelected ? 0.8 : 0.3} color={symbol.color} distance={4} />
+    </group>
+  );
+}
+
+// Category label plaque
+function CategoryPlaque({ position, category, color }: {
+  position: [number, number, number];
+  category: string;
   color: string;
 }) {
   return (
     <group position={position}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[3, 3, 0.2, 32]} />
-        <meshStandardMaterial
-          color={color}
-          transparent
-          opacity={0.3}
-          metalness={0.5}
-          roughness={0.5}
-        />
+      <mesh>
+        <boxGeometry args={[1.5, 0.4, 0.05]} />
+        <meshStandardMaterial color="#2a2a2a" metalness={0.3} />
       </mesh>
       <Text
-        position={[0, 0.2, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        fontSize={0.4}
+        position={[0, 0, 0.03]}
+        fontSize={0.12}
         color={color}
         anchorX="center"
         anchorY="middle"
@@ -237,28 +309,102 @@ function CategoryPlatform({ category, position, color }: {
   );
 }
 
-// Calculate symbol positions in a circular arrangement by category
-function getSymbolPositions(): Map<string, [number, number, number]> {
-  const positions = new Map<string, [number, number, number]>();
-  const categories = [...new Set(BIBLICAL_SYMBOLS.map((s) => s.category))];
+// Calculate positions for wall paintings
+function getWallPositions(): { symbol: typeof BIBLICAL_SYMBOLS[0]; position: [number, number, number]; rotation: [number, number, number] }[] {
+  const positions: { symbol: typeof BIBLICAL_SYMBOLS[0]; position: [number, number, number]; rotation: [number, number, number] }[] = [];
   
-  categories.forEach((category, catIndex) => {
-    const categorySymbols = BIBLICAL_SYMBOLS.filter((s) => s.category === category);
-    const categoryAngle = (catIndex / categories.length) * Math.PI * 2;
-    const categoryRadius = 8;
-    const categoryX = Math.cos(categoryAngle) * categoryRadius;
-    const categoryZ = Math.sin(categoryAngle) * categoryRadius;
-    
-    categorySymbols.forEach((symbol, symbolIndex) => {
-      const symbolAngle = (symbolIndex / categorySymbols.length) * Math.PI * 2;
-      const symbolRadius = 2;
-      const x = categoryX + Math.cos(symbolAngle) * symbolRadius;
-      const z = categoryZ + Math.sin(symbolAngle) * symbolRadius;
-      positions.set(symbol.id, [x, 1, z]);
+  // Left wall paintings
+  const leftWallSymbols = BIBLICAL_SYMBOLS.slice(0, 3);
+  leftWallSymbols.forEach((symbol, i) => {
+    positions.push({
+      symbol,
+      position: [-5.8, 2.5, -3 + i * 3],
+      rotation: [0, Math.PI / 2, 0],
+    });
+  });
+  
+  // Right wall paintings
+  const rightWallSymbols = BIBLICAL_SYMBOLS.slice(3, 6);
+  rightWallSymbols.forEach((symbol, i) => {
+    positions.push({
+      symbol,
+      position: [5.8, 2.5, -3 + i * 3],
+      rotation: [0, -Math.PI / 2, 0],
+    });
+  });
+  
+  // Back wall paintings
+  const backWallSymbols = BIBLICAL_SYMBOLS.slice(6, 9);
+  backWallSymbols.forEach((symbol, i) => {
+    positions.push({
+      symbol,
+      position: [-3 + i * 3, 2.5, -5.8],
+      rotation: [0, 0, 0],
     });
   });
   
   return positions;
+}
+
+// Main gallery content
+function GalleryContent({ selectedSymbol, onSelectSymbol }: {
+  selectedSymbol: string | null;
+  onSelectSymbol: (id: string) => void;
+}) {
+  const wallPaintings = useMemo(() => getWallPositions(), []);
+  const centerSymbols = BIBLICAL_SYMBOLS.slice(9);
+  
+  return (
+    <>
+      {/* Wall paintings */}
+      {wallPaintings.map(({ symbol, position, rotation }) => (
+        <PaintingFrame
+          key={symbol.id}
+          symbol={symbol}
+          position={position}
+          rotation={rotation}
+          isSelected={selectedSymbol === symbol.id}
+          onClick={() => onSelectSymbol(symbol.id)}
+        />
+      ))}
+      
+      {/* Center sculptures */}
+      {centerSymbols.map((symbol, i) => (
+        <SymbolSculpture
+          key={symbol.id}
+          symbol={symbol}
+          position={[(i - 1) * 3, 0, 2]}
+          isSelected={selectedSymbol === symbol.id}
+          onClick={() => onSelectSymbol(symbol.id)}
+        />
+      ))}
+      
+      {/* Gallery benches */}
+      <GalleryBench position={[0, 0, 0]} />
+      <GalleryBench position={[-3, 0, -2]} rotation={[0, Math.PI / 4, 0]} />
+      <GalleryBench position={[3, 0, -2]} rotation={[0, -Math.PI / 4, 0]} />
+      
+      {/* Category plaques */}
+      <CategoryPlaque position={[-5.8, 4.2, 0]} category="Christ Types" color={CATEGORY_COLORS["Christ Types"]} />
+      <CategoryPlaque position={[5.8, 4.2, 0]} category="Truth & Spirit" color={CATEGORY_COLORS["Truth & Spirit"]} />
+      <CategoryPlaque position={[0, 4.2, -5.8]} category="Sanctuary" color={CATEGORY_COLORS["Sanctuary"]} />
+      
+      {/* Floating descriptions */}
+      {selectedSymbol && (
+        <Float speed={2} rotationIntensity={0.05} floatIntensity={0.2}>
+          <Text
+            position={[0, 5, 0]}
+            fontSize={0.2}
+            color="#aaaaaa"
+            anchorX="center"
+            maxWidth={8}
+          >
+            {BIBLICAL_SYMBOLS.find(s => s.id === selectedSymbol)?.meaning || ""}
+          </Text>
+        </Float>
+      )}
+    </>
+  );
 }
 
 // Main scene
@@ -266,71 +412,20 @@ function SymbolsScene({ selectedSymbol, onSelectSymbol }: {
   selectedSymbol: string | null;
   onSelectSymbol: (id: string) => void;
 }) {
-  const positions = useMemo(() => getSymbolPositions(), []);
-  const categories = [...new Set(BIBLICAL_SYMBOLS.map((s) => s.category))];
-  
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[10, 15, 10]} intensity={0.8} color="#ffffff" />
-      <pointLight position={[0, 10, 0]} intensity={0.5} color="#ffd700" />
+      <PalaceRoom3D theme="gallery" width={12} depth={12}>
+        <GalleryContent selectedSymbol={selectedSymbol} onSelectSymbol={onSelectSymbol} />
+      </PalaceRoom3D>
       
-      {/* Stars background */}
-      <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
-      
-      {/* Category platforms */}
-      {categories.map((category, index) => {
-        const angle = (index / categories.length) * Math.PI * 2;
-        const radius = 8;
-        return (
-          <CategoryPlatform
-            key={category}
-            category={category}
-            position={[Math.cos(angle) * radius, -1, Math.sin(angle) * radius]}
-            color={CATEGORY_COLORS[category] || "#888888"}
-          />
-        );
-      })}
-      
-      {/* Symbol orbs */}
-      {BIBLICAL_SYMBOLS.map((symbol) => (
-        <SymbolOrb
-          key={symbol.id}
-          symbol={symbol}
-          position={positions.get(symbol.id) || [0, 1, 0]}
-          isSelected={selectedSymbol === symbol.id}
-          onClick={() => onSelectSymbol(symbol.id)}
-        />
-      ))}
-      
-      {/* Central altar */}
-      <mesh position={[0, -0.5, 0]}>
-        <cylinderGeometry args={[1.5, 2, 1, 8]} />
-        <meshStandardMaterial color="#4a3728" metalness={0.3} roughness={0.8} />
-      </mesh>
-      
-      {/* Central light beam */}
-      <mesh position={[0, 3, 0]}>
-        <cylinderGeometry args={[0.1, 0.5, 6, 16]} />
-        <meshBasicMaterial color="#ffd700" transparent opacity={0.3} />
-      </mesh>
-      
-      {/* Ground */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 0]}>
-        <planeGeometry args={[50, 50]} />
-        <meshStandardMaterial color="#1a1a2e" transparent opacity={0.8} />
-      </mesh>
-      
-      {/* Camera controls */}
       <OrbitControls
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
-        minDistance={8}
-        maxDistance={30}
-        maxPolarAngle={Math.PI / 2.2}
-        target={[0, 0, 0]}
+        minDistance={5}
+        maxDistance={16}
+        maxPolarAngle={Math.PI / 2.1}
+        target={[0, 2, 0]}
       />
     </>
   );
@@ -371,7 +466,6 @@ export function Symbols3DViewer({ onClose }: Symbols3DViewerProps) {
 
   return (
     <div className="relative w-full h-[600px] bg-gradient-to-b from-slate-900 via-amber-950/30 to-slate-900 rounded-xl overflow-hidden">
-      {/* Close button */}
       {onClose && (
         <Button
           variant="ghost"
@@ -383,28 +477,19 @@ export function Symbols3DViewer({ onClose }: Symbols3DViewerProps) {
         </Button>
       )}
       
-      {/* Title */}
       <div className="absolute top-4 left-4 z-20">
         <h3 className="text-xl font-bold text-white drop-shadow-lg">
-          🔗 Biblical Symbols Gallery
+          🖼️ Symbols Gallery
         </h3>
-        <p className="text-sm text-white/70">Click symbols to explore • Drag to rotate</p>
+        <p className="text-sm text-white/70">Click paintings or sculptures to explore</p>
       </div>
       
-      {/* 3D Canvas */}
-      <Canvas
-        camera={{ position: [12, 8, 12], fov: 50 }}
-        gl={{ antialias: true }}
-      >
+      <Canvas camera={{ position: [0, 4, 10], fov: 50 }} gl={{ antialias: true }}>
         <Suspense fallback={<LoadingFallback />}>
-          <SymbolsScene
-            selectedSymbol={selectedSymbol}
-            onSelectSymbol={setSelectedSymbol}
-          />
+          <SymbolsScene selectedSymbol={selectedSymbol} onSelectSymbol={setSelectedSymbol} />
         </Suspense>
       </Canvas>
       
-      {/* Info panel */}
       {selectedData && (
         <Card className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-background/90 backdrop-blur-md border-primary/30 z-20">
           <div className="p-4">
@@ -440,7 +525,6 @@ export function Symbols3DViewer({ onClose }: Symbols3DViewerProps) {
         </Card>
       )}
       
-      {/* Category filter pills */}
       <div className="absolute top-16 left-4 flex flex-wrap gap-2 z-20 max-w-xs">
         {[...new Set(BIBLICAL_SYMBOLS.map((s) => s.category))].map((cat) => (
           <button
