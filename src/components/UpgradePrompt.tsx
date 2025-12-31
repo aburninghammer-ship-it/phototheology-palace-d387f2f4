@@ -102,7 +102,7 @@ export const UpgradePrompt = ({
           {showTrialOption && (
             <Badge variant="secondary" className="mx-auto gap-1">
               <Sparkles className="h-3 w-3" />
-              14-day free trial available
+              7-day free trial available
             </Badge>
           )}
         </div>

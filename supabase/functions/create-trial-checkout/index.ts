@@ -91,7 +91,7 @@ serve(async (req) => {
       ],
       mode: "subscription",
     subscription_data: {
-        trial_period_days: 14, // 14-day full access trial
+        trial_period_days: 7, // 7-day full access trial
         metadata: {
           user_id: user.id,
           plan: plan,

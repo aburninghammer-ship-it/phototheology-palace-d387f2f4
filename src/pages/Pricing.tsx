@@ -21,7 +21,7 @@ export default function Pricing() {
   useEffect(() => {
     const trialStatus = searchParams.get('trial');
     if (trialStatus === 'success') {
-      toast.success("🎉 Your 14-day free trial has started! Enjoy full Premium access.");
+      toast.success("🎉 Your 7-day free trial has started! Enjoy full Premium access.");
       navigate('/palace', { replace: true });
     } else if (trialStatus === 'cancelled') {
       toast.info("Trial checkout was cancelled. No worries, you can try again anytime!");
@@ -84,12 +84,12 @@ export default function Pricing() {
   const plans = [
     {
       id: "trial",
-      name: "14-Day Free Trial",
+      name: "7-Day Free Trial",
       icon: Sparkles,
       iconColor: "text-green-600",
       monthlyPrice: "$0",
       annualPrice: "$0",
-      period: "for 14 days",
+      period: "for 7 days",
       description: "Full Premium access — no restrictions",
       badge: "Start Free Today",
       badgeVariant: "default" as const,
@@ -193,13 +193,13 @@ export default function Pricing() {
         <div className="text-center mb-12">
           <Badge className="mb-4 gradient-palace text-white border-0">
             <Sparkles className="h-3 w-3 mr-1" />
-            14-Day Free Trial • Full Access
+            7-Day Free Trial • Full Access
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-palace bg-clip-text text-transparent mb-4">
             Master Bible Study for Free
           </h1>
           <p className="text-xl text-muted-foreground max-w-xl mx-auto">
-            14-day trial. Full access. $9-15/mo after.
+            7-day trial. Full access. $9-15/mo after.
           </p>
           
           {/* Billing Period Toggle - Enhanced */}
@@ -242,7 +242,7 @@ export default function Pricing() {
               <Sparkles className="h-3 w-3 mr-1" />
               Most Popular Choice
             </Badge>
-            <h3 className="text-xl font-bold mb-2">Start Your 14-Day Free Trial</h3>
+            <h3 className="text-xl font-bold mb-2">Start Your 7-Day Free Trial</h3>
             <p className="text-muted-foreground mb-4">
               Get instant access to all Premium features — no restrictions.
               <span className="flex items-center justify-center gap-1 mt-1 text-sm font-medium text-primary">
@@ -254,7 +254,7 @@ export default function Pricing() {
               className="gradient-palace"
               disabled={isStartingTrial}
             >
-              {isStartingTrial ? "Starting..." : "Start 14-Day Free Trial"}
+              {isStartingTrial ? "Starting..." : "Start 7-Day Free Trial"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardContent>

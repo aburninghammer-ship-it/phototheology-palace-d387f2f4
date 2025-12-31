@@ -29,7 +29,7 @@ function getMessageForTrialAge(info: TrialInfo): MessageConfig | null {
   if (trialAge <= 1) {
     return {
       icon: <Star className="h-5 w-5" />,
-      title: "Welcome to your 14-day trial! 🎉",
+      title: "Welcome to your 7-day trial! 🎉",
       subtitle: "Complete your first win: explore the 24FPS Room and match 7 Genesis images.",
       cta: "Start First Win",
       urgency: "low",
