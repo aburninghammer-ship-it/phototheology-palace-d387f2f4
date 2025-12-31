@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -85,23 +85,23 @@ export function QALibrary({ onClose }: QALibraryProps) {
   if (selectedQA) {
     const relatedQA = getRelatedQA(selectedQA);
     return (
-      <Card className="h-full">
-        <CardHeader className="pb-4">
-          <Button variant="ghost" size="sm" onClick={handleBack} className="w-fit mb-2">
-            <ChevronRight className="h-4 w-4 rotate-180 mr-1" />
-            Back to Questions
-          </Button>
-          <CardTitle className="text-xl flex items-start gap-2">
+      <div className="space-y-4">
+        <Button variant="ghost" size="sm" onClick={handleBack} className="w-fit">
+          <ChevronRight className="h-4 w-4 rotate-180 mr-1" />
+          Back to Questions
+        </Button>
+        
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold flex items-start gap-2">
             <MessageCircleQuestion className="h-5 w-5 text-orange-500 flex-shrink-0 mt-1" />
             <span>{selectedQA.question}</span>
-          </CardTitle>
-          <CardDescription className="flex items-center gap-2 mt-2">
-            <Badge variant="outline" className="capitalize">
-              {qaCategories.find(c => c.id === selectedQA.category)?.icon} {selectedQA.category}
-            </Badge>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
+          </h3>
+          <Badge variant="outline" className="capitalize">
+            {qaCategories.find(c => c.id === selectedQA.category)?.icon} {selectedQA.category}
+          </Badge>
+        </div>
+
+        <div className="space-y-6">
           {/* Question Source */}
           <div className="bg-orange-500/5 border border-orange-500/20 rounded-lg p-4">
             <h4 className="font-semibold mb-2 flex items-center gap-2">
@@ -177,8 +177,8 @@ export function QALibrary({ onClose }: QALibraryProps) {
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
@@ -186,56 +186,56 @@ export function QALibrary({ onClose }: QALibraryProps) {
   if (selectedCategory) {
     const questionsInCategory = getQAByCategory(selectedCategory.id as QAEntry["category"]);
     return (
-      <Card className="h-full">
-        <CardHeader className="pb-4">
-          <Button variant="ghost" size="sm" onClick={handleBack} className="w-fit mb-2">
-            <ChevronRight className="h-4 w-4 rotate-180 mr-1" />
-            Back to Categories
-          </Button>
-          <CardTitle className="flex items-center gap-2">
+      <div className="space-y-4">
+        <Button variant="ghost" size="sm" onClick={handleBack} className="w-fit">
+          <ChevronRight className="h-4 w-4 rotate-180 mr-1" />
+          Back to Categories
+        </Button>
+        
+        <div className="space-y-2">
+          <h3 className="flex items-center gap-2 text-lg font-semibold">
             <span className="text-xl">{selectedCategory.icon}</span>
             {selectedCategory.name}
-          </CardTitle>
-          <CardDescription>
+          </h3>
+          <p className="text-sm text-muted-foreground">
             {questionsInCategory.length} questions about {selectedCategory.name.toLowerCase()}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[500px] pr-4">
-            <div className="space-y-3">
-              {questionsInCategory.map((qa, index) => (
-                <Card
-                  key={qa.id}
-                  className="cursor-pointer hover:bg-accent/50 transition-colors"
-                  onClick={() => handleSelectQA(qa)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Badge variant="outline" className="text-xs">
-                            {index + 1}
-                          </Badge>
-                          <h4 className="font-medium">{qa.question}</h4>
-                        </div>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {qa.answer}
-                        </p>
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          <Badge variant="secondary" className="text-xs">
-                            {qa.answerSource.book} {qa.answerSource.chapter}:{qa.answerSource.verses}
-                          </Badge>
-                        </div>
+          </p>
+        </div>
+
+        <ScrollArea className="h-[500px] pr-4">
+          <div className="space-y-3">
+            {questionsInCategory.map((qa, index) => (
+              <Card
+                key={qa.id}
+                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => handleSelectQA(qa)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="outline" className="text-xs">
+                          {index + 1}
+                        </Badge>
+                        <h4 className="font-medium">{qa.question}</h4>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {qa.answer}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        <Badge variant="secondary" className="text-xs">
+                          {qa.answerSource.book} {qa.answerSource.chapter}:{qa.answerSource.verses}
+                        </Badge>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
     );
   }
 
@@ -243,103 +243,101 @@ export function QALibrary({ onClose }: QALibraryProps) {
   const categoriesWithCounts = getCategoriesWithCounts();
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
+    <div className="space-y-4">
+      {/* Header - only show if onClose is provided (standalone mode) */}
+      {onClose && (
+        <div className="flex items-center justify-between pb-4">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <h3 className="flex items-center gap-2 text-lg font-semibold">
               <Library className="h-5 w-5 text-orange-500" />
               Q&A Chain Library
-            </CardTitle>
-            <CardDescription>
+            </h3>
+            <p className="text-sm text-muted-foreground">
               {totalQA} questions across {qaCategories.length} categories
-            </CardDescription>
+            </p>
           </div>
-          {onClose && (
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              Close
-            </Button>
-          )}
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            Close
+          </Button>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search questions, answers, verses..."
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+      )}
+      
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search questions, answers, verses..."
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="pl-10"
+        />
+      </div>
 
-        {/* Search Results */}
-        {searchResults.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-muted-foreground">
-              Found {searchResults.length} Q&A entries
-            </h4>
-            <ScrollArea className="h-[400px]">
-              <div className="space-y-2 pr-4">
-                {searchResults.map((qa) => (
-                  <Card
-                    key={qa.id}
-                    className="cursor-pointer hover:bg-accent/50 transition-colors"
-                    onClick={() => setSelectedQA(qa)}
-                  >
-                    <CardContent className="p-3">
-                      <div className="flex items-center gap-2">
-                        <span>{qaCategories.find(c => c.id === qa.category)?.icon}</span>
-                        <div>
-                          <h4 className="font-medium text-sm">{qa.question}</h4>
-                          <p className="text-xs text-muted-foreground capitalize">
-                            {qa.category}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-        )}
-
-        {/* Categories Grid */}
-        {searchResults.length === 0 && searchQuery.length < 2 && (
-          <ScrollArea className="h-[450px]">
-            <div className="grid grid-cols-2 gap-3 pr-4">
-              {categoriesWithCounts.map(({ category, count }) => (
+      {/* Search Results */}
+      {searchResults.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-muted-foreground">
+            Found {searchResults.length} Q&A entries
+          </h4>
+          <ScrollArea className="h-[400px]">
+            <div className="space-y-2 pr-4">
+              {searchResults.map((qa) => (
                 <Card
-                  key={category.id}
+                  key={qa.id}
                   className="cursor-pointer hover:bg-accent/50 transition-colors"
-                  onClick={() => handleSelectCategory(category)}
+                  onClick={() => setSelectedQA(qa)}
                 >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-2xl">{category.icon}</span>
-                      <Badge variant="secondary">{count}</Badge>
+                  <CardContent className="p-3">
+                    <div className="flex items-center gap-2">
+                      <span>{qaCategories.find(c => c.id === qa.category)?.icon}</span>
+                      <div>
+                        <h4 className="font-medium text-sm">{qa.question}</h4>
+                        <p className="text-xs text-muted-foreground capitalize">
+                          {qa.category}
+                        </p>
+                      </div>
                     </div>
-                    <h4 className="font-medium text-sm">{category.name}</h4>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                      {category.description}
-                    </p>
                   </CardContent>
                 </Card>
               ))}
             </div>
           </ScrollArea>
-        )}
+        </div>
+      )}
 
-        {/* Empty state for no results */}
-        {searchQuery.length >= 2 && searchResults.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            <p>No Q&A entries found for "{searchQuery}"</p>
+      {/* Categories Grid */}
+      {searchResults.length === 0 && searchQuery.length < 2 && (
+        <ScrollArea className="h-[450px]">
+          <div className="grid grid-cols-2 gap-3 pr-4">
+            {categoriesWithCounts.map(({ category, count }) => (
+              <Card
+                key={category.id}
+                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => handleSelectCategory(category)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-2xl">{category.icon}</span>
+                    <Badge variant="secondary">{count}</Badge>
+                  </div>
+                  <h4 className="font-medium text-sm">{category.name}</h4>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                    {category.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </ScrollArea>
+      )}
+
+      {/* Empty state for no results */}
+      {searchQuery.length >= 2 && searchResults.length === 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
+          <p>No Q&A entries found for "{searchQuery}"</p>
+        </div>
+      )}
+    </div>
   );
 }
