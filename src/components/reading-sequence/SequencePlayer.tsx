@@ -2183,7 +2183,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   // Auto-play when new chapter content loads (for chapter transitions)
   useEffect(() => {
-    if (shouldPlayNextRef.current && chapterContent && !isLoading && !isGeneratingRef.current && !audioRef.current) {
+    if (
+      shouldPlayNextRef.current &&
+      chapterContent &&
+      !isLoading &&
+      !isGeneratingRef.current &&
+      (!audioRef.current || audioRef.current.paused || !audioRef.current.src)
+    ) {
       console.log("Auto-playing next chapter after transition");
       shouldPlayNextRef.current = false;
       const voice = currentSequence?.voice || "daniel";
@@ -2254,7 +2260,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         hasAudio: !!audioRef.current
       });
 
-      if (chapterContent && chapterContent.verses && chapterContent.verses.length > 0 && !isLoading && !isGeneratingRef.current && !audioRef.current) {
+      if (
+        chapterContent &&
+        chapterContent.verses &&
+        chapterContent.verses.length > 0 &&
+        !isLoading &&
+        !isGeneratingRef.current &&
+        (!audioRef.current || audioRef.current.paused || !audioRef.current.src)
+      ) {
         console.log("[AutoStart] Starting playback with", chapterContent.verses.length, "verses");
         setHasStarted(true);
         const voice = currentSequence?.voice || "daniel";
@@ -2272,7 +2285,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         }
         return true;
       }
-      return false;
     };
 
     // Try immediately
