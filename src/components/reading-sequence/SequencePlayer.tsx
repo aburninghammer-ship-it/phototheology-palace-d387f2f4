@@ -801,8 +801,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     const elevenlabsVoices = ['george', 'aria', 'roger', 'sarah', 'charlie', 'callum', 'river', 'liam', 'charlotte', 'alice', 'matilda', 'will', 'jessica', 'eric', 'chris', 'brian', 'daniel', 'lily', 'bill'];
     // Speechify voices
     const speechifyVoices = ['henry', 'mrbeast', 'cliff', 'cody', 'kristy', 'natasha', 'cindy'];
-    // OpenAI voices
-    const openaiVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'];
+    // OpenAI voices (supported set)
+    const openaiVoices = ['alloy', 'ash', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer'];
     
     const voiceLower = voice.toLowerCase();
     if (elevenlabsVoices.includes(voiceLower)) return 'elevenlabs';

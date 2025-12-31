@@ -16,7 +16,6 @@ export const TTS_PROVIDERS = [
 export const OPENAI_VOICES = [
   { id: 'alloy', name: 'Alloy', description: 'Neutral and balanced voice' },
   { id: 'ash', name: 'Ash', description: 'Warm and conversational' },
-  { id: 'ballad', name: 'Ballad', description: 'Soft and melodic storyteller' },
   { id: 'coral', name: 'Coral', description: 'Clear and professional' },
   { id: 'echo', name: 'Echo', description: 'Clear and articulate male voice' },
   { id: 'fable', name: 'Fable', description: 'Warm British male voice' },
@@ -24,7 +23,6 @@ export const OPENAI_VOICES = [
   { id: 'onyx', name: 'Onyx', description: 'Deep and authoritative male voice' },
   { id: 'sage', name: 'Sage', description: 'Wise and thoughtful' },
   { id: 'shimmer', name: 'Shimmer', description: 'Soft and gentle female voice' },
-  { id: 'verse', name: 'Verse', description: 'Expressive and dynamic' },
 ] as const;
 
 // ElevenLabs voices
@@ -229,7 +227,11 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
     onStartRef.current?.();
 
     const provider = opts.provider || selectedProvider;
-    const voice = opts.voice || selectedVoice;
+
+    const requestedVoice = String(opts.voice || selectedVoice);
+    const voice = (provider === 'openai' && (requestedVoice === 'ballad' || requestedVoice === 'verse'))
+      ? (requestedVoice === 'ballad' ? 'sage' : 'fable')
+      : requestedVoice;
 
     try {
       const { data, error } = await supabase.functions.invoke('text-to-speech', {

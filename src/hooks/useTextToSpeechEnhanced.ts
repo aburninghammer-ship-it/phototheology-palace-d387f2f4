@@ -14,8 +14,6 @@ export const OPENAI_VOICES = [
   { id: 'ash', name: 'Ash', description: 'Soft and gentle' },
   { id: 'coral', name: 'Coral', description: 'Warm and friendly female' },
   { id: 'sage', name: 'Sage', description: 'Calm and thoughtful' },
-  { id: 'ballad', name: 'Ballad', description: 'Smooth storyteller' },
-  { id: 'verse', name: 'Verse', description: 'Poetic and expressive' },
 ] as const;
 
 export type VoiceId = typeof OPENAI_VOICES[number]['id'];
@@ -316,10 +314,17 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     });
 
     try {
+      const requestedVoice = (opts.voice || selectedVoice) as unknown as string;
+      const normalizedVoice = (requestedVoice === 'ballad'
+        ? 'sage'
+        : requestedVoice === 'verse'
+          ? 'fable'
+          : requestedVoice) as VoiceId;
+
       const invokePromise = supabase.functions.invoke('text-to-speech', {
         body: {
           text: text.trim(),
-          voice: opts.voice || selectedVoice,
+          voice: normalizedVoice,
           provider: 'openai',
           book: opts.book,
           chapter: opts.chapter,

@@ -87,7 +87,7 @@ export function ExportCommentaryDialog({
   const getProviderForVoice = (voiceName: string): 'openai' | 'elevenlabs' | 'speechify' => {
     const elevenlabsVoices = ['george', 'aria', 'roger', 'sarah', 'charlie', 'callum', 'river', 'liam', 'charlotte', 'alice', 'matilda', 'will', 'jessica', 'eric', 'chris', 'brian', 'daniel', 'lily', 'bill'];
     const speechifyVoices = ['henry', 'mrbeast', 'cliff', 'cody', 'kristy', 'natasha', 'cindy'];
-    const openaiVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'];
+    const openaiVoices = ['alloy', 'ash', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer'];
     
     const voiceLower = voiceName.toLowerCase();
     if (elevenlabsVoices.includes(voiceLower)) return 'elevenlabs';
