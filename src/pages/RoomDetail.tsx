@@ -77,6 +77,7 @@ import { ThemesLibrary } from "@/components/themes-room/ThemesLibrary";
 import { PatternsLibrary } from "@/components/patterns-room/PatternsLibrary";
 import { ThreeHeavensLibrary } from "@/components/three-heavens-room/ThreeHeavensLibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
+import { Room3DToggle } from "@/components/room/Room3DToggle";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -527,15 +528,30 @@ export default function RoomDetail() {
                 </Collapsible>
 
                 {room.id === "sr" && (
-                  <RoomLibrary roomId="sr">
-                    <StoryLibrary />
-                  </RoomLibrary>
+                  <Room3DToggle roomId="sr">
+                    <RoomLibrary roomId="sr">
+                      <StoryLibrary />
+                    </RoomLibrary>
+                  </Room3DToggle>
+                )}
+
+                {/* Imagination Room - 3D Immersive Experience */}
+                {room.id === "ir" && (
+                  <Room3DToggle roomId="ir">
+                    <Card className="p-6 text-center">
+                      <p className="text-muted-foreground">
+                        Use the 3D Experience toggle above to immerse yourself in biblical scenes.
+                      </p>
+                    </Card>
+                  </Room3DToggle>
                 )}
 
                 {room.id === "st" && (
-                  <RoomLibrary roomId="st">
-                    <SymbolLibrary />
-                  </RoomLibrary>
+                  <Room3DToggle roomId="st">
+                    <RoomLibrary roomId="st">
+                      <SymbolLibrary />
+                    </RoomLibrary>
+                  </Room3DToggle>
                 )}
 
                 {room.id === "qa" && (
@@ -570,22 +586,24 @@ export default function RoomDetail() {
                 )}
 
                 {room.id === "gr" && (
-                  <RoomLibrary roomId="gr">
-                    <div className="space-y-6">
-                      <GemsLibrary />
-                      <GemGenerator
-                        floorNumber={floor.number}
-                        roomId={room.id}
-                        onGemSaved={() => {
-                          // Trigger refresh of gems list
-                          const event = new CustomEvent('gems-updated');
-                          window.dispatchEvent(event);
-                        }}
-                      />
-                      <UserGemsList floorNumber={floor.number} roomId={room.id} />
-                      <SermonTitlesList />
-                    </div>
-                  </RoomLibrary>
+                  <Room3DToggle roomId="gr">
+                    <RoomLibrary roomId="gr">
+                      <div className="space-y-6">
+                        <GemsLibrary />
+                        <GemGenerator
+                          floorNumber={floor.number}
+                          roomId={room.id}
+                          onGemSaved={() => {
+                            // Trigger refresh of gems list
+                            const event = new CustomEvent('gems-updated');
+                            window.dispatchEvent(event);
+                          }}
+                        />
+                        <UserGemsList floorNumber={floor.number} roomId={room.id} />
+                        <SermonTitlesList />
+                      </div>
+                    </RoomLibrary>
+                  </Room3DToggle>
                 )}
 
                 {/* Nature Freestyle Library */}
@@ -648,9 +666,11 @@ export default function RoomDetail() {
 
                 {/* Three Heavens Room - Prophetic Horizon Library */}
                 {room.id === "123h" && (
-                  <RoomLibrary roomId="123h">
-                    <ThreeHeavensLibrary />
-                  </RoomLibrary>
+                  <Room3DToggle roomId="123h">
+                    <RoomLibrary roomId="123h">
+                      <ThreeHeavensLibrary />
+                    </RoomLibrary>
+                  </Room3DToggle>
                 )}
 
                 {/* Parallels Room - OT/NT Typological Parallels */}
@@ -676,9 +696,11 @@ export default function RoomDetail() {
 
                 {/* Prophecy Room - Biblical Prophecies & Fulfillments */}
                 {room.id === "pr" && (
-                  <RoomLibrary roomId="pr">
-                    <ProphecyLibrary />
-                  </RoomLibrary>
+                  <Room3DToggle roomId="pr">
+                    <RoomLibrary roomId="pr">
+                      <ProphecyLibrary />
+                    </RoomLibrary>
+                  </Room3DToggle>
                 )}
 
                 {/* Theme Room - 6 Walls of Biblical Truth */}
