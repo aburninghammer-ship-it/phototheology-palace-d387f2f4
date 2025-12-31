@@ -194,7 +194,7 @@ export function useFreeTier(): FreeTierAccess {
     canAccessDevotionals: true,
     canAccessDailyChallenge: !challengeLimitReached,
     canAccessCommunity: true,
-    canAccessBibleReader: true,
+    canAccessBibleReader: isPremium,
     
     // Premium-only features
     canAccessAllFloors: isPremium,
