@@ -19,7 +19,7 @@ import { ActiveGameSessions } from "@/components/games/ActiveGameSessions";
 import { usePreservePageState, usePreserveFormState } from "@/contexts/PageStateContext";
 
 // Games with special badges
-const NEW_GAMES = ["pt_tetris", "symbol_decoder", "story_room_3d", "speed_verse_3d"]; // Completely new games
+const NEW_GAMES = ["pt_tetris", "symbol_decoder", "story_room_3d", "speed_verse"]; // Completely new games
 const RENOVATED_GAMES = ["chain_chess", "escape_room"]; // Rebuilt/improved games
 
 // Bible translations available for games
@@ -112,20 +112,8 @@ const Games = () => {
       floor: 1,
       timed: true,
       rooms: ["BR"],
-      modes: ["solo", "vs-ai", "2p"],
-      difficulties: ["easy", "medium", "hard", "expert"],
-      route: "/games/verse_match"
-    },
-    {
-      id: "speed_verse_3d",
-      name: "Speed Verse 3D",
-      description: "Race against time on a celestial track! Click correct words as verse blocks fly toward you on a golden pathway.",
-      icon: "⚡",
-      floor: 1,
-      timed: true,
-      rooms: ["BR"],
       modes: ["solo"],
-      difficulties: ["easy", "medium", "hard"],
+      difficulties: ["easy", "medium", "hard", "expert"],
       route: "/games/speed-verse-3d"
     },
     {
