@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { createHmac } from "https://deno.land/std@0.168.0/crypto/mod.ts";
+import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -36,16 +36,25 @@ serve(async (req) => {
 
     console.log("Received Patreon webhook:", eventType);
 
-    // Verify signature (MD5 HMAC)
+    // Verify signature (MD5 HMAC) - Patreon uses MD5
     if (signature) {
       const encoder = new TextEncoder();
-      const key = encoder.encode(webhookSecret);
-      const data = encoder.encode(rawBody);
+      const keyData = encoder.encode(webhookSecret);
+      const messageData = encoder.encode(rawBody);
 
-      // Patreon uses MD5 HMAC
-      const hmac = createHmac("md5", key);
-      hmac.update(data);
-      const expectedSignature = hmac.digest("hex");
+      // Import the key for HMAC-MD5
+      const cryptoKey = await crypto.subtle.importKey(
+        "raw",
+        keyData,
+        { name: "HMAC", hash: "MD5" },
+        false,
+        ["sign"]
+      );
+
+      const signatureBuffer = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
+      const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
 
       if (signature !== expectedSignature) {
         console.error("Invalid webhook signature");
