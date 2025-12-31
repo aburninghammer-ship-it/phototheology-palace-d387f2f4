@@ -74,6 +74,8 @@ import { MathematicsLibrary } from "@/components/mathematics-room/MathematicsLib
 import { SanctuaryLibrary } from "@/components/sanctuary-room/SanctuaryLibrary";
 import { ProphecyLibrary } from "@/components/prophecy-room/ProphecyLibrary";
 import { ThemesLibrary } from "@/components/themes-room/ThemesLibrary";
+import { PatternsLibrary } from "@/components/patterns-room/PatternsLibrary";
+import { ThreeHeavensLibrary } from "@/components/three-heavens-room/ThreeHeavensLibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 
 // Room IDs that have quick start guides
@@ -644,10 +646,10 @@ export default function RoomDetail() {
                   </RoomLibrary>
                 )}
 
-                {/* Three Heavens Room Drill - Prophetic Horizon Discernment */}
+                {/* Three Heavens Room - Prophetic Horizon Library */}
                 {room.id === "123h" && (
                   <RoomLibrary roomId="123h">
-                    <ThreeHeavensRoomDrill />
+                    <ThreeHeavensLibrary />
                   </RoomLibrary>
                 )}
 
@@ -683,6 +685,13 @@ export default function RoomDetail() {
                 {room.id === "trm" && (
                   <RoomLibrary roomId="trm">
                     <ThemesLibrary />
+                  </RoomLibrary>
+                )}
+
+                {/* Patterns Room - Biblical Patterns Through All 66 Books */}
+                {room.id === "prm" && (
+                  <RoomLibrary roomId="prm">
+                    <PatternsLibrary />
                   </RoomLibrary>
                 )}
 

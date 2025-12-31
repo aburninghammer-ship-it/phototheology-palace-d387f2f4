@@ -41,7 +41,11 @@ interface AudioControlsProps {
 }
 
 // Tiny silent WAV as data URI to unlock iOS audio
+// This is a valid 44-byte WAV file with 2 bytes of silent audio data
 const SILENT_AUDIO = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+
+// Better silent audio for iOS 17+ (requires slightly longer duration)
+const SILENT_AUDIO_IOS = "data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1NvZnR3YXJlAExhdmY1OC43Ni4xMDAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7v/////////////////////////////////";
 
 // Detect if we're on mobile/Capacitor
 const isMobile = () => {
@@ -216,18 +220,26 @@ export const AudioControls = ({ verses, book = "", chapter = 1, onVerseHighlight
   // Unlock audio on iOS by playing silent audio on first user interaction
   const unlockAudio = useCallback(async () => {
     if (audioUnlockedRef.current || !audioRef.current) return;
-    
+
     try {
       const audio = audioRef.current;
-      audio.src = SILENT_AUDIO;
-      audio.volume = 0;
+      // Try iOS-specific audio first, fall back to WAV
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      audio.src = isIOS ? SILENT_AUDIO_IOS : SILENT_AUDIO;
+      audio.volume = 0.5; // Use audible volume - iOS may not unlock with 0 volume
+      audio.muted = false;
+
       await audio.play();
       audio.pause();
+      audio.currentTime = 0;
       audio.volume = 1;
+      audio.src = ''; // Clear but keep element
       audioUnlockedRef.current = true;
-      console.log("Audio unlocked for iOS");
-    } catch (e) {
-      console.log("Audio unlock attempt:", e);
+      console.log("[Audio] Audio unlocked for iOS/mobile");
+    } catch (e: any) {
+      console.log("[Audio] Audio unlock attempt:", e?.message || e);
+      // Mark as attempted even on failure to prevent blocking
+      // Next user gesture will try again
     }
   }, []);
 

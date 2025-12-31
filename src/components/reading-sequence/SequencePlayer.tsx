@@ -216,22 +216,33 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // Create and unlock audio element on first user interaction (iOS requirement)
   const ensureAudioUnlocked = useCallback(() => {
     if (audioUnlockedRef.current) return;
-    
+
     const audio = getOrCreateAudio();
-    
-    // Play a silent audio to "unlock" the audio context on iOS
+
+    // Play a silent WAV to "unlock" the audio context on iOS/mobile
+    // Using WAV format which is more universally supported than MP3
     // This must happen during a user gesture (click/tap)
-    audio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAbD/rU9UAAAAAAAAAAAAAAAAAAAAAP/jOMAAABQAJQCAAAhDAH+AIACQA/xQAP/zDAIAAAFPAQD/8wgD/+M4wAAAGMAlAAA';
-    audio.volume = 0.01;
-    audio.play().then(() => {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.src = ''; // Clear but keep element
-      audioUnlockedRef.current = true;
-      console.log('[iOS] Audio element unlocked for future playback');
-    }).catch(e => {
-      console.log('[iOS] Audio unlock attempt (expected to fail on first load):', e.message);
-    });
+    const silentWav = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+    audio.src = silentWav;
+    audio.volume = 0.5; // Use audible volume to ensure iOS registers the unlock
+    audio.muted = false;
+
+    const unlockAttempt = audio.play();
+    if (unlockAttempt) {
+      unlockAttempt.then(() => {
+        // Successfully played - audio is now unlocked
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 1; // Reset to full volume
+        audio.src = ''; // Clear but keep element
+        audioUnlockedRef.current = true;
+        console.log('[iOS] Audio element unlocked successfully');
+      }).catch(e => {
+        console.log('[iOS] Audio unlock attempt failed:', e.message);
+        // Even if play() fails, mark as attempted so we don't block forever
+        // The next user gesture will try again
+      });
+    }
   }, [getOrCreateAudio]);
   
   // Helper to safely stop audio without destroying the element
@@ -250,7 +261,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   
   // Helper to play audio URL using the persistent element
   const playAudioUrl = useCallback(async (
-    url: string, 
+    url: string,
     options: {
       volume?: number;
       playbackRate?: number;
@@ -260,29 +271,31 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     } = {}
   ): Promise<boolean> => {
     const audio = getOrCreateAudio();
-    
+
     // Stop any current playback
     audio.pause();
     audio.onended = null;
     audio.ontimeupdate = null;
     audio.onerror = null;
-    
+    audio.oncanplaythrough = null;
+
     // Configure
     audio.src = url;
     audio.volume = options.volume ?? (isMutedRef.current ? 0 : volumeRef.current / 100);
     audio.playbackRate = options.playbackRate ?? 1;
     audio.currentTime = 0;
-    
+    audio.preload = 'auto';
+
     // Flag to prevent double-triggering
     let hasEnded = false;
-    
+
     const handleEnded = () => {
       if (hasEnded) return;
       hasEnded = true;
       console.log('[PersistentAudio] Audio ended');
       options.onEnded?.();
     };
-    
+
     audio.onended = handleEnded;
     audio.onerror = (e: Event | string) => {
       console.error('[PersistentAudio] Audio error:', e);
@@ -299,15 +312,53 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     };
     // Allow replay after seek
     audio.onseeked = () => { hasEnded = false; };
-    
-    try {
-      await audio.play();
-      console.log('[PersistentAudio] Playback started');
-      return true;
-    } catch (e) {
-      console.error('[PersistentAudio] Play failed:', e);
-      return false;
-    }
+
+    // MOBILE FIX: Wait for audio to be ready before playing
+    // This prevents "play() failed because the media resource was not ready" errors
+    return new Promise<boolean>((resolve) => {
+      let playAttempted = false;
+
+      const attemptPlay = async () => {
+        if (playAttempted) return;
+        playAttempted = true;
+
+        try {
+          await audio.play();
+          console.log('[PersistentAudio] Playback started');
+          resolve(true);
+        } catch (e: any) {
+          console.error('[PersistentAudio] Play failed:', e?.message || e);
+          // On mobile, if play fails due to not ready, wait and retry once
+          if (e?.name === 'NotAllowedError') {
+            console.log('[PersistentAudio] Autoplay blocked - needs user gesture');
+          }
+          resolve(false);
+        }
+      };
+
+      // If audio is already ready (cached), play immediately
+      if (audio.readyState >= 3) {
+        attemptPlay();
+        return;
+      }
+
+      // Wait for audio to be ready (with timeout for mobile reliability)
+      audio.oncanplaythrough = () => {
+        audio.oncanplaythrough = null;
+        attemptPlay();
+      };
+
+      // Timeout fallback for slow networks - try to play anyway after 3s
+      setTimeout(() => {
+        if (!playAttempted) {
+          console.log('[PersistentAudio] Timeout waiting for canplaythrough, attempting play anyway');
+          attemptPlay();
+        }
+      }, 3000);
+
+      // Trigger load explicitly for mobile
+      audio.load();
+    });
   }, [getOrCreateAudio]);
   
   // Fetch user's display name for personalized commentary

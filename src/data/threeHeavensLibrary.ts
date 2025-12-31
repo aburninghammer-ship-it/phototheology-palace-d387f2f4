@@ -593,3 +593,353 @@ export const getPassageById = (id: string): PropheticPassage | undefined => {
 export const getAllPatterns = (): PropheticPattern[] => {
   return propheticPatterns;
 };
+
+// ============================================================================
+// THE THREE CYCLES FRAMEWORK
+// A comprehensive approach to understanding the Day of the Lord across history
+// ============================================================================
+
+export interface PropheticCycle {
+  number: 1 | 2 | 3;
+  name: string;
+  dayOfTheLord: string;
+  catalyst: string;
+  duration: string;
+  newHeavenAndEarth: string;
+  startDate: string;
+  endDate: string;
+  keyProphets: string[];
+  characteristics: string[];
+  scripturalBasis: string[];
+}
+
+export const threeCycles: PropheticCycle[] = [
+  {
+    number: 1,
+    name: "The First Day of the Lord",
+    dayOfTheLord: "Babylonian Destruction",
+    catalyst: "Sabbath-breaking, idolatry",
+    duration: "70 Years",
+    newHeavenAndEarth: "Rebuilt Jerusalem/Temple",
+    startDate: "607 BC",
+    endDate: "457 BC",
+    keyProphets: ["Isaiah", "Jeremiah", "Ezekiel", "Hosea", "Amos", "Micah", "Zephaniah", "Habakkuk", "Jonah"],
+    characteristics: [
+      "Breaking the Sabbath covenant triggered judgment (Lev 26:33-34)",
+      "Jerusalem destroyed by Babylon, temple burned",
+      "70-year captivity prophesied by Jeremiah (Jer 25:11)",
+      "Cosmic/apocalyptic language describes local events (Isaiah 24)",
+      "Prisoners gathered in the pit = Babylonian captivity",
+      "'After many days visited' = 70-year restoration"
+    ],
+    scripturalBasis: [
+      "Leviticus 26:33-34 — Land enjoys sabbaths",
+      "Jeremiah 17:27 — Fire on Jerusalem's gates",
+      "Jeremiah 25:11 — 70 years prophecy",
+      "Isaiah 24:22 — Prisoners in pit, visited after many days"
+    ]
+  },
+  {
+    number: 2,
+    name: "The Second Day of the Lord",
+    dayOfTheLord: "Roman Destruction",
+    catalyst: "Rejection of Messiah",
+    duration: "70 Weeks prophecy",
+    newHeavenAndEarth: "Spiritual Jerusalem (Church)",
+    startDate: "31 AD",
+    endDate: "70 AD",
+    keyProphets: ["Zechariah", "Haggai", "Malachi", "Joel", "Obadiah"],
+    characteristics: [
+      "70-week prophecy leads to Messiah (Dan 9:24-27)",
+      "Sign of Jonah: 3 days/40 days pattern fulfilled",
+      "Spirit poured out at Pentecost (Joel 2 → Acts 2)",
+      "Elijah comes as John the Baptist (Mal 4:5)",
+      "Jerusalem destroyed by Rome in 70 AD",
+      "Church established as spiritual temple"
+    ],
+    scripturalBasis: [
+      "Daniel 9:24-27 — 70 weeks determined",
+      "Matthew 12:40-41 — Sign of Jonah",
+      "Acts 2:16-21 — This is that which Joel spoke",
+      "Matthew 23:37-38 — House left desolate"
+    ]
+  },
+  {
+    number: 3,
+    name: "The Final Day of the Lord",
+    dayOfTheLord: "Final Destruction",
+    catalyst: "Mark of the Beast crisis",
+    duration: "1260/2300 Years",
+    newHeavenAndEarth: "Literal New Earth",
+    startDate: "End of Time",
+    endDate: "Eternity",
+    keyProphets: ["Daniel (sealed till end)", "Revelation (95 AD)"],
+    characteristics: [
+      "Only Daniel and Revelation apply primarily to final time",
+      "Daniel sealed until time of the end (Dan 12:4)",
+      "Revelation written AFTER the 2nd Day (95 AD)",
+      "Literal cosmic signs: sun, moon, stars",
+      "Universal scope: all nations, whole earth",
+      "Literal New Jerusalem descends"
+    ],
+    scripturalBasis: [
+      "Daniel 12:4 — Sealed till time of the end",
+      "2 Peter 3:10-13 — New heavens and earth",
+      "Revelation 21:1-3 — New heaven, new earth, God dwells with man",
+      "Revelation 22:1-5 — Paradise fully restored"
+    ]
+  }
+];
+
+// Pre-Exilic vs Post-Exilic Prophet Classification
+export interface ProphetClassification {
+  name: string;
+  era: "pre-exilic" | "post-exilic" | "special";
+  primaryFocus: string;
+  pointsTo: string[];
+}
+
+export const prophetsClassified: ProphetClassification[] = [
+  // Pre-Exilic (Before Babylon) - Point to Babylonian destruction AND restoration
+  { name: "Isaiah", era: "pre-exilic", primaryFocus: "Day of the Lord I & II, New Heaven/Earth", pointsTo: ["Babylonian destruction", "Restoration", "Messiah"] },
+  { name: "Jeremiah", era: "pre-exilic", primaryFocus: "70-year prophecy, restoration promises", pointsTo: ["Babylonian judgment", "Return from exile"] },
+  { name: "Ezekiel", era: "pre-exilic", primaryFocus: "Temple destruction, Dry Bones, New Temple", pointsTo: ["Exile", "National resurrection", "Restoration"] },
+  { name: "Hosea", era: "pre-exilic", primaryFocus: "Israel's unfaithfulness, future restoration", pointsTo: ["Northern kingdom judgment", "Future hope"] },
+  { name: "Amos", era: "pre-exilic", primaryFocus: "Day of the Lord warnings", pointsTo: ["Social injustice judgment", "Day of the Lord"] },
+  { name: "Micah", era: "pre-exilic", primaryFocus: "Mountains melting, future glory", pointsTo: ["Jerusalem's destruction", "Messiah from Bethlehem"] },
+  { name: "Zephaniah", era: "pre-exilic", primaryFocus: "Day of wrath, remnant preserved", pointsTo: ["Judgment", "Remnant hope"] },
+  { name: "Habakkuk", era: "pre-exilic", primaryFocus: "Babylonian judgment coming", pointsTo: ["Chaldean invasion", "The just live by faith"] },
+  { name: "Jonah", era: "pre-exilic", primaryFocus: "Sign for Jerusalem (40 days/40 years)", pointsTo: ["Nineveh repentance", "Sign of Messiah"] },
+
+  // Post-Exilic (After Babylon) - Point to Messiah AND Roman destruction
+  { name: "Zechariah", era: "post-exilic", primaryFocus: "Temple rebuilding, Messiah prophecies, Day of the Lord II", pointsTo: ["Temple restoration", "Messiah on donkey", "Crucifixion", "AD 70"] },
+  { name: "Haggai", era: "post-exilic", primaryFocus: "Second Temple glory, Desire of Nations", pointsTo: ["Temple rebuilding", "Messiah's presence"] },
+  { name: "Malachi", era: "post-exilic", primaryFocus: "Elijah coming, Day burning as oven", pointsTo: ["John the Baptist", "Messiah", "Day of the Lord II"] },
+  { name: "Joel", era: "post-exilic", primaryFocus: "Spirit outpouring, Day of the Lord II", pointsTo: ["Pentecost", "Cosmic signs", "Final Day"] },
+  { name: "Obadiah", era: "post-exilic", primaryFocus: "Day of the Lord near upon nations", pointsTo: ["Edom's judgment", "Kingdom to the LORD"] },
+
+  // Special: Post-Siege Books
+  { name: "Daniel", era: "special", primaryFocus: "Only OT prophet primarily for 'time of the end'", pointsTo: ["World empires", "Messiah timing", "End-time events"] },
+  { name: "Revelation", era: "special", primaryFocus: "Only NT book written AFTER 70 AD", pointsTo: ["Final Day of the Lord", "New Earth"] }
+];
+
+// The Three Temples Framework
+export interface TemplePhase {
+  number: 1 | 2 | 3;
+  name: string;
+  builder: string;
+  builtDate: string;
+  destroyedDate: string;
+  destroyedBy: string;
+  glory: string;
+  gloryReference: string;
+  highPriest: string;
+  significance: string;
+}
+
+export const threeTemples: TemplePhase[] = [
+  {
+    number: 1,
+    name: "Solomon's Temple",
+    builder: "Solomon",
+    builtDate: "~960 BC",
+    destroyedDate: "607 BC",
+    destroyedBy: "Babylon",
+    glory: "Shekinah presence",
+    gloryReference: "1 Kings 8",
+    highPriest: "Levitical line",
+    significance: "God's dwelling among Israel; Ark of the Covenant present"
+  },
+  {
+    number: 2,
+    name: "Zerubbabel/Herod's Temple",
+    builder: "Zerubbabel (rebuilt), Herod (expanded)",
+    builtDate: "516 BC",
+    destroyedDate: "70 AD",
+    destroyedBy: "Rome",
+    glory: "Christ in person",
+    gloryReference: "Haggai 2:9 — 'The glory of this latter house shall be greater'",
+    highPriest: "Levitical line",
+    significance: "Messiah walked its courts; greater glory through His presence"
+  },
+  {
+    number: 3,
+    name: "Heavenly Temple",
+    builder: "Christ (Zechariah 6:12 — 'The BRANCH shall build the temple')",
+    builtDate: "Exists eternally",
+    destroyedDate: "Cannot be destroyed",
+    destroyedBy: "N/A",
+    glory: "God's throne",
+    gloryReference: "Hebrews 8:1-2",
+    highPriest: "Jesus Christ (Melchizedek order)",
+    significance: "The true tabernacle which the Lord pitched; Christ ministers as High Priest"
+  }
+];
+
+// The Gerizim/Ebal Blessing-Curse Pattern
+export interface BlessingCursePattern {
+  cycle: 1 | 2 | 3;
+  condition: string;
+  blessing: string[];
+  curse: string[];
+  curseResult: string;
+  restoration: string;
+}
+
+export const gerizimEbalPattern: BlessingCursePattern[] = [
+  {
+    cycle: 1,
+    condition: "Israel in Canaan",
+    blessing: ["Peace in land", "Prosperity", "God dwells among them"],
+    curse: ["Scattered among nations", "Cities destroyed", "Temple desolated"],
+    curseResult: "Babylon destroys Jerusalem (607 BC)",
+    restoration: "Return and rebuild (457 BC)"
+  },
+  {
+    cycle: 2,
+    condition: "Restored Israel",
+    blessing: ["Everlasting kingdom", "Nations flow to Zion", "Paradise conditions"],
+    curse: ["House left desolate", "Not one stone upon another", "Scattered worldwide"],
+    curseResult: "Rome destroys Jerusalem (70 AD)",
+    restoration: "Spiritual Israel - the Church"
+  },
+  {
+    cycle: 3,
+    condition: "Church/World",
+    blessing: ["Protected in tribulation", "New Jerusalem descends", "God dwells with man"],
+    curse: ["Mark of the Beast", "Lake of fire", "Second death"],
+    curseResult: "Final destruction (Revelation 20)",
+    restoration: "New Earth (Revelation 21-22)"
+  }
+];
+
+// Day of the Lord Language Comparison
+export interface DayOfLordLanguage {
+  description: string;
+  cycle1Reference: string;
+  cycle2Reference: string;
+  cycle3Reference: string;
+}
+
+export const dayOfLordLanguage: DayOfLordLanguage[] = [
+  { description: "Sun darkened", cycle1Reference: "Isaiah 24:23", cycle2Reference: "Matthew 24:29; Joel 2:31", cycle3Reference: "Revelation 6:12" },
+  { description: "Moon to blood", cycle1Reference: "Joel 2:31", cycle2Reference: "Acts 2:20", cycle3Reference: "Revelation 6:12" },
+  { description: "Stars fall", cycle1Reference: "Isaiah 34:4", cycle2Reference: "Matthew 24:29", cycle3Reference: "Revelation 6:13" },
+  { description: "Heaven rolled up", cycle1Reference: "Isaiah 34:4", cycle2Reference: "Matthew 24:35", cycle3Reference: "Revelation 6:14" },
+  { description: "Earth shaken", cycle1Reference: "Isaiah 24:19-20", cycle2Reference: "Matthew 24:7", cycle3Reference: "Revelation 16:18" },
+  { description: "Mountains melted", cycle1Reference: "Micah 1:4", cycle2Reference: "—", cycle3Reference: "Revelation 16:20" },
+  { description: "Fire/burning", cycle1Reference: "Isaiah 24:6", cycle2Reference: "Malachi 4:1", cycle3Reference: "2 Peter 3:10" },
+  { description: "Pit/prison", cycle1Reference: "Isaiah 24:22", cycle2Reference: "—", cycle3Reference: "Revelation 20:1-3" }
+];
+
+// Zechariah's Sequential Prophecy
+export interface ZechariahSequence {
+  chapters: string;
+  content: string;
+  timeframe: string;
+}
+
+export const zechariahSequence: ZechariahSequence[] = [
+  { chapters: "1", content: "Temple and city to be rebuilt", timeframe: "457 BC era" },
+  { chapters: "2", content: "Measuring Jerusalem", timeframe: "Restoration" },
+  { chapters: "3-4", content: "Joshua, Zerubbabel, The BRANCH", timeframe: "Messianic" },
+  { chapters: "5", content: "Jerusalem purified from sin", timeframe: "Spiritual cleansing" },
+  { chapters: "6", content: "The BRANCH builds temple, priest-king", timeframe: "Christ's ministry" },
+  { chapters: "8", content: "Jerusalem: city of truth, elderly and children", timeframe: "Gerizim vision" },
+  { chapters: "9", content: "King coming on donkey", timeframe: "Palm Sunday" },
+  { chapters: "10-11", content: "Latter rain, 30 pieces of silver", timeframe: "Betrayal" },
+  { chapters: "12-13", content: "'Look upon me whom they pierced,' fountain opened", timeframe: "Crucifixion" },
+  { chapters: "14", content: "Day of the Lord, nations against Jerusalem", timeframe: "70 AD siege / Final Day" }
+];
+
+// The Sign of Jonah Pattern
+export interface SignOfJonah {
+  jonahExperience: string;
+  christFulfillment: string;
+}
+
+export const signOfJonah: SignOfJonah[] = [
+  { jonahExperience: "3 days in fish's belly", christFulfillment: "3 days in the grave" },
+  { jonahExperience: "Preached 40 days to Nineveh", christFulfillment: "40 years before Jerusalem's destruction (31-70 AD)" },
+  { jonahExperience: "Nineveh repented and was spared", christFulfillment: "Jerusalem did NOT repent" },
+  { jonahExperience: "City saved from destruction", christFulfillment: "City destroyed" }
+];
+
+// Four Keys to Understanding Prophecy
+export interface ProphecyKey {
+  number: number;
+  title: string;
+  description: string;
+  scriptureReference: string;
+}
+
+export const fourKeysToUnderstandingProphecy: ProphecyKey[] = [
+  {
+    number: 1,
+    title: "Written for Our Admonition",
+    description: "Events were 'ensamples' for those at 'the ends of the world.'",
+    scriptureReference: "1 Corinthians 10:11"
+  },
+  {
+    number: 2,
+    title: "Pre-Exilic vs. Post-Exilic Prophets",
+    description: "Pre-Exilic → Point to Babylonian destruction AND restoration. Post-Exilic → Point to Messiah AND Roman destruction.",
+    scriptureReference: "Various"
+  },
+  {
+    number: 3,
+    title: "Primary, Secondary, and Time",
+    description: "All prophets (except Daniel) have primary local application. Secondary application extends to the end.",
+    scriptureReference: "Various"
+  },
+  {
+    number: 4,
+    title: "Parable Language",
+    description: "Prophets used symbolic language (cosmic imagery for local events). 'Heavens and earth' can mean the covenant order, not literal cosmos.",
+    scriptureReference: "Isaiah 51:16"
+  }
+];
+
+// The First New Heaven and Earth (Restoration after Babylon)
+export interface FirstNewHeavenEarthDetails {
+  category: string;
+  items: { reference: string; meaning: string }[];
+}
+
+export const firstNewHeavenAndEarth: FirstNewHeavenEarthDetails[] = [
+  {
+    category: "Ezekiel 36-37 Restoration Promises",
+    items: [
+      { reference: "Clean water sprinkled", meaning: "Spiritual cleansing" },
+      { reference: "New heart, new spirit", meaning: "Covenant renewal" },
+      { reference: "Dwell in the land", meaning: "Return from exile" },
+      { reference: "Land like Eden", meaning: "Paradise restored" },
+      { reference: "Valley of Dry Bones", meaning: "National restoration" },
+      { reference: "David my servant king", meaning: "Messianic expectation" }
+    ]
+  },
+  {
+    category: "Isaiah's 'New Heaven and Earth' Language",
+    items: [
+      { reference: "Isaiah 65:17-18", meaning: "Create new heavens and earth, create Jerusalem a rejoicing" },
+      { reference: "Isaiah 51:16", meaning: "Plant the heavens, lay foundations of earth, say unto Zion 'Thou art my people'" }
+    ]
+  }
+];
+
+// Helper functions for the new data
+export const getCycleByNumber = (num: 1 | 2 | 3): PropheticCycle | undefined => {
+  return threeCycles.find(c => c.number === num);
+};
+
+export const getProphetsByEra = (era: "pre-exilic" | "post-exilic" | "special"): ProphetClassification[] => {
+  return prophetsClassified.filter(p => p.era === era);
+};
+
+export const getTempleByNumber = (num: 1 | 2 | 3): TemplePhase | undefined => {
+  return threeTemples.find(t => t.number === num);
+};
+
+export const getPatternByCycle = (cycle: 1 | 2 | 3): BlessingCursePattern | undefined => {
+  return gerizimEbalPattern.find(p => p.cycle === cycle);
+};

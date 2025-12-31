@@ -57,6 +57,12 @@ const ROOM_LIBRARIES: Record<string, {
     icon: "🏛️",
     gradient: "from-amber-500 to-yellow-600"
   },
+  prm: {
+    title: "Patterns Library",
+    description: "Biblical patterns through all 66 books: courses, Christ in every book, structural patterns",
+    icon: "🎵",
+    gradient: "from-violet-500 to-purple-600"
+  },
   "p||": {
     title: "Parallels Library",
     description: "Biblical parallels and typological patterns",

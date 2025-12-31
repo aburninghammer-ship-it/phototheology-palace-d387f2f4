@@ -6,9 +6,18 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, ChevronRight, Library, Sparkles, Cloud, AlertTriangle, CheckCircle } from "lucide-react";
-import { 
+import {
   threeHeavensExplanations,
   propheticPassages,
+  threeCycles,
+  prophetsClassified,
+  threeTemples,
+  dayOfLordLanguage,
+  zechariahSequence,
+  signOfJonah,
+  fourKeysToUnderstandingProphecy,
+  gerizimEbalPattern,
+  searchProphecies,
   type PropheticPassage,
   type HeavenLevel
 } from "@/data/threeHeavensLibrary";
@@ -38,7 +47,7 @@ const HEAVEN_CONFIG: Record<HeavenLevel, { icon: string; color: string; bg: stri
   }
 };
 
-type LibraryTab = "overview" | "horizons" | "passages" | "patterns" | "rules";
+type LibraryTab = "overview" | "cycles" | "prophets" | "horizons" | "passages" | "rules";
 
 export function ThreeHeavensLibrary({ onClose }: ThreeHeavensLibraryProps) {
   const [activeTab, setActiveTab] = useState<LibraryTab>("overview");
@@ -50,17 +59,7 @@ export function ThreeHeavensLibrary({ onClose }: ThreeHeavensLibraryProps) {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query.length >= 2) {
-      const lowerQuery = query.toLowerCase();
-      const results = propheticPassages.filter(p =>
-        p.title.toLowerCase().includes(lowerQuery) ||
-        p.reference.toLowerCase().includes(lowerQuery) ||
-        p.text.toLowerCase().includes(lowerQuery) ||
-        p.primaryContext.toLowerCase().includes(lowerQuery) ||
-        p.fulfillments.some(f => 
-          f.event.toLowerCase().includes(lowerQuery) ||
-          f.description.toLowerCase().includes(lowerQuery)
-        )
-      );
+const results = searchProphecies(query);
       setSearchResults(results);
     } else {
       setSearchResults([]);
@@ -319,11 +318,13 @@ export function ThreeHeavensLibrary({ onClose }: ThreeHeavensLibraryProps) {
         {/* Main Content */}
         {searchQuery.length < 2 && (
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as LibraryTab)}>
-            <TabsList className="grid grid-cols-4 w-full mb-2">
+            <TabsList className="grid grid-cols-6 w-full mb-2">
               <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
-              <TabsTrigger value="horizons" className="text-xs">3 Horizons</TabsTrigger>
+              <TabsTrigger value="cycles" className="text-xs">3 Cycles</TabsTrigger>
+              <TabsTrigger value="prophets" className="text-xs">Prophets</TabsTrigger>
+              <TabsTrigger value="horizons" className="text-xs">Horizons</TabsTrigger>
               <TabsTrigger value="passages" className="text-xs">Passages</TabsTrigger>
-              <TabsTrigger value="rules" className="text-xs">Rules</TabsTrigger>
+              <TabsTrigger value="rules" className="text-xs">Keys</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
@@ -367,6 +368,196 @@ export function ThreeHeavensLibrary({ onClose }: ThreeHeavensLibraryProps) {
                         </div>
                       );
                     })}
+                  </div>
+                </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="cycles">
+              <ScrollArea className="h-[50vh]">
+                <div className="space-y-4">
+                  {/* Master Chart */}
+                  <div className="p-4 bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-lg border border-amber-500/20">
+                    <h4 className="font-bold mb-3 text-amber-700 dark:text-amber-400">The Three Cycles of History</h4>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Each cycle follows the pattern: Sin → Day of the Lord → New Heaven & Earth
+                    </p>
+                  </div>
+
+                  {threeCycles.map((cycle) => (
+                    <div key={cycle.number} className={`p-4 rounded-lg border ${
+                      cycle.number === 1 ? 'bg-blue-500/10 border-blue-500/30' :
+                      cycle.number === 2 ? 'bg-purple-500/10 border-purple-500/30' :
+                      'bg-amber-500/10 border-amber-500/30'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-2xl">{cycle.number === 1 ? '1️⃣' : cycle.number === 2 ? '2️⃣' : '3️⃣'}</span>
+                        <div>
+                          <div className="font-bold">{cycle.name}</div>
+                          <div className="text-xs opacity-75">{cycle.startDate} → {cycle.endDate}</div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                        <div><strong>Day of Lord:</strong> {cycle.dayOfTheLord}</div>
+                        <div><strong>Catalyst:</strong> {cycle.catalyst}</div>
+                        <div><strong>Duration:</strong> {cycle.duration}</div>
+                        <div><strong>New H&E:</strong> {cycle.newHeavenAndEarth}</div>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {cycle.keyProphets.slice(0, 4).map((p, i) => (
+                          <Badge key={i} variant="secondary" className="text-xs">{p}</Badge>
+                        ))}
+                        {cycle.keyProphets.length > 4 && (
+                          <Badge variant="outline" className="text-xs">+{cycle.keyProphets.length - 4}</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Three Temples */}
+                  <div className="p-4 bg-muted/50 rounded-lg border">
+                    <h4 className="font-bold mb-3">The Three Temples</h4>
+                    <div className="space-y-2">
+                      {threeTemples.map((temple) => (
+                        <div key={temple.number} className="p-3 bg-background rounded border">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-semibold">{temple.name}</span>
+                            <Badge variant="outline">{temple.builtDate}</Badge>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            <div><strong>Glory:</strong> {temple.glory} ({temple.gloryReference})</div>
+                            <div><strong>High Priest:</strong> {temple.highPriest}</div>
+                            {temple.destroyedBy !== "N/A" && (
+                              <div className="text-red-600">Destroyed: {temple.destroyedDate} by {temple.destroyedBy}</div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Day of Lord Language Comparison */}
+                  <div className="p-4 bg-muted/50 rounded-lg border">
+                    <h4 className="font-bold mb-3">Day of the Lord Language Across Cycles</h4>
+                    <div className="text-xs space-y-1">
+                      {dayOfLordLanguage.slice(0, 5).map((item, i) => (
+                        <div key={i} className="grid grid-cols-4 gap-1 p-1 bg-background rounded">
+                          <span className="font-medium">{item.description}</span>
+                          <span className="text-blue-600">{item.cycle1Reference}</span>
+                          <span className="text-purple-600">{item.cycle2Reference}</span>
+                          <span className="text-amber-600">{item.cycle3Reference}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Same apocalyptic language describes local judgments AND final Day
+                    </p>
+                  </div>
+                </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="prophets">
+              <ScrollArea className="h-[50vh]">
+                <div className="space-y-4">
+                  {/* Pre-Exilic Prophets */}
+                  <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                    <h4 className="font-bold mb-2 text-blue-700 dark:text-blue-400">
+                      Pre-Exilic Prophets (Before Babylon)
+                    </h4>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Point to: Babylonian destruction AND restoration
+                    </p>
+                    <div className="space-y-2">
+                      {prophetsClassified.filter(p => p.era === 'pre-exilic').map((prophet) => (
+                        <div key={prophet.name} className="p-2 bg-background rounded border">
+                          <div className="font-medium">{prophet.name}</div>
+                          <div className="text-xs text-muted-foreground">{prophet.primaryFocus}</div>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {prophet.pointsTo.map((p, i) => (
+                              <Badge key={i} variant="outline" className="text-xs">{p}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Post-Exilic Prophets */}
+                  <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                    <h4 className="font-bold mb-2 text-purple-700 dark:text-purple-400">
+                      Post-Exilic Prophets (After Babylon)
+                    </h4>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Point to: Messiah's coming AND Roman destruction
+                    </p>
+                    <div className="space-y-2">
+                      {prophetsClassified.filter(p => p.era === 'post-exilic').map((prophet) => (
+                        <div key={prophet.name} className="p-2 bg-background rounded border">
+                          <div className="font-medium">{prophet.name}</div>
+                          <div className="text-xs text-muted-foreground">{prophet.primaryFocus}</div>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {prophet.pointsTo.map((p, i) => (
+                              <Badge key={i} variant="outline" className="text-xs">{p}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Special: Post-Siege Books */}
+                  <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                    <h4 className="font-bold mb-2 text-amber-700 dark:text-amber-400">
+                      Post-Siege Books (After 70 AD)
+                    </h4>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Only apply primarily to final time
+                    </p>
+                    <div className="space-y-2">
+                      {prophetsClassified.filter(p => p.era === 'special').map((prophet) => (
+                        <div key={prophet.name} className="p-2 bg-background rounded border">
+                          <div className="font-medium">{prophet.name}</div>
+                          <div className="text-xs text-muted-foreground">{prophet.primaryFocus}</div>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {prophet.pointsTo.map((p, i) => (
+                              <Badge key={i} variant="outline" className="text-xs">{p}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Zechariah Sequence */}
+                  <div className="p-4 bg-muted/50 rounded-lg border">
+                    <h4 className="font-bold mb-2">Zechariah's Sequential Prophecy</h4>
+                    <div className="space-y-1 text-xs">
+                      {zechariahSequence.map((item, i) => (
+                        <div key={i} className="grid grid-cols-3 gap-2 p-1 bg-background rounded">
+                          <span className="font-medium">Ch. {item.chapters}</span>
+                          <span>{item.content}</span>
+                          <span className="text-muted-foreground">{item.timeframe}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Sign of Jonah */}
+                  <div className="p-4 bg-muted/50 rounded-lg border">
+                    <h4 className="font-bold mb-2">The Sign of Jonah Pattern</h4>
+                    <div className="space-y-2">
+                      {signOfJonah.map((item, i) => (
+                        <div key={i} className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="p-2 bg-blue-500/10 rounded">
+                            <strong>Jonah:</strong> {item.jonahExperience}
+                          </div>
+                          <div className="p-2 bg-purple-500/10 rounded">
+                            <strong>Christ:</strong> {item.christFulfillment}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </ScrollArea>
@@ -440,6 +631,25 @@ export function ThreeHeavensLibrary({ onClose }: ThreeHeavensLibraryProps) {
             <TabsContent value="rules">
               <ScrollArea className="h-[50vh]">
                 <div className="space-y-4">
+                  {/* Four Keys */}
+                  <div className="p-4 bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-lg border border-amber-500/20">
+                    <h4 className="font-bold mb-3 text-amber-700 dark:text-amber-400">
+                      Four Keys to Understanding Prophecy
+                    </h4>
+                    <div className="space-y-3">
+                      {fourKeysToUnderstandingProphecy.map((key) => (
+                        <div key={key.number} className="p-3 bg-background rounded border">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-bold text-amber-600">Key {key.number}:</span>
+                            <span className="font-medium">{key.title}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{key.description}</p>
+                          <Badge variant="outline" className="text-xs mt-1">{key.scriptureReference}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
                     <h4 className="font-bold mb-2 text-red-600">Core Governing Law</h4>
                     <p className="text-sm">
@@ -450,6 +660,30 @@ export function ThreeHeavensLibrary({ onClose }: ThreeHeavensLibraryProps) {
                       <li>• No exceptions</li>
                       <li>• No &quot;both/and&quot; hand-waving</li>
                     </ul>
+                  </div>
+
+                  {/* Gerizim/Ebal Pattern */}
+                  <div className="p-4 bg-muted/50 rounded-lg border">
+                    <h4 className="font-bold mb-2">Gerizim/Ebal Blessing-Curse Pattern</h4>
+                    <div className="space-y-2">
+                      {gerizimEbalPattern.map((pattern) => (
+                        <div key={pattern.cycle} className={`p-2 rounded border ${
+                          pattern.cycle === 1 ? 'bg-blue-500/5' :
+                          pattern.cycle === 2 ? 'bg-purple-500/5' :
+                          'bg-amber-500/5'
+                        }`}>
+                          <div className="font-medium text-sm">Cycle {pattern.cycle}: {pattern.condition}</div>
+                          <div className="grid grid-cols-2 gap-2 text-xs mt-1">
+                            <div className="text-green-600">Blessing: {pattern.blessing.slice(0, 2).join(', ')}</div>
+                            <div className="text-red-600">Curse: {pattern.curse.slice(0, 2).join(', ')}</div>
+                          </div>
+                          <div className="text-xs mt-1">
+                            <span className="text-red-700">Result:</span> {pattern.curseResult} →
+                            <span className="text-green-700"> Restoration:</span> {pattern.restoration}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
