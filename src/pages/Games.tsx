@@ -19,7 +19,7 @@ import { ActiveGameSessions } from "@/components/games/ActiveGameSessions";
 import { usePreservePageState, usePreserveFormState } from "@/contexts/PageStateContext";
 
 // Games with special badges
-const NEW_GAMES = ["pt_tetris", "symbol_decoder", "story_room_3d", "speed_verse"]; // Completely new games
+const NEW_GAMES = ["pt_tetris", "symbol_decoder", "story_room_3d", "speed_verse", "24fps_room"]; // Completely new games
 const RENOVATED_GAMES = ["chain_chess", "escape_room"]; // Rebuilt/improved games
 
 // Bible translations available for games
@@ -91,6 +91,18 @@ const Games = () => {
       modes: ["solo"],
       difficulties: ["easy", "medium", "hard"],
       route: "/games/story-room-3d"
+    },
+    {
+      id: "24fps_room",
+      name: "24FPS Room 3D",
+      description: "Visual GPS for the Bible! Navigate a 3D film strip of memorable chapter images. Genesis 1-24 with quirky memory triggers.",
+      icon: "🎬",
+      floor: 1,
+      timed: false,
+      rooms: ["24"],
+      modes: ["solo"],
+      difficulties: ["easy"],
+      route: "/games/24fps-room"
     },
     {
       id: "palace_cards",

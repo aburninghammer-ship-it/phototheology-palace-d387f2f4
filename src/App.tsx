@@ -198,6 +198,7 @@ const ChristInFocus = lazy(() => import("./pages/games/ChristInFocus"));
 const EscapeRoom3D = lazy(() => import("./pages/games/EscapeRoom3D"));
 const StoryRoom3D = lazy(() => import("./pages/games/StoryRoom3D"));
 const SpeedVerse3D = lazy(() => import("./pages/games/SpeedVerse3D"));
+const Room24FPS3D = lazy(() => import("./pages/games/Room24FPS3D"));
 const PublicImageLibrary = lazy(() => import("./pages/PublicImageLibrary"));
 const BibleStudySeriesBuilder = lazy(() => import("./pages/BibleStudySeriesBuilder"));
 const SeriesLessonEditor = lazy(() => import("./pages/SeriesLessonEditor"));
@@ -450,6 +451,7 @@ function App() {
             <Route path="/games/story-room" element={<ProtectedRoute><StoryRoomGame /></ProtectedRoute>} />
             <Route path="/games/story-room-3d" element={<ProtectedRoute><StoryRoom3D /></ProtectedRoute>} />
             <Route path="/games/speed-verse-3d" element={<ProtectedRoute><SpeedVerse3D /></ProtectedRoute>} />
+            <Route path="/games/24fps-room" element={<ProtectedRoute><Room24FPS3D /></ProtectedRoute>} />
             <Route path="/games/observation-room" element={<ProtectedRoute><ObservationFlux /></ProtectedRoute>} />
             <Route path="/games/concentration-room" element={<ProtectedRoute><ConcentrationRoom /></ProtectedRoute>} />
             <Route path="/games/dimensions-room" element={<ProtectedRoute><DimensionsRoom /></ProtectedRoute>} />
