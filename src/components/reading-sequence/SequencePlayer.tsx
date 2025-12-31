@@ -56,6 +56,7 @@ import {
   cacheVerseCommentaryAudio,
   getCachedVerseCommentaryAudio
 } from "@/services/offlineAudioCache";
+import { audioPreloader } from "@/services/audioPreloader";
 import { 
   getCachedChapterCommentary, 
   cacheChapterCommentary,
@@ -486,7 +487,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const totalItems = allItems.length;
   const isActive = isPlaying && !isPaused;
 
-  // Reset refs on mount to ensure fresh start
+  // Reset refs on mount and clean up on unmount
   useEffect(() => {
     isFetchingChapterRef.current = false;
     lastFetchedRef.current = null;
@@ -503,6 +504,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log("SequencePlayer mounted, refs reset. Active sequences:", activeSequences.length, "Total items:", totalItems);
     console.log("[Mount] Sequences prop:", sequences.map(s => ({ enabled: s.enabled, itemCount: s.items.length, voice: s.voice })));
     console.log("[Mount] First item:", allItems[0]);
+    
+    // Cleanup on unmount
+    return () => {
+      console.log("[SequencePlayer] Unmounting, cleaning up audioPreloader cache");
+      audioPreloader.clearCache();
+    };
   }, []);
 
   // Background music is now always available during playback and is controlled solely by the user volume slider.
@@ -1614,11 +1621,21 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return;
     }
 
-    // Prefetch next 2 verses while this one plays
-    for (let i = 1; i <= 2; i++) {
+    // Prefetch next 3 verses while this one plays (increased from 2)
+    for (let i = 1; i <= 3; i++) {
       const nextIdx = verseIdx + i;
       if (nextIdx < content.verses.length) {
         prefetchVerse(nextIdx, content, voice);
+        // Also use audioPreloader for additional caching
+        const nextVerse = content.verses[nextIdx];
+        audioPreloader.preloadVerseTTS(
+          content.book, 
+          content.chapter, 
+          nextVerse.verse, 
+          nextVerse.text, 
+          voice, 
+          i // priority: closer verses have higher priority
+        );
       }
     }
     

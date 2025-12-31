@@ -225,6 +225,12 @@ export const clearCommentaryCache = (): void => {
  */
 export const cleanCommentaryForTTS = (text: string): string => {
   return text
+    // REMOVE UNWANTED PHRASES - banned expressions that AI might still generate
+    .replace(/\bmy dear friend,?\s*/gi, '')
+    .replace(/\bdear friend,?\s*/gi, '')
+    .replace(/\bmy dear student,?\s*/gi, '')
+    .replace(/\bdear student,?\s*/gi, '')
+    .replace(/\bmy friend,?\s*/gi, '')
     // Remove markdown symbols
     .replace(/\*\*/g, '')           // Bold markers
     .replace(/\*/g, '')             // Italics/single asterisks
