@@ -111,12 +111,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
   // Load saved position from localStorage AND Supabase user metadata (use most recent)
   useEffect(() => {
-    // If autoPlay is enabled, don't show resume option - just start fresh
-    if (autoPlay) {
-      console.log('[SequencePlayer] AutoPlay enabled, skipping resume prompt');
-      return;
-    }
-
     const loadPosition = async () => {
       let localPosition: { seqIdx: number; itemIdx: number; verseIdx: number; timestamp: number } | null = null;
       let cloudPosition: { seqIdx: number; itemIdx: number; verseIdx: number; timestamp: number } | null = null;
@@ -169,7 +163,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     };
 
     loadPosition();
-  }, [positionStorageKey, activeSequences.length, autoPlay, sequenceName]);
+  }, [positionStorageKey, activeSequences.length, sequenceName]);
 
   // Save current position to localStorage AND Supabase user metadata (for cross-device sync)
   const saveCurrentPosition = useCallback(async (seqIdx: number, itemIdx: number, verseIdx: number) => {
@@ -2722,38 +2716,44 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Resume Option - shown when user has a saved position */}
-        {showResumeOption && savedPosition && (
-          <div className="rounded-xl border-2 border-blue-500/30 overflow-hidden bg-gradient-to-br from-blue-500/10 via-sky-500/5 to-blue-500/10 shadow-lg shadow-blue-500/10 p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                <Play className="h-5 w-5 text-white" />
+        {showResumeOption && savedPosition && (() => {
+          // Get the saved item info for display
+          const savedSeq = activeSequences[savedPosition.seqIdx];
+          const savedItem = savedSeq?.items[savedPosition.itemIdx];
+          const savedBookChapter = savedItem ? `${savedItem.book} ${savedItem.chapter}` : `Chapter ${savedPosition.itemIdx + 1}`;
+          return (
+            <div className="rounded-xl border-2 border-blue-500/30 overflow-hidden bg-gradient-to-br from-blue-500/10 via-sky-500/5 to-blue-500/10 shadow-lg shadow-blue-500/10 p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  <Play className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-blue-600 dark:text-blue-400">Continue Where You Left Off?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {savedBookChapter}:{savedPosition.verseIdx + 1}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-blue-600 dark:text-blue-400">Continue Where You Left Off?</h3>
-                <p className="text-xs text-muted-foreground">
-                  You were on Chapter {savedPosition.itemIdx + 1}, Verse {savedPosition.verseIdx + 1}
-                </p>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleResume}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white"
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Resume
+                </Button>
+                <Button
+                  onClick={handleStartFresh}
+                  variant="outline"
+                  className="flex-1 border-blue-500/30 hover:bg-blue-500/10"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Start Fresh
+                </Button>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={handleResume}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white"
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Resume
-              </Button>
-              <Button
-                onClick={handleStartFresh}
-                variant="outline"
-                className="flex-1 border-blue-500/30 hover:bg-blue-500/10"
-              >
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Start Fresh
-              </Button>
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Mobile Tap to Start - required on mobile due to browser audio restrictions */}
         {waitingForMobileTap && (
