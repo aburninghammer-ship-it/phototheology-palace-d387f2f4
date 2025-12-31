@@ -289,6 +289,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const chapterCache = useRef<Map<string, { verse: number; text: string }[]>>(new Map()); // Cache for prefetched chapters
   const commentaryCache = useRef<Map<string, { text: string; audioUrl?: string }>>(new Map()); // Cache for pre-generated commentary
   const prefetchingCommentaryRef = useRef<Set<string>>(new Set()); // Track commentary being prefetched
+  const blobUrlsRef = useRef<Set<string>>(new Set()); // Track all created blob URLs for cleanup on unmount
   const browserUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null); // For pause/resume with browser TTS
   const retryCountRef = useRef(0); // Track retry attempts for resilience
   const pausedVerseRef = useRef<{ verseIdx: number; content: ChapterContent; voice: string } | null>(null); // Track paused position
@@ -846,7 +847,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: "audio/mpeg" });
-        return URL.createObjectURL(blob);
+        const blobUrl = URL.createObjectURL(blob);
+        // Track blob URL for cleanup on unmount
+        blobUrlsRef.current.add(blobUrl);
+        return blobUrl;
       }
       console.warn("[TTS] No audio content in response");
       return null;
@@ -1011,7 +1015,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         setIsPlayingCommentary(false);
         playingCommentaryRef.current = false;
         setCommentaryText(null);
-        if (url) URL.revokeObjectURL(url);
+        // Don't revoke blob URL here - it may be cached. Clean up on unmount only.
         onComplete();
       },
       onError: (e) => {
@@ -1637,11 +1641,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     }
 
     // Note: Audio already stopped at start of function if needed
-
-    // Clean up previous audio URL (but not if it's cached)
-    if (audioUrl && !Array.from(ttsCache.current.values()).includes(audioUrl)) {
-      URL.revokeObjectURL(audioUrl);
-    }
+    // Don't revoke blob URLs during playback - they may be reused from cache. Clean up on unmount only.
 
     // CRITICAL: Use MobileAudioEngine for reliable mobile playback
     const currentVolume = isMutedRef.current ? 0 : volumeRef.current / 100;
@@ -2586,6 +2586,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       speechSynthesis.cancel();
       browserUtteranceRef.current = null;
       notifyTTSStopped();
+      
+      // Clean up all blob URLs on unmount
+      console.log("[SequencePlayer] Cleaning up", blobUrlsRef.current.size, "blob URLs on unmount");
+      blobUrlsRef.current.forEach(url => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          // Ignore errors - URL may already be revoked
+        }
+      });
+      blobUrlsRef.current.clear();
     };
   }, []);
 
