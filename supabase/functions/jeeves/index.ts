@@ -5317,7 +5317,9 @@ Return as JSON:
 
     if (!response.ok) {
       const errorBody = await response.text().catch(() => 'No error body');
-      console.error('AI service error:', response.status, errorBody);
+      console.error(`AI service error: ${response.status}`);
+      console.error(`Error body: ${errorBody}`);
+      console.error(`Mode: ${mode}`);
       
       if (response.status === 429) {
         return new Response(
@@ -5332,7 +5334,7 @@ Return as JSON:
         );
       }
       if (response.status === 400) {
-        console.error('Bad request to AI service - check prompt format');
+        console.error(`Bad request to AI service - check prompt format. Error: ${errorBody}`);
         // For Chain Chess modes, return a fallback response instead of error
         if (mode === "chain-chess-v3-opening") {
           return new Response(
