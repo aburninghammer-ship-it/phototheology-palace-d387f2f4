@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Sparkles, Lock } from "lucide-react";
 import { Room } from "@/data/palaceData";
 import { motion } from "framer-motion";
 
@@ -150,7 +150,7 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
                       <div className="flex items-center gap-2">
                         <Lock className="h-4 w-4 text-destructive" />
                         <Badge variant="destructive" className="text-xs">
-                          {loading ? "Checking..." : "🔒 Locked"}
+                          🔒 Locked
                         </Badge>
                       </div>
                     )}

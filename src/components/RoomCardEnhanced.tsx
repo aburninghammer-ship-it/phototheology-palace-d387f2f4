@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Room } from "@/data/palaceData";
 import {
   Sparkles, BookOpen, Target, Lightbulb, Clock, Zap,
-  ChevronDown, ChevronUp, Play, CheckCircle2, AlertTriangle
+  ChevronDown, ChevronUp, Play, CheckCircle2, AlertTriangle, Lock as LockIcon
 } from "lucide-react";
 import * as Icons from "lucide-react";
 import { JeevesAssistant } from "@/components/JeevesAssistant";
@@ -80,7 +80,7 @@ export const RoomCardEnhanced = ({ room, floorNumber }: RoomCardEnhancedProps) =
                   </Badge>
                 </div>
                 <CardTitle className="font-serif text-3xl lg:text-4xl group-hover:text-primary transition-all duration-300 flex items-center gap-3 leading-tight">
-                  {!isUnlocked && <Lock className="h-6 w-6 text-destructive animate-pulse" />}
+                  {!isUnlocked && <LockIcon className="h-6 w-6 text-destructive animate-pulse" />}
                   <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">{room.name}</span>
                   {isUnlocked && <Sparkles className="h-6 w-6 text-accent opacity-0 group-hover:opacity-100 transition-all duration-500 animate-pulse" />}
                 </CardTitle>
@@ -256,7 +256,7 @@ export const RoomCardEnhanced = ({ room, floorNumber }: RoomCardEnhancedProps) =
               <CardHeader className="relative">
                 <CardTitle className="flex items-center gap-3 text-xl">
                   <div className="p-2 bg-muted rounded-lg">
-                    <Lock className="h-6 w-6 text-muted-foreground" />
+                    <LockIcon className="h-6 w-6 text-muted-foreground" />
                   </div>
                   <span className="font-serif">Locked</span>
                 </CardTitle>
