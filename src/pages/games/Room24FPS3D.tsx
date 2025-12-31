@@ -1,13 +1,13 @@
-import { useState, useRef, Suspense, useCallback } from "react";
+import { useState, useRef, Suspense, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Html, Stars, Text, Float, RoundedBox } from "@react-three/drei";
+import { OrbitControls, Html, Stars, Float, RoundedBox, Sparkles as DreiSparkles, MeshDistortMaterial, GradientTexture, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowLeft, Film, ChevronLeft, ChevronRight, Play, Info, Sparkles } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, Film, ChevronLeft, ChevronRight, Info, Sparkles } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 // ============ GENESIS 1-24 CHAPTER IMAGES ============
@@ -219,6 +219,100 @@ const GENESIS_FRAMES: ChapterFrame[] = [
 
 // ============ 3D COMPONENTS ============
 
+// Animated cosmic background orb
+function CosmicBackground() {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x = state.clock.elapsedTime * 0.05;
+      meshRef.current.rotation.y = state.clock.elapsedTime * 0.03;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} position={[50, 0, -80]} scale={[80, 80, 80]}>
+      <sphereGeometry args={[1, 64, 64]} />
+      <MeshDistortMaterial
+        color="#1a0a2e"
+        distort={0.3}
+        speed={1.5}
+        roughness={1}
+      >
+        <GradientTexture
+          stops={[0, 0.3, 0.6, 1]}
+          colors={['#0f0520', '#1a0a2e', '#2d1b4e', '#0a0a1a']}
+        />
+      </MeshDistortMaterial>
+    </mesh>
+  );
+}
+
+// Floating particles around active frame
+function ActiveFrameParticles({ position, color }: { position: [number, number, number]; color: string }) {
+  return (
+    <group position={position}>
+      <DreiSparkles
+        count={50}
+        scale={[6, 8, 4]}
+        size={3}
+        speed={0.4}
+        color={color}
+        opacity={0.8}
+      />
+      {/* Glowing ring */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, -5]}>
+        <torusGeometry args={[3.5, 0.05, 16, 64]} />
+        <meshBasicMaterial color={color} transparent opacity={0.6} />
+      </mesh>
+    </group>
+  );
+}
+
+// Reflective floor
+function ReflectiveFloor() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[55, -6, -5]} receiveShadow>
+      <planeGeometry args={[150, 30]} />
+      <meshStandardMaterial
+        color="#0a0a0a"
+        metalness={0.9}
+        roughness={0.1}
+        envMapIntensity={0.5}
+      />
+    </mesh>
+  );
+}
+
+// Animated light beams
+function LightBeams() {
+  const beamRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (beamRef.current) {
+      beamRef.current.children.forEach((child, i) => {
+        child.position.y = Math.sin(state.clock.elapsedTime * 0.5 + i * 0.5) * 0.5;
+      });
+    }
+  });
+
+  return (
+    <group ref={beamRef}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <mesh key={i} position={[i * 25, 10, -20]} rotation={[0.3, 0, 0]}>
+          <coneGeometry args={[3, 20, 32, 1, true]} />
+          <meshBasicMaterial
+            color="#ffd700"
+            transparent
+            opacity={0.03}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 function CameraController({ targetChapter }: { targetChapter: number }) {
   const { camera } = useThree();
   const targetX = (targetChapter - 1) * 5;
@@ -272,94 +366,151 @@ interface FrameProps {
 
 function ChapterFrameCard({ frame, index, isActive, onClick }: FrameProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const xPos = index * 5;
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Subtle floating for active frame
+      // Dramatic floating for active frame
       if (isActive) {
-        meshRef.current.position.z = -5 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
+        meshRef.current.position.z = -5 + Math.sin(state.clock.elapsedTime * 2) * 0.15;
+        meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.02;
       }
       // Scale on hover
-      const targetScale = hovered ? 1.05 : isActive ? 1.1 : 1;
+      const targetScale = hovered ? 1.08 : isActive ? 1.15 : 1;
       meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, 1), 0.1);
+    }
+    // Animate glow ring
+    if (glowRef.current && isActive) {
+      glowRef.current.rotation.z = state.clock.elapsedTime * 0.5;
+      const pulse = 1 + Math.sin(state.clock.elapsedTime * 3) * 0.1;
+      glowRef.current.scale.set(pulse, pulse, 1);
     }
   });
 
   return (
     <group position={[xPos, 0, 0]}>
-      {/* Frame backing */}
+      {/* Outer glow ring for active frame */}
+      {isActive && (
+        <mesh ref={glowRef} position={[0, 0, -5.2]}>
+          <ringGeometry args={[2.8, 3.2, 64]} />
+          <meshBasicMaterial color={frame.color} transparent opacity={0.4} side={THREE.DoubleSide} />
+        </mesh>
+      )}
+
+      {/* Frame backing with gradient effect */}
       <mesh
         ref={meshRef}
         onClick={(e) => { e.stopPropagation(); onClick(); }}
         onPointerOver={() => { setHovered(true); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
         position={[0, 0, -5]}
+        castShadow
       >
-        <RoundedBox args={[4, 5.5, 0.2]} radius={0.1}>
+        <RoundedBox args={[4, 5.5, 0.3]} radius={0.15}>
           <meshStandardMaterial
-            color={isActive ? frame.color : "#2a2a2a"}
-            metalness={0.3}
-            roughness={0.7}
-            emissive={isActive ? frame.color : "#000000"}
-            emissiveIntensity={isActive ? 0.3 : 0}
+            color={isActive ? frame.color : hovered ? "#3a3a3a" : "#2a2a2a"}
+            metalness={isActive ? 0.6 : 0.3}
+            roughness={isActive ? 0.3 : 0.7}
+            emissive={isActive ? frame.color : hovered ? frame.color : "#000000"}
+            emissiveIntensity={isActive ? 0.5 : hovered ? 0.15 : 0}
           />
         </RoundedBox>
       </mesh>
 
-      {/* Chapter number badge */}
-      <Html position={[-1.5, 2.2, -4.8]} center>
+      {/* Decorative corner accents */}
+      {isActive && (
+        <>
+          <mesh position={[-1.7, 2.4, -4.7]}>
+            <boxGeometry args={[0.4, 0.1, 0.1]} />
+            <meshBasicMaterial color={frame.color} />
+          </mesh>
+          <mesh position={[-1.85, 2.25, -4.7]}>
+            <boxGeometry args={[0.1, 0.4, 0.1]} />
+            <meshBasicMaterial color={frame.color} />
+          </mesh>
+          <mesh position={[1.7, 2.4, -4.7]}>
+            <boxGeometry args={[0.4, 0.1, 0.1]} />
+            <meshBasicMaterial color={frame.color} />
+          </mesh>
+          <mesh position={[1.85, 2.25, -4.7]}>
+            <boxGeometry args={[0.1, 0.4, 0.1]} />
+            <meshBasicMaterial color={frame.color} />
+          </mesh>
+        </>
+      )}
+
+      {/* Chapter number badge with glow */}
+      <Html position={[-1.5, 2.2, -4.7]} center>
         <div
           style={{
-            background: frame.color,
+            background: `linear-gradient(135deg, ${frame.color}, ${frame.color}dd)`,
             color: 'white',
-            padding: '4px 10px',
-            borderRadius: '12px',
-            fontSize: '14px',
+            padding: '6px 14px',
+            borderRadius: '14px',
+            fontSize: '15px',
             fontWeight: 'bold',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            boxShadow: isActive ? `0 0 20px ${frame.color}80, 0 4px 12px rgba(0,0,0,0.4)` : '0 2px 8px rgba(0,0,0,0.3)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            transform: isActive ? 'scale(1.1)' : 'scale(1)',
+            transition: 'all 0.3s ease',
           }}
         >
           Ch. {frame.chapter}
         </div>
       </Html>
 
-      {/* Main image/emoji display */}
-      <Html position={[0, 0.3, -4.8]} center>
+      {/* Main image/emoji display with enhanced effects */}
+      <Html position={[0, 0.3, -4.7]} center>
         <div
           onClick={(e) => { e.stopPropagation(); onClick(); }}
           style={{
-            fontSize: isActive ? '64px' : '48px',
+            fontSize: isActive ? '72px' : '52px',
             cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            filter: isActive ? 'none' : 'grayscale(30%)',
-            textShadow: isActive ? '0 0 20px rgba(255,255,255,0.5)' : 'none',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+            filter: isActive ? 'drop-shadow(0 0 20px rgba(255,255,255,0.6))' : 'grayscale(40%) brightness(0.8)',
+            textShadow: isActive ? `0 0 30px ${frame.color}, 0 0 60px ${frame.color}50` : 'none',
+            transform: isActive ? 'translateY(-5px)' : 'translateY(0)',
           }}
         >
           {frame.image}
         </div>
       </Html>
 
-      {/* Chapter title */}
-      <Html position={[0, -1.8, -4.8]} center>
+      {/* Chapter title with better styling */}
+      <Html position={[0, -1.8, -4.7]} center>
         <div
           style={{
-            color: 'white',
-            fontSize: '14px',
+            color: isActive ? '#ffffff' : '#aaaaaa',
+            fontSize: isActive ? '16px' : '14px',
             fontWeight: 'bold',
             textAlign: 'center',
-            maxWidth: '120px',
-            textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+            maxWidth: '130px',
+            textShadow: isActive ? `0 0 10px ${frame.color}, 0 2px 4px rgba(0,0,0,0.8)` : '0 2px 4px rgba(0,0,0,0.5)',
+            transition: 'all 0.3s ease',
+            letterSpacing: isActive ? '0.5px' : '0',
           }}
         >
           {frame.title}
         </div>
       </Html>
 
-      {/* Active frame glow */}
+      {/* Enhanced lighting for active frame */}
       {isActive && (
-        <pointLight position={[0, 0, -3]} intensity={1} color={frame.color} distance={8} />
+        <>
+          <pointLight position={[0, 0, -2]} intensity={2} color={frame.color} distance={10} />
+          <pointLight position={[0, 3, -3]} intensity={0.8} color="#ffffff" distance={6} />
+          <spotLight
+            position={[0, 5, 2]}
+            angle={0.4}
+            penumbra={0.8}
+            intensity={1.5}
+            color={frame.color}
+            target-position={[0, 0, -5]}
+            castShadow
+          />
+        </>
       )}
     </group>
   );
@@ -457,20 +608,36 @@ export default function Room24FPS3D() {
           shadows
           camera={{ fov: 50, position: [0, 0, 12] }}
           dpr={isMobile ? [1, 1.5] : [1, 2]}
+          gl={{ antialias: true, alpha: false }}
         >
           <Suspense fallback={null}>
             <CameraController targetChapter={currentChapter} />
 
-            {/* Lighting */}
-            <ambientLight intensity={0.2} />
-            <directionalLight position={[10, 10, 5]} intensity={0.5} />
+            {/* Enhanced Lighting */}
+            <ambientLight intensity={0.15} color="#4a4a6a" />
+            <directionalLight position={[10, 15, 5]} intensity={0.6} color="#ffeedd" castShadow />
+            <directionalLight position={[-10, 5, -10]} intensity={0.2} color="#6a8cff" />
 
-            {/* Background */}
-            <color attach="background" args={["#0a0a0a"]} />
-            <Stars radius={100} depth={50} count={2000} factor={4} fade />
+            {/* Vivid Background */}
+            <color attach="background" args={["#050510"]} />
+            <fog attach="fog" args={['#0a0a1a', 30, 100]} />
+            <CosmicBackground />
+            <Stars radius={150} depth={80} count={3000} factor={5} fade speed={0.5} />
+
+            {/* Animated light beams */}
+            <LightBeams />
+
+            {/* Reflective floor */}
+            <ReflectiveFloor />
 
             {/* Film strip structure */}
             <FilmStrip />
+
+            {/* Active frame particles */}
+            <ActiveFrameParticles
+              position={[(currentChapter - 1) * 5, 0, 0]}
+              color={currentFrame.color}
+            />
 
             {/* Chapter frames */}
             {GENESIS_FRAMES.map((frame, index) => (
@@ -483,7 +650,7 @@ export default function Room24FPS3D() {
               />
             ))}
 
-            {/* Projector beam */}
+            {/* Enhanced projector beam */}
             <ProjectorBeam targetX={(currentChapter - 1) * 5} />
 
             {/* Info panel */}
