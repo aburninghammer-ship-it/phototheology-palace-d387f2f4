@@ -1,123 +1,132 @@
+/**
+ * useMobileAudioPlayer - Simplified hook for mobile audio playback
+ * 
+ * Provides a clean, minimal API for playing audio on mobile devices.
+ * Handles iOS unlock, state management, and all mobile quirks.
+ */
+
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { mobileAudioEngine, AudioState, PlayOptions } from '@/lib/MobileAudioEngine';
 
-export interface UseMobileAudioReturn {
-  // State
-  state: AudioState;
-  isUnlocked: boolean;
+export interface MobileAudioPlayerState {
   isPlaying: boolean;
   isPaused: boolean;
   isLoading: boolean;
-  currentTime: number;
-  duration: number;
-
-  // Actions
-  unlock: () => Promise<boolean>;
-  play: (url: string, options?: PlayOptions) => Promise<boolean>;
-  pause: () => void;
-  resume: () => Promise<boolean>;
-  stop: () => void;
-  setVolume: (volume: number) => void;
-  setPlaybackRate: (rate: number) => void;
-  seek: (time: number) => void;
+  isUnlocked: boolean;
+  state: AudioState;
 }
 
+export interface MobileAudioPlayerActions {
+  /**
+   * Unlock audio - call during first user gesture (tap/click)
+   */
+  unlock: () => Promise<boolean>;
+  
+  /**
+   * Play audio from URL
+   */
+  play: (url: string, options?: PlayOptions) => Promise<boolean>;
+  
+  /**
+   * Pause current playback
+   */
+  pause: () => void;
+  
+  /**
+   * Resume paused playback
+   */
+  resume: () => Promise<boolean>;
+  
+  /**
+   * Stop playback completely
+   */
+  stop: () => void;
+  
+  /**
+   * Set volume (0-1)
+   */
+  setVolume: (volume: number) => void;
+  
+  /**
+   * Set playback speed
+   */
+  setPlaybackRate: (rate: number) => void;
+}
+
+export type UseMobileAudioPlayerReturn = MobileAudioPlayerState & MobileAudioPlayerActions;
+
 /**
- * React hook for mobile audio playback
- *
- * Provides a clean interface to the MobileAudioEngine with React state management.
- * Handles iOS audio unlock requirements and provides reliable cross-device playback.
- *
+ * Hook for mobile audio playback
+ * 
  * @example
  * ```tsx
- * const { unlock, play, pause, isPlaying, state } = useMobileAudio();
- *
+ * const audio = useMobileAudioPlayer();
+ * 
  * const handleTap = async () => {
- *   await unlock(); // First user gesture unlocks audio
- *   await play(audioUrl, { volume: 0.8, onEnded: handleNext });
+ *   await audio.unlock(); // First tap unlocks audio
+ *   await audio.play(myAudioUrl, {
+ *     volume: 0.8,
+ *     onEnded: () => console.log('Done!')
+ *   });
  * };
  * ```
  */
-export function useMobileAudio(): UseMobileAudioReturn {
-  const [state, setState] = useState<AudioState>('idle');
-  const [isUnlocked, setIsUnlocked] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
+export function useMobileAudioPlayer(): UseMobileAudioPlayerReturn {
+  const [state, setState] = useState<AudioState>(() => mobileAudioEngine.getState());
+  const [isUnlocked, setIsUnlocked] = useState(() => mobileAudioEngine.isUnlocked());
+  const mountedRef = useRef(true);
 
-  // Track component mount state to avoid state updates after unmount
-  const isMountedRef = useRef(true);
-
-  // Set up state sync on mount
+  // Sync state with engine
   useEffect(() => {
-    isMountedRef.current = true;
-
-    // Poll for state changes (simple and reliable approach)
+    mountedRef.current = true;
+    
+    // Poll for state changes (simple approach that works reliably)
     const interval = setInterval(() => {
-      if (isMountedRef.current) {
+      if (mountedRef.current) {
         const engineState = mobileAudioEngine.getState();
         const engineUnlocked = mobileAudioEngine.isUnlocked();
         
         setState(prev => prev !== engineState ? engineState : prev);
         setIsUnlocked(prev => prev !== engineUnlocked ? engineUnlocked : prev);
-        
-        // Update time/duration
-        setCurrentTime(mobileAudioEngine.getCurrentTime());
-        setDuration(mobileAudioEngine.getDuration());
       }
     }, 100);
 
-    // Check if already unlocked
-    setIsUnlocked(mobileAudioEngine.isUnlocked());
-    setState(mobileAudioEngine.getState());
-
     return () => {
-      isMountedRef.current = false;
+      mountedRef.current = false;
       clearInterval(interval);
     };
   }, []);
 
-  // Unlock audio (call during user gesture)
   const unlock = useCallback(async (): Promise<boolean> => {
-    const success = await mobileAudioEngine.unlock();
-    if (isMountedRef.current) {
-      setIsUnlocked(success);
+    const result = await mobileAudioEngine.unlock();
+    if (mountedRef.current) {
+      setIsUnlocked(result);
     }
-    return success;
+    return result;
   }, []);
 
-  // Play audio URL
   const play = useCallback(async (url: string, options?: PlayOptions): Promise<boolean> => {
     return mobileAudioEngine.play(url, options);
   }, []);
 
-  // Pause playback
   const pause = useCallback((): void => {
     mobileAudioEngine.pause();
   }, []);
 
-  // Resume playback
   const resume = useCallback(async (): Promise<boolean> => {
     return mobileAudioEngine.resume();
   }, []);
 
-  // Stop playback
   const stop = useCallback((): void => {
     mobileAudioEngine.stop();
   }, []);
 
-  // Set volume (0-1)
   const setVolume = useCallback((volume: number): void => {
     mobileAudioEngine.setVolume(volume);
   }, []);
 
-  // Set playback rate
   const setPlaybackRate = useCallback((rate: number): void => {
     mobileAudioEngine.setPlaybackRate(rate);
-  }, []);
-
-  // Seek to position
-  const seek = useCallback((time: number): void => {
-    mobileAudioEngine.seek(time);
   }, []);
 
   return {
@@ -127,9 +136,7 @@ export function useMobileAudio(): UseMobileAudioReturn {
     isPlaying: state === 'playing',
     isPaused: state === 'paused',
     isLoading: state === 'loading' || state === 'unlocking',
-    currentTime,
-    duration,
-
+    
     // Actions
     unlock,
     play,
@@ -138,8 +145,7 @@ export function useMobileAudio(): UseMobileAudioReturn {
     stop,
     setVolume,
     setPlaybackRate,
-    seek,
   };
 }
 
-export default useMobileAudio;
+export default useMobileAudioPlayer;

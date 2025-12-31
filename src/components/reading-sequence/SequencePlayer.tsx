@@ -2856,8 +2856,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               </span>
 
               <span className="text-muted-foreground">audioUnlocked:</span>
-              <span className={mobileAudioEngine.isAudioUnlocked() ? "text-green-400" : "text-red-400"}>
-                {String(mobileAudioEngine.isAudioUnlocked())}
+              <span className={mobileAudioEngine.isUnlocked() ? "text-green-400" : "text-red-400"}>
+                {String(mobileAudioEngine.isUnlocked())}
               </span>
               
               <span className="text-muted-foreground">currentItem:</span>
