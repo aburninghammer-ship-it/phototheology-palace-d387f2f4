@@ -50,7 +50,17 @@ export function ThreeHeavensLibrary({ onClose }: ThreeHeavensLibraryProps) {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query.length >= 2) {
-      const results = searchPropheticPassages(query);
+      const lowerQuery = query.toLowerCase();
+      const results = propheticPassages.filter(p =>
+        p.title.toLowerCase().includes(lowerQuery) ||
+        p.reference.toLowerCase().includes(lowerQuery) ||
+        p.text.toLowerCase().includes(lowerQuery) ||
+        p.primaryContext.toLowerCase().includes(lowerQuery) ||
+        p.fulfillments.some(f => 
+          f.event.toLowerCase().includes(lowerQuery) ||
+          f.description.toLowerCase().includes(lowerQuery)
+        )
+      );
       setSearchResults(results);
     } else {
       setSearchResults([]);

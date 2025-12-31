@@ -199,8 +199,8 @@ export const EnhancedMobileDrawer = () => {
           <Menu className="h-6 w-6" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="h-[85vh] max-h-[85vh]">
-        <DrawerHeader className="border-b px-4 py-3">
+      <DrawerContent className="h-[85vh] max-h-[85vh] flex flex-col overflow-hidden">
+        <DrawerHeader className="border-b px-4 py-3 flex-shrink-0">
           <DrawerTitle className="flex items-center justify-between">
             <Link
               to="/"
@@ -218,7 +218,7 @@ export const EnhancedMobileDrawer = () => {
           </DrawerTitle>
         </DrawerHeader>
 
-        <ScrollArea className="flex-1 px-4">
+        <ScrollArea className="flex-1 min-h-0 px-4">
           {user ? (
             <div className="py-4 space-y-4">
               {/* Navigation Style Toggle */}
