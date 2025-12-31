@@ -795,33 +795,52 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return chapterCache.current.get(cacheKey)!;
     }
 
+    const timeoutMs = 15000;
+
     try {
       console.log("[Chapter] Fetching from API:", cacheKey);
-      const { data, error } = await supabase.functions.invoke("bible-api", {
+
+      const invokePromise = supabase.functions.invoke("bible-api", {
         body: { book, chapter, version: "kjv" },
       });
 
-      console.log("[Chapter] API Response:", { hasData: !!data, hasError: !!error, versesCount: data?.verses?.length });
+      const result = await Promise.race([
+        invokePromise,
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Chapter fetch timeout")), timeoutMs)
+        ),
+      ]);
+
+      const { data, error } = result as Awaited<typeof invokePromise>;
+
+      console.log("[Chapter] API Response:", {
+        hasData: !!data,
+        hasError: !!error,
+        versesCount: data?.verses?.length,
+      });
 
       if (error) {
         console.error("[Chapter] API Error:", error);
-        toast.error(`Failed to load ${book} ${chapter}. Please try again.`);
         throw error;
       }
 
-      if (!data || !data.verses || data.verses.length === 0) {
+      if (!data || !Array.isArray(data.verses) || data.verses.length === 0) {
         console.error("[Chapter] No verses in response:", data);
-        toast.error(`No verses found for ${book} ${chapter}`);
-        return null;
+        throw new Error("No verses in response");
       }
 
       const verses = data.verses as { verse: number; text: string }[];
       console.log("[Chapter] Successfully loaded", verses.length, "verses");
       chapterCache.current.set(cacheKey, verses);
       return verses;
-    } catch (e) {
+    } catch (e: any) {
       console.error("[Chapter] Error fetching:", e);
-      toast.error(`Error loading chapter. Please check your connection.`);
+      const msg = String(e?.message || "");
+      if (msg.toLowerCase().includes("timeout")) {
+        toast.error(`Timed out loading ${book} ${chapter}. Tap Retry.`);
+      } else {
+        toast.error(`Error loading ${book} ${chapter}. Please try again.`);
+      }
       return null;
     }
   }, []);
