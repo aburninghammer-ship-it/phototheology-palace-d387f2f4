@@ -366,6 +366,348 @@ function SanctuaryRoom({ puzzles, solvedPuzzles, currentPuzzle, onObjectClick }:
   );
 }
 
+// ============================================
+// EXODUS ROOM - Desert/Egyptian Theme
+// ============================================
+function ExodusRoom({ puzzles, solvedPuzzles, currentPuzzle, onObjectClick }: SanctuaryRoomProps) {
+  const roomWidth = 14;
+  const roomDepth = 18;
+  const roomHeight = 8;
+
+  const objectConfigs: { type: InteractiveObjectProps['objectType']; position: [number, number, number]; rotation?: [number, number, number]; label: string }[] = [
+    { type: 'tablet', position: [0, 1.5, -7], label: 'Ten Commandments' },
+    { type: 'scroll', position: [-5, 1, -3], label: 'Moses\' Staff Scroll' },
+    { type: 'altar', position: [5, 0.4, -5], label: 'Altar of Sacrifice' },
+    { type: 'chest', position: [-4, 0.25, 2], label: 'Egyptian Treasure' },
+    { type: 'pillar', position: [4, 1.5, 0], label: 'Pillar of Fire' },
+    { type: 'door', position: [0, 1.25, -8], label: 'Passover Door' },
+  ];
+
+  return (
+    <group>
+      {/* Sandy floor */}
+      <Plane args={[roomWidth, roomDepth]} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#C2A060" roughness={1} />
+      </Plane>
+
+      {/* Open sky ceiling with stars */}
+      <Plane args={[roomWidth, roomDepth]} rotation={[Math.PI / 2, 0, 0]} position={[0, roomHeight, 0]}>
+        <meshStandardMaterial color="#0a0a2a" roughness={0.5} />
+      </Plane>
+
+      {/* Stone walls - Egyptian style */}
+      <Plane args={[roomWidth, roomHeight]} position={[0, roomHeight / 2, -roomDepth / 2]}>
+        <meshStandardMaterial color="#8B7355" roughness={0.9} />
+      </Plane>
+      <Plane args={[roomWidth, roomHeight]} position={[0, roomHeight / 2, roomDepth / 2]} rotation={[0, Math.PI, 0]}>
+        <meshStandardMaterial color="#8B7355" roughness={0.9} />
+      </Plane>
+      <Plane args={[roomDepth, roomHeight]} position={[-roomWidth / 2, roomHeight / 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <meshStandardMaterial color="#A08060" roughness={0.9} />
+      </Plane>
+      <Plane args={[roomDepth, roomHeight]} position={[roomWidth / 2, roomHeight / 2, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <meshStandardMaterial color="#A08060" roughness={0.9} />
+      </Plane>
+
+      {/* Burning bush effect */}
+      <group position={[-6, 0, -6]}>
+        <Sphere args={[0.8, 16, 16]}>
+          <meshStandardMaterial color="#2d5a27" roughness={0.8} />
+        </Sphere>
+        <pointLight position={[0, 1, 0]} color="#ff4500" intensity={2} distance={4} />
+        <pointLight position={[0, 0.5, 0]} color="#ffa500" intensity={1} distance={3} />
+      </group>
+
+      {/* Interactive objects */}
+      {objectConfigs.slice(0, puzzles.length).map((config, index) => (
+        <InteractiveObject
+          key={index}
+          position={config.position}
+          rotation={config.rotation}
+          objectType={config.type}
+          puzzleIndex={index}
+          isSolved={solvedPuzzles.has(index)}
+          isActive={index <= Math.max(...Array.from(solvedPuzzles), -1) + 1}
+          onClick={() => onObjectClick(index)}
+          label={config.label}
+        />
+      ))}
+
+      {/* Desert lighting - warm */}
+      <ambientLight intensity={0.3} color="#ffe4b5" />
+      <directionalLight position={[5, 15, 5]} intensity={0.8} color="#ffd700" />
+      <pointLight position={[0, 5, 0]} color="#ff6b35" intensity={0.3} distance={15} />
+    </group>
+  );
+}
+
+// ============================================
+// PROPHECY ROOM - Mystical/Vision Theme
+// ============================================
+function ProphecyRoom({ puzzles, solvedPuzzles, currentPuzzle, onObjectClick }: SanctuaryRoomProps) {
+  const roomWidth = 12;
+  const roomDepth = 16;
+  const roomHeight = 10;
+
+  const objectConfigs: { type: InteractiveObjectProps['objectType']; position: [number, number, number]; rotation?: [number, number, number]; label: string }[] = [
+    { type: 'scroll', position: [0, 1.5, -6], label: 'Sealed Scroll' },
+    { type: 'lampstand', position: [-4, 0, -4], label: 'Seven Lamps' },
+    { type: 'tablet', position: [4, 1.2, -5], label: 'Vision Tablet' },
+    { type: 'chest', position: [-3, 0.25, 1], label: 'Ark of Secrets' },
+    { type: 'veil', position: [3, 1.5, -2], label: 'Veil of Mystery' },
+    { type: 'altar', position: [0, 0.4, 3], label: 'Incense Altar' },
+  ];
+
+  return (
+    <group>
+      {/* Marble floor */}
+      <Plane args={[roomWidth, roomDepth]} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#1a1a2e" roughness={0.3} metalness={0.2} />
+      </Plane>
+
+      {/* Starry dome ceiling */}
+      <Sphere args={[12, 32, 32]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#0a0a1a" side={THREE.BackSide} />
+      </Sphere>
+
+      {/* Mystical walls */}
+      <Plane args={[roomWidth, roomHeight]} position={[0, roomHeight / 2, -roomDepth / 2]}>
+        <meshStandardMaterial color="#16213e" roughness={0.7} />
+      </Plane>
+      <Plane args={[roomWidth, roomHeight]} position={[0, roomHeight / 2, roomDepth / 2]} rotation={[0, Math.PI, 0]}>
+        <meshStandardMaterial color="#16213e" roughness={0.7} />
+      </Plane>
+      <Plane args={[roomDepth, roomHeight]} position={[-roomWidth / 2, roomHeight / 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <meshStandardMaterial color="#1a1a3e" roughness={0.7} />
+      </Plane>
+      <Plane args={[roomDepth, roomHeight]} position={[roomWidth / 2, roomHeight / 2, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <meshStandardMaterial color="#1a1a3e" roughness={0.7} />
+      </Plane>
+
+      {/* Floating orbs of light */}
+      {[[-3, 6, -4], [3, 5, -3], [0, 7, 0], [-2, 4, 3], [4, 6, 2]].map((pos, i) => (
+        <group key={i} position={pos as [number, number, number]}>
+          <Sphere args={[0.15, 16, 16]}>
+            <meshStandardMaterial color="#8b5cf6" emissive="#8b5cf6" emissiveIntensity={0.8} />
+          </Sphere>
+          <pointLight color="#8b5cf6" intensity={0.5} distance={4} />
+        </group>
+      ))}
+
+      {/* Interactive objects */}
+      {objectConfigs.slice(0, puzzles.length).map((config, index) => (
+        <InteractiveObject
+          key={index}
+          position={config.position}
+          rotation={config.rotation}
+          objectType={config.type}
+          puzzleIndex={index}
+          isSolved={solvedPuzzles.has(index)}
+          isActive={index <= Math.max(...Array.from(solvedPuzzles), -1) + 1}
+          onClick={() => onObjectClick(index)}
+          label={config.label}
+        />
+      ))}
+
+      {/* Mystical lighting */}
+      <ambientLight intensity={0.15} color="#4a00e0" />
+      <directionalLight position={[0, 10, 5]} intensity={0.3} color="#8e2de2" />
+      <pointLight position={[0, 8, 0]} color="#8b5cf6" intensity={1} distance={20} />
+    </group>
+  );
+}
+
+// ============================================
+// GARDEN/PARABLES ROOM - Nature Theme
+// ============================================
+function GardenRoom({ puzzles, solvedPuzzles, currentPuzzle, onObjectClick }: SanctuaryRoomProps) {
+  const roomWidth = 16;
+  const roomDepth = 20;
+  const roomHeight = 8;
+
+  const objectConfigs: { type: InteractiveObjectProps['objectType']; position: [number, number, number]; rotation?: [number, number, number]; label: string }[] = [
+    { type: 'scroll', position: [0, 1, -8], label: 'Parable Scroll' },
+    { type: 'chest', position: [-5, 0.25, -4], label: 'Seed Box' },
+    { type: 'altar', position: [5, 0.4, -6], label: 'Stone Altar' },
+    { type: 'tablet', position: [-4, 1.2, 2], label: 'Wisdom Tablet' },
+    { type: 'door', position: [4, 1.25, 0], label: 'Narrow Gate' },
+    { type: 'lampstand', position: [0, 0, 4], label: 'Oil Lamp' },
+  ];
+
+  return (
+    <group>
+      {/* Grass floor */}
+      <Plane args={[roomWidth, roomDepth]} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#228B22" roughness={1} />
+      </Plane>
+
+      {/* Open sky */}
+      <Plane args={[roomWidth * 2, roomDepth * 2]} rotation={[Math.PI / 2, 0, 0]} position={[0, roomHeight, 0]}>
+        <meshStandardMaterial color="#87CEEB" roughness={0.5} />
+      </Plane>
+
+      {/* Garden walls - hedges */}
+      <Box args={[roomWidth, 3, 1]} position={[0, 1.5, -roomDepth / 2]}>
+        <meshStandardMaterial color="#2d5a27" roughness={0.9} />
+      </Box>
+      <Box args={[1, 3, roomDepth]} position={[-roomWidth / 2, 1.5, 0]}>
+        <meshStandardMaterial color="#2d5a27" roughness={0.9} />
+      </Box>
+      <Box args={[1, 3, roomDepth]} position={[roomWidth / 2, 1.5, 0]}>
+        <meshStandardMaterial color="#2d5a27" roughness={0.9} />
+      </Box>
+
+      {/* Trees */}
+      {[[-6, 0, -7], [6, 0, -7], [-6, 0, 5], [6, 0, 5]].map((pos, i) => (
+        <group key={i} position={pos as [number, number, number]}>
+          <Cylinder args={[0.3, 0.4, 2, 8]} position={[0, 1, 0]}>
+            <meshStandardMaterial color="#8B4513" roughness={0.9} />
+          </Cylinder>
+          <Sphere args={[1.5, 16, 16]} position={[0, 3, 0]}>
+            <meshStandardMaterial color="#228B22" roughness={0.8} />
+          </Sphere>
+        </group>
+      ))}
+
+      {/* Flowers scattered */}
+      {Array.from({ length: 12 }).map((_, i) => (
+        <Sphere
+          key={i}
+          args={[0.15, 8, 8]}
+          position={[(Math.random() - 0.5) * 12, 0.15, (Math.random() - 0.5) * 16]}
+        >
+          <meshStandardMaterial color={['#ff69b4', '#ffff00', '#ff4500', '#9932cc'][i % 4]} />
+        </Sphere>
+      ))}
+
+      {/* Interactive objects */}
+      {objectConfigs.slice(0, puzzles.length).map((config, index) => (
+        <InteractiveObject
+          key={index}
+          position={config.position}
+          rotation={config.rotation}
+          objectType={config.type}
+          puzzleIndex={index}
+          isSolved={solvedPuzzles.has(index)}
+          isActive={index <= Math.max(...Array.from(solvedPuzzles), -1) + 1}
+          onClick={() => onObjectClick(index)}
+          label={config.label}
+        />
+      ))}
+
+      {/* Sunlight */}
+      <ambientLight intensity={0.5} color="#fffacd" />
+      <directionalLight position={[10, 15, 10]} intensity={1} color="#fff8dc" castShadow />
+      <hemisphereLight args={['#87CEEB', '#228B22', 0.6]} />
+    </group>
+  );
+}
+
+// ============================================
+// CREATION ROOM - Cosmic Theme
+// ============================================
+function CreationRoom({ puzzles, solvedPuzzles, currentPuzzle, onObjectClick }: SanctuaryRoomProps) {
+  const roomWidth = 14;
+  const roomDepth = 18;
+  const roomHeight = 12;
+
+  const objectConfigs: { type: InteractiveObjectProps['objectType']; position: [number, number, number]; rotation?: [number, number, number]; label: string }[] = [
+    { type: 'lampstand', position: [0, 0, -7], label: 'Light of Day 1' },
+    { type: 'scroll', position: [-5, 1.5, -4], label: 'Genesis Scroll' },
+    { type: 'tablet', position: [5, 1.2, -5], label: 'Creation Tablet' },
+    { type: 'altar', position: [0, 0.4, 0], label: 'Sabbath Rest Altar' },
+    { type: 'chest', position: [-4, 0.25, 4], label: 'Garden Treasure' },
+    { type: 'veil', position: [4, 1.5, 3], label: 'Veil of Days' },
+  ];
+
+  return (
+    <group>
+      {/* Water floor - day 2 */}
+      <Plane args={[roomWidth, roomDepth]} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#1a3a5c" roughness={0.2} metalness={0.5} />
+      </Plane>
+
+      {/* Cosmic dome */}
+      <Sphere args={[15, 32, 32]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#0a0010" side={THREE.BackSide} />
+      </Sphere>
+
+      {/* Floating land masses - day 3 */}
+      <Box args={[4, 0.5, 4]} position={[-4, 0.25, -5]}>
+        <meshStandardMaterial color="#654321" roughness={0.9} />
+      </Box>
+      <Box args={[3, 0.5, 3]} position={[4, 0.25, -3]}>
+        <meshStandardMaterial color="#654321" roughness={0.9} />
+      </Box>
+
+      {/* Sun and Moon - day 4 */}
+      <group position={[6, 8, -6]}>
+        <Sphere args={[1.5, 16, 16]}>
+          <meshStandardMaterial color="#ffd700" emissive="#ffa500" emissiveIntensity={1} />
+        </Sphere>
+        <pointLight color="#ffd700" intensity={2} distance={20} />
+      </group>
+      <group position={[-6, 6, -4]}>
+        <Sphere args={[0.8, 16, 16]}>
+          <meshStandardMaterial color="#c0c0c0" emissive="#a0a0a0" emissiveIntensity={0.3} />
+        </Sphere>
+        <pointLight color="#c0c0ff" intensity={0.5} distance={10} />
+      </group>
+
+      {/* Stars scattered */}
+      {Array.from({ length: 50 }).map((_, i) => (
+        <Sphere
+          key={i}
+          args={[0.05, 8, 8]}
+          position={[
+            (Math.random() - 0.5) * 25,
+            5 + Math.random() * 8,
+            (Math.random() - 0.5) * 25
+          ]}
+        >
+          <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1} />
+        </Sphere>
+      ))}
+
+      {/* Interactive objects */}
+      {objectConfigs.slice(0, puzzles.length).map((config, index) => (
+        <InteractiveObject
+          key={index}
+          position={config.position}
+          rotation={config.rotation}
+          objectType={config.type}
+          puzzleIndex={index}
+          isSolved={solvedPuzzles.has(index)}
+          isActive={index <= Math.max(...Array.from(solvedPuzzles), -1) + 1}
+          onClick={() => onObjectClick(index)}
+          label={config.label}
+        />
+      ))}
+
+      {/* Cosmic lighting */}
+      <ambientLight intensity={0.1} color="#4a00e0" />
+      <directionalLight position={[6, 10, -6]} intensity={0.6} color="#ffd700" />
+    </group>
+  );
+}
+
+// Room selector based on theme
+function getRoomComponent(theme: string) {
+  switch (theme.toLowerCase()) {
+    case 'exodus':
+      return ExodusRoom;
+    case 'prophecy':
+      return ProphecyRoom;
+    case 'parables':
+      return GardenRoom;
+    case 'creation':
+      return CreationRoom;
+    case 'sanctuary':
+    default:
+      return SanctuaryRoom;
+  }
+}
+
 // Camera controller
 function CameraController() {
   const { camera } = useThree();
@@ -498,12 +840,17 @@ export default function EscapeRoom3D() {
       <Canvas shadows camera={{ fov: 60, position: [0, 2, 8] }}>
         <Suspense fallback={null}>
           <CameraController />
-          <SanctuaryRoom
-            puzzles={room.puzzles}
-            solvedPuzzles={solvedPuzzles}
-            currentPuzzle={currentPuzzleIndex ?? 0}
-            onObjectClick={handleObjectClick}
-          />
+          {(() => {
+            const RoomComponent = getRoomComponent(room.theme);
+            return (
+              <RoomComponent
+                puzzles={room.puzzles}
+                solvedPuzzles={solvedPuzzles}
+                currentPuzzle={currentPuzzleIndex ?? 0}
+                onObjectClick={handleObjectClick}
+              />
+            );
+          })()}
           <OrbitControls
             enablePan={false}
             enableZoom={true}

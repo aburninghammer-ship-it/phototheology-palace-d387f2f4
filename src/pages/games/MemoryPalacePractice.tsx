@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Eye, EyeOff, Check, Home } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Check, Home, Box } from "lucide-react";
 import { toast } from "sonner";
 
 export default function MemoryPalacePractice() {
@@ -118,8 +118,19 @@ export default function MemoryPalacePractice() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <div className="text-sm font-medium">
-            {currentIndex + 1} / {locations.length}
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(`/memory/palace-3d/${listId}`)}
+              className="text-purple-600 border-purple-300 hover:bg-purple-50"
+            >
+              <Box className="mr-2 h-4 w-4" />
+              3D Mode
+            </Button>
+            <div className="text-sm font-medium">
+              {currentIndex + 1} / {locations.length}
+            </div>
           </div>
         </div>
 

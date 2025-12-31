@@ -163,6 +163,7 @@ const MemoryGame = lazy(() => import("./pages/MemoryGame"));
 const FirstLetterGame = lazy(() => import("./pages/games/FirstLetterGame"));
 const MemoryPalaceBuilder = lazy(() => import("./pages/games/MemoryPalaceBuilder"));
 const MemoryPalacePractice = lazy(() => import("./pages/games/MemoryPalacePractice"));
+const MemoryPalace3D = lazy(() => import("./pages/games/MemoryPalace3D"));
 const ChefChallenge = lazy(() => import("./pages/ChefChallenge"));
 const ChainWar = lazy(() => import("./pages/games/ChainWar"));
 const SanctuaryRun = lazy(() => import("./pages/games/SanctuaryRun"));
@@ -427,6 +428,7 @@ function App() {
             <Route path="/memory/game/:listId/first-letter" element={<ProtectedRoute><FirstLetterGame /></ProtectedRoute>} />
             <Route path="/memory/palace-builder/:listId" element={<ProtectedRoute><MemoryPalaceBuilder /></ProtectedRoute>} />
             <Route path="/memory/palace-practice/:listId" element={<ProtectedRoute><MemoryPalacePractice /></ProtectedRoute>} />
+            <Route path="/memory/palace-3d/:listId" element={<ProtectedRoute><MemoryPalace3D /></ProtectedRoute>} />
             <Route path="/daily-challenges" element={<ProtectedRoute><DailyChallenges /></ProtectedRoute>} />
             <Route path="/growth-journal" element={<ProtectedRoute><GrowthJournal /></ProtectedRoute>} />
             <Route path="/equations-challenge" element={<ProtectedRoute><EquationsChallenge /></ProtectedRoute>} />
