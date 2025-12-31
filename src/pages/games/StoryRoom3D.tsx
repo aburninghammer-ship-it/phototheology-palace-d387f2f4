@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Environment, Html, Text, Stars } from "@react-three/drei";
+import { OrbitControls, Html, Stars, Sparkles, Float } from "@react-three/drei";
 import * as THREE from "three";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -123,54 +123,126 @@ function CameraController({ cameraTarget }: { cameraTarget: [number, number, num
   return null;
 }
 
-// Library environment
+// Animated torch flame
+function TorchFlame({ position }: { position: [number, number, number] }) {
+  const flameRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (flameRef.current) {
+      flameRef.current.scale.y = 1 + Math.sin(state.clock.elapsedTime * 8 + position[0]) * 0.2;
+      flameRef.current.scale.x = 1 + Math.sin(state.clock.elapsedTime * 6 + position[1]) * 0.1;
+    }
+  });
+
+  return (
+    <group position={position}>
+      {/* Torch holder */}
+      <mesh>
+        <cylinderGeometry args={[0.08, 0.12, 0.6]} />
+        <meshStandardMaterial color="#4a3020" roughness={0.8} metalness={0.3} />
+      </mesh>
+      {/* Torch bowl */}
+      <mesh position={[0, 0.35, 0]}>
+        <cylinderGeometry args={[0.15, 0.1, 0.15]} />
+        <meshStandardMaterial color="#2a1a10" metalness={0.5} roughness={0.5} />
+      </mesh>
+      {/* Flame glow */}
+      <group ref={flameRef} position={[0, 0.5, 0]}>
+        <mesh>
+          <coneGeometry args={[0.08, 0.3, 8]} />
+          <meshBasicMaterial color="#ff6600" transparent opacity={0.9} />
+        </mesh>
+        <mesh position={[0, 0.1, 0]}>
+          <coneGeometry args={[0.05, 0.2, 8]} />
+          <meshBasicMaterial color="#ffcc00" transparent opacity={0.8} />
+        </mesh>
+      </group>
+      <pointLight position={[0, 0.5, 0]} intensity={0.8} distance={10} color="#ff9944" />
+      <Sparkles count={10} scale={[0.5, 1, 0.5]} size={1} speed={2} color="#ff6600" position={[0, 0.6, 0]} />
+    </group>
+  );
+}
+
+// Library environment - Enhanced with more detail
 function LibraryEnvironment() {
+  const bookColors = ["#8B4513", "#A0522D", "#6B4423", "#8B0000", "#2F4F4F", "#4B0082", "#654321", "#800000", "#3D2817"];
+
   return (
     <group>
-      {/* Floor */}
+      {/* Floor - rich wooden texture */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[20, 20]} />
-        <meshStandardMaterial color="#3d2817" roughness={0.9} />
+        <planeGeometry args={[24, 24]} />
+        <meshStandardMaterial color="#3d2817" roughness={0.8} metalness={0.1} />
       </mesh>
 
-      {/* Back Wall */}
-      <mesh position={[0, 5, -8]} receiveShadow>
-        <planeGeometry args={[20, 10]} />
-        <meshStandardMaterial color="#4a3728" roughness={0.8} />
+      {/* Floor rug in center */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 2]} receiveShadow>
+        <planeGeometry args={[10, 6]} />
+        <meshStandardMaterial color="#5c2e0f" roughness={0.9} />
       </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 2]} receiveShadow>
+        <planeGeometry args={[9, 5]} />
+        <meshStandardMaterial color="#8b4513" roughness={0.9} />
+      </mesh>
+
+      {/* Back Wall with wainscoting */}
+      <mesh position={[0, 5, -10]} receiveShadow>
+        <planeGeometry args={[24, 10]} />
+        <meshStandardMaterial color="#3d2a1e" roughness={0.8} />
+      </mesh>
+      {/* Wainscoting panels */}
+      {[-8, -4, 0, 4, 8].map((x, i) => (
+        <mesh key={i} position={[x, 2, -9.9]}>
+          <boxGeometry args={[3.5, 3.5, 0.1]} />
+          <meshStandardMaterial color="#5c4033" roughness={0.7} />
+        </mesh>
+      ))}
 
       {/* Side Walls */}
-      <mesh position={[-10, 5, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-        <planeGeometry args={[16, 10]} />
-        <meshStandardMaterial color="#4a3728" roughness={0.8} />
+      <mesh position={[-12, 5, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[20, 10]} />
+        <meshStandardMaterial color="#3d2a1e" roughness={0.8} />
       </mesh>
-      <mesh position={[10, 5, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
-        <planeGeometry args={[16, 10]} />
-        <meshStandardMaterial color="#4a3728" roughness={0.8} />
+      <mesh position={[12, 5, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[20, 10]} />
+        <meshStandardMaterial color="#3d2a1e" roughness={0.8} />
       </mesh>
 
-      {/* Ceiling */}
+      {/* Ceiling with exposed beams */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 10, 0]}>
-        <planeGeometry args={[20, 16]} />
+        <planeGeometry args={[24, 20]} />
         <meshStandardMaterial color="#2a1f14" />
       </mesh>
+      {/* Ceiling beams */}
+      {[-8, 0, 8].map((x, i) => (
+        <mesh key={i} position={[x, 9.7, 0]}>
+          <boxGeometry args={[0.5, 0.6, 20]} />
+          <meshStandardMaterial color="#3d2817" roughness={0.7} />
+        </mesh>
+      ))}
 
-      {/* Bookshelves */}
-      {[-7, -4, 4, 7].map((x, i) => (
-        <group key={i} position={[x, 2.5, -7.5]}>
+      {/* BACK WALL BOOKSHELVES - Full wall coverage */}
+      {[-9, -6, -3, 0, 3, 6, 9].map((x, i) => (
+        <group key={`back-${i}`} position={[x, 4.5, -9.5]}>
+          {/* Bookshelf frame */}
           <mesh castShadow>
-            <boxGeometry args={[2, 5, 0.8]} />
-            <meshStandardMaterial color="#5c4033" roughness={0.7} />
+            <boxGeometry args={[2.8, 8, 1]} />
+            <meshStandardMaterial color="#4a3020" roughness={0.7} />
           </mesh>
-          {/* Books */}
-          {[0, 1, 2, 3].map((shelf) => (
-            <group key={shelf} position={[0, shelf * 1.1 - 1.5, 0.2]}>
-              {[-0.6, -0.2, 0.2, 0.6].map((bx, bi) => (
-                <mesh key={bi} position={[bx, 0, 0]}>
-                  <boxGeometry args={[0.3, 0.8, 0.3]} />
-                  <meshStandardMaterial
-                    color={["#8B4513", "#A0522D", "#6B4423", "#8B0000"][bi]}
-                  />
+          {/* Shelf dividers */}
+          {[0, 1, 2, 3, 4].map((shelf) => (
+            <mesh key={shelf} position={[0, shelf * 1.5 - 3, 0.1]}>
+              <boxGeometry args={[2.6, 0.1, 0.9]} />
+              <meshStandardMaterial color="#3d2817" />
+            </mesh>
+          ))}
+          {/* Books on each shelf */}
+          {[0, 1, 2, 3, 4].map((shelf) => (
+            <group key={shelf} position={[0, shelf * 1.5 - 2.3, 0.2]}>
+              {[-1, -0.65, -0.3, 0.05, 0.4, 0.75, 1.1].map((bx, bi) => (
+                <mesh key={bi} position={[bx, Math.random() * 0.1, 0]} rotation={[0, 0, (Math.random() - 0.5) * 0.1]}>
+                  <boxGeometry args={[0.25 + Math.random() * 0.1, 0.8 + Math.random() * 0.3, 0.35]} />
+                  <meshStandardMaterial color={bookColors[(i + bi + shelf) % bookColors.length]} roughness={0.8} />
                 </mesh>
               ))}
             </group>
@@ -178,30 +250,121 @@ function LibraryEnvironment() {
         </group>
       ))}
 
-      {/* Stage Platform */}
-      <mesh position={[0, 0.15, -3]} receiveShadow castShadow>
-        <boxGeometry args={[12, 0.3, 6]} />
-        <meshStandardMaterial color="#654321" roughness={0.6} />
-      </mesh>
-
-      {/* Torches */}
-      {[[-9, 4, -5], [9, 4, -5], [-9, 4, 5], [9, 4, 5]].map((pos, i) => (
-        <group key={i} position={pos as [number, number, number]}>
-          <mesh>
-            <cylinderGeometry args={[0.1, 0.15, 0.5]} />
-            <meshStandardMaterial color="#8B4513" />
+      {/* SIDE WALL BOOKSHELVES - Left */}
+      {[-6, -2, 2, 6].map((z, i) => (
+        <group key={`left-${i}`} position={[-11.5, 4, z]} rotation={[0, Math.PI / 2, 0]}>
+          <mesh castShadow>
+            <boxGeometry args={[2.5, 7, 0.8]} />
+            <meshStandardMaterial color="#4a3020" roughness={0.7} />
           </mesh>
-          <pointLight
-            position={[0, 0.5, 0]}
-            intensity={0.5}
-            distance={8}
-            color="#ff9933"
-          />
+          {[0, 1, 2, 3].map((shelf) => (
+            <group key={shelf} position={[0, shelf * 1.5 - 2, 0.2]}>
+              {[-0.8, -0.4, 0, 0.4, 0.8].map((bx, bi) => (
+                <mesh key={bi} position={[bx, 0, 0]}>
+                  <boxGeometry args={[0.3, 0.7 + Math.random() * 0.2, 0.35]} />
+                  <meshStandardMaterial color={bookColors[(i + bi + shelf + 3) % bookColors.length]} />
+                </mesh>
+              ))}
+            </group>
+          ))}
         </group>
       ))}
 
-      {/* Central Chandelier Light */}
-      <pointLight position={[0, 8, 0]} intensity={0.3} color="#ffcc88" />
+      {/* SIDE WALL BOOKSHELVES - Right */}
+      {[-6, -2, 2, 6].map((z, i) => (
+        <group key={`right-${i}`} position={[11.5, 4, z]} rotation={[0, -Math.PI / 2, 0]}>
+          <mesh castShadow>
+            <boxGeometry args={[2.5, 7, 0.8]} />
+            <meshStandardMaterial color="#4a3020" roughness={0.7} />
+          </mesh>
+          {[0, 1, 2, 3].map((shelf) => (
+            <group key={shelf} position={[0, shelf * 1.5 - 2, 0.2]}>
+              {[-0.8, -0.4, 0, 0.4, 0.8].map((bx, bi) => (
+                <mesh key={bi} position={[bx, 0, 0]}>
+                  <boxGeometry args={[0.3, 0.7 + Math.random() * 0.2, 0.35]} />
+                  <meshStandardMaterial color={bookColors[(i + bi + shelf + 5) % bookColors.length]} />
+                </mesh>
+              ))}
+            </group>
+          ))}
+        </group>
+      ))}
+
+      {/* Stage Platform - More elaborate */}
+      <mesh position={[0, 0.15, -5]} receiveShadow castShadow>
+        <boxGeometry args={[16, 0.4, 8]} />
+        <meshStandardMaterial color="#5c4033" roughness={0.6} />
+      </mesh>
+      {/* Stage edge trim */}
+      <mesh position={[0, 0.35, -1.05]}>
+        <boxGeometry args={[16, 0.1, 0.1]} />
+        <meshStandardMaterial color="#8B7355" metalness={0.3} />
+      </mesh>
+
+      {/* Reading tables on sides */}
+      {[[-7, 0.6, 4], [7, 0.6, 4]].map((pos, i) => (
+        <group key={i} position={pos as [number, number, number]}>
+          <mesh castShadow>
+            <boxGeometry args={[2, 0.1, 1.2]} />
+            <meshStandardMaterial color="#5c4033" roughness={0.6} />
+          </mesh>
+          {/* Table legs */}
+          {[[-0.8, -0.35, 0.4], [0.8, -0.35, 0.4], [-0.8, -0.35, -0.4], [0.8, -0.35, -0.4]].map((legPos, li) => (
+            <mesh key={li} position={legPos as [number, number, number]}>
+              <boxGeometry args={[0.08, 0.6, 0.08]} />
+              <meshStandardMaterial color="#4a3020" />
+            </mesh>
+          ))}
+          {/* Books on table */}
+          <mesh position={[0.3, 0.15, 0]}>
+            <boxGeometry args={[0.5, 0.15, 0.35]} />
+            <meshStandardMaterial color="#8B4513" />
+          </mesh>
+        </group>
+      ))}
+
+      {/* Wall torches - more of them */}
+      {[
+        [-11, 5, -6], [-11, 5, 0], [-11, 5, 6],
+        [11, 5, -6], [11, 5, 0], [11, 5, 6],
+        [-6, 6, -9.5], [0, 6, -9.5], [6, 6, -9.5]
+      ].map((pos, i) => (
+        <TorchFlame key={i} position={pos as [number, number, number]} />
+      ))}
+
+      {/* Grand Chandelier */}
+      <group position={[0, 8.5, 0]}>
+        {/* Chain */}
+        <mesh position={[0, 0.8, 0]}>
+          <cylinderGeometry args={[0.05, 0.05, 1.5]} />
+          <meshStandardMaterial color="#8B7355" metalness={0.7} />
+        </mesh>
+        {/* Main ring */}
+        <mesh>
+          <torusGeometry args={[1.5, 0.1, 16, 32]} />
+          <meshStandardMaterial color="#8B7355" metalness={0.6} roughness={0.4} />
+        </mesh>
+        {/* Candle holders */}
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+          const angle = (i / 8) * Math.PI * 2;
+          return (
+            <group key={i} position={[Math.cos(angle) * 1.5, -0.2, Math.sin(angle) * 1.5]}>
+              <mesh>
+                <cylinderGeometry args={[0.03, 0.04, 0.15]} />
+                <meshStandardMaterial color="#f5f5dc" />
+              </mesh>
+              <pointLight position={[0, 0.2, 0]} intensity={0.3} distance={6} color="#ffcc88" />
+            </group>
+          );
+        })}
+      </group>
+
+      {/* Ambient dust particles */}
+      <Sparkles count={100} scale={[20, 10, 20]} size={0.5} speed={0.2} color="#ffd700" opacity={0.3} />
+
+      {/* Central warm light */}
+      <pointLight position={[0, 7, 0]} intensity={0.5} color="#ffcc88" distance={15} />
+      <ambientLight intensity={0.1} color="#ffe4c4" />
     </group>
   );
 }
@@ -219,85 +382,122 @@ interface SceneTabletProps {
 function SceneTablet({ text, position, isSelected, isPlaced, orderNumber, onClick }: SceneTabletProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
     if (groupRef.current) {
       // Floating animation on the group
-      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2 + position[0]) * 0.05;
+      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2 + position[0]) * 0.1;
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.03;
     }
     if (meshRef.current) {
       // Scale on hover
-      const targetScale = hovered ? 1.1 : 1;
-      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+      const targetScale = hovered ? 1.15 : 1;
+      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.15);
+    }
+    // Pulsing glow
+    if (glowRef.current) {
+      const pulse = 1 + Math.sin(state.clock.elapsedTime * 3) * 0.2;
+      glowRef.current.scale.set(pulse, pulse, 1);
     }
   });
 
-  const color = isPlaced ? "#2d5a27" : isSelected ? "#c9a227" : hovered ? "#6b5b3d" : "#4a3728";
+  const color = isPlaced ? "#2d5a27" : isSelected ? "#c9a227" : hovered ? "#c9a227" : "#5a4a38";
+  const glowColor = isPlaced ? "#00ff88" : "#ffd700";
 
   return (
-    <group ref={groupRef} position={[position[0], position[1], position[2]]}>
-      {/* Clickable mesh - made larger for easier clicking */}
-      <mesh
-        ref={meshRef}
-        onClick={(e) => { e.stopPropagation(); onClick(); }}
-        onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
-        onPointerOut={(e) => { e.stopPropagation(); setHovered(false); document.body.style.cursor = 'auto'; }}
-        castShadow
-      >
-        <boxGeometry args={[2.5, 1.5, 0.3]} />
-        <meshStandardMaterial color={color} roughness={0.6} />
-      </mesh>
+    <Float speed={2} rotationIntensity={0.1} floatIntensity={0.3}>
+      <group ref={groupRef} position={[position[0], position[1], position[2]]}>
+        {/* Outer glow ring */}
+        {(hovered || isPlaced) && (
+          <mesh ref={glowRef} position={[0, 0, -0.1]}>
+            <ringGeometry args={[1.5, 1.8, 32]} />
+            <meshBasicMaterial color={glowColor} transparent opacity={0.5} side={THREE.DoubleSide} />
+          </mesh>
+        )}
 
-      {/* Text on tablet - positioned in front and non-interactive */}
-      <Html
-        position={[0, 0, 0.2]}
-        center
-        distanceFactor={8}
-        occlude={false}
-        zIndexRange={[0, 0]}
-        style={{
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}
-      >
-        <div
+        {/* Magical sparkles around tablet */}
+        {hovered && (
+          <Sparkles count={20} scale={[3, 2, 1]} size={2} speed={0.5} color="#ffd700" />
+        )}
+
+        {/* Clickable mesh - larger and more prominent */}
+        <mesh
+          ref={meshRef}
           onClick={(e) => { e.stopPropagation(); onClick(); }}
-          style={{
-            background: hovered ? 'rgba(201, 162, 39, 0.9)' : 'rgba(0,0,0,0.8)',
-            color: 'white',
-            padding: '10px 20px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            whiteSpace: 'nowrap',
-            maxWidth: '200px',
-            textAlign: 'center',
-            cursor: 'pointer',
-            pointerEvents: 'auto',
-            transition: 'all 0.2s ease',
-            border: hovered ? '2px solid #ffd700' : '2px solid transparent',
-          }}
+          onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
+          onPointerOut={(e) => { e.stopPropagation(); setHovered(false); document.body.style.cursor = 'auto'; }}
+          castShadow
         >
-          {orderNumber !== undefined && (
-            <span style={{ color: '#ffd700', marginRight: '8px' }}>
-              {orderNumber}.
-            </span>
-          )}
-          {text}
-        </div>
-      </Html>
+          <boxGeometry args={[2.8, 1.8, 0.4]} />
+          <meshStandardMaterial
+            color={color}
+            roughness={0.4}
+            metalness={hovered ? 0.3 : 0.1}
+            emissive={hovered ? "#c9a227" : "#000000"}
+            emissiveIntensity={hovered ? 0.3 : 0}
+          />
+        </mesh>
 
-      {/* Glow effect for selected/placed */}
-      {(isSelected || isPlaced) && (
-        <pointLight
-          position={[0, 0, 0.5]}
-          intensity={0.3}
-          distance={3}
-          color={isPlaced ? "#00ff00" : "#ffcc00"}
-        />
-      )}
-    </group>
+        {/* Decorative border */}
+        <mesh position={[0, 0, 0.21]}>
+          <boxGeometry args={[2.9, 1.9, 0.02]} />
+          <meshStandardMaterial color={hovered ? "#ffd700" : "#8B7355"} metalness={0.5} />
+        </mesh>
+
+        {/* Text on tablet */}
+        <Html
+          position={[0, 0, 0.25]}
+          center
+          distanceFactor={8}
+          occlude={false}
+          zIndexRange={[100, 100]}
+        >
+          <div
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
+            style={{
+              background: hovered
+                ? 'linear-gradient(135deg, rgba(201, 162, 39, 0.95), rgba(139, 90, 43, 0.95))'
+                : 'linear-gradient(135deg, rgba(30,20,10,0.95), rgba(50,35,20,0.95))',
+              color: 'white',
+              padding: '14px 24px',
+              borderRadius: '10px',
+              fontSize: '15px',
+              fontWeight: 'bold',
+              whiteSpace: 'nowrap',
+              maxWidth: '220px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              pointerEvents: 'auto',
+              transition: 'all 0.3s ease',
+              border: hovered ? '3px solid #ffd700' : '2px solid rgba(201,162,39,0.5)',
+              boxShadow: hovered ? '0 0 25px rgba(255,215,0,0.6)' : '0 4px 15px rgba(0,0,0,0.5)',
+              transform: hovered ? 'scale(1.05)' : 'scale(1)',
+              textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+            }}
+          >
+            {orderNumber !== undefined && (
+              <span style={{ color: '#ffd700', marginRight: '8px', fontSize: '18px' }}>
+                {orderNumber}.
+              </span>
+            )}
+            {text}
+          </div>
+        </Html>
+
+        {/* Enhanced glow effect for selected/placed */}
+        {(isSelected || isPlaced) && (
+          <>
+            <pointLight position={[0, 0, 1]} intensity={0.8} distance={5} color={glowColor} />
+            <pointLight position={[0, 0, -0.5]} intensity={0.3} distance={3} color={glowColor} />
+          </>
+        )}
+
+        {/* Always-on subtle light */}
+        <pointLight position={[0, 0, 0.5]} intensity={hovered ? 0.5 : 0.15} distance={4} color="#ffd700" />
+      </group>
+    </Float>
   );
 }
 
