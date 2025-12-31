@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { ReadingSequenceBlock, SequenceItem } from "@/types/readingSequence";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { mobileAudioEngine } from "@/lib/MobileAudioEngine";
 import { getGlobalMusicVolume, setGlobalMusicVolume } from "@/hooks/useMusicVolumeControl";
 import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
 import { useGlobalAudio } from "@/contexts/GlobalAudioContext";
@@ -199,172 +200,49 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     return (activeSequences[currentSeqIdx]?.commentaryDepth as "surface" | "intermediate" | "depth" | "deep-drill") || 'surface';
   });
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const musicAudioRef = useRef<HTMLAudioElement | null>(null); // Background music audio
-  const audioUnlockedRef = useRef(false); // Track if audio has been unlocked by user gesture
-  
-  // Get or create the persistent audio element (NEVER set to null after creation)
-  const getOrCreateAudio = useCallback((): HTMLAudioElement => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.preload = 'auto';
-      console.log('[PersistentAudio] Created audio element');
-    }
-    return audioRef.current;
-  }, []);
-  
-  // Create and unlock audio element on first user interaction (iOS requirement)
-  // Returns a promise that resolves when unlock completes
+
+  // Use MobileAudioEngine for all TTS audio playback
+  // This handles iOS unlock, persistent audio element, and all mobile-specific concerns
   const ensureAudioUnlocked = useCallback(async (): Promise<boolean> => {
-    if (audioUnlockedRef.current) {
-      console.log('[iOS] Audio already unlocked');
-      return true;
-    }
-
-    const audio = getOrCreateAudio();
-    console.log('[iOS] Attempting to unlock audio element...');
-
-    // Play a silent WAV to "unlock" the audio context on iOS/mobile
-    // Using WAV format which is more universally supported than MP3
-    // This must happen during a user gesture (click/tap)
-    const silentWav = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-    audio.src = silentWav;
-    audio.volume = 0.5; // Use audible volume to ensure iOS registers the unlock
-    audio.muted = false;
-
-    try {
-      await audio.play();
-      // Successfully played - audio is now unlocked
-      audio.pause();
-      audio.currentTime = 0;
-      audio.volume = 1; // Reset to full volume
-      audio.src = ''; // Clear but keep element
-      audioUnlockedRef.current = true;
-      console.log('[iOS] Audio element unlocked successfully');
-      return true;
-    } catch (e: any) {
-      console.log('[iOS] Audio unlock attempt failed:', e?.message || e);
-      // Even if play() fails, mark the element as created so we can retry
-      // The next user gesture will try again
-      return false;
-    }
-  }, [getOrCreateAudio]);
-  
-  // Helper to safely stop audio without destroying the element
-  const stopAudio = useCallback(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.onended = null;
-      audio.ontimeupdate = null;
-      audio.onerror = null;
-      audio.onplay = null;
-      // DON'T set audioRef.current = null - keep the unlocked element!
-    }
+    console.log('[MobileAudio] Ensuring audio is unlocked...');
+    const result = await mobileAudioEngine.unlock();
+    console.log('[MobileAudio] Unlock result:', result);
+    return result;
   }, []);
-  
-  // Helper to play audio URL using the persistent element
+
+  // Helper to safely stop audio
+  const stopAudio = useCallback(() => {
+    console.log('[MobileAudio] Stopping audio');
+    mobileAudioEngine.stop();
+  }, []);
+
+  // Helper to play audio URL using MobileAudioEngine
   const playAudioUrl = useCallback(async (
     url: string,
     options: {
       volume?: number;
       playbackRate?: number;
       onEnded?: () => void;
-      onError?: (e: Event) => void;
+      onError?: (e: Event | Error) => void;
       onTimeUpdate?: () => void;
     } = {}
   ): Promise<boolean> => {
-    const audio = getOrCreateAudio();
+    console.log('[MobileAudio] Playing URL:', url.substring(0, 50) + '...');
 
-    // Stop any current playback
-    audio.pause();
-    audio.onended = null;
-    audio.ontimeupdate = null;
-    audio.onerror = null;
-    audio.oncanplaythrough = null;
+    const volume = options.volume ?? (isMutedRef.current ? 0 : volumeRef.current / 100);
 
-    // Configure
-    audio.src = url;
-    audio.volume = options.volume ?? (isMutedRef.current ? 0 : volumeRef.current / 100);
-    audio.playbackRate = options.playbackRate ?? 1;
-    audio.currentTime = 0;
-    audio.preload = 'auto';
-
-    // Flag to prevent double-triggering
-    let hasEnded = false;
-
-    const handleEnded = () => {
-      if (hasEnded) return;
-      hasEnded = true;
-      console.log('[PersistentAudio] Audio ended');
-      options.onEnded?.();
-    };
-
-    audio.onended = handleEnded;
-    audio.onerror = (e: Event | string) => {
-      console.error('[PersistentAudio] Audio error:', e);
-      if (typeof e !== 'string') {
-        options.onError?.(e);
-      }
-    };
-    audio.ontimeupdate = () => {
-      options.onTimeUpdate?.();
-      // Fallback end detection for mobile
-      if (!hasEnded && audio.duration > 0 && audio.currentTime >= audio.duration - 0.1) {
-        handleEnded();
-      }
-    };
-    // Allow replay after seek
-    audio.onseeked = () => { hasEnded = false; };
-
-    // MOBILE FIX: Wait for audio to be ready before playing
-    // This prevents "play() failed because the media resource was not ready" errors
-    return new Promise<boolean>((resolve) => {
-      let playAttempted = false;
-
-      const attemptPlay = async () => {
-        if (playAttempted) return;
-        playAttempted = true;
-
-        try {
-          await audio.play();
-          console.log('[PersistentAudio] Playback started');
-          resolve(true);
-        } catch (e: any) {
-          console.error('[PersistentAudio] Play failed:', e?.message || e);
-          // On mobile, if play fails due to not ready, wait and retry once
-          if (e?.name === 'NotAllowedError') {
-            console.log('[PersistentAudio] Autoplay blocked - needs user gesture');
-          }
-          resolve(false);
+    return mobileAudioEngine.play(url, {
+      volume,
+      playbackRate: options.playbackRate ?? 1,
+      onEnded: options.onEnded,
+      onError: (error) => {
+        if (options.onError) {
+          options.onError(error);
         }
-      };
-
-      // If audio is already ready (cached), play immediately
-      if (audio.readyState >= 3) {
-        attemptPlay();
-        return;
       }
-
-      // Wait for audio to be ready (with timeout for mobile reliability)
-      audio.oncanplaythrough = () => {
-        audio.oncanplaythrough = null;
-        attemptPlay();
-      };
-
-      // Timeout fallback for slow networks - try to play anyway after 3s
-      setTimeout(() => {
-        if (!playAttempted) {
-          console.log('[PersistentAudio] Timeout waiting for canplaythrough, attempting play anyway');
-          attemptPlay();
-        }
-      }, 3000);
-
-      // Trigger load explicitly for mobile
-      audio.load();
     });
-  }, [getOrCreateAudio]);
+  }, []);
   
   // Fetch user's display name for personalized commentary
   // Extract first name from display_name for more personal address
@@ -452,8 +330,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     if (!('mediaSession' in navigator)) return;
 
     const handleMediaPlay = () => {
-      if (isPaused && audioRef.current) {
-        audioRef.current.play();
+      if (isPaused && mobileAudioEngine.getState() === 'paused') {
+        mobileAudioEngine.resume();
         setIsPaused(false);
         setIsPlaying(true);
       } else if (browserUtteranceRef.current) {
@@ -463,8 +341,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     };
 
     const handleMediaPause = () => {
-      if (audioRef.current && !audioRef.current.paused) {
-        audioRef.current.pause();
+      if (mobileAudioEngine.isPlaying()) {
+        mobileAudioEngine.pause();
         setIsPaused(true);
       } else if (speechSynthesis.speaking) {
         speechSynthesis.pause();
@@ -473,10 +351,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     };
 
     const handleMediaStop = () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
+      mobileAudioEngine.stop();
       speechSynthesis.cancel();
       setIsPlaying(false);
       setIsPaused(false);
@@ -494,16 +369,15 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       navigator.mediaSession.setActionHandler('stop', null);
     };
   }, [isPaused]);
-  
+
   // Keep volume refs in sync
   useEffect(() => {
     volumeRef.current = volume;
     isMutedRef.current = isMuted;
-    // Also update any currently playing audio
-    if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume / 100;
-      console.log('[SequencePlayer] Volume ref sync - applied to audioRef:', isMuted ? 0 : volume / 100);
-    }
+    // Also update any currently playing audio via MobileAudioEngine
+    const effectiveVolume = isMuted ? 0 : volume / 100;
+    mobileAudioEngine.setVolume(effectiveVolume);
+    console.log('[SequencePlayer] Volume ref sync - applied to MobileAudioEngine:', effectiveVolume);
   }, [volume, isMuted]);
 
   // Resume from saved position
@@ -535,9 +409,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         if (speechSynthesis.paused && browserUtteranceRef.current) {
           speechSynthesis.resume();
         }
-        // Ensure audio element keeps playing
-        if (audioRef.current && audioRef.current.paused && audioRef.current.src) {
-          audioRef.current.play().catch(() => {
+        // Ensure audio keeps playing via MobileAudioEngine
+        if (mobileAudioEngine.getState() === 'paused') {
+          mobileAudioEngine.resume().catch(() => {
             console.log('[SequencePlayer] Could not resume audio in background');
           });
         }
@@ -557,10 +431,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           console.log('[SequencePlayer] Resuming suspended speech');
           speechSynthesis.resume();
         }
-        // Keep audio element alive
-        if (audioRef.current && audioRef.current.paused && audioRef.current.src && audioRef.current.currentTime > 0) {
+        // Keep audio element alive via MobileAudioEngine
+        const state = mobileAudioEngine.getState();
+        if (state === 'paused' && mobileAudioEngine.getCurrentTime() > 0) {
           console.log('[SequencePlayer] Resuming paused audio');
-          audioRef.current.play().catch(() => {});
+          mobileAudioEngine.resume().catch(() => {});
         }
       }
     };
@@ -1599,7 +1474,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return;
     }
     // Prevent duplicate calls while audio is playing
-    if (audioRef.current && !audioRef.current.paused && audioRef.current.src) {
+    if (mobileAudioEngine.isPlaying()) {
       console.log("[PlayVerse] Audio already playing, skipping duplicate call for verse:", verseIdx + 1);
       return;
     }
@@ -1758,86 +1633,38 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       prefetchChapterCommentary(content.book, content.chapter, chapterText, commentaryVoice, commentaryDepth);
     }
 
-    // Stop any existing audio BEFORE setting up new one (but keep element alive)
+    // Stop any existing audio BEFORE setting up new one
     stopAudio();
-    
+
     // Clean up previous audio URL (but not if it's cached)
     if (audioUrl && !Array.from(ttsCache.current.values()).includes(audioUrl)) {
       URL.revokeObjectURL(audioUrl);
     }
 
-    // CRITICAL: Always use the persistent audio element (iOS requirement)
+    // CRITICAL: Use MobileAudioEngine for reliable mobile playback
     const currentVolume = isMutedRef.current ? 0 : volumeRef.current / 100;
-    console.log("[PlayVerse] Setting up audio with volume:", currentVolume);
-    
-    const audio = getOrCreateAudio();
-    audio.src = url;
-    audio.volume = currentVolume;
-    audio.preload = 'auto';
-    audio.playbackRate = playbackSpeed;
-    console.log("[PlayVerse] Audio configured, playback rate:", playbackSpeed);
-    
+    console.log("[PlayVerse] Setting up audio with volume:", currentVolume, "playbackRate:", playbackSpeed);
+
     // Set URL state
     setAudioUrl(url);
 
-    // Flag to prevent double-triggering on mobile
-    let hasHandledEnd = false;
-    
-    // Handle audio completion - this function is called by onended OR timeupdate fallback
+    // Handle audio completion callback
     const handleAudioComplete = () => {
-      if (hasHandledEnd) {
-        console.log("[Audio] End already handled, skipping duplicate");
-        return;
-      }
-      hasHandledEnd = true;
-      
       console.log("[Audio] <<< Completed verse:", verseIdx + 1, "| continue:", continuePlayingRef.current, "| isPlayingRef:", isPlayingRef.current, "| isPausedRef:", isPausedRef.current);
-      
-      // Clean up event listeners but DON'T destroy the audio element
-      audio.onended = null;
-      audio.ontimeupdate = null;
-      audio.onerror = null;
-      // DON'T set audioRef.current = null - keep the unlocked element!
-      
+
       if (!continuePlayingRef.current) {
-        console.log("[Audio] ❌ continuePlayingRef is false - checking refs for recovery");
+        console.log("[Audio] continuePlayingRef is false - checking refs for recovery");
         if (isPlayingRef.current && !isPausedRef.current) {
-          console.log("[Audio] 🔄 RECOVERING - forcing continue");
+          console.log("[Audio] RECOVERING - forcing continue");
           continuePlayingRef.current = true;
         } else {
           console.log("[Audio] Not continuing - confirmed stop");
           return;
         }
       }
-      
+
       // Continue with verse/commentary logic...
       handleVerseComplete();
-    };
-
-    audio.onloadstart = () => {
-      console.log("[Audio] Load started for verse:", verseIdx + 1);
-    };
-    
-    audio.oncanplaythrough = () => {
-      console.log("[Audio] Can play through for verse:", verseIdx + 1);
-    };
-
-    audio.onplay = () => {
-      console.log("[Audio] >>> Playing verse:", verseIdx + 1);
-    };
-    
-    // Primary end handler
-    audio.onended = () => {
-      console.log("[Audio] onended event fired for verse:", verseIdx + 1);
-      handleAudioComplete();
-    };
-    
-    // Fallback for mobile: check if audio is near end via timeupdate
-    audio.ontimeupdate = () => {
-      if (!hasHandledEnd && audio.duration > 0 && audio.currentTime >= audio.duration - 0.1) {
-        console.log("[Audio] timeupdate fallback triggered for verse:", verseIdx + 1);
-        handleAudioComplete();
-      }
     };
     
     // Define the verse complete handler (logic extracted from old onended)
@@ -2094,16 +1921,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       }
     };
 
-    audio.onerror = (e) => {
-      const error = audio.error;
-      console.error("[Audio] Error:", {
-        code: error?.code,
-        message: error?.message,
-        verseIdx: verseIdx + 1
-      });
+    // Error handler callback for MobileAudioEngine
+    const handleAudioError = (error: Error) => {
+      console.error("[Audio] Error:", error.message, "verseIdx:", verseIdx + 1);
       stopAudio();
       isGeneratingRef.current = false;
-      isSettingUpPlaybackRef.current = false; // Clear setup flag on error
+      isSettingUpPlaybackRef.current = false;
 
       // Retry logic - try up to 2 times, then fall back to browser TTS
       if (retryCountRef.current < 2 && continuePlayingRef.current) {
@@ -2130,24 +1953,28 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       }
     };
 
-    // Start playback
-    try {
-      console.log("[Audio] Calling play()...");
-      await audio.play();
+    // Start playback using MobileAudioEngine
+    console.log("[Audio] Starting playback via MobileAudioEngine...");
+    const playSuccess = await mobileAudioEngine.play(url, {
+      volume: currentVolume,
+      playbackRate: playbackSpeed,
+      onEnded: handleAudioComplete,
+      onError: handleAudioError
+    });
+
+    if (playSuccess) {
       console.log("[Audio] play() succeeded for verse:", verseIdx + 1);
-      retryCountRef.current = 0; // Reset retry count on success
-      isSettingUpPlaybackRef.current = false; // Clear setup flag - audio is now playing
+      retryCountRef.current = 0;
+      isSettingUpPlaybackRef.current = false;
       setIsPlaying(true);
       setIsPaused(false);
       // Store current position for potential resume
       pausedVerseRef.current = { verseIdx, content, voice };
-    } catch (e) {
-      console.error("[Audio] play() failed:", e);
-      stopAudio();
-      isGeneratingRef.current = false;
-      isSettingUpPlaybackRef.current = false; // Clear setup flag on error
+    } else {
+      console.error("[Audio] play() failed for verse:", verseIdx + 1);
+      isSettingUpPlaybackRef.current = false;
 
-      // Try browser TTS fallback instead of giving up
+      // Try browser TTS fallback
       if (continuePlayingRef.current) {
         console.log("[Audio] play() failed, falling back to browser TTS");
         speakWithBrowserTTS(verse.text, playbackSpeed, () => {
@@ -2161,7 +1988,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         setIsPlaying(false);
       }
     }
-  }, [volume, isMuted, totalItems, generateTTS, prefetchVerse, activeSequences, currentItemIdx, currentSeqIdx, generateCommentary, playCommentary, moveToNextChapter, handleChapterCompleteWithCommentary, prefetchNextChapter, offlineMode, speakWithBrowserTTS, saveCurrentPosition, stopAudio, getOrCreateAudio]);
+  }, [volume, isMuted, totalItems, generateTTS, prefetchVerse, activeSequences, currentItemIdx, currentSeqIdx, generateCommentary, playCommentary, moveToNextChapter, handleChapterCompleteWithCommentary, prefetchNextChapter, offlineMode, speakWithBrowserTTS, saveCurrentPosition, stopAudio, playAudioUrl]);
 
   // Play current verse (wrapper for playVerseAtIndex)
   const playCurrentVerse = useCallback(() => {
@@ -2264,7 +2091,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       chapterContent &&
       !isLoading &&
       !isGeneratingRef.current &&
-      (!audioRef.current || audioRef.current.paused || !audioRef.current.src)
+      !mobileAudioEngine.isPlaying()
     ) {
       console.log("Auto-playing next chapter after transition");
       shouldPlayNextRef.current = false;
@@ -2333,7 +2160,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         versesCount: chapterContent?.verses?.length,
         isLoading,
         isGenerating: isGeneratingRef.current,
-        hasAudio: !!audioRef.current
+        audioState: mobileAudioEngine.getState()
       });
 
       if (
@@ -2342,7 +2169,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         chapterContent.verses.length > 0 &&
         !isLoading &&
         !isGeneratingRef.current &&
-        (!audioRef.current || audioRef.current.paused || !audioRef.current.src)
+        !mobileAudioEngine.isPlaying()
       ) {
         console.log("[AutoStart] Starting playback with", chapterContent.verses.length, "verses");
         setHasStarted(true);
@@ -2409,7 +2236,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, [chapterContent, currentSequence, playVerseAtIndex, ensureAudioUnlocked]);
 
   const handlePlay = async () => {
-    console.log("handlePlay called - isPaused:", isPaused, "hasAudio:", !!audioRef.current, "speechPaused:", speechSynthesis.paused);
+    console.log("handlePlay called - isPaused:", isPaused, "audioState:", mobileAudioEngine.getState(), "speechPaused:", speechSynthesis.paused);
     console.log("[handlePlay] chapterContent:", chapterContent ? `${chapterContent.book} ${chapterContent.chapter} (${chapterContent.verses?.length} verses)` : "NULL");
     console.log("[handlePlay] currentVerseIdx:", currentVerseIdx, "currentSequence:", currentSequence?.sequenceNumber);
 
@@ -2418,16 +2245,17 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     const unlocked = await ensureAudioUnlocked();
     console.log("[handlePlay] Audio unlock result:", unlocked);
 
-    // Resume paused HTML Audio
-    if (isPaused && audioRef.current) {
+    // Resume paused HTML Audio via MobileAudioEngine
+    if (isPaused && mobileAudioEngine.getState() === 'paused') {
       continuePlayingRef.current = true;
-      audioRef.current.play().catch((e) => {
-        console.error("[Resume] Audio play failed:", e);
+      const resumeSuccess = await mobileAudioEngine.resume();
+      if (!resumeSuccess) {
+        console.error("[Resume] Audio resume failed");
         // If resume fails, restart from current verse
         if (pausedVerseRef.current) {
           playVerseAtIndex(pausedVerseRef.current.verseIdx, pausedVerseRef.current.content, pausedVerseRef.current.voice);
         }
-      });
+      }
       setIsPaused(false);
       setIsPlaying(true);
       // Don't duck music in commentary-only mode
@@ -2515,19 +2343,19 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   };
 
   const handlePause = () => {
-    console.log("[Player] ⏸️ PAUSE CALLED - setting continuePlayingRef to false");
+    console.log("[Player] PAUSE CALLED - setting continuePlayingRef to false");
     continuePlayingRef.current = false;
-    
-    // Handle HTML Audio element pause
-    if (audioRef.current) {
-      audioRef.current.pause();
+
+    // Handle audio pause via MobileAudioEngine
+    if (mobileAudioEngine.isPlaying()) {
+      mobileAudioEngine.pause();
       setIsPaused(true);
       // Don't stop music ducking in commentary-only mode (music should keep playing)
       if (!currentSequence?.commentaryOnly) {
         notifyTTSStopped();
       }
     }
-    
+
     // Handle browser speech synthesis pause
     if (speechSynthesis.speaking) {
       speechSynthesis.pause();
@@ -2640,12 +2468,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     const newVolume = value[0];
     console.log('[SequencePlayer] TTS volume changed to:', newVolume);
     setVolume(newVolume);
-    // Refs are updated by effect, but also apply immediately to current audio
-    if (audioRef.current) {
-      const effectiveVolume = isMutedRef.current ? 0 : newVolume / 100;
-      audioRef.current.volume = effectiveVolume;
-      console.log('[SequencePlayer] Applied TTS volume to audioRef:', effectiveVolume);
-    }
+    // Apply immediately to current audio via MobileAudioEngine
+    const effectiveVolume = isMutedRef.current ? 0 : newVolume / 100;
+    mobileAudioEngine.setVolume(effectiveVolume);
+    console.log('[SequencePlayer] Applied TTS volume via MobileAudioEngine:', effectiveVolume);
   };
 
   const handleMusicVolumeChange = useCallback((value: number[]) => {
@@ -2687,12 +2513,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     // If currently playing, regenerate current verse/commentary
     if (isPlaying && !isPaused && chapterContent && currentItem) {
       const wasPlayingCommentary = isPlayingCommentary;
-      
-      // Stop current audio
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
+
+      // Stop current audio via MobileAudioEngine
+      mobileAudioEngine.stop();
       if (browserUtteranceRef.current) {
         speechSynthesis.cancel();
         browserUtteranceRef.current = null;
@@ -2733,12 +2556,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     const newMuted = !isMuted;
     console.log('[SequencePlayer] Mute toggled to:', newMuted);
     setIsMuted(newMuted);
-    // Apply immediately to current audio
-    if (audioRef.current) {
-      const effectiveVolume = newMuted ? 0 : volumeRef.current / 100;
-      audioRef.current.volume = effectiveVolume;
-      console.log('[SequencePlayer] Applied mute toggle to audioRef:', effectiveVolume);
-    }
+    // Apply immediately to current audio via MobileAudioEngine
+    const effectiveVolume = newMuted ? 0 : volumeRef.current / 100;
+    mobileAudioEngine.setVolume(effectiveVolume);
+    console.log('[SequencePlayer] Applied mute toggle via MobileAudioEngine:', effectiveVolume);
   };
   // Auto-scroll to current verse
   useEffect(() => {
@@ -3027,14 +2848,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               <span className="text-muted-foreground">isPaused:</span>
               <span>{String(isPaused)}</span>
               
-              <span className="text-muted-foreground">audioRef:</span>
-              <span className={audioRef.current ? "text-green-400" : "text-yellow-400"}>
-                {audioRef.current ? (audioRef.current.src ? "has src" : "no src") : "null"}
+              <span className="text-muted-foreground">audioState:</span>
+              <span className={mobileAudioEngine.isPlaying() ? "text-green-400" : "text-yellow-400"}>
+                {mobileAudioEngine.getState()}
               </span>
-              
+
               <span className="text-muted-foreground">audioUnlocked:</span>
-              <span className={audioUnlockedRef.current ? "text-green-400" : "text-red-400"}>
-                {String(audioUnlockedRef.current)}
+              <span className={mobileAudioEngine.isAudioUnlocked() ? "text-green-400" : "text-red-400"}>
+                {String(mobileAudioEngine.isAudioUnlocked())}
               </span>
               
               <span className="text-muted-foreground">currentItem:</span>
@@ -3074,8 +2895,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   size="icon"
                   className="h-8 w-8 text-amber-600 hover:text-amber-500 hover:bg-amber-500/10"
                   onClick={() => {
-                    if (audioRef.current) {
-                      audioRef.current.currentTime = 0;
+                    if (mobileAudioEngine.isPlaying() || mobileAudioEngine.getState() === 'paused') {
+                      mobileAudioEngine.seek(0);
                       toast.success("Restarted from beginning", { duration: 1500 });
                     } else if (browserUtteranceRef.current && window.speechSynthesis) {
                       // For browser TTS, cancel and restart
@@ -3096,8 +2917,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   size="icon"
                   className="h-8 w-8 text-amber-600 hover:text-amber-500 hover:bg-amber-500/10"
                   onClick={() => {
-                    if (audioRef.current) {
-                      audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 10);
+                    if (mobileAudioEngine.isPlaying() || mobileAudioEngine.getState() === 'paused') {
+                      const currentTime = mobileAudioEngine.getCurrentTime();
+                      mobileAudioEngine.seek(Math.max(0, currentTime - 10));
                       toast.success("Rewound 10 seconds", { duration: 1500 });
                     }
                   }}
