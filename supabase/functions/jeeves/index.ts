@@ -116,15 +116,15 @@ serve(async (req) => {
       if (!authError && user) {
         userId = user.id;
         
-        // Fetch user's first name and selected path from profiles
+        // Fetch user's display name and selected path from profiles
         const { data: profile } = await supabase
           .from('profiles')
-          .select('first_name, selected_path')
+          .select('display_name, selected_path')
           .eq('id', user.id)
           .single();
         
-        if (profile?.first_name) {
-          userFirstName = profile.first_name;
+        if (profile?.display_name) {
+          userFirstName = profile.display_name.split(' ')[0]; // Get first name from display_name
         }
         if (profile?.selected_path) {
           userPathType = profile.selected_path;
