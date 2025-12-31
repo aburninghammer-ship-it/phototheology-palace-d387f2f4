@@ -2074,7 +2074,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     playVerseAtIndex(currentVerseIdx, chapterContent, voice);
   }, [chapterContent, currentVerseIdx, currentSequence, playVerseAtIndex]);
 
-  // Load chapter when item changes
+  // Load chapter when item changes - CRITICAL: This must run immediately on mobile
+  // Do not include chapterContent in dependencies to avoid circular issues
   useEffect(() => {
     console.log("[ChapterLoad Effect] Running - currentItem:", currentItem ? `${currentItem.book} ${currentItem.chapter}` : "NULL", "isMobile:", isMobile);
     if (!currentItem) {
@@ -2090,12 +2091,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return;
     }
     
-    // Skip if we already have this exact content
-    if (chapterContent && chapterContent.book === currentItem.book && chapterContent.chapter === currentItem.chapter) {
-      console.log("Already have content for:", cacheKey);
-      return;
-    }
-    
     // Skip if we already fetched this
     if (lastFetchedRef.current === cacheKey) {
       console.log("Already fetched:", cacheKey);
@@ -2103,13 +2098,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     }
 
     const loadChapter = async (retryCount = 0) => {
-      console.log("Starting chapter load for:", cacheKey, "retry:", retryCount);
+      console.log("[ChapterLoad] Starting load for:", cacheKey, "retry:", retryCount, "isMobile:", isMobile);
       isFetchingChapterRef.current = true;
       setIsLoading(true);
       
       try {
         const verses = await fetchChapter(currentItem.book, currentItem.chapter);
-        console.log("Fetch result:", verses ? `${verses.length} verses` : "null");
+        console.log("[ChapterLoad] Fetch result:", verses ? `${verses.length} verses` : "null");
         
         isFetchingChapterRef.current = false;
         
@@ -2129,32 +2124,33 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             chapter: currentItem.chapter,
             verses: filteredVerses,
           });
-          console.log("Chapter content set:", filteredVerses.length, "verses");
-        } else if (retryCount < 2) {
-          // Retry on mobile - network can be flaky
-          console.log("[ChapterLoad] No verses returned, retrying in 1s...");
+          setIsLoading(false);
+          console.log("[ChapterLoad] SUCCESS - Chapter content set:", filteredVerses.length, "verses");
+        } else if (retryCount < 3) {
+          // Retry on mobile - network can be flaky, increase retries to 3
+          console.log("[ChapterLoad] No verses returned, retrying in 1.5s... (attempt", retryCount + 1, "of 3)");
           isFetchingChapterRef.current = false;
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 1500));
           return loadChapter(retryCount + 1);
         } else {
-          console.error("Failed to load chapter after retries:", cacheKey);
-          toast.error("Failed to load chapter. Please try again.");
+          console.error("[ChapterLoad] FAILED after all retries:", cacheKey);
+          setIsLoading(false);
         }
       } catch (e) {
         console.error("[ChapterLoad] Error:", e);
         isFetchingChapterRef.current = false;
-        if (retryCount < 2) {
-          console.log("[ChapterLoad] Error occurred, retrying in 1s...");
-          await new Promise(resolve => setTimeout(resolve, 1000));
+        if (retryCount < 3) {
+          console.log("[ChapterLoad] Error occurred, retrying in 1.5s... (attempt", retryCount + 1, "of 3)");
+          await new Promise(resolve => setTimeout(resolve, 1500));
           return loadChapter(retryCount + 1);
         }
-        toast.error("Error loading chapter. Please check your connection.");
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
+    // Start loading immediately
     loadChapter();
-  }, [currentItem?.book, currentItem?.chapter, currentItem?.startVerse, currentItem?.endVerse, fetchChapter, isMobile, allItems.length, activeSequences.length, chapterContent]);
+  }, [currentItem?.book, currentItem?.chapter, currentItem?.startVerse, currentItem?.endVerse, fetchChapter, isMobile, allItems.length, activeSequences.length]);
 
   // Auto-play when new chapter content loads (for chapter transitions)
   useEffect(() => {
@@ -2776,18 +2772,30 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         {waitingForMobileTap && (
           <div className="rounded-xl border-2 border-green-500/30 overflow-hidden bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10 shadow-lg shadow-green-500/10 p-6 text-center">
             <div className="flex flex-col items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30 animate-pulse">
+              <div className={`h-16 w-16 rounded-full flex items-center justify-center shadow-lg ${
+                isLoading 
+                  ? "bg-gradient-to-br from-blue-500 to-indigo-600 shadow-blue-500/30 animate-pulse"
+                  : !chapterContent 
+                    ? "bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30"
+                    : "bg-gradient-to-br from-green-500 to-emerald-600 shadow-green-500/30 animate-pulse"
+              }`}>
                 {isLoading ? (
                   <Loader2 className="h-8 w-8 text-white animate-spin" />
-                ) : !chapterContent && !isLoading && currentItem ? (
+                ) : !chapterContent ? (
                   <RefreshCw className="h-8 w-8 text-white" />
                 ) : (
                   <Play className="h-8 w-8 text-white ml-1" />
                 )}
               </div>
               <div>
-                <h3 className="font-bold text-green-600 dark:text-green-400 text-lg">
-                  {isLoading ? "Loading Audio..." : !chapterContent && currentItem ? "Loading Failed" : "Ready to Play"}
+                <h3 className={`font-bold text-lg ${
+                  isLoading 
+                    ? "text-blue-600 dark:text-blue-400"
+                    : !chapterContent 
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-green-600 dark:text-green-400"
+                }`}>
+                  {isLoading ? "Loading Verses..." : !chapterContent ? "Tap to Retry" : "Ready to Play"}
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
                   {chapterContent 
@@ -2796,25 +2804,40 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                       ? `${currentItem.book} ${currentItem.chapter}`
                       : "Preparing..."}
                 </p>
-                {!chapterContent && !isLoading && currentItem && (
+                {isLoading && (
+                  <p className="text-xs text-blue-500 mt-2">
+                    Please wait, fetching Bible content...
+                  </p>
+                )}
+                {!chapterContent && !isLoading && (
                   <p className="text-xs text-amber-500 mt-2">
-                    Tap retry to reload the chapter
+                    Connection issue - tap below to retry
                   </p>
                 )}
               </div>
-              {/* Show retry button if loading failed */}
-              {!chapterContent && !isLoading && currentItem ? (
+              {/* Show retry button if loading failed OR loading button while loading */}
+              {isLoading ? (
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-6 text-lg"
+                  disabled
+                >
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Loading Verses...
+                </Button>
+              ) : !chapterContent && currentItem ? (
                 <Button
                   onClick={() => {
                     // Force reload by clearing cache key
                     lastFetchedRef.current = null;
                     isFetchingChapterRef.current = false;
-                    setChapterContent(null);
-                    // Trigger effect by changing a dependency
-                    setCurrentItemIdx(prev => prev);
+                    // Clear chapter cache for this item
+                    const cacheKey = `${currentItem.book}-${currentItem.chapter}`;
+                    chapterCache.current.delete(cacheKey);
                     // Manually trigger load
                     const loadNow = async () => {
                       setIsLoading(true);
+                      console.log("[Mobile Retry] Manual load triggered for:", cacheKey);
                       const verses = await fetchChapter(currentItem.book, currentItem.chapter);
                       if (verses && verses.length > 0) {
                         let filteredVerses = verses;
@@ -2825,13 +2848,15 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                               v.verse <= (currentItem.endVerse || verses.length)
                           );
                         }
+                        lastFetchedRef.current = cacheKey;
                         setChapterContent({
                           book: currentItem.book,
                           chapter: currentItem.chapter,
                           verses: filteredVerses,
                         });
+                        console.log("[Mobile Retry] SUCCESS - loaded", filteredVerses.length, "verses");
                       } else {
-                        toast.error("Still unable to load. Check your connection.");
+                        toast.error("Unable to load. Please check your connection.");
                       }
                       setIsLoading(false);
                     };
@@ -2848,19 +2873,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   onClick={handleMobileTapToStart}
                   size="lg"
                   className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-lg"
-                  disabled={isLoading || !chapterContent}
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-5 w-5 mr-2" />
-                      Tap to Start
-                    </>
-                  )}
+                  <Play className="h-5 w-5 mr-2" />
+                  Tap to Start
                 </Button>
               )}
             </div>
