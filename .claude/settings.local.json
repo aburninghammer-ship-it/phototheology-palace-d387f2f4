@@ -33,7 +33,9 @@
       "Bash(mkdir:*)",
       "WebFetch(domain:thephototheologyapp.com)",
       "WebFetch(domain:bible-api.com)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(git rebase:*)",
+      "Bash(GIT_EDITOR=true git rebase:*)"
     ],
     "deny": [],
     "ask": []
