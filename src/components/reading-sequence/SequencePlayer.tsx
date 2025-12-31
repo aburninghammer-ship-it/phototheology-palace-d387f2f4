@@ -2702,159 +2702,176 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Resume Option - shown when user has a saved position */}
-        {showResumeOption && savedPosition && (() => {
-          // Get the saved item info for display
-          const savedSeq = activeSequences[savedPosition.seqIdx];
+        {/* Start/Resume Section - Consolidated single panel */}
+        {!hasStarted && !isPlaying && !isPaused && (() => {
+          // Check if we have a saved position to resume from
+          const hasSavedPosition = showResumeOption && savedPosition;
+          const savedSeq = hasSavedPosition ? activeSequences[savedPosition.seqIdx] : null;
           const savedItem = savedSeq?.items[savedPosition.itemIdx];
-          const savedBookChapter = savedItem ? `${savedItem.book} ${savedItem.chapter}` : `Chapter ${savedPosition.itemIdx + 1}`;
+          const savedBookChapter = savedItem ? `${savedItem.book} ${savedItem.chapter}` : `Chapter ${(savedPosition?.itemIdx || 0) + 1}`;
+          
+          // Determine what to show based on loading state
+          const showLoading = isLoading;
+          const showRetry = !isLoading && !chapterContent && currentItem;
+          const showReady = !isLoading && chapterContent;
+          
           return (
-            <div className="rounded-xl border-2 border-blue-500/30 overflow-hidden bg-gradient-to-br from-blue-500/10 via-sky-500/5 to-blue-500/10 shadow-lg shadow-blue-500/10 p-4">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                  <Play className="h-5 w-5 text-white" />
+            <div className={`rounded-xl border-2 overflow-hidden p-5 ${
+              hasSavedPosition 
+                ? "border-blue-500/30 bg-gradient-to-br from-blue-500/10 via-sky-500/5 to-blue-500/10 shadow-lg shadow-blue-500/10"
+                : showLoading
+                  ? "border-blue-500/30 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-blue-500/10"
+                  : showRetry
+                    ? "border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-amber-500/10"
+                    : "border-green-500/30 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10"
+            }`}>
+              {/* Header with icon and status */}
+              <div className="flex items-center gap-4 mb-4">
+                <div className={`h-14 w-14 rounded-full flex items-center justify-center shadow-lg ${
+                  hasSavedPosition
+                    ? "bg-gradient-to-br from-blue-500 to-sky-600 shadow-blue-500/30"
+                    : showLoading 
+                      ? "bg-gradient-to-br from-blue-500 to-indigo-600 shadow-blue-500/30 animate-pulse"
+                      : showRetry 
+                        ? "bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30"
+                        : "bg-gradient-to-br from-green-500 to-emerald-600 shadow-green-500/30"
+                }`}>
+                  {showLoading ? (
+                    <Loader2 className="h-7 w-7 text-white animate-spin" />
+                  ) : showRetry ? (
+                    <RefreshCw className="h-7 w-7 text-white" />
+                  ) : (
+                    <Play className="h-7 w-7 text-white ml-1" />
+                  )}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-blue-600 dark:text-blue-400">Continue Where You Left Off?</h3>
+                  <h3 className={`font-bold text-lg ${
+                    hasSavedPosition
+                      ? "text-blue-600 dark:text-blue-400"
+                      : showLoading 
+                        ? "text-blue-600 dark:text-blue-400"
+                        : showRetry 
+                          ? "text-amber-600 dark:text-amber-400"
+                          : "text-green-600 dark:text-green-400"
+                  }`}>
+                    {hasSavedPosition 
+                      ? "Continue Where You Left Off?" 
+                      : showLoading 
+                        ? "Loading Verses..." 
+                        : showRetry 
+                          ? "Connection Issue" 
+                          : "Ready to Play"}
+                  </h3>
                   <p className="text-sm text-muted-foreground">
-                    {savedBookChapter}:{savedPosition.verseIdx + 1}
+                    {hasSavedPosition 
+                      ? `${savedBookChapter}:${savedPosition.verseIdx + 1}`
+                      : chapterContent 
+                        ? `${chapterContent.book} ${chapterContent.chapter} • ${chapterContent.verses.length} verses`
+                        : currentItem 
+                          ? `${currentItem.book} ${currentItem.chapter}`
+                          : "Preparing..."}
                   </p>
+                  {showLoading && (
+                    <p className="text-xs text-blue-500 mt-1">
+                      Please wait, fetching Bible content...
+                    </p>
+                  )}
+                  {showRetry && (
+                    <p className="text-xs text-amber-500 mt-1">
+                      Tap below to retry loading
+                    </p>
+                  )}
                 </div>
               </div>
+
+              {/* Action Buttons */}
               <div className="flex gap-2">
-                <Button
-                  onClick={handleResume}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white"
-                >
-                  <Play className="h-4 w-4 mr-2" />
-                  Resume
-                </Button>
-                <Button
-                  onClick={handleStartFresh}
-                  variant="outline"
-                  className="flex-1 border-blue-500/30 hover:bg-blue-500/10"
-                >
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Start Fresh
-                </Button>
+                {hasSavedPosition ? (
+                  <>
+                    <Button
+                      onClick={handleResume}
+                      size="lg"
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white py-5"
+                    >
+                      <Play className="h-5 w-5 mr-2" />
+                      Resume
+                    </Button>
+                    <Button
+                      onClick={handleStartFresh}
+                      variant="outline"
+                      size="lg"
+                      className="flex-1 border-blue-500/30 hover:bg-blue-500/10 py-5"
+                    >
+                      <RotateCcw className="h-5 w-5 mr-2" />
+                      Start Fresh
+                    </Button>
+                  </>
+                ) : showLoading ? (
+                  <Button
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-5"
+                    disabled
+                  >
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Loading...
+                  </Button>
+                ) : showRetry ? (
+                  <Button
+                    onClick={() => {
+                      // Force reload by clearing cache key
+                      lastFetchedRef.current = null;
+                      isFetchingChapterRef.current = false;
+                      // Clear chapter cache for this item
+                      const cacheKey = `${currentItem.book}-${currentItem.chapter}`;
+                      chapterCache.current.delete(cacheKey);
+                      // Manually trigger load
+                      const loadNow = async () => {
+                        setIsLoading(true);
+                        console.log("[Mobile Retry] Manual load triggered for:", cacheKey);
+                        const verses = await fetchChapter(currentItem.book, currentItem.chapter);
+                        if (verses && verses.length > 0) {
+                          let filteredVerses = verses;
+                          if (currentItem.startVerse) {
+                            filteredVerses = verses.filter(
+                              (v) =>
+                                v.verse >= (currentItem.startVerse || 1) &&
+                                v.verse <= (currentItem.endVerse || verses.length)
+                            );
+                          }
+                          lastFetchedRef.current = cacheKey;
+                          setChapterContent({
+                            book: currentItem.book,
+                            chapter: currentItem.chapter,
+                            verses: filteredVerses,
+                          });
+                          console.log("[Mobile Retry] SUCCESS - loaded", filteredVerses.length, "verses");
+                        } else {
+                          toast.error("Unable to load. Please check your connection.");
+                        }
+                        setIsLoading(false);
+                      };
+                      loadNow();
+                    }}
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-5"
+                  >
+                    <RefreshCw className="h-5 w-5 mr-2" />
+                    Retry Loading
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={isMobile ? handleMobileTapToStart : handlePlay}
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-5"
+                  >
+                    <Play className="h-5 w-5 mr-2" />
+                    Play Now
+                  </Button>
+                )}
               </div>
             </div>
           );
         })()}
-
-        {/* Mobile Tap to Start - required on mobile due to browser audio restrictions */}
-        {waitingForMobileTap && (
-          <div className="rounded-xl border-2 border-green-500/30 overflow-hidden bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10 shadow-lg shadow-green-500/10 p-6 text-center">
-            <div className="flex flex-col items-center gap-4">
-              <div className={`h-16 w-16 rounded-full flex items-center justify-center shadow-lg ${
-                isLoading 
-                  ? "bg-gradient-to-br from-blue-500 to-indigo-600 shadow-blue-500/30 animate-pulse"
-                  : !chapterContent 
-                    ? "bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/30"
-                    : "bg-gradient-to-br from-green-500 to-emerald-600 shadow-green-500/30 animate-pulse"
-              }`}>
-                {isLoading ? (
-                  <Loader2 className="h-8 w-8 text-white animate-spin" />
-                ) : !chapterContent ? (
-                  <RefreshCw className="h-8 w-8 text-white" />
-                ) : (
-                  <Play className="h-8 w-8 text-white ml-1" />
-                )}
-              </div>
-              <div>
-                <h3 className={`font-bold text-lg ${
-                  isLoading 
-                    ? "text-blue-600 dark:text-blue-400"
-                    : !chapterContent 
-                      ? "text-amber-600 dark:text-amber-400"
-                      : "text-green-600 dark:text-green-400"
-                }`}>
-                  {isLoading ? "Loading Verses..." : !chapterContent ? "Tap to Retry" : "Ready to Play"}
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {chapterContent 
-                    ? `${chapterContent.book} ${chapterContent.chapter} • ${chapterContent.verses.length} verses`
-                    : currentItem 
-                      ? `${currentItem.book} ${currentItem.chapter}`
-                      : "Preparing..."}
-                </p>
-                {isLoading && (
-                  <p className="text-xs text-blue-500 mt-2">
-                    Please wait, fetching Bible content...
-                  </p>
-                )}
-                {!chapterContent && !isLoading && (
-                  <p className="text-xs text-amber-500 mt-2">
-                    Connection issue - tap below to retry
-                  </p>
-                )}
-              </div>
-              {/* Show retry button if loading failed OR loading button while loading */}
-              {isLoading ? (
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-6 text-lg"
-                  disabled
-                >
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Loading Verses...
-                </Button>
-              ) : !chapterContent && currentItem ? (
-                <Button
-                  onClick={() => {
-                    // Force reload by clearing cache key
-                    lastFetchedRef.current = null;
-                    isFetchingChapterRef.current = false;
-                    // Clear chapter cache for this item
-                    const cacheKey = `${currentItem.book}-${currentItem.chapter}`;
-                    chapterCache.current.delete(cacheKey);
-                    // Manually trigger load
-                    const loadNow = async () => {
-                      setIsLoading(true);
-                      console.log("[Mobile Retry] Manual load triggered for:", cacheKey);
-                      const verses = await fetchChapter(currentItem.book, currentItem.chapter);
-                      if (verses && verses.length > 0) {
-                        let filteredVerses = verses;
-                        if (currentItem.startVerse) {
-                          filteredVerses = verses.filter(
-                            (v) =>
-                              v.verse >= (currentItem.startVerse || 1) &&
-                              v.verse <= (currentItem.endVerse || verses.length)
-                          );
-                        }
-                        lastFetchedRef.current = cacheKey;
-                        setChapterContent({
-                          book: currentItem.book,
-                          chapter: currentItem.chapter,
-                          verses: filteredVerses,
-                        });
-                        console.log("[Mobile Retry] SUCCESS - loaded", filteredVerses.length, "verses");
-                      } else {
-                        toast.error("Unable to load. Please check your connection.");
-                      }
-                      setIsLoading(false);
-                    };
-                    loadNow();
-                  }}
-                  size="lg"
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-6 text-lg"
-                >
-                  <RefreshCw className="h-5 w-5 mr-2" />
-                  Retry Loading
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleMobileTapToStart}
-                  size="lg"
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-lg"
-                >
-                  <Play className="h-5 w-5 mr-2" />
-                  Tap to Start
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
 
 
         {/* Commentary Display - shown when Jeeves is commenting */}
