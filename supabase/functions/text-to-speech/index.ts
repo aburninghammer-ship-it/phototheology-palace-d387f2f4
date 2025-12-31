@@ -10,8 +10,15 @@ const corsHeaders = {
 // Provider types
 type TTSProvider = 'openai' | 'elevenlabs' | 'speechify';
 
-// OpenAI TTS voice options
-const OPENAI_VOICES = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'];
+// OpenAI TTS voice options (supported set)
+// Note: OpenAI may reject deprecated voices; keep server-side normalization below.
+const OPENAI_VOICES = ['alloy', 'ash', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer'];
+
+// Backward-compatible aliases (deprecated voice names)
+const OPENAI_VOICE_ALIASES: Record<string, string> = {
+  ballad: 'sage',
+  verse: 'fable',
+};
 
 // ElevenLabs voice IDs
 const ELEVENLABS_VOICES: Record<string, string> = {
@@ -211,7 +218,9 @@ async function generateOpenAI(
   speed: number,
   apiKey: string
 ): Promise<ArrayBuffer> {
-  const selectedVoice = OPENAI_VOICES.includes(voice.toLowerCase()) ? voice.toLowerCase() : DEFAULT_VOICE;
+  const voiceKey = (voice || '').toLowerCase();
+  const aliased = OPENAI_VOICE_ALIASES[voiceKey] ?? voiceKey;
+  const selectedVoice = OPENAI_VOICES.includes(aliased) ? aliased : DEFAULT_VOICE;
 
   const response = await fetch('https://api.openai.com/v1/audio/speech', {
     method: 'POST',
@@ -344,7 +353,16 @@ serve(async (req) => {
       throw new Error("Text is required");
     }
 
-    console.log(`[TTS] Provider: ${provider}, Voice: ${voice}, Text length: ${text.length}`);
+    // Normalize OpenAI voice (handles deprecated voices like "ballad" / "verse")
+    const effectiveVoice = provider === 'openai'
+      ? (OPENAI_VOICE_ALIASES[(voice || '').toLowerCase()] ?? (voice || '').toLowerCase())
+      : voice;
+
+    const finalVoice = provider === 'openai'
+      ? (OPENAI_VOICES.includes(String(effectiveVoice)) ? String(effectiveVoice) : DEFAULT_VOICE)
+      : voice;
+
+    console.log(`[TTS] Provider: ${provider}, Voice: ${voice} -> ${finalVoice}, Text length: ${text.length}`);
 
     // Get appropriate API key
     let apiKey: string | undefined;
@@ -371,9 +389,9 @@ serve(async (req) => {
 
     // Check cache if verse info provided
     if (useCache && book && chapter !== undefined && verse !== undefined) {
-      console.log(`[TTS] Checking cache: ${book} ${chapter}:${verse} (${provider}:${voice})`);
+      console.log(`[TTS] Checking cache: ${book} ${chapter}:${verse} (${provider}:${finalVoice})`);
 
-      const cacheResult = await checkCache(supabase, book, chapter, verse, voice, provider);
+      const cacheResult = await checkCache(supabase, book, chapter, verse, finalVoice, provider);
 
       if (cacheResult.found && cacheResult.url) {
         console.log(`[TTS] CACHE HIT - ${book} ${chapter}:${verse}`);
@@ -404,14 +422,14 @@ serve(async (req) => {
       let buffer: ArrayBuffer;
       switch (provider) {
         case 'elevenlabs':
-          buffer = await generateElevenLabs(chunk, voice, speed, apiKey);
+          buffer = await generateElevenLabs(chunk, finalVoice, speed, apiKey);
           break;
         case 'speechify':
-          buffer = await generateSpeechify(chunk, voice, speed, apiKey);
+          buffer = await generateSpeechify(chunk, finalVoice, speed, apiKey);
           break;
         case 'openai':
         default:
-          buffer = await generateOpenAI(chunk, voice, speed, apiKey);
+          buffer = await generateOpenAI(chunk, finalVoice, speed, apiKey);
           break;
       }
 
@@ -435,7 +453,7 @@ serve(async (req) => {
 
     // Store in cache if verse info provided
     if (useCache && book && chapter !== undefined && verse !== undefined) {
-      const cachedUrl = await storeInCache(supabase, book, chapter, verse, voice, provider, combined.buffer);
+      const cachedUrl = await storeInCache(supabase, book, chapter, verse, finalVoice, provider, combined.buffer);
 
       if (cachedUrl) {
         return new Response(
@@ -456,12 +474,12 @@ serve(async (req) => {
       try {
         const stableKey = await sha256Hex(JSON.stringify({
           provider,
-          voice,
+          voice: finalVoice,
           speed: Math.round(speed * 100) / 100,
           text: text.trim(),
         }));
 
-        const storagePath = `tts/${provider}/${voice}/${stableKey}.mp3`;
+        const storagePath = `tts/${provider}/${finalVoice}/${stableKey}.mp3`;
 
         const { error: uploadError } = await supabase.storage
           .from('bible-audio')
@@ -502,7 +520,7 @@ serve(async (req) => {
         audioContent: base64Audio,
         contentType: 'audio/mpeg',
         textLength: text.length,
-        voice,
+        voice: finalVoice,
         provider,
         chunks: chunks.length
       }),
