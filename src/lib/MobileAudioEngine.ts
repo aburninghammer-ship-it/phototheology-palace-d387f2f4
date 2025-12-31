@@ -193,38 +193,58 @@ class MobileAudioEngineV2 {
   /**
    * Wait for audio to be ready to play, with timeout
    */
-  private waitForCanPlay(timeoutMs = 5000): Promise<void> {
+  private waitForCanPlay(timeoutMs = 30000): Promise<void> {
     return new Promise((resolve, reject) => {
+      console.log('[MobileAudioV2] waitForCanPlay, readyState:', this.audio.readyState);
+      
       // If already ready, resolve immediately
-      if (this.audio.readyState >= 3) {
+      if (this.audio.readyState >= 2) {
+        console.log('[MobileAudioV2] Already ready to play');
         resolve();
         return;
       }
 
       let resolved = false;
       
+      const cleanup = () => {
+        this.audio.removeEventListener('canplaythrough', onCanPlay);
+        this.audio.removeEventListener('canplay', onCanPlay);
+        this.audio.removeEventListener('loadeddata', onCanPlay);
+        this.audio.removeEventListener('error', onError);
+      };
+      
       const onCanPlay = () => {
         if (!resolved) {
           resolved = true;
-          this.audio.removeEventListener('canplaythrough', onCanPlay);
-          this.audio.removeEventListener('canplay', onCanPlay);
+          console.log('[MobileAudioV2] Audio ready (canplay/loadeddata)');
+          cleanup();
           resolve();
+        }
+      };
+      
+      const onError = () => {
+        if (!resolved) {
+          resolved = true;
+          console.error('[MobileAudioV2] Load error during wait');
+          cleanup();
+          reject(new Error('Audio load failed'));
         }
       };
 
       this.audio.addEventListener('canplaythrough', onCanPlay);
       this.audio.addEventListener('canplay', onCanPlay);
+      this.audio.addEventListener('loadeddata', onCanPlay);
+      this.audio.addEventListener('error', onError);
       
       // Explicit load for mobile
       this.audio.load();
 
-      // Timeout - try to play anyway after waiting
+      // Timeout - try to play anyway after waiting (increased for large files)
       setTimeout(() => {
         if (!resolved) {
           resolved = true;
-          this.audio.removeEventListener('canplaythrough', onCanPlay);
-          this.audio.removeEventListener('canplay', onCanPlay);
-          console.log('[MobileAudioV2] Load timeout, attempting play anyway');
+          cleanup();
+          console.log('[MobileAudioV2] Load timeout after', timeoutMs, 'ms, attempting play anyway');
           resolve();
         }
       }, timeoutMs);
