@@ -1,18 +1,18 @@
-import { Suspense, useState, useRef, useCallback, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Suspense, useState, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
   Environment, 
   PerspectiveCamera,
   Html,
   Float,
-  Sparkles,
-  MeshTransmissionMaterial
+  Sparkles
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { X, Plus, Gem, RotateCcw, Sparkles as SparklesIcon } from 'lucide-react';
+import { X, Gem, RotateCcw, Sparkles as SparklesIcon } from 'lucide-react';
+import { PalaceRoom3D } from '@/components/3d/PalaceRoom3D';
 
 // Sample gems with Scripture insights
 const SAMPLE_GEMS = [
@@ -132,6 +132,16 @@ function Crystal3D({ gem, position, isSelected, onClick }: Crystal3DProps) {
   return (
     <Float speed={2} rotationIntensity={0.3} floatIntensity={0.5}>
       <group position={position}>
+        {/* Pedestal */}
+        <mesh position={[0, -1.5, 0]} castShadow>
+          <cylinderGeometry args={[0.4, 0.5, 0.3, 8]} />
+          <meshStandardMaterial color="#DAA520" metalness={0.8} roughness={0.2} />
+        </mesh>
+        <mesh position={[0, -1.2, 0]} castShadow>
+          <cylinderGeometry args={[0.15, 0.15, 0.6, 8]} />
+          <meshStandardMaterial color="#4a4a4a" metalness={0.6} roughness={0.3} />
+        </mesh>
+        
         <mesh
           ref={meshRef}
           onClick={(e) => { e.stopPropagation(); onClick(); }}
@@ -158,8 +168,8 @@ function Crystal3D({ gem, position, isSelected, onClick }: Crystal3DProps) {
 
         {/* Label on hover */}
         {(hovered || isSelected) && (
-          <Html position={[0, 1, 0]} center distanceFactor={8}>
-            <div className="bg-black/80 text-white px-3 py-1 rounded-full text-sm whitespace-nowrap backdrop-blur-sm">
+          <Html position={[0, 1.2, 0]} center distanceFactor={8}>
+            <div className="bg-black/80 text-white px-3 py-1 rounded-full text-sm whitespace-nowrap backdrop-blur-sm border border-primary/30">
               {gem.title}
             </div>
           </Html>
@@ -209,7 +219,7 @@ function TreasureChest({ isOpen }: { isOpen: boolean }) {
             <meshStandardMaterial color="#8B4513" roughness={0.6} />
           </mesh>
           {/* Lid curved top */}
-          <mesh position={[0, 0.3, 0]}>
+          <mesh position={[0, 0.3, 0]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.75, 0.75, 2.5, 16, 1, false, 0, Math.PI]} />
             <meshStandardMaterial color="#8B4513" roughness={0.6} />
           </mesh>
@@ -230,49 +240,53 @@ function TreasureChest({ isOpen }: { isOpen: boolean }) {
   );
 }
 
-// Cave environment
-function CaveEnvironment() {
+// Treasury room contents
+function TreasuryContents({ gems, selectedGem, onSelectGem, chestOpen }: {
+  gems: typeof SAMPLE_GEMS;
+  selectedGem: typeof SAMPLE_GEMS[0] | null;
+  onSelectGem: (gem: typeof SAMPLE_GEMS[0] | null) => void;
+  chestOpen: boolean;
+}) {
+  // Arrange gems in a circle around the chest
+  const gemPositions = gems.map((_, i) => {
+    const angle = (i / gems.length) * Math.PI * 2;
+    const radius = 5;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    return [x, 2, z] as [number, number, number];
+  });
+
   return (
-    <group>
-      {/* Cave floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <circleGeometry args={[15, 32]} />
-        <meshStandardMaterial color="#1a1a2e" roughness={0.9} />
-      </mesh>
-
-      {/* Cave walls (cylinder) */}
-      <mesh position={[0, 5, 0]}>
-        <cylinderGeometry args={[15, 12, 10, 32, 1, true]} />
-        <meshStandardMaterial color="#16213e" side={THREE.BackSide} roughness={0.9} />
-      </mesh>
-
-      {/* Stalactites */}
-      {Array.from({ length: 20 }).map((_, i) => {
-        const angle = (i / 20) * Math.PI * 2;
-        const radius = 8 + Math.random() * 4;
-        const x = Math.cos(angle) * radius;
-        const z = Math.sin(angle) * radius;
-        const height = 1 + Math.random() * 2;
-        
-        return (
-          <mesh key={i} position={[x, 9, z]}>
-            <coneGeometry args={[0.2, height, 4]} />
-            <meshStandardMaterial color="#2a2a4a" roughness={0.8} />
-          </mesh>
-        );
-      })}
-
-      {/* Ambient cave lighting */}
-      <ambientLight intensity={0.1} color="#1a1a2e" />
+    <>
+      {/* Central treasure chest */}
+      <TreasureChest isOpen={chestOpen} />
       
-      {/* Torch lights */}
-      {[[-8, 3, 0], [8, 3, 0], [0, 3, -8], [0, 3, 8]].map((pos, i) => (
-        <group key={i} position={pos as [number, number, number]}>
-          <pointLight intensity={0.5} distance={10} color="#ff6600" />
-          <Sparkles count={20} scale={1} size={3} speed={0.5} color="#ff6600" />
-        </group>
+      {/* Floating gems on pedestals */}
+      {gems.map((gem, i) => (
+        <Crystal3D
+          key={gem.id}
+          gem={gem}
+          position={gemPositions[i]}
+          isSelected={selectedGem?.id === gem.id}
+          onClick={() => onSelectGem(gem === selectedGem ? null : gem)}
+        />
       ))}
-    </group>
+
+      {/* Decorative floor pattern */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <ringGeometry args={[2, 8, 8]} />
+        <meshStandardMaterial color="#DAA520" metalness={0.6} roughness={0.4} transparent opacity={0.3} />
+      </mesh>
+
+      {/* Magical sparkles */}
+      <Sparkles
+        count={150}
+        scale={[20, 10, 20]}
+        size={2}
+        speed={0.3}
+        color="#FFD700"
+      />
+    </>
   );
 }
 
@@ -287,43 +301,20 @@ export function Gems3DViewer({ onClose, userGems }: Gems3DViewerProps) {
 
   const gems = userGems || SAMPLE_GEMS;
 
-  // Arrange gems in a circle around the chest
-  const gemPositions = gems.map((_, i) => {
-    const angle = (i / gems.length) * Math.PI * 2;
-    const radius = 4;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    return [x, 2, z] as [number, number, number];
-  });
-
   return (
     <div className="relative w-full h-[600px] rounded-xl overflow-hidden border border-border">
       <Canvas shadows>
         <Suspense fallback={null}>
-          <PerspectiveCamera makeDefault position={[0, 5, 10]} fov={50} />
+          <PerspectiveCamera makeDefault position={[0, 6, 12]} fov={50} />
           
-          <CaveEnvironment />
-          <TreasureChest isOpen={chestOpen} />
-          
-          {/* Floating gems */}
-          {gems.map((gem, i) => (
-            <Crystal3D
-              key={gem.id}
-              gem={gem}
-              position={gemPositions[i]}
-              isSelected={selectedGem?.id === gem.id}
-              onClick={() => setSelectedGem(gem === selectedGem ? null : gem)}
+          <PalaceRoom3D theme="treasury" width={30} height={10} depth={25}>
+            <TreasuryContents 
+              gems={gems}
+              selectedGem={selectedGem}
+              onSelectGem={setSelectedGem}
+              chestOpen={chestOpen}
             />
-          ))}
-
-          {/* Magical sparkles */}
-          <Sparkles
-            count={100}
-            scale={[20, 10, 20]}
-            size={2}
-            speed={0.3}
-            color="#FFD700"
-          />
+          </PalaceRoom3D>
           
           <OrbitControls 
             enableZoom={true}
@@ -332,6 +323,7 @@ export function Gems3DViewer({ onClose, userGems }: Gems3DViewerProps) {
             maxDistance={18}
             minPolarAngle={Math.PI / 6}
             maxPolarAngle={Math.PI / 2.2}
+            target={[0, 1, 0]}
           />
           <Environment preset="night" />
         </Suspense>
@@ -343,7 +335,7 @@ export function Gems3DViewer({ onClose, userGems }: Gems3DViewerProps) {
           <CardContent className="p-4">
             <h3 className="font-bold text-lg flex items-center gap-2">
               <Gem className="h-5 w-5 text-primary" />
-              Gems Treasury
+              💎 Gems Treasury
             </h3>
             <p className="text-sm text-muted-foreground">
               {gems.length} precious insights collected
