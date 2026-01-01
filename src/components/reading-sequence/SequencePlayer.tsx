@@ -220,10 +220,14 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     return result;
   }, []);
 
-  // Helper to safely stop audio
+  // Helper to safely stop ALL audio (both mobile engine and browser TTS)
   const stopAudio = useCallback(() => {
-    console.log('[MobileAudio] Stopping audio');
+    console.log('[MobileAudio] Stopping all audio');
     mobileAudioEngine.stop();
+    // Also stop browser TTS to prevent overlapping voices
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
   }, []);
 
   // Helper to play audio URL using MobileAudioEngine
@@ -1540,10 +1544,15 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     isSettingUpPlaybackRef.current = true;
     
     // Stop any existing audio BEFORE proceeding (moved earlier to prevent race conditions)
-    // This ensures we can always start fresh playback
+    // This ensures we can always start fresh playback - stop BOTH audio systems
     if (mobileAudioEngine.isPlaying() || mobileAudioEngine.getState() === 'loading') {
       console.log("[PlayVerse] Stopping existing audio before verse:", verseIdx + 1);
       mobileAudioEngine.stop();
+    }
+    // CRITICAL: Also stop browser TTS to prevent overlapping voices
+    if (speechSynthesis.speaking) {
+      console.log("[PlayVerse] Stopping browser TTS before verse:", verseIdx + 1);
+      speechSynthesis.cancel();
     }
 
     const verse = content.verses[verseIdx];
