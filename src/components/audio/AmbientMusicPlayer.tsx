@@ -465,6 +465,47 @@ export function AmbientMusicPlayer({
     };
   }, [playNextTrackFromState]); // Include the callback dependency
 
+  // Keep music playing when app goes to background (mobile)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!audioRef.current) return;
+
+      if (document.hidden && isPlaying) {
+        // App went to background - try to keep music playing
+        console.log('[AmbientMusic] Tab hidden - keeping music alive');
+        if (audioRef.current.paused) {
+          audioRef.current.play().catch(() => {
+            console.log('[AmbientMusic] Could not resume music in background');
+          });
+        }
+      } else if (!document.hidden && isPlaying) {
+        // App came back to foreground - ensure music is still playing
+        console.log('[AmbientMusic] Tab visible - ensuring music continues');
+        if (audioRef.current.paused) {
+          audioRef.current.play().catch(() => {});
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isPlaying]);
+
+  // Keep-alive interval for background playback
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const keepAlive = () => {
+      if (audioRef.current && isPlaying && audioRef.current.paused) {
+        console.log('[AmbientMusic] Keep-alive: resuming paused music');
+        audioRef.current.play().catch(() => {});
+      }
+    };
+
+    const interval = setInterval(keepAlive, 5000);
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
   // Update audio source when track changes - only reset src if URL actually changed
   useEffect(() => {
     if (audioRef.current && currentTrack) {

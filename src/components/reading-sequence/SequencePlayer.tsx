@@ -402,11 +402,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     setSavedPosition(null);
   }, [positionStorageKey]);
 
-  // Keep audio playing when tab is hidden (background playback)
+  // Keep audio AND music playing when tab is hidden (background playback)
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden && isPlayingRef.current && !isPausedRef.current) {
-        console.log('[SequencePlayer] Tab hidden - keeping audio alive');
+        console.log('[SequencePlayer] Tab hidden - keeping audio and music alive');
         // Resume speech synthesis if it was paused by the browser
         if (speechSynthesis.paused && browserUtteranceRef.current) {
           speechSynthesis.resume();
@@ -417,14 +417,26 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             console.log('[SequencePlayer] Could not resume audio in background');
           });
         }
+        // Keep background music playing
+        if (musicAudioRef.current && musicAudioRef.current.paused && musicVolume > 0) {
+          musicAudioRef.current.play().catch(() => {
+            console.log('[SequencePlayer] Could not resume music in background');
+          });
+        }
+      } else if (!document.hidden && isPlayingRef.current && !isPausedRef.current) {
+        // When returning to foreground, ensure everything is still playing
+        console.log('[SequencePlayer] Tab visible - ensuring playback continues');
+        if (musicAudioRef.current && musicAudioRef.current.paused && musicVolume > 0) {
+          musicAudioRef.current.play().catch(() => {});
+        }
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, []);
+  }, [musicVolume]);
 
-  // Keep-alive interval for background playback
+  // Keep-alive interval for background playback (audio, speech, AND music)
   useEffect(() => {
     const keepAlive = () => {
       if (isPlaying && !isPaused) {
@@ -439,6 +451,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           console.log('[SequencePlayer] Resuming paused audio');
           mobileAudioEngine.resume().catch(() => {});
         }
+        // Keep background music alive
+        if (musicAudioRef.current && musicAudioRef.current.paused && musicVolume > 0) {
+          console.log('[SequencePlayer] Resuming paused music');
+          musicAudioRef.current.play().catch(() => {});
+        }
       }
     };
 
@@ -452,7 +469,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         keepAliveIntervalRef.current = null;
       }
     };
-  }, [isPlaying, isPaused]);
+  }, [isPlaying, isPaused, musicVolume]);
 
   // Sync playback state with global audio context for mini player
   useEffect(() => {
