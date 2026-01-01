@@ -3,7 +3,7 @@ import { Navigation } from "@/components/Navigation";
 import { BibleReader } from "@/components/bible/BibleReader";
 import { BibleNavigation } from "@/components/bible/BibleNavigation";
 import { Button } from "@/components/ui/button";
-import { BookMarked, HelpCircle } from "lucide-react";
+import { BookMarked, HelpCircle, Headphones } from "lucide-react";
 import { Link } from "react-router-dom";
 import { StudyBibleDemoDialog } from "@/components/bible/StudyBibleDemoDialog";
 import { VoiceChatWidget } from "@/components/voice/VoiceChatWidget";
@@ -43,8 +43,8 @@ const Bible = () => {
                 </div>
               </div>
               <div className="flex gap-2 flex-wrap">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 whitespace-nowrap"
                   onClick={() => setDemoOpen(true)}
                 >
@@ -57,6 +57,13 @@ const Bible = () => {
                     <BookMarked className="h-4 w-4 mr-2" />
                     <span className="hidden sm:inline">My Memorization Verses</span>
                     <span className="sm:hidden">Memorization</span>
+                  </Link>
+                </Button>
+                <Button asChild className="bg-primary/90 hover:bg-primary text-primary-foreground whitespace-nowrap">
+                  <Link to="/audio-bible">
+                    <Headphones className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Audio Bible & Commentary</span>
+                    <span className="sm:hidden">Listen</span>
                   </Link>
                 </Button>
               </div>
