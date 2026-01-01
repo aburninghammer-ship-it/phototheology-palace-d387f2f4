@@ -62,24 +62,31 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   const [isPlayingCommentary, setIsPlayingCommentary] = useState(false);
   const [currentCommentary, setCurrentCommentary] = useState<string>("");
 
-  // Refs for async operations
+  // Refs for async operations and avoiding stale closures
   const playbackQueueRef = useRef<PlaybackItem[]>([]);
   const currentItemRef = useRef<PlaybackItem | null>(null);
   const isStoppedRef = useRef(false);
   const loadingRef = useRef(false);
 
-  // Subscribe to audio engine events
-  useEffect(() => {
-    const unsubscribe = audioEngine.subscribe((state) => {
-      setAudioState(state);
+  // Refs to store current values for callbacks (avoid stale closures)
+  const currentVerseIndexRef = useRef(currentVerseIndex);
+  const isPlayingCommentaryRef = useRef(isPlayingCommentary);
+  const includeCommentaryRef = useRef(includeCommentary);
+  const commentaryOnlyRef = useRef(commentaryOnly);
+  const commentaryTierRef = useRef(commentaryTier);
+  const voiceRef = useRef(voice);
+  const onChapterCompleteRef = useRef(onChapterComplete);
+  const onVerseChangeRef = useRef(onVerseChange);
 
-      if (state === "ended") {
-        handlePlaybackEnded();
-      }
-    });
-
-    return unsubscribe;
-  }, []);
+  // Keep refs in sync with state
+  useEffect(() => { currentVerseIndexRef.current = currentVerseIndex; }, [currentVerseIndex]);
+  useEffect(() => { isPlayingCommentaryRef.current = isPlayingCommentary; }, [isPlayingCommentary]);
+  useEffect(() => { includeCommentaryRef.current = includeCommentary; }, [includeCommentary]);
+  useEffect(() => { commentaryOnlyRef.current = commentaryOnly; }, [commentaryOnly]);
+  useEffect(() => { commentaryTierRef.current = commentaryTier; }, [commentaryTier]);
+  useEffect(() => { voiceRef.current = voice; }, [voice]);
+  useEffect(() => { onChapterCompleteRef.current = onChapterComplete; }, [onChapterComplete]);
+  useEffect(() => { onVerseChangeRef.current = onVerseChange; }, [onVerseChange]);
 
   // Update playback rate when speed changes
   useEffect(() => {
@@ -107,93 +114,46 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   }, []);
 
   /**
-   * Handle when current audio ends
-   */
-  const handlePlaybackEnded = useCallback(() => {
-    if (isStoppedRef.current) return;
-
-    const item = currentItemRef.current;
-    if (!item) return;
-
-    // If we just played a verse and commentary is enabled, play commentary next
-    if (!isPlayingCommentary && includeCommentary && !commentaryOnly) {
-      playCurrentVerseCommentary();
-      return;
-    }
-
-    // Move to next verse
-    setIsPlayingCommentary(false);
-    setCurrentCommentary("");
-
-    const nextIndex = currentVerseIndex + 1;
-    if (nextIndex < item.verses.length) {
-      setCurrentVerseIndex(nextIndex);
-
-      // Prefetch more commentary ahead when advancing verses
-      if (includeCommentary && nextIndex + 2 < item.verses.length) {
-        prefetchUpcomingCommentary(
-          item.book,
-          item.chapter,
-          nextIndex,
-          item.verses,
-          commentaryTier,
-          3 // Keep 3 verses ahead prefetched
-        ).catch(console.error);
-      }
-
-      playVerseAtIndex(item, nextIndex);
-    } else {
-      // Chapter complete
-      onChapterComplete?.(item.book, item.chapter);
-
-      // Check for more items in queue
-      if (playbackQueueRef.current.length > 0) {
-        const nextItem = playbackQueueRef.current.shift()!;
-        startPlayback(nextItem);
-      } else {
-        // All done
-        currentItemRef.current = null;
-        setAudioState("idle");
-      }
-    }
-  }, [currentVerseIndex, includeCommentary, commentaryOnly, commentaryTier, onChapterComplete]);
-
-  /**
    * Play commentary for current verse
    */
   const playCurrentVerseCommentary = useCallback(async () => {
     const item = currentItemRef.current;
     if (!item || isStoppedRef.current) return;
 
-    const verse = item.verses[currentVerseIndex];
+    const verseIdx = currentVerseIndexRef.current;
+    const verse = item.verses[verseIdx];
     if (!verse) return;
 
     setIsPlayingCommentary(true);
     loadingRef.current = true;
 
     try {
+      console.log(`[useAudioBible] Generating commentary for ${item.book} ${item.chapter}:${verse.verse}`);
+
       const result = await generateCommentary({
         book: item.book,
         chapter: item.chapter,
         verse: verse.verse,
         verseText: verse.text,
-        tier: commentaryTier,
+        tier: commentaryTierRef.current,
         generateAudio: true,
-        voice,
+        voice: voiceRef.current,
       });
 
       if (isStoppedRef.current || !result) {
+        console.log("[useAudioBible] Stopped or no result");
         loadingRef.current = false;
         return;
       }
 
+      console.log(`[useAudioBible] Commentary received: ${result.commentary?.substring(0, 100)}...`);
       setCurrentCommentary(result.commentary);
 
       if (result.audioUrl) {
         await audioEngine.play(result.audioUrl);
       } else {
         // Generate TTS for commentary text
-        const audioUrl = await generateTTSAudio({ text: result.commentary, voice });
+        const audioUrl = await generateTTSAudio({ text: result.commentary, voice: voiceRef.current });
         if (audioUrl && !isStoppedRef.current) {
           await audioEngine.play(audioUrl);
         }
@@ -203,7 +163,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     } finally {
       loadingRef.current = false;
     }
-  }, [currentVerseIndex, commentaryTier, voice]);
+  }, []);
 
   /**
    * Play a specific verse
@@ -214,10 +174,10 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     const verse = item.verses[index];
     if (!verse) return;
 
-    onVerseChange?.(item.book, item.chapter, verse.verse);
+    onVerseChangeRef.current?.(item.book, item.chapter, verse.verse);
 
     // If commentary only, skip verse reading
-    if (commentaryOnly) {
+    if (commentaryOnlyRef.current) {
       setIsPlayingCommentary(true);
       await playCurrentVerseCommentary();
       return;
@@ -228,7 +188,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     try {
       // Generate TTS for verse text
       const verseWithRef = `${item.book} chapter ${item.chapter}, verse ${verse.verse}. ${verse.text}`;
-      const audioUrl = await generateTTSAudio({ text: verseWithRef, voice });
+      const audioUrl = await generateTTSAudio({ text: verseWithRef, voice: voiceRef.current });
 
       if (audioUrl && !isStoppedRef.current) {
         await audioEngine.play(audioUrl);
@@ -238,7 +198,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     } finally {
       loadingRef.current = false;
     }
-  }, [voice, commentaryOnly, onVerseChange, playCurrentVerseCommentary]);
+  }, [playCurrentVerseCommentary]);
 
   /**
    * Start playback for an item
@@ -255,19 +215,92 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     setCurrentCommentary("");
 
     // Prefetch commentary for upcoming verses in the background
-    if (includeCommentary && item.verses.length > 1) {
+    if (includeCommentaryRef.current && item.verses.length > 1) {
       prefetchUpcomingCommentary(
         item.book,
         item.chapter,
         0,
         item.verses,
-        commentaryTier,
+        commentaryTierRef.current,
         3 // Prefetch next 3 verses
       ).catch(console.error);
     }
 
     playVerseAtIndex(item, 0);
-  }, [playVerseAtIndex, includeCommentary, commentaryTier]);
+  }, [playVerseAtIndex]);
+
+  /**
+   * Handle when current audio ends - uses refs to avoid stale closures
+   */
+  const handlePlaybackEnded = useCallback(() => {
+    if (isStoppedRef.current) return;
+
+    const item = currentItemRef.current;
+    if (!item) return;
+
+    console.log(`[useAudioBible] Playback ended. isPlayingCommentary: ${isPlayingCommentaryRef.current}, includeCommentary: ${includeCommentaryRef.current}`);
+
+    // If we just played a verse and commentary is enabled, play commentary next
+    if (!isPlayingCommentaryRef.current && includeCommentaryRef.current && !commentaryOnlyRef.current) {
+      console.log("[useAudioBible] Starting commentary playback");
+      playCurrentVerseCommentary();
+      return;
+    }
+
+    // Move to next verse
+    setIsPlayingCommentary(false);
+    setCurrentCommentary("");
+
+    const nextIndex = currentVerseIndexRef.current + 1;
+    console.log(`[useAudioBible] Moving to verse index ${nextIndex} of ${item.verses.length}`);
+
+    if (nextIndex < item.verses.length) {
+      setCurrentVerseIndex(nextIndex);
+
+      // Prefetch more commentary ahead when advancing verses
+      if (includeCommentaryRef.current && nextIndex + 2 < item.verses.length) {
+        prefetchUpcomingCommentary(
+          item.book,
+          item.chapter,
+          nextIndex,
+          item.verses,
+          commentaryTierRef.current,
+          3 // Keep 3 verses ahead prefetched
+        ).catch(console.error);
+      }
+
+      playVerseAtIndex(item, nextIndex);
+    } else {
+      // Chapter complete
+      onChapterCompleteRef.current?.(item.book, item.chapter);
+
+      // Check for more items in queue
+      if (playbackQueueRef.current.length > 0) {
+        const nextItem = playbackQueueRef.current.shift()!;
+        startPlayback(nextItem);
+      } else {
+        // All done
+        currentItemRef.current = null;
+        setAudioState("idle");
+      }
+    }
+  }, [playCurrentVerseCommentary, playVerseAtIndex, startPlayback]);
+
+  // Subscribe to audio engine events - use ref to always get latest handler
+  const handlePlaybackEndedRef = useRef(handlePlaybackEnded);
+  useEffect(() => { handlePlaybackEndedRef.current = handlePlaybackEnded; }, [handlePlaybackEnded]);
+
+  useEffect(() => {
+    const unsubscribe = audioEngine.subscribe((state) => {
+      setAudioState(state);
+
+      if (state === "ended") {
+        handlePlaybackEndedRef.current();
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   /**
    * Play a chapter
@@ -349,13 +382,13 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
 
     audioEngine.stop();
 
-    const nextIndex = currentVerseIndex + 1;
+    const nextIndex = currentVerseIndexRef.current + 1;
     if (nextIndex < item.verses.length) {
       setCurrentVerseIndex(nextIndex);
       setIsPlayingCommentary(false);
       playVerseAtIndex(item, nextIndex);
     }
-  }, [currentVerseIndex, playVerseAtIndex]);
+  }, [playVerseAtIndex]);
 
   /**
    * Skip to previous verse
@@ -366,11 +399,11 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
 
     audioEngine.stop();
 
-    const prevIndex = Math.max(0, currentVerseIndex - 1);
+    const prevIndex = Math.max(0, currentVerseIndexRef.current - 1);
     setCurrentVerseIndex(prevIndex);
     setIsPlayingCommentary(false);
     playVerseAtIndex(item, prevIndex);
-  }, [currentVerseIndex, playVerseAtIndex]);
+  }, [playVerseAtIndex]);
 
   // Computed states
   const isPlaying = audioState === "playing";
