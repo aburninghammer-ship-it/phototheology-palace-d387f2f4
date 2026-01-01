@@ -8,6 +8,7 @@ import { audioEngine, AudioState } from "@/lib/AudioEngine";
 import {
   generateTTSAudio,
   generateCommentary,
+  prefetchUpcomingCommentary,
   CommentaryTier,
   OpenAIVoice,
   OPENAI_VOICES,
@@ -127,6 +128,19 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     const nextIndex = currentVerseIndex + 1;
     if (nextIndex < item.verses.length) {
       setCurrentVerseIndex(nextIndex);
+
+      // Prefetch more commentary ahead when advancing verses
+      if (includeCommentary && nextIndex + 2 < item.verses.length) {
+        prefetchUpcomingCommentary(
+          item.book,
+          item.chapter,
+          nextIndex,
+          item.verses,
+          commentaryTier,
+          3 // Keep 3 verses ahead prefetched
+        ).catch(console.error);
+      }
+
       playVerseAtIndex(item, nextIndex);
     } else {
       // Chapter complete
@@ -142,7 +156,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
         setAudioState("idle");
       }
     }
-  }, [currentVerseIndex, includeCommentary, commentaryOnly, onChapterComplete]);
+  }, [currentVerseIndex, includeCommentary, commentaryOnly, commentaryTier, onChapterComplete]);
 
   /**
    * Play commentary for current verse
@@ -240,8 +254,20 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     setIsPlayingCommentary(false);
     setCurrentCommentary("");
 
+    // Prefetch commentary for upcoming verses in the background
+    if (includeCommentary && item.verses.length > 1) {
+      prefetchUpcomingCommentary(
+        item.book,
+        item.chapter,
+        0,
+        item.verses,
+        commentaryTier,
+        3 // Prefetch next 3 verses
+      ).catch(console.error);
+    }
+
     playVerseAtIndex(item, 0);
-  }, [playVerseAtIndex]);
+  }, [playVerseAtIndex, includeCommentary, commentaryTier]);
 
   /**
    * Play a chapter

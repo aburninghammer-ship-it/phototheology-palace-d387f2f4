@@ -1,9 +1,16 @@
 /**
  * Audio Bible Service
- * Handles TTS generation and commentary fetching
+ * Handles TTS generation, commentary fetching, and caching
  */
 
 import { supabase } from "@/integrations/supabase/client";
+import {
+  cacheChapterVerses,
+  getCachedChapterVerses,
+  cacheCommentary as cacheCommentaryLocal,
+  getCachedCommentary as getCachedCommentaryLocal,
+  prefetchCommentary,
+} from "./audioBibleCache";
 
 export type CommentaryTier = "surface" | "intermediate" | "scholarly";
 
@@ -44,6 +51,45 @@ interface CommentaryResult {
 }
 
 /**
+ * Fetch chapter verses with caching
+ */
+export async function fetchChapterVerses(
+  book: string,
+  chapter: number
+): Promise<{ verse: number; text: string }[]> {
+  // Check local cache first
+  const cached = await getCachedChapterVerses(book, chapter);
+  if (cached && cached.length > 0) {
+    console.log(`[Service] Using cached verses for ${book} ${chapter}`);
+    return cached;
+  }
+
+  // Fetch from API
+  try {
+    const response = await fetch(
+      `https://bible-api.com/${encodeURIComponent(book)}+${chapter}?translation=kjv`
+    );
+    const data = await response.json();
+
+    if (data.verses) {
+      const verses = data.verses.map((v: any) => ({
+        verse: v.verse,
+        text: v.text.trim(),
+      }));
+
+      // Cache for next time
+      await cacheChapterVerses(book, chapter, verses);
+
+      return verses;
+    }
+    return [];
+  } catch (error) {
+    console.error("[Service] Error fetching verses:", error);
+    return [];
+  }
+}
+
+/**
  * Generate TTS audio from text using OpenAI
  */
 export async function generateTTSAudio(options: GenerateAudioOptions): Promise<string | null> {
@@ -68,10 +114,23 @@ export async function generateTTSAudio(options: GenerateAudioOptions): Promise<s
 
 /**
  * Generate commentary for a verse with optional TTS
+ * Uses local cache first, then Supabase cache, then generates new
  */
 export async function generateCommentary(options: CommentaryOptions): Promise<CommentaryResult | null> {
   const { book, chapter, verse, verseText, tier = "surface", generateAudio = false, voice = "onyx" } = options;
 
+  // 1. Check local IndexedDB cache first (fastest)
+  const localCached = await getCachedCommentaryLocal(book, chapter, verse, tier);
+  if (localCached) {
+    console.log(`[Service] Local cache hit for ${book} ${chapter}:${verse} (${tier})`);
+    return {
+      commentary: localCached.commentary,
+      audioUrl: localCached.audioUrl || null,
+      cached: true,
+    };
+  }
+
+  // 2. Call edge function (which checks Supabase cache and generates if needed)
   try {
     const { data, error } = await supabase.functions.invoke("generate-audio-commentary", {
       body: { book, chapter, verse, verseText, tier, generateAudio, voice },
@@ -82,11 +141,18 @@ export async function generateCommentary(options: CommentaryOptions): Promise<Co
       return null;
     }
 
-    return {
+    const result = {
       commentary: data?.commentary || "",
       audioUrl: data?.audioUrl || null,
       cached: data?.cached || false,
     };
+
+    // 3. Cache locally for even faster access next time
+    if (result.commentary) {
+      await cacheCommentaryLocal(book, chapter, verse, tier, result.commentary, result.audioUrl || undefined);
+    }
+
+    return result;
   } catch (error) {
     console.error("[Commentary] Error:", error);
     return null;
@@ -94,7 +160,7 @@ export async function generateCommentary(options: CommentaryOptions): Promise<Co
 }
 
 /**
- * Get cached commentary from database
+ * Get cached commentary from Supabase database
  */
 export async function getCachedCommentary(
   book: string,
@@ -102,6 +168,17 @@ export async function getCachedCommentary(
   verse: number,
   tier: CommentaryTier = "surface"
 ): Promise<CommentaryResult | null> {
+  // Check local cache first
+  const localCached = await getCachedCommentaryLocal(book, chapter, verse, tier);
+  if (localCached) {
+    return {
+      commentary: localCached.commentary,
+      audioUrl: localCached.audioUrl || null,
+      cached: true,
+    };
+  }
+
+  // Check Supabase cache
   try {
     const { data, error } = await supabase
       .from("bible_commentaries")
@@ -114,6 +191,9 @@ export async function getCachedCommentary(
 
     if (error || !data) return null;
 
+    // Cache locally
+    await cacheCommentaryLocal(book, chapter, verse, tier, data.commentary_text, data.audio_url || undefined);
+
     return {
       commentary: data.commentary_text,
       audioUrl: data.audio_url,
@@ -122,6 +202,46 @@ export async function getCachedCommentary(
   } catch {
     return null;
   }
+}
+
+/**
+ * Prefetch commentary for upcoming verses in the background
+ */
+export async function prefetchUpcomingCommentary(
+  book: string,
+  chapter: number,
+  currentVerse: number,
+  verses: { verse: number; text: string }[],
+  tier: CommentaryTier = "surface",
+  count: number = 3
+): Promise<void> {
+  // Generate function for prefetch
+  const generateFn = async (
+    b: string,
+    ch: number,
+    v: number,
+    text: string,
+    t: string
+  ): Promise<{ commentary: string; audioUrl?: string } | null> => {
+    const result = await generateCommentary({
+      book: b,
+      chapter: ch,
+      verse: v,
+      verseText: text,
+      tier: t as CommentaryTier,
+      generateAudio: false, // Don't generate audio for prefetch to save time/cost
+    });
+
+    if (result) {
+      return {
+        commentary: result.commentary,
+        audioUrl: result.audioUrl || undefined,
+      };
+    }
+    return null;
+  };
+
+  await prefetchCommentary(book, chapter, currentVerse + 1, count, tier, verses, generateFn);
 }
 
 /**

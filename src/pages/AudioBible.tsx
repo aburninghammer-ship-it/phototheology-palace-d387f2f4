@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { READING_SERIES, getThemes, CommentaryTier } from "@/services/audioBibleService";
+import { READING_SERIES, getThemes, CommentaryTier, fetchChapterVerses } from "@/services/audioBibleService";
 import { BIBLE_BOOK_METADATA } from "@/data/bibleBooks";
 import {
   Play,
@@ -133,27 +133,6 @@ export default function AudioBible() {
   const getChapterCount = (bookName: string = selectedBook) => {
     const book = BIBLE_BOOK_METADATA.find((b) => b.name === bookName);
     return book?.chapters || 1;
-  };
-
-  // Fetch verses for a chapter
-  const fetchChapterVerses = async (book: string, chapter: number) => {
-    try {
-      const response = await fetch(
-        `https://bible-api.com/${encodeURIComponent(book)}+${chapter}?translation=kjv`
-      );
-      const data = await response.json();
-
-      if (data.verses) {
-        return data.verses.map((v: any) => ({
-          verse: v.verse,
-          text: v.text.trim(),
-        }));
-      }
-      return [];
-    } catch (error) {
-      console.error("Error fetching verses:", error);
-      return [];
-    }
   };
 
   // Handle play for single chapter
