@@ -161,6 +161,7 @@ export async function generateCommentary(options: CommentaryOptions): Promise<Co
 
 /**
  * Get cached commentary from Supabase database
+ * Note: bible_commentaries table may not exist yet - commentary is generated on-demand
  */
 export async function getCachedCommentary(
   book: string,
@@ -178,30 +179,9 @@ export async function getCachedCommentary(
     };
   }
 
-  // Check Supabase cache
-  try {
-    const { data, error } = await supabase
-      .from("bible_commentaries")
-      .select("commentary_text, audio_url")
-      .eq("book", book)
-      .eq("chapter", chapter)
-      .eq("verse", verse)
-      .eq("tier", tier)
-      .maybeSingle();
-
-    if (error || !data) return null;
-
-    // Cache locally
-    await cacheCommentaryLocal(book, chapter, verse, tier, data.commentary_text, data.audio_url || undefined);
-
-    return {
-      commentary: data.commentary_text,
-      audioUrl: data.audio_url,
-      cached: true,
-    };
-  } catch {
-    return null;
-  }
+  // Commentary is generated via edge function, not stored in main database
+  // The edge function handles its own caching
+  return null;
 }
 
 /**
@@ -246,37 +226,21 @@ export async function prefetchUpcomingCommentary(
 
 /**
  * Get available themes
+ * Note: Themes feature not yet implemented - returns empty array
  */
-export async function getThemes() {
-  const { data, error } = await supabase
-    .from("commentary_themes")
-    .select("*")
-    .order("name");
-
-  if (error) {
-    console.error("[Themes] Error:", error);
-    return [];
-  }
-
-  return data || [];
+export async function getThemes(): Promise<{ id: string; name: string; display_name: string; description: string; icon: string; category: string; verse_count: number }[]> {
+  // Themes feature not yet implemented
+  // Return empty array for now
+  return [];
 }
 
 /**
  * Get verses for a theme
+ * Note: Themes feature not yet implemented - returns empty array
  */
-export async function getThemeVerses(themeId: string) {
-  const { data, error } = await supabase
-    .from("theme_verses")
-    .select("*")
-    .eq("theme_id", themeId)
-    .order("relevance_score", { ascending: false });
-
-  if (error) {
-    console.error("[ThemeVerses] Error:", error);
-    return [];
-  }
-
-  return data || [];
+export async function getThemeVerses(_themeId: string): Promise<{ verse_reference: string; relevance_score: number }[]> {
+  // Themes feature not yet implemented
+  return [];
 }
 
 // Pre-defined reading series
