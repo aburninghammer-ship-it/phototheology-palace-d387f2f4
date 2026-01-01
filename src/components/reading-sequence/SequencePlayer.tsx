@@ -23,9 +23,13 @@ import {
   RefreshCw,
   Mic,
   Share2,
+  Gem,
+  Save,
+  Check,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 import { ReadingSequenceBlock, SequenceItem } from "@/types/readingSequence";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -80,6 +84,7 @@ interface ChapterContent {
 
 export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceName }: SequencePlayerProps) => {
   const { setBibleAudioState, updateBibleProgress, setShowMiniPlayer } = useGlobalAudio();
+  const { user } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +106,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const [isPlayingCommentary, setIsPlayingCommentary] = useState(false);
   const [offlineMode, setOfflineMode] = useState(!isOnline());
   const [commentaryText, setCommentaryText] = useState<string | null>(null);
+  const [completedVerseIndices, setCompletedVerseIndices] = useState<Set<number>>(new Set());
+  const [currentCommentaryVerse, setCurrentCommentaryVerse] = useState<{ index: number; text: string; verse: number } | null>(null);
+  const [savingGem, setSavingGem] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [savedPosition, setSavedPosition] = useState<{ seqIdx: number; itemIdx: number; verseIdx: number } | null>(null);
   const [showResumeOption, setShowResumeOption] = useState(false);
@@ -733,6 +741,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       }
       console.log("[Audio] Moving to chapter:", nextIdx + 1, "of", totalItems);
       setCurrentVerseIdx(0);
+      // Clear completed verses for new chapter
+      setCompletedVerseIndices(new Set());
+      setCurrentCommentaryVerse(null);
       // Clear chapter content to trigger reload
       setChapterContent(null);
       // Reset lastFetchedRef so the new chapter can load
@@ -1728,6 +1739,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         const cached = commentaryCache.current.get(cacheKey);
         
         const proceedAfterCommentary = () => {
+          // Mark the verse as completed (commentary finished)
+          setCompletedVerseIndices(prev => new Set(prev).add(verseIdx));
+          setCurrentCommentaryVerse(null);
+
           // Always check continuePlayingRef before proceeding - use refs to avoid stale closures
           if (!continuePlayingRef.current) {
             console.log("[Verse Commentary] ❌ Stopped - continuePlayingRef is false | isPlayingRef:", isPlayingRef.current, "| isPausedRef:", isPausedRef.current);
@@ -1739,7 +1754,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               return;
             }
           }
-          
+
           if (isLastVerse) {
             console.log("[Audio] Chapter complete, moving to next");
             moveToNextChapter();
@@ -1753,6 +1768,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           // Use cached commentary with pre-generated audio - instant playback!
           console.log("[Verse Commentary] Using cached audio for verse", verseIdx + 1);
           setCommentaryText(cached.text);
+          setCurrentCommentaryVerse({ index: verseIdx, text: currentVerse.text, verse: currentVerse.verse });
           setIsPlayingCommentary(true);
           playingCommentaryRef.current = true;
           
@@ -1804,20 +1820,22 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         } else if (cached?.text) {
           // Have text but no audio - generate TTS only
           console.log("[Verse Commentary] Using cached text, generating audio");
-          
+          setCurrentCommentaryVerse({ index: verseIdx, text: currentVerse.text, verse: currentVerse.verse });
+
           // Also prefetch next verse while this commentary TTS generates
           const nextVerseToPrep = verseIdx + 1;
           if (nextVerseToPrep < content.verses.length) {
             const nextVerse = content.verses[nextVerseToPrep];
             prefetchVerseCommentary(content.book, content.chapter, nextVerse.verse, nextVerse.text, commentaryVoice, commentaryDepth);
           }
-          
+
           playCommentary(cached.text, commentaryVoice, proceedAfterCommentary);
           return;
         }
         
         // Fallback: generate everything with timeout protection
         console.log("[Verse Commentary] No cache, generating for verse", verseIdx + 1);
+        setCurrentCommentaryVerse({ index: verseIdx, text: currentVerse.text, verse: currentVerse.verse });
         setIsLoading(true);
         
         // Start prefetching next verse while we generate current - use every opportunity
@@ -2651,6 +2669,38 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     ? ((currentVerseIdx + 1) / chapterContent.verses.length) * 100
     : 0;
 
+  // Save commentary as gem handler
+  const handleSaveCommentaryAsGem = async () => {
+    if (!user || !commentaryText || !chapterContent || !currentCommentaryVerse) {
+      toast.error("Unable to save - please try again");
+      return;
+    }
+
+    setSavingGem(true);
+    try {
+      const verseRef = `${chapterContent.book} ${chapterContent.chapter}:${currentCommentaryVerse.verse}`;
+      const gemTitle = `Commentary on ${verseRef}`;
+      const gemContent = `**${verseRef}**\n\n_"${currentCommentaryVerse.text}"_\n\n---\n\n${commentaryText}`;
+
+      // Save to user_gems table
+      const { error: saveError } = await supabase.from("user_gems").insert({
+        user_id: user.id,
+        gem_name: gemTitle,
+        gem_content: gemContent,
+        category: "Bible Commentary",
+      });
+
+      if (saveError) throw saveError;
+
+      toast.success("Commentary saved to your Gems! 💎");
+    } catch (error) {
+      console.error("Error saving gem:", error);
+      toast.error("Failed to save gem");
+    } finally {
+      setSavingGem(false);
+    }
+  };
+
   // Music URL - use cached version when offline
   // Using peaceful ambient track without bells/chimes
   const [musicUrl, setMusicUrl] = useState("https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e5e3b4b5a.mp3");
@@ -3019,9 +3069,32 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             </p>
           )}
           {isPlayingCommentary && (
-            <p className="text-sm text-amber-600 dark:text-amber-400 mt-2">
-              🎩 Jeeves is sharing insights...
-            </p>
+            <div className="mt-2 space-y-2">
+              <p className="text-sm text-amber-600 dark:text-amber-400">
+                🎩 Jeeves is sharing insights...
+              </p>
+              {user && commentaryText && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSaveCommentaryAsGem}
+                  disabled={savingGem}
+                  className="text-xs gap-1"
+                >
+                  {savingGem ? (
+                    <>
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Gem className="h-3 w-3" />
+                      Save as Gem
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
           )}
         </div>
 
@@ -3029,22 +3102,39 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         {chapterContent && chapterContent.verses.length > 0 && (
           <div className="max-h-[400px] overflow-y-auto rounded-lg border border-border/50 bg-muted/20">
             <div className="p-4 space-y-3">
-              {chapterContent.verses.map((verse, idx) => (
-                <p
-                  key={verse.verse}
-                  id={`verse-${verse.verse}`}
-                  className={`text-base leading-relaxed transition-all duration-300 rounded-md p-2 ${
-                    idx === currentVerseIdx
-                      ? "bg-primary/20 border-l-4 border-primary scale-[1.01]"
-                      : "opacity-70 hover:opacity-100"
-                  }`}
-                >
-                  <span className={`font-bold mr-2 ${idx === currentVerseIdx ? "text-primary" : "text-muted-foreground"}`}>
-                    {verse.verse}
-                  </span>
-                  {verse.text}
-                </p>
-              ))}
+              {chapterContent.verses.map((verse, idx) => {
+                const isCompleted = completedVerseIndices.has(idx);
+                const isCurrent = idx === currentVerseIdx;
+                const isUpcoming = !isCompleted && !isCurrent;
+
+                return (
+                  <div
+                    key={verse.verse}
+                    id={`verse-${verse.verse}`}
+                    className={`text-base leading-relaxed transition-all duration-300 rounded-md p-2 ${
+                      isCompleted
+                        ? "bg-green-500/20 border-l-4 border-green-500"
+                        : isCurrent
+                        ? "bg-primary/20 border-l-4 border-primary scale-[1.01]"
+                        : "opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <p className="flex items-start gap-2">
+                      <span className={`font-bold shrink-0 ${
+                        isCompleted
+                          ? "text-green-600 dark:text-green-400"
+                          : isCurrent
+                          ? "text-primary"
+                          : "text-muted-foreground"
+                      }`}>
+                        {isCompleted && <Check className="inline h-4 w-4 mr-1" />}
+                        {verse.verse}
+                      </span>
+                      <span>{verse.text}</span>
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
