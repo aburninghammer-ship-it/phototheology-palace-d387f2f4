@@ -27,6 +27,7 @@ interface PlaybackItem {
 interface UseAudioBibleOptions {
   defaultVoice?: OpenAIVoice;
   defaultSpeed?: number;
+  defaultVolume?: number;
   defaultTier?: CommentaryTier;
   onVerseChange?: (book: string, chapter: number, verse: number) => void;
   onChapterComplete?: (book: string, chapter: number) => void;
@@ -36,6 +37,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   const {
     defaultVoice = "onyx",
     defaultSpeed = 1.0,
+    defaultVolume = 1.0,
     defaultTier = "surface",
     onVerseChange,
     onChapterComplete,
@@ -46,6 +48,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [voice, setVoice] = useState<OpenAIVoice>(defaultVoice);
   const [speed, setSpeed] = useState(defaultSpeed);
+  const [volume, setVolumeState] = useState(defaultVolume);
   const [commentaryTier, setCommentaryTier] = useState<CommentaryTier>(defaultTier);
   const [includeCommentary, setIncludeCommentary] = useState(true);
   const [commentaryOnly, setCommentaryOnly] = useState(false);
@@ -81,6 +84,17 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   useEffect(() => {
     audioEngine.setPlaybackRate(speed);
   }, [speed]);
+
+  // Update volume when it changes
+  useEffect(() => {
+    audioEngine.setVolume(volume);
+  }, [volume]);
+
+  // Volume setter
+  const setVolume = useCallback((vol: number) => {
+    setVolumeState(vol);
+    audioEngine.setVolume(vol);
+  }, []);
 
   /**
    * Unlock iOS audio - call on first user interaction
@@ -363,6 +377,8 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     setVoice,
     speed,
     setSpeed,
+    volume,
+    setVolume,
     commentaryTier,
     setCommentaryTier,
     includeCommentary,

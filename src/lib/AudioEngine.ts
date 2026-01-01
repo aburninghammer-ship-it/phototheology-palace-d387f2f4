@@ -14,6 +14,7 @@ class AudioEngine {
   private listeners: Set<AudioEventCallback> = new Set();
   private currentState: AudioState = 'idle';
   private playbackRate = 1.0;
+  private volume = 1.0;
 
   private constructor() {
     if (typeof window !== 'undefined') {
@@ -91,6 +92,7 @@ class AudioEngine {
     try {
       this.audio.src = url;
       this.audio.playbackRate = this.playbackRate;
+      this.audio.volume = this.volume;
       this.setState('loading');
       await this.audio.load();
     } catch (error) {
@@ -121,6 +123,17 @@ class AudioEngine {
     if (this.audio) {
       this.audio.playbackRate = rate;
     }
+  }
+
+  setVolume(vol: number) {
+    this.volume = Math.max(0, Math.min(1, vol));
+    if (this.audio) {
+      this.audio.volume = this.volume;
+    }
+  }
+
+  getVolume(): number {
+    return this.volume;
   }
 
   getState(): AudioState {
