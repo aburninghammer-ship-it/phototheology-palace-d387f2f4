@@ -451,22 +451,33 @@ serve(async (req) => {
 
     console.log(`[TTS] Generated ${totalLength} bytes with ${provider}`);
 
-    // Store in cache if verse info provided
+    // For cache-enabled requests, return audio immediately and cache in background
     if (useCache && book && chapter !== undefined && verse !== undefined) {
-      const cachedUrl = await storeInCache(supabase, book, chapter, verse, finalVoice, provider, combined.buffer);
-
-      if (cachedUrl) {
-        return new Response(
-          JSON.stringify({
-            audioUrl: cachedUrl,
-            cached: false,
-            justCached: true,
-            provider,
-            contentType: 'audio/mpeg'
-          }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
+      const storagePath = getStoragePath(book, chapter, verse, finalVoice, provider);
+      
+      // Start caching in background (fire and forget - don't await)
+      const cachePromise = storeInCache(supabase, book, chapter, verse, finalVoice, provider, combined.buffer);
+      cachePromise.catch(e => console.error('[TTS] Background cache failed:', e));
+      
+      // Return URL immediately - the file will be available shortly
+      const { data: urlData } = supabase.storage
+        .from('bible-audio')
+        .getPublicUrl(storagePath);
+      
+      // Also return base64 for immediate playback while cache uploads
+      const base64Audio = base64Encode(combined.buffer);
+      
+      return new Response(
+        JSON.stringify({
+          audioUrl: urlData.publicUrl,
+          audioContent: base64Audio,
+          cached: false,
+          justCached: true,
+          provider,
+          contentType: 'audio/mpeg'
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // If requested, return a URL response to avoid huge base64 payloads (better for mobile)
