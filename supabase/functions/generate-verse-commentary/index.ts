@@ -1,8 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+// Normalize book name for consistent caching
+const normalizeBookName = (book: string): string => {
+  return book.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
 };
 
 type CommentaryDepth = "surface" | "intermediate" | "depth" | "deep-drill";
@@ -299,6 +305,39 @@ serve(async (req) => {
       );
     }
 
+    // Initialize Supabase client for caching
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const normalizedBook = normalizeBookName(book);
+    const verseNum = parseInt(verse);
+    const chapterNum = parseInt(chapter);
+
+    // Skip cache if user has study context - personalized commentary should be fresh
+    const hasUserStudies = userStudiesContext && userStudiesContext.length > 0;
+
+    // Check database cache first (only if no user studies - personalized should be fresh)
+    if (supabaseUrl && supabaseServiceKey && !hasUserStudies) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+      const { data: cached, error: cacheError } = await supabase
+        .from("verse_commentary_cache")
+        .select("commentary_text")
+        .eq("book", book)
+        .eq("chapter", chapterNum)
+        .eq("verse", verseNum)
+        .eq("depth", depth)
+        .maybeSingle();
+
+      if (!cacheError && cached?.commentary_text) {
+        console.log(`[Verse Commentary] Cache HIT for ${book} ${chapter}:${verse} (${depth})`);
+        return new Response(
+          JSON.stringify({ commentary: cached.commentary_text, cached: true }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      console.log(`[Verse Commentary] Cache MISS for ${book} ${chapter}:${verse} - generating...`);
+    }
+
     // Build user studies section if provided
     const userStudiesSection = userStudiesContext 
       ? `\n\n${userStudiesContext}\n`
@@ -418,8 +457,31 @@ Give commentary appropriate for audio narration. Do not include verse reference 
 
     console.log(`[Verse Commentary] Generated ${commentary?.length || 0} chars for ${book} ${chapter}:${verse}`);
 
+    // Cache the generated commentary for future use (only if no user studies)
+    if (commentary && supabaseUrl && supabaseServiceKey && !hasUserStudies) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+      // Fire and forget - don't wait for cache to complete
+      supabase
+        .from("verse_commentary_cache")
+        .upsert({
+          book,
+          chapter: chapterNum,
+          verse: verseNum,
+          depth,
+          commentary_text: commentary,
+        }, { onConflict: "book,chapter,verse,depth" })
+        .then(({ error }) => {
+          if (error) {
+            console.error("[Verse Commentary] Cache insert error:", error);
+          } else {
+            console.log(`[Verse Commentary] Cached ${book} ${chapter}:${verse} (${depth})`);
+          }
+        });
+    }
+
     return new Response(
-      JSON.stringify({ commentary }),
+      JSON.stringify({ commentary, cached: false }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
