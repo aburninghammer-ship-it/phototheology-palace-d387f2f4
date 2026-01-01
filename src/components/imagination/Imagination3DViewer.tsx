@@ -397,12 +397,14 @@ function SceneEnvironment({ scene }: { scene: typeof BIBLE_SCENES[0] }) {
 // Sensory prompt display
 function SensoryPrompt({ prompts, currentIndex }: { prompts: string[]; currentIndex: number }) {
   return (
-    <Html position={[0, 3, -3]} center>
+    <Html position={[0, 3, -3]} center style={{ pointerEvents: 'auto' }}>
       <div 
-        className="bg-black/80 text-white p-6 rounded-xl max-w-md text-center backdrop-blur-sm border border-primary/30 max-h-[200px] overflow-y-auto"
+        className="bg-black/80 text-white p-6 rounded-xl max-w-md text-center backdrop-blur-sm border border-primary/30 max-h-[200px] overflow-y-auto overscroll-contain"
         data-scrollable="true"
+        style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}
         onTouchStart={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
       >
         <p className="text-lg italic leading-relaxed">
           "{prompts[currentIndex]}"
