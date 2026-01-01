@@ -848,8 +848,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     return 'elevenlabs';
   }, []);
 
-  // Generate TTS for text - with offline fallback
-  const generateTTS = useCallback(async (text: string, voice: string): Promise<string | null> => {
+  // Generate TTS for text - with offline fallback and optional server-side caching
+  const generateTTS = useCallback(async (
+    text: string, 
+    voice: string,
+    verseInfo?: { book: string; chapter: number; verse: number }
+  ): Promise<string | null> => {
     // If offline mode, use browser speech synthesis
     if (offlineMode || !isOnline()) {
       console.log("[TTS] Using offline browser speech synthesis");
@@ -861,15 +865,24 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log(`[TTS] Using provider: ${provider} for voice: ${voice}`);
     
     try {
+      // Build request body - include verse info for server-side caching when available
+      const requestBody: Record<string, unknown> = { text, voice, provider };
+      if (verseInfo) {
+        requestBody.book = verseInfo.book;
+        requestBody.chapter = verseInfo.chapter;
+        requestBody.verse = verseInfo.verse;
+        requestBody.useCache = true;
+      }
+      
       const { data, error } = await supabase.functions.invoke("text-to-speech", {
-        body: { text, voice, provider },
+        body: requestBody,
       });
 
       if (error) throw error;
 
       // Handle URL response (cached or just-cached)
       if (data?.audioUrl) {
-        console.log("[TTS] Using returned audio URL");
+        console.log("[TTS] Using returned audio URL, cached:", data.cached);
         return data.audioUrl;
       }
 
@@ -1189,7 +1202,12 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log("[Prefetch] Starting for verse:", verseIdx + 1);
     
     const verse = content.verses[verseIdx];
-    const url = await generateTTS(verse.text, voice);
+    // Pass verse info for server-side caching
+    const url = await generateTTS(verse.text, voice, {
+      book: content.book,
+      chapter: content.chapter,
+      verse: verse.verse
+    });
     
     prefetchingRef.current.delete(cacheKey);
     
@@ -1583,30 +1601,24 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       if (url) {
         console.log("[PlayVerse] Using in-memory cached TTS for verse:", verseIdx + 1);
       } else if (isOnline()) {
-        // Generate TTS via API (online mode)
+        // Generate TTS via API (online mode) - pass verse info for server-side caching
         isGeneratingRef.current = true;
         console.log("[PlayVerse] Generating TTS for verse:", verseIdx + 1, "text:", verse.text.substring(0, 50));
         setIsLoading(true);
 
-        url = await generateTTS(verse.text, voice);
+        url = await generateTTS(verse.text, voice, {
+          book: content.book,
+          chapter: content.chapter,
+          verse: verse.verse
+        });
 
         isGeneratingRef.current = false;
         setIsLoading(false);
 
         if (url) {
           ttsCache.current.set(cacheKey, url);
-
-          // Cache audio blob for offline use (fire and forget)
-          try {
-            const response = await fetch(url);
-            if (response.ok) {
-              const blob = await response.blob();
-              await cacheTTSAudio(content.book, content.chapter, verse.verse, blob, voice);
-              console.log("[PlayVerse] Cached TTS for offline use:", content.book, content.chapter, verse.verse);
-            }
-          } catch (e) {
-            console.warn("[PlayVerse] Failed to cache TTS for offline:", e);
-          }
+          // Server-side caching now handles storage, no need for client-side blob caching
+          // This dramatically speeds up verse-to-verse transitions
         }
       }
     }
@@ -1649,21 +1661,24 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return;
     }
 
-    // Prefetch next 3 verses while this one plays (increased from 2)
-    for (let i = 1; i <= 3; i++) {
+    // Prefetch next 5 verses while this one plays - aggressive prefetch for smooth playback
+    for (let i = 1; i <= 5; i++) {
       const nextIdx = verseIdx + i;
       if (nextIdx < content.verses.length) {
-        prefetchVerse(nextIdx, content, voice);
-        // Also use audioPreloader for additional caching
-        const nextVerse = content.verses[nextIdx];
-        audioPreloader.preloadVerseTTS(
-          content.book, 
-          content.chapter, 
-          nextVerse.verse, 
-          nextVerse.text, 
-          voice, 
-          i // priority: closer verses have higher priority
-        );
+        // Stagger prefetch slightly to avoid overwhelming API
+        setTimeout(() => {
+          prefetchVerse(nextIdx, content, voice);
+          // Also use audioPreloader for additional caching
+          const nextVerse = content.verses[nextIdx];
+          audioPreloader.preloadVerseTTS(
+            content.book, 
+            content.chapter, 
+            nextVerse.verse, 
+            nextVerse.text, 
+            voice, 
+            i // priority: closer verses have higher priority
+          );
+        }, i * 50); // Stagger by 50ms each
       }
     }
     
@@ -2690,6 +2705,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         user_id: user.id,
         gem_name: gemTitle,
         gem_content: gemContent,
+        room_id: "GR", // Gems Room
+        floor_number: 1,
         category: "Bible Commentary",
       });
 
