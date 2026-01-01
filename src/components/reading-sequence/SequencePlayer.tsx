@@ -1154,9 +1154,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log("[ChapterComplete] Commentary settings:", { includeCommentary, commentaryMode });
     
     if (includeCommentary && commentaryMode === "chapter" && content && continuePlayingRef.current) {
+      // CRITICAL: Set commentary ref IMMEDIATELY when entering commentary path
+      // This prevents effects from restarting verse playback during cache check or audio setup
+      playingCommentaryRef.current = true;
+
       const cacheKey = `chapter-${content.book}-${content.chapter}-${commentaryVoice}`;
       const cached = commentaryCache.current.get(cacheKey);
-      
+
       if (cached?.audioUrl) {
         console.log("[ChapterComplete] Using cached chapter commentary audio");
         setCommentaryText(cached.text);
@@ -1819,6 +1823,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       
       // Handle verse-by-verse commentary mode
       if (includeCommentary && commentaryMode === "verse" && content && continuePlayingRef.current) {
+        // CRITICAL: Set commentary ref IMMEDIATELY when entering commentary path
+        // This prevents effects from restarting verse playback during cache check or audio setup
+        playingCommentaryRef.current = true;
+
         const currentVerse = content.verses[verseIdx];
         const cacheKey = `verse-${content.book}-${content.chapter}-${currentVerse.verse}-${commentaryVoice}`;
         const cached = commentaryCache.current.get(cacheKey);
@@ -1976,9 +1984,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         console.log("[Audio] Chapter complete, checking for chapter commentary...");
         
         if (includeCommentary && commentaryMode === "chapter" && content && continuePlayingRef.current) {
+          // CRITICAL: Set commentary ref IMMEDIATELY when entering commentary path
+          // This prevents effects from restarting verse playback during cache check or audio setup
+          playingCommentaryRef.current = true;
+
           const cacheKey = `chapter-${content.book}-${content.chapter}-${commentaryVoice}`;
           const cached = commentaryCache.current.get(cacheKey);
-          
+
           if (cached?.audioUrl) {
             // Use cached chapter commentary with pre-generated audio - instant playback!
             console.log("[Chapter Commentary] Using cached audio");
