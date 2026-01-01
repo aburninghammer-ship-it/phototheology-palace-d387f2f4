@@ -15,7 +15,7 @@ const intents = [
     description: "Start with guided reading and simple principles",
     color: "from-blue-500 to-cyan-500",
     path: "/interactive-demo",
-    authPath: "/reading-plans",
+    authPath: "/bible",
   },
   {
     id: "deep-study" as const,
