@@ -35,7 +35,11 @@
       "WebFetch(domain:bible-api.com)",
       "Bash(npm uninstall:*)",
       "Bash(git rebase:*)",
-      "Bash(GIT_EDITOR=true git rebase:*)"
+      "Bash(GIT_EDITOR=true git rebase:*)",
+      "Bash(supabase functions deploy:*)",
+      "Bash(npx supabase functions deploy:*)",
+      "Bash(npx supabase:*)",
+      "Bash(SUPABASE_ACCESS_TOKEN=\"sbp_fe32d3be189beab600f50a27caea50a09e6ef260\" npx supabase:*)"
     ],
     "deny": [],
     "ask": []
