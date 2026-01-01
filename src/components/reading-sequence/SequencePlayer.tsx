@@ -1739,10 +1739,6 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         const cached = commentaryCache.current.get(cacheKey);
         
         const proceedAfterCommentary = () => {
-          // Mark the verse as completed (commentary finished)
-          setCompletedVerseIndices(prev => new Set(prev).add(verseIdx));
-          setCurrentCommentaryVerse(null);
-
           // Always check continuePlayingRef before proceeding - use refs to avoid stale closures
           if (!continuePlayingRef.current) {
             console.log("[Verse Commentary] ❌ Stopped - continuePlayingRef is false | isPlayingRef:", isPlayingRef.current, "| isPausedRef:", isPausedRef.current);
@@ -1751,9 +1747,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
               console.log("[Verse Commentary] 🔄 RECOVERING - forcing continue");
               continuePlayingRef.current = true;
             } else {
+              // Mark as completed even if stopped
+              setCompletedVerseIndices(prev => new Set(prev).add(verseIdx));
+              setCurrentCommentaryVerse(null);
               return;
             }
           }
+
+          // Mark verse as completed AFTER checking refs to avoid interference
+          setCompletedVerseIndices(prev => new Set(prev).add(verseIdx));
+          setCurrentCommentaryVerse(null);
 
           if (isLastVerse) {
             console.log("[Audio] Chapter complete, moving to next");
