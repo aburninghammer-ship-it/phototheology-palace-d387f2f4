@@ -159,6 +159,7 @@ export function QuickAudioButton({
         // Fallback to browser TTS on error
         if ('speechSynthesis' in window) {
           const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-US'; // Force English
           utterance.onend = () => {
             setIsPlaying(false);
             notifyTTSStopped();
@@ -191,6 +192,7 @@ export function QuickAudioButton({
         if ('speechSynthesis' in window) {
           console.log('[QuickAudio] Falling back to browser TTS');
           const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-US'; // Force English
           utterance.onend = () => {
             setIsPlaying(false);
             notifyTTSStopped();
@@ -207,6 +209,7 @@ export function QuickAudioButton({
       // Fallback to browser TTS
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US'; // Force English
         utterance.onend = () => {
           setIsPlaying(false);
           notifyTTSStopped();

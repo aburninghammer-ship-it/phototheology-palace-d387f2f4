@@ -255,6 +255,8 @@ async function generateElevenLabs(
   // Get voice ID from name or use directly if it looks like an ID
   const voiceId = ELEVENLABS_VOICES[voice.toLowerCase()] || voice;
 
+  // Use monolingual English model to prevent Hebrew/other language auto-detection
+  // eleven_multilingual_v2 can incorrectly detect Hebrew in biblical text
   const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
     method: 'POST',
     headers: {
@@ -263,7 +265,7 @@ async function generateElevenLabs(
     },
     body: JSON.stringify({
       text: text,
-      model_id: 'eleven_multilingual_v2',
+      model_id: 'eleven_turbo_v2_5', // English-optimized model, faster and won't read Hebrew
       voice_settings: {
         stability: 0.5,
         similarity_boost: 0.75,

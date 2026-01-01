@@ -249,6 +249,7 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
           utterance.rate = 1;
           utterance.pitch = 1;
           utterance.volume = 1;
+          utterance.lang = 'en-US'; // Force English to prevent Hebrew detection
           
           // Use the captured voice to ensure consistency across all chunks
           if (voiceToUse) {

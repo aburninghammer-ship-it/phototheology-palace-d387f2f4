@@ -947,6 +947,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       const utterance = new SpeechSynthesisUtterance(chunks[currentChunkIndex]);
       utterance.rate = playbackSpeed;
       utterance.pitch = 1;
+      utterance.lang = 'en-US'; // Force English to prevent Hebrew detection
       
       const voices = speechSynthesis.getVoices();
       const englishVoice = voices.find(v => 
@@ -2998,6 +2999,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                       window.speechSynthesis.cancel();
                       const utterance = new SpeechSynthesisUtterance(commentaryText);
                       utterance.rate = currentSequence?.playbackSpeed || 1;
+                      utterance.lang = 'en-US'; // Force English
                       browserUtteranceRef.current = utterance;
                       window.speechSynthesis.speak(utterance);
                       toast.success("Restarted from beginning", { duration: 1500 });
