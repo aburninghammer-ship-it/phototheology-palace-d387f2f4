@@ -279,12 +279,14 @@ function ReadingDesk({ book, stories }: { book: string | null; stories: string[]
       </group>
 
       {/* Book info panel */}
-      <Html position={[0, 2.5, 0]} center distanceFactor={6}>
+      <Html position={[0, 2.5, 0]} center distanceFactor={6} style={{ pointerEvents: 'auto' }}>
         <div 
-          className="bg-black/90 text-white p-4 rounded-xl min-w-[250px] text-center backdrop-blur-sm border border-primary/30 max-h-[250px] overflow-y-auto"
+          className="bg-black/90 text-white p-4 rounded-xl min-w-[250px] text-center backdrop-blur-sm border border-primary/30 max-h-[250px] overflow-y-auto overscroll-contain"
           data-scrollable="true"
+          style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}
           onTouchStart={(e) => e.stopPropagation()}
           onTouchMove={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
         >
           <h3 className="text-xl font-bold mb-2">{book}</h3>
           <p className="text-sm text-muted-foreground mb-3">Key Stories:</p>

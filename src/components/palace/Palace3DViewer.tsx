@@ -254,12 +254,14 @@ function RoomDoor({ position, room, floorNumber, isUnlocked, onClick, index }: R
 
       {/* Hover info panel */}
       {hovered && (
-        <Html position={[0, 3.2, 0]} center>
+        <Html position={[0, 3.2, 0]} center style={{ pointerEvents: 'auto' }}>
           <div 
-            className="bg-gradient-to-b from-black/95 to-gray-900/95 text-white px-5 py-3 rounded-xl shadow-2xl border border-white/20 min-w-[180px] backdrop-blur-sm max-h-[200px] overflow-y-auto"
+            className="bg-gradient-to-b from-black/95 to-gray-900/95 text-white px-5 py-3 rounded-xl shadow-2xl border border-white/20 min-w-[180px] backdrop-blur-sm max-h-[200px] overflow-y-auto overscroll-contain"
             data-scrollable="true"
+            style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}
             onTouchStart={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
           >
             <p className="font-bold text-base">{room.name}</p>
             <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
