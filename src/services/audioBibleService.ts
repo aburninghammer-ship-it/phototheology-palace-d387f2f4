@@ -97,7 +97,7 @@ export async function generateTTSAudio(options: GenerateAudioOptions): Promise<s
 
   try {
     const { data, error } = await supabase.functions.invoke("text-to-speech", {
-      body: { text, voice, returnUrl: true },
+      body: { text, voice, returnType: "url" },
     });
 
     if (error) {

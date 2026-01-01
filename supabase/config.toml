@@ -216,3 +216,6 @@ verify_jwt = false
 
 [functions.send-engagement-email]
 verify_jwt = false
+
+[functions.generate-audio-commentary]
+verify_jwt = false
