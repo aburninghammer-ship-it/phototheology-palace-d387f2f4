@@ -297,15 +297,37 @@ serve(async (req) => {
     // Build personalization note - capitalize name properly
     const capitalizedName = profileName ? profileName.charAt(0).toUpperCase() + profileName.slice(1).toLowerCase() : "";
     
+    // Check for children's devotional context
+    const isChildDevotional = body.ageGroup?.toLowerCase()?.includes("child") || 
+                              body.ageGroup?.toLowerCase()?.includes("kid") ||
+                              body.ageGroup?.toLowerCase() === "children" ||
+                              body.targetAudience?.toLowerCase()?.includes("child") ||
+                              body.targetAudience?.toLowerCase()?.includes("kid");
+    
     let personalizationNote = "";
     if (capitalizedName) {
-      personalizationNote = `\n\nCRITICAL PERSONALIZATION (NON-NEGOTIABLE):
-- This devotional is for a SPECIFIC PERSON named ${capitalizedName}
+      if (isChildDevotional) {
+        personalizationNote = `\n\nCRITICAL PERSONALIZATION FOR CHILD (NON-NEGOTIABLE):
+- This devotional is written DIRECTLY TO a child named ${capitalizedName}
+- A parent/leader will READ THIS TO ${capitalizedName}—so address the child as "you"
+- Use their name ${capitalizedName} 2–3 times TOTAL (opening greeting, mid encouragement, closing)
+- Use SIMPLE vocabulary and SHORT sentences a child can understand
+- Use vivid, imagination-sparking descriptions and concrete examples
+- Make Jesus feel real, close, and loving to ${capitalizedName}'s young heart
+- Include a simple question or activity ${capitalizedName} can respond to
+- Avoid abstract theological concepts—use story and image instead
+- Sound warm and inviting, like a favorite teacher or loving grandparent
+- NEVER use "Dear ${capitalizedName}" - just start naturally`;
+      } else {
+        personalizationNote = `\n\nCRITICAL PERSONALIZATION (NON-NEGOTIABLE):
+- This devotional is written DIRECTLY TO ${capitalizedName}—they are the READER
+- Do NOT write ABOUT ${capitalizedName} for someone else. You are addressing THEM directly.
 - Use their name ${capitalizedName} 2–3 times TOTAL in the devotional (opening, mid-devotional encouragement, closing charge)
 - Refer to their situation in plain language at least once (paraphrase the provided situation details; don't be vague)
-- Sound like a caring pastor writing a personal note, not a template
-- NEVER use “Dear ${capitalizedName}” or “Dear friend”
+- Sound like a caring pastor writing a personal letter TO ${capitalizedName}, not about them
+- NEVER use "Dear ${capitalizedName}" or "Dear friend"
 - Always capitalize their name correctly: ${capitalizedName}`;
+      }
     }
 
     // Build CADE context-aware section
@@ -408,7 +430,9 @@ OUTPUT FORMAT - Return a JSON array of devotional days:
 }`;
 
     const forPersonNote = capitalizedName
-      ? `\nThis devotional is written PERSONALLY for: ${capitalizedName}. Address ${capitalizedName} BY NAME 2-3 times total (opening, mid, closing). Always capitalize their name properly.`
+      ? isChildDevotional
+        ? `\nThis devotional is written DIRECTLY TO a child named ${capitalizedName}. A parent will read it TO them. Address ${capitalizedName} BY NAME 2-3 times. Use simple language and vivid imagery. Make Jesus feel close and real to a young heart.`
+        : `\nThis devotional is written DIRECTLY TO ${capitalizedName}—they are the READER, not someone else. Address ${capitalizedName} BY NAME 2-3 times total (opening, mid, closing). Always capitalize their name properly.`
       : "";
 
     const contextNote = resolvedIssueDescription ? `\nSITUATION DETAILS: ${resolvedIssueDescription}` : "";

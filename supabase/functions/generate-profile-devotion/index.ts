@@ -92,16 +92,42 @@ All devotionals must remain ALIGNED WITH:
 - Biblical hope and transformation
 
 PERSONALIZATION RULES:
+CRITICAL: The devotional is written DIRECTLY TO the person named—they are the READER. You are NOT writing about them for someone else to read. You are addressing THEM.
+
 When writing for a specific person:
+- Write TO them, not ABOUT them. They are the recipient and reader.
 - Their struggles become the ENTRY POINT
 - The solution is always Christ revealed through Scripture
 - Address them by name SPARINGLY and NATURALLY (1-2 times per section max)
 - Always capitalize names properly
-- Sound like a pastor writing a personal letter, not a mail-merge template
-- Their pain meets His provision at specific sanctuary stations (implicitly)`;
+- Sound like a pastor writing a personal letter TO THIS PERSON, not a mail-merge template
+- Their pain meets His provision at specific sanctuary stations (implicitly)
+
+CHILDREN'S DEVOTIONAL RULES:
+When age_group is "child" or "children" or "kids":
+- Write content that speaks DIRECTLY TO the child at their level
+- Use simple vocabulary, short sentences, and concrete examples
+- Include imagination-sparking descriptions children can visualize
+- The parent/creator will READ THIS TO THE CHILD—so address the child as "you"
+- Make Jesus feel real, close, and loving to a young heart
+- Include a simple question or activity the child can respond to
+- Avoid abstract theological concepts—use story and image instead`;
 
 function buildPersonalizedPrompt(profile: ProfileContext, theme?: string, scripture?: string): string {
-  let prompt = `Create a DENSE, theologically rich Phototheology devotional for ${profile.name}.
+  const isChild = profile.age_group?.toLowerCase().includes("child") || 
+                  profile.age_group?.toLowerCase().includes("kid") ||
+                  profile.age_group?.toLowerCase() === "children";
+  
+  let prompt = isChild 
+    ? `Create a CHILD-FRIENDLY Phototheology devotional written DIRECTLY TO ${profile.name}. 
+This is for a parent/leader to read TO the child—so write it addressing the child as "you."
+Use simple words, vivid imagery, and speak to a young heart about Jesus's love.
+
+ABOUT THIS CHILD:
+- Name: ${profile.name}
+- Age Group: ${profile.age_group || "child"}`
+    : `Create a DENSE, theologically rich Phototheology devotional written DIRECTLY TO ${profile.name}.
+CRITICAL: You are writing TO ${profile.name}—they are the READER. Do NOT write about them for someone else. Address THEM directly.
 
 ABOUT THIS PERSON:
 - Relationship: ${profile.relationship}
