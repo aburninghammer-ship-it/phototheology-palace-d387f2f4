@@ -7,10 +7,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// OpenAI TTS voice options (supported set)
+// OpenAI TTS voice options
 const OPENAI_VOICES = ['alloy', 'ash', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer'];
 
-// Backward-compatible aliases (deprecated voice names and ElevenLabs voice mappings)
+// Backward-compatible aliases (deprecated voice names and legacy provider voice mappings)
 const VOICE_ALIASES: Record<string, string> = {
   ballad: 'sage',
   verse: 'fable',
@@ -72,8 +72,6 @@ async function checkCache(
   voiceId: string
 ): Promise<{ found: boolean; url?: string }> {
   try {
-    const storagePath = getStoragePath(book, chapter, verse, voiceId);
-
     const { data, error } = await supabase
       .from('bible_audio_cache')
       .select('storage_path')
@@ -248,7 +246,7 @@ serve(async (req) => {
       verse,
       useCache = true,
       provider, // Ignored - always use OpenAI now
-      returnType = 'base64' as 'base64' | 'url'
+      returnType = 'url' as 'base64' | 'url'
     } = await req.json();
 
     if (!text) {
@@ -285,7 +283,6 @@ serve(async (req) => {
           JSON.stringify({
             audioUrl: cacheResult.url,
             cached: true,
-            provider: 'openai',
             contentType: 'audio/mpeg'
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -327,37 +324,35 @@ serve(async (req) => {
     // For cache-enabled requests, return audio immediately and cache in background
     if (useCache && book && chapter !== undefined && verse !== undefined) {
       const storagePath = getStoragePath(book, chapter, verse, finalVoice);
-      
-      // Start caching in background (fire and forget - don't await)
+
+      // Start caching in background (fire and forget)
       const cachePromise = storeInCache(supabase, book, chapter, verse, finalVoice, combined.buffer);
       cachePromise.catch(e => console.error('[TTS] Background cache failed:', e));
-      
-      // Return URL immediately - the file will be available shortly
+
+      // Return URL immediately
       const { data: urlData } = supabase.storage
         .from('bible-audio')
         .getPublicUrl(storagePath);
-      
+
       // Also return base64 for immediate playback while cache uploads
       const base64Audio = base64Encode(combined.buffer);
-      
+
       return new Response(
         JSON.stringify({
           audioUrl: urlData.publicUrl,
           audioContent: base64Audio,
           cached: false,
           justCached: true,
-          provider: 'openai',
           contentType: 'audio/mpeg'
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // If requested, return a URL response to avoid huge base64 payloads (better for mobile)
+    // For URL response type, upload to storage and return URL
     if (returnType === 'url') {
       try {
         const stableKey = await sha256Hex(JSON.stringify({
-          provider: 'openai',
           voice: finalVoice,
           speed: Math.round(speed * 100) / 100,
           text: text.trim(),
@@ -381,7 +376,6 @@ serve(async (req) => {
             JSON.stringify({
               audioUrl: urlData.publicUrl,
               cached: false,
-              provider: 'openai',
               contentType: 'audio/mpeg'
             }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -392,14 +386,13 @@ serve(async (req) => {
       }
     }
 
-    // Default: return base64 encoded audio
+    // Return base64 (fallback)
     const base64Audio = base64Encode(combined.buffer);
 
     return new Response(
       JSON.stringify({
         audioContent: base64Audio,
         cached: false,
-        provider: 'openai',
         contentType: 'audio/mpeg'
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

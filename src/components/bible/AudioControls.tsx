@@ -24,7 +24,10 @@ import {
   Download,
 } from "lucide-react";
 import { Verse } from "@/types/bible";
-import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import { OPENAI_VOICES, OpenAIVoice } from "@/services/ttsService";
+
+// Alias for backward compatibility
+type VoiceId = OpenAIVoice;
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";

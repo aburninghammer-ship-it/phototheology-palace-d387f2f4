@@ -33,9 +33,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { ReadingSequenceBlock, SequenceItem } from "@/types/readingSequence";
 import { notifyTTSStarted, notifyTTSStopped } from "@/hooks/useAudioDucking";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { mobileAudioEngine } from "@/lib/MobileAudioEngine";
+import { audioEngine } from "@/lib/AudioEngine";
 import { getGlobalMusicVolume, setGlobalMusicVolume } from "@/hooks/useMusicVolumeControl";
-import { OPENAI_VOICES, VoiceId } from "@/hooks/useTextToSpeech";
+import { OPENAI_VOICES, OpenAIVoice } from "@/services/ttsService";
+
+// Type alias for backward compatibility
+type VoiceId = OpenAIVoice;
 import { useGlobalAudio } from "@/contexts/GlobalAudioContext";
 import {
   Select,
@@ -215,7 +218,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // This handles iOS unlock, persistent audio element, and all mobile-specific concerns
   const ensureAudioUnlocked = useCallback(async (): Promise<boolean> => {
     console.log('[MobileAudio] Ensuring audio is unlocked...');
-    const result = await mobileAudioEngine.unlock();
+    const result = await audioEngine.unlock();
     console.log('[MobileAudio] Unlock result:', result);
     return result;
   }, []);
@@ -223,7 +226,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   // Helper to safely stop ALL audio (both mobile engine and browser TTS)
   const stopAudio = useCallback(() => {
     console.log('[MobileAudio] Stopping all audio');
-    mobileAudioEngine.stop();
+    audioEngine.stop();
     // Also stop browser TTS to prevent overlapping voices
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
@@ -245,7 +248,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
     const volume = options.volume ?? (isMutedRef.current ? 0 : volumeRef.current / 100);
 
-    return mobileAudioEngine.play(url, {
+    return audioEngine.play(url, {
       volume,
       playbackRate: options.playbackRate ?? 1,
       onEnded: options.onEnded,
@@ -344,8 +347,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     if (!('mediaSession' in navigator)) return;
 
     const handleMediaPlay = () => {
-      if (isPaused && mobileAudioEngine.getState() === 'paused') {
-        mobileAudioEngine.resume();
+      if (isPaused && audioEngine.getState() === 'paused') {
+        audioEngine.resume();
         setIsPaused(false);
         setIsPlaying(true);
       } else if (browserUtteranceRef.current) {
@@ -355,8 +358,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     };
 
     const handleMediaPause = () => {
-      if (mobileAudioEngine.isPlaying()) {
-        mobileAudioEngine.pause();
+      if (audioEngine.isPlaying()) {
+        audioEngine.pause();
         setIsPaused(true);
       } else if (speechSynthesis.speaking) {
         speechSynthesis.pause();
@@ -365,7 +368,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     };
 
     const handleMediaStop = () => {
-      mobileAudioEngine.stop();
+      audioEngine.stop();
       speechSynthesis.cancel();
       setIsPlaying(false);
       setIsPaused(false);
@@ -390,7 +393,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     isMutedRef.current = isMuted;
     // Also update any currently playing audio via MobileAudioEngine
     const effectiveVolume = isMuted ? 0 : volume / 100;
-    mobileAudioEngine.setVolume(effectiveVolume);
+    audioEngine.setVolume(effectiveVolume);
     console.log('[SequencePlayer] Volume ref sync - applied to MobileAudioEngine:', effectiveVolume);
   }, [volume, isMuted]);
 
@@ -424,8 +427,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           speechSynthesis.resume();
         }
         // Ensure audio keeps playing via MobileAudioEngine
-        if (mobileAudioEngine.getState() === 'paused') {
-          mobileAudioEngine.resume().catch(() => {
+        if (audioEngine.getState() === 'paused') {
+          audioEngine.resume().catch(() => {
             console.log('[SequencePlayer] Could not resume audio in background');
           });
         }
@@ -458,10 +461,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
           speechSynthesis.resume();
         }
         // Keep audio element alive via MobileAudioEngine
-        const state = mobileAudioEngine.getState();
-        if (state === 'paused' && mobileAudioEngine.getCurrentTime() > 0) {
+        const state = audioEngine.getState();
+        if (state === 'paused' && audioEngine.getCurrentTime() > 0) {
           console.log('[SequencePlayer] Resuming paused audio');
-          mobileAudioEngine.resume().catch(() => {});
+          audioEngine.resume().catch(() => {});
         }
         // Keep background music alive
         if (musicAudioRef.current && musicAudioRef.current.paused && musicVolume > 0) {
@@ -1546,9 +1549,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     
     // Stop any existing audio BEFORE proceeding (moved earlier to prevent race conditions)
     // This ensures we can always start fresh playback - stop BOTH audio systems
-    if (mobileAudioEngine.isPlaying() || mobileAudioEngine.getState() === 'loading') {
+    if (audioEngine.isPlaying() || audioEngine.getState() === 'loading') {
       console.log("[PlayVerse] Stopping existing audio before verse:", verseIdx + 1);
-      mobileAudioEngine.stop();
+      audioEngine.stop();
     }
     // CRITICAL: Also stop browser TTS to prevent overlapping voices
     if (speechSynthesis.speaking) {
@@ -2037,7 +2040,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
 
     // Start playback using MobileAudioEngine
     console.log("[Audio] Starting playback via MobileAudioEngine...");
-    const playSuccess = await mobileAudioEngine.play(url, {
+    const playSuccess = await audioEngine.play(url, {
       volume: currentVolume,
       playbackRate: playbackSpeed,
       onEnded: handleAudioComplete,
@@ -2174,7 +2177,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       chapterContent &&
       !isLoading &&
       !isGeneratingRef.current &&
-      !mobileAudioEngine.isPlaying()
+      !audioEngine.isPlaying()
     ) {
       console.log("Auto-playing next chapter after transition");
       shouldPlayNextRef.current = false;
@@ -2243,7 +2246,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         versesCount: chapterContent?.verses?.length,
         isLoading,
         isGenerating: isGeneratingRef.current,
-        audioState: mobileAudioEngine.getState()
+        audioState: audioEngine.getState()
       });
 
       if (
@@ -2252,7 +2255,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         chapterContent.verses.length > 0 &&
         !isLoading &&
         !isGeneratingRef.current &&
-        !mobileAudioEngine.isPlaying()
+        !audioEngine.isPlaying()
       ) {
         console.log("[AutoStart] Starting playback with", chapterContent.verses.length, "verses");
         setHasStarted(true);
@@ -2319,7 +2322,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, [chapterContent, currentSequence, playVerseAtIndex, ensureAudioUnlocked]);
 
   const handlePlay = async () => {
-    console.log("handlePlay called - isPaused:", isPaused, "audioState:", mobileAudioEngine.getState(), "speechPaused:", speechSynthesis.paused);
+    console.log("handlePlay called - isPaused:", isPaused, "audioState:", audioEngine.getState(), "speechPaused:", speechSynthesis.paused);
     console.log("[handlePlay] chapterContent:", chapterContent ? `${chapterContent.book} ${chapterContent.chapter} (${chapterContent.verses?.length} verses)` : "NULL");
     console.log("[handlePlay] currentVerseIdx:", currentVerseIdx, "currentSequence:", currentSequence?.sequenceNumber);
 
@@ -2329,9 +2332,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log("[handlePlay] Audio unlock result:", unlocked);
 
     // Resume paused HTML Audio via MobileAudioEngine
-    if (isPaused && mobileAudioEngine.getState() === 'paused') {
+    if (isPaused && audioEngine.getState() === 'paused') {
       continuePlayingRef.current = true;
-      const resumeSuccess = await mobileAudioEngine.resume();
+      const resumeSuccess = await audioEngine.resume();
       if (!resumeSuccess) {
         console.error("[Resume] Audio resume failed");
         // If resume fails, restart from current verse
@@ -2430,8 +2433,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     continuePlayingRef.current = false;
 
     // Handle audio pause via MobileAudioEngine
-    if (mobileAudioEngine.isPlaying()) {
-      mobileAudioEngine.pause();
+    if (audioEngine.isPlaying()) {
+      audioEngine.pause();
       setIsPaused(true);
       // Don't stop music ducking in commentary-only mode (music should keep playing)
       if (!currentSequence?.commentaryOnly) {
@@ -2553,7 +2556,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     setVolume(newVolume);
     // Apply immediately to current audio via MobileAudioEngine
     const effectiveVolume = isMutedRef.current ? 0 : newVolume / 100;
-    mobileAudioEngine.setVolume(effectiveVolume);
+    audioEngine.setVolume(effectiveVolume);
     console.log('[SequencePlayer] Applied TTS volume via MobileAudioEngine:', effectiveVolume);
   };
 
@@ -2598,7 +2601,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       const wasPlayingCommentary = isPlayingCommentary;
 
       // Stop current audio via MobileAudioEngine
-      mobileAudioEngine.stop();
+      audioEngine.stop();
       if (browserUtteranceRef.current) {
         speechSynthesis.cancel();
         browserUtteranceRef.current = null;
@@ -2641,7 +2644,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     setIsMuted(newMuted);
     // Apply immediately to current audio via MobileAudioEngine
     const effectiveVolume = newMuted ? 0 : volumeRef.current / 100;
-    mobileAudioEngine.setVolume(effectiveVolume);
+    audioEngine.setVolume(effectiveVolume);
     console.log('[SequencePlayer] Applied mute toggle via MobileAudioEngine:', effectiveVolume);
   };
   // Auto-scroll to current verse
@@ -2991,8 +2994,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   size="icon"
                   className="h-8 w-8 text-amber-600 hover:text-amber-500 hover:bg-amber-500/10"
                   onClick={() => {
-                    if (mobileAudioEngine.isPlaying() || mobileAudioEngine.getState() === 'paused') {
-                      mobileAudioEngine.seek(0);
+                    if (audioEngine.isPlaying() || audioEngine.getState() === 'paused') {
+                      audioEngine.seek(0);
                       toast.success("Restarted from beginning", { duration: 1500 });
                     } else if (browserUtteranceRef.current && window.speechSynthesis) {
                       // For browser TTS, cancel and restart
@@ -3014,9 +3017,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                   size="icon"
                   className="h-8 w-8 text-amber-600 hover:text-amber-500 hover:bg-amber-500/10"
                   onClick={() => {
-                    if (mobileAudioEngine.isPlaying() || mobileAudioEngine.getState() === 'paused') {
-                      const currentTime = mobileAudioEngine.getCurrentTime();
-                      mobileAudioEngine.seek(Math.max(0, currentTime - 10));
+                    if (audioEngine.isPlaying() || audioEngine.getState() === 'paused') {
+                      const currentTime = audioEngine.getCurrentTime();
+                      audioEngine.seek(Math.max(0, currentTime - 10));
                       toast.success("Rewound 10 seconds", { duration: 1500 });
                     }
                   }}
