@@ -1,7 +1,5 @@
-import { OpenAIVoice } from "@/services/ttsService";
-
-// Alias for backward compatibility
-type VoiceId = OpenAIVoice;
+// Voice ID type for reading sequences
+type VoiceId = string;
 
 export interface SequenceItem {
   id: string;

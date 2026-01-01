@@ -13,7 +13,6 @@ export const FreeTierBanner = () => {
     { name: "Unlimited Jeeves AI", description: "AI-powered Bible analysis" },
     { name: "All Premium Games", description: "Full access to 20+ games" },
     { name: "Art of War Dojo", description: "Complete spiritual warfare training" },
-    { name: "Audio Bible/Commentary", description: "Listen while you learn" },
   ];
 
   return (

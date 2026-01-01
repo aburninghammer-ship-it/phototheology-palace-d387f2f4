@@ -22,7 +22,6 @@ const TRIAL_FEATURES = [
   "Unlimited Jeeves AI Conversations",
   "All Premium Games & Courses",
   "Art of War Dojo Complete",
-  "Audio Bible Reader/Commentary",
   "Treasure Hunts & Escape Rooms",
   "Bible Study Leader Tools",
   "Full access for 7 days"

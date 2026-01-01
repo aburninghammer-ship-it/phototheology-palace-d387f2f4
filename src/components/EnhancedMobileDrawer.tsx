@@ -45,7 +45,6 @@ const categoryConfig = {
     links: [
       { to: "/bible", label: "PT Study Bible", icon: "📖" },
       { to: "/bible-image-library", label: "PT Image Bible", icon: "🎨" },
-      { to: "/read-me-the-bible", label: "Listen to Bible", icon: "🎧" },
       { to: "/reading-plans", label: "Reading Plans", icon: "📅" },
       { to: "/daily-reading", label: "Daily Reading", icon: "📖" },
       { to: "/devotionals", label: "Devotionals", icon: "💜" },

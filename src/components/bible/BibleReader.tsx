@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot, Bookmark, Sparkles, Upload, Volume2, Headphones, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { QuickAudioButton } from "@/components/audio";
-import { AudioControls } from "./AudioControls";
 import { VerseView } from "./VerseView";
 import { StrongsVerseView } from "./StrongsVerseView";
 import { PrinciplePanel } from "./PrinciplePanel";
@@ -57,8 +56,6 @@ export const BibleReader = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [activeDimensions, setActiveDimensions] = useState<string[]>(["1D", "2D", "3D", "4D", "5D"]);
   const [studyMode, setStudyMode] = useState<"beginner" | "advanced" | "apologetics">("advanced");
-  const [showAudioControls, setShowAudioControls] = useState(false);
-  const [audioHighlightedVerse, setAudioHighlightedVerse] = useState<number | null>(null);
   
   const toggleDimension = (dimension: string) => {
     setActiveDimensions(prev =>
@@ -339,30 +336,12 @@ export const BibleReader = () => {
 
       {/* Audio Controls */}
       <div className="flex items-center gap-2 flex-wrap">
-        <Button
-          variant={showAudioControls ? "default" : "outline"}
+        <QuickAudioButton
+          text={chapterData.verses.map(v => `Verse ${v.verse}. ${v.text}`).join(' ')}
+          variant="outline"
           size="sm"
-          onClick={() => setShowAudioControls(!showAudioControls)}
-          className={showAudioControls ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white" : ""}
-        >
-          <Volume2 className="h-4 w-4 mr-2" />
-          Listen (Browser)
-        </Button>
-        <QuickAudioButton 
-          text={chapterData.verses.map(v => `Verse ${v.verse}. ${v.text}`).join(' ')} 
-          variant="outline" 
-          size="sm" 
           className="gap-2"
         />
-        {showAudioControls && (
-          <AudioControls
-            verses={chapterData.verses}
-            book={book}
-            chapter={chapter}
-            onVerseHighlight={setAudioHighlightedVerse}
-            className="flex-1"
-          />
-        )}
       </div>
 
       {/* Mode Toggles */}

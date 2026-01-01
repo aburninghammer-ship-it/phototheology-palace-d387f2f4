@@ -333,16 +333,8 @@ export default function Dashboard() {
                   <BookOpen className="mr-2 h-4 w-4" />
                   Read Bible
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => navigate("/read-me-the-bible")}
-                >
-                  <Headphones className="mr-2 h-4 w-4" />
-                  Listen to Bible
-                </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start bg-primary/10 border-primary/30 hover:bg-primary/20"
                   onClick={() => navigate("/quarterly-study")}
                 >

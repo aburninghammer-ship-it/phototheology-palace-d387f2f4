@@ -11,7 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { RoomInsightChat } from "./RoomInsightChat";
 import { DimensionFilter } from "./DimensionFilter";
-import { ExportCommentaryDialog } from "@/components/reading-sequence/ExportCommentaryDialog";
 
 // Helper function to parse room insights from commentary
 const parseRoomInsights = (commentary: string) => {
@@ -373,19 +372,6 @@ export const CommentaryPanel = ({ book, chapter, verse, verseText, onClose }: Co
             </CardDescription>
           </div>
           <div className="flex items-center gap-1">
-            {commentary && (
-              <ExportCommentaryDialog
-                commentaryText={commentary}
-                book={book}
-                chapter={chapter}
-                verseText={verseText}
-                trigger={
-                  <Button variant="ghost" size="sm" className="hover:bg-white/10" title="Export commentary audio">
-                    <Download className="h-4 w-4" />
-                  </Button>
-                }
-              />
-            )}
             <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-white/10">
               <X className="h-4 w-4" />
             </Button>

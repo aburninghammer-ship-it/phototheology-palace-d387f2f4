@@ -53,13 +53,6 @@ const Bible = () => {
                   <span className="sm:hidden">Help</span>
                 </Button>
                 <Button asChild variant="outline" className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 whitespace-nowrap">
-                  <Link to="/read-me-the-bible">
-                    <Headphones className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">Read Me the Bible</span>
-                    <span className="sm:hidden">Listen</span>
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 whitespace-nowrap">
                   <Link to="/memorization-verses">
                     <BookMarked className="h-4 w-4 mr-2" />
                     <span className="hidden sm:inline">My Memorization Verses</span>
