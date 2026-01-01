@@ -76,7 +76,10 @@ export function Room3DToggle({ roomId, children }: Room3DToggleProps) {
           <Card className="border-2 border-primary/20 bg-background/80 backdrop-blur-sm overflow-hidden">
             <CardContent className="p-0">
               <Suspense fallback={<Viewer3DLoader />}>
-                <div className="min-h-[600px]">
+                <div 
+                  className="min-h-[600px] touch-pan-y"
+                  style={{ touchAction: 'pan-y pinch-zoom' }}
+                >
                   <Viewer3D />
                 </div>
               </Suspense>

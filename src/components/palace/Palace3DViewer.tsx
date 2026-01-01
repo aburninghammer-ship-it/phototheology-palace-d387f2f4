@@ -255,7 +255,12 @@ function RoomDoor({ position, room, floorNumber, isUnlocked, onClick, index }: R
       {/* Hover info panel */}
       {hovered && (
         <Html position={[0, 3.2, 0]} center>
-          <div className="bg-gradient-to-b from-black/95 to-gray-900/95 text-white px-5 py-3 rounded-xl shadow-2xl border border-white/20 min-w-[180px] backdrop-blur-sm">
+          <div 
+            className="bg-gradient-to-b from-black/95 to-gray-900/95 text-white px-5 py-3 rounded-xl shadow-2xl border border-white/20 min-w-[180px] backdrop-blur-sm max-h-[200px] overflow-y-auto"
+            data-scrollable="true"
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+          >
             <p className="font-bold text-base">{room.name}</p>
             <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
               <span>{floorEmojis[floorNumber]}</span>
@@ -487,25 +492,39 @@ function CameraController({ targetFloor, onFloorChange }: { targetFloor: number;
 // Swipe gesture handler for mobile floor navigation
 function useSwipeGesture(onSwipeUp: () => void, onSwipeDown: () => void) {
   const touchStartY = useRef<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
 
   const handleTouchStart = useCallback((e: TouchEvent) => {
+    // Don't intercept if touching a scrollable element
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-scrollable="true"]') || target.closest('.overflow-auto') || target.closest('.overflow-y-auto')) {
+      touchStartY.current = null;
+      return;
+    }
     touchStartY.current = e.touches[0].clientY;
+    touchStartX.current = e.touches[0].clientX;
   }, []);
 
   const handleTouchEnd = useCallback((e: TouchEvent) => {
-    if (touchStartY.current === null) return;
+    if (touchStartY.current === null || touchStartX.current === null) return;
 
     const touchEndY = e.changedTouches[0].clientY;
-    const diff = touchStartY.current - touchEndY;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - touchEndY;
+    const diffX = touchStartX.current - touchEndX;
     const threshold = 50;
 
-    if (diff > threshold) {
-      onSwipeUp();
-    } else if (diff < -threshold) {
-      onSwipeDown();
+    // Only trigger floor change if vertical swipe is more dominant than horizontal
+    if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > threshold) {
+      if (diffY > 0) {
+        onSwipeUp();
+      } else {
+        onSwipeDown();
+      }
     }
 
     touchStartY.current = null;
+    touchStartX.current = null;
   }, [onSwipeUp, onSwipeDown]);
 
   useEffect(() => {
