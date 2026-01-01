@@ -17,7 +17,7 @@ import { PathBanner, PathDashboardWidget } from "@/components/path";
 import { QuickNotes } from "@/components/notes/QuickNotes";
 import { CommunityHighlight } from "@/components/dashboard/CommunityHighlight";
 import { QuickAIPrompt } from "@/components/dashboard/QuickAIPrompt";
-import { Brain, Building2, Headphones, Calendar } from "lucide-react";
+import { Brain, Building2, Headphones, Calendar, Volume2 } from "lucide-react";
 import { 
   BookOpen, 
   Flame, 
@@ -325,13 +325,21 @@ export default function Dashboard() {
                   <BookOpen className="mr-2 h-4 w-4" />
                   Explore Memory Palace
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
                   onClick={() => navigate("/bible")}
                 >
                   <BookOpen className="mr-2 h-4 w-4" />
                   Read Bible
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start bg-primary/10 border-primary/30 hover:bg-primary/20"
+                  onClick={() => navigate("/audio-bible")}
+                >
+                  <Volume2 className="mr-2 h-4 w-4 text-primary" />
+                  Audio Bible
                 </Button>
                 <Button
                   variant="outline"

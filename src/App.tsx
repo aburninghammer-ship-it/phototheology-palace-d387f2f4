@@ -59,6 +59,7 @@ const FloorDetail = lazy(() => import("./pages/FloorDetail"));
 const RoomDetail = lazy(() => import("./pages/RoomDetail"));
 const GenesisHighRise = lazy(() => import("./pages/GenesisHighRise"));
 const Bible = lazy(() => import("./pages/Bible"));
+const AudioBible = lazy(() => import("./pages/AudioBible"));
 const BibleChapter = lazy(() => import("./pages/BibleChapter"));
 const BibleSearch = lazy(() => import("./pages/BibleSearch"));
 const ThematicSearch = lazy(() => import("./pages/ThematicSearch"));
@@ -397,6 +398,7 @@ function App() {
             <Route path="/analyze-thoughts" element={<ProtectedRoute><AnalyzeThoughts /></ProtectedRoute>} />
             
             <Route path="/bible" element={<ProtectedRoute><Bible /></ProtectedRoute>} />
+            <Route path="/audio-bible" element={<ProtectedRoute><AudioBible /></ProtectedRoute>} />
             <Route path="/image-bible" element={<ProtectedRoute><PhototheologyImageBible /></ProtectedRoute>} />
             <Route path="/bible/search" element={<ProtectedRoute><BibleSearch /></ProtectedRoute>} />
             <Route path="/bible/thematic-search" element={<ProtectedRoute><ThematicSearch /></ProtectedRoute>} />

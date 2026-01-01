@@ -28,6 +28,7 @@ import {
   Brain,
   LayoutGrid,
   Heart,
+  Headphones,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Separator } from "@/components/ui/separator";
@@ -44,6 +45,7 @@ const categoryConfig = {
     icon: BookOpen,
     links: [
       { to: "/bible", label: "PT Study Bible", icon: "📖" },
+      { to: "/audio-bible", label: "Audio Bible", icon: "🎧" },
       { to: "/bible-image-library", label: "PT Image Bible", icon: "🎨" },
       { to: "/reading-plans", label: "Reading Plans", icon: "📅" },
       { to: "/daily-reading", label: "Daily Reading", icon: "📖" },
@@ -152,8 +154,8 @@ const simplifiedQuickLinks = [
   { to: "/dashboard", label: "Home", icon: Home, color: "from-primary/10 to-primary/5", borderColor: "border-primary/20", iconColor: "text-primary" },
   { to: "/palace", label: "Palace", icon: Building2, color: "from-amber-500/10 to-orange-500/5", borderColor: "border-amber-500/20", iconColor: "text-amber-500" },
   { to: "/bible", label: "Bible", icon: BookOpen, color: "from-blue-500/10 to-blue-500/5", borderColor: "border-blue-500/20", iconColor: "text-blue-500" },
+  { to: "/audio-bible", label: "Listen", icon: Headphones, color: "from-emerald-500/10 to-teal-500/5", borderColor: "border-emerald-500/20", iconColor: "text-emerald-500" },
   { to: "/devotionals", label: "Devotions", icon: Heart, color: "from-rose-500/10 to-pink-500/5", borderColor: "border-rose-500/20", iconColor: "text-rose-500" },
-  { to: "/games", label: "Games", icon: Gamepad2, color: "from-fuchsia-500/10 to-pink-500/5", borderColor: "border-fuchsia-500/20", iconColor: "text-fuchsia-500" },
   { to: "/memory", label: "Memory", icon: Brain, color: "from-cyan-500/10 to-teal-500/5", borderColor: "border-cyan-500/20", iconColor: "text-cyan-500" },
   { to: "/leaderboard", label: "Scores", icon: Trophy, color: "from-yellow-500/10 to-amber-500/5", borderColor: "border-yellow-500/20", iconColor: "text-yellow-500" },
   { to: "/phototheologygpt", label: "AI Chat", icon: Sparkles, color: "from-violet-500/10 to-purple-500/5", borderColor: "border-violet-500/20", iconColor: "text-violet-500" },
