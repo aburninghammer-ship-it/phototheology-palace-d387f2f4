@@ -307,6 +307,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const prefetchingCommentaryRef = useRef<Set<string>>(new Set()); // Track commentary being prefetched
   const blobUrlsRef = useRef<Set<string>>(new Set()); // Track all created blob URLs for cleanup on unmount
   const browserUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null); // For pause/resume with browser TTS
+  const browserVoicesRef = useRef<SpeechSynthesisVoice[]>([]); // Cache browser voices for iOS Safari
   const retryCountRef = useRef(0); // Track retry attempts for resilience
   const pausedVerseRef = useRef<{ verseIdx: number; content: ChapterContent; voice: string } | null>(null); // Track paused position
   const keepAliveIntervalRef = useRef<number | null>(null); // Keep speech alive on mobile
@@ -485,6 +486,47 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       }
     };
   }, [isPlaying, isPaused, musicVolume]);
+
+  // Preload browser voices for iOS Safari (voices load asynchronously)
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        browserVoicesRef.current = voices;
+        console.log('[BrowserTTS] Loaded', voices.length, 'voices');
+        // Log available English voices for debugging
+        const englishVoices = voices.filter(v => v.lang.startsWith('en'));
+        console.log('[BrowserTTS] English voices:', englishVoices.map(v => `${v.name} (${v.lang})`).join(', '));
+      }
+    };
+
+    // Try to load immediately
+    loadVoices();
+
+    // iOS Safari loads voices asynchronously - listen for the event
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    // Fallback: poll for voices on iOS (some versions don't fire the event)
+    const pollInterval = setInterval(() => {
+      if (browserVoicesRef.current.length === 0) {
+        loadVoices();
+      } else {
+        clearInterval(pollInterval);
+      }
+    }, 100);
+
+    // Clear after 5 seconds (voices should be loaded by then)
+    setTimeout(() => clearInterval(pollInterval), 5000);
+
+    return () => {
+      clearInterval(pollInterval);
+      if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, []);
 
   // Sync playback state with global audio context for mini player
   useEffect(() => {
@@ -944,15 +986,26 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       utterance.rate = playbackSpeed;
       utterance.pitch = 1;
       utterance.lang = 'en-US'; // Force English to prevent Hebrew detection
-      
-      const voices = speechSynthesis.getVoices();
-      const englishVoice = voices.find(v => 
-        v.lang.startsWith('en') && 
-        (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Daniel'))
-      ) || voices.find(v => v.lang.startsWith('en'));
-      
+
+      // Use cached voices (preloaded for iOS Safari compatibility)
+      // Fall back to fresh getVoices() if cache is empty
+      const voices = browserVoicesRef.current.length > 0
+        ? browserVoicesRef.current
+        : speechSynthesis.getVoices();
+
+      // Find an English voice - prioritize common quality voices
+      const englishVoice = voices.find(v =>
+        v.lang.startsWith('en') &&
+        (v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Daniel') ||
+         v.name.includes('Google') || v.name.includes('Microsoft'))
+      ) || voices.find(v => v.lang === 'en-US')
+        || voices.find(v => v.lang.startsWith('en'));
+
       if (englishVoice) {
         utterance.voice = englishVoice;
+        console.log('[BrowserTTS] Using voice:', englishVoice.name, englishVoice.lang);
+      } else {
+        console.warn('[BrowserTTS] No English voice found! Available:', voices.map(v => `${v.name}(${v.lang})`).slice(0, 5));
       }
       
       utterance.onend = () => {
@@ -3025,6 +3078,11 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
                       const utterance = new SpeechSynthesisUtterance(commentaryText);
                       utterance.rate = currentSequence?.playbackSpeed || 1;
                       utterance.lang = 'en-US'; // Force English
+                      // Set English voice from cache
+                      const voices = browserVoicesRef.current.length > 0 ? browserVoicesRef.current : speechSynthesis.getVoices();
+                      const englishVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Daniel') || v.name.includes('Google')))
+                        || voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang.startsWith('en'));
+                      if (englishVoice) utterance.voice = englishVoice;
                       browserUtteranceRef.current = utterance;
                       window.speechSynthesis.speak(utterance);
                       toast.success("Restarted from beginning", { duration: 1500 });
