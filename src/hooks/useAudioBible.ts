@@ -116,6 +116,60 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     return success;
   }, []);
 
+  // Cache for pre-fetched commentary to avoid delay on mobile
+  const prefetchedCommentaryRef = useRef<{
+    book: string;
+    chapter: number;
+    verse: number;
+    result: { commentary: string; audioUrl: string | null } | null;
+  } | null>(null);
+
+  /**
+   * Pre-fetch commentary for current verse while verse audio is playing
+   * This helps mobile by having the data ready when needed
+   */
+  const prefetchCurrentCommentary = useCallback(async () => {
+    const item = currentItemRef.current;
+    if (!item || isStoppedRef.current) return;
+
+    const verseIdx = currentVerseIndexRef.current;
+    const verse = item.verses[verseIdx];
+    if (!verse) return;
+
+    // Don't prefetch if we already have it
+    if (prefetchedCommentaryRef.current?.book === item.book &&
+        prefetchedCommentaryRef.current?.chapter === item.chapter &&
+        prefetchedCommentaryRef.current?.verse === verse.verse) {
+      return;
+    }
+
+    console.log(`[useAudioBible] Pre-fetching commentary for ${item.book} ${item.chapter}:${verse.verse}`);
+
+    try {
+      const result = await generateCommentary({
+        book: item.book,
+        chapter: item.chapter,
+        verse: verse.verse,
+        verseText: verse.text,
+        tier: commentaryTierRef.current,
+        generateAudio: true,
+        voice: voiceRef.current,
+      });
+
+      if (result && !isStoppedRef.current) {
+        prefetchedCommentaryRef.current = {
+          book: item.book,
+          chapter: item.chapter,
+          verse: verse.verse,
+          result: { commentary: result.commentary, audioUrl: result.audioUrl },
+        };
+        console.log(`[useAudioBible] Pre-fetched commentary ready for ${item.book} ${item.chapter}:${verse.verse}`);
+      }
+    } catch (error) {
+      console.error("[useAudioBible] Pre-fetch error:", error);
+    }
+  }, []);
+
   /**
    * Play commentary for current verse
    */
@@ -131,29 +185,41 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     loadingRef.current = true;
 
     try {
-      console.log(`[useAudioBible] Generating commentary for ${item.book} ${item.chapter}:${verse.verse}`);
+      console.log(`[useAudioBible] Playing commentary for ${item.book} ${item.chapter}:${verse.verse}`);
 
-      // Add timeout for commentary generation (30 seconds)
-      const timeoutPromise = new Promise<null>((_, reject) => {
-        setTimeout(() => reject(new Error("Commentary generation timed out")), 30000);
-      });
+      // Check if we have pre-fetched commentary
+      let result: { commentary: string; audioUrl: string | null } | null = null;
 
-      const commentaryPromise = generateCommentary({
-        book: item.book,
-        chapter: item.chapter,
-        verse: verse.verse,
-        verseText: verse.text,
-        tier: commentaryTierRef.current,
-        generateAudio: true,
-        voice: voiceRef.current,
-      });
+      if (prefetchedCommentaryRef.current?.book === item.book &&
+          prefetchedCommentaryRef.current?.chapter === item.chapter &&
+          prefetchedCommentaryRef.current?.verse === verse.verse &&
+          prefetchedCommentaryRef.current?.result) {
+        console.log("[useAudioBible] Using pre-fetched commentary");
+        result = prefetchedCommentaryRef.current.result;
+        prefetchedCommentaryRef.current = null; // Clear after use
+      } else {
+        // Fetch if not pre-fetched (with timeout)
+        console.log("[useAudioBible] Fetching commentary (not pre-fetched)");
+        const timeoutPromise = new Promise<null>((_, reject) => {
+          setTimeout(() => reject(new Error("Commentary generation timed out")), 30000);
+        });
 
-      const result = await Promise.race([commentaryPromise, timeoutPromise]);
+        const commentaryPromise = generateCommentary({
+          book: item.book,
+          chapter: item.chapter,
+          verse: verse.verse,
+          verseText: verse.text,
+          tier: commentaryTierRef.current,
+          generateAudio: true,
+          voice: voiceRef.current,
+        });
+
+        result = await Promise.race([commentaryPromise, timeoutPromise]);
+      }
 
       if (isStoppedRef.current || !result) {
         console.log("[useAudioBible] Stopped or no result");
         loadingRef.current = false;
-        // Move to next verse if no commentary
         setIsPlayingCommentary(false);
         return;
       }
@@ -162,9 +228,11 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
       setCurrentCommentary(result.commentary);
 
       if (result.audioUrl) {
+        console.log("[useAudioBible] Playing commentary audio URL");
         await audioEngine.play(result.audioUrl);
       } else if (result.commentary) {
         // Generate TTS for commentary text
+        console.log("[useAudioBible] Generating TTS for commentary");
         const audioUrl = await generateTTSAudio({ text: result.commentary, voice: voiceRef.current });
         if (audioUrl && !isStoppedRef.current) {
           await audioEngine.play(audioUrl);
@@ -223,14 +291,20 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
       const audioUrl = await generateTTSAudio({ text: verseWithRef, voice: voiceRef.current });
 
       if (audioUrl && !isStoppedRef.current) {
+        // Start playing verse audio
         await audioEngine.play(audioUrl);
+
+        // Pre-fetch commentary while verse plays (for mobile performance)
+        if (includeCommentaryRef.current && !commentaryOnlyRef.current) {
+          prefetchCurrentCommentary().catch(console.error);
+        }
       }
     } catch (error) {
       console.error("[useAudioBible] Verse playback error:", error);
     } finally {
       loadingRef.current = false;
     }
-  }, [playCurrentVerseCommentary]);
+  }, [playCurrentVerseCommentary, prefetchCurrentCommentary]);
 
   // Keep playVerseAtIndex ref updated
   useEffect(() => { playVerseAtIndexRef.current = playVerseAtIndex; }, [playVerseAtIndex]);
