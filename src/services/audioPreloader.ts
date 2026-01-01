@@ -23,7 +23,7 @@ class AudioPreloader {
   private isProcessing = false;
   private preloadedUrls = new Map<string, string>();
   private inProgress = new Set<string>();
-  private maxConcurrent = 2;
+  private maxConcurrent = 4; // Increased from 2 for faster mobile preloading
   private activeCount = 0;
 
   // Preload Bible verse TTS

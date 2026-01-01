@@ -436,7 +436,7 @@ serve(async (req) => {
       audioBuffers.push(buffer);
 
       if (i < chunks.length - 1) {
-        await delay(100);
+        await delay(50); // Reduced from 100ms for faster mobile TTS generation
       }
     }
 

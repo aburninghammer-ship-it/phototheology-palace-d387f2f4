@@ -192,8 +192,10 @@ class MobileAudioEngineV2 {
 
   /**
    * Wait for audio to be ready to play, with timeout
+   * Reduced from 30s to 8s for faster mobile experience - if audio isn't ready
+   * by then, we try to play anyway (often works on mobile)
    */
-  private waitForCanPlay(timeoutMs = 30000): Promise<void> {
+  private waitForCanPlay(timeoutMs = 8000): Promise<void> {
     return new Promise((resolve, reject) => {
       console.log('[MobileAudioV2] waitForCanPlay, readyState:', this.audio.readyState);
       
