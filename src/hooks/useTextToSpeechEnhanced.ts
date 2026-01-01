@@ -200,7 +200,9 @@ export function useTextToSpeechEnhanced(options: UseTextToSpeechEnhancedOptions 
     speechSynthesis.cancel();
 
     setIsPlaying(false);
-    onEndRef.current?.();
+    // NOTE: Do NOT call onEndRef here - onEnd should only fire when audio
+    // naturally completes, not when manually stopped. Calling it here causes
+    // infinite loops when speak() calls stop() to clear previous audio.
   }, []);
 
   // Browser TTS fallback with chunking for long texts
