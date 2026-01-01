@@ -2170,7 +2170,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       chapterContent &&
       !isLoading &&
       !isGeneratingRef.current &&
-      !audioEngine.isPlaying()
+      !audioEngine.isPlaying() &&
+      !playingCommentaryRef.current // Don't interrupt commentary playback
     ) {
       console.log("Auto-playing next chapter after transition");
       shouldPlayNextRef.current = false;
@@ -2248,7 +2249,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         chapterContent.verses.length > 0 &&
         !isLoading &&
         !isGeneratingRef.current &&
-        !audioEngine.isPlaying()
+        !audioEngine.isPlaying() &&
+        !playingCommentaryRef.current // Don't interrupt commentary playback
       ) {
         console.log("[AutoStart] Starting playback with", chapterContent.verses.length, "verses");
         setHasStarted(true);
