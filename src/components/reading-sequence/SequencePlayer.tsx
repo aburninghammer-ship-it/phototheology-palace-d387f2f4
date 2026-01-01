@@ -1141,8 +1141,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         // Generate commentary
         console.log("[ChapterComplete] Generating chapter commentary");
         setIsLoading(true);
+        // CRITICAL: Set commentary ref BEFORE async to prevent effects from restarting verse
+        playingCommentaryRef.current = true;
         const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
-        
+
         generateCommentary(content.book, content.chapter, chapterText, commentaryDepth, commentaryVoice)
           .then(result => {
             if (result?.text && continuePlayingRef.current) {
@@ -1402,7 +1404,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     
     console.log("[Commentary Only] Playing verse", verseIdx + 1, "commentary");
     setCurrentVerseIdx(verseIdx);
-    
+    // CRITICAL: Set commentary ref BEFORE async to prevent effects from restarting
+    playingCommentaryRef.current = true;
+
     try {
       const commentary = await generateVerseCommentary(content.book, content.chapter, verse.verse, verse.text, commentaryDepth);
       
@@ -1451,7 +1455,9 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     const commentaryVoice = sequence.commentaryVoice || "daniel";
     // Use the session-level commentary depth (can be changed mid-session)
     const commentaryDepth = currentCommentaryDepth;
-    
+    // CRITICAL: Set commentary ref BEFORE async to prevent effects from restarting
+    playingCommentaryRef.current = true;
+
     try {
       if (commentaryMode === "chapter") {
         // Play chapter commentary
@@ -1861,6 +1867,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
         console.log("[Verse Commentary] No cache, generating for verse", verseIdx + 1);
         setCurrentCommentaryVerse({ index: verseIdx, text: currentVerse.text, verse: currentVerse.verse });
         setIsLoading(true);
+        // CRITICAL: Set commentary ref BEFORE async to prevent effects from restarting verse
+        playingCommentaryRef.current = true;
         
         // Start prefetching next verse while we generate current - use every opportunity
         const nextVerseToPrep = verseIdx + 1;
@@ -1952,8 +1960,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
             // Fallback: generate everything
             console.log("[Chapter Commentary] No cache, generating", commentaryDepth);
             setIsLoading(true);
+            // CRITICAL: Set commentary ref BEFORE async to prevent effects from restarting verse
+            playingCommentaryRef.current = true;
             const chapterText = content.verses.map(v => `${v.verse}. ${v.text}`).join(" ");
-            
+
             generateCommentary(content.book, content.chapter, chapterText, commentaryDepth, commentaryVoice)
               .then(result => {
                 if (result?.text && continuePlayingRef.current) {
