@@ -837,22 +837,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     fetchChapter(nextItem.book, nextItem.chapter);
   }, [allItems, fetchChapter]);
 
-  // Determine TTS provider from voice name
-  const getProviderForVoice = useCallback((voice: string): 'openai' | 'elevenlabs' | 'speechify' => {
-    // ElevenLabs voices
-    const elevenlabsVoices = ['george', 'aria', 'roger', 'sarah', 'charlie', 'callum', 'river', 'liam', 'charlotte', 'alice', 'matilda', 'will', 'jessica', 'eric', 'chris', 'brian', 'daniel', 'lily', 'bill'];
-    // Speechify voices
-    const speechifyVoices = ['henry', 'mrbeast', 'cliff', 'cody', 'kristy', 'natasha', 'cindy'];
-    // OpenAI voices (supported set)
-    const openaiVoices = ['alloy', 'ash', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer'];
-    
-    const voiceLower = voice.toLowerCase();
-    if (elevenlabsVoices.includes(voiceLower)) return 'elevenlabs';
-    if (speechifyVoices.includes(voiceLower)) return 'speechify';
-    if (openaiVoices.includes(voiceLower)) return 'openai';
-    
-    // Default to elevenlabs for premium experience
-    return 'elevenlabs';
+  // Determine TTS provider - always OpenAI now (edge function maps old voices)
+  const getProviderForVoice = useCallback((_voice: string): 'openai' => {
+    // All TTS now goes through OpenAI - the edge function handles voice mapping
+    return 'openai';
   }, []);
 
   // Generate TTS for text - with offline fallback and optional server-side caching

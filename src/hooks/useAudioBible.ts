@@ -88,6 +88,9 @@ export function useAudioBible(options: UseAudioBibleOptions = {}): UseAudioBible
   const callbacksRef = useRef(options);
   callbacksRef.current = options;
 
+  // Ref for playNextVerseInChapter to avoid stale closure in event handler
+  const playNextVerseInChapterRef = useRef<() => Promise<void>>();
+
   // Subscribe to audio engine events
   useEffect(() => {
     const handleStateChange = (state: AudioState) => {
@@ -111,7 +114,8 @@ export function useAudioBible(options: UseAudioBibleOptions = {}): UseAudioBible
       if (chapterDataRef.current) {
         const { verses, index } = chapterDataRef.current;
         if (index < verses.length - 1) {
-          playNextVerseInChapter();
+          // Use ref to get the latest function
+          playNextVerseInChapterRef.current?.();
           return;
         }
       }
@@ -259,6 +263,11 @@ export function useAudioBible(options: UseAudioBibleOptions = {}): UseAudioBible
       setIsLoading(false);
     }
   }, [voice, speed]);
+
+  // Keep ref in sync with latest function
+  useEffect(() => {
+    playNextVerseInChapterRef.current = playNextVerseInChapter;
+  }, [playNextVerseInChapter]);
 
   // Play entire chapter
   const playChapter = useCallback(async (
