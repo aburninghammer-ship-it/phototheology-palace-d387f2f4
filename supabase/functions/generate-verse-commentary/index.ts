@@ -190,6 +190,7 @@ CRITICAL FOR SPOKEN DELIVERY (MANDATORY):
     depth: `
 ### COMMENTARY STYLE: Scholarly Depth (Comprehensive Analysis)
 - Provide comprehensive verse analysis (4-7 sentences) with full theological exposition
+- EXCEPTION: Transitional verses ("And God said unto Moses", "It came to pass", "Then he answered") warrant only 1-2 sentences—depth applies to SUBSTANCE, not every verse equally
 - Anchor all interpretation in the biblical text
 
 **PROPHETIC DATES (When discussing prophecy, include specific dates):**
@@ -216,6 +217,7 @@ CRITICAL FOR SPOKEN DELIVERY (MANDATORY):
     "deep-drill": `
 ### COMMENTARY STYLE: FULL PALACE DEEP DRILL (Maximum Scholarly Depth - Single Verse)
 Produce a comprehensive scholarly analysis of this single Bible verse applying AT LEAST 16 DISTINCT interpretive lenses.
+**EXCEPTION: If the verse is purely transitional ("And God said unto Moses", "It came to pass", "Then he spoke"), provide only 2-3 sentences acknowledging its narrative function. Deep drill applies to SUBSTANTIVE verses, not narrative scaffolding.**
 **DO NOT NAME OR REFERENCE ROOMS/PRINCIPLES—weave them naturally into unified commentary.**
 
 **PROPHETIC DATES (When the verse touches prophecy, include specific dates):**
@@ -310,8 +312,12 @@ serve(async (req) => {
 ${userStudiesSection}
 COMMENTARY GUIDANCE:
 - Maintain third-person, scholarly commentary style throughout
-- Remember the Fragments rule: even simple-seeming verses often carry profound significance when examined carefully
-- If this verse doesn't warrant deep explanation, provide a concise analytical note
+- CRITICAL: Match commentary length to verse SUBSTANCE, not depth setting:
+  * TRANSITIONAL/INTRODUCTORY verses like "And God said unto Moses", "Then Jesus answered", "And it came to pass" deserve only 1-2 sentences regardless of depth setting—they serve narrative function, not theological weight
+  * SUBSTANTIVE verses with doctrine, prophecy, typology, or significant revelation warrant full depth analysis
+  * Even in "scholarly" or "deep-drill" mode, a simple transitional phrase should receive appropriately brief commentary
+- If this verse is transitional/narrative scaffolding, acknowledge its function briefly and move on
+- Reserve deep analysis for verses that ACTUALLY contain theological, prophetic, or typological substance
 - NEVER use second-person language (you, your, we, our)
 - NEVER reference or mention "the listener" or "the reader" directly
 ${userStudiesContext ? "- BUILD UPON the previous study insights where relevant—acknowledge and extend those discoveries" : ""}
