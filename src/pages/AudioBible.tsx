@@ -76,6 +76,8 @@ export default function AudioBible() {
     currentCommentary,
     voice,
     setVoice,
+    commentaryVoice,
+    setCommentaryVoice,
     speed,
     setSpeed,
     volume,
@@ -642,9 +644,9 @@ export default function AudioBible() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-5">
-                  {/* Voice Selection */}
+                  {/* Bible Voice Selection */}
                   <div className="space-y-2">
-                    <Label>Voice</Label>
+                    <Label>Bible Voice</Label>
                     <Select value={voice} onValueChange={(v) => setVoice(v as any)}>
                       <SelectTrigger>
                         <SelectValue />
@@ -658,6 +660,25 @@ export default function AudioBible() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Commentary Voice Selection */}
+                  {includeCommentary && (
+                    <div className="space-y-2">
+                      <Label>Commentary Voice</Label>
+                      <Select value={commentaryVoice} onValueChange={(v) => setCommentaryVoice(v as any)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {voices.map((v) => (
+                            <SelectItem key={v.id} value={v.id}>
+                              {v.name} - {v.description}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
 
                   {/* Speed Control */}
                   <div className="space-y-2">

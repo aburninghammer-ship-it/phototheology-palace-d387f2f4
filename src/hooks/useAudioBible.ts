@@ -27,6 +27,7 @@ interface PlaybackItem {
 
 interface UseAudioBibleOptions {
   defaultVoice?: OpenAIVoice;
+  defaultCommentaryVoice?: OpenAIVoice;
   defaultSpeed?: number;
   defaultVolume?: number;
   defaultTier?: CommentaryTier;
@@ -48,6 +49,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   const [audioState, setAudioState] = useState<AudioState>("idle");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [voice, setVoice] = useState<OpenAIVoice>(defaultVoice);
+  const [commentaryVoice, setCommentaryVoice] = useState<OpenAIVoice>(options.defaultCommentaryVoice || "nova");
   const [speed, setSpeed] = useState(defaultSpeed);
   const [volume, setVolumeState] = useState(defaultVolume);
   const [commentaryTier, setCommentaryTier] = useState<CommentaryTier>(defaultTier);
@@ -78,6 +80,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   const commentaryOnlyRef = useRef(commentaryOnly);
   const commentaryTierRef = useRef(commentaryTier);
   const voiceRef = useRef(voice);
+  const commentaryVoiceRef = useRef(commentaryVoice);
   const onChapterCompleteRef = useRef(onChapterComplete);
   const onVerseChangeRef = useRef(onVerseChange);
 
@@ -88,6 +91,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   useEffect(() => { commentaryOnlyRef.current = commentaryOnly; }, [commentaryOnly]);
   useEffect(() => { commentaryTierRef.current = commentaryTier; }, [commentaryTier]);
   useEffect(() => { voiceRef.current = voice; }, [voice]);
+  useEffect(() => { commentaryVoiceRef.current = commentaryVoice; }, [commentaryVoice]);
   useEffect(() => { onChapterCompleteRef.current = onChapterComplete; }, [onChapterComplete]);
   useEffect(() => { onVerseChangeRef.current = onVerseChange; }, [onVerseChange]);
 
@@ -153,7 +157,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
         verseText: verse.text,
         tier: commentaryTierRef.current,
         generateAudio: true,
-        voice: voiceRef.current,
+        voice: commentaryVoiceRef.current,
       });
 
       if (result && !isStoppedRef.current) {
@@ -211,7 +215,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
           verseText: verse.text,
           tier: commentaryTierRef.current,
           generateAudio: true,
-          voice: voiceRef.current,
+          voice: commentaryVoiceRef.current,
         });
 
         result = await Promise.race([commentaryPromise, timeoutPromise]);
@@ -233,7 +237,7 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
       } else if (result.commentary) {
         // Generate TTS for commentary text
         console.log("[useAudioBible] Generating TTS for commentary");
-        const audioUrl = await generateTTSAudio({ text: result.commentary, voice: voiceRef.current });
+        const audioUrl = await generateTTSAudio({ text: result.commentary, voice: commentaryVoiceRef.current });
         if (audioUrl && !isStoppedRef.current) {
           await audioEngine.play(audioUrl);
         } else {
@@ -543,6 +547,8 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     // Settings
     voice,
     setVoice,
+    commentaryVoice,
+    setCommentaryVoice,
     speed,
     setSpeed,
     volume,
