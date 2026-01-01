@@ -309,6 +309,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   const browserUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null); // For pause/resume with browser TTS
   const browserVoicesRef = useRef<SpeechSynthesisVoice[]>([]); // Cache browser voices for iOS Safari
   const retryCountRef = useRef(0); // Track retry attempts for resilience
+  const lastPlayedVerseRef = useRef<number>(-1); // Track last verse that started playing to prevent loops
   const pausedVerseRef = useRef<{ verseIdx: number; content: ChapterContent; voice: string } | null>(null); // Track paused position
   const keepAliveIntervalRef = useRef<number | null>(null); // Keep speech alive on mobile
   // Use refs to track state for event handlers to avoid stale closures on mobile
@@ -797,6 +798,8 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       setChapterContent(null);
       // Reset lastFetchedRef so the new chapter can load
       lastFetchedRef.current = "";
+      // Reset loop detection for new chapter
+      lastPlayedVerseRef.current = -1;
       return nextIdx;
     });
   }, [totalItems]);
@@ -1604,6 +1607,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       console.log("[PlayVerse] Invalid verse index or content:", { hasContent: !!content, verseIdx });
       return;
     }
+    // LOOP DETECTION: Prevent the same verse from playing twice in a row
+    // This catches edge cases where callbacks or effects incorrectly trigger a repeat
+    if (lastPlayedVerseRef.current === verseIdx && !playingCommentaryRef.current) {
+      console.warn("[PlayVerse] ⚠️ LOOP DETECTED! Verse", verseIdx + 1, "already playing/just played. Skipping to prevent loop.");
+      console.log("[PlayVerse] State:", { playingCommentary: playingCommentaryRef.current, continueRef: continuePlayingRef.current });
+      return;
+    }
 
     // Set the setup flag immediately to prevent race conditions
     isSettingUpPlaybackRef.current = true;
@@ -2123,6 +2133,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     if (playSuccess) {
       console.log("[Audio] play() succeeded for verse:", verseIdx + 1);
       retryCountRef.current = 0;
+      lastPlayedVerseRef.current = verseIdx; // Track for loop detection
       isSettingUpPlaybackRef.current = false;
       setIsPlaying(true);
       setIsPaused(false);
@@ -2567,6 +2578,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     lastFetchedRef.current = null;
     shouldPlayNextRef.current = false;
     retryCountRef.current = 0;
+    lastPlayedVerseRef.current = -1; // Reset loop detection on stop
     isSettingUpPlaybackRef.current = false; // Clear setup flag on stop
     // Always stop music ducking when stopping playback
     notifyTTSStopped();
