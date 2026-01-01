@@ -11,7 +11,7 @@ import { useDevotionalProfiles } from "@/hooks/useDevotionalProfiles";
 import { useDevotionals } from "@/hooks/useDevotionals";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { CADE_ISSUES, ISSUE_SEVERITY } from "@/lib/cadeIssues";
+import { CADE_ISSUES, KID_FRIENDLY_ISSUES, ISSUE_SEVERITY } from "@/lib/cadeIssues";
 
 interface CreateProfileWizardProps {
   onClose: () => void;
@@ -577,32 +577,43 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
                 </p>
               </div>
 
-              {/* CADE Primary Issue Selection */}
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4 text-primary" />
-                  Primary Issue (CADE Engine)
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  Selecting a primary issue enables our Context-Aware Devotional Engine for laser-focused pastoral care.
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[200px] overflow-y-auto p-1">
-                  {CADE_ISSUES.map((issue) => (
-                    <Button
-                      key={issue.value}
-                      variant={formData.primary_issue === issue.value ? "default" : "outline"}
-                      className={cn(
-                        "justify-start text-xs h-auto py-2",
-                        formData.primary_issue === issue.value && "ring-2 ring-primary"
-                      )}
-                      onClick={() => setFormData({ ...formData, primary_issue: issue.value })}
-                    >
-                      <span className="mr-1">{issue.emoji}</span>
-                      {issue.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+              {/* CADE Primary Issue Selection - Show kid-friendly issues for young children */}
+              {(() => {
+                const isYoungChildren = formData.family_dynamic === "young_children";
+                const issueList = isYoungChildren ? KID_FRIENDLY_ISSUES : CADE_ISSUES;
+                const sectionTitle = isYoungChildren ? "Topic for Kids Devotion" : "Primary Issue (CADE Engine)";
+                const sectionDescription = isYoungChildren 
+                  ? "Select a topic for age-appropriate devotionals that parents can read with their little ones."
+                  : "Selecting a primary issue enables our Context-Aware Devotional Engine for laser-focused pastoral care.";
+                
+                return (
+                  <div className="space-y-3">
+                    <Label className="flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-primary" />
+                      {sectionTitle}
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      {sectionDescription}
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[200px] overflow-y-auto p-1">
+                      {issueList.map((issue) => (
+                        <Button
+                          key={issue.value}
+                          variant={formData.primary_issue === issue.value ? "default" : "outline"}
+                          className={cn(
+                            "justify-start text-xs h-auto py-2",
+                            formData.primary_issue === issue.value && "ring-2 ring-primary"
+                          )}
+                          onClick={() => setFormData({ ...formData, primary_issue: issue.value })}
+                        >
+                          <span className="mr-1">{issue.emoji}</span>
+                          {issue.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Issue Severity */}
               {formData.primary_issue && (
