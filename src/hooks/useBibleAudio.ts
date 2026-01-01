@@ -89,6 +89,7 @@ export const useBibleAudio = (verses: Verse[], options?: UseBibleAudioOptions) =
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = playbackRate;
     utterance.pitch = 1;
+    utterance.lang = 'en-US'; // Force English to prevent Hebrew detection
     
     if (selectedVoice) {
       utterance.voice = selectedVoice;
