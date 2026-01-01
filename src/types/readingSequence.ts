@@ -1,4 +1,7 @@
-import { VoiceId } from "@/hooks/useTextToSpeech";
+import { OpenAIVoice } from "@/services/ttsService";
+
+// Alias for backward compatibility
+type VoiceId = OpenAIVoice;
 
 export interface SequenceItem {
   id: string;
