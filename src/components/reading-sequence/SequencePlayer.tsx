@@ -860,8 +860,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     console.log(`[TTS] Using provider: ${provider} for voice: ${voice}`);
     
     try {
-      // Build request body - include verse info for server-side caching when available
-      const requestBody: Record<string, unknown> = { text, voice, provider };
+      // Build request body - always request URL format for caching support
+      const requestBody: Record<string, unknown> = {
+        text,
+        voice,
+        provider, // Legacy field, ignored by server but kept for compatibility
+        returnType: 'url' // Enable hash-based caching for commentary/non-verse TTS
+      };
       if (verseInfo) {
         requestBody.book = verseInfo.book;
         requestBody.chapter = verseInfo.chapter;

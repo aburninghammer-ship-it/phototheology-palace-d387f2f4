@@ -292,6 +292,41 @@ serve(async (req) => {
       console.log(`[TTS] CACHE MISS - generating audio with OpenAI`);
     }
 
+    // For non-verse requests with URL return type, check hash-based cache first
+    if (returnType === 'url' && (!book || chapter === undefined || verse === undefined)) {
+      const stableKey = await sha256Hex(JSON.stringify({
+        voice: finalVoice,
+        speed: Math.round(speed * 100) / 100,
+        text: text.trim(),
+      }));
+      const storagePath = `tts/openai/${finalVoice}/${stableKey}.mp3`;
+
+      // Check if this audio already exists in storage
+      const { data: existsData } = await supabase.storage
+        .from('bible-audio')
+        .list(`tts/openai/${finalVoice}`, {
+          search: `${stableKey}.mp3`,
+          limit: 1
+        });
+
+      if (existsData && existsData.length > 0) {
+        const { data: urlData } = supabase.storage
+          .from('bible-audio')
+          .getPublicUrl(storagePath);
+
+        console.log(`[TTS] HASH CACHE HIT - returning cached audio`);
+        return new Response(
+          JSON.stringify({
+            audioUrl: urlData.publicUrl,
+            cached: true,
+            contentType: 'audio/mpeg'
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      console.log(`[TTS] HASH CACHE MISS - generating audio`);
+    }
+
     // Split text and generate
     const chunks = splitTextIntoChunks(text, MAX_CHARS);
     console.log(`[TTS] Split into ${chunks.length} chunks`);
