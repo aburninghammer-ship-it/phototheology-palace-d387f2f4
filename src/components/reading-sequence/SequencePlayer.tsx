@@ -1347,18 +1347,23 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
     content: ChapterContent,
     commentaryVoice: string,
     depth: string = "surface",
-    startFromVerse: number = 0
+    startFromVerse: number = 0,
+    limitVerses?: number // Optional: limit how many verses to prefetch (for mobile)
   ) => {
     if (!content?.verses?.length) return;
 
-    console.log(`[Prefetch ALL] Starting background preload for ${content.book} ${content.chapter} (${content.verses.length} verses, starting from ${startFromVerse + 1})`);
+    // On mobile, limit prefetching to reduce network load
+    const maxVerses = limitVerses ?? content.verses.length;
+    const endVerse = Math.min(startFromVerse + maxVerses, content.verses.length);
 
-    // Stagger requests to avoid overwhelming the API - process in batches of 3
-    const BATCH_SIZE = 3;
-    const BATCH_DELAY = 1000; // 1 second between batches
+    console.log(`[Prefetch] Starting preload for ${content.book} ${content.chapter} (verses ${startFromVerse + 1}-${endVerse})`);
 
-    for (let i = startFromVerse; i < content.verses.length; i += BATCH_SIZE) {
-      const batch = content.verses.slice(i, Math.min(i + BATCH_SIZE, content.verses.length));
+    // Stagger requests - smaller batches and longer delays on mobile
+    const BATCH_SIZE = 2; // Reduced from 3
+    const BATCH_DELAY = 1500; // Increased from 1000ms
+
+    for (let i = startFromVerse; i < endVerse; i += BATCH_SIZE) {
+      const batch = content.verses.slice(i, Math.min(i + BATCH_SIZE, endVerse));
 
       // Fire off batch in parallel
       const batchPromises = batch.map(verse =>
@@ -1375,13 +1380,13 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       // Wait for batch to complete before starting next
       await Promise.allSettled(batchPromises);
 
-      // Small delay between batches to be gentle on the API
-      if (i + BATCH_SIZE < content.verses.length) {
+      // Delay between batches
+      if (i + BATCH_SIZE < endVerse) {
         await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
       }
     }
 
-    console.log(`[Prefetch ALL] Completed background preload for ${content.book} ${content.chapter}`);
+    console.log(`[Prefetch] Completed preload for ${content.book} ${content.chapter}`);
   }, [prefetchVerseCommentary]);
 
   // Play commentary for a single verse (commentary-only mode)
@@ -2194,8 +2199,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       const commentaryVoice = currentSequence?.commentaryVoice || "daniel";
 
       if (includeCommentary && commentaryMode === "verse" && !offlineMode) {
-        console.log("[Preload] Auto-play transition - preloading ALL verse commentary...");
-        prefetchAllChapterVerseCommentary(chapterContent, commentaryVoice, currentCommentaryDepth, 0);
+        // On mobile, only prefetch first 5 verses to reduce network load
+        const prefetchLimit = isMobile ? 5 : undefined;
+        console.log(`[Preload] Auto-play transition - preloading verse commentary (limit: ${prefetchLimit || 'all'})...`);
+        prefetchAllChapterVerseCommentary(chapterContent, commentaryVoice, currentCommentaryDepth, 0, prefetchLimit);
       }
 
       // Check for commentary-only mode
@@ -2211,9 +2218,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
   }, [chapterContent, isLoading, currentSequence, playVerseAtIndex, prefetchAllChapterVerseCommentary, currentCommentaryDepth, offlineMode]);
 
   // EAGER PRELOADING: Start preloading commentary as soon as chapter loads (before play is clicked)
+  // SKIP on mobile to avoid slow initial load - will prefetch just-in-time during playback instead
   useEffect(() => {
     // Guard: only run if we have content and sequence
     if (!chapterContent || isLoading || !currentSequence) return;
+
+    // Skip eager preloading on mobile - too slow on cellular networks
+    if (isMobile) {
+      console.log("[Eager Preload] Skipping on mobile - will prefetch just-in-time during playback");
+      return;
+    }
 
     const includeCommentary = currentSequence.includeJeevesCommentary || false;
     const commentaryMode = currentSequence.commentaryMode || "chapter";
@@ -2225,7 +2239,7 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       // Start from verse 0 to preload everything
       prefetchAllChapterVerseCommentary(chapterContent, commentaryVoice, currentCommentaryDepth, 0);
     }
-  }, [chapterContent, isLoading, currentSequence, prefetchAllChapterVerseCommentary, currentCommentaryDepth, offlineMode]);
+  }, [chapterContent, isLoading, currentSequence, prefetchAllChapterVerseCommentary, currentCommentaryDepth, offlineMode, isMobile]);
 
   // Track if we're waiting for user tap on mobile
   const [waitingForMobileTap, setWaitingForMobileTap] = useState(false);
@@ -2384,13 +2398,16 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       const commentaryVoice = currentSequence?.commentaryVoice || "daniel";
 
       if (includeCommentary && commentaryMode === "verse" && !offlineMode) {
-        console.log("[Preload] Starting background preload of ALL verse commentary...");
+        // On mobile, only prefetch next 3 verses; on desktop prefetch all
+        const prefetchLimit = isMobile ? 3 : undefined;
+        console.log(`[Preload] Starting background preload (limit: ${prefetchLimit || 'all'})...`);
         // Fire and forget - runs in background while playback starts
         prefetchAllChapterVerseCommentary(
           chapterContent,
           commentaryVoice,
           currentCommentaryDepth,
-          currentVerseIdx // Start from current verse
+          currentVerseIdx, // Start from current verse
+          prefetchLimit
         );
       }
 
