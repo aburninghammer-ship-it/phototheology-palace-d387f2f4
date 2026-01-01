@@ -212,8 +212,7 @@ verify_jwt = false
 [functions.live-sermon-commentary]
 verify_jwt = false
 
-[functions.elevenlabs-scribe-token]
-verify_jwt = false
+# ElevenLabs removed - using OpenAI TTS only
 
 [functions.send-engagement-email]
 verify_jwt = false
