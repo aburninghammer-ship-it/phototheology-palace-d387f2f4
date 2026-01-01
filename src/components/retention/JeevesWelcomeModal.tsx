@@ -106,6 +106,20 @@ export function JeevesWelcomeModal() {
             <Button
               variant="outline"
               className="w-full justify-start h-auto py-3 px-4"
+              onClick={() => handleAction("/bible", "read_bible")}
+            >
+              <BookOpen className="h-5 w-5 mr-3 text-primary" />
+              <div className="text-left">
+                <div className="font-medium">Study the Bible</div>
+                <div className="text-xs text-muted-foreground">
+                  Start with PT Study Bible
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              variant="outline"
+              className="w-full justify-start h-auto py-3 px-4"
               onClick={() => handleAction("/palace", "explore_palace")}
             >
               <Building2 className="h-5 w-5 mr-3 text-accent" />

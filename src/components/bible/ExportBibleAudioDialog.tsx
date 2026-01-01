@@ -168,13 +168,15 @@ export const ExportBibleAudioDialog = ({
       // Get selected music URL
       const musicUrl = AMBIENT_TRACKS.find(t => t.id === selectedTrack)?.url || "";
 
-      // Mix audio
-      const mixedBlob = await mixAndDownload({
+      // Mix audio - convert base64 to data URL for the mixer
+      const firstSegment = audioSegments[0]?.audioContent || "";
+      const speechUrl = `data:audio/mp3;base64,${firstSegment}`;
+      const mixedBlob = await mixAndDownload(
+        speechUrl,
         musicUrl,
-        musicVolume: musicVolume / 100,
-        segments: audioSegments,
-        gapBetweenSegments: 0.8,
-      });
+        musicVolume / 100,
+        `${book}_chapter_${chapter}.wav`
+      );
 
       if (!mixedBlob) {
         throw new Error("Failed to mix audio");

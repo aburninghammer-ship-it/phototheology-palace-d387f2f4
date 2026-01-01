@@ -467,7 +467,7 @@ export const BibleReader = () => {
                     onSelect={() => handleVerseClick(verse.verse)}
                     showPrinciples={false}
                     isHighlighted={highlightedVerses.includes(verse.verse)}
-                    isAudioPlaying={audioHighlightedVerse === verse.verse}
+                    isAudioPlaying={false}
                   />
                 ))
               ) : (
@@ -481,7 +481,7 @@ export const BibleReader = () => {
                     onSelect={() => handleVerseClick(verse.verse)}
                     showPrinciples={principleMode}
                     isHighlighted={highlightedVerses.includes(verse.verse)}
-                    isAudioPlaying={audioHighlightedVerse === verse.verse}
+                    isAudioPlaying={false}
                     highlightColor={getHighlightColor(verse.verse)}
                     highlightColors={HIGHLIGHT_COLORS}
                     onHighlight={addHighlight}
