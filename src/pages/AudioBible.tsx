@@ -1,6 +1,6 @@
 /**
  * Audio Bible Page
- * Listen to Bible chapters with optional AI-generated commentary
+ * Listen to Bible chapters with optional Phototheology Commentary
  */
 
 import { useState, useEffect } from "react";
@@ -13,10 +13,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { READING_SERIES, getThemes, CommentaryTier } from "@/services/audioBibleService";
 import { BIBLE_BOOK_METADATA } from "@/data/bibleBooks";
 import {
@@ -31,6 +32,10 @@ import {
   Loader2,
   Headphones,
   ListMusic,
+  Plus,
+  X,
+  BookText,
+  Layers,
 } from "lucide-react";
 
 interface Theme {
@@ -42,6 +47,14 @@ interface Theme {
   category: string;
   verse_count: number;
 }
+
+interface ChapterSelection {
+  book: string;
+  chapter: number;
+}
+
+type SelectionMode = "chapter" | "book" | "custom";
+type CommentaryMode = "verse" | "chapter";
 
 export default function AudioBible() {
   const [searchParams] = useSearchParams();
@@ -91,6 +104,11 @@ export default function AudioBible() {
   // Selection state
   const [selectedBook, setSelectedBook] = useState("Genesis");
   const [selectedChapter, setSelectedChapter] = useState(1);
+  const [selectionMode, setSelectionMode] = useState<SelectionMode>("chapter");
+  const [commentaryMode, setCommentaryMode] = useState<CommentaryMode>("verse");
+  const [customChapters, setCustomChapters] = useState<ChapterSelection[]>([]);
+  const [customBook, setCustomBook] = useState("Genesis");
+  const [customChapter, setCustomChapter] = useState(1);
   const [themes, setThemes] = useState<Theme[]>([]);
 
   // Load themes on mount
@@ -112,8 +130,8 @@ export default function AudioBible() {
   };
 
   // Get chapter count for selected book
-  const getChapterCount = () => {
-    const book = BIBLE_BOOK_METADATA.find((b) => b.name === selectedBook);
+  const getChapterCount = (bookName: string = selectedBook) => {
+    const book = BIBLE_BOOK_METADATA.find((b) => b.name === bookName);
     return book?.chapters || 1;
   };
 
@@ -138,32 +156,65 @@ export default function AudioBible() {
     }
   };
 
-  // Handle play button
-  const handlePlay = async () => {
-    if (isPaused) {
-      resume();
-      return;
-    }
-
-    if (isPlaying) {
-      pause();
-      return;
-    }
-
-    // Unlock audio first (iOS requirement)
+  // Handle play for single chapter
+  const handlePlayChapter = async () => {
     await unlock();
-
-    // Fetch verses and start playback
     const verses = await fetchChapterVerses(selectedBook, selectedChapter);
     if (verses.length > 0) {
       playChapter(selectedBook, selectedChapter, verses);
     }
   };
 
+  // Handle play for whole book
+  const handlePlayBook = async () => {
+    await unlock();
+    // Start with chapter 1
+    const verses = await fetchChapterVerses(selectedBook, 1);
+    if (verses.length > 0) {
+      playChapter(selectedBook, 1, verses);
+      // TODO: Queue remaining chapters
+    }
+  };
+
+  // Handle play for custom selection
+  const handlePlayCustom = async () => {
+    if (customChapters.length === 0) return;
+    await unlock();
+    const first = customChapters[0];
+    const verses = await fetchChapterVerses(first.book, first.chapter);
+    if (verses.length > 0) {
+      playChapter(first.book, first.chapter, verses);
+      // TODO: Queue remaining chapters
+    }
+  };
+
+  // Add chapter to custom list
+  const addCustomChapter = () => {
+    const exists = customChapters.some(
+      (c) => c.book === customBook && c.chapter === customChapter
+    );
+    if (!exists) {
+      setCustomChapters([...customChapters, { book: customBook, chapter: customChapter }]);
+    }
+  };
+
+  // Remove chapter from custom list
+  const removeCustomChapter = (index: number) => {
+    setCustomChapters(customChapters.filter((_, i) => i !== index));
+  };
+
+  // Handle play/pause toggle
+  const handlePlayPause = () => {
+    if (isPaused) {
+      resume();
+    } else if (isPlaying) {
+      pause();
+    }
+  };
+
   // Handle series play
   const handlePlaySeries = async (series: typeof READING_SERIES[0]) => {
     await unlock();
-
     const firstItem = series.items[0];
     const verses = await fetchChapterVerses(firstItem.book, firstItem.chapter);
     if (verses.length > 0) {
@@ -192,7 +243,7 @@ export default function AudioBible() {
                   Audio Bible & Commentary
                 </h1>
                 <p className="text-muted-foreground">
-                  Listen to Scripture with AI-powered insights
+                  Listen to Scripture with Phototheology Commentary
                 </p>
               </div>
             </div>
@@ -205,22 +256,38 @@ export default function AudioBible() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-sm text-muted-foreground">
-                      {isPlayingCommentary ? "Commentary" : "Now Playing"}
+                      {isPlayingCommentary ? "Phototheology Commentary" : "Now Playing"}
                     </p>
                     <h2 className="text-2xl font-bold">
                       {currentBook} {currentChapter}:{currentVerse}
                     </h2>
                   </div>
                   <Badge variant={isPlayingCommentary ? "secondary" : "default"} className="text-sm px-3 py-1">
-                    {isPlayingCommentary ? commentaryTier : "Verse"}
+                    {isPlayingCommentary ? `${commentaryTier} commentary` : "Scripture"}
                   </Badge>
                 </div>
 
-                {/* Current text */}
-                <div className="bg-background/80 rounded-xl p-4 mb-6 max-h-40 overflow-y-auto border">
-                  <p className="text-base leading-relaxed">
-                    {isPlayingCommentary ? currentCommentary : `"${currentVerseText}"`}
-                  </p>
+                {/* Current text - Always visible */}
+                <div className="bg-background/80 rounded-xl p-4 mb-6 min-h-[100px] max-h-[200px] overflow-y-auto border">
+                  {isPlayingCommentary ? (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
+                        Phototheology Commentary
+                      </p>
+                      <p className="text-base leading-relaxed">
+                        {currentCommentary || "Generating commentary..."}
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
+                        {currentBook} {currentChapter}:{currentVerse}
+                      </p>
+                      <p className="text-lg leading-relaxed font-serif">
+                        "{currentVerseText}"
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Progress */}
@@ -245,7 +312,7 @@ export default function AudioBible() {
                   <Button
                     size="lg"
                     className="rounded-full h-16 w-16 shadow-lg"
-                    onClick={handlePlay}
+                    onClick={handlePlayPause}
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -285,69 +352,181 @@ export default function AudioBible() {
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Left Column - Selection */}
             <div className="space-y-6">
-              {/* Book/Chapter Selection */}
+              {/* Selection Mode Tabs */}
               <Card className="glass-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BookOpen className="h-5 w-5 text-primary" />
-                    Select Chapter
+                    What to Listen
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Book</Label>
-                      <Select value={selectedBook} onValueChange={setSelectedBook}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <ScrollArea className="h-64">
-                            {BIBLE_BOOK_METADATA.map((book) => (
-                              <SelectItem key={book.name} value={book.name}>
-                                {book.name}
-                              </SelectItem>
-                            ))}
-                          </ScrollArea>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                <CardContent>
+                  <Tabs value={selectionMode} onValueChange={(v) => setSelectionMode(v as SelectionMode)}>
+                    <TabsList className="grid w-full grid-cols-3 mb-4">
+                      <TabsTrigger value="chapter">
+                        <BookText className="h-4 w-4 mr-1" />
+                        Chapter
+                      </TabsTrigger>
+                      <TabsTrigger value="book">
+                        <BookOpen className="h-4 w-4 mr-1" />
+                        Whole Book
+                      </TabsTrigger>
+                      <TabsTrigger value="custom">
+                        <Layers className="h-4 w-4 mr-1" />
+                        Custom
+                      </TabsTrigger>
+                    </TabsList>
 
-                    <div className="space-y-2">
-                      <Label>Chapter</Label>
-                      <Select
-                        value={selectedChapter.toString()}
-                        onValueChange={(v) => setSelectedChapter(parseInt(v, 10))}
+                    {/* Single Chapter */}
+                    <TabsContent value="chapter" className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Book</Label>
+                          <Select value={selectedBook} onValueChange={setSelectedBook}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <ScrollArea className="h-64">
+                                {BIBLE_BOOK_METADATA.map((book) => (
+                                  <SelectItem key={book.name} value={book.name}>
+                                    {book.name}
+                                  </SelectItem>
+                                ))}
+                              </ScrollArea>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Chapter</Label>
+                          <Select
+                            value={selectedChapter.toString()}
+                            onValueChange={(v) => setSelectedChapter(parseInt(v, 10))}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <ScrollArea className="h-64">
+                                {Array.from({ length: getChapterCount() }, (_, i) => i + 1).map((ch) => (
+                                  <SelectItem key={ch} value={ch.toString()}>
+                                    Chapter {ch}
+                                  </SelectItem>
+                                ))}
+                              </ScrollArea>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <Button size="lg" className="w-full" onClick={handlePlayChapter} disabled={isLoading}>
+                        {isLoading ? <Loader2 className="h-5 w-5 mr-2 animate-spin" /> : <Play className="h-5 w-5 mr-2" />}
+                        Play {selectedBook} {selectedChapter}
+                      </Button>
+                    </TabsContent>
+
+                    {/* Whole Book */}
+                    <TabsContent value="book" className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Book</Label>
+                        <Select value={selectedBook} onValueChange={setSelectedBook}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <ScrollArea className="h-64">
+                              {BIBLE_BOOK_METADATA.map((book) => (
+                                <SelectItem key={book.name} value={book.name}>
+                                  {book.name} ({book.chapters} chapters)
+                                </SelectItem>
+                              ))}
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Listen to all {getChapterCount()} chapters of {selectedBook}
+                      </p>
+                      <Button size="lg" className="w-full" onClick={handlePlayBook} disabled={isLoading}>
+                        {isLoading ? <Loader2 className="h-5 w-5 mr-2 animate-spin" /> : <Play className="h-5 w-5 mr-2" />}
+                        Play Entire {selectedBook}
+                      </Button>
+                    </TabsContent>
+
+                    {/* Custom Selection */}
+                    <TabsContent value="custom" className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Build a custom playlist of chapters (e.g., Genesis 3, Isaiah 6, John 3)
+                      </p>
+                      <div className="flex gap-2">
+                        <Select value={customBook} onValueChange={setCustomBook}>
+                          <SelectTrigger className="flex-1">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <ScrollArea className="h-64">
+                              {BIBLE_BOOK_METADATA.map((book) => (
+                                <SelectItem key={book.name} value={book.name}>
+                                  {book.name}
+                                </SelectItem>
+                              ))}
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          value={customChapter.toString()}
+                          onValueChange={(v) => setCustomChapter(parseInt(v, 10))}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <ScrollArea className="h-64">
+                              {Array.from({ length: getChapterCount(customBook) }, (_, i) => i + 1).map((ch) => (
+                                <SelectItem key={ch} value={ch.toString()}>
+                                  {ch}
+                                </SelectItem>
+                              ))}
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                        <Button variant="outline" size="icon" onClick={addCustomChapter}>
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      {/* Custom chapters list */}
+                      {customChapters.length > 0 && (
+                        <div className="space-y-2">
+                          <Label>Your Playlist ({customChapters.length} chapters)</Label>
+                          <div className="flex flex-wrap gap-2">
+                            {customChapters.map((ch, i) => (
+                              <Badge key={i} variant="secondary" className="pr-1">
+                                {ch.book} {ch.chapter}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-4 w-4 p-0 ml-1 hover:bg-destructive/20"
+                                  onClick={() => removeCustomChapter(i)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <Button
+                        size="lg"
+                        className="w-full"
+                        onClick={handlePlayCustom}
+                        disabled={isLoading || customChapters.length === 0}
                       >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <ScrollArea className="h-64">
-                            {Array.from({ length: getChapterCount() }, (_, i) => i + 1).map((ch) => (
-                              <SelectItem key={ch} value={ch.toString()}>
-                                Chapter {ch}
-                              </SelectItem>
-                            ))}
-                          </ScrollArea>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <Button
-                    size="lg"
-                    className="w-full"
-                    onClick={handlePlay}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    ) : (
-                      <Play className="h-5 w-5 mr-2" />
-                    )}
-                    Play {selectedBook} {selectedChapter}
-                  </Button>
+                        {isLoading ? <Loader2 className="h-5 w-5 mr-2 animate-spin" /> : <Play className="h-5 w-5 mr-2" />}
+                        Play {customChapters.length} Chapter{customChapters.length !== 1 ? "s" : ""}
+                      </Button>
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
               </Card>
 
@@ -356,13 +535,13 @@ export default function AudioBible() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <ListMusic className="h-5 w-5 text-primary" />
-                    Reading Series
+                    Pre-Built Series
                   </CardTitle>
                   <CardDescription>Curated multi-chapter journeys</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {READING_SERIES.slice(0, 4).map((series) => (
+                    {READING_SERIES.map((series) => (
                       <div
                         key={series.id}
                         className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer"
@@ -370,7 +549,9 @@ export default function AudioBible() {
                       >
                         <div>
                           <h3 className="font-medium text-sm">{series.name}</h3>
-                          <p className="text-xs text-muted-foreground">{series.items.length} chapters</p>
+                          <p className="text-xs text-muted-foreground">
+                            {series.description} • {series.items.length} chapters
+                          </p>
                         </div>
                         <Button variant="ghost" size="sm">
                           <Play className="h-4 w-4" />
@@ -384,7 +565,7 @@ export default function AudioBible() {
 
             {/* Right Column - Settings */}
             <div className="space-y-6">
-              {/* Listening Mode - Prominent */}
+              {/* Listening Mode */}
               <Card className="glass-card border-2 border-primary/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -394,7 +575,7 @@ export default function AudioBible() {
                   <CardDescription>Choose how you want to listen</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Bible Only vs With Commentary Toggle */}
+                  {/* Bible Only vs With Commentary */}
                   <div className="grid grid-cols-2 gap-3">
                     <Button
                       variant={!includeCommentary ? "default" : "outline"}
@@ -412,28 +593,56 @@ export default function AudioBible() {
                     >
                       <MessageSquare className="h-6 w-6 mb-1" />
                       <span className="font-semibold">With Commentary</span>
-                      <span className="text-xs opacity-80">AI insights</span>
+                      <span className="text-xs opacity-80">Phototheology insights</span>
                     </Button>
                   </div>
 
-                  {/* Commentary Depth (only show if enabled) */}
+                  {/* Commentary Options (only show if enabled) */}
                   {includeCommentary && (
-                    <div className="space-y-2 pt-2">
-                      <Label>Commentary Depth</Label>
-                      <Select
-                        value={commentaryTier}
-                        onValueChange={(v) => setCommentaryTier(v as CommentaryTier)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="surface">Surface - Brief (2-3 sentences)</SelectItem>
-                          <SelectItem value="intermediate">Intermediate - Deeper (2-3 paragraphs)</SelectItem>
-                          <SelectItem value="scholarly">Scholarly - Comprehensive (4-6 paragraphs)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <>
+                      {/* Commentary Mode: Verse by Verse or Chapter Summary */}
+                      <div className="space-y-2 pt-2">
+                        <Label>Commentary Style</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            variant={commentaryMode === "verse" ? "default" : "outline"}
+                            size="sm"
+                            className="h-auto py-2 flex-col"
+                            onClick={() => setCommentaryMode("verse")}
+                          >
+                            <span className="font-medium">Verse by Verse</span>
+                            <span className="text-xs opacity-80">After each verse</span>
+                          </Button>
+                          <Button
+                            variant={commentaryMode === "chapter" ? "default" : "outline"}
+                            size="sm"
+                            className="h-auto py-2 flex-col"
+                            onClick={() => setCommentaryMode("chapter")}
+                          >
+                            <span className="font-medium">Chapter Summary</span>
+                            <span className="text-xs opacity-80">After whole chapter</span>
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Commentary Depth */}
+                      <div className="space-y-2">
+                        <Label>Commentary Depth</Label>
+                        <Select
+                          value={commentaryTier}
+                          onValueChange={(v) => setCommentaryTier(v as CommentaryTier)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="surface">Surface - Brief (2-3 sentences)</SelectItem>
+                            <SelectItem value="intermediate">Intermediate - Deeper (2-3 paragraphs)</SelectItem>
+                            <SelectItem value="scholarly">Scholarly - Comprehensive (4-6 paragraphs)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </>
                   )}
                 </CardContent>
               </Card>
