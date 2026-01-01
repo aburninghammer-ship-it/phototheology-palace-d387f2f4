@@ -253,9 +253,16 @@ export default function AudioBible() {
                       <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
                         Phototheology Commentary
                       </p>
-                      <p className="text-base leading-relaxed">
-                        {currentCommentary || "Generating commentary..."}
-                      </p>
+                      {currentCommentary ? (
+                        <p className="text-base leading-relaxed">
+                          {currentCommentary}
+                        </p>
+                      ) : (
+                        <div className="flex items-center gap-3 text-muted-foreground">
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <span>Generating commentary...</span>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div>
@@ -615,9 +622,9 @@ export default function AudioBible() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="surface">Surface - Brief (2-3 sentences)</SelectItem>
-                            <SelectItem value="intermediate">Intermediate - Deeper (2-3 paragraphs)</SelectItem>
-                            <SelectItem value="scholarly">Scholarly - Comprehensive (4-6 paragraphs)</SelectItem>
+                            <SelectItem value="surface">Surface</SelectItem>
+                            <SelectItem value="intermediate">Intermediate</SelectItem>
+                            <SelectItem value="scholarly">Scholarly</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>

@@ -68,6 +68,9 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
   const isStoppedRef = useRef(false);
   const loadingRef = useRef(false);
 
+  // Ref for playVerseAtIndex to avoid circular dependencies
+  const playVerseAtIndexRef = useRef<((item: PlaybackItem, index: number) => Promise<void>) | null>(null);
+
   // Refs to store current values for callbacks (avoid stale closures)
   const currentVerseIndexRef = useRef(currentVerseIndex);
   const isPlayingCommentaryRef = useRef(isPlayingCommentary);
@@ -130,7 +133,12 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
     try {
       console.log(`[useAudioBible] Generating commentary for ${item.book} ${item.chapter}:${verse.verse}`);
 
-      const result = await generateCommentary({
+      // Add timeout for commentary generation (30 seconds)
+      const timeoutPromise = new Promise<null>((_, reject) => {
+        setTimeout(() => reject(new Error("Commentary generation timed out")), 30000);
+      });
+
+      const commentaryPromise = generateCommentary({
         book: item.book,
         chapter: item.chapter,
         verse: verse.verse,
@@ -140,9 +148,13 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
         voice: voiceRef.current,
       });
 
+      const result = await Promise.race([commentaryPromise, timeoutPromise]);
+
       if (isStoppedRef.current || !result) {
         console.log("[useAudioBible] Stopped or no result");
         loadingRef.current = false;
+        // Move to next verse if no commentary
+        setIsPlayingCommentary(false);
         return;
       }
 
@@ -151,15 +163,35 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
 
       if (result.audioUrl) {
         await audioEngine.play(result.audioUrl);
-      } else {
+      } else if (result.commentary) {
         // Generate TTS for commentary text
         const audioUrl = await generateTTSAudio({ text: result.commentary, voice: voiceRef.current });
         if (audioUrl && !isStoppedRef.current) {
           await audioEngine.play(audioUrl);
+        } else {
+          // If TTS fails, just show text and auto-advance after delay
+          console.log("[useAudioBible] TTS failed, showing text only");
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          if (!isStoppedRef.current) {
+            audioEngine.stop(); // Trigger "ended" event
+          }
         }
       }
     } catch (error) {
       console.error("[useAudioBible] Commentary error:", error);
+      setCurrentCommentary("Commentary unavailable. Moving to next verse...");
+      // Auto-advance after showing error message
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (!isStoppedRef.current) {
+        setIsPlayingCommentary(false);
+        setCurrentCommentary("");
+        // Move to next verse
+        const nextIndex = currentVerseIndexRef.current + 1;
+        if (nextIndex < item.verses.length) {
+          setCurrentVerseIndex(nextIndex);
+          playVerseAtIndexRef.current?.(item, nextIndex);
+        }
+      }
     } finally {
       loadingRef.current = false;
     }
@@ -199,6 +231,9 @@ export function useAudioBible(options: UseAudioBibleOptions = {}) {
       loadingRef.current = false;
     }
   }, [playCurrentVerseCommentary]);
+
+  // Keep playVerseAtIndex ref updated
+  useEffect(() => { playVerseAtIndexRef.current = playVerseAtIndex; }, [playVerseAtIndex]);
 
   /**
    * Start playback for an item
