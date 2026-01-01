@@ -2034,9 +2034,10 @@ export const SequencePlayer = ({ sequences, onClose, autoPlay = false, sequenceN
       return;
     }
     
-    // Skip if we already fetched this
-    if (lastFetchedRef.current === cacheKey) {
-      console.log("Already fetched:", cacheKey);
+    // Skip if we already fetched this AND content is still loaded
+    // (chapterContent check is critical - if content was cleared, we need to reload)
+    if (lastFetchedRef.current === cacheKey && chapterContent) {
+      console.log("Already fetched and content present:", cacheKey);
       return;
     }
 
