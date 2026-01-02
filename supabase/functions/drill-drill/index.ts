@@ -128,55 +128,89 @@ CRITICAL: Create a UNIFIED STUDY where each principle naturally flows from and b
     let userPrompt = "";
 
     if (mode === "auto" && rooms) {
-      // Auto-drill: analyze verse through all rooms
+      // Auto-drill: analyze verse through all rooms with 3 VARIATIONS
       const roomCount = rooms.length;
       
       systemPrompt += `\n\nYou are running an AUTO-DRILL. This is a "Gather the Fragments" exercise (John 6:12). 
 
-🎯 MISSION CRITICAL: You MUST provide EXACTLY ${roomCount} responses - ONE for EACH of the ${roomCount} rooms provided. Do NOT skip any room. The goal is to extract ONE principle from EVERY room in the Palace.
+🎯 MISSION CRITICAL: Generate THREE DISTINCT DRILL VARIATIONS. Each variation must:
+- Cover EXACTLY ${roomCount} rooms - ONE response for EACH room provided
+- Use DIFFERENT principle combinations and theological angles per variation
+- Build a unique unified study narrative per variation
+
+Since many rooms contain multiple principles, each variation explores DIFFERENT combinations:
+- Variation 1: Focus on CHRIST-CENTERED connections (typology, sanctuary, prophecy emphasis)
+- Variation 2: Focus on PRACTICAL APPLICATION (personal, church, lifestyle emphasis)  
+- Variation 3: Focus on COSMIC CONTEXT (cycles, heavens, great controversy emphasis)
 
 CRITICAL INSTRUCTIONS:
-- Provide EXACTLY ONE response for EACH of the ${roomCount} rooms - no exceptions, no skipping
-- Use ONLY ONE principle per room - select the most impactful one for this verse
-- You are NOT locked into using rooms in order - start from any floor, room, or cycle that best illuminates this verse
-- Build sequence strategically: whatever room you use first should prepare the way for the next room
+- Generate EXACTLY 3 variations, each with EXACTLY ${roomCount} room responses
+- Each variation must use DIFFERENT primary principles from rooms with multiple principles
+- Each variation builds a unique cohesive study narrative
+- Variations should complement each other, not repeat insights
 - Each response should be focused (2-4 sentences) but substantive
-- Always create a unified study where each response builds upon and references previous discoveries
+- You are NOT locked into room order - build sequence strategically per variation
 
-ROOM REQUIREMENTS:
+ROOM LIST (each variation covers ALL ${roomCount} rooms):
 ${rooms.map((r: any, i: number) => `${i + 1}. ${r.tag} (${r.name}): ${r.coreQuestion}`).join('\n')}
 
 SPECIAL INSTRUCTION FOR QUESTIONS ROOM (QR):
-When you reach the Questions Room (QR), generate EXACTLY 15 questions:
-- 5 INTRATEXTUAL questions (about details within this verse/passage)
-- 5 INTERTEXTUAL questions (connecting to other Scripture passages)
-- 5 PALACE questions (applying Phototheology principles from other rooms)
-Label each question clearly with its type.
+In EACH variation, generate EXACTLY 15 questions with different focus:
+- Variation 1 QR: Emphasize typological/prophetic questions
+- Variation 2 QR: Emphasize application/lifestyle questions
+- Variation 3 QR: Emphasize cosmic/historical cycle questions
+Label each: 5 INTRA, 5 INTER, 5 PALACE.
 
-REMEMBER: You MUST generate exactly ${roomCount} responses, one for each room listed above. "Gather up the fragments that remain, that nothing be lost."`;
+REMEMBER: "Gather up the fragments that remain, that nothing be lost." - Different principle combinations reveal different facets of truth.`;
       
-      userPrompt = `Run a complete Drill Drill on: "${verse}"
+      userPrompt = `Run a complete Drill Drill with 3 VARIATIONS on: "${verse}"
 ${verseText ? `\nVerse text: "${verseText}"` : ""}
 
-🎯 MANDATORY: Analyze through ALL ${roomCount} rooms below. Do NOT skip any room. Each room must receive exactly one response.
+🎯 Generate THREE DISTINCT DRILL VARIATIONS, each analyzing ALL ${roomCount} rooms with different principle combinations.
 
-ROOMS TO ANALYZE (${roomCount} total):
+ROOMS TO ANALYZE (${roomCount} total, covered in EACH variation):
 ${rooms.map((r: any, i: number) => `${i + 1}. [${r.tag}] ${r.name} - "${r.coreQuestion}"`).join('\n')}
 
-CRITICAL REQUIREMENTS:
-1. Generate EXACTLY ${roomCount} responses - one for each room listed above
-2. Use ONLY ONE principle per room - select the most impactful one
-3. Each response must reference and build upon previous room discoveries
-4. Create a unified, cohesive study where insights flow naturally
-5. For Questions Room (QR): Generate exactly 15 questions (5 intra, 5 inter, 5 palace)
-6. DO NOT SKIP ANY ROOM - every room must have a response
+VARIATION THEMES:
+- Variation 1 (Christ-Centered): Prioritize typology, sanctuary, prophecy, symbols pointing to Christ
+- Variation 2 (Practical): Prioritize personal application, church relevance, lifestyle transformation
+- Variation 3 (Cosmic): Prioritize cycles, three heavens, great controversy, historical patterns
 
-Return JSON format with EXACTLY ${roomCount} room responses:
+CRITICAL REQUIREMENTS:
+1. Generate EXACTLY 3 variations
+2. Each variation has EXACTLY ${roomCount} responses (one per room)
+3. Each variation uses DIFFERENT principle combinations where rooms have multiple principles
+4. Each variation builds a unique unified study narrative
+5. For QR in each variation: 15 questions with different emphasis per variation
+6. DO NOT SKIP ANY ROOM in any variation
+
+Return JSON format:
 {
-  "responses": [
-    { "roomId": "sr", "response": "Your Story Room analysis..." },
-    { "roomId": "ir", "response": "Your Imagination Room analysis..." },
-    ... (continue for ALL ${roomCount} rooms)
+  "variations": [
+    {
+      "theme": "Christ-Centered",
+      "description": "Brief description of this variation's focus",
+      "responses": [
+        { "roomId": "sr", "response": "..." },
+        ... (ALL ${roomCount} rooms)
+      ]
+    },
+    {
+      "theme": "Practical Application",
+      "description": "Brief description of this variation's focus",
+      "responses": [
+        { "roomId": "sr", "response": "..." },
+        ... (ALL ${roomCount} rooms)
+      ]
+    },
+    {
+      "theme": "Cosmic Context",
+      "description": "Brief description of this variation's focus",
+      "responses": [
+        { "roomId": "sr", "response": "..." },
+        ... (ALL ${roomCount} rooms)
+      ]
+    }
   ]
 }`;
     } else if (mode === "guided" && action === "teach") {
@@ -253,48 +287,62 @@ Please:
 
     console.log("Drill-drill request:", { mode, verse, roomCount: rooms?.length || 1 });
 
-    // Increase token limit significantly for auto mode to accommodate all 35+ rooms
+    // Increase token limit significantly for auto mode to accommodate 3 variations with 35+ rooms each
     const requestBody: any = {
       model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
       ],
-      temperature: 0.7,
-      max_tokens: mode === "auto" ? 24000 : 2000, // Increased from 12000 to handle all rooms
+      temperature: 0.8, // Slightly higher for variation diversity
+      max_tokens: mode === "auto" ? 48000 : 2000, // Increased to handle 3 variations
     };
 
-    // Use tool calling for auto mode to ensure structured output
+    // Use tool calling for auto mode to ensure structured output with 3 variations
     if (mode === "auto" && rooms) {
       requestBody.tools = [
         {
           type: "function",
           function: {
-            name: "submit_drill_responses",
-            description: "Submit the analysis responses for each room in the drill",
+            name: "submit_drill_variations",
+            description: "Submit 3 drill variations, each with analysis responses for every room",
             parameters: {
               type: "object",
               properties: {
-                responses: {
+                variations: {
                   type: "array",
+                  minItems: 3,
+                  maxItems: 3,
                   items: {
                     type: "object",
                     properties: {
-                      roomId: { type: "string", description: "The room ID (e.g., 'sr', 'ir', 'or')" },
-                      response: { type: "string", description: "The analysis response for this room" }
+                      theme: { type: "string", description: "The theme of this variation (Christ-Centered, Practical Application, or Cosmic Context)" },
+                      description: { type: "string", description: "Brief description of this variation's focus" },
+                      responses: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            roomId: { type: "string", description: "The room ID (e.g., 'sr', 'ir', 'or')" },
+                            response: { type: "string", description: "The analysis response for this room in this variation" }
+                          },
+                          required: ["roomId", "response"],
+                          additionalProperties: false
+                        }
+                      }
                     },
-                    required: ["roomId", "response"],
+                    required: ["theme", "description", "responses"],
                     additionalProperties: false
                   }
                 }
               },
-              required: ["responses"],
+              required: ["variations"],
               additionalProperties: false
             }
           }
         }
       ];
-      requestBody.tool_choice = { type: "function", function: { name: "submit_drill_responses" } };
+      requestBody.tool_choice = { type: "function", function: { name: "submit_drill_variations" } };
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -329,16 +377,18 @@ Please:
     
     // Parse response based on mode
     if (mode === "auto") {
-      // Check for tool call response first
+      // Check for tool call response first (expecting 3 variations)
       const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
       if (toolCall?.function?.arguments) {
         try {
           const parsed = JSON.parse(toolCall.function.arguments);
-          console.log("Parsed tool call response with", parsed.responses?.length, "rooms");
-          return new Response(
-            JSON.stringify(parsed),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
+          console.log("Parsed tool call response with", parsed.variations?.length, "variations");
+          if (parsed.variations?.length >= 1) {
+            return new Response(
+              JSON.stringify(parsed),
+              { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+          }
         } catch (e) {
           console.error("Failed to parse tool call arguments:", e);
         }
@@ -352,17 +402,34 @@ Please:
           const jsonMatch = content.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             const parsed = JSON.parse(jsonMatch[0]);
-            console.log("Parsed content JSON with", parsed.responses?.length, "rooms");
-            return new Response(
-              JSON.stringify(parsed),
-              { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
+            // Check if it has variations format
+            if (parsed.variations?.length >= 1) {
+              console.log("Parsed content JSON with", parsed.variations.length, "variations");
+              return new Response(
+                JSON.stringify(parsed),
+                { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+              );
+            }
+            // Legacy format support - wrap single responses in a variation
+            if (parsed.responses?.length > 0) {
+              console.log("Converting legacy format to variations");
+              return new Response(
+                JSON.stringify({
+                  variations: [{
+                    theme: "Comprehensive Analysis",
+                    description: "Full palace analysis of the verse",
+                    responses: parsed.responses
+                  }]
+                }),
+                { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+              );
+            }
           }
         } catch (e) {
           console.error("Failed to parse content JSON:", e);
         }
 
-        // Last fallback: create responses from content for each room
+        // Last fallback: create single variation with pending responses
         console.log("Using content fallback for all rooms");
         const fallbackResponses = rooms.map((r: any) => ({
           roomId: r.id,
@@ -371,7 +438,11 @@ Please:
         
         return new Response(
           JSON.stringify({ 
-            responses: fallbackResponses,
+            variations: [{
+              theme: "Analysis Pending",
+              description: "Please regenerate for full analysis",
+              responses: fallbackResponses
+            }],
             rawContent: content
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -381,10 +452,14 @@ Please:
       // Complete fallback
       return new Response(
         JSON.stringify({ 
-          responses: rooms.map((r: any) => ({
-            roomId: r.id,
-            response: "Analysis failed to generate. Please try again."
-          }))
+          variations: [{
+            theme: "Error",
+            description: "Analysis failed to generate",
+            responses: rooms.map((r: any) => ({
+              roomId: r.id,
+              response: "Analysis failed to generate. Please try again."
+            }))
+          }]
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
