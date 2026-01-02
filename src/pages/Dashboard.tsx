@@ -32,7 +32,8 @@ import {
   Star,
   Sparkles,
   ChevronRight,
-  BarChart3
+  BarChart3,
+  Lightbulb
 } from "lucide-react";
 import { XPSystem, BadgeSystem, WeeklyLeaderboard } from "@/components/gamification";
 import { IdentityLoopWidget } from "@/components/IdentityLoopWidget";
@@ -317,6 +318,15 @@ export default function Dashboard() {
                 <CardDescription>Pick up where you left off</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
+                {/* Mobile-prominent Analyze My Thoughts */}
+                <Button
+                  variant="outline"
+                  className="w-full justify-start bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border-yellow-500/30 hover:from-yellow-500/20 hover:to-amber-500/20 md:hidden"
+                  onClick={() => navigate("/analyze-thoughts")}
+                >
+                  <Lightbulb className="mr-2 h-4 w-4 text-yellow-500" />
+                  <span className="font-semibold text-yellow-700 dark:text-yellow-400">Analyze My Thoughts</span>
+                </Button>
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
