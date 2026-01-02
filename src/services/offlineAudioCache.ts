@@ -1,4 +1,14 @@
 // Offline audio caching service for music and TTS
+// Uses Cache API for web and Capacitor Filesystem for native apps
+
+import {
+  isNativePlatform,
+  saveAudioToDevice,
+  getAudioFromDevice,
+  isAudioSavedOnDevice,
+  getSavedAudioSize,
+  clearAllSavedAudio,
+} from './nativeAudioStorage';
 
 const MUSIC_CACHE_NAME = 'pt-music-cache-v1';
 const TTS_CACHE_NAME = 'pt-tts-cache-v1';
@@ -81,6 +91,7 @@ export const isMusicTrackCached = async (url: string): Promise<boolean> => {
 };
 
 // Cache TTS audio for a verse (includes voice in key for multi-voice support)
+// Uses native filesystem on mobile, Cache API on web
 export const cacheTTSAudio = async (
   book: string,
   chapter: number,
@@ -89,6 +100,13 @@ export const cacheTTSAudio = async (
   voice: string = 'default'
 ): Promise<boolean> => {
   try {
+    // Try native storage first for mobile apps
+    if (isNativePlatform()) {
+      const saved = await saveAudioToDevice(audioBlob, book, chapter, verse, 'verse', voice);
+      if (saved) return true;
+    }
+
+    // Fall back to Cache API for web
     const cache = await caches.open(TTS_CACHE_NAME);
     const key = `tts://${book}/${chapter}/${verse}/${voice}`;
 
@@ -106,6 +124,7 @@ export const cacheTTSAudio = async (
 };
 
 // Get cached TTS audio
+// Checks native filesystem first on mobile, then Cache API
 export const getCachedTTSAudio = async (
   book: string,
   chapter: number,
@@ -113,6 +132,13 @@ export const getCachedTTSAudio = async (
   voice: string = 'default'
 ): Promise<string | null> => {
   try {
+    // Try native storage first for mobile apps
+    if (isNativePlatform()) {
+      const nativeUrl = await getAudioFromDevice(book, chapter, verse, 'verse', voice);
+      if (nativeUrl) return nativeUrl;
+    }
+
+    // Fall back to Cache API
     const cache = await caches.open(TTS_CACHE_NAME);
     const key = `tts://${book}/${chapter}/${verse}/${voice}`;
     const response = await cache.match(key);
@@ -128,6 +154,7 @@ export const getCachedTTSAudio = async (
 };
 
 // Cache commentary audio (chapter-level commentary)
+// Uses native filesystem on mobile, Cache API on web
 export const cacheCommentaryAudio = async (
   book: string,
   chapter: number,
@@ -136,6 +163,13 @@ export const cacheCommentaryAudio = async (
   audioBlob: Blob
 ): Promise<boolean> => {
   try {
+    // Try native storage first for mobile apps
+    if (isNativePlatform()) {
+      const saved = await saveAudioToDevice(audioBlob, book, chapter, undefined, 'commentary', voice);
+      if (saved) return true;
+    }
+
+    // Fall back to Cache API
     const cache = await caches.open(TTS_CACHE_NAME);
     const key = `commentary://${book}/${chapter}/${depth}/${voice}`;
 
@@ -153,6 +187,7 @@ export const cacheCommentaryAudio = async (
 };
 
 // Get cached commentary audio
+// Checks native filesystem first on mobile, then Cache API
 export const getCachedCommentaryAudio = async (
   book: string,
   chapter: number,
@@ -160,6 +195,13 @@ export const getCachedCommentaryAudio = async (
   voice: string
 ): Promise<string | null> => {
   try {
+    // Try native storage first for mobile apps
+    if (isNativePlatform()) {
+      const nativeUrl = await getAudioFromDevice(book, chapter, undefined, 'commentary', voice);
+      if (nativeUrl) return nativeUrl;
+    }
+
+    // Fall back to Cache API
     const cache = await caches.open(TTS_CACHE_NAME);
     const key = `commentary://${book}/${chapter}/${depth}/${voice}`;
     const response = await cache.match(key);
@@ -176,6 +218,7 @@ export const getCachedCommentaryAudio = async (
 };
 
 // Cache verse commentary audio
+// Uses native filesystem on mobile, Cache API on web
 export const cacheVerseCommentaryAudio = async (
   book: string,
   chapter: number,
@@ -185,6 +228,13 @@ export const cacheVerseCommentaryAudio = async (
   audioBlob: Blob
 ): Promise<boolean> => {
   try {
+    // Try native storage first for mobile apps
+    if (isNativePlatform()) {
+      const saved = await saveAudioToDevice(audioBlob, book, chapter, verse, 'commentary', voice);
+      if (saved) return true;
+    }
+
+    // Fall back to Cache API
     const cache = await caches.open(TTS_CACHE_NAME);
     const key = `verse-commentary://${book}/${chapter}/${verse}/${depth}/${voice}`;
 
@@ -202,6 +252,7 @@ export const cacheVerseCommentaryAudio = async (
 };
 
 // Get cached verse commentary audio
+// Checks native filesystem first on mobile, then Cache API
 export const getCachedVerseCommentaryAudio = async (
   book: string,
   chapter: number,
@@ -210,6 +261,13 @@ export const getCachedVerseCommentaryAudio = async (
   voice: string
 ): Promise<string | null> => {
   try {
+    // Try native storage first for mobile apps
+    if (isNativePlatform()) {
+      const nativeUrl = await getAudioFromDevice(book, chapter, verse, 'commentary', voice);
+      if (nativeUrl) return nativeUrl;
+    }
+
+    // Fall back to Cache API
     const cache = await caches.open(TTS_CACHE_NAME);
     const key = `verse-commentary://${book}/${chapter}/${verse}/${depth}/${voice}`;
     const response = await cache.match(key);
@@ -254,9 +312,15 @@ export const cacheAudioFromUrl = async (
   }
 };
 
-// Clear all cached audio
+// Clear all cached audio (both native and web cache)
 export const clearAudioCache = async (): Promise<void> => {
   try {
+    // Clear native storage
+    if (isNativePlatform()) {
+      await clearAllSavedAudio();
+    }
+
+    // Clear web cache
     await caches.delete(MUSIC_CACHE_NAME);
     await caches.delete(TTS_CACHE_NAME);
     console.log('[OfflineAudio] Cache cleared');
@@ -265,10 +329,16 @@ export const clearAudioCache = async (): Promise<void> => {
   }
 };
 
-// Get cache size estimate
-export const getAudioCacheSize = async (): Promise<{ music: number; tts: number }> => {
+// Get cache size estimate (combines native and web cache)
+export const getAudioCacheSize = async (): Promise<{ music: number; tts: number; native: number }> => {
   let musicSize = 0;
   let ttsSize = 0;
+  let nativeSize = 0;
+
+  // Get native storage size
+  if (isNativePlatform()) {
+    nativeSize = await getSavedAudioSize();
+  }
   
   try {
     const musicCache = await caches.open(MUSIC_CACHE_NAME);
@@ -294,5 +364,18 @@ export const getAudioCacheSize = async (): Promise<{ music: number; tts: number 
     }
   } catch {}
   
-  return { music: musicSize, tts: ttsSize };
+  return { music: musicSize, tts: ttsSize, native: nativeSize };
 };
+
+// Re-export native storage functions for direct access
+export { 
+  isNativePlatform,
+  saveAudioToDevice,
+  getAudioFromDevice,
+  isAudioSavedOnDevice,
+  getAllSavedAudio,
+  getSavedAudioSize,
+  clearAllSavedAudio,
+  saveChapterAudioToDevice,
+  isChapterSaved,
+} from './nativeAudioStorage';
