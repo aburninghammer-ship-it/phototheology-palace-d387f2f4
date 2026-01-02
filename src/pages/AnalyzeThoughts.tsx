@@ -769,6 +769,16 @@ const AnalyzeThoughts = () => {
                 )}
               </div>
 
+              {/* Mobile Voice Input - Prominent */}
+              <div className="md:hidden py-4 flex flex-col items-center border-b border-purple-500/20 mb-4">
+                <p className="text-sm text-muted-foreground mb-3">Speak your thoughts</p>
+                <VoiceInput 
+                  onTranscript={handleVoiceTranscript} 
+                  disabled={isAnalyzing} 
+                  variant="large"
+                />
+              </div>
+
               <div className="relative">
                 <Textarea
                   placeholder="Example: I believe the sanctuary in Hebrews represents Christ's mediatorial work in heaven..."
@@ -784,7 +794,10 @@ const AnalyzeThoughts = () => {
                     <span className="text-xs text-muted-foreground/50">Saved</span>
                   )}
                   <span className="text-xs text-muted-foreground/50">{input.length}</span>
-                  <VoiceInput onTranscript={handleVoiceTranscript} disabled={isAnalyzing} />
+                  {/* Desktop Voice Input - Icon */}
+                  <div className="hidden md:block">
+                    <VoiceInput onTranscript={handleVoiceTranscript} disabled={isAnalyzing} />
+                  </div>
                 </div>
               </div>
               
