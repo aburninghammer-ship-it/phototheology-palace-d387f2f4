@@ -89,7 +89,7 @@ serve(async (req) => {
   }
 
   try {
-    const { mode, verse, verseText, room, rooms, userAnswer, action, difficulty, previousResponses, expound } = await req.json();
+    const { mode, drillType, verse, verseText, thought, room, rooms, userAnswer, action, difficulty, previousResponses, expound } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -103,9 +103,27 @@ serve(async (req) => {
       pro: "Advanced analysis with scholarly depth. Expect familiarity with PT terminology. Challenge them to go deeper."
     };
 
+    // Determine if this is a thought drill or verse drill
+    const isThoughtDrill = drillType === "thought" && thought;
+    const subjectLabel = isThoughtDrill ? "THOUGHT" : "VERSE";
+    const subjectContent = isThoughtDrill ? thought : verse;
+    const subjectText = isThoughtDrill ? thought : (verseText || verse);
+
     let systemPrompt = `You are Jeeves, the wise and engaging AI butler of the Phototheology Palace. You guide users through deep Bible study using the Phototheology method.
 
-Your mission is based on Jesus' words: "Gather up the fragments that remain, that nothing be lost" (John 6:12). Just as Jesus commanded His disciples to gather every fragment after feeding the 5,000, you help believers extract every insight from Scripture—leaving nothing of value behind.
+Your mission is based on Jesus' words: "Gather up the fragments that remain, that nothing be lost" (John 6:12). Just as Jesus commanded His disciples to gather every fragment after feeding the 5,000, you help believers extract every insight—leaving nothing of value behind.
+
+${isThoughtDrill ? `
+THOUGHT DRILLING MODE:
+You are drilling a THEOLOGICAL THOUGHT or IDEA, not a specific verse. The user has provided a thought, concept, question, or insight they want to explore through the Phototheology Palace.
+
+When drilling a thought:
+- Apply each room's principles to analyze, expand, and deepen the thought
+- Connect the thought to relevant Scripture passages
+- Show how different Palace rooms reveal different facets of the thought
+- Build a comprehensive theological understanding
+- Always ground insights in Scripture while exploring the thought
+` : ''}
 
 ${PALACE_STRUCTURE}
 
@@ -128,7 +146,7 @@ CRITICAL: Create a UNIFIED STUDY where each principle naturally flows from and b
     let userPrompt = "";
 
     if (mode === "auto" && rooms) {
-      // Auto-drill: analyze verse through all rooms with 3 VARIATIONS
+      // Auto-drill: analyze verse/thought through all rooms with 3 VARIATIONS
       const roomCount = rooms.length;
       
       systemPrompt += `\n\nYou are running an AUTO-DRILL. This is a "Gather the Fragments" exercise (John 6:12). 
@@ -150,6 +168,8 @@ CRITICAL INSTRUCTIONS:
 - Variations should complement each other, not repeat insights
 - Each response should be focused (2-4 sentences) but substantive
 - You are NOT locked into room order - build sequence strategically per variation
+${isThoughtDrill ? `- Connect the thought to relevant Scripture in each response
+- Show how the thought relates to each room's principles` : ''}
 
 ROOM LIST (each variation covers ALL ${roomCount} rooms):
 ${rooms.map((r: any, i: number) => `${i + 1}. ${r.tag} (${r.name}): ${r.coreQuestion}`).join('\n')}
@@ -163,8 +183,9 @@ Label each: 5 INTRA, 5 INTER, 5 PALACE.
 
 REMEMBER: "Gather up the fragments that remain, that nothing be lost." - Different principle combinations reveal different facets of truth.`;
       
-      userPrompt = `Run a complete Drill Drill with 3 VARIATIONS on: "${verse}"
-${verseText ? `\nVerse text: "${verseText}"` : ""}
+      userPrompt = `Run a complete Drill Drill with 3 VARIATIONS on this ${subjectLabel}: "${subjectContent}"
+${!isThoughtDrill && verseText ? `\nVerse text: "${verseText}"` : ""}
+${isThoughtDrill ? `\nThis is a THEOLOGICAL THOUGHT/IDEA to analyze through the Palace, not a Bible verse. Connect it to relevant Scripture as you analyze.` : ""}
 
 🎯 Generate THREE DISTINCT DRILL VARIATIONS, each analyzing ALL ${roomCount} rooms with different principle combinations.
 
@@ -183,6 +204,7 @@ CRITICAL REQUIREMENTS:
 4. Each variation builds a unique unified study narrative
 5. For QR in each variation: 15 questions with different emphasis per variation
 6. DO NOT SKIP ANY ROOM in any variation
+${isThoughtDrill ? `7. Connect every room's response to relevant Scripture passages` : ""}
 
 Return JSON format:
 {
@@ -285,7 +307,7 @@ Please:
 5. Connect to broader biblical themes`;
     }
 
-    console.log("Drill-drill request:", { mode, verse, roomCount: rooms?.length || 1 });
+    console.log("Drill-drill request:", { mode, drillType, verse, thought: thought?.substring(0, 50), roomCount: rooms?.length || 1 });
 
     // Increase token limit significantly for auto mode to accommodate 3 variations with 35+ rooms each
     const requestBody: any = {
