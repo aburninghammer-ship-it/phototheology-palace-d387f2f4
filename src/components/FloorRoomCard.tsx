@@ -19,7 +19,9 @@ const roomEmojis: Record<string, string> = {
   cr: "✝️", dr: "💠", c6: "📚", trm: "🏛️", tz: "⏰", prm: "🎵", "p||": "🪞", frt: "🍇", cec: "👑", r66: "📿",
   bl: "⛪", pr: "🔮", "3a": "👼", fe: "🎊",
   "123h": "☁️", cycles: "🔄", jr: "🍊", math: "🔢",
-  frm: "🔥", mr: "🙏", srm: "⚡"
+  frm: "🔥", mr: "🙏", srm: "⚡",
+  // Floor 8 - Master
+  infinity: "♾️", freestyle: "✨"
 };
 
 // Rooms with libraries - show "Newly Renovated" badge
@@ -101,6 +103,9 @@ const roomGradients: Record<string, string> = {
   frm: "bg-gradient-to-br from-red-600 to-orange-700",
   mr: "bg-gradient-to-br from-indigo-700 to-purple-800",
   srm: "bg-gradient-to-br from-yellow-500 to-lime-600",
+  // Floor 8 - Master
+  infinity: "bg-gradient-to-br from-slate-700 to-zinc-900",
+  freestyle: "bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500",
 };
 
 export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProps) => {
@@ -114,7 +119,12 @@ export const FloorRoomCard = ({ room, floorNumber, gradient }: FloorRoomCardProp
   const isNewlyRenovated = NEWLY_RENOVATED_ROOMS.has(room.id);
 
   const handleClick = () => {
-    navigate(`/palace/floor/${floorNumber}/room/${room.id}`);
+    // Special routing for Palace Freestyle room
+    if (room.id === "freestyle") {
+      navigate("/palace/freestyle");
+    } else {
+      navigate(`/palace/floor/${floorNumber}/room/${room.id}`);
+    }
   };
 
   return (
