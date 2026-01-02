@@ -219,3 +219,6 @@ verify_jwt = false
 
 [functions.generate-audio-commentary]
 verify_jwt = false
+
+[functions.freestyle-mentor]
+verify_jwt = false
