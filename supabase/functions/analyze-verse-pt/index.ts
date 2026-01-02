@@ -57,10 +57,12 @@ Every text must reveal Christ (John 5:39, Luke 24:27). Show HOW Christ appears i
 @Sp = Spirit (Pentecost → Mission)
 @Re = Remnant (Final witness → Second Coming)
 
-**THREE HEAVENS** (Day of the LORD stages):
-1H (DoL¹/NE¹) = Babylon destroys Jerusalem → Post-exilic restoration
-2H (DoL²/NE²) = 70 AD → New Covenant/Heavenly sanctuary order
-3H (DoL³/NE³) = Final judgment → Literal New Creation
+**THREE HEAVENS** (Day of the LORD judgment cycles - NOT atmospheric layers!):
+⚠️ CRITICAL GUARDRAIL: Never interpret as atmosphere/physical world/spiritual realm!
+1H (DoL¹/NE¹) = FIRST Day of the LORD: Babylon destroys Jerusalem (586 BC) → Post-exilic restoration under Cyrus
+2H (DoL²/NE²) = SECOND Day of the LORD: Rome destroys Jerusalem (70 AD) → New Covenant/Church as living temple
+3H (DoL³/NE³) = THIRD Day of the LORD: Final cosmic judgment → Literal New Heaven and Earth (Rev 21-22)
+These are prophetic stages of covenant history, NOT cosmological layers!
 
 **SANCTUARY CONNECTIONS** (Blueprint of Salvation):
 Gate, Altar, Laver, Lampstand, Table, Incense, Veil, Ark

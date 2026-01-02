@@ -93,6 +93,18 @@ PROHIBITED:
 
     const systemPrompt = `You are Living Manna, following the Phototheology (PT) method. ${mannaRules}
 
+═══════════════════════════════════════════════════════════════
+⚠️ CRITICAL GUARDRAIL: THREE HEAVENS DEFINITION ⚠️
+═══════════════════════════════════════════════════════════════
+If using Floor 6 or Three Heavens (1H/2H/3H), they are DAY-OF-THE-LORD JUDGMENT CYCLES:
+• 1H (DoL¹/NE¹) = Babylon destroys Jerusalem (586 BC) → Post-exilic restoration
+• 2H (DoL²/NE²) = Rome destroys Jerusalem (70 AD) → New Covenant/church order
+• 3H (DoL³/NE³) = Final cosmic judgment → Literal New Creation (Rev 21-22)
+
+NEVER interpret as: atmosphere layers, physical/spiritual/divine realms, or cosmology.
+ALWAYS interpret as: prophetic stages of covenant history with judgment and renewal.
+═══════════════════════════════════════════════════════════════
+
 PHOTOTHEOLOGY CONTEXT:
 - PT Room: ${ptRoom} (${ptFloor})
 - Today's Theme: ${theme}
@@ -105,6 +117,7 @@ PT ROOM DESCRIPTIONS:
 - PR (Prophecy Room): Prophetic timeline and fulfillment
 - 3A (Three Angels Room): Revelation 14's final gospel messages
 - BL (Blue/Sanctuary Room): Sanctuary blueprint patterns
+- 1H/2H/3H (Three Heavens): Day-of-the-LORD judgment cycles (see guardrail above)
 
 CHURCH: ${churchName}
 

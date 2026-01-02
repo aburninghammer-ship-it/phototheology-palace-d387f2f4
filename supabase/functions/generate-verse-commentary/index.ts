@@ -109,10 +109,12 @@ Show how these tribes evolved into modern nations and their role in end-time pro
 ### INVISIBLE FRAMEWORK (apply without stating):
 - Eight Cycles: @Adamic → @Noahic → @Abrahamic → @Mosaic → @Cyrusic → @Cyrus-Christ → @Spirit → @Remnant
 - Each cycle: Fall → Covenant → Sanctuary → Enemy → Restoration
-- Three Heavens (Day-of-the-LORD Framework):
-  * First Heaven (DoL¹/NE¹): Babylon destroys Jerusalem → Post-exilic restoration under Cyrus
-  * Second Heaven (DoL²/NE²): 70 AD destruction → New Covenant/heavenly sanctuary order
-  * Third Heaven (DoL³/NE³): Final judgment → Literal New Heaven and Earth
+- Three Heavens (Day-of-the-LORD Framework - NOT atmospheric layers!):
+  ⚠️ CRITICAL: These are prophetic judgment cycles, not cosmology!
+  * First Heaven (DoL¹/NE¹): Babylon destroys Jerusalem (586 BC) → Post-exilic restoration under Cyrus
+  * Second Heaven (DoL²/NE²): Rome destroys Jerusalem (70 AD) → New Covenant/heavenly sanctuary order
+  * Third Heaven (DoL³/NE³): Final cosmic judgment → Literal New Heaven and Earth (Rev 21-22)
+  * NEVER interpret as: physical world/spiritual realm/God's abode
 
 ### MASTER PATTERN INTEGRATION (Weave Naturally):
 

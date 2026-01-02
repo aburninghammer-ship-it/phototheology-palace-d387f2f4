@@ -52,9 +52,9 @@ const principleInfo: Record<string, string> = {
   "@CyC": "Cyrus-Christ Cycle - Type to antitype Deliverer",
   "@Sp": "Holy Spirit Cycle - Church age, Pentecost",
   "@Re": "Remnant Cycle - End-time witness to Second Coming",
-  "1H": "First Heaven - Destruction/Restoration (586 BC)",
-  "2H": "Second Heaven - New Covenant order (70 AD)",
-  "3H": "Third Heaven - Final New Creation",
+  "1H": "First Heaven (DoL¹/NE¹) - Day of the LORD: Babylon destroys Jerusalem (586 BC) → Post-exilic restoration",
+  "2H": "Second Heaven (DoL²/NE²) - Day of the LORD: Rome destroys Jerusalem (70 AD) → New Covenant/church order",
+  "3H": "Third Heaven (DoL³/NE³) - Day of the LORD: Final cosmic judgment → Literal New Creation (NOT atmospheric layers!)",
 };
 
 // Simple hash function for text to ensure consistent but varied selection
