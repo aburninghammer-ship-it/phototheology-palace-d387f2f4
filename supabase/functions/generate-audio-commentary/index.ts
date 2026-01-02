@@ -46,6 +46,23 @@ CRITICAL THEOLOGICAL SAFEGUARDS - You MUST follow these interpretations:
 
 8. SABBATH: The seventh-day Sabbath remains God's sign of creation and sanctification,
    unchanged from creation through eternity (Isaiah 66:22-23).
+
+9. FEAST TYPOLOGY - CRITICAL: The feasts MUST be correctly mapped to Christ's ministry:
+
+   SPRING FEASTS (Christ's FIRST ADVENT - already fulfilled):
+   - PASSOVER (Nisan 14): Christ's DEATH on the cross - "Christ our Passover" (1 Cor 5:7)
+   - UNLEAVENED BREAD (Nisan 15-21): Christ's BURIAL and sinless life - "without leaven of sin"
+   - FIRSTFRUITS (Nisan 16): Christ's RESURRECTION - "firstfruits of those who have fallen asleep" (1 Cor 15:20)
+   - PENTECOST (50 days later): Outpouring of Holy Spirit on the early church (Acts 2)
+
+   FALL FEASTS (Christ's SECOND ADVENT ministry - end-time):
+   - TRUMPETS (Tishri 1): The great awakening/judgment hour message (1840s Advent movement)
+   - DAY OF ATONEMENT (Tishri 10): Christ's heavenly MOST HOLY PLACE ministry and
+     pre-advent investigative judgment beginning 1844 - NOT His death on the cross!
+   - TABERNACLES (Tishri 15-22): God dwelling with His people in the New Earth
+
+   NEVER confuse the Day of Atonement with Christ's death. His death fulfilled PASSOVER.
+   The Day of Atonement points to His HIGH PRIESTLY ministry in heaven since 1844.
 `;
 
 const PHOTOTHEOLOGY_PRINCIPLES = `
