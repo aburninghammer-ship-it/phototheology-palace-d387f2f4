@@ -34,6 +34,12 @@ export interface DrillResponse {
   expounded?: boolean;
 }
 
+export interface DrillVariation {
+  theme: string;
+  description: string;
+  responses: DrillResponse[];
+}
+
 export interface DrillSession {
   id?: string;
   verse: string;
@@ -41,6 +47,7 @@ export interface DrillSession {
   mode: DrillMode;
   difficulty: DifficultyLevel;
   responses: DrillResponse[];
+  variations?: DrillVariation[];
   mindMap?: any;
   createdAt: Date;
   completedAt?: Date;
@@ -165,7 +172,36 @@ const DrillDrill = () => {
 
       if (error) throw error;
 
-      if (data?.responses) {
+      // Handle new variations format (3 outputs)
+      if (data?.variations && data.variations.length > 0) {
+        const processedVariations: DrillVariation[] = data.variations.map((variation: any) => ({
+          theme: variation.theme,
+          description: variation.description,
+          responses: session.responses.map(resp => {
+            const aiResponse = variation.responses?.find((r: any) => r.roomId === resp.roomId);
+            return {
+              ...resp,
+              jeevesResponse: aiResponse?.response || "Analysis pending",
+              completed: !!aiResponse?.response
+            };
+          })
+        }));
+
+        // Use the first variation as the main responses for backward compatibility
+        const primaryResponses = processedVariations[0]?.responses || session.responses;
+
+        setSession(prev => prev ? {
+          ...prev,
+          responses: primaryResponses,
+          variations: processedVariations,
+          mindMap: data.mindMap,
+          completedAt: new Date()
+        } : null);
+
+        toast.success(`Generated ${processedVariations.length} drill variations!`);
+      } 
+      // Legacy single response format fallback
+      else if (data?.responses) {
         const updatedResponses = session.responses.map(resp => {
           const aiResponse = data.responses.find((r: any) => r.roomId === resp.roomId);
           if (aiResponse) {
@@ -181,6 +217,11 @@ const DrillDrill = () => {
         setSession(prev => prev ? {
           ...prev,
           responses: updatedResponses,
+          variations: [{
+            theme: "Comprehensive Analysis",
+            description: "Full palace analysis of the verse",
+            responses: updatedResponses
+          }],
           mindMap: data.mindMap,
           completedAt: new Date()
         } : null);
