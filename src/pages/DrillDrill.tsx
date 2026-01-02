@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Target, Sparkles, BookOpen, Loader2, Save, Download, ChevronRight, Check, Brain, Zap, Bot, HelpCircle } from "lucide-react";
+import { Target, Sparkles, BookOpen, Loader2, Save, Download, ChevronRight, Check, Brain, Zap, Bot, HelpCircle, Lightbulb } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -21,6 +21,7 @@ import { SparkContainer, SparkSettings } from "@/components/sparks";
 
 export type DrillMode = "guided" | "self" | "auto";
 export type DifficultyLevel = "beginner" | "intermediate" | "pro";
+export type DrillType = "verse" | "thought";
 
 export interface DrillResponse {
   roomId: string;
@@ -44,6 +45,8 @@ export interface DrillSession {
   id?: string;
   verse: string;
   verseText?: string;
+  thought?: string;
+  drillType: DrillType;
   mode: DrillMode;
   difficulty: DifficultyLevel;
   responses: DrillResponse[];
@@ -58,6 +61,8 @@ const DrillDrill = () => {
   const { user } = useAuth();
   const [verse, setVerse] = useState("");
   const [verseText, setVerseText] = useState("");
+  const [thought, setThought] = useState("");
+  const [drillType, setDrillType] = useState<DrillType>("verse");
   const [mode, setMode] = useState<DrillMode | null>(null);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>("intermediate");
   const [session, setSession] = useState<DrillSession | null>(null);
@@ -105,16 +110,20 @@ const DrillDrill = () => {
     );
 
   const startDrill = async () => {
-    if (!verse.trim()) {
+    if (drillType === "verse" && !verse.trim()) {
       toast.error("Please enter a verse reference");
+      return;
+    }
+    if (drillType === "thought" && !thought.trim()) {
+      toast.error("Please enter a thought to drill");
       return;
     }
 
     setLoading(true);
     try {
-      // Fetch verse text if not provided
+      // Fetch verse text if not provided (only for verse drill)
       let text = verseText;
-      if (!text.trim()) {
+      if (drillType === "verse" && !text.trim()) {
         const { data, error } = await supabase.functions.invoke("fetch-verse", {
           body: { reference: verse }
         });
@@ -135,8 +144,10 @@ const DrillDrill = () => {
       }));
 
       const newSession: DrillSession = {
-        verse,
-        verseText: text,
+        verse: drillType === "verse" ? verse : `Thought: ${thought.substring(0, 50)}...`,
+        verseText: drillType === "verse" ? text : undefined,
+        thought: drillType === "thought" ? thought : undefined,
+        drillType,
         mode: mode!,
         difficulty,
         responses,
@@ -163,8 +174,10 @@ const DrillDrill = () => {
       const { data, error } = await supabase.functions.invoke("drill-drill", {
         body: {
           mode: "auto",
-          verse: session.verse,
-          verseText: session.verseText,
+          drillType: session.drillType,
+          verse: session.drillType === "verse" ? session.verse : undefined,
+          verseText: session.drillType === "verse" ? session.verseText : undefined,
+          thought: session.drillType === "thought" ? session.thought : undefined,
           difficulty: session.difficulty,
           rooms: allRooms.map(r => ({ id: r.id, tag: r.tag, name: r.name, coreQuestion: r.coreQuestion }))
         }
@@ -243,11 +256,14 @@ const DrillDrill = () => {
       const { error } = await supabase.from("drill_sessions" as any).insert({
         user_id: user.id,
         verse_reference: session.verse,
-        verse_text: session.verseText,
+        verse_text: session.drillType === "thought" ? session.thought : session.verseText,
         mode: session.mode,
         drill_data: {
           difficulty: session.difficulty,
+          drillType: session.drillType,
+          thought: session.thought,
           responses: session.responses,
+          variations: session.variations,
           mindMap: session.mindMap
         },
         name,
@@ -268,6 +284,8 @@ const DrillDrill = () => {
     setDifficulty("intermediate");
     setVerse("");
     setVerseText("");
+    setThought("");
+    setDrillType("verse");
   };
 
   return (
@@ -460,46 +478,125 @@ const DrillDrill = () => {
             <TabsContent value="drill" className="space-y-6">
               {!session ? (
                 <>
-                  {/* Verse Input */}
+                  {/* Drill Type Selection */}
                   <Card variant="glass">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <BookOpen className="h-5 w-5 text-primary" />
-                        Choose Your Verse
+                        <Target className="h-5 w-5 text-primary" />
+                        What Do You Want to Drill?
                       </CardTitle>
-                      <CardDescription>
-                        Enter a single verse reference to drill through the entire Palace
-                      </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Verse Reference</label>
-                          <Input
-                            placeholder="e.g., John 3:16, Romans 8:28"
-                            value={verse}
-                            onChange={(e) => setVerse(e.target.value)}
-                            className="bg-background/50"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Verse Text <span className="text-muted-foreground">(optional - will auto-fetch if left blank)</span></label>
-                          <Textarea
-                            placeholder="Enter verse reference (e.g., John 3:16) or paste full verse text..."
-                            value={verseText}
-                            onChange={(e) => setVerseText(e.target.value)}
-                            className="min-h-[120px] bg-background/50"
-                          />
-                        </div>
-                        {verseText && (
-                          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                            <p className="text-sm font-medium text-primary mb-1">{verse || "Selected Verse"}</p>
-                            <p className="text-muted-foreground italic">"{verseText}"</p>
+                    <CardContent>
+                      <div className="grid gap-3 md:grid-cols-2">
+                        <Button
+                          variant={drillType === "verse" ? "default" : "outline"}
+                          className="h-auto p-4 flex flex-col items-start gap-2"
+                          onClick={() => setDrillType("verse")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <BookOpen className="h-5 w-5" />
+                            <span className="font-semibold">Drill a Verse</span>
                           </div>
-                        )}
+                          <p className="text-xs text-left opacity-80">
+                            Enter a Bible verse and extract every insight through the Palace
+                          </p>
+                        </Button>
+                        <Button
+                          variant={drillType === "thought" ? "default" : "outline"}
+                          className="h-auto p-4 flex flex-col items-start gap-2"
+                          onClick={() => setDrillType("thought")}
+                        >
+                          <div className="flex items-center gap-2">
+                            <Lightbulb className="h-5 w-5" />
+                            <span className="font-semibold">Drill a Thought</span>
+                          </div>
+                          <p className="text-xs text-left opacity-80">
+                            Enter a theological idea, question, or insight to drill through the Palace
+                          </p>
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
+
+                  {/* Verse Input - shown when drilling a verse */}
+                  {drillType === "verse" && (
+                    <Card variant="glass">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-primary" />
+                          Choose Your Verse
+                        </CardTitle>
+                        <CardDescription>
+                          Enter a single verse reference to drill through the entire Palace
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Verse Reference</label>
+                            <Input
+                              placeholder="e.g., John 3:16, Romans 8:28"
+                              value={verse}
+                              onChange={(e) => setVerse(e.target.value)}
+                              className="bg-background/50"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Verse Text <span className="text-muted-foreground">(optional - will auto-fetch if left blank)</span></label>
+                            <Textarea
+                              placeholder="Enter verse reference (e.g., John 3:16) or paste full verse text..."
+                              value={verseText}
+                              onChange={(e) => setVerseText(e.target.value)}
+                              className="min-h-[120px] bg-background/50"
+                            />
+                          </div>
+                          {verseText && (
+                            <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                              <p className="text-sm font-medium text-primary mb-1">{verse || "Selected Verse"}</p>
+                              <p className="text-muted-foreground italic">"{verseText}"</p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Thought Input - shown when drilling a thought */}
+                  {drillType === "thought" && (
+                    <Card variant="glass">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Lightbulb className="h-5 w-5 text-primary" />
+                          Enter Your Thought
+                        </CardTitle>
+                        <CardDescription>
+                          Enter a theological idea, doctrine, question, or insight to explore through the entire Palace
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Your Thought or Idea</label>
+                          <Textarea
+                            placeholder="e.g., 'The relationship between law and grace', 'How does the sanctuary reveal Christ's work?', 'The significance of the number 40 in Scripture'..."
+                            value={thought}
+                            onChange={(e) => setThought(e.target.value)}
+                            className="min-h-[150px] bg-background/50"
+                          />
+                        </div>
+                        {thought && (
+                          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                            <p className="text-sm font-medium text-primary mb-1">Your Thought</p>
+                            <p className="text-muted-foreground">"{thought}"</p>
+                          </div>
+                        )}
+                        <div className="p-3 rounded-lg bg-muted/50 border border-muted">
+                          <p className="text-xs text-muted-foreground">
+                            <strong>Tip:</strong> Enter theological concepts, doctrinal questions, biblical themes, or personal insights. Jeeves will analyze your thought through every room of the Palace, providing 3 distinct perspectives.
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                   {/* Mode Selection */}
                   <Card variant="glass">
@@ -598,7 +695,7 @@ const DrillDrill = () => {
                       <Button
                         className="w-full"
                         size="lg"
-                        disabled={!verse.trim() || !mode || loading}
+                        disabled={(!verse.trim() && drillType === "verse") || (!thought.trim() && drillType === "thought") || !mode || loading}
                         onClick={startDrill}
                       >
                         {loading ? (
@@ -609,7 +706,7 @@ const DrillDrill = () => {
                         ) : (
                           <>
                             <Target className="mr-2 h-4 w-4" />
-                            Gather the Fragments
+                            {drillType === "thought" ? "Drill My Thought" : "Gather the Fragments"}
                           </>
                         )}
                       </Button>
@@ -652,7 +749,21 @@ const DrillDrill = () => {
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex-1">
-                          <h2 className="text-xl font-bold text-primary">{session.verse}</h2>
+                          <div className="flex items-center gap-2 mb-1">
+                            {session.drillType === "thought" ? (
+                              <Lightbulb className="h-5 w-5 text-primary" />
+                            ) : (
+                              <BookOpen className="h-5 w-5 text-primary" />
+                            )}
+                            <h2 className="text-xl font-bold text-primary">
+                              {session.drillType === "thought" ? "Drilling Thought" : session.verse}
+                            </h2>
+                          </div>
+                          {session.thought && (
+                            <div className="mt-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                              <p className="text-foreground">"{session.thought}"</p>
+                            </div>
+                          )}
                           {session.verseText && (
                             <div className="mt-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
                               <p className="text-foreground italic">"{session.verseText}"</p>
@@ -660,6 +771,7 @@ const DrillDrill = () => {
                           )}
                         </div>
                         <div className="flex items-center gap-2">
+                          <Badge variant="outline">{session.drillType === "thought" ? "thought" : "verse"}</Badge>
                           <Badge variant="outline">{session.mode} mode</Badge>
                           <Badge>
                             {session.responses.filter(r => r.completed).length}/{session.responses.length} complete
