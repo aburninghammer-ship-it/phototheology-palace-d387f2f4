@@ -220,6 +220,9 @@ verify_jwt = false
 [functions.generate-audio-commentary]
 verify_jwt = false
 
+[functions.clear-commentary-cache]
+verify_jwt = true
+
 [functions.freestyle-mentor]
 verify_jwt = false
 

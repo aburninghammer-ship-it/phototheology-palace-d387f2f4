@@ -88,6 +88,14 @@ FLOOR 5: VISION (Sanctuary, Prophecy & Feasts)
 🔹 3A (Three Angels Room): How does this proclaim everlasting gospel/judgment/Babylon/Beast warning?
 🔹 FE (Feasts Room): Which feast does this fulfill/foreshadow?
    • Passover, Unleavened Bread, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles
+   ⚠️ CRITICAL FEAST TYPOLOGY: Spring feasts (Passover, Unleavened Bread, Firstfruits, Pentecost) = Christ's FIRST ADVENT
+   - Passover = Christ's DEATH (NOT Day of Atonement!)
+   - Unleavened Bread = Christ's BURIAL
+   - Firstfruits = Christ's RESURRECTION
+   - Pentecost = Holy Spirit outpouring
+   Fall feasts (Trumpets, Atonement, Tabernacles) = Christ's SECOND ADVENT ministry
+   - Day of Atonement = 1844 heavenly ministry, NOT the cross!
+   NEVER equate Jesus's death/resurrection with Day of Atonement - that is PASSOVER/FIRSTFRUITS
 🔹 CEC (Christ in Every Chapter): Christ title/role, what He does, crosslink
 🔹 R66 (Room 66): How does this theme develop Genesis→Revelation?
 

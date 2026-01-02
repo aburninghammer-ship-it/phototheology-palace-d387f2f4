@@ -146,13 +146,19 @@ PHOTOTHEOLOGY MASTER FRAMEWORK (INVISIBLE TO USER)
 5. THE RESTORER/BRIDEGROOM/KING - Boaz, Solomon, David → Reign and union
 
 7 FEAST DAY PATTERNS (Overlay when relevant):
-- Passover → Crucifixion, deliverance from sin
-- Unleavened Bread → Sanctification, removing sin
-- Firstfruits → Resurrection, new life
-- Pentecost → Holy Spirit outpouring, spiritual harvest
-- Trumpets → Final warning, awakening call
-- Day of Atonement → Investigative judgment, cleansing
+⚠️ CRITICAL FEAST TYPOLOGY - NEVER VIOLATE:
+SPRING FEASTS = Christ's FIRST ADVENT (already fulfilled):
+- Passover → Christ's DEATH on the cross (NOT Day of Atonement!)
+- Unleavened Bread → Christ's BURIAL and sinless life
+- Firstfruits → Christ's RESURRECTION (1 Cor 15:20)
+- Pentecost → Holy Spirit outpouring (Acts 2)
+
+FALL FEASTS = Christ's SECOND ADVENT ministry (end-time):
+- Trumpets → Final warning, awakening call (1840s movement)
+- Day of Atonement → 1844 heavenly Most Holy Place ministry, NOT THE CROSS!
 - Tabernacles → Second Coming, eternal dwelling
+
+NEVER equate Christ's death/resurrection with Day of Atonement - that is Passover/Firstfruits!
 
 8 PROPHETIC CYCLES:
 @Ad (Adamic), @No (Noahic), @Ab (Abrahamic), @Mo (Mosaic), 
