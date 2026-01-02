@@ -222,3 +222,6 @@ verify_jwt = false
 
 [functions.freestyle-mentor]
 verify_jwt = false
+
+[functions.transcribe-audio]
+verify_jwt = false
