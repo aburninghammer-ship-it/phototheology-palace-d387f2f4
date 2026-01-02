@@ -534,24 +534,30 @@ export const EnhancedMobileDrawer = () => {
                 </p>
               </div>
               
-              <Button asChild variant="outline" className="w-full" onClick={handleLinkClick}>
-                <Link to="/app-tour">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Take a Tour
-                </Link>
-              </Button>
-              <Button asChild className="w-full gradient-palace" onClick={handleLinkClick}>
-                <Link to="/auth">
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Get Started Free
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full" onClick={handleLinkClick}>
-                <Link to="/pricing">
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  View Pricing
-                </Link>
-              </Button>
+              <Link
+                to="/app-tour"
+                onClick={handleLinkClick}
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+              >
+                <BookOpen className="h-4 w-4" />
+                Take a Tour
+              </Link>
+              <Link
+                to="/auth"
+                onClick={handleLinkClick}
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 w-full gradient-palace text-white"
+              >
+                <Sparkles className="h-4 w-4" />
+                Get Started Free
+              </Link>
+              <Link
+                to="/pricing"
+                onClick={handleLinkClick}
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+              >
+                <CreditCard className="h-4 w-4" />
+                View Pricing
+              </Link>
             </div>
           )}
         </ScrollArea>
