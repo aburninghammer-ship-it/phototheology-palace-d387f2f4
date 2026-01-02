@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,8 @@ export interface DrillSession {
 
 const DrillDrill = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const autoStartTriggered = useRef(false);
   const [verse, setVerse] = useState("");
   const [verseText, setVerseText] = useState("");
   const [thought, setThought] = useState("");
@@ -68,6 +71,32 @@ const DrillDrill = () => {
   const [session, setSession] = useState<DrillSession | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("drill");
+
+  // Handle incoming thought from Analyze My Thoughts page
+  useEffect(() => {
+    const state = location.state as { thought?: string; autoStart?: boolean } | null;
+    if (state?.thought && !autoStartTriggered.current) {
+      setThought(state.thought);
+      setDrillType("thought");
+      setMode("auto");
+      setDifficulty("pro"); // Use pro difficulty for thorough drilling
+      autoStartTriggered.current = true;
+      
+      // Clear the state so it doesn't re-trigger on navigation
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  // Auto-start drilling when thought is loaded from navigation
+  useEffect(() => {
+    if (autoStartTriggered.current && thought && drillType === "thought" && mode === "auto" && !session && !loading) {
+      // Small delay to ensure state is set
+      const timer = setTimeout(() => {
+        startDrill();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [thought, drillType, mode, session, loading]);
 
   // Sparks integration
   const {

@@ -12,6 +12,7 @@ import {
   Church, Cross, Moon, Scale, Compass, Save, Download, Copy, Gem, FolderOpen, MessageSquare,
   Zap, ArrowRight, FileText, Brain, Clock, Star, RefreshCw, CalendarDays, Box, Focus, MessageCircle
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { ExportToStudyButton } from "@/components/ExportToStudyButton";
 import { QuickShareButton } from "@/components/social/QuickShareButton";
 import { supabase } from "@/integrations/supabase/client";
@@ -178,6 +179,7 @@ const normalizeFurtherStudy = (item: string | FurtherStudyItem): FurtherStudyIte
 };
 
 const AnalyzeThoughts = () => {
+  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -948,6 +950,23 @@ const AnalyzeThoughts = () => {
                   variant="outline"
                   size="sm"
                 />
+                {/* Drill this Thought - Deep Multi-Route Analysis */}
+                <Button 
+                  onClick={() => {
+                    // Navigate to drill tab with thought pre-loaded and auto-start
+                    navigate('/drill-drill', { 
+                      state: { 
+                        thought: input, 
+                        autoStart: true 
+                      } 
+                    });
+                  }}
+                  variant="outline" 
+                  className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border-orange-500/30 text-orange-300 hover:text-orange-200 hover:bg-orange-500/30"
+                >
+                  <Target className="h-4 w-4 mr-2" />
+                  Drill this Thought
+                </Button>
                 {/* Creator-only: Add to Jeeves Knowledge Bank */}
                 {isAdmin && (
                   <Button 
