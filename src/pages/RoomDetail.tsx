@@ -78,6 +78,7 @@ import { PatternsLibrary } from "@/components/patterns-room/PatternsLibrary";
 import { ThreeHeavensLibrary } from "@/components/three-heavens-room/ThreeHeavensLibrary";
 import { RoomLibrary, LibraryBanner, hasLibrary } from "@/components/room/RoomLibrary";
 import { Room3DToggle } from "@/components/room/Room3DToggle";
+import { RoomGraphicsDisplay, hasRoomGraphics } from "@/components/room/RoomGraphicsDisplay";
 
 // Room IDs that have quick start guides
 const QUICK_START_ROOMS = new Set([
@@ -418,6 +419,11 @@ export default function RoomDetail() {
                 
                 {showQuickStart && <ValueProposition roomId={room.id} />}
                 {showQuickStart && <QuickStartGuide roomId={room.id} roomName={room.name} />}
+
+                {/* At-a-Glance Graphics - Visual teaching diagrams */}
+                {hasRoomGraphics(room.id) && (
+                  <RoomGraphicsDisplay roomId={room.id} roomName={room.name} />
+                )}
 
                 {/* Prominent Library Banner for rooms with libraries */}
                 {hasLibrary(room.id) && !["sr", "st", "qa", "24fps", "gr", "cycles", "123h", "math", "jr", "dc", "cr", "bl", "pr", "trm", "fe"].includes(room.id) && (
