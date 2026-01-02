@@ -635,17 +635,25 @@ List at least 4 books of the Bible that connect to this ${textTypeLabel}, with s
 
       } else {
         // Original help mode logic for other rooms
+        // CRITICAL GUARDRAIL: Three Heavens are Day-of-the-LORD cycles, NOT atmospheric layers
+        const THREE_HEAVENS_GUARDRAIL = `
+⚠️ CRITICAL: Three Heavens (1H/2H/3H) are DAY-OF-THE-LORD JUDGMENT CYCLES, not atmospheric layers!
+• 1H = Babylon destroys Jerusalem (586 BC) → Post-exilic restoration
+• 2H = Rome destroys Jerusalem (70 AD) → New Covenant/church order
+• 3H = Final cosmic judgment → Literal New Creation (Rev 21-22)
+NEVER interpret as: atmosphere/physical world/spiritual realm. ALWAYS as: prophetic stages of covenant history.`;
+
         // Get application-based prompt based on room
         const getApplicationPrompt = (roomTag: string, roomName: string) => {
-          // For Three Heavens and Cycles rooms, use application-based language
+          // For Three Heavens and Cycles rooms, use application-based language with guardrail
           if (roomTag === "1H" || roomTag === "DoL¹/NE¹" || roomName.includes("First Heaven")) {
-            return `Apply something from the First Heaven (1H/DoL¹/NE¹) - the Babylonian destruction and restoration cycle - to this ${textTypeLabel}.`;
+            return `${THREE_HEAVENS_GUARDRAIL}\n\nApply the First Heaven (1H/DoL¹/NE¹) - when Babylon destroyed Jerusalem (586 BC) and God brought restoration through Cyrus - to this ${textTypeLabel}. Show how this historical judgment cycle illuminates the text.`;
           }
           if (roomTag === "2H" || roomTag === "DoL²/NE²" || roomName.includes("Second Heaven")) {
-            return `Connect a theme, text, or story from the Second Heaven (2H/DoL²/NE²) - the 70 AD temple destruction and New-Covenant order - to this ${textTypeLabel}.`;
+            return `${THREE_HEAVENS_GUARDRAIL}\n\nApply the Second Heaven (2H/DoL²/NE²) - when Rome destroyed Jerusalem (70 AD) and the New Covenant order was established with the church as living temple - to this ${textTypeLabel}. Show how this judgment cycle illuminates the text.`;
           }
           if (roomTag === "3H" || roomTag === "DoL³/NE³" || roomName.includes("Third Heaven")) {
-            return `Apply something from the Third Heaven (3H/DoL³/NE³) - the final cosmic judgment and new creation - to this ${textTypeLabel}.`;
+            return `${THREE_HEAVENS_GUARDRAIL}\n\nApply the Third Heaven (3H/DoL³/NE³) - the final Day of the LORD with cosmic judgment, Second Coming, and literal New Heaven and Earth (Rev 21-22) - to this ${textTypeLabel}. Show how this eschatological horizon illuminates the text.`;
           }
           
           // For Cycle rooms, use application-based language

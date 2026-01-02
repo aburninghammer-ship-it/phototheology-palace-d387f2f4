@@ -94,10 +94,13 @@ FLOOR 5: VISION (Sanctuary, Prophecy & Feasts)
 ═══════════════════════════════════════════════════════════════
 FLOOR 6: THREE HEAVENS & CYCLES (Horizons & History)
 ═══════════════════════════════════════════════════════════════
+⚠️ CRITICAL: Three Heavens are DAY-OF-THE-LORD JUDGMENT CYCLES, NOT atmospheric layers!
 🔹 123H (Three Heavens/Horizons Room): Which prophetic horizon?
-   • 1H = Babylon/return (Cyrus, post-exilic)
-   • 2H = 70 AD, 'this generation', church as temple
-   • 3H = Global, final judgment, new creation
+   • 1H (DoL¹/NE¹) = Babylon destroys Jerusalem (586 BC) → Post-exilic restoration under Cyrus
+   • 2H (DoL²/NE²) = Rome destroys Jerusalem (70 AD) → New Covenant order, church as living temple
+   • 3H (DoL³/NE³) = Final global judgment → Literal New Heaven and Earth (Rev 21-22)
+   ❌ NEVER: atmosphere/physical world/spiritual realm interpretation
+   ✅ ALWAYS: prophetic stages of covenant history marked by judgment and renewal
 🔹 @ (Eight Cycles Room): Which covenant cycle?
    • @Ad (Adam), @No (Noah), @Ab (Abraham), @Mo (Moses)
    • @Cy (Cyrus), @CyC (Christ), @Sp (Spirit/Church), @Re (Return)

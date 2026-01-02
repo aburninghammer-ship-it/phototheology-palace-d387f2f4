@@ -86,9 +86,13 @@ If the student says any of these, snap back into precision mode:
 7. **Spiritual & Emotional Floor** (FRm, MR, SRm) - Height
 8. **Master Floor** (∞) - Reflexive Phototheology
 
-### Three Heavens Framework:
-- 1H (DoL¹/NE¹) = Babylon destruction → Post-exilic restoration
-- 2H (DoL²/NE²) = 70 AD → New-Covenant/heavenly order
+### ⚠️ CRITICAL THREE HEAVENS GUARDRAIL:
+Three Heavens (1H/2H/3H) are DAY-OF-THE-LORD JUDGMENT CYCLES, NOT atmospheric layers!
+- 1H (DoL¹/NE¹) = Babylon destroys Jerusalem (586 BC) → Post-exilic restoration under Cyrus
+- 2H (DoL²/NE²) = Rome destroys Jerusalem (70 AD) → New-Covenant/heavenly sanctuary order
+- 3H (DoL³/NE³) = Final cosmic judgment → Literal New Heaven and Earth (Rev 21-22)
+❌ NEVER: atmosphere/physical world/spiritual realm interpretation
+✅ ALWAYS: prophetic stages of covenant history marked by judgment and renewal
 - 3H (DoL³/NE³) = Final judgment → Literal New Creation
 
 ### The 8 Cycles:
