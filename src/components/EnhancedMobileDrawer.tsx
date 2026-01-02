@@ -327,38 +327,41 @@ export const EnhancedMobileDrawer = () => {
                     </div>
                     <div className="space-y-1">
                       {recentPages.slice(0, 5).map((page) => (
-                        <Button
+                        <div
                           key={page.path}
-                          asChild
-                          variant="ghost"
-                          size="sm"
                           className={cn(
-                            "w-full justify-between",
-                            location.pathname === page.path && "bg-accent"
+                            "flex items-center justify-between rounded-md px-3 py-2 text-sm",
+                            location.pathname === page.path 
+                              ? "bg-accent" 
+                              : "hover:bg-muted/50 active:bg-muted"
                           )}
-                          onClick={handleLinkClick}
                         >
-                          <Link to={page.path}>
-                            <span className="truncate">{page.title}</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 w-6 p-0"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleBookmark({ path: page.path, title: page.title });
-                              }}
-                            >
-                              <Star
-                                className={cn(
-                                  "h-3 w-3",
-                                  isBookmarked(page.path) && "fill-yellow-500 text-yellow-500"
-                                )}
-                              />
-                            </Button>
+                          <Link
+                            to={page.path}
+                            onClick={handleLinkClick}
+                            className="flex-1 truncate min-h-[44px] flex items-center active:opacity-70"
+                          >
+                            {page.title}
                           </Link>
-                        </Button>
+                          <button
+                            type="button"
+                            className="h-11 w-11 flex items-center justify-center -mr-2 active:scale-95"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleBookmark({ path: page.path, title: page.title });
+                            }}
+                          >
+                            <Star
+                              className={cn(
+                                "h-4 w-4",
+                                isBookmarked(page.path) 
+                                  ? "fill-yellow-500 text-yellow-500" 
+                                  : "text-muted-foreground"
+                              )}
+                            />
+                          </button>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -376,33 +379,34 @@ export const EnhancedMobileDrawer = () => {
                     </div>
                     <div className="space-y-1">
                       {bookmarks.map((bookmark) => (
-                        <Button
+                        <div
                           key={bookmark.path}
-                          asChild
-                          variant="ghost"
-                          size="sm"
                           className={cn(
-                            "w-full justify-between",
-                            location.pathname === bookmark.path && "bg-accent"
+                            "flex items-center justify-between rounded-md px-3 py-2 text-sm",
+                            location.pathname === bookmark.path 
+                              ? "bg-accent" 
+                              : "hover:bg-muted/50 active:bg-muted"
                           )}
-                          onClick={handleLinkClick}
                         >
-                          <Link to={bookmark.path}>
-                            <span className="truncate">{bookmark.title}</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 w-6 p-0"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleBookmark(bookmark);
-                              }}
-                            >
-                              <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                            </Button>
+                          <Link
+                            to={bookmark.path}
+                            onClick={handleLinkClick}
+                            className="flex-1 truncate min-h-[44px] flex items-center active:opacity-70"
+                          >
+                            {bookmark.title}
                           </Link>
-                        </Button>
+                          <button
+                            type="button"
+                            className="h-11 w-11 flex items-center justify-center -mr-2 active:scale-95"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleBookmark(bookmark);
+                            }}
+                          >
+                            <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                          </button>
+                        </div>
                       ))}
                     </div>
                   </div>
