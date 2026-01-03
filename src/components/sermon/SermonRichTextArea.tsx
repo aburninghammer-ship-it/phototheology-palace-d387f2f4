@@ -25,6 +25,9 @@ interface SermonRichTextAreaProps {
 // Regex pattern to match Bible verse references like "John 3:16", "1 Corinthians 13:4-7", "Genesis 1:1"
 const VERSE_REFERENCE_PATTERN = /\b([1-3]?\s?[A-Za-z]+)\s+(\d{1,3}):(\d{1,3})(?:-(\d{1,3}))?\b/g;
 
+// Pattern to detect verse references inside blockquotes (already expanded)
+const BLOCKQUOTE_VERSE_PATTERN = /<blockquote><strong>([^<]+)<\/strong>:\s*"([^"]*)"<\/blockquote>/g;
+
 // Parse a verse reference string into components
 function parseVerseReference(ref: string): { book: string; chapter: number; verseStart: number; verseEnd?: number } | null {
   const match = ref.match(/^([1-3]?\s?[A-Za-z]+)\s+(\d+):(\d+)(?:-(\d+))?$/);
@@ -47,6 +50,7 @@ export function SermonRichTextArea({
   themePassage
 }: SermonRichTextAreaProps) {
   const lastProcessedRef = useRef<Set<string>>(new Set());
+  const verseContentMapRef = useRef<Map<string, string>>(new Map()); // Track ref -> verse text
   const processingRef = useRef(false);
   const { connections, isAnalyzing, analyzeText } = usePalaceConnections();
 
@@ -75,12 +79,52 @@ export function SermonRichTextArea({
     },
   });
 
-  // Auto-detect and expand verse references
+  // Fetch verse text for a given reference
+  const fetchVerseText = useCallback(async (parsed: { book: string; chapter: number; verseStart: number; verseEnd?: number }): Promise<string | null> => {
+    try {
+      const chapterData = await fetchChapter(parsed.book, parsed.chapter);
+      if (chapterData?.verses?.length > 0) {
+        const verseEnd = parsed.verseEnd || parsed.verseStart;
+        const verses = chapterData.verses.filter(
+          v => v.verse >= parsed.verseStart && v.verse <= verseEnd
+        );
+        if (verses.length > 0) {
+          return verses.map(v => v.text).join(' ');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching verse:', error);
+    }
+    return null;
+  }, []);
+
+  // Auto-detect and expand verse references + detect edits to existing blockquotes
   const processVerseReferences = useCallback(async () => {
     if (!editor || processingRef.current) return;
     
     const html = editor.getHTML();
     const plainText = html.replace(/<[^>]*>/g, ' ');
+    
+    // First, check for edited blockquotes (verse reference changed inside an existing blockquote)
+    const blockquoteMatches = [...html.matchAll(BLOCKQUOTE_VERSE_PATTERN)];
+    for (const match of blockquoteMatches) {
+      const refInBlockquote = match[1]; // The verse reference inside <strong>
+      const currentVerseText = match[2]; // The current verse text
+      
+      const parsed = parseVerseReference(refInBlockquote);
+      if (!parsed) continue;
+      
+      // Check if we have a cached version and if it differs
+      const cachedText = verseContentMapRef.current.get(refInBlockquote);
+      
+      if (cachedText === undefined) {
+        // First time seeing this ref - cache it
+        verseContentMapRef.current.set(refInBlockquote, currentVerseText);
+      } else if (cachedText !== currentVerseText) {
+        // User might have edited the reference, but the text changed too - skip
+        // This is for detecting ref changes, not text changes
+      }
+    }
     
     // Find all verse references in the text
     const matches = [...plainText.matchAll(VERSE_REFERENCE_PATTERN)];
@@ -101,35 +145,27 @@ export function SermonRichTextArea({
       processingRef.current = true;
       
       try {
-        const chapterData = await fetchChapter(parsed.book, parsed.chapter);
+        const verseText = await fetchVerseText(parsed);
         
-        if (chapterData?.verses?.length > 0) {
-          const verseEnd = parsed.verseEnd || parsed.verseStart;
-          const verses = chapterData.verses.filter(
-            v => v.verse >= parsed.verseStart && v.verse <= verseEnd
-          );
+        if (verseText) {
+          // Find and replace the reference with the full verse
+          const currentHtml = editor.getHTML();
           
-          if (verses.length > 0) {
-            const verseText = verses.map(v => v.text).join(' ');
+          // Only replace if it's a standalone reference (not already in a blockquote)
+          const refPattern = new RegExp(`(?<!<strong>)${fullRef.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?!</strong>)`, 'g');
+          
+          if (refPattern.test(currentHtml) && !currentHtml.includes(`"${verseText}"`)) {
+            const newHtml = currentHtml.replace(
+              refPattern,
+              `<blockquote><strong>${fullRef}</strong>: "${verseText}"</blockquote>`
+            );
             
-            // Find and replace the reference with the full verse
-            const currentHtml = editor.getHTML();
-            
-            // Only replace if it's a standalone reference (not already in a blockquote)
-            const refPattern = new RegExp(`(?<!<strong>)${fullRef.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?!</strong>)`, 'g');
-            
-            if (refPattern.test(currentHtml) && !currentHtml.includes(`"${verseText}"`)) {
-              const newHtml = currentHtml.replace(
-                refPattern,
-                `<blockquote><strong>${fullRef}</strong>: "${verseText}"</blockquote>`
-              );
-              
-              editor.commands.setContent(newHtml);
-              lastProcessedRef.current.add(fullRef);
-              toast.success(`Inserted ${fullRef}`);
-            } else {
-              lastProcessedRef.current.add(fullRef);
-            }
+            editor.commands.setContent(newHtml);
+            lastProcessedRef.current.add(fullRef);
+            verseContentMapRef.current.set(fullRef, verseText);
+            toast.success(`Inserted ${fullRef}`);
+          } else {
+            lastProcessedRef.current.add(fullRef);
           }
         }
       } catch (error) {
@@ -138,7 +174,86 @@ export function SermonRichTextArea({
         processingRef.current = false;
       }
     }
-  }, [editor]);
+  }, [editor, fetchVerseText]);
+
+  // Detect when a verse reference in a blockquote is edited and refresh the verse
+  const detectBlockquoteEdits = useCallback(async () => {
+    if (!editor || processingRef.current) return;
+    
+    const html = editor.getHTML();
+    const blockquoteMatches = [...html.matchAll(BLOCKQUOTE_VERSE_PATTERN)];
+    
+    // Build a set of current refs in blockquotes
+    const currentRefs = new Set<string>();
+    
+    for (const match of blockquoteMatches) {
+      const refInBlockquote = match[1];
+      currentRefs.add(refInBlockquote);
+      
+      const parsed = parseVerseReference(refInBlockquote);
+      if (!parsed) continue;
+      
+      // If we've processed this ref before but haven't cached its verse text yet
+      // OR the ref was just created, fetch and update
+      if (!verseContentMapRef.current.has(refInBlockquote) && lastProcessedRef.current.has(refInBlockquote)) {
+        // Already handled by processVerseReferences
+        continue;
+      }
+    }
+    
+    // Check if any previously cached ref is no longer present (user deleted or changed it)
+    const cachedRefs = [...verseContentMapRef.current.keys()];
+    for (const cachedRef of cachedRefs) {
+      if (!currentRefs.has(cachedRef)) {
+        // This ref was removed or changed - clean up cache
+        verseContentMapRef.current.delete(cachedRef);
+        lastProcessedRef.current.delete(cachedRef);
+      }
+    }
+    
+    // Look for blockquotes where the verse reference might have been manually edited
+    // This detects patterns like <blockquote><strong>John 3:17</strong>: "old text for John 3:16"</blockquote>
+    for (const match of blockquoteMatches) {
+      const refInBlockquote = match[1];
+      const currentVerseText = match[2];
+      
+      const parsed = parseVerseReference(refInBlockquote);
+      if (!parsed) continue;
+      
+      // Check if this reference is new (user changed the ref inside the blockquote)
+      if (!lastProcessedRef.current.has(refInBlockquote)) {
+        processingRef.current = true;
+        
+        try {
+          const newVerseText = await fetchVerseText(parsed);
+          
+          if (newVerseText && newVerseText !== currentVerseText) {
+            // Update the blockquote with the correct verse text
+            const currentHtml = editor.getHTML();
+            const oldBlockquote = `<blockquote><strong>${refInBlockquote}</strong>: "${currentVerseText}"</blockquote>`;
+            const newBlockquote = `<blockquote><strong>${refInBlockquote}</strong>: "${newVerseText}"</blockquote>`;
+            
+            if (currentHtml.includes(oldBlockquote)) {
+              const updatedHtml = currentHtml.replace(oldBlockquote, newBlockquote);
+              editor.commands.setContent(updatedHtml);
+              lastProcessedRef.current.add(refInBlockquote);
+              verseContentMapRef.current.set(refInBlockquote, newVerseText);
+              toast.success(`Updated verse to ${refInBlockquote}`);
+            }
+          } else {
+            lastProcessedRef.current.add(refInBlockquote);
+            if (newVerseText) {
+              verseContentMapRef.current.set(refInBlockquote, newVerseText);
+            }
+          }
+        } catch (error) {
+          console.error('Error updating verse:', error);
+        } finally {
+          processingRef.current = false;
+        }
+      }
+    }
+  }, [editor, fetchVerseText]);
 
   // Debounced verse detection - trigger after user stops typing
   useEffect(() => {
@@ -146,10 +261,11 @@ export function SermonRichTextArea({
     
     const timeoutId = setTimeout(() => {
       processVerseReferences();
+      detectBlockquoteEdits();
     }, 1500); // 1.5 second delay after typing stops
     
     return () => clearTimeout(timeoutId);
-  }, [content, processVerseReferences, editor]);
+  }, [content, processVerseReferences, detectBlockquoteEdits, editor]);
 
   // Analyze text for Palace connections as user writes
   useEffect(() => {
