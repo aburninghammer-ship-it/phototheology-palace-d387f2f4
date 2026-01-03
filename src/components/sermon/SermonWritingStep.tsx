@@ -135,79 +135,74 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="font-semibold flex items-center gap-2">
-            <FileText className="w-5 h-5 text-purple-600" />
-            Write Your Sermon
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Use this space to write out your full sermon. Sparks, verses, and Jeeves will assist on the side.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Auto-save indicator */}
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            {isSaving ? (
-              <Badge variant="outline" className="gap-1 text-xs">
-                <Save className="w-3 h-3 animate-pulse" />
-                Saving...
-              </Badge>
-            ) : lastSaved ? (
-              <Badge variant="outline" className="gap-1 text-xs text-green-600 border-green-200">
-                <Check className="w-3 h-3" />
-                Saved {lastSaved.toLocaleTimeString()}
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="gap-1 text-xs">
-                <Save className="w-3 h-3" />
-                Auto-saves every 15s
-              </Badge>
-            )}
+    <div className="h-[calc(100vh-200px)] min-h-[600px]">
+      {/* Header bar with title and controls */}
+      <div className="flex items-center justify-between mb-3 pb-3 border-b">
+        <div className="flex items-center gap-3">
+          <FileText className="w-5 h-5 text-purple-600" />
+          <div>
+            <h3 className="font-semibold text-sm">Write Your Sermon</h3>
+            <div className="flex items-center gap-2">
+              {/* Auto-save indicator */}
+              {isSaving ? (
+                <Badge variant="outline" className="gap-1 text-xs">
+                  <Save className="w-3 h-3 animate-pulse" />
+                  Saving...
+                </Badge>
+              ) : lastSaved ? (
+                <Badge variant="outline" className="gap-1 text-xs text-green-600 border-green-200">
+                  <Check className="w-3 h-3" />
+                  Saved {lastSaved.toLocaleTimeString()}
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="gap-1 text-xs">
+                  <Save className="w-3 h-3" />
+                  Auto-saves every 15s
+                </Badge>
+              )}
+              <span className="text-xs text-muted-foreground">
+                {sermon.full_sermon.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length} words
+              </span>
+            </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowPanel(!showPanel)}
-            className="gap-2"
-          >
-            {showPanel ? (
-              <>
-                <PanelRightClose className="w-4 h-4" />
-                <span className="hidden sm:inline">Hide Assistant</span>
-              </>
-            ) : (
-              <>
-                <PanelRight className="w-4 h-4" />
-                <span className="hidden sm:inline">Show Assistant</span>
-              </>
-            )}
-          </Button>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPanel(!showPanel)}
+          className="gap-2"
+        >
+          {showPanel ? (
+            <>
+              <PanelRightClose className="w-4 h-4" />
+              <span className="hidden sm:inline">Hide Assistant</span>
+            </>
+          ) : (
+            <>
+              <PanelRight className="w-4 h-4" />
+              <span className="hidden sm:inline">Show Assistant</span>
+            </>
+          )}
+        </Button>
       </div>
 
-      <div className={`grid gap-4 ${showPanel ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}>
-        {/* Main writing area */}
-        <div className="min-h-[500px]">
+      {/* Main 50/50 split layout */}
+      <div className={`grid gap-4 h-[calc(100%-60px)] ${showPanel ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
+        {/* Left: Writing area - takes full height */}
+        <div className="h-full flex flex-col">
           <SermonRichTextArea
             content={sermon.full_sermon}
             onChange={handleContentChange}
             placeholder="Begin writing your sermon here. Start with your opening hook, weave through your smooth stones, build bridges between ideas, lead to your climax, and close with a powerful call to action..."
-            minHeight="480px"
+            minHeight="100%"
             showTools={true}
             themePassage={themePassage}
           />
-          
-          {/* Word count */}
-          <div className="mt-2 text-xs text-muted-foreground text-right">
-            {sermon.full_sermon.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length} words
-          </div>
         </div>
 
-        {/* Side Panel: Sparks, Verses, Jeeves Chat + 5 Stones */}
+        {/* Right: Assistant Panel - takes full height */}
         {showPanel && (
-          <div className="lg:col-span-1 h-[500px]">
+          <div className="h-full overflow-hidden">
             <SermonSidePanel
               suggestedVerses={suggestedVerses}
               loadingVerses={loadingVerses}
