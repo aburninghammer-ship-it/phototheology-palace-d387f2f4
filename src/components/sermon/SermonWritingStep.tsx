@@ -465,6 +465,7 @@ Return ONLY the JSON, no other text.`
                   sermonTitle={sermon.title}
                   themePassage={themePassage}
                   sermonContent={sermon.full_sermon}
+                  sermonId={sermonId}
                 />
               </div>
             )}

@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Send, Sparkles, MessageCircle, BookOpen, Loader2, Trash2, Gem } from "lucide-react";
+import { Send, Sparkles, MessageCircle, BookOpen, Loader2, Trash2, Gem, Save, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SparkContainer } from "@/components/sparks/SparkContainer";
 import { useSparks } from "@/hooks/useSparks";
 import { SaveJeevesResponseButton } from "@/components/jeeves/SaveJeevesResponseButton";
+import { useQuery } from "@tanstack/react-query";
 
 interface SuggestedVerse {
   reference: string;
@@ -23,6 +24,25 @@ interface Message {
   content: string;
 }
 
+interface SavedPolishAnalysis {
+  amplify?: Array<{
+    quote: string;
+    insight: string;
+    suggestion: string;
+  }>;
+  tighten?: {
+    cut: string[];
+    clarify: string[];
+    strengthen: string[];
+  };
+  missed?: {
+    typological: string[];
+    sanctuary: string[];
+    prophetic: string[];
+    threeHeavens: string[];
+  };
+}
+
 interface SermonSidePanelProps {
   suggestedVerses: SuggestedVerse[];
   loadingVerses: boolean;
@@ -31,6 +51,7 @@ interface SermonSidePanelProps {
   sermonTitle: string;
   themePassage: string;
   sermonContent: string;
+  sermonId?: string;
 }
 
 export function SermonSidePanel({
@@ -40,13 +61,32 @@ export function SermonSidePanel({
   smoothStones,
   sermonTitle,
   themePassage,
-  sermonContent
+  sermonContent,
+  sermonId
 }: SermonSidePanelProps) {
   const [activeTab, setActiveTab] = useState("verses");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Query for saved polish suggestions
+  const { data: savedPolish, isLoading: loadingSaved, refetch: refetchSaved } = useQuery({
+    queryKey: ['sermon-polish', sermonId],
+    queryFn: async () => {
+      if (!sermonId) return null;
+      const { data, error } = await supabase
+        .from('sermons')
+        .select('polish_analysis')
+        .eq('id', sermonId)
+        .single();
+
+      if (error) throw error;
+      return data?.polish_analysis as SavedPolishAnalysis | null;
+    },
+    enabled: !!sermonId,
+    staleTime: 30000, // Cache for 30 seconds
+  });
 
   // Initialize sparks for sermon context - unlimited sparks in sermon mode
   const {
@@ -147,18 +187,22 @@ export function SermonSidePanel({
       <Card className="flex-1 min-h-0 border-purple-200 dark:border-purple-800/50 flex flex-col">
         <CardHeader className="py-2 px-3 bg-purple-50 dark:bg-purple-900/20 border-b shrink-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full grid grid-cols-3 h-8">
-              <TabsTrigger value="sparks" className="text-xs gap-1">
+            <TabsList className="w-full grid grid-cols-4 h-8">
+              <TabsTrigger value="sparks" className="text-xs gap-1 px-1">
                 <Sparkles className="w-3 h-3" />
-                Sparks
+                <span className="hidden sm:inline">Sparks</span>
               </TabsTrigger>
-              <TabsTrigger value="verses" className="text-xs gap-1">
+              <TabsTrigger value="verses" className="text-xs gap-1 px-1">
                 <BookOpen className="w-3 h-3" />
-                Verses
+                <span className="hidden sm:inline">Verses</span>
               </TabsTrigger>
-              <TabsTrigger value="jeeves" className="text-xs gap-1">
+              <TabsTrigger value="jeeves" className="text-xs gap-1 px-1">
                 <MessageCircle className="w-3 h-3" />
-                Jeeves
+                <span className="hidden sm:inline">Jeeves</span>
+              </TabsTrigger>
+              <TabsTrigger value="saved" className="text-xs gap-1 px-1">
+                <Save className="w-3 h-3" />
+                <span className="hidden sm:inline">Saved</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -338,6 +382,117 @@ export function SermonSidePanel({
                 </div>
               </div>
             </div>
+          )}
+
+          {activeTab === "saved" && (
+            <ScrollArea className="h-full">
+              {loadingSaved ? (
+                <div className="flex flex-col items-center justify-center h-full text-center p-4 text-muted-foreground">
+                  <Loader2 className="w-6 h-6 animate-spin mb-2" />
+                  <p className="text-sm">Loading saved suggestions...</p>
+                </div>
+              ) : savedPolish ? (
+                <div className="space-y-3">
+                  {/* Refresh button */}
+                  <div className="flex justify-end">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => refetchSaved()}
+                      className="h-6 text-xs gap-1"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      Refresh
+                    </Button>
+                  </div>
+
+                  {/* Amplify suggestions */}
+                  {savedPolish.amplify && savedPolish.amplify.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-semibold text-purple-700 dark:text-purple-400 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3" />
+                        Connections to Amplify
+                      </h4>
+                      {savedPolish.amplify.slice(0, 3).map((item, i) => (
+                        <div
+                          key={i}
+                          className="p-2 rounded-lg border bg-gradient-to-r from-purple-50/50 to-transparent dark:from-purple-950/20 border-purple-200/50 dark:border-purple-800/30"
+                        >
+                          <p className="text-[10px] italic text-muted-foreground line-clamp-1">"{item.quote}"</p>
+                          <p className="text-[10px] font-medium mt-0.5">✨ {item.insight}</p>
+                          <p className="text-[10px] text-primary mt-0.5 line-clamp-2">→ {item.suggestion}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Tighten suggestions */}
+                  {savedPolish.tighten && (
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1">
+                        ✂️ Tighten
+                      </h4>
+                      {savedPolish.tighten.strengthen && savedPolish.tighten.strengthen.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-medium text-green-600">🟢 Strengthen:</p>
+                          {savedPolish.tighten.strengthen.slice(0, 2).map((item, i) => (
+                            <p key={i} className="text-[10px] text-muted-foreground pl-2">• {item}</p>
+                          ))}
+                        </div>
+                      )}
+                      {savedPolish.tighten.clarify && savedPolish.tighten.clarify.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-medium text-yellow-600">🟡 Clarify:</p>
+                          {savedPolish.tighten.clarify.slice(0, 2).map((item, i) => (
+                            <p key={i} className="text-[10px] text-muted-foreground pl-2">• {item}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Missed connections */}
+                  {savedPolish.missed && (
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-1">
+                        🔍 Missed Connections
+                      </h4>
+                      {savedPolish.missed.typological && savedPolish.missed.typological.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-medium">📖 Typological:</p>
+                          {savedPolish.missed.typological.slice(0, 2).map((item, i) => (
+                            <p key={i} className="text-[10px] text-muted-foreground pl-2 line-clamp-2">• {item}</p>
+                          ))}
+                        </div>
+                      )}
+                      {savedPolish.missed.sanctuary && savedPolish.missed.sanctuary.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-medium">🏛️ Sanctuary:</p>
+                          {savedPolish.missed.sanctuary.slice(0, 2).map((item, i) => (
+                            <p key={i} className="text-[10px] text-muted-foreground pl-2 line-clamp-2">• {item}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <p className="text-[9px] text-muted-foreground text-center pt-2 border-t">
+                    View full analysis in the Polish tab
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-center p-4 text-muted-foreground">
+                  <Save className="w-8 h-8 mb-2 opacity-30" />
+                  <p className="text-sm font-medium">No Saved Suggestions</p>
+                  <p className="text-[10px] mt-1">
+                    {sermonId
+                      ? "Use the Polish tab to analyze your sermon and get AI suggestions."
+                      : "Save your sermon first, then use Polish to get suggestions."
+                    }
+                  </p>
+                </div>
+              )}
+            </ScrollArea>
           )}
         </CardContent>
       </Card>
