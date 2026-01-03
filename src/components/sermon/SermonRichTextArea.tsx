@@ -8,6 +8,8 @@ import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo } from 'lucide-react
 import { ScriptureLookup } from './ScriptureLookup';
 import { PTIntegrationPanel } from './PTIntegrationPanel';
 import { SavedMaterialsPicker } from './SavedMaterialsPicker';
+import { PalaceConnectionsOverlay } from './PalaceConnectionsOverlay';
+import { usePalaceConnections } from '@/hooks/usePalaceConnections';
 import { fetchChapter } from '@/services/bibleApi';
 import { toast } from 'sonner';
 
@@ -46,6 +48,7 @@ export function SermonRichTextArea({
 }: SermonRichTextAreaProps) {
   const lastProcessedRef = useRef<Set<string>>(new Set());
   const processingRef = useRef(false);
+  const { connections, isAnalyzing, analyzeText } = usePalaceConnections();
 
   const editor = useEditor({
     extensions: [
@@ -148,6 +151,13 @@ export function SermonRichTextArea({
     return () => clearTimeout(timeoutId);
   }, [content, processVerseReferences, editor]);
 
+  // Analyze text for Palace connections as user writes
+  useEffect(() => {
+    if (content) {
+      analyzeText(content);
+    }
+  }, [content, analyzeText]);
+
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
       editor.commands.setContent(content);
@@ -243,6 +253,7 @@ export function SermonRichTextArea({
       <div className="flex-1 overflow-y-auto">
         <EditorContent editor={editor} className="h-full" />
       </div>
+      <PalaceConnectionsOverlay connections={connections} isAnalyzing={isAnalyzing} />
     </div>
   );
 }

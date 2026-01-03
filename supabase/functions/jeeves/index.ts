@@ -1491,6 +1491,101 @@ Maintain the same doctrinal standards as the initial analysis:
 
       userPrompt = message || "Please continue the analysis.";
 
+    } else if (mode === "palace_connections") {
+      // Palace Connections - Live sermon writing analysis
+      // Identifies Palace principles, rooms, cycles, and patterns in user's writing
+      const userMessage = message || "";
+      
+      if (!userMessage.trim() || userMessage.length < 50) {
+        return new Response(
+          JSON.stringify({ connections: [] }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      console.log("Palace connections mode - analyzing sermon text:", userMessage.substring(0, 100));
+      
+      systemPrompt = `You are Jeeves, a Phototheology expert analyzing sermon text for Palace principle connections.
+
+TASK: Identify 3-7 key phrases or concepts in the text that connect to specific Phototheology Palace rooms, cycles, heavens, or patterns.
+
+PALACE CODES REFERENCE:
+Rooms: SR (Story), IR (Imagination), 24 (24FPS), BR (Bible Rendered), TR (Translation), GR (Gems), OR (Observation), DC (Def-Com), ST (Symbols/Types), QR (Questions), QA (Q&A), NF (Nature Freestyle), PF (Personal Freestyle), BF (Bible Freestyle), HF (History Freestyle), LR (Listening), CR (Concentration), DR (Dimensions), C6 (Connect-6), TRm (Theme Room), TZ (Time Zone), PRm (Patterns), P‖ (Parallels), FRt (Fruit), BL (Blue/Sanctuary), PR (Prophecy), 3A (Three Angels), CEC (Christ Every Chapter), R66 (Room 66), FRm (Fire), MR (Meditation), SRm (Speed)
+Cycles: @Ad (Adamic), @No (Noahic), @Ab (Abrahamic), @Mo (Mosaic), @Cy (Cyrusic), @CyC (Cyrus-Christ), @Sp (Spirit), @Re (Remnant)
+Heavens: 1H (DoL¹/NE¹), 2H (DoL²/NE²), 3H (DoL³/NE³)
+Patterns: Types, Parallels, Christ-centered connections
+
+OUTPUT FORMAT - Return ONLY valid JSON:
+{
+  "connections": [
+    {
+      "phrase": "exact phrase from user's text",
+      "roomCode": "ST",
+      "roomName": "Symbols/Types Room",
+      "connectionType": "room",
+      "insight": "Brief explanation of why this connects to this palace principle"
+    }
+  ]
+}
+
+RULES:
+- connectionType must be one of: "room", "cycle", "heaven", "pattern", "theme"
+- Focus on the most significant connections, not every possible one
+- Be specific about which phrase triggered the connection
+- Keep insights to 1-2 sentences
+- Return ONLY the JSON object, no markdown wrapping`;
+
+      userPrompt = `Analyze this sermon text for Phototheology Palace connections:
+
+"${userMessage}"
+
+Identify key phrases that connect to Palace rooms, cycles, heavens, or patterns.`;
+
+      // Make the AI call and return immediately for this mode
+      try {
+        const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+          }),
+        });
+
+        const data = await response.json();
+        let content = data.choices[0].message.content;
+        
+        // Clean control characters
+        content = content.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+        
+        // Extract JSON
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          return new Response(
+            JSON.stringify(parsed),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
+        return new Response(
+          JSON.stringify({ connections: [] }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } catch (error) {
+        console.error('Palace connections error:', error);
+        return new Response(
+          JSON.stringify({ connections: [] }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
     } else if (mode === "chain-witness") {
       // Chain Witness - Supporting Scripture Engine
       // Returns 5-9 verses that support, echo, or reinforce the user's written thoughts
