@@ -134,10 +134,10 @@ export function SermonSidePanel({
   };
 
   return (
-    <div className="h-full flex flex-col gap-3">
-      {/* Top Section: Tabbed Panel */}
-      <Card className="flex-1 min-h-0 border-purple-200 dark:border-purple-800/50">
-        <CardHeader className="py-2 px-3 bg-purple-50 dark:bg-purple-900/20 border-b">
+    <div className="h-full flex flex-col gap-3 min-h-0">
+      {/* Top Section: Tabbed Panel - Takes most of the space */}
+      <Card className="flex-1 min-h-0 border-purple-200 dark:border-purple-800/50 flex flex-col">
+        <CardHeader className="py-2 px-3 bg-purple-50 dark:bg-purple-900/20 border-b shrink-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full grid grid-cols-3 h-8">
               <TabsTrigger value="sparks" className="text-xs gap-1">
@@ -156,9 +156,9 @@ export function SermonSidePanel({
           </Tabs>
         </CardHeader>
         
-        <CardContent className="p-2 flex-1 min-h-0">
+        <CardContent className="p-2 flex-1 min-h-0 overflow-hidden">
           {activeTab === "sparks" && (
-            <ScrollArea className="h-[250px]">
+            <ScrollArea className="h-full">
               {activeSparks.length > 0 ? (
                 <div className="space-y-2">
                   <SparkContainer
@@ -186,7 +186,7 @@ export function SermonSidePanel({
           )}
 
           {activeTab === "verses" && (
-            <ScrollArea className="h-[250px]">
+            <ScrollArea className="h-full">
               {suggestedVerses.length > 0 ? (
                 <div className="space-y-2">
                   {suggestedVerses.map((verse, idx) => (
@@ -246,7 +246,7 @@ export function SermonSidePanel({
           )}
 
           {activeTab === "jeeves" && (
-            <div className="h-[250px] flex flex-col">
+            <div className="h-full flex flex-col min-h-0">
               <ScrollArea className="flex-1 pr-2 mb-2">
                 <div className="space-y-2">
                   {messages.length === 0 && (
@@ -298,7 +298,7 @@ export function SermonSidePanel({
                 </div>
               </ScrollArea>
 
-              <div className="flex gap-1.5">
+              <div className="flex gap-1.5 shrink-0">
                 <Textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -334,8 +334,8 @@ export function SermonSidePanel({
         </CardContent>
       </Card>
 
-      {/* Bottom Section: 5 Stones */}
-      <Card className="shrink-0 border-amber-200 dark:border-amber-800/50">
+      {/* Bottom Section: 5 Stones - Fixed height */}
+      <Card className="shrink-0 border-amber-200 dark:border-amber-800/50 max-h-[180px]">
         <CardHeader className="py-2 px-3 bg-amber-50 dark:bg-amber-900/20 border-b">
           <CardTitle className="text-xs flex items-center gap-1.5">
             <Gem className="w-3.5 h-3.5 text-amber-600" />
