@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo } from 'lucide-react';
 import { ScriptureLookup } from './ScriptureLookup';
 import { PTIntegrationPanel } from './PTIntegrationPanel';
+import { SavedMaterialsPicker } from './SavedMaterialsPicker';
 
 interface SermonRichTextAreaProps {
   content: string;
@@ -139,6 +140,7 @@ export function SermonRichTextArea({
           
           <ScriptureLookup onInsert={insertText} />
           <PTIntegrationPanel onInsert={insertText} themePassage={themePassage} />
+          <SavedMaterialsPicker onSelectMaterial={(content, title) => insertText(`**From: ${title}**\n${content}`)} />
         </div>
       )}
       <EditorContent editor={editor} />

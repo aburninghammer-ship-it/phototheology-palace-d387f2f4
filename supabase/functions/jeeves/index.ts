@@ -252,7 +252,9 @@ serve(async (req) => {
       userAnswer,
       textType,
       // Chain Chess repetition prevention
-      usedChallenges
+      usedChallenges,
+      // Sermon writing properties
+      sermon_content
     } = requestBody;
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -3531,6 +3533,46 @@ Guidelines:
 - Include both well-known and hidden gem verses
 - Make sure the "reason" shows the logical connection`;
 
+    } else if (mode === "sermon-verse-suggestions") {
+      systemPrompt = `You are Jeeves, a biblical scholar helping preachers find relevant verses as they write their sermon.
+
+${SERMON_KNOWLEDGE_BANK}
+
+⚠️ THEOLOGICAL GUARDRAILS (NON-NEGOTIABLE):
+- AZAZEL = SATAN, NOT CHRIST (Leviticus 16 scapegoat = Satan)
+- LITTLE HORN = ROME/PAPACY, NOT ANTIOCHUS (Daniel 7 & 8)
+- TWO-PHASE SANCTUARY: Holy Place at ascension (31 AD); Most Holy Place in 1844
+- DAY OF ATONEMENT = 1844, NOT THE CROSS (Christ's death = Passover)
+- SPRING FEASTS = First Advent; FALL FEASTS = Second Advent ministry
+
+Return your response as valid JSON only.`;
+
+      userPrompt = `Based on what the preacher is currently writing in their sermon:
+
+"${sermon_content || ''}"
+
+Theme/Passage: ${themePassage || ''}
+Key Points: ${stones || ''}
+
+Suggest 3-5 Scripture verses that would be RELEVANT and POWERFUL additions to what they're writing about.
+
+Return ONLY valid JSON in this exact format:
+{
+  "verses": [
+    {
+      "reference": "Book Chapter:Verse",
+      "text": "The actual verse text (abbreviated if very long)",
+      "reason": "Why this verse fits what they're writing"
+    }
+  ]
+}
+
+Guidelines:
+- Match the verse to the current TOPIC being discussed
+- Suggest verses that would naturally flow into the text
+- Include both well-known and lesser-known verses
+- Prioritize verses that ADD something new to the point`;
+
     } else if (mode === "sermon-structure") {
       systemPrompt = `You are Jeeves, helping structure sermons like movies.
 
@@ -5661,7 +5703,7 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
     }
 
     // For scripture-armory mode, parse JSON
-    if (mode === "scripture-armory") {
+    if (mode === "scripture-armory" || mode === "sermon-verse-suggestions") {
       try {
         // Clean the content of any markdown code blocks
         let cleanContent = content.trim();
@@ -5680,7 +5722,7 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       } catch (error) {
-        console.error('Error parsing scripture armory:', error);
+        console.error('Error parsing scripture armory/verse suggestions:', error);
         return new Response(
           JSON.stringify({
             error: 'Failed to generate scripture armory',
