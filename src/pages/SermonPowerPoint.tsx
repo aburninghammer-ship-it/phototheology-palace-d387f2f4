@@ -36,6 +36,7 @@ import {
   type PPTExportSettings,
   type SermonDeck,
   type AudienceType,
+  type VenueSize,
 } from "@/types/sermonPPT";
 import { downloadSermonPPT } from "@/lib/sermonPPTRenderer";
 
@@ -160,11 +161,14 @@ export default function SermonPowerPoint() {
 
     setGenerating(true);
     try {
-      await downloadSermonPPT(generatedDeck, PPT_THEMES, VENUE_PRESETS, {
-        themeId: settings.theme_id,
-        venuePresetId: settings.venue_preset,
-        includeSpeakerNotes: settings.include_speaker_notes,
-      });
+      // Update the deck with current settings before download
+      const deckWithSettings: SermonDeck = {
+        ...generatedDeck,
+        theme: settings.theme_id,
+        venue: settings.venue_preset,
+      };
+      
+      await downloadSermonPPT(deckWithSettings);
 
       toast.success("PowerPoint downloaded successfully!");
     } catch (error) {
@@ -430,7 +434,7 @@ John 3:16 - "For God so loved the world..."`}
                     <Label>Venue Size</Label>
                     <Select
                       value={settings.venue_preset}
-                      onValueChange={(v) => setSettings({ ...settings, venue_preset: v })}
+                      onValueChange={(v) => setSettings({ ...settings, venue_preset: v as VenueSize })}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -448,8 +452,8 @@ John 3:16 - "For God so loved the world..."`}
                   <div className="space-y-2">
                     <Label>Slide Count</Label>
                     <Select
-                      value={settings.slide_count}
-                      onValueChange={(v) => setSettings({ ...settings, slide_count: v })}
+                      value={String(settings.slide_count)}
+                      onValueChange={(v) => setSettings({ ...settings, slide_count: parseInt(v) })}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -578,27 +582,15 @@ John 3:16 - "For God so loved the world..."`}
             {/* Deck Info */}
             <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-xl border-white/20">
               <CardHeader>
-                <CardTitle>{generatedDeck.deck.title}</CardTitle>
-                {generatedDeck.deck.subtitle && (
-                  <CardDescription>{generatedDeck.deck.subtitle}</CardDescription>
+                <CardTitle>{generatedDeck.metadata.sermonTitle}</CardTitle>
+                {generatedDeck.metadata.themePassage && (
+                  <CardDescription>{generatedDeck.metadata.themePassage}</CardDescription>
                 )}
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Big Idea */}
-                {generatedDeck.sermon_map?.big_idea && (
-                  <div className="p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg border border-purple-200 dark:border-purple-800">
-                    <p className="text-xs uppercase tracking-wider text-purple-700 dark:text-purple-300 mb-1">
-                      Big Idea ({generatedDeck.sermon_map.big_idea_source})
-                    </p>
-                    <p className="font-medium text-purple-900 dark:text-purple-100">
-                      "{generatedDeck.sermon_map.big_idea}"
-                    </p>
-                  </div>
-                )}
-
                 {/* Slide Structure */}
                 <div className="space-y-2">
-                  <Label>Slide Structure</Label>
+                  <Label>Slide Structure ({generatedDeck.slides.length} slides)</Label>
                   <ScrollArea className="h-[300px] rounded-lg border bg-muted/30 p-2">
                     <div className="space-y-1">
                       {generatedDeck.slides.map((slide, idx) => (
@@ -607,13 +599,13 @@ John 3:16 - "For God so loved the world..."`}
                           className="flex items-center gap-3 p-2 bg-background rounded border text-sm"
                         >
                           <span className="w-7 h-7 flex items-center justify-center bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded text-xs font-bold">
-                            {slide.slide_number}
+                            {idx + 1}
                           </span>
                           <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded text-xs font-medium">
                             {slide.type}
                           </span>
                           <span className="flex-1 truncate text-muted-foreground">
-                            {slide.title || slide.content?.text?.substring(0, 60) || "—"}
+                            {slide.title || slide.body?.substring(0, 60) || "—"}
                           </span>
                         </div>
                       ))}

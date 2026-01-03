@@ -245,3 +245,48 @@ export const VENUE_PRESETS: Record<VenueSize, VenuePreset> = {
     captionSize: 20,
   },
 };
+
+// Audience types
+export type AudienceType = 'evangelistic' | 'discipleship' | 'doctrinal' | 'devotional';
+
+// Export settings types
+export interface PPTExportSettings {
+  theme_id: ThemeId;
+  venue_preset: VenueSize;
+  bible_version: string;
+  include_speaker_notes: boolean;
+  slide_count: number;
+  audience: AudienceType;
+}
+
+// Sermon deck alias for compatibility
+export type SermonDeck = SlideDeck;
+
+// Slide count options
+export const SLIDE_COUNT_OPTIONS = [
+  { value: '8', label: '8 slides' },
+  { value: '12', label: '12 slides' },
+  { value: '16', label: '16 slides' },
+  { value: '20', label: '20 slides' },
+  { value: '24', label: '24 slides' },
+] as const;
+
+// Bible version options
+export const BIBLE_VERSIONS = [
+  { value: 'KJV', label: 'King James Version' },
+  { value: 'NKJV', label: 'New King James Version' },
+  { value: 'ESV', label: 'English Standard Version' },
+  { value: 'NIV', label: 'New International Version' },
+  { value: 'NASB', label: 'New American Standard Bible' },
+  { value: 'NLT', label: 'New Living Translation' },
+] as const;
+
+// Default export settings
+export const DEFAULT_EXPORT_SETTINGS: PPTExportSettings = {
+  theme_id: 'palace-purple',
+  venue_preset: 'medium',
+  bible_version: 'KJV',
+  include_speaker_notes: true,
+  slide_count: 16,
+  audience: 'discipleship',
+};
