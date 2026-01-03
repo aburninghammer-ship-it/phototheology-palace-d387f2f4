@@ -64,7 +64,7 @@ export function SermonSidePanel({
 
   // Generate sparks based on sermon content changes
   useEffect(() => {
-    if (!sermonContent) return;
+    if (!sermonContent || typeof sermonContent !== 'string') return;
     const plainText = sermonContent.replace(/<[^>]*>/g, '').trim();
     if (plainText.length > 200) {
       const timer = setTimeout(() => {
