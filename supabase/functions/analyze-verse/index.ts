@@ -84,6 +84,11 @@ FLOOR 5: VISION (Sanctuary, Prophecy & Feasts)
 🔹 BL (Blue/Sanctuary Room): Which sanctuary article/service?
    • Gate, Altar, Laver, Lampstand, Table, Incense, Veil, Ark
    • Daily service or Day of Atonement
+   ⚠️ CRITICAL SANCTUARY TWO-PHASE MINISTRY:
+   - Christ entered the HOLY PLACE (first apartment) at His ASCENSION in 31 AD
+   - Christ entered the MOST HOLY PLACE (second apartment) in 1844
+   - NEVER say Christ went to the Most Holy Place at resurrection/ascension!
+   - Hebrews contrasts EARTHLY vs HEAVENLY sanctuary, NOT Holy vs Most Holy Place
 🔹 PR (Prophecy Room): Daniel-Revelation symbols, timelines, parallel visions
 🔹 3A (Three Angels Room): How does this proclaim everlasting gospel/judgment/Babylon/Beast warning?
 🔹 FE (Feasts Room): Which feast does this fulfill/foreshadow?
