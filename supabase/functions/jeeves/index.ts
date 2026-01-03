@@ -3684,6 +3684,57 @@ Guidelines:
 - Prioritize verses that ADD something new to the point
 - Make connections Christ-centered where appropriate`;
 
+    } else if (mode === "sermon-scripture-lookup") {
+      // Inline scripture lookup when user types (request) in sermon editor
+      const scriptureRequest = request || '';
+      const additionalContext = additional_context || '';
+      const sermonContext = sermon_context || '';
+
+      systemPrompt = `You are Jeeves, helping a preacher find and insert specific Scripture passages in real-time as they write their sermon.
+
+${SERMON_KNOWLEDGE_BANK}
+
+⚠️ THEOLOGICAL GUARDRAILS (NON-NEGOTIABLE):
+- AZAZEL = SATAN, NOT CHRIST (Leviticus 16 scapegoat = Satan)
+- LITTLE HORN = ROME/PAPACY, NOT ANTIOCHUS (Daniel 7 & 8)
+- TWO-PHASE SANCTUARY: Holy Place at ascension (31 AD); Most Holy Place in 1844
+- DAY OF ATONEMENT = 1844, NOT THE CROSS (Christ's death = Passover)
+- SPRING FEASTS = First Advent; FALL FEASTS = Second Advent ministry
+
+Your job: When the user types a request in parentheses like "(I need the verse about Jesus in the tomb)", you should:
+
+1. IDENTIFY the exact Scripture passage they're looking for
+2. PROVIDE the full text of that passage
+3. If the request is AMBIGUOUS (multiple possible passages), ask for clarification
+
+RESPONSE FORMAT (JSON only):
+
+If you can identify the passage:
+{
+  "reference": "Book Chapter:Verse(s)",
+  "scripture": "The full text of the scripture passage",
+  "needs_clarification": false
+}
+
+If you need clarification:
+{
+  "needs_clarification": true,
+  "clarification_question": "Your question to the user, e.g., 'Are you looking for Matthew 27, Mark 15, Luke 23, or John 19's account of the burial?'"
+}
+
+Return ONLY valid JSON.`;
+
+      userPrompt = `The preacher typed this request while writing their sermon:
+"${scriptureRequest}"
+
+${additionalContext ? `Additional context from user: "${additionalContext}"` : ''}
+
+Sermon context (last few sentences): "${sermonContext}"
+
+Theme passage: ${themePassage || 'Not specified'}
+
+Find and return the exact Scripture they're looking for. If unclear, ask for clarification.`;
+
     } else if (mode === "sermon-assistant") {
       // Chat mode for sermon writing assistance
       const sermonTitle = sermon_title || title || '';
@@ -5868,7 +5919,7 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
         if (cleanContent.endsWith('```')) {
           cleanContent = cleanContent.slice(0, -3);
         }
-        
+
         const parsed = JSON.parse(cleanContent.trim());
         return new Response(
           JSON.stringify(parsed),
@@ -5880,6 +5931,38 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
           JSON.stringify({
             error: 'Failed to generate scripture armory',
             verses: []
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // For sermon-scripture-lookup mode, parse JSON response
+    if (mode === "sermon-scripture-lookup") {
+      try {
+        // Clean the content of any markdown code blocks
+        let cleanContent = content.trim();
+        if (cleanContent.startsWith('```json')) {
+          cleanContent = cleanContent.slice(7);
+        } else if (cleanContent.startsWith('```')) {
+          cleanContent = cleanContent.slice(3);
+        }
+        if (cleanContent.endsWith('```')) {
+          cleanContent = cleanContent.slice(0, -3);
+        }
+
+        const parsed = JSON.parse(cleanContent.trim());
+        return new Response(
+          JSON.stringify(parsed),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (error) {
+        console.error('Error parsing scripture lookup:', error);
+        // Return the raw content if JSON parsing fails
+        return new Response(
+          JSON.stringify({
+            content: content,
+            error: 'Response was not valid JSON'
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );

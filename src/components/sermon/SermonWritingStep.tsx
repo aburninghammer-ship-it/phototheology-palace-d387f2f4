@@ -2,10 +2,12 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { SermonRichTextArea } from "./SermonRichTextArea";
 import { SermonSidePanel } from "./SermonSidePanel";
 import { Button } from "@/components/ui/button";
-import { FileText, PanelRightClose, PanelRight, Save, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { FileText, PanelRightClose, PanelRight, Save, Check, Loader2, MessageSquare, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const AUTOSAVE_KEY = "sermon_autosave_content";
 
@@ -40,6 +42,17 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
   const autoSaveRef = useRef<NodeJS.Timeout | null>(null);
   const lastContentRef = useRef<string>("");
   const lastSavedContentRef = useRef<string>(sermon.full_sermon);
+
+  // Parentheses-based scripture lookup state
+  const [processingRequest, setProcessingRequest] = useState(false);
+  const [clarificationDialog, setClarificationDialog] = useState<{
+    open: boolean;
+    question: string;
+    originalRequest: string;
+    matchedText: string;
+  }>({ open: false, question: "", originalRequest: "", matchedText: "" });
+  const [clarificationAnswer, setClarificationAnswer] = useState("");
+  const processedRequestsRef = useRef<Set<string>>(new Set());
 
   // Load autosaved content from localStorage on mount (protects against browser crashes)
   useEffect(() => {
@@ -86,6 +99,122 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
       }
     };
   }, [sermon.full_sermon, sermon.title]);
+
+  // Process parentheses-based scripture requests
+  const processScriptureRequest = useCallback(async (request: string, matchedText: string, additionalContext?: string) => {
+    setProcessingRequest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("jeeves", {
+        body: {
+          mode: "sermon-scripture-lookup",
+          request: request,
+          additional_context: additionalContext || "",
+          theme_passage: themePassage,
+          sermon_context: sermon.full_sermon.replace(/<[^>]*>/g, '').slice(-300),
+        },
+      });
+
+      if (error) throw error;
+
+      // Check if Jeeves needs clarification
+      if (data?.needs_clarification) {
+        setClarificationDialog({
+          open: true,
+          question: data.clarification_question || "Could you be more specific about what you're looking for?",
+          originalRequest: request,
+          matchedText: matchedText,
+        });
+        setClarificationAnswer("");
+        return;
+      }
+
+      // If we got scripture back, insert it
+      if (data?.scripture) {
+        const scriptureHtml = `<blockquote><strong>${data.reference || "Scripture"}</strong>: "${data.scripture}"</blockquote>`;
+        const newContent = sermon.full_sermon.replace(matchedText, scriptureHtml);
+        setSermon({ ...sermon, full_sermon: newContent });
+        toast.success(`Scripture added: ${data.reference || "Scripture passage"}`);
+        processedRequestsRef.current.add(matchedText);
+      } else if (data?.content) {
+        // Try to parse as JSON
+        try {
+          const parsed = JSON.parse(data.content);
+          if (parsed.scripture) {
+            const scriptureHtml = `<blockquote><strong>${parsed.reference || "Scripture"}</strong>: "${parsed.scripture}"</blockquote>`;
+            const newContent = sermon.full_sermon.replace(matchedText, scriptureHtml);
+            setSermon({ ...sermon, full_sermon: newContent });
+            toast.success(`Scripture added: ${parsed.reference || "Scripture passage"}`);
+            processedRequestsRef.current.add(matchedText);
+          } else if (parsed.needs_clarification) {
+            setClarificationDialog({
+              open: true,
+              question: parsed.clarification_question || "Could you be more specific?",
+              originalRequest: request,
+              matchedText: matchedText,
+            });
+            setClarificationAnswer("");
+          }
+        } catch {
+          // If response is plain text, use it directly
+          const scriptureHtml = `<blockquote>${data.content}</blockquote>`;
+          const newContent = sermon.full_sermon.replace(matchedText, scriptureHtml);
+          setSermon({ ...sermon, full_sermon: newContent });
+          toast.success("Content added");
+          processedRequestsRef.current.add(matchedText);
+        }
+      }
+    } catch (error) {
+      console.error("Error processing scripture request:", error);
+      toast.error("Failed to fetch scripture. Please try again.");
+    } finally {
+      setProcessingRequest(false);
+    }
+  }, [sermon, setSermon, themePassage]);
+
+  // Handle clarification submission
+  const handleClarificationSubmit = async () => {
+    if (!clarificationAnswer.trim()) return;
+
+    setClarificationDialog({ ...clarificationDialog, open: false });
+    await processScriptureRequest(
+      clarificationDialog.originalRequest,
+      clarificationDialog.matchedText,
+      clarificationAnswer
+    );
+    setClarificationAnswer("");
+  };
+
+  // Check for parentheses requests in content
+  const checkForScriptureRequests = useCallback((content: string) => {
+    // Match text in parentheses that looks like a request (contains keywords or is > 10 chars)
+    const regex = /\(([^)]{10,})\)/g;
+    const plainContent = content.replace(/<[^>]*>/g, '');
+    let match;
+
+    while ((match = regex.exec(plainContent)) !== null) {
+      const fullMatch = match[0];
+      const innerText = match[1].trim();
+
+      // Skip if already processed
+      if (processedRequestsRef.current.has(fullMatch)) continue;
+
+      // Check if it looks like a scripture request (contains trigger words)
+      const triggerWords = [
+        'need', 'find', 'get', 'show', 'pull', 'insert', 'add',
+        'text', 'verse', 'passage', 'scripture', 'bible',
+        'where', 'when', 'about', 'story', 'chapter'
+      ];
+
+      const lowerText = innerText.toLowerCase();
+      const isRequest = triggerWords.some(word => lowerText.includes(word));
+
+      if (isRequest) {
+        // Process this request
+        processScriptureRequest(innerText, fullMatch);
+        break; // Process one at a time
+      }
+    }
+  }, [processScriptureRequest]);
 
   // Debounced function to get verse suggestions based on sermon content
   const fetchVerseSuggestions = useCallback(async (content: string) => {
@@ -137,13 +266,17 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
   // Handle content change with debounce
   const handleContentChange = (content: string) => {
     setSermon({ ...sermon, full_sermon: content });
-    
+
     // Debounce the verse suggestions
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
     debounceRef.current = setTimeout(() => {
       fetchVerseSuggestions(content);
+      // Also check for parentheses-based scripture requests
+      if (!processingRequest) {
+        checkForScriptureRequests(content);
+      }
     }, 2000); // 2 second debounce
   };
 
@@ -165,6 +298,41 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
 
   return (
     <div className="h-[calc(100vh-280px)] min-h-[500px]">
+      {/* Clarification Dialog */}
+      <Dialog open={clarificationDialog.open} onOpenChange={(open) => setClarificationDialog({ ...clarificationDialog, open })}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-purple-600" />
+              Jeeves Needs Clarification
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-muted-foreground">
+              Your request: <em>"{clarificationDialog.originalRequest}"</em>
+            </p>
+            <p className="text-sm font-medium">{clarificationDialog.question}</p>
+            <Input
+              placeholder="Type your answer..."
+              value={clarificationAnswer}
+              onChange={(e) => setClarificationAnswer(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleClarificationSubmit()}
+            />
+          </div>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setClarificationDialog({ ...clarificationDialog, open: false })}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleClarificationSubmit} disabled={!clarificationAnswer.trim()}>
+              Submit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Header bar with save indicator */}
       <div className="flex items-center justify-between mb-3 pb-3 border-b">
         <div className="flex items-center gap-3">
@@ -172,7 +340,12 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
           <div>
             <h3 className="font-semibold text-sm">Write Your Sermon</h3>
             <div className="flex items-center gap-2">
-              {isSaving ? (
+              {processingRequest ? (
+                <Badge variant="outline" className="gap-1 text-xs text-purple-600 border-purple-200">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Fetching scripture...
+                </Badge>
+              ) : isSaving ? (
                 <Badge variant="outline" className="gap-1 text-xs">
                   <Save className="w-3 h-3 animate-pulse" />
                   Saving...
