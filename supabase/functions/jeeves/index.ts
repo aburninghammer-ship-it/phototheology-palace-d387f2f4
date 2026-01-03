@@ -3686,9 +3686,9 @@ Guidelines:
 
     } else if (mode === "sermon-scripture-lookup") {
       // Inline scripture lookup when user types (request) in sermon editor
-      const scriptureRequest = request || '';
-      const additionalContext = additional_context || '';
-      const sermonContext = sermon_context || '';
+      const scriptureRequest = requestBody.request || '';
+      const additionalContext = requestBody.additional_context || '';
+      const sermonContext = requestBody.sermon_context || '';
 
       systemPrompt = `You are Jeeves, helping a preacher find and insert specific Scripture passages in real-time as they write their sermon.
 
