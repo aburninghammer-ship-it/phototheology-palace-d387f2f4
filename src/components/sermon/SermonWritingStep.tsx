@@ -2,12 +2,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { SermonRichTextArea } from "./SermonRichTextArea";
 import { SermonSidePanel } from "./SermonSidePanel";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FileText, PanelRightClose, PanelRight, Save, Check, Loader2, MessageSquare, X } from "lucide-react";
+import { FileText, PanelRightClose, PanelRight, Save, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const AUTOSAVE_KEY = "sermon_autosave_content";
 
@@ -43,16 +41,6 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
   const lastContentRef = useRef<string>("");
   const lastSavedContentRef = useRef<string>(sermon.full_sermon);
 
-  // Parentheses-based scripture lookup state
-  const [processingRequest, setProcessingRequest] = useState(false);
-  const [clarificationDialog, setClarificationDialog] = useState<{
-    open: boolean;
-    question: string;
-    originalRequest: string;
-    matchedText: string;
-  }>({ open: false, question: "", originalRequest: "", matchedText: "" });
-  const [clarificationAnswer, setClarificationAnswer] = useState("");
-  const processedRequestsRef = useRef<Set<string>>(new Set());
 
   // Load autosaved content from localStorage on mount (protects against browser crashes)
   useEffect(() => {
@@ -101,149 +89,6 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
       }
     };
   }, [sermon.full_sermon, sermon.title]);
-
-  // Process parentheses-based scripture requests
-  const processScriptureRequest = useCallback(async (request: string, matchedText: string, additionalContext?: string) => {
-    setProcessingRequest(true);
-    try {
-      // Use sermon-assistant mode with a specific prompt to find scripture
-      const { data, error } = await supabase.functions.invoke("jeeves", {
-        body: {
-          mode: "sermon-assistant",
-          sermon_title: sermon.title,
-          themePassage: themePassage,
-          sermon_content: (sermon.full_sermon || '').replace(/<[^>]*>/g, '').slice(-300),
-          smooth_stones: sermon.smooth_stones,
-          chatMessages: [{
-            role: "user",
-            content: `Find and provide the exact scripture passage for this request: "${request}"${additionalContext ? ` (Additional context: ${additionalContext})` : ''}
-
-IMPORTANT: Respond in this exact JSON format only:
-{
-  "reference": "Book Chapter:Verse(s)",
-  "scripture": "The full text of the scripture passage"
-}
-
-If the request is ambiguous, respond with:
-{
-  "needs_clarification": true,
-  "clarification_question": "Your question"
-}
-
-Return ONLY the JSON, no other text.`
-          }]
-        },
-      });
-
-      if (error) throw error;
-
-      // Parse the response - it might be in data.content or data directly
-      let responseText = data?.content || data?.response || (typeof data === 'string' ? data : JSON.stringify(data));
-
-      // Try to extract JSON from the response
-      let parsed: any = null;
-      try {
-        // Clean markdown code blocks if present
-        let cleanResponse = responseText.trim();
-        if (cleanResponse.startsWith('```json')) {
-          cleanResponse = cleanResponse.slice(7);
-        } else if (cleanResponse.startsWith('```')) {
-          cleanResponse = cleanResponse.slice(3);
-        }
-        if (cleanResponse.endsWith('```')) {
-          cleanResponse = cleanResponse.slice(0, -3);
-        }
-        parsed = JSON.parse(cleanResponse.trim());
-      } catch {
-        // If not JSON, try to extract scripture reference from text
-        console.log("Response wasn't JSON, attempting to parse:", responseText);
-      }
-
-      if (parsed?.needs_clarification) {
-        setClarificationDialog({
-          open: true,
-          question: parsed.clarification_question || "Could you be more specific about what you're looking for?",
-          originalRequest: request,
-          matchedText: matchedText,
-        });
-        setClarificationAnswer("");
-        return;
-      }
-
-      if (parsed?.scripture && parsed?.reference) {
-        const scriptureHtml = `<blockquote><strong>${parsed.reference}</strong>: "${parsed.scripture}"</blockquote>`;
-        const newContent = (sermon.full_sermon || '').replace(matchedText, scriptureHtml);
-        setSermon({ ...sermon, full_sermon: newContent });
-        toast.success(`Scripture added: ${parsed.reference}`);
-        processedRequestsRef.current.add(matchedText);
-        return;
-      }
-
-      // Fallback: if we got any text response, show it
-      if (responseText && responseText.length > 10) {
-        toast.info("Jeeves found some context but couldn't format it as scripture. Check the assistant panel.");
-        return;
-      }
-
-      throw new Error("Could not find the requested scripture");
-    } catch (error: any) {
-      console.error("Error processing scripture request:", error);
-      // Show more helpful error message
-      const errorMsg = error?.message || "Unknown error";
-      if (errorMsg.includes("not found") || errorMsg.includes("mode")) {
-        toast.error("Scripture lookup feature is being deployed. Please try again in a few minutes.");
-      } else {
-        toast.error(`Failed to fetch scripture: ${errorMsg}`);
-      }
-    } finally {
-      setProcessingRequest(false);
-    }
-  }, [sermon, setSermon, themePassage]);
-
-  // Handle clarification submission
-  const handleClarificationSubmit = async () => {
-    if (!clarificationAnswer.trim()) return;
-
-    setClarificationDialog({ ...clarificationDialog, open: false });
-    await processScriptureRequest(
-      clarificationDialog.originalRequest,
-      clarificationDialog.matchedText,
-      clarificationAnswer
-    );
-    setClarificationAnswer("");
-  };
-
-  // Check for parentheses requests in content
-  const checkForScriptureRequests = useCallback((content: string) => {
-    // Only match text in parentheses that STARTS with action words
-    // This prevents triggering on normal parenthetical notes
-    const regex = /\(([^)]{15,})\)/g;
-    const plainContent = content.replace(/<[^>]*>/g, '');
-    let match;
-
-    while ((match = regex.exec(plainContent)) !== null) {
-      const fullMatch = match[0];
-      const innerText = match[1].trim();
-
-      // Skip if already processed
-      if (processedRequestsRef.current.has(fullMatch)) continue;
-
-      const lowerText = innerText.toLowerCase();
-
-      // STRICT CHECK: Must start with an action word
-      const startsWithAction = /^(find|get|pull|insert|add|show|i need|give me|fetch|look up|lookup)/i.test(innerText);
-
-      // OR must contain explicit scripture words
-      const hasScriptureWord = /\b(verse|scripture|passage|bible text)\b/i.test(innerText);
-
-      // Only trigger if it's clearly a scripture request
-      if (startsWithAction || hasScriptureWord) {
-        // Process this request
-        processScriptureRequest(innerText, fullMatch);
-        break; // Process one at a time
-      }
-    }
-  }, [processScriptureRequest]);
 
   // Debounced function to get verse suggestions based on sermon content
   const fetchVerseSuggestions = useCallback(async (content: string) => {
@@ -302,11 +147,6 @@ Return ONLY the JSON, no other text.`
     }
     debounceRef.current = setTimeout(() => {
       fetchVerseSuggestions(content);
-      // NOTE: Parentheses-based scripture lookup disabled for now
-      // Use Jeeves chat in the side panel instead
-      // if (!processingRequest) {
-      //   checkForScriptureRequests(content);
-      // }
     }, 2000); // 2 second debounce
   };
 
@@ -328,41 +168,6 @@ Return ONLY the JSON, no other text.`
 
   return (
     <div className="h-[calc(100vh-280px)] min-h-[500px]">
-      {/* Clarification Dialog */}
-      <Dialog open={clarificationDialog.open} onOpenChange={(open) => setClarificationDialog({ ...clarificationDialog, open })}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-purple-600" />
-              Jeeves Needs Clarification
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <p className="text-sm text-muted-foreground">
-              Your request: <em>"{clarificationDialog.originalRequest}"</em>
-            </p>
-            <p className="text-sm font-medium">{clarificationDialog.question}</p>
-            <Input
-              placeholder="Type your answer..."
-              value={clarificationAnswer}
-              onChange={(e) => setClarificationAnswer(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleClarificationSubmit()}
-            />
-          </div>
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setClarificationDialog({ ...clarificationDialog, open: false })}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleClarificationSubmit} disabled={!clarificationAnswer.trim()}>
-              Submit
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       {/* Header bar with save indicator */}
       <div className="flex items-center justify-between mb-3 pb-3 border-b">
         <div className="flex items-center gap-3">
@@ -370,12 +175,7 @@ Return ONLY the JSON, no other text.`
           <div>
             <h3 className="font-semibold text-sm">Write Your Sermon</h3>
             <div className="flex items-center gap-2">
-              {processingRequest ? (
-                <Badge variant="outline" className="gap-1 text-xs text-purple-600 border-purple-200">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  Fetching scripture...
-                </Badge>
-              ) : isSaving ? (
+              {isSaving ? (
                 <Badge variant="outline" className="gap-1 text-xs">
                   <Save className="w-3 h-3 animate-pulse" />
                   Saving...

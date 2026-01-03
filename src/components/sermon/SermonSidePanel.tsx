@@ -48,7 +48,7 @@ export function SermonSidePanel({
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Initialize sparks for sermon context
+  // Initialize sparks for sermon context - unlimited sparks in sermon mode
   const {
     sparks: activeSparks,
     generateSpark,
@@ -59,7 +59,9 @@ export function SermonSidePanel({
   } = useSparks({
     surface: 'study',
     contextType: 'study',
-    contextId: sermonTitle || 'sermon-writing'
+    contextId: sermonTitle || 'sermon-writing',
+    maxSparks: 50, // Allow many sparks in sermon writing mode
+    debounceMs: 45000 // Generate sparks more frequently (45s instead of 90s)
   });
 
   // Generate sparks based on sermon content changes

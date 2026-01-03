@@ -13,6 +13,7 @@ interface SparkContainerProps {
   onExplore: (sparkId: string) => Promise<Spark | undefined>;
   position?: 'margin' | 'inline' | 'floating';
   className?: string;
+  maxDisplay?: number; // 0 or undefined = show all sparks
 }
 
 export function SparkContainer({
@@ -22,7 +23,8 @@ export function SparkContainer({
   onDismiss,
   onExplore,
   position = 'floating',
-  className
+  className,
+  maxDisplay
 }: SparkContainerProps) {
   const [openSparkId, setOpenSparkId] = useState<string | null>(null);
   const [exploringSparkId, setExploringSparkId] = useState<string | null>(null);
@@ -63,15 +65,15 @@ export function SparkContainer({
   return (
     <div className={cn("relative", className)}>
       {/* Spark Icons */}
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 flex-wrap">
         <AnimatePresence>
-          {sparks.slice(0, 3).map((spark, index) => (
+          {(maxDisplay && maxDisplay > 0 ? sparks.slice(0, maxDisplay) : sparks).map((spark, index) => (
             <motion.div
               key={spark.id}
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: Math.min(index * 0.1, 0.5) }}
             >
               <SparkIcon
                 type={spark.spark_type}
@@ -82,10 +84,10 @@ export function SparkContainer({
             </motion.div>
           ))}
         </AnimatePresence>
-        
-        {sparks.length > 3 && (
+
+        {maxDisplay && maxDisplay > 0 && sparks.length > maxDisplay && (
           <span className="text-xs text-muted-foreground self-center ml-1">
-            +{sparks.length - 3}
+            +{sparks.length - maxDisplay}
           </span>
         )}
       </div>
