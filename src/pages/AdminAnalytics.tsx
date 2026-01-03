@@ -1,7 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
-import { Loader2, Eye, MessageSquare, Users, TrendingUp, RefreshCw } from "lucide-react";
+import { Loader2, Eye, MessageSquare, Users, TrendingUp, RefreshCw, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -18,6 +18,7 @@ const AdminAnalytics = () => {
     totalPageViews,
     totalJeevesQueries,
     uniqueUsers,
+    liveUsersCount,
     refetch,
   } = useAdminAnalytics();
 
@@ -62,6 +63,25 @@ const AdminAnalytics = () => {
             Refresh
           </Button>
         </div>
+
+        {/* Live Users - Prominent Display */}
+        <Card className="border-green-500/50 bg-gradient-to-r from-green-500/10 to-emerald-500/10">
+          <CardContent className="p-6 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-green-500/20 animate-pulse">
+                <Radio className="w-8 h-8 text-green-500" />
+              </div>
+              <div>
+                <p className="text-4xl font-bold text-green-600">{liveUsersCount}</p>
+                <p className="text-sm text-muted-foreground">Users Online Right Now</p>
+              </div>
+            </div>
+            <Badge variant="outline" className="gap-1 text-green-600 border-green-500/50">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              Live
+            </Badge>
+          </CardContent>
+        </Card>
 
         {/* Stats Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
