@@ -346,17 +346,25 @@ export function SermonSidePanel({
           <ScrollArea className="h-[120px]">
             {smoothStones.length > 0 ? (
               <div className="space-y-1.5">
-                {smoothStones.map((stone, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-2 p-1.5 rounded bg-amber-50/50 dark:bg-amber-900/10 border border-amber-200/50 dark:border-amber-800/30"
-                  >
-                    <span className="shrink-0 w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center justify-center text-[10px] font-bold">
-                      {idx + 1}
-                    </span>
-                    <p className="text-[11px] text-foreground/90 line-clamp-2">{stone}</p>
-                  </div>
-                ))}
+                {smoothStones.map((stone, idx) => {
+                  // Strip HTML tags to get clean text
+                  const cleanText = stone
+                    .replace(/<ol>|<\/ol>|<ul>|<\/ul>|<li>|<\/li>|<p>|<\/p>|<br\s*\/?>/gi, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                  
+                  return (
+                    <div
+                      key={idx}
+                      className="flex items-start gap-2 p-1.5 rounded bg-amber-50/50 dark:bg-amber-900/10 border border-amber-200/50 dark:border-amber-800/30"
+                    >
+                      <span className="shrink-0 w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center justify-center text-[10px] font-bold">
+                        {idx + 1}
+                      </span>
+                      <p className="text-[11px] text-foreground/90 line-clamp-2">{cleanText}</p>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
