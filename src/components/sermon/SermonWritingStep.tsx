@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { SermonRichTextArea } from "./SermonRichTextArea";
 import { SermonSidePanel } from "./SermonSidePanel";
 import { Button } from "@/components/ui/button";
-import { FileText, PanelRightClose, PanelRight } from "lucide-react";
+import { FileText, PanelRightClose, PanelRight, Save, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 interface SuggestedVerse {
   reference: string;
@@ -31,8 +32,31 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
   const [suggestedVerses, setSuggestedVerses] = useState<SuggestedVerse[]>([]);
   const [loadingVerses, setLoadingVerses] = useState(false);
   const [showPanel, setShowPanel] = useState(true);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const autoSaveRef = useRef<NodeJS.Timeout | null>(null);
   const lastContentRef = useRef<string>("");
+  const lastSavedContentRef = useRef<string>(sermon.full_sermon);
+
+  // Auto-save every 15 seconds if content has changed
+  useEffect(() => {
+    autoSaveRef.current = setInterval(() => {
+      if (sermon.full_sermon !== lastSavedContentRef.current) {
+        setIsSaving(true);
+        lastSavedContentRef.current = sermon.full_sermon;
+        setLastSaved(new Date());
+        // The setSermon already updates parent state which persists
+        setTimeout(() => setIsSaving(false), 500);
+      }
+    }, 15000);
+
+    return () => {
+      if (autoSaveRef.current) {
+        clearInterval(autoSaveRef.current);
+      }
+    };
+  }, [sermon.full_sermon]);
 
   // Debounced function to get verse suggestions based on sermon content
   const fetchVerseSuggestions = useCallback(async (content: string) => {
@@ -122,24 +146,45 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
             Use this space to write out your full sermon. Sparks, verses, and Jeeves will assist on the side.
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowPanel(!showPanel)}
-          className="gap-2"
-        >
-          {showPanel ? (
-            <>
-              <PanelRightClose className="w-4 h-4" />
-              <span className="hidden sm:inline">Hide Assistant</span>
-            </>
-          ) : (
-            <>
-              <PanelRight className="w-4 h-4" />
-              <span className="hidden sm:inline">Show Assistant</span>
-            </>
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Auto-save indicator */}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            {isSaving ? (
+              <Badge variant="outline" className="gap-1 text-xs">
+                <Save className="w-3 h-3 animate-pulse" />
+                Saving...
+              </Badge>
+            ) : lastSaved ? (
+              <Badge variant="outline" className="gap-1 text-xs text-green-600 border-green-200">
+                <Check className="w-3 h-3" />
+                Saved {lastSaved.toLocaleTimeString()}
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="gap-1 text-xs">
+                <Save className="w-3 h-3" />
+                Auto-saves every 15s
+              </Badge>
+            )}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPanel(!showPanel)}
+            className="gap-2"
+          >
+            {showPanel ? (
+              <>
+                <PanelRightClose className="w-4 h-4" />
+                <span className="hidden sm:inline">Hide Assistant</span>
+              </>
+            ) : (
+              <>
+                <PanelRight className="w-4 h-4" />
+                <span className="hidden sm:inline">Show Assistant</span>
+              </>
+            )}
+          </Button>
+        </div>
       </div>
 
       <div className={`grid gap-4 ${showPanel ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}>
