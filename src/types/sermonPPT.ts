@@ -1,6 +1,6 @@
 // Sermon PowerPoint Type Definitions
 
-export type SlideType = 
+export type SlideType =
   | 'TITLE'
   | 'BIG_IDEA'
   | 'SCRIPTURE'
@@ -14,7 +14,43 @@ export type SlideType =
   | 'QUOTE'
   | 'QUESTION'
   | 'RECAP'
-  | 'BLANK';
+  | 'BLANK'
+  | 'SPLIT'
+  | 'FULLBLEED'
+  | 'NUMBERED_POINT';
+
+// AI-generated layout options
+export type SlideLayout =
+  | 'centered'
+  | 'left-aligned'
+  | 'right-aligned'
+  | 'split-50'
+  | 'split-70-30'
+  | 'full-bleed'
+  | 'stacked'
+  | 'minimal'
+  | 'dramatic';
+
+// Visual style emphasis
+export type VisualEmphasis = 'bold' | 'subtle' | 'dramatic' | 'elegant' | 'modern' | 'classic';
+
+// Visual mood
+export type VisualMood = 'light' | 'dark' | 'warm' | 'cool' | 'neutral';
+
+// Visual style configuration per slide
+export interface VisualStyle {
+  emphasis?: VisualEmphasis;
+  mood?: VisualMood;
+  accent?: boolean;
+  invertColors?: boolean;
+}
+
+// Point numbering for NUMBERED_POINT slides
+export interface PointNumbering {
+  current: number;
+  total: number;
+  label?: string;
+}
 
 export type ThemeId = 
   | 'minimal'
@@ -56,6 +92,8 @@ export interface VenuePreset {
 
 export interface SlideContent {
   type: SlideType;
+  layout?: SlideLayout;
+  visualStyle?: VisualStyle;
   title?: string;
   subtitle?: string;
   body?: string;
@@ -63,13 +101,16 @@ export interface SlideContent {
     reference: string;
     text: string;
     version?: string;
+    highlightWords?: string[];
   };
   bullets?: string[];
   quote?: {
     text: string;
     attribution?: string;
   };
+  numbering?: PointNumbering;
   speakerNotes?: string;
+  designNotes?: string;
 }
 
 export interface SlideDeck {
@@ -80,6 +121,7 @@ export interface SlideDeck {
     church?: string;
     themePassage?: string;
     bibleVersion: string;
+    suggestedMood?: 'reverent' | 'joyful' | 'contemplative' | 'urgent' | 'celebratory' | 'solemn';
   };
   theme: ThemeId;
   venue: VenueSize;
