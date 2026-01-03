@@ -438,9 +438,9 @@ export default function SermonBuilder() {
           ))}
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className={`grid gap-6 ${currentStep === 5 ? 'lg:grid-cols-1' : 'lg:grid-cols-2'}`}>
           {/* Main Content */}
-          <Card variant="glass" className="bg-white/90 dark:bg-white/10 backdrop-blur-xl border-white/20">
+          <Card variant="glass" className={`bg-white/90 dark:bg-white/10 backdrop-blur-xl border-white/20 ${currentStep === 5 ? 'lg:col-span-1' : ''}`}>
             <CardHeader>
               <CardTitle className="text-2xl">
                 {currentStep === 1 && "Start New Sermon"}
@@ -807,62 +807,64 @@ export default function SermonBuilder() {
             </CardContent>
           </Card>
 
-          {/* Info Panel */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="space-y-6"
-          >
-            <Card variant="glass" className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-400/30 backdrop-blur-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-white" />
-                  </div>
-                  The 5 Smooth Stones Approach
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-white/90">
-                <p>
-                  Like David selecting 5 smooth stones to face Goliath, you'll gather 5 powerful AHA moments that will captivate your audience.
-                </p>
-                <div className="space-y-2">
-                  <div className="flex gap-2 items-start">
-                    <TrendingUp className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-300" />
-                    <p className="text-sm">Each stone is a mind-blowing Phototheology insight</p>
-                  </div>
-                  <div className="flex gap-2 items-start">
-                    <ArrowRight className="w-5 h-5 flex-shrink-0 mt-0.5 text-cyan-300" />
-                    <p className="text-sm">Bridges connect stones into a flowing narrative</p>
-                  </div>
-                  <div className="flex gap-2 items-start">
-                    <Film className="w-5 h-5 flex-shrink-0 mt-0.5 text-purple-300" />
-                    <p className="text-sm">Structure it like a movie with climax and resolution</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* AI Help Display */}
-            {aiHelp && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                <Card variant="glass" className="bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 border-purple-400/30 backdrop-blur-xl">
-                  <CardHeader>
-                    <CardTitle className="text-white">Jeeves&apos; Guidance</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="prose prose-sm max-w-none text-white/90 dark:prose-invert">
-                      <StyledMarkdown content={aiHelp} />
+          {/* Info Panel - Hidden on step 5 since SermonWritingStep has its own assistant */}
+          {currentStep !== 5 && (
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="space-y-6"
+            >
+              <Card variant="glass" className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-400/30 backdrop-blur-xl">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-white" />
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-          </motion.div>
+                    The 5 Smooth Stones Approach
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-white/90">
+                  <p>
+                    Like David selecting 5 smooth stones to face Goliath, you'll gather 5 powerful AHA moments that will captivate your audience.
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex gap-2 items-start">
+                      <TrendingUp className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-300" />
+                      <p className="text-sm">Each stone is a mind-blowing Phototheology insight</p>
+                    </div>
+                    <div className="flex gap-2 items-start">
+                      <ArrowRight className="w-5 h-5 flex-shrink-0 mt-0.5 text-cyan-300" />
+                      <p className="text-sm">Bridges connect stones into a flowing narrative</p>
+                    </div>
+                    <div className="flex gap-2 items-start">
+                      <Film className="w-5 h-5 flex-shrink-0 mt-0.5 text-purple-300" />
+                      <p className="text-sm">Structure it like a movie with climax and resolution</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* AI Help Display */}
+              {aiHelp && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                >
+                  <Card variant="glass" className="bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 border-purple-400/30 backdrop-blur-xl">
+                    <CardHeader>
+                      <CardTitle className="text-white">Jeeves&apos; Guidance</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="prose prose-sm max-w-none text-white/90 dark:prose-invert">
+                        <StyledMarkdown content={aiHelp} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
         </div>
       </div>
 

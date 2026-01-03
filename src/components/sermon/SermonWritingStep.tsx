@@ -135,15 +135,14 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
   };
 
   return (
-    <div className="h-[calc(100vh-200px)] min-h-[600px]">
-      {/* Header bar with title and controls */}
+    <div className="h-[calc(100vh-280px)] min-h-[500px]">
+      {/* Header bar with save indicator */}
       <div className="flex items-center justify-between mb-3 pb-3 border-b">
         <div className="flex items-center gap-3">
           <FileText className="w-5 h-5 text-purple-600" />
           <div>
             <h3 className="font-semibold text-sm">Write Your Sermon</h3>
             <div className="flex items-center gap-2">
-              {/* Auto-save indicator */}
               {isSaving ? (
                 <Badge variant="outline" className="gap-1 text-xs">
                   <Save className="w-3 h-3 animate-pulse" />
@@ -188,8 +187,8 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
 
       {/* Main 50/50 split layout */}
       <div className={`grid gap-4 h-[calc(100%-60px)] ${showPanel ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
-        {/* Left: Writing area - takes full height */}
-        <div className="h-full flex flex-col">
+        {/* Left: Writing area - full half */}
+        <div className="h-full flex flex-col min-h-0">
           <SermonRichTextArea
             content={sermon.full_sermon}
             onChange={handleContentChange}
@@ -200,9 +199,9 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
           />
         </div>
 
-        {/* Right: Assistant Panel - takes full height */}
+        {/* Right: Assistant Panel with Sparks/Verses/Jeeves + Your 5 Stones - full half */}
         {showPanel && (
-          <div className="h-full overflow-hidden">
+          <div className="h-full overflow-hidden min-h-0">
             <SermonSidePanel
               suggestedVerses={suggestedVerses}
               loadingVerses={loadingVerses}
