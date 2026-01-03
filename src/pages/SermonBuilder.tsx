@@ -20,6 +20,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
+import { useSparks } from "@/hooks/useSparks";
+import { SparkContainer } from "@/components/sparks";
 
 const STEPS = [
   { num: 1, title: "Setup", icon: BookOpen },
@@ -97,7 +99,19 @@ export default function SermonBuilder() {
   const [gemsDialogOpen, setGemsDialogOpen] = useState(false);
   const [scriptureArmory, setScriptureArmory] = useState<Record<number, ArmoryVerse[]>>({});
 
-  // Restore preserved state on mount (only for new sermons, not when editing)
+  // Sparks for sermon building insights
+  const {
+    sparks,
+    generateSpark,
+    openSpark,
+    saveSpark,
+    dismissSpark,
+    exploreSpark,
+  } = useSparks({
+    surface: 'study',
+    contextType: 'study',
+    contextId: editId || 'new-sermon',
+  });
   useEffect(() => {
     if (!editId && !hasRestoredState.current) {
       const savedStep = getCustomState<number>('sermon_currentStep');
@@ -851,6 +865,19 @@ export default function SermonBuilder() {
           </motion.div>
         </div>
       </div>
+
+      {/* Sparks Container */}
+      {sparks.length > 0 && (
+        <div className="fixed top-20 right-4 z-50">
+          <SparkContainer
+            sparks={sparks}
+            onOpen={openSpark}
+            onSave={saveSpark}
+            onDismiss={dismissSpark}
+            onExplore={exploreSpark}
+          />
+        </div>
+      )}
     </div>
   );
 }
