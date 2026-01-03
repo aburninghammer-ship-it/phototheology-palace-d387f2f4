@@ -215,8 +215,9 @@ Return ONLY the JSON, no other text.`
 
   // Check for parentheses requests in content
   const checkForScriptureRequests = useCallback((content: string) => {
-    // Match text in parentheses that looks like a request (contains keywords or is > 10 chars)
-    const regex = /\(([^)]{10,})\)/g;
+    // Only match text in parentheses that STARTS with action words
+    // This prevents triggering on normal parenthetical notes
+    const regex = /\(([^)]{15,})\)/g;
     const plainContent = content.replace(/<[^>]*>/g, '');
     let match;
 
@@ -227,17 +228,16 @@ Return ONLY the JSON, no other text.`
       // Skip if already processed
       if (processedRequestsRef.current.has(fullMatch)) continue;
 
-      // Check if it looks like a scripture request (contains trigger words)
-      const triggerWords = [
-        'need', 'find', 'get', 'show', 'pull', 'insert', 'add',
-        'text', 'verse', 'passage', 'scripture', 'bible',
-        'where', 'when', 'about', 'story', 'chapter'
-      ];
-
       const lowerText = innerText.toLowerCase();
-      const isRequest = triggerWords.some(word => lowerText.includes(word));
 
-      if (isRequest) {
+      // STRICT CHECK: Must start with an action word
+      const startsWithAction = /^(find|get|pull|insert|add|show|i need|give me|fetch|look up|lookup)/i.test(innerText);
+
+      // OR must contain explicit scripture words
+      const hasScriptureWord = /\b(verse|scripture|passage|bible text)\b/i.test(innerText);
+
+      // Only trigger if it's clearly a scripture request
+      if (startsWithAction || hasScriptureWord) {
         // Process this request
         processScriptureRequest(innerText, fullMatch);
         break; // Process one at a time
