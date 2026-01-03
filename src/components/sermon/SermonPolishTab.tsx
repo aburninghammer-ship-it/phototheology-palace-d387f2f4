@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -76,15 +76,17 @@ interface PolishAnalysis {
 interface SermonPolishTabProps {
   initialSermonText?: string;
   themePassage?: string;
+  sermonId?: string;
 }
 
-export function SermonPolishTab({ initialSermonText = "", themePassage = "" }: SermonPolishTabProps) {
+export function SermonPolishTab({ initialSermonText = "", themePassage = "", sermonId }: SermonPolishTabProps) {
   const [sermonText, setSermonText] = useState(initialSermonText);
   const [mainText, setMainText] = useState(themePassage);
   const [centralTheme, setCentralTheme] = useState("");
   const [analysisDepth, setAnalysisDepth] = useState<"quick" | "deep" | "full">("deep");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<PolishAnalysis | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     snapshot: true,
     amplify: true,
@@ -95,8 +97,64 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "" }: S
     checklist: false,
   });
 
+  // Load saved analysis on mount
+  useEffect(() => {
+    const loadSavedAnalysis = async () => {
+      if (!sermonId) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from("sermons")
+          .select("polish_analysis")
+          .eq("id", sermonId)
+          .single();
+        
+        if (error) throw error;
+        if (data?.polish_analysis) {
+          setAnalysis(data.polish_analysis as unknown as PolishAnalysis);
+          setExpandedSections({
+            snapshot: true,
+            amplify: true,
+            missed: true,
+            tighten: true,
+            arc: true,
+            pt: true,
+            checklist: true,
+          });
+        }
+      } catch (error) {
+        console.error("Error loading saved analysis:", error);
+      }
+    };
+    
+    loadSavedAnalysis();
+  }, [sermonId]);
+
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  const saveAnalysis = async (analysisData: PolishAnalysis) => {
+    if (!sermonId) {
+      toast.info("Analysis complete! Save a sermon to persist the analysis.");
+      return;
+    }
+    
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from("sermons")
+        .update({ polish_analysis: JSON.parse(JSON.stringify(analysisData)) })
+        .eq("id", sermonId);
+      
+      if (error) throw error;
+      toast.success("Analysis saved!");
+    } catch (error: any) {
+      console.error("Error saving analysis:", error);
+      toast.error("Failed to save analysis");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const analyzeSermon = async () => {
@@ -121,6 +179,11 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "" }: S
 
       setAnalysis(data);
       toast.success("Sermon analysis complete!");
+      
+      // Auto-save if we have a sermon ID
+      if (sermonId) {
+        await saveAnalysis(data);
+      }
       
       // Expand all sections after analysis
       setExpandedSections({
