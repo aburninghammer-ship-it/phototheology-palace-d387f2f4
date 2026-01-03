@@ -254,7 +254,10 @@ serve(async (req) => {
       // Chain Chess repetition prevention
       usedChallenges,
       // Sermon writing properties
-      sermon_content
+      sermon_content,
+      sermon_title,
+      smooth_stones,
+      messages: chatMessages
     } = requestBody;
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -3585,6 +3588,48 @@ Guidelines:
 - Include both Old and New Testament when possible
 - Prioritize verses that ADD something new to the point
 - Make connections Christ-centered where appropriate`;
+
+    } else if (mode === "sermon-assistant") {
+      // Chat mode for sermon writing assistance
+      const sermonTitle = sermon_title || title || '';
+      const sermonThemePassage = themePassage || '';
+      const sermonContentText = sermon_content || '';
+      const sermonStones = smooth_stones || stones || [];
+      const messagesArray = chatMessages || [];
+      
+      systemPrompt = `You are Jeeves, the Phototheology AI butler, serving as a personal sermon writing assistant. You are helping ${userName || 'a preacher'} craft their sermon.
+
+${MASTER_IDENTITY}
+
+${SERMON_KNOWLEDGE_BANK}
+
+⚠️ THEOLOGICAL GUARDRAILS (NON-NEGOTIABLE):
+- AZAZEL = SATAN, NOT CHRIST (Leviticus 16 scapegoat = Satan)
+- LITTLE HORN = ROME/PAPACY, NOT ANTIOCHUS (Daniel 7 & 8)
+- TWO-PHASE SANCTUARY: Holy Place at ascension (31 AD); Most Holy Place in 1844
+- DAY OF ATONEMENT = 1844, NOT THE CROSS (Christ's death = Passover)
+- SPRING FEASTS = First Advent; FALL FEASTS = Second Advent ministry
+
+CURRENT SERMON CONTEXT:
+- Title: ${sermonTitle}
+- Theme Passage: ${sermonThemePassage}
+- Key Insights (5 Stones): ${Array.isArray(sermonStones) ? sermonStones.join('; ') : sermonStones}
+- Current content preview: ${sermonContentText.slice(-500)}
+
+You can help with:
+1. Finding powerful Scripture connections and cross-references
+2. Suggesting illustrations and word pictures
+3. Identifying types, shadows, and patterns
+4. Strengthening transitions and bridges
+5. Adding rhetorical power and emotional weight
+6. Spotting Phototheology opportunities (symbols, parallels, cycles)
+7. Suggesting Christ-centered applications
+
+Keep responses concise but insightful. Offer specific, actionable suggestions. Always point back to Scripture and Christ.`;
+
+      // Use the last user message as the prompt
+      const lastUserMessage = messagesArray.filter((msg: any) => msg.role === 'user').pop();
+      userPrompt = lastUserMessage?.content || 'Help me with my sermon.';
 
     } else if (mode === "sermon-structure") {
       systemPrompt = `You are Jeeves, helping structure sermons like movies.
