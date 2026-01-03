@@ -61,8 +61,9 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
       if (savedData) {
         const { content, timestamp, title } = JSON.parse(savedData);
         const hoursSaved = (Date.now() - timestamp) / (1000 * 60 * 60);
+        const currentContent = sermon.full_sermon || '';
         // Restore if: content exists, within 24 hours, and current content is empty or shorter
-        if (content && hoursSaved < 24 && (!sermon.full_sermon || sermon.full_sermon.length < content.length)) {
+        if (content && hoursSaved < 24 && (!currentContent || currentContent.length < content.length)) {
           setSermon({ ...sermon, full_sermon: content });
           toast.success("Restored your autosaved sermon draft");
         }
@@ -74,15 +75,16 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
 
   // Auto-save every 15 seconds if content has changed (also saves to localStorage)
   useEffect(() => {
+    const currentContent = sermon.full_sermon || '';
     autoSaveRef.current = setInterval(() => {
-      if (sermon.full_sermon !== lastSavedContentRef.current) {
+      if (currentContent !== lastSavedContentRef.current) {
         setIsSaving(true);
-        lastSavedContentRef.current = sermon.full_sermon;
+        lastSavedContentRef.current = currentContent;
         setLastSaved(new Date());
         // Save to localStorage for crash recovery
         try {
           localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({
-            content: sermon.full_sermon,
+            content: currentContent,
             timestamp: Date.now(),
             title: sermon.title || "untitled",
           }));
@@ -110,7 +112,7 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
           request: request,
           additional_context: additionalContext || "",
           theme_passage: themePassage,
-          sermon_context: sermon.full_sermon.replace(/<[^>]*>/g, '').slice(-300),
+          sermon_context: (sermon.full_sermon || '').replace(/<[^>]*>/g, '').slice(-300),
         },
       });
 
@@ -131,7 +133,7 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
       // If we got scripture back, insert it
       if (data?.scripture) {
         const scriptureHtml = `<blockquote><strong>${data.reference || "Scripture"}</strong>: "${data.scripture}"</blockquote>`;
-        const newContent = sermon.full_sermon.replace(matchedText, scriptureHtml);
+        const newContent = (sermon.full_sermon || '').replace(matchedText, scriptureHtml);
         setSermon({ ...sermon, full_sermon: newContent });
         toast.success(`Scripture added: ${data.reference || "Scripture passage"}`);
         processedRequestsRef.current.add(matchedText);
@@ -141,7 +143,7 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
           const parsed = JSON.parse(data.content);
           if (parsed.scripture) {
             const scriptureHtml = `<blockquote><strong>${parsed.reference || "Scripture"}</strong>: "${parsed.scripture}"</blockquote>`;
-            const newContent = sermon.full_sermon.replace(matchedText, scriptureHtml);
+            const newContent = (sermon.full_sermon || '').replace(matchedText, scriptureHtml);
             setSermon({ ...sermon, full_sermon: newContent });
             toast.success(`Scripture added: ${parsed.reference || "Scripture passage"}`);
             processedRequestsRef.current.add(matchedText);
@@ -157,7 +159,7 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
         } catch {
           // If response is plain text, use it directly
           const scriptureHtml = `<blockquote>${data.content}</blockquote>`;
-          const newContent = sermon.full_sermon.replace(matchedText, scriptureHtml);
+          const newContent = (sermon.full_sermon || '').replace(matchedText, scriptureHtml);
           setSermon({ ...sermon, full_sermon: newContent });
           toast.success("Content added");
           processedRequestsRef.current.add(matchedText);
@@ -362,7 +364,7 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
                 </Badge>
               )}
               <span className="text-xs text-muted-foreground">
-                {sermon.full_sermon.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length} words
+                {(sermon.full_sermon || '').replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length} words
               </span>
             </div>
           </div>

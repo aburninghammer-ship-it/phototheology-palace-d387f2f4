@@ -121,7 +121,16 @@ export default function SermonBuilder() {
       const savedAiHelp = getCustomState<string>('sermon_aiHelp');
       
       if (savedStep) setCurrentStep(savedStep);
-      if (savedSermon) setSermon(savedSermon);
+      if (savedSermon) {
+        // Merge with default state to ensure all properties exist
+        setSermon(prev => ({
+          ...prev,
+          ...savedSermon,
+          full_sermon: savedSermon.full_sermon || prev.full_sermon || "",
+          smooth_stones: savedSermon.smooth_stones || prev.smooth_stones || [],
+          bridges: savedSermon.bridges || prev.bridges || [],
+        }));
+      }
       if (savedNewStone) setNewStone(savedNewStone);
       if (savedNewBridge) setNewBridge(savedNewBridge);
       if (savedAiHelp) setAiHelp(savedAiHelp);
