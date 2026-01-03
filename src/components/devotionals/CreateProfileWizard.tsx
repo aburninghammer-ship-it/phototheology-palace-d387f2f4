@@ -349,7 +349,7 @@ export function CreateProfileWizard({ onClose, onProfileCreated }: CreateProfile
         if (formData.category === "dating" && !formData.dating_stage) return false;
         return true;
       case 2:
-        return formData.struggles.length > 0 || formData.current_situation.trim();
+        return true; // Issues are optional - some people may have none
       case 3:
         return formData.preferred_tones.length > 0 && formData.preferred_themes.length > 0;
       case 4:
