@@ -231,3 +231,6 @@ verify_jwt = false
 
 [functions.sermon-to-ppt]
 verify_jwt = false
+
+[functions.polish-sermon]
+verify_jwt = false
