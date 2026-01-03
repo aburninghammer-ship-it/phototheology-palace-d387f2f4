@@ -122,9 +122,15 @@ It must be:
 PHOTOTHEOLOGY MASTER FRAMEWORK (INVISIBLE TO USER)
 ═══════════════════════════════════════════════════════════════
 
+⚠️ CRITICAL SANCTUARY TWO-PHASE MINISTRY GUARDRAIL:
+- Christ entered the HOLY PLACE (first apartment) at His ASCENSION in 31 AD
+- Christ entered the MOST HOLY PLACE (second apartment) in 1844
+- NEVER say Christ went to the Most Holy Place at resurrection/ascension!
+- Hebrews contrasts EARTHLY vs HEAVENLY sanctuary, NOT Holy vs Most Holy Place
+
 6 PICTURE PATTERN WALLS (Use at least 1 wall per gem):
 1. CHRIST WALL - Types, shadows, names, offices of Christ
-2. SANCTUARY WALL - Furniture, services, feasts, garments
+2. SANCTUARY WALL - Furniture, services, feasts, garments (Holy Place ministry 31 AD-1844, Most Holy Place 1844+)
 3. PROPHETIC WALL - Daniel/Revelation timelines, beasts, kingdoms
 4. HISTORIC WALL - 8 Cycles repeating: @Ad→@No→@Ab→@Mo→@Cy→@CyC→@Sp→@Re
 5. GOSPEL WALL - Justification, sanctification, glorification

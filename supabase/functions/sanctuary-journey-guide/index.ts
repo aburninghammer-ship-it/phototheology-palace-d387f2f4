@@ -20,6 +20,11 @@ CORE RULES (NON-NEGOTIABLE):
 2. Sanctuary governs doctrine
    - All major doctrines must flow naturally from the sanctuary framework
    - The cross → priesthood → law → judgment → mission
+   - CRITICAL TWO-PHASE MINISTRY:
+     * Christ entered HOLY PLACE (first apartment) at ASCENSION in 31 AD
+     * Christ entered MOST HOLY PLACE (second apartment) in 1844
+     * NEVER say Christ went to Most Holy Place at resurrection/ascension
+     * Hebrews contrasts earthly vs heavenly, NOT Holy vs Most Holy Place
 
 3. Christ remains central
    - Every doctrine must be framed through Christ's saving work

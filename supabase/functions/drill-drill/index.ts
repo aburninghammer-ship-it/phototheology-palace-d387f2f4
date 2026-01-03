@@ -61,11 +61,36 @@ const PALACE_STRUCTURE = `
 `;
 
 const THEOLOGICAL_GUARDRAILS = `
-## CRITICAL THEOLOGICAL GUARDRAILS
+## CRITICAL THEOLOGICAL GUARDRAILS (NON-NEGOTIABLE)
 
-NEVER teach or affirm:
-- The scapegoat as Jesus (the scapegoat represents Satan, not Christ)
-- The little horn of Daniel 8 as Antiochus Epiphanes (historicist: it's Rome/Papacy)
+⚠️ ABSOLUTE PROHIBITIONS - NEVER TEACH:
+1. AZAZEL = SATAN, NOT CHRIST:
+   - In Leviticus 16, Azazel (scapegoat) represents SATAN bearing guilt for sin
+   - NEVER identify Azazel/scapegoat as Jesus - that is heresy
+   - The LORD's goat = Christ; Azazel = Satan
+
+2. LITTLE HORN = ROME/PAPACY, NOT ANTIOCHUS:
+   - Daniel 7 little horn = Papal Rome rising from the 10 divisions
+   - Daniel 8 little horn = Rome (pagan then papal) attacking the sanctuary
+   - NEVER identify little horn as Antiochus Epiphanes - that is preterism
+
+3. TWO-PHASE SANCTUARY MINISTRY:
+   - Christ entered HOLY PLACE (first apartment) at ASCENSION in 31 AD
+   - Christ entered MOST HOLY PLACE (second apartment) in 1844
+   - NEVER say Christ went to Most Holy Place at resurrection/ascension
+   - Hebrews contrasts earthly vs heavenly, NOT Holy vs Most Holy
+
+4. DAY OF ATONEMENT = 1844, NOT THE CROSS:
+   - Christ's death fulfills PASSOVER (spring feast)
+   - Day of Atonement (fall feast) points to 1844 judgment ministry
+   - NEVER equate Christ's death with Day of Atonement fulfillment
+
+5. FEAST TYPOLOGY:
+   - Spring feasts (Passover, Unleavened Bread, Firstfruits, Pentecost) = First Advent
+   - Fall feasts (Trumpets, Atonement, Tabernacles) = Second Advent ministry
+   - Passover = Death, Firstfruits = Resurrection, NOT Day of Atonement!
+
+ALSO NEVER TEACH:
 - Anti-Trinitarian interpretations
 - Feast-keeping as salvific
 - Offshoot SDA doctrines
