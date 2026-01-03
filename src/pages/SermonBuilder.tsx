@@ -318,8 +318,9 @@ export default function SermonBuilder() {
         smooth_stones: sermon.smooth_stones,
         bridges: sermon.bridges,
         movie_structure: sermon.movie_structure,
+        full_sermon: sermon.full_sermon,
         current_step: currentStep,
-        status: currentStep === 5 ? "complete" : "in_progress",
+        status: currentStep >= 5 ? "complete" : "in_progress",
       };
 
       if (editId) {
@@ -329,8 +330,12 @@ export default function SermonBuilder() {
           .eq("id", editId);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("sermons").insert(sermonData);
+        const { data, error } = await supabase.from("sermons").insert(sermonData).select('id').single();
         if (error) throw error;
+        // Navigate to the new sermon so user can continue editing
+        if (data?.id) {
+          navigate(`/sermon-builder?id=${data.id}`, { replace: true });
+        }
       }
 
       toast.success("Sermon saved successfully!");
