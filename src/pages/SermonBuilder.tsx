@@ -13,6 +13,7 @@ import { sermonTitleSchema, sermonThemeSchema, sermonStoneSchema, sermonBridgeSc
 import { sanitizeText, sanitizeHtml } from "@/lib/sanitize";
 import { SermonRichTextArea } from "@/components/sermon/SermonRichTextArea";
 import { SermonPDFExport } from "@/components/sermon/SermonPDFExport";
+import { SermonPPTExport } from "@/components/sermon/SermonPPTExport";
 import { ScriptureArmory, ArmoryVerse } from "@/components/sermon/ScriptureArmory";
 import { SermonWritingStep } from "@/components/sermon/SermonWritingStep";
 import { StyledMarkdown } from "@/components/ui/styled-markdown";
@@ -800,6 +801,7 @@ export default function SermonBuilder() {
                       Save Sermon
                     </Button>
                     <SermonPDFExport sermon={sermon} size="lg" variant="secondary" />
+                    <SermonPPTExport sermon={sermon} size="lg" variant="secondary" />
                   </div>
                 </div>
               )}
