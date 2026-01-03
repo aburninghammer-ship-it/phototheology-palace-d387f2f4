@@ -263,7 +263,7 @@ Return ONLY the JSON, no other text.`
         body: {
           mode: "sermon-verse-suggestions",
           sermon_content: plainText.slice(-500), // Last 500 characters
-          theme_passage: themePassage,
+          themePassage: themePassage,
           stones: sermon.smooth_stones.join("\n"),
         },
       });
