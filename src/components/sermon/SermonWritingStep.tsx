@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { SermonRichTextArea } from "./SermonRichTextArea";
+import { SermonSidePanel } from "./SermonSidePanel";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { BookOpen, Loader2, Sparkles, X, FileText } from "lucide-react";
+import { FileText, PanelRightClose, PanelRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -120,27 +119,37 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
             Write Your Sermon
           </h3>
           <p className="text-sm text-muted-foreground">
-            Use this space to write out your full sermon. Relevant verses will appear as you type.
+            Use this space to write out your full sermon. Sparks, verses, and Jeeves will assist on the side.
           </p>
         </div>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => setShowPanel(!showPanel)}
-          className="text-muted-foreground"
+          className="gap-2"
         >
-          {showPanel ? "Hide Suggestions" : "Show Suggestions"}
+          {showPanel ? (
+            <>
+              <PanelRightClose className="w-4 h-4" />
+              <span className="hidden sm:inline">Hide Assistant</span>
+            </>
+          ) : (
+            <>
+              <PanelRight className="w-4 h-4" />
+              <span className="hidden sm:inline">Show Assistant</span>
+            </>
+          )}
         </Button>
       </div>
 
-      <div className={`grid gap-4 ${showPanel ? 'lg:grid-cols-3' : 'lg:grid-cols-1'}`}>
+      <div className={`grid gap-4 ${showPanel ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}>
         {/* Main writing area */}
-        <div className={showPanel ? 'lg:col-span-2' : ''}>
+        <div className="min-h-[500px]">
           <SermonRichTextArea
             content={sermon.full_sermon}
             onChange={handleContentChange}
             placeholder="Begin writing your sermon here. Start with your opening hook, weave through your smooth stones, build bridges between ideas, lead to your climax, and close with a powerful call to action..."
-            minHeight="400px"
+            minHeight="480px"
             showTools={true}
             themePassage={themePassage}
           />
@@ -151,78 +160,18 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
           </div>
         </div>
 
-        {/* Verse suggestions panel */}
+        {/* Side Panel: Sparks, Verses, Jeeves Chat + 5 Stones */}
         {showPanel && (
-          <div className="lg:col-span-1">
-            <Card className="h-full border-purple-200 dark:border-purple-800/50">
-              <CardHeader className="py-3 px-4 bg-purple-50 dark:bg-purple-900/20 border-b">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-purple-600" />
-                  Suggested Verses
-                  {loadingVerses && <Loader2 className="w-3 h-3 animate-spin ml-auto" />}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-2">
-                <ScrollArea className="h-[350px]">
-                  {suggestedVerses.length > 0 ? (
-                    <div className="space-y-2">
-                      {suggestedVerses.map((verse, idx) => (
-                        <div
-                          key={idx}
-                          className="p-3 rounded-lg border hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors cursor-pointer group"
-                          onClick={() => insertVerse(verse)}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <p className="font-semibold text-sm text-purple-700 dark:text-purple-400">
-                                  {verse.reference}
-                                </p>
-                                {verse.type && (
-                                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
-                                    verse.type === 'descriptive' 
-                                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' 
-                                      : verse.type === 'connection'
-                                      ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-                                      : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-                                  }`}>
-                                    {verse.type === 'descriptive' ? '📖 Describes' : 
-                                     verse.type === 'connection' ? '🔗 Connects' : '✨ Amplifies'}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs text-foreground/80 mt-1 line-clamp-2">
-                                "{verse.text}"
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1 italic">
-                                {verse.reason}
-                              </p>
-                            </div>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-                            >
-                              Add
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-center p-4 text-muted-foreground">
-                      <BookOpen className="w-8 h-8 mb-2 opacity-30" />
-                      <p className="text-sm">
-                        {loadingVerses 
-                          ? "Finding relevant verses..." 
-                          : "As you write, relevant scripture references will appear here."}
-                      </p>
-                      <p className="text-xs mt-1">Click a verse to add it to your sermon</p>
-                    </div>
-                  )}
-                </ScrollArea>
-              </CardContent>
-            </Card>
+          <div className="lg:col-span-1 h-[500px]">
+            <SermonSidePanel
+              suggestedVerses={suggestedVerses}
+              loadingVerses={loadingVerses}
+              onInsertVerse={insertVerse}
+              smoothStones={sermon.smooth_stones}
+              sermonTitle={sermon.title}
+              themePassage={themePassage}
+              sermonContent={sermon.full_sermon}
+            />
           </div>
         )}
       </div>
