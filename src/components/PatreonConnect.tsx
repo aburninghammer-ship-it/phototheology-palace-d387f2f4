@@ -15,7 +15,6 @@ interface PatreonConnection {
   patreon_email: string | null;
   is_active_patron: boolean | null;
   entitled_cents: number | null;
-  created_at: string;
 }
 
 export const PatreonConnect = () => {
@@ -31,7 +30,7 @@ export const PatreonConnect = () => {
       if (!user) return null;
       const { data, error } = await supabase
         .from('patreon_connections')
-        .select('id, patreon_name, patreon_email, is_active_patron, entitled_cents, created_at')
+        .select('id, patreon_name, patreon_email, is_active_patron, entitled_cents')
         .eq('user_id', user.id)
         .single();
 

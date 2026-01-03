@@ -506,3 +506,6 @@ export async function generateAndDownloadPPT(deck: SlideDeck): Promise<void> {
   renderer.render();
   await renderer.download();
 }
+
+// Alias for backward compatibility
+export const downloadSermonPPT = generateAndDownloadPPT;
