@@ -145,7 +145,7 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
           PPT
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
+      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col min-h-0 overflow-hidden">
         <DialogHeader className="shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Presentation className="w-5 h-5" />
@@ -154,7 +154,7 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
         </DialogHeader>
 
         {step === "settings" && (
-          <ScrollArea className="flex-1 pr-4">
+          <ScrollArea className="flex-1 min-h-0 pr-4">
             <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="full-sermon">Full Sermon</TabsTrigger>
