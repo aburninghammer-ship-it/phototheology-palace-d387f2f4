@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
+const AUTOSAVE_KEY = "sermon_autosave_content";
+
 interface SuggestedVerse {
   reference: string;
   text: string;
@@ -39,14 +41,41 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
   const lastContentRef = useRef<string>("");
   const lastSavedContentRef = useRef<string>(sermon.full_sermon);
 
-  // Auto-save every 15 seconds if content has changed
+  // Load autosaved content from localStorage on mount (protects against browser crashes)
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem(AUTOSAVE_KEY);
+      if (savedData) {
+        const { content, timestamp, title } = JSON.parse(savedData);
+        const hoursSaved = (Date.now() - timestamp) / (1000 * 60 * 60);
+        // Restore if: content exists, within 24 hours, and current content is empty or shorter
+        if (content && hoursSaved < 24 && (!sermon.full_sermon || sermon.full_sermon.length < content.length)) {
+          setSermon({ ...sermon, full_sermon: content });
+          toast.success("Restored your autosaved sermon draft");
+        }
+      }
+    } catch (error) {
+      console.error("Error loading autosaved content:", error);
+    }
+  }, []); // Only run once on mount
+
+  // Auto-save every 15 seconds if content has changed (also saves to localStorage)
   useEffect(() => {
     autoSaveRef.current = setInterval(() => {
       if (sermon.full_sermon !== lastSavedContentRef.current) {
         setIsSaving(true);
         lastSavedContentRef.current = sermon.full_sermon;
         setLastSaved(new Date());
-        // The setSermon already updates parent state which persists
+        // Save to localStorage for crash recovery
+        try {
+          localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({
+            content: sermon.full_sermon,
+            timestamp: Date.now(),
+            title: sermon.title || "untitled",
+          }));
+        } catch (e) {
+          console.error("Error saving to localStorage:", e);
+        }
         setTimeout(() => setIsSaving(false), 500);
       }
     }, 15000);
@@ -56,7 +85,7 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
         clearInterval(autoSaveRef.current);
       }
     };
-  }, [sermon.full_sermon]);
+  }, [sermon.full_sermon, sermon.title]);
 
   // Debounced function to get verse suggestions based on sermon content
   const fetchVerseSuggestions = useCallback(async (content: string) => {
