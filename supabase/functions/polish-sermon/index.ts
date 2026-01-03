@@ -193,8 +193,10 @@ Return ONLY the JSON object as specified in your instructions, no other text.`;
 
     console.log("Received AI response, parsing JSON...");
 
-    // Clean and parse JSON
+    // Clean and parse JSON with robust handling
     let cleanContent = content.trim();
+    
+    // Remove markdown code blocks
     if (cleanContent.startsWith("```json")) {
       cleanContent = cleanContent.slice(7);
     } else if (cleanContent.startsWith("```")) {
@@ -203,8 +205,54 @@ Return ONLY the JSON object as specified in your instructions, no other text.`;
     if (cleanContent.endsWith("```")) {
       cleanContent = cleanContent.slice(0, -3);
     }
+    cleanContent = cleanContent.trim();
 
-    const analysis = JSON.parse(cleanContent.trim());
+    // Try to find JSON object boundaries if parsing fails
+    let analysis;
+    try {
+      analysis = JSON.parse(cleanContent);
+    } catch (parseError) {
+      console.log("Initial parse failed, attempting to extract JSON object...");
+      
+      // Find the first { and last } to extract just the JSON object
+      const firstBrace = cleanContent.indexOf('{');
+      const lastBrace = cleanContent.lastIndexOf('}');
+      
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        const jsonSubstring = cleanContent.substring(firstBrace, lastBrace + 1);
+        try {
+          analysis = JSON.parse(jsonSubstring);
+        } catch (secondParseError) {
+          console.error("JSON extraction also failed:", secondParseError);
+          // Return a basic fallback response
+          analysis = {
+            snapshot: {
+              structureScore: 70,
+              structureNote: "Analysis parsing encountered an issue. Please try again.",
+              scriptureDensity: 70,
+              scriptureDensityNote: "Unable to fully analyze.",
+              christConnection: 70,
+              christConnectionNote: "Please retry analysis.",
+              applicationClarity: 70,
+              applicationClarityNote: "Retry recommended.",
+              emotionalArc: 70,
+              emotionalArcNote: "Analysis incomplete.",
+              estimatedLength: "Unknown",
+              pointCount: "Unable to determine",
+              scriptureReferences: 0
+            },
+            amplify: [],
+            missed: { typological: [], sanctuary: [], prophetic: [], threeHeavens: [] },
+            tighten: { cut: [], clarify: [], strengthen: [] },
+            arc: { currentFlow: "Analysis incomplete", issue: "Please retry", suggestedFix: "Try again", climaxPosition: "Unknown" },
+            ptEnhancement: { currentDimensions: [], missingDimensions: [], suggestions: { observationRoom: [], concentrationRoom: [], symbolsRoom: [], sanctuaryRoom: [], fireRoom: [] } },
+            checklist: { structure: ["Retry analysis"], content: [], delivery: [], spiritual: [] }
+          };
+        }
+      } else {
+        throw new Error("Could not find valid JSON in AI response");
+      }
+    }
 
     console.log("Successfully parsed sermon analysis");
 
