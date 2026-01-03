@@ -87,6 +87,8 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<PolishAnalysis | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasSavedAnalysis, setHasSavedAnalysis] = useState(false);
+  const [isLoadingCheck, setIsLoadingCheck] = useState(true);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     snapshot: true,
     amplify: true,
@@ -97,10 +99,13 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
     checklist: false,
   });
 
-  // Load saved analysis on mount
+  // Check for saved analysis on mount (don't auto-load, just check if exists)
   useEffect(() => {
-    const loadSavedAnalysis = async () => {
-      if (!sermonId) return;
+    const checkForSavedAnalysis = async () => {
+      if (!sermonId) {
+        setIsLoadingCheck(false);
+        return;
+      }
       
       try {
         const { data, error } = await supabase
@@ -110,26 +115,46 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
           .single();
         
         if (error) throw error;
-        if (data?.polish_analysis) {
-          setAnalysis(data.polish_analysis as unknown as PolishAnalysis);
-          setExpandedSections({
-            snapshot: true,
-            amplify: true,
-            missed: true,
-            tighten: true,
-            arc: true,
-            pt: true,
-            checklist: true,
-          });
-        }
+        setHasSavedAnalysis(!!data?.polish_analysis);
       } catch (error) {
-        console.error("Error loading saved analysis:", error);
+        console.error("Error checking for saved analysis:", error);
+      } finally {
+        setIsLoadingCheck(false);
       }
     };
     
-    loadSavedAnalysis();
+    checkForSavedAnalysis();
   }, [sermonId]);
 
+  const loadSavedAnalysis = async () => {
+    if (!sermonId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("sermons")
+        .select("polish_analysis")
+        .eq("id", sermonId)
+        .single();
+      
+      if (error) throw error;
+      if (data?.polish_analysis) {
+        setAnalysis(data.polish_analysis as unknown as PolishAnalysis);
+        setExpandedSections({
+          snapshot: true,
+          amplify: true,
+          missed: true,
+          tighten: true,
+          arc: true,
+          pt: true,
+          checklist: true,
+        });
+        toast.success("Loaded saved polish review!");
+      }
+    } catch (error) {
+      console.error("Error loading saved analysis:", error);
+      toast.error("Failed to load saved review");
+    }
+  };
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
@@ -241,6 +266,30 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
     <div className="h-full flex flex-col">
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-6">
+          {/* Saved Analysis Prompt */}
+          {!analysis && !isLoadingCheck && hasSavedAnalysis && (
+            <Card className="border-primary/30 bg-primary/5">
+              <CardContent className="pt-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-primary/10">
+                      <Sparkles className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Previous Polish Review Found</p>
+                      <p className="text-sm text-muted-foreground">
+                        You have a saved analysis for this sermon
+                      </p>
+                    </div>
+                  </div>
+                  <Button onClick={loadSavedAnalysis} variant="default" size="sm">
+                    Load Saved Review
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Input Section */}
           {!analysis && (
             <Card>
