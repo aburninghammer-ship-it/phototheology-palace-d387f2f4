@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Bookmark, Search, Flame, Sparkles, Lightbulb } from 'lucide-react';
+import { X, Bookmark, Search, Flame, Sparkles, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Spark } from '@/hooks/useSparks';
@@ -39,15 +40,19 @@ const sparkTypeConfig = {
   }
 };
 
-export function SparkCard({ 
-  spark, 
-  onClose, 
-  onExplore, 
-  onSave, 
-  onDismiss 
+export function SparkCard({
+  spark,
+  onClose,
+  onExplore,
+  onSave,
+  onDismiss
 }: SparkCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const config = sparkTypeConfig[spark.spark_type];
   const Icon = config.icon;
+
+  // Check if insight is long enough to need expansion
+  const needsExpansion = spark.insight && spark.insight.length > 200;
 
   return (
     <AnimatePresence>
@@ -157,9 +162,35 @@ export function SparkCard({
               <p className="text-xs text-muted-foreground italic line-clamp-2">
                 {spark.recognition}
               </p>
-              <p className="text-sm leading-relaxed line-clamp-4">
-                {spark.insight}
-              </p>
+              <div
+                className={cn(
+                  "cursor-pointer transition-all",
+                  needsExpansion && "hover:bg-foreground/5 rounded-md -mx-1 px-1"
+                )}
+                onClick={() => needsExpansion && setIsExpanded(!isExpanded)}
+              >
+                <p className={cn(
+                  "text-sm leading-relaxed",
+                  !isExpanded && "line-clamp-4"
+                )}>
+                  {spark.insight}
+                </p>
+                {needsExpansion && (
+                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-1 touch-manipulation">
+                    {isExpanded ? (
+                      <>
+                        <ChevronUp size={12} />
+                        Show less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown size={12} />
+                        Read more
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
             
             {/* Footer */}

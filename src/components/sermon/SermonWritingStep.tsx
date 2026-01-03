@@ -286,8 +286,12 @@ Return ONLY the JSON, no other text.`
           setSuggestedVerses([]);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching verse suggestions:", error);
+      // Don't show toast for every error to avoid spam, but log for debugging
+      if (error?.message?.includes("non-2xx")) {
+        console.warn("Verse suggestions: Edge function returned an error. The AI may be overloaded.");
+      }
     } finally {
       setLoadingVerses(false);
     }
