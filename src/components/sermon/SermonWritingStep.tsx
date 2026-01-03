@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { SermonRichTextArea } from "./SermonRichTextArea";
 import { SermonSidePanel } from "./SermonSidePanel";
+import { SermonPolishTab } from "./SermonPolishTab";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FileText, PanelRightClose, PanelRight, Save, Check, Loader2, MessageSquare } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileText, PanelRightClose, PanelRight, Save, Check, Loader2, MessageSquare, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -330,6 +332,8 @@ Return ONLY the JSON, no other text.`
     toast.success(`${verse.reference} added to sermon`);
   };
 
+  const [activeTab, setActiveTab] = useState<"write" | "polish">("write");
+
   return (
     <div className="h-[calc(100vh-280px)] min-h-[500px]">
       {/* Clarification Dialog */}
@@ -367,89 +371,113 @@ Return ONLY the JSON, no other text.`
         </DialogContent>
       </Dialog>
 
-      {/* Header bar with save indicator */}
-      <div className="flex items-center justify-between mb-3 pb-3 border-b">
-        <div className="flex items-center gap-3">
-          <FileText className="w-5 h-5 text-purple-600" />
-          <div>
-            <h3 className="font-semibold text-sm">Write Your Sermon</h3>
-            <div className="flex items-center gap-2">
-              {processingRequest ? (
-                <Badge variant="outline" className="gap-1 text-xs text-purple-600 border-purple-200">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  Fetching scripture...
-                </Badge>
-              ) : isSaving ? (
-                <Badge variant="outline" className="gap-1 text-xs">
-                  <Save className="w-3 h-3 animate-pulse" />
-                  Saving...
-                </Badge>
-              ) : lastSaved ? (
-                <Badge variant="outline" className="gap-1 text-xs text-green-600 border-green-200">
-                  <Check className="w-3 h-3" />
-                  Saved {lastSaved.toLocaleTimeString()}
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="gap-1 text-xs">
-                  <Save className="w-3 h-3" />
-                  Auto-saves every 15s
-                </Badge>
-              )}
-              <span className="text-xs text-muted-foreground">
-                {(sermon.full_sermon || '').replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length} words
-              </span>
-            </div>
-          </div>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowPanel(!showPanel)}
-          className="gap-2"
-        >
-          {showPanel ? (
-            <>
-              <PanelRightClose className="w-4 h-4" />
-              <span className="hidden sm:inline">Hide Assistant</span>
-            </>
-          ) : (
-            <>
-              <PanelRight className="w-4 h-4" />
-              <span className="hidden sm:inline">Show Assistant</span>
-            </>
-          )}
-        </Button>
-      </div>
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "write" | "polish")} className="h-full flex flex-col">
+        {/* Header bar with tabs and save indicator */}
+        <div className="flex items-center justify-between mb-3 pb-3 border-b">
+          <div className="flex items-center gap-4">
+            <TabsList className="h-9">
+              <TabsTrigger value="write" className="gap-2 text-sm">
+                <FileText className="w-4 h-4" />
+                Write
+              </TabsTrigger>
+              <TabsTrigger value="polish" className="gap-2 text-sm">
+                <Sparkles className="w-4 h-4" />
+                Polish
+              </TabsTrigger>
+            </TabsList>
 
-      {/* Main 50/50 split layout */}
-      <div className={`grid gap-4 h-[calc(100%-60px)] ${showPanel ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
-        {/* Left: Writing area - full half */}
-        <div className="h-full flex flex-col min-h-0">
-          <SermonRichTextArea
-            content={sermon.full_sermon}
-            onChange={handleContentChange}
-            placeholder="Begin writing your sermon here. Type (find verse about...) in parentheses to auto-insert scripture. Start with your opening hook, weave through your smooth stones, build bridges between ideas, lead to your climax, and close with a powerful call to action..."
-            minHeight="100%"
-            showTools={true}
+            {activeTab === "write" && (
+              <div className="flex items-center gap-2">
+                {processingRequest ? (
+                  <Badge variant="outline" className="gap-1 text-xs text-purple-600 border-purple-200">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    Fetching scripture...
+                  </Badge>
+                ) : isSaving ? (
+                  <Badge variant="outline" className="gap-1 text-xs">
+                    <Save className="w-3 h-3 animate-pulse" />
+                    Saving...
+                  </Badge>
+                ) : lastSaved ? (
+                  <Badge variant="outline" className="gap-1 text-xs text-green-600 border-green-200">
+                    <Check className="w-3 h-3" />
+                    Saved {lastSaved.toLocaleTimeString()}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-xs">
+                    <Save className="w-3 h-3" />
+                    Auto-saves every 15s
+                  </Badge>
+                )}
+                <span className="text-xs text-muted-foreground">
+                  {(sermon.full_sermon || '').replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length} words
+                </span>
+              </div>
+            )}
+          </div>
+
+          {activeTab === "write" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowPanel(!showPanel)}
+              className="gap-2"
+            >
+              {showPanel ? (
+                <>
+                  <PanelRightClose className="w-4 h-4" />
+                  <span className="hidden sm:inline">Hide Assistant</span>
+                </>
+              ) : (
+                <>
+                  <PanelRight className="w-4 h-4" />
+                  <span className="hidden sm:inline">Show Assistant</span>
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+
+        {/* Write Tab Content */}
+        <TabsContent value="write" className="flex-1 mt-0 h-[calc(100%-60px)]">
+          <div className={`grid gap-4 h-full ${showPanel ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
+            {/* Left: Writing area - full half */}
+            <div className="h-full flex flex-col min-h-0">
+              <SermonRichTextArea
+                content={sermon.full_sermon}
+                onChange={handleContentChange}
+                placeholder="Begin writing your sermon here. Type (find verse about...) in parentheses to auto-insert scripture. Start with your opening hook, weave through your smooth stones, build bridges between ideas, lead to your climax, and close with a powerful call to action..."
+                minHeight="100%"
+                showTools={true}
+                themePassage={themePassage}
+              />
+            </div>
+
+            {/* Right: Assistant Panel with Sparks/Verses/Jeeves + Your 5 Stones - full half */}
+            {showPanel && (
+              <div className="h-full overflow-hidden min-h-0">
+                <SermonSidePanel
+                  suggestedVerses={suggestedVerses}
+                  loadingVerses={loadingVerses}
+                  onInsertVerse={insertVerse}
+                  smoothStones={sermon.smooth_stones}
+                  sermonTitle={sermon.title}
+                  themePassage={themePassage}
+                  sermonContent={sermon.full_sermon}
+                />
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Polish Tab Content */}
+        <TabsContent value="polish" className="flex-1 mt-0 h-[calc(100%-60px)]">
+          <SermonPolishTab 
+            initialSermonText={sermon.full_sermon || ''} 
             themePassage={themePassage}
           />
-        </div>
-
-        {/* Right: Assistant Panel with Sparks/Verses/Jeeves + Your 5 Stones - full half */}
-        {showPanel && (
-          <div className="h-full overflow-hidden min-h-0">
-            <SermonSidePanel
-              suggestedVerses={suggestedVerses}
-              loadingVerses={loadingVerses}
-              onInsertVerse={insertVerse}
-              smoothStones={sermon.smooth_stones}
-              sermonTitle={sermon.title}
-              themePassage={themePassage}
-              sermonContent={sermon.full_sermon}
-            />
-          </div>
-        )}
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
