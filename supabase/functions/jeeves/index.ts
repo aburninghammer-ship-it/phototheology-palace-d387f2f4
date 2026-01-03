@@ -202,9 +202,12 @@ serve(async (req) => {
       selectedFruits,
       title,
       theme,
+      themePassage,
       style,
       existingStones,
       stones,
+      stone,
+      stoneNumber,
       existingBridges,
       bridges,
       scope,
@@ -3488,6 +3491,46 @@ Suggest 2-3 potential bridge transitions that:
 - Keep the audience engaged
 - Build toward a climax`;
 
+    } else if (mode === "scripture-armory") {
+      systemPrompt = `You are Jeeves, a biblical scholar helping preachers build a "Scripture Armory" - powerful backing verses for their sermon points.
+
+${SERMON_KNOWLEDGE_BANK}
+
+⚠️ THEOLOGICAL GUARDRAILS (NON-NEGOTIABLE):
+- AZAZEL = SATAN, NOT CHRIST (Leviticus 16 scapegoat = Satan)
+- LITTLE HORN = ROME/PAPACY, NOT ANTIOCHUS (Daniel 7 & 8)
+- TWO-PHASE SANCTUARY: Holy Place at ascension (31 AD); Most Holy Place in 1844
+- DAY OF ATONEMENT = 1844, NOT THE CROSS (Christ's death = Passover)
+- SPRING FEASTS = First Advent; FALL FEASTS = Second Advent ministry
+
+Return your response as valid JSON only.`;
+
+      userPrompt = `For this sermon point (Stone ${stoneNumber || 1}):
+
+"${stone || ''}"
+
+${themePassage ? `Theme/Main Passage: ${themePassage}` : ''}
+
+Generate 3-7 powerful Scripture verses that STRONGLY SUPPORT this point. 
+
+Return ONLY valid JSON in this exact format:
+{
+  "verses": [
+    {
+      "reference": "Book Chapter:Verse",
+      "text": "The actual verse text (abbreviated if very long)",
+      "reason": "Brief explanation of why this verse powerfully backs up the point"
+    }
+  ]
+}
+
+Guidelines:
+- Choose verses that DIRECTLY support the insight
+- Include a mix of Old and New Testament when relevant
+- Prioritize memorable, quotable verses
+- Include both well-known and hidden gem verses
+- Make sure the "reason" shows the logical connection`;
+
     } else if (mode === "sermon-structure") {
       systemPrompt = `You are Jeeves, helping structure sermons like movies.
 
@@ -5611,6 +5654,37 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
           JSON.stringify({
             error: 'Failed to generate series outline',
             outline: []
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // For scripture-armory mode, parse JSON
+    if (mode === "scripture-armory") {
+      try {
+        // Clean the content of any markdown code blocks
+        let cleanContent = content.trim();
+        if (cleanContent.startsWith('```json')) {
+          cleanContent = cleanContent.slice(7);
+        } else if (cleanContent.startsWith('```')) {
+          cleanContent = cleanContent.slice(3);
+        }
+        if (cleanContent.endsWith('```')) {
+          cleanContent = cleanContent.slice(0, -3);
+        }
+        
+        const parsed = JSON.parse(cleanContent.trim());
+        return new Response(
+          JSON.stringify(parsed),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (error) {
+        console.error('Error parsing scripture armory:', error);
+        return new Response(
+          JSON.stringify({
+            error: 'Failed to generate scripture armory',
+            verses: []
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );

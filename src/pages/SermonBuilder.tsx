@@ -8,11 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Film, Mic, BookOpen, TrendingUp, ArrowRight, CheckCircle2, Loader2, Archive, Gem, Info } from "lucide-react";
+import { Film, Mic, BookOpen, TrendingUp, ArrowRight, CheckCircle2, Loader2, Archive, Gem, Info, Swords } from "lucide-react";
 import { sermonTitleSchema, sermonThemeSchema, sermonStoneSchema, sermonBridgeSchema } from "@/lib/validationSchemas";
 import { sanitizeText, sanitizeHtml } from "@/lib/sanitize";
 import { SermonRichTextArea } from "@/components/sermon/SermonRichTextArea";
 import { SermonPDFExport } from "@/components/sermon/SermonPDFExport";
+import { ScriptureArmory, ArmoryVerse } from "@/components/sermon/ScriptureArmory";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -90,6 +91,7 @@ export default function SermonBuilder() {
   const [userGems, setUserGems] = useState<UserGem[]>([]);
   const [loadingGems, setLoadingGems] = useState(false);
   const [gemsDialogOpen, setGemsDialogOpen] = useState(false);
+  const [scriptureArmory, setScriptureArmory] = useState<Record<number, ArmoryVerse[]>>({});
 
   // Restore preserved state on mount (only for new sermons, not when editing)
   useEffect(() => {
@@ -251,25 +253,22 @@ export default function SermonBuilder() {
   };
 
   const nextStep = () => {
-    if (currentStep === 1) {
+    // Allow skipping - only validate step 1 if we're on it and have data
+    if (currentStep === 1 && (sermon.title || sermon.theme_passage)) {
       try {
-        sermonTitleSchema.parse(sermon.title);
-        sermonThemeSchema.parse(sermon.theme_passage.replace(/<[^>]*>/g, ''));
+        if (sermon.title) sermonTitleSchema.parse(sermon.title);
+        if (sermon.theme_passage) sermonThemeSchema.parse(sermon.theme_passage.replace(/<[^>]*>/g, ''));
       } catch (error: any) {
         toast.error(error.errors?.[0]?.message || "Invalid input");
         return;
       }
     }
-    if (currentStep === 2 && sermon.smooth_stones.length < 5) {
-      toast.error("Please add 5 smooth stones (insights)");
-      return;
-    }
-    if (currentStep === 3 && sermon.bridges.length < 4) {
-      toast.error("Please add at least 4 bridges");
-      return;
-    }
-    
+    // All other steps can be skipped freely
     setCurrentStep(Math.min(currentStep + 1, 5));
+  };
+
+  const goToStep = (step: number) => {
+    setCurrentStep(step);
   };
 
   const prevStep = () => {
@@ -412,7 +411,7 @@ export default function SermonBuilder() {
                     ? "bg-white/20 text-white border-white/40 backdrop-blur-sm"
                     : "bg-white/5 text-white/60 border-white/20 backdrop-blur-sm"
                 }`}
-                onClick={() => setCurrentStep(step.num)}
+                onClick={() => goToStep(step.num)}
               >
                 {step.num}. {step.title}
               </Button>
@@ -606,6 +605,18 @@ export default function SermonBuilder() {
                     {asking ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     Ask Jeeves for Stone Ideas
                   </Button>
+
+                  {/* Scripture Armory Section */}
+                  {sermon.smooth_stones.length > 0 && (
+                    <div className="mt-6 pt-6 border-t">
+                      <ScriptureArmory
+                        stones={sermon.smooth_stones}
+                        themePassage={sermon.theme_passage}
+                        armory={scriptureArmory}
+                        setArmory={setScriptureArmory}
+                      />
+                    </div>
+                  )}
                 </>
               )}
 
