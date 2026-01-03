@@ -106,23 +106,63 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
   const processScriptureRequest = useCallback(async (request: string, matchedText: string, additionalContext?: string) => {
     setProcessingRequest(true);
     try {
+      // Use sermon-assistant mode with a specific prompt to find scripture
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
-          mode: "sermon-scripture-lookup",
-          request: request,
-          additional_context: additionalContext || "",
-          theme_passage: themePassage,
-          sermon_context: (sermon.full_sermon || '').replace(/<[^>]*>/g, '').slice(-300),
+          mode: "sermon-assistant",
+          sermon_title: sermon.title,
+          themePassage: themePassage,
+          sermon_content: (sermon.full_sermon || '').replace(/<[^>]*>/g, '').slice(-300),
+          smooth_stones: sermon.smooth_stones,
+          chatMessages: [{
+            role: "user",
+            content: `Find and provide the exact scripture passage for this request: "${request}"${additionalContext ? ` (Additional context: ${additionalContext})` : ''}
+
+IMPORTANT: Respond in this exact JSON format only:
+{
+  "reference": "Book Chapter:Verse(s)",
+  "scripture": "The full text of the scripture passage"
+}
+
+If the request is ambiguous, respond with:
+{
+  "needs_clarification": true,
+  "clarification_question": "Your question"
+}
+
+Return ONLY the JSON, no other text.`
+          }]
         },
       });
 
       if (error) throw error;
 
-      // Check if Jeeves needs clarification
-      if (data?.needs_clarification) {
+      // Parse the response - it might be in data.content or data directly
+      let responseText = data?.content || data?.response || (typeof data === 'string' ? data : JSON.stringify(data));
+
+      // Try to extract JSON from the response
+      let parsed: any = null;
+      try {
+        // Clean markdown code blocks if present
+        let cleanResponse = responseText.trim();
+        if (cleanResponse.startsWith('```json')) {
+          cleanResponse = cleanResponse.slice(7);
+        } else if (cleanResponse.startsWith('```')) {
+          cleanResponse = cleanResponse.slice(3);
+        }
+        if (cleanResponse.endsWith('```')) {
+          cleanResponse = cleanResponse.slice(0, -3);
+        }
+        parsed = JSON.parse(cleanResponse.trim());
+      } catch {
+        // If not JSON, try to extract scripture reference from text
+        console.log("Response wasn't JSON, attempting to parse:", responseText);
+      }
+
+      if (parsed?.needs_clarification) {
         setClarificationDialog({
           open: true,
-          question: data.clarification_question || "Could you be more specific about what you're looking for?",
+          question: parsed.clarification_question || "Could you be more specific about what you're looking for?",
           originalRequest: request,
           matchedText: matchedText,
         });
@@ -130,44 +170,31 @@ export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWri
         return;
       }
 
-      // If we got scripture back, insert it
-      if (data?.scripture) {
-        const scriptureHtml = `<blockquote><strong>${data.reference || "Scripture"}</strong>: "${data.scripture}"</blockquote>`;
+      if (parsed?.scripture && parsed?.reference) {
+        const scriptureHtml = `<blockquote><strong>${parsed.reference}</strong>: "${parsed.scripture}"</blockquote>`;
         const newContent = (sermon.full_sermon || '').replace(matchedText, scriptureHtml);
         setSermon({ ...sermon, full_sermon: newContent });
-        toast.success(`Scripture added: ${data.reference || "Scripture passage"}`);
+        toast.success(`Scripture added: ${parsed.reference}`);
         processedRequestsRef.current.add(matchedText);
-      } else if (data?.content) {
-        // Try to parse as JSON
-        try {
-          const parsed = JSON.parse(data.content);
-          if (parsed.scripture) {
-            const scriptureHtml = `<blockquote><strong>${parsed.reference || "Scripture"}</strong>: "${parsed.scripture}"</blockquote>`;
-            const newContent = (sermon.full_sermon || '').replace(matchedText, scriptureHtml);
-            setSermon({ ...sermon, full_sermon: newContent });
-            toast.success(`Scripture added: ${parsed.reference || "Scripture passage"}`);
-            processedRequestsRef.current.add(matchedText);
-          } else if (parsed.needs_clarification) {
-            setClarificationDialog({
-              open: true,
-              question: parsed.clarification_question || "Could you be more specific?",
-              originalRequest: request,
-              matchedText: matchedText,
-            });
-            setClarificationAnswer("");
-          }
-        } catch {
-          // If response is plain text, use it directly
-          const scriptureHtml = `<blockquote>${data.content}</blockquote>`;
-          const newContent = (sermon.full_sermon || '').replace(matchedText, scriptureHtml);
-          setSermon({ ...sermon, full_sermon: newContent });
-          toast.success("Content added");
-          processedRequestsRef.current.add(matchedText);
-        }
+        return;
       }
-    } catch (error) {
+
+      // Fallback: if we got any text response, show it
+      if (responseText && responseText.length > 10) {
+        toast.info("Jeeves found some context but couldn't format it as scripture. Check the assistant panel.");
+        return;
+      }
+
+      throw new Error("Could not find the requested scripture");
+    } catch (error: any) {
       console.error("Error processing scripture request:", error);
-      toast.error("Failed to fetch scripture. Please try again.");
+      // Show more helpful error message
+      const errorMsg = error?.message || "Unknown error";
+      if (errorMsg.includes("not found") || errorMsg.includes("mode")) {
+        toast.error("Scripture lookup feature is being deployed. Please try again in a few minutes.");
+      } else {
+        toast.error(`Failed to fetch scripture: ${errorMsg}`);
+      }
     } finally {
       setProcessingRequest(false);
     }
