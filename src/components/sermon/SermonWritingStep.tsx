@@ -302,10 +302,11 @@ Return ONLY the JSON, no other text.`
     }
     debounceRef.current = setTimeout(() => {
       fetchVerseSuggestions(content);
-      // Also check for parentheses-based scripture requests
-      if (!processingRequest) {
-        checkForScriptureRequests(content);
-      }
+      // NOTE: Parentheses-based scripture lookup disabled for now
+      // Use Jeeves chat in the side panel instead
+      // if (!processingRequest) {
+      //   checkForScriptureRequests(content);
+      // }
     }, 2000); // 2 second debounce
   };
 
