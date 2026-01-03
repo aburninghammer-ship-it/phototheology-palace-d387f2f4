@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Film, Mic, BookOpen, TrendingUp, ArrowRight, CheckCircle2, Loader2, Archive, Gem, Info, Swords, PenLine, FileText } from "lucide-react";
+import { Film, Mic, BookOpen, TrendingUp, ArrowRight, CheckCircle2, Loader2, Archive, Gem, Info, Swords, PenLine, FileText, Presentation } from "lucide-react";
 import { sermonTitleSchema, sermonThemeSchema, sermonStoneSchema, sermonBridgeSchema } from "@/lib/validationSchemas";
 import { sanitizeText, sanitizeHtml } from "@/lib/sanitize";
 import { SermonRichTextArea } from "@/components/sermon/SermonRichTextArea";
@@ -404,14 +404,24 @@ export default function SermonBuilder() {
                 <p className="text-purple-200 text-lg">Movie-Model Approach with 5 Smooth Stones</p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/sermon-archive")}
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
-            >
-              <Archive className="w-4 h-4 mr-2" />
-              My Sermons
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/sermon-powerpoint")}
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
+              >
+                <Presentation className="w-4 h-4 mr-2" />
+                PowerPoint
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/sermon-archive")}
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
+              >
+                <Archive className="w-4 h-4 mr-2" />
+                My Sermons
+              </Button>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -796,8 +806,8 @@ export default function SermonBuilder() {
                     )}
                   </div>
 
-                  <div className="flex gap-2">
-                    <Button onClick={saveSermon} disabled={loading} className="flex-1" size="lg">
+                  <div className="flex gap-2 flex-wrap">
+                    <Button onClick={saveSermon} disabled={loading} className="flex-1 min-w-[120px]" size="lg">
                       {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                       Save Sermon
                     </Button>

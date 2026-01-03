@@ -666,7 +666,7 @@ const AnalyzeThoughts = () => {
         />
       </div>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
+      <div className="container mx-auto px-4 py-8 pb-28 md:pb-8 max-w-4xl relative z-10">
         {/* Header */}
         <motion.div 
           className="text-center mb-10"

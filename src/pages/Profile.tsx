@@ -21,6 +21,7 @@ import { Crown, Zap, User as UserIcon } from "lucide-react";
 import { PathProfileSection, PathCertificatesGallery } from "@/components/path";
 import { usePath } from "@/hooks/usePath";
 import { SocialMediaConnect } from "@/components/SocialMediaConnect";
+import { PatreonConnect } from "@/components/PatreonConnect";
 import { LanguageSelector } from "@/components/settings/LanguageSelector";
 
 export default function Profile() {
@@ -372,6 +373,9 @@ export default function Profile() {
               <LanguageSelector />
             </CardContent>
           </Card>
+
+          {/* Patreon Connection */}
+          <PatreonConnect />
 
           {/* Social Media Connections */}
           <div id="social">
