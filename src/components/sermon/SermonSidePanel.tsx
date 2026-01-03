@@ -202,7 +202,7 @@ export function SermonSidePanel({
               </TabsTrigger>
               <TabsTrigger value="saved" className="text-xs gap-1 px-1">
                 <Save className="w-3 h-3" />
-                <span className="hidden sm:inline">Saved</span>
+                <span className="hidden sm:inline">Polish</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
