@@ -37,65 +37,136 @@ ANALYSIS FRAMEWORK:
 TONE: Coach, not critic. Encouraging, not condescending.
 Every suggestion should feel like a gift, not a correction.
 
-You MUST return a valid JSON object with this exact structure:
-{
-  "snapshot": {
-    "structureScore": 0-100,
-    "structureNote": "brief assessment",
-    "scriptureDensity": 0-100,
-    "scriptureDensityNote": "brief assessment",
-    "christConnection": 0-100,
-    "christConnectionNote": "brief assessment",
-    "applicationClarity": 0-100,
-    "applicationClarityNote": "brief assessment",
-    "emotionalArc": 0-100,
-    "emotionalArcNote": "brief assessment",
-    "estimatedLength": "~X minutes",
-    "pointCount": "description of structure",
-    "scriptureReferences": number
+IMPORTANT:
+- Return your result by calling the provided tool.
+- Do not wrap output in markdown.
+- Fill every field; use empty arrays ([]) rather than omitting keys.`;
+
+const POLISH_ANALYSIS_TOOL = {
+  type: "function",
+  function: {
+    name: "return_polish_analysis",
+    description: "Return a structured sermon polish analysis in the expected schema.",
+    parameters: {
+      type: "object",
+      additionalProperties: false,
+      required: ["snapshot", "amplify", "missed", "tighten", "arc", "ptEnhancement", "checklist"],
+      properties: {
+        snapshot: {
+          type: "object",
+          additionalProperties: false,
+          required: [
+            "structureScore",
+            "structureNote",
+            "scriptureDensity",
+            "scriptureDensityNote",
+            "christConnection",
+            "christConnectionNote",
+            "applicationClarity",
+            "applicationClarityNote",
+            "emotionalArc",
+            "emotionalArcNote",
+            "estimatedLength",
+            "pointCount",
+            "scriptureReferences",
+          ],
+          properties: {
+            structureScore: { type: "integer", minimum: 0, maximum: 100 },
+            structureNote: { type: "string" },
+            scriptureDensity: { type: "integer", minimum: 0, maximum: 100 },
+            scriptureDensityNote: { type: "string" },
+            christConnection: { type: "integer", minimum: 0, maximum: 100 },
+            christConnectionNote: { type: "string" },
+            applicationClarity: { type: "integer", minimum: 0, maximum: 100 },
+            applicationClarityNote: { type: "string" },
+            emotionalArc: { type: "integer", minimum: 0, maximum: 100 },
+            emotionalArcNote: { type: "string" },
+            estimatedLength: { type: "string" },
+            pointCount: { type: "string" },
+            scriptureReferences: { type: "integer", minimum: 0 },
+          },
+        },
+        amplify: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["quote", "insight", "suggestion"],
+            properties: {
+              quote: { type: "string" },
+              insight: { type: "string" },
+              suggestion: { type: "string" },
+            },
+          },
+        },
+        missed: {
+          type: "object",
+          additionalProperties: false,
+          required: ["typological", "sanctuary", "prophetic", "threeHeavens"],
+          properties: {
+            typological: { type: "array", items: { type: "string" } },
+            sanctuary: { type: "array", items: { type: "string" } },
+            prophetic: { type: "array", items: { type: "string" } },
+            threeHeavens: { type: "array", items: { type: "string" } },
+          },
+        },
+        tighten: {
+          type: "object",
+          additionalProperties: false,
+          required: ["cut", "clarify", "strengthen"],
+          properties: {
+            cut: { type: "array", items: { type: "string" } },
+            clarify: { type: "array", items: { type: "string" } },
+            strengthen: { type: "array", items: { type: "string" } },
+          },
+        },
+        arc: {
+          type: "object",
+          additionalProperties: false,
+          required: ["currentFlow", "issue", "suggestedFix", "climaxPosition"],
+          properties: {
+            currentFlow: { type: "string" },
+            issue: { type: "string" },
+            suggestedFix: { type: "string" },
+            climaxPosition: { type: "string" },
+          },
+        },
+        ptEnhancement: {
+          type: "object",
+          additionalProperties: false,
+          required: ["currentDimensions", "missingDimensions", "suggestions"],
+          properties: {
+            currentDimensions: { type: "array", items: { type: "string" } },
+            missingDimensions: { type: "array", items: { type: "string" } },
+            suggestions: {
+              type: "object",
+              additionalProperties: false,
+              required: ["observationRoom", "concentrationRoom", "symbolsRoom", "sanctuaryRoom", "fireRoom"],
+              properties: {
+                observationRoom: { type: "array", items: { type: "string" } },
+                concentrationRoom: { type: "array", items: { type: "string" } },
+                symbolsRoom: { type: "array", items: { type: "string" } },
+                sanctuaryRoom: { type: "array", items: { type: "string" } },
+                fireRoom: { type: "array", items: { type: "string" } },
+              },
+            },
+          },
+        },
+        checklist: {
+          type: "object",
+          additionalProperties: false,
+          required: ["structure", "content", "delivery", "spiritual"],
+          properties: {
+            structure: { type: "array", items: { type: "string" } },
+            content: { type: "array", items: { type: "string" } },
+            delivery: { type: "array", items: { type: "string" } },
+            spiritual: { type: "array", items: { type: "string" } },
+          },
+        },
+      },
+    },
   },
-  "amplify": [
-    {
-      "quote": "phrase from their sermon",
-      "insight": "what deeper meaning exists",
-      "suggestion": "how to amplify it"
-    }
-  ],
-  "missed": {
-    "typological": ["connection 1", "connection 2"],
-    "sanctuary": ["pattern 1", "pattern 2"],
-    "prophetic": ["framework 1"],
-    "threeHeavens": ["application 1"]
-  },
-  "tighten": {
-    "cut": ["suggestion 1"],
-    "clarify": ["suggestion 1"],
-    "strengthen": ["suggestion 1"]
-  },
-  "arc": {
-    "currentFlow": "description of current emotional flow",
-    "issue": "main issue with the arc",
-    "suggestedFix": "how to improve",
-    "climaxPosition": "where the climax currently is"
-  },
-  "ptEnhancement": {
-    "currentDimensions": ["dimension used 1", "dimension used 2"],
-    "missingDimensions": ["dimension missing 1"],
-    "suggestions": {
-      "observationRoom": ["note 1"],
-      "concentrationRoom": ["connection 1"],
-      "symbolsRoom": ["symbol 1"],
-      "sanctuaryRoom": ["pattern 1"],
-      "fireRoom": ["moment 1"]
-    }
-  },
-  "checklist": {
-    "structure": ["item 1", "item 2"],
-    "content": ["item 1", "item 2"],
-    "delivery": ["item 1", "item 2"],
-    "spiritual": ["item 1", "item 2"]
-  }
-}`;
+} as const;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -108,7 +179,7 @@ serve(async (req) => {
     if (!sermonText || sermonText.length < 50) {
       return new Response(
         JSON.stringify({ error: "Please provide a sermon with at least 50 characters" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
@@ -121,13 +192,16 @@ serve(async (req) => {
     let depthInstruction = "";
     switch (analysisDepth) {
       case "quick":
-        depthInstruction = "Provide a QUICK analysis. Focus on the top 2-3 insights in each category. Keep it brief and actionable.";
+        depthInstruction =
+          "Provide a QUICK analysis. Focus on the top 2-3 insights in each category. Keep it brief and actionable.";
         break;
       case "full":
-        depthInstruction = "Provide a COMPREHENSIVE PhotoTheology analysis. Go deep into typology, sanctuary patterns, prophetic frameworks, and all PT dimensions. Leave no stone unturned.";
+        depthInstruction =
+          "Provide a COMPREHENSIVE PhotoTheology analysis. Go deep into typology, sanctuary patterns, prophetic frameworks, and all PT dimensions. Leave no stone unturned.";
         break;
       default: // deep
-        depthInstruction = "Provide a thorough analysis covering all categories with meaningful depth. Balance comprehensiveness with clarity.";
+        depthInstruction =
+          "Provide a thorough analysis covering all categories with meaningful depth. Balance comprehensiveness with clarity.";
     }
 
     const userPrompt = `Analyze this sermon draft and provide coaching feedback.
@@ -142,9 +216,7 @@ SERMON DRAFT:
 ${sermonText}
 """
 
-Remember: Be a coach, not a critic. Celebrate what's working before suggesting improvements. Every suggestion should feel like a gift.
-
-Return ONLY the JSON object as specified in your instructions, no other text.`;
+Remember: Be a coach, not a critic. Celebrate what's working before suggesting improvements. Every suggestion should feel like a gift.`;
 
     console.log("Calling Lovable AI Gateway for sermon polish...");
     console.log("Sermon length:", sermonText.length, "characters");
@@ -158,99 +230,76 @@ Return ONLY the JSON object as specified in your instructions, no other text.`;
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
+        temperature: 0.2,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userPrompt },
         ],
+        tools: [POLISH_ANALYSIS_TOOL],
+        tool_choice: { type: "function", function: { name: "return_polish_analysis" } },
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI Gateway error:", response.status, errorText);
-      
+
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
       if (response.status === 402) {
         return new Response(
           JSON.stringify({ error: "AI credits exhausted. Please add credits to continue." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
       throw new Error(`AI Gateway error: ${response.status}`);
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const message = data.choices?.[0]?.message;
 
-    if (!content) {
-      throw new Error("No content in AI response");
-    }
+    // Prefer tool-calling output (much more reliable than JSON-in-text)
+    const toolArgs = message?.tool_calls?.[0]?.function?.arguments as string | undefined;
 
-    console.log("Received AI response, parsing JSON...");
+    let analysis: unknown;
 
-    // Clean and parse JSON with robust handling
-    let cleanContent = content.trim();
-    
-    // Remove markdown code blocks
-    if (cleanContent.startsWith("```json")) {
-      cleanContent = cleanContent.slice(7);
-    } else if (cleanContent.startsWith("```")) {
-      cleanContent = cleanContent.slice(3);
-    }
-    if (cleanContent.endsWith("```")) {
-      cleanContent = cleanContent.slice(0, -3);
-    }
-    cleanContent = cleanContent.trim();
+    if (toolArgs) {
+      console.log("Received tool call response, parsing arguments...");
+      try {
+        analysis = JSON.parse(toolArgs);
+      } catch (e) {
+        console.error("Tool arguments JSON.parse failed:", e);
+        throw new Error("Failed to parse structured analysis output");
+      }
+    } else {
+      // Fallback: attempt to parse content
+      const content = message?.content as string | undefined;
+      if (!content) throw new Error("No tool call or content in AI response");
 
-    // Try to find JSON object boundaries if parsing fails
-    let analysis;
-    try {
-      analysis = JSON.parse(cleanContent);
-    } catch (parseError) {
-      console.log("Initial parse failed, attempting to extract JSON object...");
-      
-      // Find the first { and last } to extract just the JSON object
-      const firstBrace = cleanContent.indexOf('{');
-      const lastBrace = cleanContent.lastIndexOf('}');
-      
-      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-        const jsonSubstring = cleanContent.substring(firstBrace, lastBrace + 1);
-        try {
-          analysis = JSON.parse(jsonSubstring);
-        } catch (secondParseError) {
-          console.error("JSON extraction also failed:", secondParseError);
-          // Return a basic fallback response
-          analysis = {
-            snapshot: {
-              structureScore: 70,
-              structureNote: "Analysis parsing encountered an issue. Please try again.",
-              scriptureDensity: 70,
-              scriptureDensityNote: "Unable to fully analyze.",
-              christConnection: 70,
-              christConnectionNote: "Please retry analysis.",
-              applicationClarity: 70,
-              applicationClarityNote: "Retry recommended.",
-              emotionalArc: 70,
-              emotionalArcNote: "Analysis incomplete.",
-              estimatedLength: "Unknown",
-              pointCount: "Unable to determine",
-              scriptureReferences: 0
-            },
-            amplify: [],
-            missed: { typological: [], sanctuary: [], prophetic: [], threeHeavens: [] },
-            tighten: { cut: [], clarify: [], strengthen: [] },
-            arc: { currentFlow: "Analysis incomplete", issue: "Please retry", suggestedFix: "Try again", climaxPosition: "Unknown" },
-            ptEnhancement: { currentDimensions: [], missingDimensions: [], suggestions: { observationRoom: [], concentrationRoom: [], symbolsRoom: [], sanctuaryRoom: [], fireRoom: [] } },
-            checklist: { structure: ["Retry analysis"], content: [], delivery: [], spiritual: [] }
-          };
+      console.log("No tool call found; falling back to parsing content as JSON...");
+
+      let cleanContent = content.trim();
+
+      // Remove markdown code blocks
+      if (cleanContent.startsWith("```json")) cleanContent = cleanContent.slice(7);
+      else if (cleanContent.startsWith("```")) cleanContent = cleanContent.slice(3);
+      if (cleanContent.endsWith("```")) cleanContent = cleanContent.slice(0, -3);
+      cleanContent = cleanContent.trim();
+
+      try {
+        analysis = JSON.parse(cleanContent);
+      } catch {
+        const firstBrace = cleanContent.indexOf("{");
+        const lastBrace = cleanContent.lastIndexOf("}");
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+          analysis = JSON.parse(cleanContent.substring(firstBrace, lastBrace + 1));
+        } else {
+          throw new Error("Could not find valid JSON in AI response");
         }
-      } else {
-        throw new Error("Could not find valid JSON in AI response");
       }
     }
 
@@ -259,12 +308,12 @@ Return ONLY the JSON object as specified in your instructions, no other text.`;
     return new Response(JSON.stringify(analysis), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-
   } catch (error) {
     console.error("Error in polish-sermon function:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Failed to analyze sermon" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 });
+

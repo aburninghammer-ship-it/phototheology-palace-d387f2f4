@@ -166,22 +166,39 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
 
   const saveAnalysis = async (analysisData: PolishAnalysis) => {
     if (!sermonId) {
-      toast.info("Analysis complete! Save a sermon to persist the analysis.");
-      return;
+      toast.info("Analysis complete! Save your sermon first to persist the analysis.");
+      return false;
     }
-    
+
     setIsSaving(true);
     try {
-      const { error } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const payload = JSON.parse(JSON.stringify(analysisData));
+
+      // Use select() to detect "0 rows updated" (common when sermonId is missing/wrong or RLS blocks)
+      const { data, error } = await supabase
         .from("sermons")
-        .update({ polish_analysis: JSON.parse(JSON.stringify(analysisData)) })
-        .eq("id", sermonId);
-      
+        .update({ polish_analysis: payload })
+        .eq("id", sermonId)
+        .eq("user_id", user.id)
+        .select("id")
+        .maybeSingle();
+
       if (error) throw error;
+      if (!data?.id) {
+        throw new Error("Could not save: sermon not found or you don’t have permission.");
+      }
+
+      setHasSavedAnalysis(true);
       toast.success("Analysis saved!");
+      return true;
     } catch (error: any) {
       console.error("Error saving analysis:", error);
-      toast.error("Failed to save analysis");
+      const msg = error?.message || error?.details || "Failed to save analysis";
+      toast.error(msg);
+      return false;
     } finally {
       setIsSaving(false);
     }
@@ -197,7 +214,7 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
     try {
       const { data, error } = await supabase.functions.invoke("polish-sermon", {
         body: {
-          sermonText: sermonText.replace(/<[^>]*>/g, ''), // Strip HTML
+          sermonText: sermonText.replace(/<[^>]*>/g, ""), // Strip HTML
           mainText,
           centralTheme,
           analysisDepth,
@@ -205,16 +222,16 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
       });
 
       if (error) throw error;
-      if (data.error) throw new Error(data.error);
+      if (data?.error) throw new Error(data.error);
 
       setAnalysis(data);
       toast.success("Sermon analysis complete!");
-      
+
       // Auto-save if we have a sermon ID
       if (sermonId) {
-        await saveAnalysis(data);
+        await saveAnalysis(data as PolishAnalysis);
       }
-      
+
       // Expand all sections after analysis
       setExpandedSections({
         snapshot: true,
@@ -227,7 +244,8 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
       });
     } catch (error: any) {
       console.error("Error analyzing sermon:", error);
-      toast.error(error.message || "Failed to analyze sermon");
+      const msg = error?.message || error?.details || "Failed to analyze sermon";
+      toast.error(msg);
     } finally {
       setIsAnalyzing(false);
     }
