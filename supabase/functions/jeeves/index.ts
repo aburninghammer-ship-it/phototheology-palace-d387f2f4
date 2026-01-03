@@ -3545,6 +3545,11 @@ ${SERMON_KNOWLEDGE_BANK}
 - DAY OF ATONEMENT = 1844, NOT THE CROSS (Christ's death = Passover)
 - SPRING FEASTS = First Advent; FALL FEASTS = Second Advent ministry
 
+You are an expert at finding:
+1. DESCRIPTIVE VERSES - verses that directly describe the event, concept, or doctrine being discussed
+2. CONNECTION VERSES - verses that create powerful typological, thematic, or prophetic links to what is being said
+3. AMPLIFYING VERSES - verses that deepen, expand, or add emotional/rhetorical power to the point
+
 Return your response as valid JSON only.`;
 
       userPrompt = `Based on what the preacher is currently writing in their sermon:
@@ -3554,7 +3559,13 @@ Return your response as valid JSON only.`;
 Theme/Passage: ${themePassage || ''}
 Key Points: ${stones || ''}
 
-Suggest 3-5 Scripture verses that would be RELEVANT and POWERFUL additions to what they're writing about.
+Suggest 5-7 Scripture verses that would be RELEVANT and POWERFUL additions. Include THREE TYPES:
+
+1. **DESCRIPTIVE VERSES** (2-3): Verses that directly describe the event, person, or doctrine being discussed. If speaking of the cross, give verses that describe the crucifixion. If speaking of Moses, give verses that narrate that event.
+
+2. **CONNECTION VERSES** (2-3): Verses that create typological, prophetic, or thematic CONNECTIONS. Cross-references that show patterns across Scripture. If speaking of Joseph's pit, connect to Christ's tomb. If speaking of manna, connect to John 6's Bread of Life.
+
+3. **AMPLIFYING VERSES** (1-2): Lesser-known but powerful verses that add rhetorical weight, emotional depth, or fresh perspective to the point.
 
 Return ONLY valid JSON in this exact format:
 {
@@ -3562,16 +3573,18 @@ Return ONLY valid JSON in this exact format:
     {
       "reference": "Book Chapter:Verse",
       "text": "The actual verse text (abbreviated if very long)",
-      "reason": "Why this verse fits what they're writing"
+      "reason": "Brief explanation of why this verse fits",
+      "type": "descriptive" | "connection" | "amplifying"
     }
   ]
 }
 
 Guidelines:
-- Match the verse to the current TOPIC being discussed
-- Suggest verses that would naturally flow into the text
-- Include both well-known and lesser-known verses
-- Prioritize verses that ADD something new to the point`;
+- Match verses to the SPECIFIC topic/event being discussed
+- For connections, explicitly name the typological or thematic link
+- Include both Old and New Testament when possible
+- Prioritize verses that ADD something new to the point
+- Make connections Christ-centered where appropriate`;
 
     } else if (mode === "sermon-structure") {
       systemPrompt = `You are Jeeves, helping structure sermons like movies.
