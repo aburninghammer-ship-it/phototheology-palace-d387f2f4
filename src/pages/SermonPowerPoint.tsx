@@ -130,15 +130,31 @@ export default function SermonPowerPoint() {
 
       const { data, error } = await supabase.functions.invoke("sermon-to-ppt", {
         body: {
-          // Verses mode
-          verses,
+          // Mode selection
+          mode: isVersesMode ? "verses-only" : "full-sermon",
+          
+          // Verses mode data
+          verses: isVersesMode ? verses : undefined,
 
-          // Full sermon mode
-          sermon_title: !isVersesMode ? sermonTitle : undefined,
-          full_sermon: !isVersesMode ? sermonContent : undefined,
+          // Full sermon mode data (structured as expected by edge function)
+          sermonData: !isVersesMode ? {
+            title: sermonTitle || "Untitled Sermon",
+            themePassage: "",
+            sermonStyle: "expository",
+            smoothStones: [],
+            bridges: [],
+            movieStructure: null,
+            fullSermon: sermonContent,
+          } : undefined,
 
-          // Settings
-          settings,
+          // Settings (mapped to expected names)
+          settings: {
+            slideCount: settings.slide_count,
+            bibleVersion: settings.bible_version,
+            audienceType: settings.audience,
+            theme: settings.theme_id,
+            venue: settings.venue_preset,
+          },
         },
       });
 
