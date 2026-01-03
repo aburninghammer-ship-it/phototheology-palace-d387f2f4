@@ -388,27 +388,25 @@ export function SermonPolishTab({ initialSermonText = "", themePassage = "", ser
                   🪞 Sermon Polish Report
                 </h2>
                 <div className="flex items-center gap-2">
-                  {sermonId && (
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => saveAnalysis(analysis)}
-                      disabled={isSaving}
-                      className="gap-1"
-                    >
-                      {isSaving ? (
-                        <>
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <CheckSquare className="w-3 h-3" />
-                          Save Polish
-                        </>
-                      )}
-                    </Button>
-                  )}
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => saveAnalysis(analysis)}
+                    disabled={isSaving}
+                    className="gap-1"
+                  >
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <CheckSquare className="w-3 h-3" />
+                        Save Polish
+                      </>
+                    )}
+                  </Button>
                   <Button variant="outline" size="sm" onClick={() => setAnalysis(null)}>
                     Analyze Another
                   </Button>
