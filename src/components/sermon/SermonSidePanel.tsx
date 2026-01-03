@@ -101,9 +101,9 @@ export function SermonSidePanel({
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "sermon-assistant",
-          messages: [...messages, userMessage],
+          chatMessages: [...messages, userMessage],
           sermon_title: sermonTitle,
-          theme_passage: themePassage,
+          themePassage: themePassage,
           sermon_content: (sermonContent || '').replace(/<[^>]*>/g, '').slice(-1000),
           smooth_stones: smoothStones,
           userName,
@@ -112,16 +112,21 @@ export function SermonSidePanel({
 
       if (error) throw error;
 
-      if (data?.response) {
+      // Response could be in data.response or data.content
+      const responseContent = data?.response || data?.content;
+      if (responseContent) {
         const assistantMessage: Message = {
           role: "assistant",
-          content: data.response,
+          content: responseContent,
         };
         setMessages(prev => [...prev, assistantMessage]);
+      } else {
+        throw new Error("No response from Jeeves");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Jeeves sermon error:", error);
-      toast.error("Connection error. Please try again.");
+      const errorMsg = error?.message || "Connection error";
+      toast.error(`Jeeves error: ${errorMsg}. Please try again.`);
     } finally {
       setIsLoading(false);
     }
