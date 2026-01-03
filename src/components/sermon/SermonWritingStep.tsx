@@ -32,9 +32,10 @@ interface SermonWritingStepProps {
   };
   setSermon: (sermon: any) => void;
   themePassage: string;
+  sermonId?: string;
 }
 
-export function SermonWritingStep({ sermon, setSermon, themePassage }: SermonWritingStepProps) {
+export function SermonWritingStep({ sermon, setSermon, themePassage, sermonId }: SermonWritingStepProps) {
   const [suggestedVerses, setSuggestedVerses] = useState<SuggestedVerse[]>([]);
   const [loadingVerses, setLoadingVerses] = useState(false);
   const [showPanel, setShowPanel] = useState(true);
@@ -475,6 +476,7 @@ Return ONLY the JSON, no other text.`
           <SermonPolishTab 
             initialSermonText={sermon.full_sermon || ''} 
             themePassage={themePassage}
+            sermonId={sermonId}
           />
         </TabsContent>
       </Tabs>

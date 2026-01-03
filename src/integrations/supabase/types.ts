@@ -9744,6 +9744,7 @@ export type Database = {
           current_step: number
           id: string
           movie_structure: Json | null
+          polish_analysis: Json | null
           sermon_style: string
           smooth_stones: Json | null
           status: string
@@ -9758,6 +9759,7 @@ export type Database = {
           current_step?: number
           id?: string
           movie_structure?: Json | null
+          polish_analysis?: Json | null
           sermon_style: string
           smooth_stones?: Json | null
           status?: string
@@ -9772,6 +9774,7 @@ export type Database = {
           current_step?: number
           id?: string
           movie_structure?: Json | null
+          polish_analysis?: Json | null
           sermon_style?: string
           smooth_stones?: Json | null
           status?: string
