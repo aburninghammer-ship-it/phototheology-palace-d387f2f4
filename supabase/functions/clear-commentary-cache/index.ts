@@ -69,14 +69,12 @@ serve(async (req) => {
 
     // Clear from bible_commentaries table
     if (clearAll) {
-      const { count, error } = await supabase
+      const { error } = await supabase
         .from("bible_commentaries")
         .delete()
-        .neq("id", "00000000-0000-0000-0000-000000000000") // Delete all
-        .select("*", { count: "exact", head: true });
+        .neq("id", "00000000-0000-0000-0000-000000000000"); // Delete all
 
       if (!error) {
-        deletedCount += count || 0;
         results.push(`Cleared all bible_commentaries`);
       }
     } else {
