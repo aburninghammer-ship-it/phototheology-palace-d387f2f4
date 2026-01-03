@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -79,7 +80,11 @@ interface SermonPolishTabProps {
   sermonId?: string;
 }
 
-export function SermonPolishTab({ initialSermonText = "", themePassage = "", sermonId }: SermonPolishTabProps) {
+export function SermonPolishTab({ initialSermonText = "", themePassage = "", sermonId: propSermonId }: SermonPolishTabProps) {
+  const [searchParams] = useSearchParams();
+  // Use prop first, fallback to URL param
+  const sermonId = propSermonId || searchParams.get("id") || undefined;
+  
   const [sermonText, setSermonText] = useState(initialSermonText);
   const [mainText, setMainText] = useState(themePassage);
   const [centralTheme, setCentralTheme] = useState("");
