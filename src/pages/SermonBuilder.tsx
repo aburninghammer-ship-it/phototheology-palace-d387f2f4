@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Film, Mic, BookOpen, TrendingUp, ArrowRight, CheckCircle2, Loader2, Archive, Gem, Info, Swords } from "lucide-react";
+import { Film, Mic, BookOpen, TrendingUp, ArrowRight, CheckCircle2, Loader2, Archive, Gem, Info, Swords, PenLine, FileText } from "lucide-react";
 import { sermonTitleSchema, sermonThemeSchema, sermonStoneSchema, sermonBridgeSchema } from "@/lib/validationSchemas";
 import { sanitizeText, sanitizeHtml } from "@/lib/sanitize";
 import { SermonRichTextArea } from "@/components/sermon/SermonRichTextArea";
 import { SermonPDFExport } from "@/components/sermon/SermonPDFExport";
 import { ScriptureArmory, ArmoryVerse } from "@/components/sermon/ScriptureArmory";
+import { SermonWritingStep } from "@/components/sermon/SermonWritingStep";
+import { StyledMarkdown } from "@/components/ui/styled-markdown";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -24,7 +26,8 @@ const STEPS = [
   { num: 2, title: "Smooth Stones", icon: TrendingUp },
   { num: 3, title: "Build Bridges", icon: ArrowRight },
   { num: 4, title: "Movie Structure", icon: Film },
-  { num: 5, title: "Complete", icon: CheckCircle2 },
+  { num: 5, title: "Write Sermon", icon: PenLine },
+  { num: 6, title: "Complete", icon: CheckCircle2 },
 ];
 
 const SERMON_STYLES = [
@@ -83,6 +86,7 @@ export default function SermonBuilder() {
     smooth_stones: [] as string[],
     bridges: [] as string[],
     movie_structure: {} as any,
+    full_sermon: "" as string,
   });
 
   const [newStone, setNewStone] = useState("");
@@ -163,6 +167,7 @@ export default function SermonBuilder() {
           smooth_stones: Array.isArray(data.smooth_stones) ? (data.smooth_stones as string[]) : [],
           bridges: Array.isArray(data.bridges) ? (data.bridges as string[]) : [],
           movie_structure: data.movie_structure || {},
+          full_sermon: (data as any).full_sermon || "",
         });
         setCurrentStep(data.current_step || 1);
       }
@@ -264,7 +269,7 @@ export default function SermonBuilder() {
       }
     }
     // All other steps can be skipped freely
-    setCurrentStep(Math.min(currentStep + 1, 5));
+    setCurrentStep(Math.min(currentStep + 1, 6));
   };
 
   const goToStep = (step: number) => {
@@ -428,7 +433,8 @@ export default function SermonBuilder() {
                 {currentStep === 2 && "Gather Your 5 Smooth Stones"}
                 {currentStep === 3 && "Build Bridges"}
                 {currentStep === 4 && "Structure Like a Movie"}
-                {currentStep === 5 && "Complete & Review"}
+                {currentStep === 5 && "Write Your Sermon"}
+                {currentStep === 6 && "Complete & Review"}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -727,6 +733,14 @@ export default function SermonBuilder() {
               )}
 
               {currentStep === 5 && (
+                <SermonWritingStep
+                  sermon={sermon}
+                  setSermon={setSermon}
+                  themePassage={sermon.theme_passage}
+                />
+              )}
+
+              {currentStep === 6 && (
                 <div className="space-y-4">
                   <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                     <CheckCircle2 className="w-8 h-8 text-green-600 mb-2" />
@@ -750,6 +764,11 @@ export default function SermonBuilder() {
                     <div className="p-3 bg-card rounded border">
                       <p className="font-medium text-sm">Movie Structure: Complete</p>
                     </div>
+                    {sermon.full_sermon && (
+                      <div className="p-3 bg-card rounded border">
+                        <p className="font-medium text-sm">Full Sermon: Written</p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex gap-2">
@@ -767,7 +786,7 @@ export default function SermonBuilder() {
                 <Button onClick={prevStep} disabled={currentStep === 1} variant="outline" className="flex-1">
                   Previous
                 </Button>
-                <Button onClick={nextStep} disabled={currentStep === 5} className="flex-1">
+                <Button onClick={nextStep} disabled={currentStep === 6} className="flex-1">
                   Next Step
                 </Button>
               </div>
@@ -822,8 +841,8 @@ export default function SermonBuilder() {
                     <CardTitle className="text-white">Jeeves&apos; Guidance</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="prose prose-sm max-w-none text-white/90 whitespace-pre-wrap">
-                      {aiHelp}
+                    <div className="prose prose-sm max-w-none text-white/90 dark:prose-invert">
+                      <StyledMarkdown content={aiHelp} />
                     </div>
                   </CardContent>
                 </Card>
