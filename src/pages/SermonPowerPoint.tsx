@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -39,6 +39,7 @@ import {
   type VenueSize,
 } from "@/types/sermonPPT";
 import { downloadSermonPPT } from "@/lib/sermonPPTRenderer";
+import { extractScriptureReferencesFromSermon } from "@/lib/extractScriptureReferences";
 
 // ============================================================================
 // THEME PREVIEW COMPONENT
@@ -99,8 +100,12 @@ function ThemePreview({ themeId, selected }: { themeId: string; selected: boolea
 
 export default function SermonPowerPoint() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sermonId = searchParams.get("id");
+  
   const [activeTab, setActiveTab] = useState<"full" | "verses">("full");
   const [generating, setGenerating] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<"input" | "settings" | "preview">("input");
 
   // Input state
@@ -113,6 +118,86 @@ export default function SermonPowerPoint() {
 
   // Generated deck
   const [generatedDeck, setGeneratedDeck] = useState<SermonDeck | null>(null);
+
+  // Load sermon data if ID provided
+  useEffect(() => {
+    const loadSermon = async () => {
+      if (!sermonId) return;
+      
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("sermons")
+          .select("title, theme_passage, smooth_stones, bridges, movie_structure, polish_analysis")
+          .eq("id", sermonId)
+          .single();
+        
+        if (error) throw error;
+        
+        if (data) {
+          setSermonTitle(data.title || "");
+          
+          // Build content from available sermon data
+          let contentParts: string[] = [];
+          
+          if (data.theme_passage) {
+            contentParts.push(`Theme Passage: ${data.theme_passage}`);
+          }
+          
+          // Extract smooth stones
+          if (data.smooth_stones && Array.isArray(data.smooth_stones)) {
+            const stones = data.smooth_stones as Array<{ title?: string; content?: string }>;
+            stones.forEach((stone, i) => {
+              if (stone.title || stone.content) {
+                contentParts.push(`\nPoint ${i + 1}: ${stone.title || ''}`);
+                if (stone.content) contentParts.push(stone.content);
+              }
+            });
+          }
+          
+          // Extract bridges
+          if (data.bridges && Array.isArray(data.bridges)) {
+            const bridges = data.bridges as Array<{ content?: string }>;
+            bridges.forEach((bridge) => {
+              if (bridge.content) contentParts.push(bridge.content);
+            });
+          }
+          
+          // Extract movie structure
+          if (data.movie_structure && typeof data.movie_structure === 'object') {
+            const movie = data.movie_structure as Record<string, string>;
+            Object.entries(movie).forEach(([key, value]) => {
+              if (value) contentParts.push(`${key}: ${value}`);
+            });
+          }
+          
+          const combinedContent = contentParts.join('\n\n');
+          setSermonContent(combinedContent);
+          
+          // Extract scripture references for verses tab
+          const refs = extractScriptureReferencesFromSermon(combinedContent);
+          if (data.theme_passage) {
+            // Add theme passage if not already included
+            if (!refs.some(r => r.toLowerCase().includes(data.theme_passage?.toLowerCase() || ''))) {
+              refs.unshift(data.theme_passage);
+            }
+          }
+          if (refs.length > 0) {
+            setVersesInput(refs.join('\n'));
+          }
+          
+          toast.success("Sermon loaded!");
+        }
+      } catch (error) {
+        console.error("Error loading sermon:", error);
+        toast.error("Failed to load sermon");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadSermon();
+  }, [sermonId]);
 
   // Check if input is valid
   const isInputValid = activeTab === "verses"
@@ -285,8 +370,18 @@ export default function SermonPowerPoint() {
           ))}
         </div>
 
+        {/* Loading state */}
+        {loading && (
+          <div className="flex items-center justify-center py-16">
+            <div className="text-center">
+              <Loader2 className="w-12 h-12 text-white animate-spin mx-auto mb-4" />
+              <p className="text-white/70">Loading sermon data...</p>
+            </div>
+          </div>
+        )}
+
         {/* Step 1: Input */}
-        {step === "input" && (
+        {step === "input" && !loading && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -295,10 +390,10 @@ export default function SermonPowerPoint() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Wand2 className="w-5 h-5 text-purple-600" />
-                  What would you like to turn into slides?
+                  {sermonId ? "Sermon Loaded - Ready to Generate" : "What would you like to turn into slides?"}
                 </CardTitle>
                 <CardDescription>
-                  Paste your sermon content or enter Scripture references
+                  {sermonId ? `"${sermonTitle}" has been loaded. Choose full sermon or verses only.` : "Paste your sermon content or enter Scripture references"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">

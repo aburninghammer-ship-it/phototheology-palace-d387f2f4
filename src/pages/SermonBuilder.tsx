@@ -407,7 +407,10 @@ export default function SermonBuilder() {
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                onClick={() => navigate("/sermon-powerpoint")}
+                onClick={() => {
+                  const sermonId = searchParams.get("id");
+                  navigate(sermonId ? `/sermon-powerpoint?id=${sermonId}` : "/sermon-powerpoint");
+                }}
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
               >
                 <Presentation className="w-4 h-4 mr-2" />

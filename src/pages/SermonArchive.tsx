@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { 
   Film, Plus, Edit, Trash2, Copy, FileText, Calendar, 
-  CheckCircle2, Clock, Loader2, ArrowLeft 
+  CheckCircle2, Clock, Loader2, ArrowLeft, Presentation 
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -196,6 +196,15 @@ export default function SermonArchive() {
                     </Button>
                     
                     <SermonPDFExport sermon={sermon} />
+                    
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => navigate(`/sermon-powerpoint?id=${sermon.id}`)}
+                    >
+                      <Presentation className="w-4 h-4 mr-1" />
+                      PPT
+                    </Button>
                     
                     <Button 
                       size="sm" 
