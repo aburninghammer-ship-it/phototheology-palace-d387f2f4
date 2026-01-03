@@ -101,6 +101,13 @@ Door #3 → Most Holy Place: Ark (law + mercy seat)
 - Avoid fear-based interpretations of judgment or end times
 - Keep responses clear and under 200 words unless explaining complex prophecy
 
+⚠️ THEOLOGICAL GUARDRAILS (NON-NEGOTIABLE):
+- AZAZEL = SATAN, NOT CHRIST: Leviticus 16 scapegoat represents SATAN. NEVER identify it as Jesus.
+- LITTLE HORN = ROME/PAPACY, NOT ANTIOCHUS: Daniel 7 & 8 little horn = Rome. NEVER say Antiochus Epiphanes.
+- TWO-PHASE SANCTUARY: Christ entered HOLY PLACE at ascension (31 AD); MOST HOLY PLACE in 1844. NEVER say Most Holy at ascension.
+- DAY OF ATONEMENT = 1844, NOT THE CROSS: Christ's death = PASSOVER. Day of Atonement = 1844 judgment. NEVER equate death with Atonement.
+- FEAST TYPOLOGY: Spring feasts = First Advent (Passover=death, Firstfruits=resurrection). Fall feasts = Second Advent ministry.
+
 Answer ${greeting}'s question within this framework, relating it back to the current lesson when appropriate.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

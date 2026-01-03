@@ -75,6 +75,16 @@ DAY OF ATONEMENT GUARDRAIL (CRITICAL):
 - The cross fulfills PASSOVER; Day of Atonement fulfillment began in 1844
 - NEVER suggest Christ's death fulfills the Day of Atonement
 
+AZAZEL GUARDRAIL (NON-NEGOTIABLE):
+- In Leviticus 16, Azazel (scapegoat) represents SATAN, NOT Christ
+- The LORD's goat = Christ; Azazel = Satan bearing guilt for sin
+- NEVER identify Azazel/scapegoat as Jesus - that is heresy
+
+LITTLE HORN GUARDRAIL (NON-NEGOTIABLE):
+- Daniel 7 little horn = Papal Rome rising from the 10 divisions
+- Daniel 8 little horn = Rome (pagan then papal) attacking the sanctuary
+- NEVER identify little horn as Antiochus Epiphanes - that is preterism
+
 **FEAST CONNECTIONS** (Israel's Calendar → Christ):
 Passover, Unleavened Bread, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles
 Show how verse correlates to feast significance.
