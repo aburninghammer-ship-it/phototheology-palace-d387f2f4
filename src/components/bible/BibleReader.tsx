@@ -43,6 +43,12 @@ import { useSparks } from "@/hooks/useSparks";
 import { SparkContainer, SparkSettings } from "@/components/sparks";
 import { Badge } from "@/components/ui/badge";
 
+// New PT Study Tools
+import { VisualExegesisLayer } from "./VisualExegesisLayer";
+import { CrossRoomLinking } from "./CrossRoomLinking";
+import { InteractiveWordStudy } from "./InteractiveWordStudy";
+import { AIStudyQuestions } from "./AIStudyQuestions";
+
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
   const navigate = useNavigate();
@@ -528,6 +534,22 @@ export const BibleReader = () => {
                 chapterText={chapterData.verses.map(v => `${v.verse}. ${v.text}`).join('\n')}
                 onHighlightVerses={setHighlightedVerses}
               />
+              
+              {/* Visual Exegesis Layer */}
+              <VisualExegesisLayer
+                book={book}
+                chapter={chapter}
+                chapterText={chapterData.verses.map(v => `${v.verse}. ${v.text}`).join('\n')}
+                onHighlightVerses={setHighlightedVerses}
+              />
+              
+              {/* AI Study Questions for Chapter */}
+              <AIStudyQuestions
+                book={book}
+                chapter={chapter}
+                chapterText={chapterData.verses.map(v => `${v.verse}. ${v.text}`).join('\n')}
+              />
+              
               <ChainReferencePanel
                 book={book}
                 chapter={chapter}
@@ -593,6 +615,31 @@ export const BibleReader = () => {
                 onClose={() => setSelectedVerse(null)}
                 onHighlight={setHighlightedVerses}
               />
+              
+              {/* Cross-Room Linking */}
+              <CrossRoomLinking
+                book={book}
+                chapter={chapter}
+                verse={selectedVerse}
+                verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+              />
+              
+              {/* Interactive Word Study */}
+              <InteractiveWordStudy
+                book={book}
+                chapter={chapter}
+                verse={selectedVerse}
+                verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+              />
+              
+              {/* AI Study Questions for Verse */}
+              <AIStudyQuestions
+                book={book}
+                chapter={chapter}
+                verse={selectedVerse}
+                verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+              />
+              
               <VerseImageAttachment
                 book={book}
                 chapter={chapter}

@@ -257,6 +257,12 @@ serve(async (req) => {
       sermon_content,
       sermon_title,
       smooth_stones,
+      // Chapter text for scanning
+      chapterText,
+      // Word study
+      word,
+      // Floor level for study questions
+      floorLevel,
       messages: chatMessages
     } = requestBody;
     
@@ -1791,69 +1797,70 @@ Return as JSON array: [...]`;
       console.log("PT Chain Chapter mode - scanning:", chapterRef, "with principle:", principle);
       
       const principleMap: Record<string, { name: string; description: string; examples: string }> = {
-        "parables": { 
-          name: "Parables of Jesus", 
-          description: "connections to Christ's parables and their deeper meanings",
-          examples: "Parable of the Sower, Prodigal Son, Good Samaritan, Ten Virgins, Talents, etc."
-        },
-        "prophecy": { 
-          name: "Prophetic Connections", 
-          description: "prophetic fulfillments, types, and future events",
-          examples: "Messianic prophecies, end-time prophecies, prophetic timelines"
-        },
-        "life-of-christ": { 
-          name: "Life of Christ Wall", 
-          description: "connections to events in Christ's earthly ministry",
-          examples: "Birth, baptism, temptation, miracles, teachings, transfiguration, crucifixion, resurrection"
-        },
-        "70-weeks": { 
-          name: "70 Week Prophecy", 
-          description: "connections to Daniel's 70-week prophecy and timeline",
-          examples: "Daniel 9:24-27, anointing of Messiah, cutting off of Messiah, confirmation of covenant"
-        },
-        "2d": { 
-          name: "2D Christ Dimension", 
-          description: "how the text reveals Christ - His person, work, or character",
-          examples: "Christ as Lamb, King, High Priest, Prophet, Shepherd, Bread of Life"
-        },
-        "3d": { 
-          name: "3D Me Dimension", 
-          description: "personal application and spiritual lessons",
-          examples: "Faith lessons, character development, spiritual warfare, personal holiness"
-        },
-        "sanctuary": { 
-          name: "Sanctuary Principles", 
-          description: "connections to tabernacle/temple services, furniture, rituals",
-          examples: "Altar, laver, lampstand, showbread, incense, veil, ark, Day of Atonement"
-        },
-        "feasts": { 
-          name: "Feast Connections", 
-          description: "connections to biblical feasts and their prophetic significance",
-          examples: "Passover, Unleavened Bread, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles"
-        },
-        "types": { 
-          name: "Types & Shadows", 
-          description: "Old Testament types and shadows pointing to Christ",
-          examples: "Isaac, Joseph, Moses, David, Jonah as types of Christ; sacrificial lamb, bronze serpent"
-        },
-        "covenant": { 
-          name: "Covenant Themes", 
-          description: "covenant promises, conditions, and relationship dynamics",
-          examples: "Abrahamic, Mosaic, Davidic, New Covenant; covenant signs, blessings, curses"
-        },
-        "cycles": { 
-          name: "PT Cycles", 
-          description: "connections to the 8 cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re)",
-          examples: "Adamic, Noahic, Abrahamic, Mosaic, Cyrusic, Cyrus-Christ, Spirit, Remnant cycles"
-        },
-        "horizons": { 
-          name: "Three Heavens", 
-          description: "connections to the three heavens (1H, 2H, 3H) and Day of the Lord patterns",
-          examples: "1H (Babylon destruction), 2H (70 AD), 3H (Final); DoL patterns, new heavens/earth"
-        },
+        // Floor 1 - Furnishing (Memory & Visualization)
+        "SR": { name: "Story Room (SR)", description: "narrative memory anchors and story patterns", examples: "Story sequences, mental movies, narrative arcs" },
+        "IR": { name: "Imagination Room (IR)", description: "immersive visualization and sensory engagement", examples: "Step inside the scene, feel the emotions, sensory details" },
+        "24F": { name: "24FPS Room (24F)", description: "chapter-by-chapter symbolic frames", examples: "One image per chapter, symbolic film strips" },
+        "BR": { name: "Bible Rendered (BR)", description: "24-chapter block symbolization", examples: "Master images for book sections, panoramic memory" },
+        "TR": { name: "Translation Room (TR)", description: "converting words into visual images", examples: "Verses→images, chapters→scenes, books→murals" },
+        "GR": { name: "Gems Room (GR)", description: "collecting striking insights and discoveries", examples: "Powerful insights, teaching points, hidden treasures" },
+        
+        // Floor 2 - Investigation (Detective Work)
+        "OR": { name: "Observation Room (OR)", description: "detailed textual observations without interpretation", examples: "Fingerprints, footprints, what-who-when-where-why" },
+        "DC": { name: "Def-Com Room (DC)", description: "definitions (Greek/Hebrew) and commentary", examples: "Word studies, historical context, lexical analysis" },
+        "ST": { name: "Symbols/Types Room (ST)", description: "God's symbolic language and typology", examples: "Lamb=Christ, Rock=Christ, Types pointing to antitype" },
+        "QR": { name: "Questions Room (QR)", description: "interrogating the text through questions", examples: "Intratextual, intertextual, and Phototheological questions" },
+        "QA": { name: "Q&A Internship (QA)", description: "Scripture answering Scripture", examples: "Cross-referencing, verse corroboration, witness alignment" },
+        
+        // Floor 3 - Freestyle (Connections)
+        "NF": { name: "Nature Freestyle (NF)", description: "connections to nature and creation", examples: "Trees=Psalm 1, storms=trials, sunrise=hope" },
+        "PF": { name: "Personal Freestyle (PF)", description: "connections to personal life experiences", examples: "Traffic=patience, keys=lost things, struggles=growth" },
+        "BF": { name: "Bible Freestyle/Verse Genetics (BF)", description: "verse family connections across Scripture", examples: "Sibling verses, cousin passages, distant relatives" },
+        "HF": { name: "History/Social Freestyle (HF)", description: "connections to history and culture", examples: "Historical events, social movements, cultural parallels" },
+        "LR": { name: "Listening Room (LR)", description: "hearing and responding to conversations", examples: "Sermons, testimonies, conversations as springboards" },
+        
+        // Floor 4 - Next Level (Christ-Centered Depth)
+        "CR": { name: "Concentration Room (CR)", description: "every text revealing Christ", examples: "Christ as Deliverer, Priest, King, Prophet in all texts" },
+        "DR": { name: "Dimensions Room (DR)", description: "five dimensions: Literal, Christ, Me, Church, Heaven", examples: "1D-5D analysis, multi-layer meaning" },
+        "C6": { name: "Connect-6 Room (C6)", description: "genre classification and rules", examples: "Prophecy, Poetry, History, Gospels, Epistles, Parables" },
+        "TRm": { name: "Theme Room (TRm)", description: "structural walls and floors", examples: "Sanctuary Wall, Life of Christ Wall, Great Controversy Wall" },
+        "TZ": { name: "Time Zone Room (TZ)", description: "past/present/future across heaven and earth", examples: "Earth-Past, Heaven-Now, Earth-Future perspectives" },
+        "PRm": { name: "Patterns Room (PRm)", description: "recurring divine fingerprints", examples: "40 days, 3 days, 7 days patterns across Scripture" },
+        "P": { name: "Parallels Room (P‖)", description: "mirrored actions across time", examples: "Babel/Pentecost, Exodus/Babylon return" },
+        "FRt": { name: "Fruit Room (FRt)", description: "testing interpretation by spiritual fruit", examples: "Love, joy, peace, patience, kindness, goodness" },
+        "CEC": { name: "Christ in Every Chapter (CEC)", description: "tracing Christ through every chapter", examples: "Christ-thread explicit in each chapter" },
+        "R66": { name: "Room 66 (R66)", description: "one theme traced through all 66 books", examples: "Theme threading Genesis to Revelation" },
+        
+        // Floor 5 - Vision (Prophecy & Sanctuary)
+        "BL": { name: "Blue Room/Sanctuary (BL)", description: "sanctuary furniture and services", examples: "Altar, Laver, Lampstand, Table, Incense, Veil, Ark" },
+        "PR": { name: "Prophecy Room (PR)", description: "prophetic timelines and constellations", examples: "Daniel 2, 7, 8-9, Revelation 13-14 connections" },
+        "3A": { name: "Three Angels' Room (3A)", description: "Revelation 14 final gospel messages", examples: "Everlasting Gospel, Babylon fallen, Beast warning" },
+        "FR": { name: "Feasts Room (FR)", description: "biblical feast connections", examples: "Passover, Unleavened Bread, Pentecost, Tabernacles" },
+        
+        // Floor 6 - Three Heavens (Cycles & Cosmic Context)
+        "cycles": { name: "Eight Cycles (@Ad-@Re)", description: "8 cycles: Adamic→Remnant patterns", examples: "@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re" },
+        "horizons": { name: "Three Heavens (1H-3H)", description: "Day of the Lord judgment cycles", examples: "1H (Babylon), 2H (70 AD), 3H (Final)" },
+        "JR": { name: "Juice Room (JR)", description: "squeezing entire books with all principles", examples: "Full book analysis using all PT tools" },
+        
+        // Floor 7 - Spiritual & Emotional
+        "FRm": { name: "Fire Room (FRm)", description: "emotional weight and conviction", examples: "Gethsemane weight, Calvary trembling, Pentecost fire" },
+        "MR": { name: "Meditation Room (MR)", description: "slow marination in truth", examples: "Psalm 23 meditation, John 15 dwelling" },
+        "SRm": { name: "Speed Room (SRm)", description: "rapid application and connection", examples: "Quick connections, sprint training, fast recall" },
+        
+        // Legacy aliases
+        "parables": { name: "Parables of Jesus", description: "connections to Christ's parables", examples: "Sower, Prodigal Son, Good Samaritan, Ten Virgins" },
+        "prophecy": { name: "Prophetic Connections", description: "prophetic fulfillments and future events", examples: "Messianic prophecies, end-time prophecies" },
+        "life-of-christ": { name: "Life of Christ Wall", description: "Christ's earthly ministry events", examples: "Birth, baptism, miracles, crucifixion, resurrection" },
+        "70-weeks": { name: "70 Week Prophecy", description: "Daniel's 70-week prophecy", examples: "Daniel 9:24-27, anointing, cutting off of Messiah" },
+        "2d": { name: "2D Christ Dimension", description: "how text reveals Christ", examples: "Christ as Lamb, King, Priest, Prophet, Shepherd" },
+        "3d": { name: "3D Me Dimension", description: "personal application", examples: "Faith lessons, character development, spiritual warfare" },
+        "sanctuary": { name: "Sanctuary Principles", description: "tabernacle/temple connections", examples: "Altar, laver, lampstand, showbread, incense, veil, ark" },
+        "feasts": { name: "Feast Connections", description: "biblical feasts significance", examples: "Passover, Pentecost, Trumpets, Atonement, Tabernacles" },
+        "types": { name: "Types & Shadows", description: "OT types pointing to Christ", examples: "Isaac, Joseph, Moses, David as types" },
+        "covenant": { name: "Covenant Themes", description: "covenant dynamics", examples: "Abrahamic, Mosaic, Davidic, New Covenant" },
       };
 
-      const selectedPrinciple = principleMap[principle] || principleMap["types"];
+      const selectedPrinciple = principleMap[principle] || principleMap["ST"];
       
       systemPrompt = `You are Jeeves, a Phototheology Bible scholar. Your task is to scan ${chapterRef} and find every verse that connects with ${selectedPrinciple.name}.
 
@@ -1891,6 +1898,174 @@ Find all verses in this chapter that connect with ${selectedPrinciple.name}. For
 4. Provide 2-3 cross-references that support the connection
 
 Return as JSON array: [...]`;
+
+    } else if (mode === "visual-exegesis") {
+      // Visual Exegesis Layer - Map sanctuary, timeline, and cycles onto chapter
+      systemPrompt = `You are Jeeves, analyzing ${book} ${chapter} through three visual overlays: Sanctuary, Timeline, and Cycles.
+
+TASK: Analyze the chapter and return a JSON object with three arrays.
+
+Return ONLY valid JSON with this structure:
+{
+  "sanctuary": [
+    { "article": "Gate|Altar|Laver|Lampstand|Table|Incense|Veil|Ark", "connection": "How this article appears in text", "verses": [1,2,3], "significance": "Deeper meaning" }
+  ],
+  "timeline": [
+    { "period": "Historical period name", "horizon": "1H|2H|3H", "description": "What's happening", "verses": [1,2,3] }
+  ],
+  "cycles": [
+    { "cycle": "@Ad|@No|@Ab|@Mo|@Cy|@CyC|@Sp|@Re", "description": "How this cycle appears", "verses": [1,2,3] }
+  ]
+}
+
+CRITICAL:
+- Only include genuine connections, not forced ones
+- Sanctuary articles: Gate, Altar, Laver, Lampstand, Table, Incense, Veil, Ark
+- Horizons: 1H (Babylon/restoration), 2H (70AD/church), 3H (Final/new creation)
+- Cycles: @Ad (Adamic), @No (Noahic), @Ab (Abrahamic), @Mo (Mosaic), @Cy (Cyrusic), @CyC (Cyrus-Christ), @Sp (Spirit), @Re (Remnant)
+
+Return ONLY the JSON, no explanation.`;
+
+      userPrompt = `Analyze ${book} ${chapter} for visual exegesis overlays.
+
+Chapter content:
+${chapterText || `[${book} ${chapter} - analyze based on your knowledge]`}
+
+Map:
+1. Sanctuary connections (which articles appear thematically)
+2. Timeline placement (which horizon/period)
+3. Cycle connections (which of the 8 cycles)
+
+Return as JSON object with "sanctuary", "timeline", and "cycles" arrays.`;
+
+    } else if (mode === "cross-room-linking") {
+      // Cross-Room Linking - Show how a verse connects to multiple Palace rooms
+      systemPrompt = `You are Jeeves, analyzing a single verse through ALL applicable Phototheology Palace rooms.
+
+TASK: Identify which Palace rooms this verse connects to and explain each connection.
+
+Return ONLY valid JSON:
+{
+  "verse": ${verse},
+  "verseText": "${verseText}",
+  "christCenter": "How Christ is central to this verse",
+  "rooms": [
+    { "roomCode": "SR|IR|OR|DC|ST|CR|DR|BL|PR|etc", "roomName": "Full room name", "floor": 1-7, "insight": "How this room illuminates the verse", "confidence": 1-100 }
+  ]
+}
+
+Palace Rooms by Floor:
+Floor 1: SR (Story), IR (Imagination), 24F (24FPS), BR (Bible Rendered), TR (Translation), GR (Gems)
+Floor 2: OR (Observation), DC (Def-Com), ST (Symbols/Types), QR (Questions), QA (Q&A)
+Floor 3: NF (Nature), PF (Personal), BF (Bible Freestyle), HF (History), LR (Listening)
+Floor 4: CR (Concentration), DR (Dimensions), C6 (Connect-6), TRm (Theme), TZ (Time Zone), PRm (Patterns), P‖ (Parallels), FRt (Fruit), CEC, R66
+Floor 5: BL (Blue/Sanctuary), PR (Prophecy), 3A (Three Angels), FR (Feasts)
+Floor 6: Cycles, Horizons, JR (Juice)
+Floor 7: FRm (Fire), MR (Meditation), SRm (Speed)
+
+CRITICAL: Include 6-12 rooms that genuinely apply. Start with Christ-centered (CR) always. Higher confidence = stronger connection.`;
+
+      userPrompt = `Analyze ${book} ${chapter}:${verse} through multiple Palace rooms.
+
+Verse: "${verseText}"
+
+Identify all rooms that illuminate this verse, starting with Christ-center (CR). For each room, explain the specific insight it provides.
+
+Return as JSON object.`;
+
+    } else if (mode === "word-study") {
+      // Interactive Word Study - Deep Hebrew/Greek analysis
+      const { word } = requestBody;
+      
+      systemPrompt = `You are Jeeves, conducting a deep word study on "${word}" as it appears in ${book} ${chapter}:${verse}.
+
+TASK: Provide comprehensive Hebrew/Greek word study.
+
+Return ONLY valid JSON:
+{
+  "word": "${word}",
+  "originalLanguage": "Hebrew|Greek",
+  "transliteration": "transliterated form",
+  "strongsNumber": "H1234 or G1234",
+  "definition": "Primary definition",
+  "rootMeaning": "Root/etymological meaning",
+  "usageCount": 123,
+  "relatedWords": [{ "word": "related term", "meaning": "meaning" }],
+  "keyOccurrences": [{ "reference": "Gen 1:1", "context": "How used there" }],
+  "theologicalSignificance": "Why this word matters theologically",
+  "ptConnection": "How this connects to Phototheology principles"
+}
+
+CRITICAL: Be accurate with Strong's numbers. Focus on the word as used in the given context. Include 3-5 key occurrences and 2-4 related words.`;
+
+      userPrompt = `Conduct deep word study on "${word}" in ${book} ${chapter}:${verse}.
+
+Verse context: "${verseText}"
+
+Analyze:
+1. Original language (Hebrew for OT, Greek for NT)
+2. Strong's number and transliteration
+3. Root meaning and etymology
+4. Usage across Scripture
+5. Theological significance
+6. Phototheology connections
+
+Return as JSON object.`;
+
+    } else if (mode === "study-questions") {
+      // AI Study Questions - Floor-level tailored questions
+      const { floorLevel } = requestBody;
+      
+      const floorDescriptions: Record<number, string> = {
+        1: "Floor 1 (Furnishing): Focus on memory, visualization, stories, images. Questions should help with recall and mental pictures.",
+        2: "Floor 2 (Investigation): Focus on observation, definitions, symbols, questions. Questions should train detective-like analysis.",
+        3: "Floor 3 (Freestyle): Focus on connections to nature, personal life, other verses, history. Questions should spark spontaneous linking.",
+        4: "Floor 4 (Next Level): Focus on Christ-center, dimensions, themes, patterns. Questions should deepen theological understanding.",
+        5: "Floor 5 (Vision): Focus on sanctuary, prophecy, feasts, three angels. Questions should develop prophetic sight.",
+        6: "Floor 6 (Three Heavens): Focus on cycles, horizons, cosmic context. Questions should situate texts in cosmic history.",
+        7: "Floor 7 (Spiritual): Focus on fire, meditation, emotional engagement. Questions should lead to heart transformation.",
+      };
+      
+      const floorContext = floorDescriptions[floorLevel] || floorDescriptions[1];
+      
+      systemPrompt = `You are Jeeves, generating study questions tailored to ${floorContext}
+
+TASK: Create 5-8 study questions appropriate for this floor level.
+
+Return ONLY valid JSON array:
+[
+  {
+    "question": "The question text",
+    "type": "observation|interpretation|application|integration",
+    "floor": ${floorLevel},
+    "roomCode": "SR|OR|CR|BL|etc",
+    "hint": "Optional hint to help the student",
+    "sampleAnswer": "A brief sample answer (revealed after completion)"
+  }
+]
+
+Question Types:
+- observation: What does the text say?
+- interpretation: What does it mean?
+- application: How does it apply to life?
+- integration: How does it connect to other truths?
+
+CRITICAL: Questions must match Floor ${floorLevel} methodology. Include room codes that the question activates. Make questions engaging and progressive.`;
+
+      userPrompt = `Generate study questions for ${book} ${chapter}${verse ? ':' + verse : ''} at Floor ${floorLevel} level.
+
+${verse && verseText ? `Verse: "${verseText}"` : `Chapter content: ${chapterText || 'Analyze based on your knowledge'}`}
+
+Floor focus: ${floorContext}
+
+Create 5-8 questions that:
+1. Match the floor's methodology
+2. Progress from simpler to deeper
+3. Include room codes they activate
+4. Have helpful hints
+5. Include sample answers
+
+Return as JSON array.`;
 
     } else if (mode === "commentary-revealed") {
       systemPrompt = `You are Jeeves, a theologian analyzing Bible verses to identify which principles and dimensions are REVEALED or PRESENT in the text itself.
