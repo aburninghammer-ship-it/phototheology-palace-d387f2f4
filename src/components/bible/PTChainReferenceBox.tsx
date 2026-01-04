@@ -186,12 +186,17 @@ export const PTChainReferenceBox = () => {
         <Button
           onClick={analyzeVerse}
           disabled={loading || !verseInput.trim()}
-          className="w-full gradient-royal text-white shadow-blue"
+          className="w-full gradient-royal text-white shadow-blue disabled:opacity-50"
         >
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               Finding Chain References...
+            </>
+          ) : !verseInput.trim() ? (
+            <>
+              <Search className="h-4 w-4 mr-2" />
+              Enter a Verse Above to Search
             </>
           ) : (
             <>
