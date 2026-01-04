@@ -522,7 +522,12 @@ export const BibleReader = () => {
         <div className="lg:col-span-1 space-y-4 lg:space-y-6 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto" ref={jeevesRef}>
           {chainReferenceMode ? (
             <div className="space-y-6">
-              <PTChainReferenceBox />
+              <PTChainReferenceBox 
+                book={book}
+                chapter={chapter}
+                chapterText={chapterData.verses.map(v => `${v.verse}. ${v.text}`).join('\n')}
+                onHighlightVerses={setHighlightedVerses}
+              />
               <ChainReferencePanel
                 book={book}
                 chapter={chapter}

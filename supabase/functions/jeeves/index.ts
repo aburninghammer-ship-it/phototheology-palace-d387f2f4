@@ -1784,6 +1784,114 @@ Include relevant PT codes like:
 
 Return as JSON array: [...]`;
 
+    } else if (mode === "pt-chain-chapter") {
+      // PT Chain Chapter - Scan entire chapter for principle connections
+      const chapterRef = `${book} ${chapter}`;
+      
+      console.log("PT Chain Chapter mode - scanning:", chapterRef, "with principle:", principle);
+      
+      const principleMap: Record<string, { name: string; description: string; examples: string }> = {
+        "parables": { 
+          name: "Parables of Jesus", 
+          description: "connections to Christ's parables and their deeper meanings",
+          examples: "Parable of the Sower, Prodigal Son, Good Samaritan, Ten Virgins, Talents, etc."
+        },
+        "prophecy": { 
+          name: "Prophetic Connections", 
+          description: "prophetic fulfillments, types, and future events",
+          examples: "Messianic prophecies, end-time prophecies, prophetic timelines"
+        },
+        "life-of-christ": { 
+          name: "Life of Christ Wall", 
+          description: "connections to events in Christ's earthly ministry",
+          examples: "Birth, baptism, temptation, miracles, teachings, transfiguration, crucifixion, resurrection"
+        },
+        "70-weeks": { 
+          name: "70 Week Prophecy", 
+          description: "connections to Daniel's 70-week prophecy and timeline",
+          examples: "Daniel 9:24-27, anointing of Messiah, cutting off of Messiah, confirmation of covenant"
+        },
+        "2d": { 
+          name: "2D Christ Dimension", 
+          description: "how the text reveals Christ - His person, work, or character",
+          examples: "Christ as Lamb, King, High Priest, Prophet, Shepherd, Bread of Life"
+        },
+        "3d": { 
+          name: "3D Me Dimension", 
+          description: "personal application and spiritual lessons",
+          examples: "Faith lessons, character development, spiritual warfare, personal holiness"
+        },
+        "sanctuary": { 
+          name: "Sanctuary Principles", 
+          description: "connections to tabernacle/temple services, furniture, rituals",
+          examples: "Altar, laver, lampstand, showbread, incense, veil, ark, Day of Atonement"
+        },
+        "feasts": { 
+          name: "Feast Connections", 
+          description: "connections to biblical feasts and their prophetic significance",
+          examples: "Passover, Unleavened Bread, Firstfruits, Pentecost, Trumpets, Atonement, Tabernacles"
+        },
+        "types": { 
+          name: "Types & Shadows", 
+          description: "Old Testament types and shadows pointing to Christ",
+          examples: "Isaac, Joseph, Moses, David, Jonah as types of Christ; sacrificial lamb, bronze serpent"
+        },
+        "covenant": { 
+          name: "Covenant Themes", 
+          description: "covenant promises, conditions, and relationship dynamics",
+          examples: "Abrahamic, Mosaic, Davidic, New Covenant; covenant signs, blessings, curses"
+        },
+        "cycles": { 
+          name: "PT Cycles", 
+          description: "connections to the 8 cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re)",
+          examples: "Adamic, Noahic, Abrahamic, Mosaic, Cyrusic, Cyrus-Christ, Spirit, Remnant cycles"
+        },
+        "horizons": { 
+          name: "Three Heavens", 
+          description: "connections to the three heavens (1H, 2H, 3H) and Day of the Lord patterns",
+          examples: "1H (Babylon destruction), 2H (70 AD), 3H (Final); DoL patterns, new heavens/earth"
+        },
+      };
+
+      const selectedPrinciple = principleMap[principle] || principleMap["types"];
+      
+      systemPrompt = `You are Jeeves, a Phototheology Bible scholar. Your task is to scan ${chapterRef} and find every verse that connects with ${selectedPrinciple.name}.
+
+TASK: Analyze each verse in the chapter and identify which ones have meaningful connections to ${selectedPrinciple.description}.
+
+Return ONLY a valid JSON array. Each object must have:
+- "verse": The verse number in this chapter (integer)
+- "reference": The full Bible reference this verse connects TO (e.g., "Matthew 13:3-9" for a parable connection)
+- "principle": The specific connection name (e.g., "Parable of the Sower")
+- "ptCodes": Array of PT codes (e.g., ["@CyC", "2H", "ST"])
+- "connection": 2-3 sentence explanation of how this verse connects to the principle
+- "crossReferences": Array of 2-3 related references with { "reference", "relationship", "confidence" (1-100), "note" }
+- "expounded": 1-2 paragraph deeper theological explanation
+
+CRITICAL RULES:
+1. Only include verses that have GENUINE, MEANINGFUL connections to ${selectedPrinciple.name}
+2. Not every verse will connect - only return verses with real connections
+3. Focus on quality over quantity - 3-8 strong connections are better than 15 weak ones
+4. The "reference" field should point to the connecting Scripture (e.g., the parable, prophecy, or type)
+5. Be accurate with verse numbers from the chapter
+
+Examples of ${selectedPrinciple.name}: ${selectedPrinciple.examples}
+
+Return ONLY the JSON array, no markdown, no explanation outside the JSON.`;
+
+      userPrompt = `Scan ${chapterRef} for connections to ${selectedPrinciple.name} (${selectedPrinciple.description}).
+
+Chapter content:
+${requestBody.chapterText || `[${chapterRef} - analyze based on your knowledge]`}
+
+Find all verses in this chapter that connect with ${selectedPrinciple.name}. For each connection:
+1. Identify the verse number
+2. Show what Scripture/principle it connects to
+3. Explain the connection clearly
+4. Provide 2-3 cross-references that support the connection
+
+Return as JSON array: [...]`;
+
     } else if (mode === "commentary-revealed") {
       systemPrompt = `You are Jeeves, a theologian analyzing Bible verses to identify which principles and dimensions are REVEALED or PRESENT in the text itself.
 Focus on discovering what's already there, not applying external frameworks.
