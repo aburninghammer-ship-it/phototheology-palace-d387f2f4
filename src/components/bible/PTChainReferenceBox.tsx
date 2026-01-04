@@ -34,26 +34,64 @@ interface PTChainReferenceBoxProps {
   onHighlightVerses?: (verses: number[]) => void;
 }
 
+// All 37 Palace Rooms organized by floor
 const PRINCIPLES = [
-  { value: "parables", label: "Parables of Jesus" },
-  { value: "prophecy", label: "Prophecy Connections" },
-  { value: "life-of-christ", label: "Life of Christ Wall" },
-  { value: "70-weeks", label: "70 Week Connections" },
-  { value: "2d", label: "2D Christ Dimension" },
-  { value: "3d", label: "3D Kingdom Dimension" },
-  { value: "sanctuary", label: "Sanctuary Principles" },
-  { value: "feasts", label: "Feast Connections" },
-  { value: "types", label: "Types & Shadows" },
-  { value: "covenant", label: "Covenant Themes" },
-  { value: "cycles", label: "PT Cycles (@Ad-@Re)" },
-  { value: "horizons", label: "Three Heavens (1H-3H)" },
+  // Floor 1 - Furnishing (Memory & Visualization)
+  { value: "SR", label: "Story Room (SR)", floor: 1 },
+  { value: "IR", label: "Imagination Room (IR)", floor: 1 },
+  { value: "24F", label: "24FPS Room (24F)", floor: 1 },
+  { value: "BR", label: "Bible Rendered (BR)", floor: 1 },
+  { value: "TR", label: "Translation Room (TR)", floor: 1 },
+  { value: "GR", label: "Gems Room (GR)", floor: 1 },
+  
+  // Floor 2 - Investigation (Detective Work)
+  { value: "OR", label: "Observation Room (OR)", floor: 2 },
+  { value: "DC", label: "Def-Com Room (DC)", floor: 2 },
+  { value: "ST", label: "Symbols/Types Room (ST)", floor: 2 },
+  { value: "QR", label: "Questions Room (QR)", floor: 2 },
+  { value: "QA", label: "Q&A Internship (QA)", floor: 2 },
+  
+  // Floor 3 - Freestyle (Connections)
+  { value: "NF", label: "Nature Freestyle (NF)", floor: 3 },
+  { value: "PF", label: "Personal Freestyle (PF)", floor: 3 },
+  { value: "BF", label: "Bible Freestyle (BF)", floor: 3 },
+  { value: "HF", label: "History Freestyle (HF)", floor: 3 },
+  { value: "LR", label: "Listening Room (LR)", floor: 3 },
+  
+  // Floor 4 - Next Level (Christ-Centered Depth)
+  { value: "CR", label: "Concentration Room (CR)", floor: 4 },
+  { value: "DR", label: "Dimensions Room (DR)", floor: 4 },
+  { value: "C6", label: "Connect 6 Room (C6)", floor: 4 },
+  { value: "TRm", label: "Theme Room (TRm)", floor: 4 },
+  { value: "TZ", label: "Time Zone Room (TZ)", floor: 4 },
+  { value: "PRm", label: "Patterns Room (PRm)", floor: 4 },
+  { value: "P", label: "Parallels Room (P‖)", floor: 4 },
+  { value: "FRt", label: "Fruit Room (FRt)", floor: 4 },
+  { value: "CEC", label: "Christ in Every Chapter (CEC)", floor: 4 },
+  { value: "R66", label: "Room 66 (R66)", floor: 4 },
+  
+  // Floor 5 - Vision (Prophecy & Sanctuary)
+  { value: "BL", label: "Blue Room / Sanctuary (BL)", floor: 5 },
+  { value: "PR", label: "Prophecy Room (PR)", floor: 5 },
+  { value: "3A", label: "Three Angels' Room (3A)", floor: 5 },
+  { value: "FR", label: "Feasts Room (FR)", floor: 5 },
+  
+  // Floor 6 - Three Heavens (Cycles & Cosmic Context)
+  { value: "cycles", label: "Eight Cycles (@Ad-@Re)", floor: 6 },
+  { value: "horizons", label: "Three Heavens (1H-3H)", floor: 6 },
+  { value: "JR", label: "Juice Room (JR)", floor: 6 },
+  
+  // Floor 7 - Spiritual & Emotional
+  { value: "FRm", label: "Fire Room (FRm)", floor: 7 },
+  { value: "MR", label: "Meditation Room (MR)", floor: 7 },
+  { value: "SRm", label: "Speed Room (SRm)", floor: 7 },
 ];
 
 export const PTChainReferenceBox = ({ book, chapter, chapterText, onHighlightVerses }: PTChainReferenceBoxProps) => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ChainReferenceResult[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [selectedPrinciple, setSelectedPrinciple] = useState<string>("types");
+  const [selectedPrinciple, setSelectedPrinciple] = useState<string>("ST");
   const { toast } = useToast();
 
   const currentChapter = book && chapter ? `${book} ${chapter}` : null;
@@ -197,12 +235,23 @@ export const PTChainReferenceBox = ({ book, chapter, chapterText, onHighlightVer
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Choose a principle" />
             </SelectTrigger>
-            <SelectContent>
-              {PRINCIPLES.map((principle) => (
-                <SelectItem key={principle.value} value={principle.value}>
-                  {principle.label}
-                </SelectItem>
-              ))}
+            <SelectContent className="max-h-[400px]">
+              {[1, 2, 3, 4, 5, 6, 7].map((floor) => {
+                const floorPrinciples = PRINCIPLES.filter(p => p.floor === floor);
+                const floorNames = ["", "Furnishing", "Investigation", "Freestyle", "Next Level", "Vision", "Three Heavens", "Spiritual"];
+                return (
+                  <div key={floor}>
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50 sticky top-0">
+                      Floor {floor}: {floorNames[floor]}
+                    </div>
+                    {floorPrinciples.map((principle) => (
+                      <SelectItem key={principle.value} value={principle.value}>
+                        {principle.label}
+                      </SelectItem>
+                    ))}
+                  </div>
+                );
+              })}
             </SelectContent>
           </Select>
         </div>
