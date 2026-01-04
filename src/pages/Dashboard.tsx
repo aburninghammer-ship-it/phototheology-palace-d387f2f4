@@ -187,7 +187,7 @@ export default function Dashboard() {
     <div className="min-h-screen gradient-dreamy">
       {preferences.navigation_style === "simplified" ? <SimplifiedNav /> : <Navigation />}
       <JeevesWelcomeModal />
-      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 pb-24 md:pb-8 max-w-7xl">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 pb-32 md:pb-8 max-w-7xl">
         {/* Mobile-optimized header */}
         <div className="mb-6 md:mb-8 flex items-center gap-3 md:gap-4">
           <img
