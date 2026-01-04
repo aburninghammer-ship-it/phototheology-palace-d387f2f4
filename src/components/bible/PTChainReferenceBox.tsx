@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Link2, ChevronDown, ChevronUp, Search, Info } from "lucide-react";
+import { Loader2, Link2, ChevronDown, ChevronUp, Search, Info, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
@@ -28,6 +27,13 @@ interface ChainReferenceResult {
   expounded: string;
 }
 
+interface PTChainReferenceBoxProps {
+  book?: string;
+  chapter?: number;
+  chapterText?: string;
+  onHighlightVerses?: (verses: number[]) => void;
+}
+
 const PRINCIPLES = [
   { value: "parables", label: "Parables of Jesus" },
   { value: "prophecy", label: "Prophecy Connections" },
@@ -43,19 +49,36 @@ const PRINCIPLES = [
   { value: "horizons", label: "Three Heavens (1H-3H)" },
 ];
 
-export const PTChainReferenceBox = () => {
-  const [verseInput, setVerseInput] = useState("");
+export const PTChainReferenceBox = ({ book, chapter, chapterText, onHighlightVerses }: PTChainReferenceBoxProps) => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ChainReferenceResult[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [selectedPrinciple, setSelectedPrinciple] = useState<string>("types");
   const { toast } = useToast();
 
-  const analyzeVerse = async () => {
-    if (!verseInput.trim()) {
+  const currentChapter = book && chapter ? `${book} ${chapter}` : null;
+
+  // Reset results when chapter changes
+  useEffect(() => {
+    setResults([]);
+    setExpandedIndex(null);
+  }, [book, chapter]);
+
+  // Update highlighted verses when results change
+  useEffect(() => {
+    if (onHighlightVerses && results.length > 0) {
+      const verseNumbers = results.map(r => r.verse).filter(v => v > 0);
+      onHighlightVerses(verseNumbers);
+    } else if (onHighlightVerses) {
+      onHighlightVerses([]);
+    }
+  }, [results, onHighlightVerses]);
+
+  const scanChapter = async () => {
+    if (!currentChapter) {
       toast({
-        title: "Enter a Verse",
-        description: "Please enter a verse reference (e.g., John 3:16)",
+        title: "No Chapter Selected",
+        description: "Please navigate to a chapter first",
         variant: "destructive",
       });
       return;
@@ -64,17 +87,20 @@ export const PTChainReferenceBox = () => {
     setLoading(true);
     setResults([]);
     try {
-      console.log("PT Chain Reference: Calling jeeves with", { 
-        mode: "pt-chain-verse", 
+      console.log("PT Chain Reference: Scanning chapter", { 
+        mode: "pt-chain-chapter", 
         principle: selectedPrinciple, 
-        verse: verseInput 
+        book,
+        chapter,
       });
       
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
-          mode: "pt-chain-verse",
+          mode: "pt-chain-chapter",
           principle: selectedPrinciple,
-          verseReference: verseInput.trim(),
+          book,
+          chapter,
+          chapterText,
         },
       });
 
@@ -118,7 +144,7 @@ export const PTChainReferenceBox = () => {
       if (parsedResults.length === 0) {
         toast({
           title: "No Connections Found",
-          description: `No ${PRINCIPLES.find(p => p.value === selectedPrinciple)?.label} connections found for this verse.`,
+          description: `No ${PRINCIPLES.find(p => p.value === selectedPrinciple)?.label} connections found in this chapter.`,
         });
         return;
       }
@@ -127,7 +153,7 @@ export const PTChainReferenceBox = () => {
       const principleLabel = PRINCIPLES.find(p => p.value === selectedPrinciple)?.label;
       toast({
         title: "Chain References Found",
-        description: `Found ${parsedResults.length} ${principleLabel} connections`,
+        description: `Found ${parsedResults.length} verses with ${principleLabel} connections`,
       });
     } catch (error: any) {
       console.error("PT Chain Reference error:", error);
@@ -149,21 +175,19 @@ export const PTChainReferenceBox = () => {
           PT Chain Reference
         </CardTitle>
         <CardDescription className="text-white/90">
-          Enter a verse and discover principle-based cross-references
+          Scan the current chapter to discover principle-based connections
         </CardDescription>
       </CardHeader>
 
       <CardContent className="pt-6 space-y-4">
+        {/* Current Chapter Display */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Verse Reference</label>
-          <div className="flex gap-2">
-            <Input
-              placeholder="e.g., John 3:16 or Genesis 22:8"
-              value={verseInput}
-              onChange={(e) => setVerseInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && analyzeVerse()}
-              className="flex-1"
-            />
+          <label className="text-sm font-medium">Current Chapter</label>
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 border border-primary/30">
+            <BookOpen className="h-4 w-4 text-primary" />
+            <span className="font-medium text-foreground">
+              {currentChapter || "Navigate to a chapter"}
+            </span>
           </div>
         </div>
 
@@ -184,24 +208,24 @@ export const PTChainReferenceBox = () => {
         </div>
 
         <Button
-          onClick={analyzeVerse}
-          disabled={loading || !verseInput.trim()}
+          onClick={scanChapter}
+          disabled={loading || !currentChapter}
           className="w-full gradient-royal text-white shadow-blue disabled:opacity-50"
         >
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Finding Chain References...
+              Scanning {currentChapter}...
             </>
-          ) : !verseInput.trim() ? (
+          ) : !currentChapter ? (
             <>
-              <Search className="h-4 w-4 mr-2" />
-              Enter a Verse Above to Search
+              <BookOpen className="h-4 w-4 mr-2" />
+              Navigate to a Chapter First
             </>
           ) : (
             <>
               <Search className="h-4 w-4 mr-2" />
-              Find Chain References
+              Scan {currentChapter} for Connections
             </>
           )}
         </Button>
@@ -217,7 +241,7 @@ export const PTChainReferenceBox = () => {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge className="gradient-palace text-white">
-                        {result.reference}
+                        v{result.verse}: {result.reference}
                       </Badge>
                       {result.ptCodes && result.ptCodes.length > 0 && (
                         <div className="flex gap-1 flex-wrap">
@@ -240,7 +264,7 @@ export const PTChainReferenceBox = () => {
 
                   {result.crossReferences && result.crossReferences.length > 0 && (
                     <div className="mb-3 space-y-1">
-                      <p className="text-xs font-semibold text-muted-foreground mb-1">Cross References:</p>
+                      <p className="text-xs font-semibold text-muted-foreground mb-1">Related Scriptures:</p>
                       {result.crossReferences.map((ref, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-xs">
                           <Badge variant="secondary" className="text-xs">
@@ -295,8 +319,10 @@ export const PTChainReferenceBox = () => {
             <div className="text-center py-12 text-muted-foreground">
               <Link2 className="h-12 w-12 mx-auto mb-3 text-primary/50" />
               <p className="text-sm">
-                Enter a verse reference and select a principle to discover 
-                how Scripture witnesses to Scripture through PT principles
+                {currentChapter 
+                  ? `Select a principle and scan ${currentChapter} to discover how Scripture interprets Scripture`
+                  : "Navigate to a chapter to scan for principle-based connections"
+                }
               </p>
             </div>
           )}
