@@ -154,185 +154,189 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
         </DialogHeader>
 
         {step === "settings" && (
-          <ScrollArea className="flex-1 min-h-0 pr-4">
-            <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="full-sermon">Full Sermon</TabsTrigger>
-                <TabsTrigger value="verses-only">Verses Only</TabsTrigger>
-              </TabsList>
+          <div className="flex flex-col flex-1 min-h-0">
+            <ScrollArea className="flex-1 min-h-0 pr-4">
+              <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="full-sermon">Full Sermon</TabsTrigger>
+                  <TabsTrigger value="verses-only">Verses Only</TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="full-sermon" className="space-y-4 mt-4">
-                <div className="p-3 rounded-lg bg-muted/50 border">
-                  <p className="text-sm font-medium mb-2">Sermon Content Loaded:</p>
-                  <ul className="text-xs text-muted-foreground space-y-1">
-                    <li>📖 Title: {sermon.title || "Not set"}</li>
-                    <li>📜 Theme Passage: {sermon.theme_passage || "Not set"}</li>
-                    <li>🎯 Style: {sermon.sermon_style || "Not set"}</li>
-                    <li>💎 Smooth Stones: {sermon.smooth_stones?.length || 0} points</li>
-                    <li>🌉 Bridges: {sermon.bridges?.length || 0} connections</li>
-                    <li>📝 Written Sermon: {sermon.full_sermon ? `${sermon.full_sermon.length} characters` : "Not written"}</li>
-                  </ul>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Generate a complete presentation from your sermon content, including movie structure, smooth stones, and bridges.
-                </p>
-              </TabsContent>
+                <TabsContent value="full-sermon" className="space-y-4 mt-4">
+                  <div className="p-3 rounded-lg bg-muted/50 border">
+                    <p className="text-sm font-medium mb-2">Sermon Content Loaded:</p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>📖 Title: {sermon.title || "Not set"}</li>
+                      <li>📜 Theme Passage: {sermon.theme_passage || "Not set"}</li>
+                      <li>🎯 Style: {sermon.sermon_style || "Not set"}</li>
+                      <li>💎 Smooth Stones: {sermon.smooth_stones?.length || 0} points</li>
+                      <li>🌉 Bridges: {sermon.bridges?.length || 0} connections</li>
+                      <li>📝 Written Sermon: {sermon.full_sermon ? `${sermon.full_sermon.length} characters` : "Not written"}</li>
+                    </ul>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Generate a complete presentation from your sermon content, including movie structure, smooth stones, and bridges.
+                  </p>
+                </TabsContent>
 
-              <TabsContent value="verses-only" className="space-y-4 mt-4">
-                <div>
-                  <Label>Scripture References (one per line)</Label>
-                  <Textarea
-                    placeholder="John 3:16&#10;Romans 8:28&#10;Psalm 23:1-6"
-                    value={versesInput}
-                    onChange={(e) => setVersesInput(e.target.value)}
-                    className="min-h-[100px] mt-1"
-                  />
-                </div>
-              </TabsContent>
+                <TabsContent value="verses-only" className="space-y-4 mt-4">
+                  <div>
+                    <Label>Scripture References (one per line)</Label>
+                    <Textarea
+                      placeholder="John 3:16&#10;Romans 8:28&#10;Psalm 23:1-6"
+                      value={versesInput}
+                      onChange={(e) => setVersesInput(e.target.value)}
+                      className="min-h-[100px] mt-1"
+                    />
+                  </div>
+                </TabsContent>
 
-              <div className="space-y-4 pt-4 border-t">
-                {/* Theme Selection */}
-                <div>
-                  <Label>Theme</Label>
-                  <Select value={theme} onValueChange={(v) => setTheme(v as ThemeId)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(PPT_THEMES).map((t) => (
-                        <SelectItem key={t.id} value={t.id}>
-                          <div className="flex items-center gap-2">
-                            <div 
-                              className="w-4 h-4 rounded border"
-                              style={{ backgroundColor: `#${t.colors.background}` }}
-                            />
-                            <span>{t.name}</span>
-                            <span className="text-xs text-muted-foreground">— {t.description}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="space-y-4 pt-4 border-t">
+                  {/* Theme Selection */}
+                  <div>
+                    <Label>Theme</Label>
+                    <Select value={theme} onValueChange={(v) => setTheme(v as ThemeId)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(PPT_THEMES).map((t) => (
+                          <SelectItem key={t.id} value={t.id}>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="w-4 h-4 rounded border"
+                                style={{ backgroundColor: `#${t.colors.background}` }}
+                              />
+                              <span>{t.name}</span>
+                              <span className="text-xs text-muted-foreground">— {t.description}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-                  {/* Theme Preview */}
-                  <div 
-                    className="mt-2 p-3 rounded-lg border flex items-center justify-between"
-                    style={{ backgroundColor: `#${selectedTheme.colors.background}` }}
-                  >
+                    {/* Theme Preview */}
+                    <div
+                      className="mt-2 p-3 rounded-lg border flex items-center justify-between"
+                      style={{ backgroundColor: `#${selectedTheme.colors.background}` }}
+                    >
+                      <div>
+                        <p
+                          className="font-semibold"
+                          style={{ color: `#${selectedTheme.colors.primary}` }}
+                        >
+                          {sermon.title || "Sermon Title"}
+                        </p>
+                        <p
+                          className="text-sm italic"
+                          style={{ color: `#${selectedTheme.colors.accent}` }}
+                        >
+                          {sermon.theme_passage || "Theme Passage"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Venue Size */}
+                  <div>
+                    <Label>Venue Size</Label>
+                    <Select value={venue} onValueChange={(v) => setVenue(v as VenueSize)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(VENUE_PRESETS).map((v) => (
+                          <SelectItem key={v.id} value={v.id}>
+                            <span>{v.name}</span>
+                            <span className="text-xs text-muted-foreground ml-2">— {v.description}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Slide Count */}
+                  <div>
+                    <Label>Slide Density</Label>
+                    <RadioGroup
+                      value={slideCount}
+                      onValueChange={(v) => setSlideCount(v as typeof slideCount)}
+                      className="flex flex-wrap gap-4 mt-1"
+                    >
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="minimal" id="minimal" />
+                        <Label htmlFor="minimal" className="font-normal">Minimal (8-12)</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="standard" id="standard" />
+                        <Label htmlFor="standard" className="font-normal">Standard (15-20)</Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="expanded" id="expanded" />
+                        <Label htmlFor="expanded" className="font-normal">Expanded (25-35)</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Bible Version & Audience */}
+                  <div className="grid grid-cols-2 gap-4 pb-4">
                     <div>
-                      <p 
-                        className="font-semibold"
-                        style={{ color: `#${selectedTheme.colors.primary}` }}
-                      >
-                        {sermon.title || "Sermon Title"}
-                      </p>
-                      <p 
-                        className="text-sm italic"
-                        style={{ color: `#${selectedTheme.colors.accent}` }}
-                      >
-                        {sermon.theme_passage || "Theme Passage"}
-                      </p>
+                      <Label>Bible Version</Label>
+                      <Select value={bibleVersion} onValueChange={setBibleVersion}>
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="KJV">KJV</SelectItem>
+                          <SelectItem value="NKJV">NKJV</SelectItem>
+                          <SelectItem value="ESV">ESV</SelectItem>
+                          <SelectItem value="NIV">NIV</SelectItem>
+                          <SelectItem value="NASB">NASB</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Audience</Label>
+                      <Select value={audienceType} onValueChange={(v) => setAudienceType(v as typeof audienceType)}>
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="seeker">Seeker-Friendly</SelectItem>
+                          <SelectItem value="believer">Believer-Focused</SelectItem>
+                          <SelectItem value="mixed">Mixed Audience</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
+              </Tabs>
+            </ScrollArea>
 
-                {/* Venue Size */}
-                <div>
-                  <Label>Venue Size</Label>
-                  <Select value={venue} onValueChange={(v) => setVenue(v as VenueSize)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(VENUE_PRESETS).map((v) => (
-                        <SelectItem key={v.id} value={v.id}>
-                          <span>{v.name}</span>
-                          <span className="text-xs text-muted-foreground ml-2">— {v.description}</span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Slide Count */}
-                <div>
-                  <Label>Slide Density</Label>
-                  <RadioGroup 
-                    value={slideCount} 
-                    onValueChange={(v) => setSlideCount(v as typeof slideCount)}
-                    className="flex flex-wrap gap-4 mt-1"
-                  >
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem value="minimal" id="minimal" />
-                      <Label htmlFor="minimal" className="font-normal">Minimal (8-12)</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem value="standard" id="standard" />
-                      <Label htmlFor="standard" className="font-normal">Standard (15-20)</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem value="expanded" id="expanded" />
-                      <Label htmlFor="expanded" className="font-normal">Expanded (25-35)</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                {/* Bible Version & Audience */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Bible Version</Label>
-                    <Select value={bibleVersion} onValueChange={setBibleVersion}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="KJV">KJV</SelectItem>
-                        <SelectItem value="NKJV">NKJV</SelectItem>
-                        <SelectItem value="ESV">ESV</SelectItem>
-                        <SelectItem value="NIV">NIV</SelectItem>
-                        <SelectItem value="NASB">NASB</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Audience</Label>
-                    <Select value={audienceType} onValueChange={(v) => setAudienceType(v as typeof audienceType)}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="seeker">Seeker-Friendly</SelectItem>
-                        <SelectItem value="believer">Believer-Focused</SelectItem>
-                        <SelectItem value="mixed">Mixed Audience</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-4 pb-2">
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={handleGenerate} 
-                  disabled={generating || (mode === "verses-only" && !versesInput.trim())}
-                >
-                  {generating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Generate Slides
-                    </>
-                  )}
-                </Button>
-              </div>
-            </Tabs>
-          </ScrollArea>
+            {/* Fixed footer with Generate button - always visible */}
+            <div className="flex justify-end gap-2 pt-4 border-t mt-4 shrink-0">
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleGenerate}
+                disabled={generating || (mode === "verses-only" && !versesInput.trim())}
+                size="lg"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generate Slides
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         )}
 
         {step === "preview" && generatedDeck && (
