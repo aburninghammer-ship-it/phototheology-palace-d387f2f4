@@ -125,7 +125,7 @@ const BibleEncyclopedia = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-palace-purple/10 rounded-full blur-[80px] animate-pulse delay-500" />
       </div>
       
-      <div className="pt-24 pb-16 px-4 relative z-10">
+      <div className="pt-24 pb-32 md:pb-16 px-4 relative z-10">
         <div className="container mx-auto max-w-7xl space-y-6">
           {/* Header */}
           <Card variant="glass" className="border-indigo-500/30">
