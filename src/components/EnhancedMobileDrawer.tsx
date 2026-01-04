@@ -499,7 +499,7 @@ export const EnhancedMobileDrawer = () => {
               )}
 
               {/* Account Section */}
-              <div className="space-y-2 pb-6">
+              <div className="space-y-2 pb-28">
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">Account</p>
                 <div className="rounded-xl border border-border/50 overflow-hidden">
                   <Link
