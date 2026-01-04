@@ -2067,6 +2067,29 @@ Create 5-8 questions that:
 
 Return as JSON array.`;
 
+    } else if (mode === "christ-connection") {
+      // Quick Christ Connection - One-liner showing how this verse points to Christ
+      const verseRef = requestBody.verseReference || "";
+      const vText = requestBody.verseText || "";
+      
+      systemPrompt = `You are Jeeves, providing a single powerful sentence that reveals how this verse points to Christ.
+
+Your response must be:
+- ONE sentence only (20-40 words max)
+- Direct and profound
+- Show the Christ connection in fresh language
+- No markdown, no asterisks, no headers
+- Just the insight itself
+
+Examples of good Christ connections:
+- "As the bronze serpent lifted up brought healing to all who looked, so Christ lifted on the cross brings eternal healing to all who believe."
+- "The ark that saved Noah's family through judgment waters prefigures Christ who saves His people through the waters of baptism into His death and resurrection."
+- "This cry of abandonment on the cross is Christ bearing the full weight of our separation from God so we never have to."`;
+
+      userPrompt = `${verseRef}: "${vText}"
+
+Give ONE sentence showing how this points to Christ.`;
+
     } else if (mode === "commentary-revealed") {
       systemPrompt = `You are Jeeves, a theologian analyzing Bible verses to identify which principles and dimensions are REVEALED or PRESENT in the text itself.
 Focus on discovering what's already there, not applying external frameworks.
@@ -6767,6 +6790,14 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
       
       console.log("Updated usedVerses:", newUsedVerses);
       console.log("Updated usedRooms:", newUsedRooms);
+    }
+
+    // Handle christ-connection mode - return the connection text directly
+    if (mode === "christ-connection") {
+      return new Response(
+        JSON.stringify({ connection: content.trim() }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Handle chain-witness mode - parse JSON array of verses

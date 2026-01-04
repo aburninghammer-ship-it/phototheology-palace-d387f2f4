@@ -48,6 +48,7 @@ import { VisualExegesisLayer } from "./VisualExegesisLayer";
 import { CrossRoomLinking } from "./CrossRoomLinking";
 import { InteractiveWordStudy } from "./InteractiveWordStudy";
 import { AIStudyQuestions } from "./AIStudyQuestions";
+import { ChristConnection } from "./ChristConnection";
 
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
@@ -606,6 +607,14 @@ export const BibleReader = () => {
                 verse={selectedVerse}
                 verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
               />
+              
+              {/* Quick Christ Connection */}
+              <div className="px-2">
+                <ChristConnection
+                  verseReference={`${book} ${chapter}:${selectedVerse}`}
+                  verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+                />
+              </div>
               
               <PrinciplePanel
                 book={book}
