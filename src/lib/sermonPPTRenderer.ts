@@ -573,7 +573,7 @@ export class SermonPPTRenderer {
 
     // Body or bullets with improved spacing
     if (content.bullets && content.bullets.length > 0) {
-      const bulletText = content.bullets.map(b => ({ text: `  ${b}`, options: { bullet: { type: 'bullet', code: '●' }, indentLevel: 0 } }));
+      const bulletText = content.bullets.map(b => ({ text: `  ${b}`, options: { bullet: { type: 'bullet' as const, characterCode: '●' }, indentLevel: 0 } }));
       slide.addText(bulletText, {
         x: 0.5,
         y: 2.4,
@@ -675,7 +675,7 @@ export class SermonPPTRenderer {
     });
 
     if (content.bullets && content.bullets.length > 0) {
-      const bulletText = content.bullets.map(b => ({ text: `  ${b}`, options: { bullet: { type: 'bullet', code: '●' }, indentLevel: 0 } }));
+      const bulletText = content.bullets.map(b => ({ text: `  ${b}`, options: { bullet: { type: 'bullet' as const, characterCode: '●' }, indentLevel: 0 } }));
       slide.addText(bulletText, {
         x: 0.5,
         y: 1.9,
@@ -1032,7 +1032,7 @@ export class SermonPPTRenderer {
     });
 
     if (content.bullets && content.bullets.length > 0) {
-      const bulletText = content.bullets.map(b => ({ text: `  ${b}`, options: { bullet: { type: 'bullet', code: '→' }, indentLevel: 0 } }));
+      const bulletText = content.bullets.map(b => ({ text: `  ${b}`, options: { bullet: { type: 'bullet' as const, characterCode: '→' }, indentLevel: 0 } }));
       slide.addText(bulletText, {
         x: 0.5,
         y: 2.1,
@@ -1452,7 +1452,7 @@ export class SermonPPTRenderer {
     }
 
     if (content.bullets && content.bullets.length > 0) {
-      const bulletText = content.bullets.map(b => ({ text: `  ${b}`, options: { bullet: { type: 'bullet', code: '●' }, indentLevel: 0 } }));
+      const bulletText = content.bullets.map(b => ({ text: `  ${b}`, options: { bullet: { type: 'bullet' as const, characterCode: '●' }, indentLevel: 0 } }));
       slide.addText(bulletText, {
         x: 0.5,
         y: content.title ? 1.7 : 0.6,
