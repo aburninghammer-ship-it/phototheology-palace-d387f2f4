@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,18 +16,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Presentation, Loader2, Sparkles, Download, Eye } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Presentation, Loader2, Sparkles, Download, Eye, ExternalLink, Wand2, Key } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  PPT_THEMES, 
-  VENUE_PRESETS, 
-  SlideDeck, 
-  ThemeId, 
-  VenueSize 
+import {
+  PPT_THEMES,
+  VENUE_PRESETS,
+  SlideDeck,
+  ThemeId,
+  VenueSize
 } from "@/types/sermonPPT";
 import { generateAndDownloadPPT } from "@/lib/sermonPPTRenderer";
 
@@ -52,6 +54,17 @@ interface SermonPPTExportProps {
   size?: "default" | "sm" | "lg";
 }
 
+// Gamma API result type
+interface GammaResult {
+  success: boolean;
+  title: string;
+  gammaUrl: string;
+  exportUrl?: string;
+  numCards: number;
+}
+
+const GAMMA_API_KEY_STORAGE_KEY = 'phototheology_gamma_api_key';
+
 export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: SermonPPTExportProps) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"full-sermon" | "verses-only">("full-sermon");
@@ -66,48 +79,119 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
   const [generatedDeck, setGeneratedDeck] = useState<SlideDeck | null>(null);
   const [step, setStep] = useState<"settings" | "preview">("settings");
 
+  // Gamma-specific state
+  const [useGamma, setUseGamma] = useState(false);
+  const [gammaApiKey, setGammaApiKey] = useState("");
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [gammaResult, setGammaResult] = useState<GammaResult | null>(null);
+  const [gammaImageStyle, setGammaImageStyle] = useState<"photorealistic" | "illustration" | "none">("photorealistic");
+  const [gammaTextAmount, setGammaTextAmount] = useState<"brief" | "medium" | "detailed">("medium");
+
+  // Load saved Gamma API key on mount
+  useEffect(() => {
+    const savedKey = localStorage.getItem(GAMMA_API_KEY_STORAGE_KEY);
+    if (savedKey) {
+      setGammaApiKey(savedKey);
+    }
+  }, []);
+
+  // Save Gamma API key when changed
+  const handleGammaApiKeyChange = (value: string) => {
+    setGammaApiKey(value);
+    if (value.startsWith('sk-gamma-')) {
+      localStorage.setItem(GAMMA_API_KEY_STORAGE_KEY, value);
+    }
+  };
+
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      const requestBody = {
-        mode,
-        sermonData: mode === "full-sermon" ? {
-          title: sermon.title,
-          themePassage: sermon.theme_passage,
-          sermonStyle: sermon.sermon_style,
-          smoothStones: sermon.smooth_stones,
-          bridges: sermon.bridges,
-          movieStructure: sermon.movie_structure,
-          fullSermon: sermon.full_sermon,
-        } : undefined,
-        verses: mode === "verses-only" 
-          ? versesInput.split('\n').filter(v => v.trim()) 
-          : undefined,
-        settings: {
-          theme,
-          venue,
-          slideCount,
-          bibleVersion,
-          audienceType,
-        },
-      };
+      if (useGamma) {
+        // Generate with Gamma
+        if (!gammaApiKey || !gammaApiKey.startsWith('sk-gamma-')) {
+          throw new Error("Please enter a valid Gamma API key (starts with 'sk-gamma-')");
+        }
 
-      const { data, error } = await supabase.functions.invoke("sermon-to-ppt", {
-        body: requestBody,
-      });
+        const requestBody = {
+          apiKey: gammaApiKey,
+          mode,
+          sermonData: mode === "full-sermon" ? {
+            title: sermon.title,
+            themePassage: sermon.theme_passage,
+            sermonStyle: sermon.sermon_style,
+            smoothStones: sermon.smooth_stones,
+            bridges: sermon.bridges,
+            movieStructure: sermon.movie_structure,
+            fullSermon: sermon.full_sermon,
+          } : undefined,
+          verses: mode === "verses-only"
+            ? versesInput.split('\n').filter(v => v.trim())
+            : undefined,
+          settings: {
+            slideCount,
+            bibleVersion,
+            audienceType,
+            imageStyle: gammaImageStyle,
+            textAmount: gammaTextAmount,
+            dimensions: '16x9',
+            tone: 'reverent, inspiring',
+          },
+        };
 
-      if (error) throw error;
-      if (data.error) throw new Error(data.error);
+        const { data, error } = await supabase.functions.invoke("gamma-generate", {
+          body: requestBody,
+        });
 
-      setGeneratedDeck(data);
-      setStep("preview");
-      toast.success(`Generated ${data.slides?.length || 0} slides!`);
+        if (error) throw error;
+        if (data.error) throw new Error(data.error);
+
+        setGammaResult(data);
+        setStep("preview");
+        toast.success(`Gamma created ${data.numCards || 'your'} slides!`);
+      } else {
+        // Generate with built-in renderer
+        const requestBody = {
+          mode,
+          sermonData: mode === "full-sermon" ? {
+            title: sermon.title,
+            themePassage: sermon.theme_passage,
+            sermonStyle: sermon.sermon_style,
+            smoothStones: sermon.smooth_stones,
+            bridges: sermon.bridges,
+            movieStructure: sermon.movie_structure,
+            fullSermon: sermon.full_sermon,
+          } : undefined,
+          verses: mode === "verses-only"
+            ? versesInput.split('\n').filter(v => v.trim())
+            : undefined,
+          settings: {
+            theme,
+            venue,
+            slideCount,
+            bibleVersion,
+            audienceType,
+          },
+        };
+
+        const { data, error } = await supabase.functions.invoke("sermon-to-ppt", {
+          body: requestBody,
+        });
+
+        if (error) throw error;
+        if (data.error) throw new Error(data.error);
+
+        setGeneratedDeck(data);
+        setStep("preview");
+        toast.success(`Generated ${data.slides?.length || 0} slides!`);
+      }
     } catch (error: any) {
       console.error("PPT generation error:", error);
       if (error.message?.includes("429") || error.message?.includes("Rate limit")) {
         toast.error("Rate limit exceeded. Please wait a moment and try again.");
-      } else if (error.message?.includes("402")) {
-        toast.error("AI credits exhausted. Please add credits to continue.");
+      } else if (error.message?.includes("402") || error.message?.includes("403")) {
+        toast.error("API credits exhausted. Please add credits to continue.");
+      } else if (error.message?.includes("401")) {
+        toast.error("Invalid API key. Please check your Gamma API key.");
       } else {
         toast.error(error.message || "Failed to generate presentation");
       }
@@ -133,6 +217,7 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
   const resetDialog = () => {
     setStep("settings");
     setGeneratedDeck(null);
+    setGammaResult(null);
   };
 
   const selectedTheme = PPT_THEMES[theme];
@@ -192,7 +277,95 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
                 </TabsContent>
 
                 <div className="space-y-4 pt-4 border-t">
-                  {/* Theme Selection */}
+                  {/* Generator Selection */}
+                  <div className="p-3 rounded-lg border bg-gradient-to-r from-purple-500/5 to-blue-500/5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Wand2 className="w-4 h-4 text-purple-500" />
+                        <Label className="font-medium">Use Gamma.app</Label>
+                      </div>
+                      <Switch
+                        checked={useGamma}
+                        onCheckedChange={setUseGamma}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {useGamma
+                        ? "Generate stunning AI presentations with Gamma"
+                        : "Use built-in PowerPoint generator"}
+                    </p>
+
+                    {useGamma && (
+                      <div className="mt-3 space-y-3">
+                        <div>
+                          <Label className="text-xs flex items-center gap-1">
+                            <Key className="w-3 h-3" />
+                            Gamma API Key
+                          </Label>
+                          <div className="flex gap-2 mt-1">
+                            <Input
+                              type={showApiKey ? "text" : "password"}
+                              placeholder="sk-gamma-..."
+                              value={gammaApiKey}
+                              onChange={(e) => handleGammaApiKeyChange(e.target.value)}
+                              className="text-xs"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setShowApiKey(!showApiKey)}
+                            >
+                              {showApiKey ? "Hide" : "Show"}
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            <a
+                              href="https://gamma.app/settings"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-purple-500 hover:underline inline-flex items-center gap-1"
+                            >
+                              Get your API key <ExternalLink className="w-3 h-3" />
+                            </a>
+                            {" "}(requires Gamma Pro)
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <Label className="text-xs">Image Style</Label>
+                            <Select value={gammaImageStyle} onValueChange={(v) => setGammaImageStyle(v as typeof gammaImageStyle)}>
+                              <SelectTrigger className="mt-1 h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="photorealistic">Photorealistic</SelectItem>
+                                <SelectItem value="illustration">Illustration</SelectItem>
+                                <SelectItem value="none">No Images</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label className="text-xs">Text Amount</Label>
+                            <Select value={gammaTextAmount} onValueChange={(v) => setGammaTextAmount(v as typeof gammaTextAmount)}>
+                              <SelectTrigger className="mt-1 h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="brief">Brief</SelectItem>
+                                <SelectItem value="medium">Medium</SelectItem>
+                                <SelectItem value="detailed">Detailed</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Theme Selection - only show for built-in */}
+                  {!useGamma && (<>
                   <div>
                     <Label>Theme</Label>
                     <Select value={theme} onValueChange={(v) => setTheme(v as ThemeId)}>
@@ -254,6 +427,7 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
                       </SelectContent>
                     </Select>
                   </div>
+                  </>)}
 
                   {/* Slide Count */}
                   <div>
@@ -320,18 +494,23 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
               </Button>
               <Button
                 onClick={handleGenerate}
-                disabled={generating || (mode === "verses-only" && !versesInput.trim())}
+                disabled={
+                  generating ||
+                  (mode === "verses-only" && !versesInput.trim()) ||
+                  (useGamma && !gammaApiKey.startsWith('sk-gamma-'))
+                }
                 size="lg"
+                className={useGamma ? "bg-purple-600 hover:bg-purple-700" : ""}
               >
                 {generating ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating...
+                    {useGamma ? "Creating with Gamma..." : "Generating..."}
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generate Slides
+                    {useGamma ? <Wand2 className="w-4 h-4 mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                    {useGamma ? "Generate with Gamma" : "Generate Slides"}
                   </>
                 )}
               </Button>
@@ -339,7 +518,8 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
           </div>
         )}
 
-        {step === "preview" && generatedDeck && (
+        {/* Preview for Built-in Generator */}
+        {step === "preview" && generatedDeck && !useGamma && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
@@ -357,7 +537,7 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
             <ScrollArea className="h-[300px] border rounded-lg p-3">
               <div className="space-y-2">
                 {generatedDeck.slides.map((slide, idx) => (
-                  <div 
+                  <div
                     key={idx}
                     className="flex items-start gap-3 p-2 rounded hover:bg-muted/50"
                   >
@@ -400,6 +580,61 @@ export function SermonPPTExport({ sermon, variant = "outline", size = "sm" }: Se
                     Download .pptx
                   </>
                 )}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Preview for Gamma Generator */}
+        {step === "preview" && gammaResult && useGamma && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Wand2 className="w-4 h-4 text-purple-500" />
+                  {gammaResult.title}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {gammaResult.numCards} slides • Created with Gamma.app
+                </p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setStep("settings")}>
+                <Eye className="w-4 h-4 mr-1" />
+                Edit Settings
+              </Button>
+            </div>
+
+            <div className="p-6 border rounded-lg bg-gradient-to-br from-purple-500/10 to-blue-500/10 text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-purple-500/20 rounded-full flex items-center justify-center">
+                <Sparkles className="w-8 h-8 text-purple-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold">Your Gamma presentation is ready!</h4>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Open in Gamma to edit, or download as PowerPoint
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Close
+              </Button>
+              {gammaResult.exportUrl && (
+                <Button
+                  variant="outline"
+                  onClick={() => window.open(gammaResult.exportUrl, '_blank')}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download .pptx
+                </Button>
+              )}
+              <Button
+                onClick={() => window.open(gammaResult.gammaUrl, '_blank')}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Open in Gamma
               </Button>
             </div>
           </div>
