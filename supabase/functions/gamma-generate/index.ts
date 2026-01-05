@@ -39,7 +39,7 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const {
-      apiKey,
+      apiKey: userApiKey,
       mode,
       sermonData,
       verses,
@@ -48,10 +48,14 @@ serve(async (req) => {
 
     console.log("[gamma-generate] Processing request:", { mode, settings });
 
+    // Use backend secret if available, otherwise use user-provided key
+    const backendApiKey = Deno.env.get('GAMMA_API_KEY');
+    const apiKey = backendApiKey || userApiKey;
+
     // Validate API key
     if (!apiKey || !apiKey.startsWith('sk-gamma-')) {
       return new Response(
-        JSON.stringify({ error: "Invalid Gamma API key. Keys should start with 'sk-gamma-'" }),
+        JSON.stringify({ error: "Gamma API key required. Please add your key in the settings." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
