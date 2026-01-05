@@ -43,13 +43,6 @@ import { useSparks } from "@/hooks/useSparks";
 import { SparkContainer, SparkSettings } from "@/components/sparks";
 import { Badge } from "@/components/ui/badge";
 
-// New PT Study Tools
-import { VisualExegesisLayer } from "./VisualExegesisLayer";
-import { CrossRoomLinking } from "./CrossRoomLinking";
-import { InteractiveWordStudy } from "./InteractiveWordStudy";
-import { AIStudyQuestions } from "./AIStudyQuestions";
-import { ChristConnection } from "./ChristConnection";
-
 export const BibleReader = () => {
   const { book = "John", chapter: chapterParam = "3" } = useParams();
   const navigate = useNavigate();
@@ -529,28 +522,7 @@ export const BibleReader = () => {
         <div className="lg:col-span-1 space-y-4 lg:space-y-6 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto" ref={jeevesRef}>
           {chainReferenceMode ? (
             <div className="space-y-6">
-              <PTChainReferenceBox 
-                book={book}
-                chapter={chapter}
-                chapterText={chapterData.verses.map(v => `${v.verse}. ${v.text}`).join('\n')}
-                onHighlightVerses={setHighlightedVerses}
-              />
-              
-              {/* Visual Exegesis Layer */}
-              <VisualExegesisLayer
-                book={book}
-                chapter={chapter}
-                chapterText={chapterData.verses.map(v => `${v.verse}. ${v.text}`).join('\n')}
-                onHighlightVerses={setHighlightedVerses}
-              />
-              
-              {/* AI Study Questions for Chapter */}
-              <AIStudyQuestions
-                book={book}
-                chapter={chapter}
-                chapterText={chapterData.verses.map(v => `${v.verse}. ${v.text}`).join('\n')}
-              />
-              
+              <PTChainReferenceBox initialVerse={selectedVerse ? `${book} ${chapter}:${selectedVerse}` : `${book} ${chapter}`} />
               <ChainReferencePanel
                 book={book}
                 chapter={chapter}
@@ -608,14 +580,6 @@ export const BibleReader = () => {
                 verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
               />
               
-              {/* Quick Christ Connection */}
-              <div className="px-2">
-                <ChristConnection
-                  verseReference={`${book} ${chapter}:${selectedVerse}`}
-                  verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
-                />
-              </div>
-              
               <PrinciplePanel
                 book={book}
                 chapter={chapter}
@@ -624,31 +588,6 @@ export const BibleReader = () => {
                 onClose={() => setSelectedVerse(null)}
                 onHighlight={setHighlightedVerses}
               />
-              
-              {/* Cross-Room Linking */}
-              <CrossRoomLinking
-                book={book}
-                chapter={chapter}
-                verse={selectedVerse}
-                verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
-              />
-              
-              {/* Interactive Word Study */}
-              <InteractiveWordStudy
-                book={book}
-                chapter={chapter}
-                verse={selectedVerse}
-                verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
-              />
-              
-              {/* AI Study Questions for Verse */}
-              <AIStudyQuestions
-                book={book}
-                chapter={chapter}
-                verse={selectedVerse}
-                verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
-              />
-              
               <VerseImageAttachment
                 book={book}
                 chapter={chapter}
