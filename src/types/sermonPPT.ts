@@ -111,6 +111,8 @@ export interface SlideContent {
   numbering?: PointNumbering;
   speakerNotes?: string;
   designNotes?: string;
+  imageUrl?: string;
+  imagePrompt?: string;
 }
 
 export interface SlideDeck {

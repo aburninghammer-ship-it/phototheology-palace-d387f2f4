@@ -40,6 +40,7 @@ import {
 } from "@/types/sermonPPT";
 import { downloadSermonPPT } from "@/lib/sermonPPTRenderer";
 import { extractScriptureReferencesFromSermon } from "@/lib/extractScriptureReferences";
+import { SlideEditor } from "@/components/sermon/SlideEditor";
 
 // ============================================================================
 // THEME PREVIEW COMPONENT
@@ -106,7 +107,7 @@ export default function SermonPowerPoint() {
   const [activeTab, setActiveTab] = useState<"full" | "verses">("full");
   const [generating, setGenerating] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<"input" | "settings" | "preview">("input");
+  const [step, setStep] = useState<"input" | "settings" | "edit" | "preview">("input");
 
   // Input state
   const [sermonTitle, setSermonTitle] = useState("");
@@ -246,8 +247,8 @@ export default function SermonPowerPoint() {
       if (error) throw error;
 
       setGeneratedDeck(data as SermonDeck);
-      setStep("preview");
-      toast.success("Presentation structure generated!");
+      setStep("edit");
+      toast.success("Presentation generated! Now customize your slides.");
     } catch (error) {
       console.error("Error generating presentation:", error);
       toast.error("Failed to generate presentation. Please try again.");
@@ -345,6 +346,7 @@ export default function SermonPowerPoint() {
           {[
             { id: "input", label: "Content", icon: FileText },
             { id: "settings", label: "Style", icon: Palette },
+            { id: "edit", label: "Edit", icon: Wand2 },
             { id: "preview", label: "Download", icon: Download },
           ].map((s, idx) => (
             <div key={s.id} className="flex items-center">
@@ -352,6 +354,7 @@ export default function SermonPowerPoint() {
                 onClick={() => {
                   if (s.id === "input") setStep("input");
                   else if (s.id === "settings" && isInputValid) setStep("settings");
+                  else if (s.id === "edit" && generatedDeck) setStep("edit");
                   else if (s.id === "preview" && generatedDeck) setStep("preview");
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
@@ -363,7 +366,7 @@ export default function SermonPowerPoint() {
                 <s.icon className="w-4 h-4" />
                 <span className="text-sm font-medium">{s.label}</span>
               </button>
-              {idx < 2 && (
+              {idx < 3 && (
                 <ChevronRight className="w-5 h-5 text-white/30 mx-1" />
               )}
             </div>
@@ -665,7 +668,50 @@ John 3:16 - "For God so loved the world..."`}
           </motion.div>
         )}
 
-        {/* Step 3: Preview & Download */}
+        {/* Step 3: Edit Slides */}
+        {step === "edit" && generatedDeck && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full"
+          >
+            <Card className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-white/20 overflow-hidden">
+              <CardHeader className="border-b">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Wand2 className="w-5 h-5 text-purple-600" />
+                      Customize Your Slides
+                    </CardTitle>
+                    <CardDescription>
+                      Click on slides to edit them. Use AI to generate images and refine content.
+                    </CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setStep("settings")}>
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back
+                    </Button>
+                    <Button onClick={() => setStep("preview")} className="gap-2">
+                      Continue to Download
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="h-[600px]">
+                  <SlideEditor
+                    deck={generatedDeck}
+                    onDeckUpdate={setGeneratedDeck}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Step 4: Preview & Download */}
         {step === "preview" && generatedDeck && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -728,11 +774,11 @@ John 3:16 - "For God so loved the world..."`}
                 <div className="flex gap-3 pt-4">
                   <Button
                     variant="outline"
-                    onClick={() => setStep("settings")}
+                    onClick={() => setStep("edit")}
                     className="flex-1"
                   >
-                    <Settings2 className="w-4 h-4 mr-2" />
-                    Adjust Settings
+                    <Wand2 className="w-4 h-4 mr-2" />
+                    Edit Slides
                   </Button>
                   <Button
                     onClick={downloadPPT}

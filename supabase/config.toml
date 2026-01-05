@@ -234,3 +234,9 @@ verify_jwt = false
 
 [functions.polish-sermon]
 verify_jwt = false
+
+[functions.generate-slide-image]
+verify_jwt = false
+
+[functions.refine-slide]
+verify_jwt = false
