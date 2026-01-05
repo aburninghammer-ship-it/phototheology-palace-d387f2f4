@@ -7953,6 +7953,7 @@ export type Database = {
           focused_room_floor: number | null
           focused_room_id: string | null
           focused_room_set_at: string | null
+          gamma_api_key: string | null
           gem_creation_streak: number | null
           guided_path_completed_at: string | null
           guided_path_step: number | null
@@ -8027,6 +8028,7 @@ export type Database = {
           focused_room_floor?: number | null
           focused_room_id?: string | null
           focused_room_set_at?: string | null
+          gamma_api_key?: string | null
           gem_creation_streak?: number | null
           guided_path_completed_at?: string | null
           guided_path_step?: number | null
@@ -8101,6 +8103,7 @@ export type Database = {
           focused_room_floor?: number | null
           focused_room_id?: string | null
           focused_room_set_at?: string | null
+          gamma_api_key?: string | null
           gem_creation_streak?: number | null
           guided_path_completed_at?: string | null
           guided_path_step?: number | null

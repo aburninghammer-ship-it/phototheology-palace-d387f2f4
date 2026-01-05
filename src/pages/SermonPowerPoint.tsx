@@ -130,6 +130,60 @@ export default function SermonPowerPoint() {
     numCards: number;
   } | null>(null);
   const [gammaImageStyle, setGammaImageStyle] = useState<"photorealistic" | "illustration" | "none">("photorealistic");
+  const [gammaApiKey, setGammaApiKey] = useState("");
+  const [gammaKeyLoading, setGammaKeyLoading] = useState(false);
+  const [gammaKeySaved, setGammaKeySaved] = useState(false);
+
+  // Load user's saved Gamma API key
+  useEffect(() => {
+    const loadGammaKey = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("gamma_api_key")
+        .eq("id", user.id)
+        .single();
+      
+      if (profile?.gamma_api_key) {
+        setGammaApiKey(profile.gamma_api_key);
+        setGammaKeySaved(true);
+      }
+    };
+    loadGammaKey();
+  }, []);
+
+  // Save Gamma API key to profile
+  const saveGammaApiKey = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Please sign in to save your API key");
+      return;
+    }
+    
+    if (!gammaApiKey.startsWith("sk-gamma-")) {
+      toast.error("Invalid Gamma API key. It should start with 'sk-gamma-'");
+      return;
+    }
+    
+    setGammaKeyLoading(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ gamma_api_key: gammaApiKey })
+        .eq("id", user.id);
+      
+      if (error) throw error;
+      setGammaKeySaved(true);
+      toast.success("Gamma API key saved!");
+    } catch (error) {
+      console.error("Error saving Gamma API key:", error);
+      toast.error("Failed to save API key");
+    } finally {
+      setGammaKeyLoading(false);
+    }
+  };
 
   // Load sermon data if ID provided
   useEffect(() => {
@@ -226,9 +280,17 @@ export default function SermonPowerPoint() {
         : undefined;
 
       if (useGamma) {
-        // Generate with Gamma - backend has the API key configured
+        // Validate API key is saved
+        if (!gammaApiKey || !gammaApiKey.startsWith("sk-gamma-")) {
+          toast.error("Please enter and save your Gamma API key first");
+          setGenerating(false);
+          return;
+        }
+
+        // Generate with Gamma - pass user's API key
         const { data, error } = await supabase.functions.invoke("gamma-generate", {
           body: {
+            apiKey: gammaApiKey,
             mode: isVersesMode ? "verses-only" : "full-sermon",
             sermonData: !isVersesMode ? {
               title: sermonTitle || "Untitled Sermon",
@@ -590,11 +652,45 @@ John 3:16 - "For God so loved the world..."`}
 
                   {useGamma && (
                     <div className="mt-4 space-y-4 pt-4 border-t border-purple-500/20">
-                      {/* Backend key is configured - just show image style options */}
-                      <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
-                        <p className="text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
-                          <Check className="w-4 h-4" />
-                          Gamma.app is configured and ready to use
+                      {/* Per-user API key input */}
+                      <div className="space-y-2">
+                        <Label className="text-sm">Your Gamma API Key</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="password"
+                            placeholder="sk-gamma-..."
+                            value={gammaApiKey}
+                            onChange={(e) => {
+                              setGammaApiKey(e.target.value);
+                              setGammaKeySaved(false);
+                            }}
+                            className="flex-1"
+                          />
+                          <Button
+                            variant={gammaKeySaved ? "outline" : "default"}
+                            size="sm"
+                            onClick={saveGammaApiKey}
+                            disabled={gammaKeyLoading || !gammaApiKey}
+                          >
+                            {gammaKeyLoading ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : gammaKeySaved ? (
+                              <Check className="w-4 h-4" />
+                            ) : (
+                              "Save"
+                            )}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Get your key at{" "}
+                          <a
+                            href="https://gamma.app/settings/developers"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-400 hover:underline"
+                          >
+                            gamma.app/settings/developers
+                          </a>
                         </p>
                       </div>
 
