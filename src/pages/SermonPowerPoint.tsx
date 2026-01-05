@@ -26,6 +26,8 @@ import {
   ArrowLeft,
   Check,
   Wand2,
+  Key,
+  ExternalLink,
 } from "lucide-react";
 import {
   PPT_THEMES,
@@ -119,6 +121,29 @@ export default function SermonPowerPoint() {
 
   // Generated deck
   const [generatedDeck, setGeneratedDeck] = useState<SermonDeck | null>(null);
+
+  // Gamma-specific state
+  const [useGamma, setUseGamma] = useState(false);
+  const [gammaApiKey, setGammaApiKey] = useState(() => {
+    return localStorage.getItem('phototheology_gamma_api_key') || '';
+  });
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [gammaResult, setGammaResult] = useState<{
+    success: boolean;
+    title: string;
+    gammaUrl: string;
+    exportUrl?: string;
+    numCards: number;
+  } | null>(null);
+  const [gammaImageStyle, setGammaImageStyle] = useState<"photorealistic" | "illustration" | "none">("photorealistic");
+
+  // Save Gamma API key when changed
+  const handleGammaApiKeyChange = (value: string) => {
+    setGammaApiKey(value);
+    if (value.startsWith('sk-gamma-')) {
+      localStorage.setItem('phototheology_gamma_api_key', value);
+    }
+  };
 
   // Load sermon data if ID provided
   useEffect(() => {
@@ -214,44 +239,84 @@ export default function SermonPowerPoint() {
         ? versesInput.split("\n").filter((v) => v.trim())
         : undefined;
 
-      const { data, error } = await supabase.functions.invoke("sermon-to-ppt", {
-        body: {
-          // Mode selection
-          mode: isVersesMode ? "verses-only" : "full-sermon",
-          
-          // Verses mode data
-          verses: isVersesMode ? verses : undefined,
+      if (useGamma) {
+        // Generate with Gamma
+        if (!gammaApiKey || !gammaApiKey.startsWith('sk-gamma-')) {
+          throw new Error("Please enter a valid Gamma API key (starts with 'sk-gamma-')");
+        }
 
-          // Full sermon mode data (structured as expected by edge function)
-          sermonData: !isVersesMode ? {
-            title: sermonTitle || "Untitled Sermon",
-            themePassage: "",
-            sermonStyle: "expository",
-            smoothStones: [],
-            bridges: [],
-            movieStructure: null,
-            fullSermon: sermonContent,
-          } : undefined,
-
-          // Settings (mapped to expected names)
-          settings: {
-            slideCount: settings.slide_count,
-            bibleVersion: settings.bible_version,
-            audienceType: settings.audience,
-            theme: settings.theme_id,
-            venue: settings.venue_preset,
+        const { data, error } = await supabase.functions.invoke("gamma-generate", {
+          body: {
+            apiKey: gammaApiKey,
+            mode: isVersesMode ? "verses-only" : "full-sermon",
+            sermonData: !isVersesMode ? {
+              title: sermonTitle || "Untitled Sermon",
+              themePassage: "",
+              sermonStyle: "expository",
+              smoothStones: [],
+              bridges: [],
+              movieStructure: null,
+              fullSermon: sermonContent,
+            } : undefined,
+            verses: isVersesMode ? verses : undefined,
+            settings: {
+              slideCount: settings.slide_count <= 12 ? 'minimal' : settings.slide_count <= 20 ? 'standard' : 'expanded',
+              bibleVersion: settings.bible_version,
+              audienceType: settings.audience,
+              imageStyle: gammaImageStyle,
+              textAmount: 'medium',
+              dimensions: '16x9',
+              tone: 'reverent, inspiring',
+            },
           },
-        },
-      });
+        });
 
-      if (error) throw error;
+        if (error) throw error;
+        if (data.error) throw new Error(data.error);
 
-      setGeneratedDeck(data as SermonDeck);
-      setStep("edit");
-      toast.success("Presentation generated! Now customize your slides.");
-    } catch (error) {
+        setGammaResult(data);
+        setStep("preview");
+        toast.success(`Gamma created ${data.numCards || 'your'} slides!`);
+      } else {
+        // Generate with built-in renderer
+        const { data, error } = await supabase.functions.invoke("sermon-to-ppt", {
+          body: {
+            mode: isVersesMode ? "verses-only" : "full-sermon",
+            verses: isVersesMode ? verses : undefined,
+            sermonData: !isVersesMode ? {
+              title: sermonTitle || "Untitled Sermon",
+              themePassage: "",
+              sermonStyle: "expository",
+              smoothStones: [],
+              bridges: [],
+              movieStructure: null,
+              fullSermon: sermonContent,
+            } : undefined,
+            settings: {
+              slideCount: settings.slide_count,
+              bibleVersion: settings.bible_version,
+              audienceType: settings.audience,
+              theme: settings.theme_id,
+              venue: settings.venue_preset,
+            },
+          },
+        });
+
+        if (error) throw error;
+
+        setGeneratedDeck(data as SermonDeck);
+        setStep("edit");
+        toast.success("Presentation generated! Now customize your slides.");
+      }
+    } catch (error: any) {
       console.error("Error generating presentation:", error);
-      toast.error("Failed to generate presentation. Please try again.");
+      if (error.message?.includes("401")) {
+        toast.error("Invalid Gamma API key. Please check your key.");
+      } else if (error.message?.includes("403")) {
+        toast.error("Gamma API access denied. Check your credits.");
+      } else {
+        toast.error(error.message || "Failed to generate presentation. Please try again.");
+      }
     } finally {
       setGenerating(false);
     }
@@ -522,7 +587,82 @@ John 3:16 - "For God so loved the world..."`}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Theme Selection Grid */}
+                {/* Generator Selection - Gamma Toggle */}
+                <div className="p-4 rounded-xl border-2 border-purple-500/30 bg-gradient-to-r from-purple-500/10 to-fuchsia-500/10">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-fuchsia-600 flex items-center justify-center">
+                        <Wand2 className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <Label className="text-base font-semibold">Use Gamma.app</Label>
+                        <p className="text-xs text-muted-foreground">
+                          {useGamma ? "AI-powered stunning presentations" : "Built-in PowerPoint generator"}
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={useGamma}
+                      onCheckedChange={setUseGamma}
+                    />
+                  </div>
+
+                  {useGamma && (
+                    <div className="mt-4 space-y-4 pt-4 border-t border-purple-500/20">
+                      <div className="space-y-2">
+                        <Label className="flex items-center gap-2 text-sm">
+                          <Key className="w-4 h-4" />
+                          Gamma API Key
+                        </Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type={showApiKey ? "text" : "password"}
+                            placeholder="sk-gamma-..."
+                            value={gammaApiKey}
+                            onChange={(e) => handleGammaApiKeyChange(e.target.value)}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowApiKey(!showApiKey)}
+                          >
+                            {showApiKey ? "Hide" : "Show"}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          <a
+                            href="https://gamma.app/settings"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-400 hover:text-purple-300 hover:underline inline-flex items-center gap-1"
+                          >
+                            Get your API key <ExternalLink className="w-3 h-3" />
+                          </a>
+                          {" "}(requires Gamma Pro subscription)
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm">Image Style</Label>
+                        <Select value={gammaImageStyle} onValueChange={(v) => setGammaImageStyle(v as typeof gammaImageStyle)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="photorealistic">Photorealistic</SelectItem>
+                            <SelectItem value="illustration">Illustration</SelectItem>
+                            <SelectItem value="none">No AI Images</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Theme Selection Grid - only show for built-in */}
+                {!useGamma && (
                 <div className="space-y-3">
                   <Label>Visual Theme</Label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -541,9 +681,11 @@ John 3:16 - "For God so loved the world..."`}
                     ))}
                   </div>
                 </div>
+                )}
 
                 {/* Other Settings */}
                 <div className="grid gap-4 sm:grid-cols-2">
+                  {!useGamma && (
                   <div className="space-y-2">
                     <Label>Venue Size</Label>
                     <Select
@@ -562,6 +704,7 @@ John 3:16 - "For God so loved the world..."`}
                       </SelectContent>
                     </Select>
                   </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label>Slide Count</Label>
@@ -646,19 +789,19 @@ John 3:16 - "For God so loved the world..."`}
                   </Button>
                   <Button
                     onClick={generatePresentation}
-                    disabled={generating}
-                    className="flex-1 gap-2"
+                    disabled={generating || (useGamma && !gammaApiKey.startsWith('sk-gamma-'))}
+                    className={`flex-1 gap-2 ${useGamma ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700' : ''}`}
                     size="lg"
                   >
                     {generating ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        Generating...
+                        {useGamma ? "Creating with Gamma..." : "Generating..."}
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-4 h-4" />
-                        Generate Presentation
+                        {useGamma ? <Wand2 className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                        {useGamma ? "Generate with Gamma" : "Generate Presentation"}
                       </>
                     )}
                   </Button>
@@ -711,8 +854,104 @@ John 3:16 - "For God so loved the world..."`}
           </motion.div>
         )}
 
-        {/* Step 4: Preview & Download */}
-        {step === "preview" && generatedDeck && (
+        {/* Step 4: Preview & Download - Gamma Result */}
+        {step === "preview" && gammaResult && useGamma && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            {/* Success Card */}
+            <Card className="bg-gradient-to-r from-purple-500/20 to-fuchsia-500/20 border-purple-400/30 backdrop-blur-xl">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-fuchsia-600 rounded-full flex items-center justify-center">
+                    <Wand2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Gamma Presentation Ready!</h3>
+                    <p className="text-purple-200">
+                      {gammaResult.numCards} slides created with Gamma.app
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Gamma Result Card */}
+            <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Wand2 className="w-5 h-5 text-purple-500" />
+                  {gammaResult.title}
+                </CardTitle>
+                <CardDescription>
+                  Your presentation is ready in Gamma
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Preview illustration */}
+                <div className="p-8 rounded-xl bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10 border border-purple-500/20 text-center">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-fuchsia-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
+                    <Sparkles className="w-10 h-10 text-white" />
+                  </div>
+                  <h4 className="text-lg font-semibold mb-2">Your presentation is live!</h4>
+                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                    Open in Gamma to edit, customize, and present your slides. You can also download as PowerPoint.
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setStep("settings")}
+                    className="flex-1"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Settings
+                  </Button>
+                  {gammaResult.exportUrl && (
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open(gammaResult.exportUrl, '_blank')}
+                      className="flex-1"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download .pptx
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => window.open(gammaResult.gammaUrl, '_blank')}
+                    className="flex-1 gap-2 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700"
+                    size="lg"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Open in Gamma
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Start Over */}
+            <div className="text-center">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setStep("input");
+                  setGammaResult(null);
+                }}
+                className="text-white/70 hover:text-white"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Create Another Presentation
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 4: Preview & Download - Built-in */}
+        {step === "preview" && generatedDeck && !useGamma && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
