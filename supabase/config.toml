@@ -240,3 +240,6 @@ verify_jwt = false
 
 [functions.refine-slide]
 verify_jwt = false
+
+[functions.gamma-export]
+verify_jwt = false

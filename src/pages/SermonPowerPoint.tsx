@@ -19,14 +19,12 @@ import {
   Sparkles,
   BookOpen,
   Palette,
-  Settings2,
   ChevronRight,
   FileText,
   Download,
   ArrowLeft,
   Check,
   Wand2,
-  Key,
   ExternalLink,
 } from "lucide-react";
 import {
@@ -124,10 +122,6 @@ export default function SermonPowerPoint() {
 
   // Gamma-specific state
   const [useGamma, setUseGamma] = useState(false);
-  const [gammaApiKey, setGammaApiKey] = useState(() => {
-    return localStorage.getItem('phototheology_gamma_api_key') || '';
-  });
-  const [showApiKey, setShowApiKey] = useState(false);
   const [gammaResult, setGammaResult] = useState<{
     success: boolean;
     title: string;
@@ -136,14 +130,6 @@ export default function SermonPowerPoint() {
     numCards: number;
   } | null>(null);
   const [gammaImageStyle, setGammaImageStyle] = useState<"photorealistic" | "illustration" | "none">("photorealistic");
-
-  // Save Gamma API key when changed
-  const handleGammaApiKeyChange = (value: string) => {
-    setGammaApiKey(value);
-    if (value.startsWith('sk-gamma-')) {
-      localStorage.setItem('phototheology_gamma_api_key', value);
-    }
-  };
 
   // Load sermon data if ID provided
   useEffect(() => {
@@ -240,14 +226,9 @@ export default function SermonPowerPoint() {
         : undefined;
 
       if (useGamma) {
-        // Generate with Gamma
-        if (!gammaApiKey || !gammaApiKey.startsWith('sk-gamma-')) {
-          throw new Error("Please enter a valid Gamma API key (starts with 'sk-gamma-')");
-        }
-
+        // Generate with Gamma - backend has the API key configured
         const { data, error } = await supabase.functions.invoke("gamma-generate", {
           body: {
-            apiKey: gammaApiKey,
             mode: isVersesMode ? "verses-only" : "full-sermon",
             sermonData: !isVersesMode ? {
               title: sermonTitle || "Untitled Sermon",
@@ -609,38 +590,11 @@ John 3:16 - "For God so loved the world..."`}
 
                   {useGamma && (
                     <div className="mt-4 space-y-4 pt-4 border-t border-purple-500/20">
-                      <div className="space-y-2">
-                        <Label className="flex items-center gap-2 text-sm">
-                          <Key className="w-4 h-4" />
-                          Gamma API Key
-                        </Label>
-                        <div className="flex gap-2">
-                          <Input
-                            type={showApiKey ? "text" : "password"}
-                            placeholder="sk-gamma-..."
-                            value={gammaApiKey}
-                            onChange={(e) => handleGammaApiKeyChange(e.target.value)}
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowApiKey(!showApiKey)}
-                          >
-                            {showApiKey ? "Hide" : "Show"}
-                          </Button>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          <a
-                            href="https://gamma.app/settings"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-purple-400 hover:text-purple-300 hover:underline inline-flex items-center gap-1"
-                          >
-                            Get your API key <ExternalLink className="w-3 h-3" />
-                          </a>
-                          {" "}(requires Gamma Pro subscription)
+                      {/* Backend key is configured - just show image style options */}
+                      <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                        <p className="text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
+                          <Check className="w-4 h-4" />
+                          Gamma.app is configured and ready to use
                         </p>
                       </div>
 
@@ -789,7 +743,7 @@ John 3:16 - "For God so loved the world..."`}
                   </Button>
                   <Button
                     onClick={generatePresentation}
-                    disabled={generating || (useGamma && !gammaApiKey.startsWith('sk-gamma-'))}
+                    disabled={generating}
                     className={`flex-1 gap-2 ${useGamma ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700' : ''}`}
                     size="lg"
                   >
