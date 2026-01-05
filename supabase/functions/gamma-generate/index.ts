@@ -48,14 +48,13 @@ serve(async (req) => {
 
     console.log("[gamma-generate] Processing request:", { mode, settings });
 
-    // Use backend secret if available, otherwise use user-provided key
-    const backendApiKey = Deno.env.get('GAMMA_API_KEY');
-    const apiKey = backendApiKey || userApiKey;
+    // Use user-provided key (per-user model)
+    const apiKey = userApiKey;
 
     // Validate API key
     if (!apiKey || !apiKey.startsWith('sk-gamma-')) {
       return new Response(
-        JSON.stringify({ error: "Gamma API key required. Please add your key in the settings." }),
+        JSON.stringify({ error: "Gamma API key required. Please add your key in your profile settings." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
