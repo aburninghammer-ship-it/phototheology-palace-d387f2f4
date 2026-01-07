@@ -282,7 +282,7 @@ export default function WhyPhototheology() {
                 </h2>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    Phototheology isn't just another Bible program—it's a complete study system based on
+                    Phototheology isn't just another Bible tool—it's a complete learning suite based on
                     the ancient memory palace technique.
                   </p>
                   <p>

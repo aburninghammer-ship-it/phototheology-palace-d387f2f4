@@ -33,7 +33,7 @@ const TermsOfService = () => {
             <section>
               <h2 className="text-2xl font-semibold mb-3">2. Description of Service</h2>
               <p>
-                Phototheology provides a comprehensive Bible study platform incorporating memory techniques, interactive learning, AI assistance, and community features to help users engage with Scripture through the Phototheology method.
+                Phototheology provides a comprehensive Bible learning suite incorporating memory techniques, interactive learning, AI assistance, and community features to help users engage with Scripture through the Phototheology method.
               </p>
             </section>
 
