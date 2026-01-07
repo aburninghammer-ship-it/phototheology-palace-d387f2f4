@@ -45,9 +45,9 @@ export const PunchyHero = () => {
               {/* Floating orbs */}
               <div className="absolute top-2 right-3 w-1.5 h-1.5 rounded-full bg-cyan-400/60 animate-pulse" />
               <div className="absolute bottom-2 left-4 w-1 h-1 rounded-full bg-yellow-400/50 animate-pulse delay-500" />
-              <h2 className="relative font-display text-lg sm:text-xl md:text-2xl font-bold tracking-widest text-primary uppercase drop-shadow-[0_0_15px_hsl(var(--primary)/0.6)]">
-                Phototheology Bible Study Suite
-              </h2>
+                <h2 className="relative font-display text-lg sm:text-xl md:text-2xl font-bold tracking-widest text-primary uppercase drop-shadow-[0_0_15px_hsl(var(--primary)/0.6)]">
+                  Phototheology Bible Learning Suite
+                </h2>
             </div>
           </div>
         </motion.div>
@@ -61,7 +61,7 @@ export const PunchyHero = () => {
         >
           <span className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-background/20 backdrop-blur-md border border-primary/30 text-xs sm:text-sm font-medium text-primary shadow-[0_4px_30px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)]">
             <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="whitespace-normal sm:whitespace-nowrap">Not another devotional • A complete Bible study platform</span>
+            <span className="whitespace-normal sm:whitespace-nowrap">Not another devotional • A complete Bible learning suite</span>
           </span>
         </motion.div>
 
