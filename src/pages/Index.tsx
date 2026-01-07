@@ -107,7 +107,7 @@ const Index = () => {
         <ExitIntentPopup />
       </Suspense>
       
-      {/* Install App Banner */}
+      {/* Install Banner */}
       {showInstallBanner && (
         <div className="sticky top-16 z-40 bg-gradient-to-r from-primary via-primary/95 to-accent text-primary-foreground shadow-lg border-b border-primary/20">
           <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3">
@@ -115,8 +115,8 @@ const Index = () => {
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <Download className="w-5 h-5 flex-shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="font-bold text-sm">📱 Get the App!</p>
-                  <p className="text-xs opacity-90">Install for offline access</p>
+                  <p className="font-bold text-sm">📱 Install Phototheology</p>
+                  <p className="text-xs opacity-90">Access offline anytime</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">

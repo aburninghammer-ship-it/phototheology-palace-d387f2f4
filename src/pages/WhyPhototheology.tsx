@@ -163,7 +163,7 @@ export default function WhyPhototheology() {
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Most Bible apps help you read. Phototheology helps you{" "}
+              Most Bible software helps you read. Phototheology helps you{" "}
               <span className="text-primary font-semibold">remember</span>,{" "}
               <span className="text-palace-teal font-semibold">understand</span>, and{" "}
               <span className="text-palace-orange font-semibold">connect</span> Scripture for life.
@@ -183,7 +183,7 @@ export default function WhyPhototheology() {
           >
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold">The Problem With Most Bible Apps</h2>
+                <h2 className="text-3xl font-bold">The Problem With Most Bible Software</h2>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
                     You've read through the Bible. You've highlighted verses. You've taken notes. But
@@ -193,7 +193,7 @@ export default function WhyPhototheology() {
                     Can you recall what you studied last month? Last year?
                   </p>
                   <p>
-                    Traditional Bible apps are designed for <em>consumption</em>, not{" "}
+                    Traditional Bible software is designed for <em>consumption</em>, not{" "}
                     <em>retention</em>. You read, you scroll, you forget.
                   </p>
                 </div>
@@ -282,7 +282,7 @@ export default function WhyPhototheology() {
                 </h2>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    Phototheology isn't just another Bible app—it's a complete study system based on
+                    Phototheology isn't just another Bible program—it's a complete study system based on
                     the ancient memory palace technique.
                   </p>
                   <p>
@@ -310,7 +310,7 @@ export default function WhyPhototheology() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">How We Compare</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              See how Phototheology stacks up against the most popular Bible apps
+              See how Phototheology stacks up against the most popular Bible software
             </p>
           </motion.div>
 

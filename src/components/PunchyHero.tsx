@@ -61,7 +61,7 @@ export const PunchyHero = () => {
         >
           <span className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-background/20 backdrop-blur-md border border-primary/30 text-xs sm:text-sm font-medium text-primary shadow-[0_4px_30px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)]">
             <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-            <span className="whitespace-normal sm:whitespace-nowrap">Not another devotional app • A complete Bible study system</span>
+            <span className="whitespace-normal sm:whitespace-nowrap">Not another devotional • A complete Bible study platform</span>
           </span>
         </motion.div>
 
