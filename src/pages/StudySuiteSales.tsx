@@ -166,7 +166,7 @@ export default function StudySuiteSales() {
                 asChild
                 className="text-lg px-8 py-6 h-auto"
               >
-                <a href="https://buy.stripe.com/7sY4gzdirbPE46Qc6M6EU0d" target="_blank" rel="noopener noreferrer">
+                <a href="https://buy.stripe.com/dRm28r6U37zo9ra0o46EU0e" target="_blank" rel="noopener noreferrer">
                   Get the Study Suite
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </a>
@@ -507,7 +507,7 @@ export default function StudySuiteSales() {
                   asChild
                   className="w-full text-lg py-6 h-auto"
                 >
-                  <a href="https://buy.stripe.com/7sY4gzdirbPE46Qc6M6EU0d" target="_blank" rel="noopener noreferrer">
+                  <a href="https://buy.stripe.com/dRm28r6U37zo9ra0o46EU0e" target="_blank" rel="noopener noreferrer">
                     <Building2 className="w-5 h-5 mr-2" />
                     Get the Study Suite
                   </a>
