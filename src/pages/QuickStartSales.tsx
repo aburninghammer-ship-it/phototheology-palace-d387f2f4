@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,8 +18,6 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 
 export default function QuickStartSales() {
-  const navigate = useNavigate();
-
   const outcomes = [
     "Understand the architectural logic of the Phototheology Palace",
     "Identify the purpose of each of the 8 Floors",
@@ -97,11 +94,13 @@ export default function QuickStartSales() {
             <div className="pt-4">
               <Button
                 size="lg"
-                onClick={() => navigate("/auth")}
+                asChild
                 className="text-lg px-8 py-6 h-auto"
               >
-                Get the Quick-Start Guide
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <a href="https://buy.stripe.com/dRm28r6U37zo9ra0o46EU0e" target="_blank" rel="noopener noreferrer">
+                  Get the Quick-Start Guide
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </a>
               </Button>
               <p className="text-sm text-muted-foreground mt-3">
                 Instant access upon purchase
@@ -479,11 +478,13 @@ export default function QuickStartSales() {
 
                 <Button
                   size="lg"
-                  onClick={() => navigate("/auth")}
+                  asChild
                   className="w-full text-lg py-6 h-auto"
                 >
-                  <Target className="w-5 h-5 mr-2" />
-                  Get the Quick-Start Guide
+                  <a href="https://buy.stripe.com/dRm28r6U37zo9ra0o46EU0e" target="_blank" rel="noopener noreferrer">
+                    <Target className="w-5 h-5 mr-2" />
+                    Get the Quick-Start Guide
+                  </a>
                 </Button>
 
                 <p className="text-xs text-muted-foreground">

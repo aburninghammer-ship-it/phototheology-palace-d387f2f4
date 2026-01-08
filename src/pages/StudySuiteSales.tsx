@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,8 +22,6 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 
 export default function StudySuiteSales() {
-  const navigate = useNavigate();
-
   const floors = [
     {
       number: 1,
@@ -165,11 +163,13 @@ export default function StudySuiteSales() {
             <div className="pt-4">
               <Button
                 size="lg"
-                onClick={() => navigate("/auth")}
+                asChild
                 className="text-lg px-8 py-6 h-auto"
               >
-                Get the Study Suite
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <a href="https://buy.stripe.com/7sY4gzdirbPE46Qc6M6EU0d" target="_blank" rel="noopener noreferrer">
+                  Get the Study Suite
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </a>
               </Button>
               <p className="text-sm text-muted-foreground mt-3">
                 Instant access upon purchase
@@ -465,9 +465,9 @@ export default function StudySuiteSales() {
             <div className="mt-8 text-center">
               <p className="text-muted-foreground">
                 Not sure if you're ready?{" "}
-                <Button variant="link" onClick={() => navigate("/quick-start")} className="p-0 h-auto">
+                <Button variant="link" asChild className="p-0 h-auto"><Link to="/quick-start">
                   Start with the Quick-Start Guide
-                </Button>{" "}
+                </Link></Button>{" "}
                 to orient yourself first.
               </p>
             </div>
@@ -504,11 +504,13 @@ export default function StudySuiteSales() {
 
                 <Button
                   size="lg"
-                  onClick={() => navigate("/auth")}
+                  asChild
                   className="w-full text-lg py-6 h-auto"
                 >
-                  <Building2 className="w-5 h-5 mr-2" />
-                  Get the Study Suite
+                  <a href="https://buy.stripe.com/7sY4gzdirbPE46Qc6M6EU0d" target="_blank" rel="noopener noreferrer">
+                    <Building2 className="w-5 h-5 mr-2" />
+                    Get the Study Suite
+                  </a>
                 </Button>
 
                 <p className="text-xs text-muted-foreground">
