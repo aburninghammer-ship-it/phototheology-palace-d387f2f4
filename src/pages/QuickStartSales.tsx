@@ -141,7 +141,7 @@ export default function QuickStartSales() {
                 className="text-lg px-8 py-6 h-auto shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all"
               >
                 <a href="https://buy.stripe.com/7sY4gzdirbPE46Qc6M6EU0d" target="_blank" rel="noopener noreferrer">
-                  Get the Quick-Start Guide - $17
+                  Get the Quick-Start Guide - $12
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </a>
               </Button>
@@ -603,7 +603,7 @@ export default function QuickStartSales() {
                 </p>
 
                 <div className="py-6">
-                  <p className="text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">$17</p>
+                  <p className="text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">$12</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     One-time purchase - Instant PDF download
                   </p>
