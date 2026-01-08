@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Building2,
   Check,
+  CheckCircle,
   X,
   ArrowRight,
   BookOpen,
@@ -141,7 +142,7 @@ export default function QuickStartSales() {
                 className="text-lg px-8 py-6 h-auto shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all"
               >
                 <a href="https://buy.stripe.com/7sY4gzdirbPE46Qc6M6EU0d" target="_blank" rel="noopener noreferrer">
-                  Get the Quick-Start Guide - $12
+                  Get the Quick-Start Guide - $17
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </a>
               </Button>
@@ -603,7 +604,7 @@ export default function QuickStartSales() {
                 </p>
 
                 <div className="py-6">
-                  <p className="text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">$12</p>
+                  <p className="text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">$17</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     One-time purchase - Instant PDF download
                   </p>
@@ -623,6 +624,86 @@ export default function QuickStartSales() {
                 <p className="text-xs text-muted-foreground">
                   This is not a subscription. You are purchasing access to training, not content consumption.
                 </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* STUDY SUITE UPSELL */}
+      <section className="py-20 bg-gradient-to-br from-accent/10 via-background to-primary/10">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto text-center space-y-8"
+          >
+            <Badge className="bg-accent/10 text-accent border-accent/20">
+              <Layers className="w-3 h-3 mr-2" />
+              Complete Training Package
+            </Badge>
+
+            <h2 className="text-3xl md:text-4xl font-bold font-serif">
+              Ready for the Full Palace?
+            </h2>
+
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              The Quick-Start Guide opens the door. The Study Suite builds the entire palace.
+              Get comprehensive training across all 8 floors with detailed room breakdowns,
+              practice exercises, and the complete Phototheology method.
+            </p>
+
+            <Card className="border-2 border-accent/30 bg-gradient-to-br from-accent/5 via-background to-primary/5 overflow-hidden">
+              <div className="bg-gradient-to-r from-accent to-primary p-1" />
+              <CardContent className="p-8 md:p-12 space-y-6">
+                <h3 className="text-2xl font-bold">PhotoTheology Study Suite</h3>
+                
+                <div className="grid md:grid-cols-3 gap-4 text-left">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Complete 8-Floor Palace Training</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">All Room Codes & Methods</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Practice Exercises</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Cycles & Heavens Framework</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Five Ascensions Method</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Lifetime Access</span>
+                  </div>
+                </div>
+
+                <div className="py-4">
+                  <p className="text-5xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">$97</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    One-time purchase - Complete PDF training suite
+                  </p>
+                </div>
+
+                <Button
+                  size="lg"
+                  asChild
+                  className="w-full text-lg py-6 h-auto shadow-lg shadow-accent/25 bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90"
+                >
+                  <a href="/study-suite" rel="noopener noreferrer">
+                    <Building2 className="w-5 h-5 mr-2" />
+                    Explore the Study Suite
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </a>
+                </Button>
               </CardContent>
             </Card>
           </motion.div>
