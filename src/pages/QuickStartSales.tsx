@@ -630,6 +630,107 @@ export default function QuickStartSales() {
         </div>
       </section>
 
+      {/* GENESIS IN 6 DAYS */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="text-center mb-12">
+              <Badge className="bg-accent/10 text-accent border-accent/20 mb-4">
+                <Sparkles className="w-3 h-3 mr-2" />
+                Starter Study
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Genesis in 6 Days
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Experience Phototheology in action. Walk through the first chapter of Scripture 
+                using the Palace method—one creation day at a time.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-background">
+                <CardContent className="p-8 space-y-6">
+                  <h3 className="font-bold text-xl">What You'll Discover</h3>
+                  <ul className="space-y-4 text-muted-foreground">
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <span>How each creation day reveals Christ's redemptive pattern</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <span>Palace Room applications for Genesis 1</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <span>The typological structure of creation week</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <span>Practical exercises for each day's study</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <span>Cross-references that unlock Genesis across Scripture</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 border-accent/30 bg-gradient-to-br from-accent/10 via-background to-primary/5 overflow-hidden">
+                <div className="bg-gradient-to-r from-accent to-primary p-1" />
+                <CardContent className="p-8 text-center space-y-6">
+                  <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto">
+                    <BookOpen className="w-8 h-8 text-accent" />
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-2xl font-bold">Genesis in 6 Days</h3>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      A Phototheology starter study
+                    </p>
+                  </div>
+
+                  <div className="py-4">
+                    <p className="text-5xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">$9</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Instant PDF download
+                    </p>
+                  </div>
+
+                  <Button
+                    size="lg"
+                    asChild
+                    className="w-full text-lg py-6 h-auto shadow-lg shadow-accent/25 bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90"
+                  >
+                    <a href="https://buy.stripe.com/test_genesis6days" target="_blank" rel="noopener noreferrer">
+                      <BookOpen className="w-5 h-5 mr-2" />
+                      Get Genesis in 6 Days
+                    </a>
+                  </Button>
+
+                  <p className="text-xs text-muted-foreground">
+                    Perfect companion to the Quick-Start Guide
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="border-primary/20 bg-primary/5 p-6 mt-8">
+              <p className="text-center italic text-muted-foreground">
+                "Before you can study the whole Bible, you must learn to see Christ in one chapter. 
+                Genesis 1 is where vision begins."
+              </p>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
       {/* STUDY SUITE UPSELL */}
       <section className="py-20 bg-gradient-to-br from-accent/10 via-background to-primary/10">
         <div className="container mx-auto px-4">
