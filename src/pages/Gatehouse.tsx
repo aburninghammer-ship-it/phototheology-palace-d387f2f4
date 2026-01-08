@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BookOpen, Castle, ChevronRight, AlertTriangle, Heart, Brain, Sword, ArrowLeft, X } from 'lucide-react';
+import { BookOpen, Castle, ChevronRight, AlertTriangle, Heart, Brain, Sword, ArrowLeft, X, Layers, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -643,6 +643,53 @@ const Gatehouse = () => {
           >
             Once you do, things will change from here on out.
           </motion.p>
+        </motion.div>
+
+        {/* Training Products Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-16 pt-12 border-t border-border"
+        >
+          <h3 className="text-xl font-serif font-semibold mb-2 text-center text-muted-foreground">
+            Prefer to Study Offline?
+          </h3>
+          <p className="text-center text-sm text-muted-foreground mb-8">
+            Get the Phototheology method in downloadable PDF format
+          </p>
+
+          <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <Link to="/quick-start" className="group">
+              <Card className="p-6 h-full border-primary/20 hover:border-primary/40 transition-all hover:shadow-lg hover:shadow-primary/10">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Target className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="font-semibold group-hover:text-primary transition-colors">Quick-Start Guide</h4>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Orientation to the Palace framework. Understand the structure before you begin.
+                </p>
+                <p className="text-lg font-bold text-primary">$17</p>
+              </Card>
+            </Link>
+
+            <Link to="/study-suite" className="group">
+              <Card className="p-6 h-full border-primary/20 hover:border-primary/40 transition-all hover:shadow-lg hover:shadow-primary/10">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Layers className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="font-semibold group-hover:text-primary transition-colors">Study Suite</h4>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Complete method training for all 8 Floors. Master the Phototheology system.
+                </p>
+                <p className="text-lg font-bold text-primary">$97</p>
+              </Card>
+            </Link>
+          </div>
         </motion.div>
       </main>
 

@@ -56,23 +56,28 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Community */}
+          {/* Training Products */}
           <div>
-            <h3 className="font-semibold mb-3 text-foreground">Community</h3>
+            <h3 className="font-semibold mb-3 text-foreground">Training</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/community" className="text-muted-foreground hover:text-primary transition-colors">
-                  Community Chat
+                <Link to="/quick-start" className="text-muted-foreground hover:text-primary transition-colors">
+                  Quick-Start Guide
                 </Link>
               </li>
               <li>
-                <Link to="/leaderboard" className="text-muted-foreground hover:text-primary transition-colors">
-                  Leaderboard
+                <Link to="/study-suite" className="text-muted-foreground hover:text-primary transition-colors">
+                  Study Suite
                 </Link>
               </li>
               <li>
-                <Link to="/achievements" className="text-muted-foreground hover:text-primary transition-colors">
-                  Achievements
+                <Link to="/courses" className="text-muted-foreground hover:text-primary transition-colors">
+                  Courses
+                </Link>
+              </li>
+              <li>
+                <Link to="/video-training" className="text-muted-foreground hover:text-primary transition-colors">
+                  Video Training
                 </Link>
               </li>
             </ul>
