@@ -738,36 +738,101 @@ export default function QuickStartSales() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto text-center space-y-8"
+            className="max-w-4xl mx-auto"
           >
-            <Badge className="bg-accent/10 text-accent border-accent/20">
-              <Layers className="w-3 h-3 mr-2" />
-              Complete Training Package
-            </Badge>
+            <div className="text-center space-y-6 mb-12">
+              <Badge className="bg-accent/10 text-accent border-accent/20">
+                <Layers className="w-3 h-3 mr-2" />
+                Complete Training Package
+              </Badge>
 
-            <h2 className="text-3xl md:text-4xl font-bold font-serif">
-              Ready for the Full Palace?
-            </h2>
+              <h2 className="text-3xl md:text-4xl font-bold font-serif">
+                Ready to Master the Entire Palace?
+              </h2>
 
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              The Quick-Start Guide opens the door. The Study Suite builds the entire palace.
-              Get comprehensive training across all 8 floors with detailed room breakdowns,
-              practice exercises, and the complete Phototheology method.
-            </p>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+                The Quick-Start Guide shows you the blueprint. <strong className="text-foreground">The Study Suite builds you into a master craftsman.</strong> This is the complete Phototheology training—every floor, every room, every method.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 items-start mb-8">
+              {/* What's Missing Without Full Training */}
+              <Card className="border-destructive/20 bg-gradient-to-br from-destructive/5 to-transparent">
+                <CardContent className="p-8">
+                  <h3 className="font-bold text-xl mb-6 flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-destructive/10">
+                      <X className="w-5 h-5 text-destructive" />
+                    </div>
+                    Without Full Training You'll:
+                  </h3>
+                  <ul className="space-y-4 text-muted-foreground">
+                    <li className="flex items-start gap-3">
+                      <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                      Know the rooms exist but not how to work in them
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                      Understand concepts without developing skills
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                      Miss the Cycles, Heavens, and Ascensions framework
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                      Lack the practice drills that create reflexive mastery
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* What You Gain */}
+              <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                <CardContent className="p-8">
+                  <h3 className="font-bold text-xl mb-6 flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-primary/10">
+                      <Check className="w-5 h-5 text-primary" />
+                    </div>
+                    The Study Suite Delivers:
+                  </h3>
+                  <ul className="space-y-4 text-muted-foreground">
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      Complete 8-Floor Palace method training
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      Room-by-room skill development with exercises
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      The 8 Cycles, 3 Heavens, and 5 Ascensions
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      Practice drills that build reflexive Bible study
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
 
             <Card className="border-2 border-accent/30 bg-gradient-to-br from-accent/5 via-background to-primary/5 overflow-hidden">
               <div className="bg-gradient-to-r from-accent to-primary p-1" />
-              <CardContent className="p-8 md:p-12 space-y-6">
+              <CardContent className="p-8 md:p-12 space-y-6 text-center">
                 <h3 className="text-2xl font-bold">PhotoTheology Study Suite</h3>
+                <p className="text-muted-foreground max-w-lg mx-auto">
+                  The complete training system. From orientation to mastery—this is the full Phototheology method in PDF form.
+                </p>
                 
-                <div className="grid md:grid-cols-3 gap-4 text-left">
+                <div className="grid sm:grid-cols-3 gap-4 text-left max-w-2xl mx-auto">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-muted-foreground">Complete 8-Floor Palace Training</span>
+                    <span className="text-sm text-muted-foreground">All 8 Floors Detailed</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-muted-foreground">All Room Codes & Methods</span>
+                    <span className="text-sm text-muted-foreground">Every Room Code</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
@@ -775,11 +840,11 @@ export default function QuickStartSales() {
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-muted-foreground">Cycles & Heavens Framework</span>
+                    <span className="text-sm text-muted-foreground">Cycles & Heavens</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-muted-foreground">Five Ascensions Method</span>
+                    <span className="text-sm text-muted-foreground">Five Ascensions</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
@@ -797,7 +862,7 @@ export default function QuickStartSales() {
                 <Button
                   size="lg"
                   asChild
-                  className="w-full text-lg py-6 h-auto shadow-lg shadow-accent/25 bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90"
+                  className="w-full max-w-md text-lg py-6 h-auto shadow-lg shadow-accent/25 bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90"
                 >
                   <a href="/study-suite" rel="noopener noreferrer">
                     <Building2 className="w-5 h-5 mr-2" />
@@ -805,6 +870,10 @@ export default function QuickStartSales() {
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </a>
                 </Button>
+
+                <p className="text-xs text-muted-foreground italic">
+                  "The Quick-Start opens the door. The Study Suite furnishes every room."
+                </p>
               </CardContent>
             </Card>
           </motion.div>
