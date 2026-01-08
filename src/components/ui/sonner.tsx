@@ -10,6 +10,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
+      closeButton={true}
       toastOptions={{
         classNames: {
           toast:
@@ -17,6 +18,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           description: "group-[.toast]:text-muted-foreground",
           actionButton: "group-[.toast]:bg-gradient-to-r group-[.toast]:from-primary group-[.toast]:to-accent group-[.toast]:text-primary-foreground group-[.toast]:font-semibold group-[.toast]:shadow-lg group-[.toast]:border-0 group-[.toast]:hover:shadow-xl group-[.toast]:transition-all",
           cancelButton: "group-[.toast]:bg-muted/80 group-[.toast]:backdrop-blur-sm group-[.toast]:text-muted-foreground group-[.toast]:border group-[.toast]:border-border/50",
+          closeButton: "group-[.toast]:bg-background/80 group-[.toast]:border group-[.toast]:border-border/50 group-[.toast]:text-muted-foreground group-[.toast]:hover:bg-muted group-[.toast]:hover:text-foreground group-[.toast]:transition-colors",
           success: "group-[.toaster]:!bg-gradient-to-br group-[.toaster]:!from-emerald-500/20 group-[.toaster]:!via-green-500/10 group-[.toaster]:!to-teal-500/20 group-[.toaster]:!border-emerald-500/40 group-[.toaster]:!shadow-[0_8px_32px_-4px_rgba(16,185,129,0.4)]",
           error: "group-[.toaster]:!bg-gradient-to-br group-[.toaster]:!from-rose-500/20 group-[.toaster]:!via-red-500/10 group-[.toaster]:!to-pink-500/20 group-[.toaster]:!border-rose-500/40 group-[.toaster]:!shadow-[0_8px_32px_-4px_rgba(244,63,94,0.4)]",
           warning: "group-[.toaster]:!bg-gradient-to-br group-[.toaster]:!from-amber-500/20 group-[.toaster]:!via-orange-500/10 group-[.toaster]:!to-yellow-500/20 group-[.toaster]:!border-amber-500/40 group-[.toaster]:!shadow-[0_8px_32px_-4px_rgba(245,158,11,0.4)]",
