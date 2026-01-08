@@ -241,7 +241,9 @@ const DevotionalProfileDetail = lazy(() => import("./pages/DevotionalProfileDeta
 const PublicDevotionalView = lazy(() => import("./pages/PublicDevotionalView"));
 const WhyPhototheology = lazy(() => import("./pages/WhyPhototheology"));
 const QuickStartSales = lazy(() => import("./pages/QuickStartSales"));
+const QuickStartSuccess = lazy(() => import("./pages/QuickStartSuccess"));
 const StudySuiteSales = lazy(() => import("./pages/StudySuiteSales"));
+const StudySuiteSuccess = lazy(() => import("./pages/StudySuiteSuccess"));
 const MusicCategories = lazy(() => import("./pages/MusicCategories"));
 const Paths = lazy(() => import("./pages/Paths"));
 const PathWeek = lazy(() => import("./pages/PathWeek"));
@@ -376,7 +378,9 @@ function App() {
             <Route path="/path/week" element={<ProtectedRoute><PathWeek /></ProtectedRoute>} />
             <Route path="/why-phototheology" element={<WhyPhototheology />} />
             <Route path="/quick-start" element={<QuickStartSales />} />
+            <Route path="/quick-start/success" element={<QuickStartSuccess />} />
             <Route path="/study-suite" element={<StudySuiteSales />} />
+            <Route path="/study-suite/success" element={<StudySuiteSuccess />} />
             <Route path="/app-tour" element={<AppTour />} />
             
 {/* Gatehouse Flow - Public (/ is the main gatehouse, /gatehouse kept for legacy links) */}
