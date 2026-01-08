@@ -4,7 +4,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Sparkles, Star, Crown, Zap, GraduationCap, Building2, ArrowRight, CreditCard, Gift } from "lucide-react";
+import { Check, Sparkles, Star, Crown, Zap, Building2, ArrowRight, CreditCard, Gift } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -156,32 +156,6 @@ export default function Pricing() {
         "Priority support + early access",
       ],
     },
-    {
-      id: "student",
-      name: "Student",
-      icon: GraduationCap,
-      iconColor: "text-green-600",
-      monthlyPrice: "FREE",
-      annualPrice: "FREE",
-      monthlySavings: null,
-      annualSavings: null,
-      period: "with .edu email",
-      description: "Full Premium for students",
-      badge: ".edu Required",
-      badgeVariant: "default" as const,
-      ctaText: "Verify Student",
-      ctaVariant: "default" as const,
-      monthlyUrl: "/student-verify",
-      annualUrl: "/student-verify",
-      stripePriceId: "price_1STVXrFGDAd3RU8Ia2NbKJWo",
-      features: [
-        "Everything in Premium — FREE",
-        "Valid for 1 academic year",
-        "No credit card required",
-        "Auto-renews with .edu verification",
-        "Supporting Christian education",
-      ],
-    },
   ];
 
   return (
@@ -310,7 +284,7 @@ export default function Pricing() {
         </Card>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan) => (
             <Card
               key={plan.id}
@@ -343,8 +317,6 @@ export default function Pricing() {
                   <div className="text-sm text-muted-foreground mt-1">
                     {plan.id === 'free' ? (
                       `/ ${plan.period}`
-                    ) : plan.id === 'student' ? (
-                      `/ ${plan.period}`
                     ) : billingPeriod === 'monthly' ? (
                       '/ per month'
                     ) : (
@@ -371,18 +343,7 @@ export default function Pricing() {
               </CardContent>
 
               <CardFooter>
-                {plan.id === "student" ? (
-                  <Button
-                    asChild
-                    variant={plan.ctaVariant}
-                    className="w-full bg-green-600 hover:bg-green-700"
-                    size="lg"
-                  >
-                    <Link to={billingPeriod === 'monthly' ? plan.monthlyUrl : plan.annualUrl}>
-                      {plan.ctaText}
-                    </Link>
-                  </Button>
-                ) : plan.id === "trial" ? (
+                {plan.id === "trial" ? (
                   <Button
                     onClick={startTrialNow}
                     variant={plan.ctaVariant}
@@ -432,7 +393,6 @@ export default function Pricing() {
                       <th className="text-center p-4 font-semibold">Free Trial</th>
                       <th className="text-center p-4 font-semibold">Essential</th>
                       <th className="text-center p-4 font-semibold bg-primary/5">Premium</th>
-                      <th className="text-center p-4 font-semibold">Student</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -441,161 +401,138 @@ export default function Pricing() {
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Bible Reader with Strong's & Chain References</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Core Games (Chain Chess, Verse Match, etc.)</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">20+ Palace-Based Games</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Kids Games (All Ages)</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Escape Rooms & Treasure Hunts</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 text-muted-foreground">Limited</td>
                       <td className="text-center p-4 bg-primary/5">Unlimited</td>
-                      <td className="text-center p-4">Unlimited</td>
                     </tr>
                     <tr className="border-b bg-yellow-500/5">
                       <td className="p-4 font-semibold">⚔️ Art of War Dojo - Complete System</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 text-muted-foreground">3 Lessons Only</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4 pl-8">→ All 30+ War Lessons</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4 pl-8">→ 12 Supernatural Weapons</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 text-muted-foreground">2 Only</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4 pl-8">→ 4 Creature Combat Styles</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 text-muted-foreground">1 Only</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4 pl-8">→ Spiritual Eponyms & Time Zones</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4 pl-8">→ Rank Progression System (7 Levels)</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Phototheology GPT (Main AI)</td>
                       <td className="text-center p-4 text-muted-foreground">Limited</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">All 4 Specialized AI GPTs</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">The Blueprint Course</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">All Courses (Daniel, Revelation, Kids)</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Sermon Builder & 5 Smooth Stones</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Research Mode with Citations</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Bible Image Library</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Prophecy Watch & Culture Analysis</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Live Study Rooms & Partners</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr className="border-b">
                       <td className="p-4">Community & Leaderboards</td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                     <tr>
                       <td className="p-4">Priority Support</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4">—</td>
                       <td className="text-center p-4 bg-primary/5"><Check className="h-5 w-5 text-primary mx-auto" /></td>
-                      <td className="text-center p-4"><Check className="h-5 w-5 text-primary mx-auto" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -626,12 +563,6 @@ export default function Pricing() {
               <h3 className="font-semibold mb-2">Is my free trial really free?</h3>
               <p className="text-sm text-muted-foreground">
                 Absolutely! No credit card required. You get full access to all features for 7 days with no commitments.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2">How does the student plan work?</h3>
-              <p className="text-sm text-muted-foreground">
-                Students with a valid .edu email get free Premium access for 1 year. After that, you'll need to verify your student status again to renew.
               </p>
             </div>
           </CardContent>
