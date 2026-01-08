@@ -7,9 +7,14 @@ const corsHeaders = {
 };
 
 // Map product IDs to their PDF filenames in storage
-const PRODUCT_FILES: Record<string, string> = {
+// Products can have single file (string) or multiple files (string[])
+const PRODUCT_FILES: Record<string, string | string[]> = {
   "quick-start-guide": "quick-start-guide.pdf",
-  "study-suite": "study-suite.pdf",
+  "study-suite": [
+    "study-suite-2.pdf",
+    "study-suite-4.pdf", 
+    "study-suite-6.pdf"
+  ],
 };
 
 serve(async (req) => {
@@ -32,28 +37,64 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const fileName = PRODUCT_FILES[product];
+    const files = PRODUCT_FILES[product];
     const bucketName = "products";
 
-    // Generate a signed URL that expires in 1 hour (3600 seconds)
-    const { data, error } = await supabase.storage
-      .from(bucketName)
-      .createSignedUrl(fileName, 3600);
+    // Handle single file or multiple files
+    if (typeof files === "string") {
+      // Single file - return single URL
+      const { data, error } = await supabase.storage
+        .from(bucketName)
+        .createSignedUrl(files, 3600);
 
-    if (error) {
-      console.error("[get-product-download] Storage error:", error);
+      if (error) {
+        console.error("[get-product-download] Storage error:", error);
+        return new Response(
+          JSON.stringify({ error: "Failed to generate download link" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      console.log(`[get-product-download] Generated signed URL for ${product}`);
+
       return new Response(
-        JSON.stringify({ error: "Failed to generate download link" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ url: data.signedUrl }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    } else {
+      // Multiple files - return array of URLs with names
+      const urls: { name: string; url: string }[] = [];
+      
+      for (const fileName of files) {
+        const { data, error } = await supabase.storage
+          .from(bucketName)
+          .createSignedUrl(fileName, 3600);
+
+        if (error) {
+          console.error(`[get-product-download] Storage error for ${fileName}:`, error);
+          continue;
+        }
+
+        urls.push({
+          name: fileName.replace('.pdf', '').replace(/-/g, ' ').replace(/study suite (\d)/, 'Study Suite Part $1'),
+          url: data.signedUrl
+        });
+      }
+
+      if (urls.length === 0) {
+        return new Response(
+          JSON.stringify({ error: "Failed to generate download links" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      console.log(`[get-product-download] Generated ${urls.length} signed URLs for ${product}`);
+
+      return new Response(
+        JSON.stringify({ urls }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    console.log(`[get-product-download] Generated signed URL for ${product}`);
-
-    return new Response(
-      JSON.stringify({ url: data.signedUrl }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
 
   } catch (error) {
     console.error("[get-product-download] Error:", error);

@@ -9,6 +9,7 @@ import {
   Building2,
   ArrowRight,
   Loader2,
+  FileText,
 } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -17,8 +18,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
+interface DownloadFile {
+  name: string;
+  url: string;
+}
+
 export default function StudySuiteSuccess() {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadFiles, setDownloadFiles] = useState<DownloadFile[] | null>(null);
 
   const handleDownload = async () => {
     setIsDownloading(true);
@@ -29,7 +36,12 @@ export default function StudySuiteSuccess() {
 
       if (error) throw error;
 
-      if (data?.url) {
+      if (data?.urls && Array.isArray(data.urls)) {
+        // Multiple files - show download list
+        setDownloadFiles(data.urls);
+        toast.success("Your downloads are ready!");
+      } else if (data?.url) {
+        // Single file fallback
         window.open(data.url, '_blank');
         toast.success("Download started!");
       } else {
@@ -41,6 +53,11 @@ export default function StudySuiteSuccess() {
     } finally {
       setIsDownloading(false);
     }
+  };
+
+  const handleFileDownload = (url: string, name: string) => {
+    window.open(url, '_blank');
+    toast.success(`Downloading ${name}...`);
   };
 
   return (
@@ -101,29 +118,57 @@ export default function StudySuiteSuccess() {
                   </p>
                 </div>
 
-                <Button
-                  size="lg"
-                  onClick={handleDownload}
-                  disabled={isDownloading}
-                  className="w-full text-lg py-6 h-auto"
-                >
-                  {isDownloading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Preparing Download...
-                    </>
-                  ) : (
-                    <>
-                      <Download className="w-5 h-5 mr-2" />
-                      Download PDF
-                    </>
-                  )}
-                </Button>
+                {!downloadFiles ? (
+                  <>
+                    <Button
+                      size="lg"
+                      onClick={handleDownload}
+                      disabled={isDownloading}
+                      className="w-full text-lg py-6 h-auto"
+                    >
+                      {isDownloading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Preparing Downloads...
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-5 h-5 mr-2" />
+                          Get Your PDFs
+                        </>
+                      )}
+                    </Button>
 
-                <p className="text-xs text-muted-foreground">
-                  Click the button above to download your PDF.
-                  You can return to this page anytime from your purchase confirmation email.
-                </p>
+                    <p className="text-xs text-muted-foreground">
+                      Click the button above to access your 3 PDF files.
+                      You can return to this page anytime from your purchase confirmation email.
+                    </p>
+                  </>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Click each file to download:
+                    </p>
+                    {downloadFiles.map((file, index) => (
+                      <motion.div
+                        key={file.url}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left h-auto py-4"
+                          onClick={() => handleFileDownload(file.url, file.name)}
+                        >
+                          <FileText className="w-5 h-5 mr-3 text-primary flex-shrink-0" />
+                          <span className="capitalize">{file.name}</span>
+                          <Download className="w-4 h-4 ml-auto text-muted-foreground" />
+                        </Button>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </motion.div>
