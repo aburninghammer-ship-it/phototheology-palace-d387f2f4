@@ -68,14 +68,14 @@ export default function SinglesDevotional() {
   useEffect(() => {
     const fetchSeries = async () => {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('singles_devotional_series')
           .select('*')
           .eq('is_active', true)
           .order('sort_order');
 
         if (error) throw error;
-        setSeries(data || []);
+        setSeries((data as Series[]) || []);
       } catch (err) {
         console.error('Error fetching series:', err);
         toast.error('Failed to load devotional series');
@@ -94,25 +94,26 @@ export default function SinglesDevotional() {
       try {
         // First check cache
         const today = new Date().toISOString().split('T')[0];
-        const { data: cached, error: cacheError } = await supabase
+        const { data: cached, error: cacheError } = await (supabase as any)
           .from('daily_singles_devotional_cache')
           .select('*')
           .eq('date_for', today)
           .maybeSingle();
 
         if (cached && !cacheError) {
+          const c = cached as any;
           setDailyDevotional({
-            id: cached.id,
-            title: cached.title,
-            scriptureReference: cached.scripture_reference,
-            scriptureText: cached.scripture_text || '',
-            openingThought: cached.opening_thought,
-            mainContent: cached.main_content,
-            reflectionQuestions: cached.reflection_questions || [],
-            prayerPrompt: cached.prayer_prompt || '',
-            practicalApplication: cached.practical_application || '',
-            christConnection: cached.christ_connection || '',
-            theme: cached.theme,
+            id: c.id,
+            title: c.title,
+            scriptureReference: c.scripture_reference,
+            scriptureText: c.scripture_text || '',
+            openingThought: c.opening_thought,
+            mainContent: c.main_content,
+            reflectionQuestions: c.reflection_questions || [],
+            prayerPrompt: c.prayer_prompt || '',
+            practicalApplication: c.practical_application || '',
+            christConnection: c.christ_connection || '',
+            theme: c.theme,
           });
           setDailyLoading(false);
           return;
@@ -135,7 +136,7 @@ export default function SinglesDevotional() {
 
     const fetchProgress = async () => {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('user_singles_devotional_progress')
           .select('series_id')
           .eq('user_id', user.id);
@@ -144,7 +145,7 @@ export default function SinglesDevotional() {
 
         // Count completed entries per series
         const progress: Record<string, number> = {};
-        (data || []).forEach(p => {
+        ((data as any[]) || []).forEach((p: any) => {
           if (p.series_id) {
             progress[p.series_id] = (progress[p.series_id] || 0) + 1;
           }

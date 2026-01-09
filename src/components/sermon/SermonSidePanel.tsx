@@ -16,7 +16,7 @@ interface SuggestedVerse {
   reference: string;
   text: string;
   reason: string;
-  type?: 'descriptive' | 'connection' | 'amplifying';
+  type?: 'proof' | 'descriptive' | 'connection' | 'amplifying';
 }
 
 interface Message {
@@ -255,13 +255,15 @@ export function SermonSidePanel({
                             </p>
                             {verse.type && (
                               <span className={`text-[9px] px-1 py-0.5 rounded-full font-medium ${
-                                verse.type === 'descriptive' 
+                                verse.type === 'proof'
+                                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                                  : verse.type === 'descriptive' 
                                   ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' 
                                   : verse.type === 'connection'
                                   ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
                                   : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
                               }`}>
-                                {verse.type === 'descriptive' ? '📖' : verse.type === 'connection' ? '🔗' : '✨'}
+                                {verse.type === 'proof' ? '✓' : verse.type === 'descriptive' ? '📖' : verse.type === 'connection' ? '🔗' : '✨'}
                               </span>
                             )}
                           </div>
