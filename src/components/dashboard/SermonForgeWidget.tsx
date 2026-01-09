@@ -41,7 +41,7 @@ interface GeneratedStarter {
 export function SermonForgeWidget() {
   const navigate = useNavigate();
   const [topic, setTopic] = useState("");
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategory] = useState<string>("any");
   const [generating, setGenerating] = useState(false);
   const [starter, setStarter] = useState<GeneratedStarter | null>(null);
 
@@ -59,7 +59,7 @@ export function SermonForgeWidget() {
         body: {
           topic: topic.trim(),
           level: "Intermediate",
-          category: category || undefined,
+          category: category !== "any" ? category : undefined,
         },
       });
 
@@ -125,7 +125,7 @@ export function SermonForgeWidget() {
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Any Category</SelectItem>
+              <SelectItem value="any">Any Category</SelectItem>
               {CATEGORIES.map((cat) => (
                 <SelectItem key={cat.id} value={cat.id}>
                   {cat.label}
