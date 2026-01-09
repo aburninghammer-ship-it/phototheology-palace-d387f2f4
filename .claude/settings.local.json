@@ -41,7 +41,10 @@
       "Bash(npx supabase:*)",
       "Bash(SUPABASE_ACCESS_TOKEN=\"sbp_fe32d3be189beab600f50a27caea50a09e6ef260\" npx supabase:*)",
       "Bash(SUPABASE_ACCESS_TOKEN=\"sbp_fe32d3be189beab600f50a27caea50a09e6ef260\" npx supabase db execute --project-ref tdjtumtdkjicnhlpqqzd \"DELETE FROM bible_commentaries WHERE book = ''Matthew'' AND chapter = 28;\")",
-      "WebFetch(domain:developers.gamma.app)"
+      "WebFetch(domain:developers.gamma.app)",
+      "Bash(SUPABASE_ACCESS_TOKEN=\"sbp_fe32d3be189beab600f50a27caea50a09e6ef260\" npx supabase functions list:*)",
+      "Bash(git stash:*)",
+      "Bash(git stash pop:*)"
     ],
     "deny": [],
     "ask": []

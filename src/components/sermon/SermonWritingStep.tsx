@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { SermonRichTextArea } from "./SermonRichTextArea";
 import { SermonSidePanel } from "./SermonSidePanel";
 import { SermonPolishTab } from "./SermonPolishTab";
+import { SermonBlockEditor } from "./SermonBlockEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, PanelRightClose, PanelRight, Save, Check, Loader2, MessageSquare, Sparkles } from "lucide-react";
+import { FileText, PanelRightClose, PanelRight, Save, Check, Loader2, MessageSquare, Sparkles, LayoutGrid, Type } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -430,6 +431,7 @@ Return ONLY the JSON, no other text.`
   };
 
   const [activeTab, setActiveTab] = useState<"write" | "polish">("write");
+  const [blockMode, setBlockMode] = useState(false);
 
   return (
     <div className="h-[calc(100vh-280px)] min-h-[500px]">
@@ -514,14 +516,30 @@ Return ONLY the JSON, no other text.`
           </div>
 
           {activeTab === "write" && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowPanel(!showPanel)}
-              className="gap-2"
-            >
-              {showPanel ? (
-                <>
+            <div className="flex items-center gap-2">
+              {/* Block Mode Toggle */}
+              <Button
+                variant={blockMode ? "default" : "outline"}
+                size="sm"
+                onClick={() => setBlockMode(!blockMode)}
+                className="gap-2"
+                title="Toggle block mode to rearrange content"
+              >
+                <LayoutGrid className="w-4 h-4" />
+                <span className="hidden sm:inline">
+                  {blockMode ? "Exit Blocks" : "Rearrange"}
+                </span>
+              </Button>
+
+              {/* Panel Toggle */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPanel(!showPanel)}
+                className="gap-2"
+              >
+                {showPanel ? (
+                  <>
                   <PanelRightClose className="w-4 h-4" />
                   <span className="hidden sm:inline">Hide Assistant</span>
                 </>
@@ -531,41 +549,54 @@ Return ONLY the JSON, no other text.`
                   <span className="hidden sm:inline">Show Assistant</span>
                 </>
               )}
-            </Button>
+              </Button>
+            </div>
           )}
         </div>
 
         {/* Write Tab Content */}
         <TabsContent value="write" className="flex-1 mt-0 h-[calc(100%-60px)]">
-          <div className={`grid gap-4 h-full ${showPanel ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
-            {/* Left: Writing area - full half */}
-            <div className="h-full flex flex-col min-h-0">
-              <SermonRichTextArea
+          {blockMode ? (
+            /* Block Editor Mode - Full Width */
+            <div className="h-full border rounded-lg overflow-hidden">
+              <SermonBlockEditor
                 content={sermon.full_sermon}
-                onChange={handleContentChange}
-                placeholder="Begin writing your sermon here. Type (find verse about...) in parentheses to auto-insert scripture. Start with your opening hook, weave through your smooth stones, build bridges between ideas, lead to your climax, and close with a powerful call to action..."
-                minHeight="100%"
-                showTools={true}
-                themePassage={themePassage}
+                onChange={(newContent) => setSermon({ ...sermon, full_sermon: newContent })}
+                onClose={() => setBlockMode(false)}
               />
             </div>
-
-            {/* Right: Assistant Panel with Sparks/Verses/Jeeves + Your 5 Stones - full half */}
-            {showPanel && (
-              <div className="h-full overflow-hidden min-h-0">
-                <SermonSidePanel
-                  suggestedVerses={suggestedVerses}
-                  loadingVerses={loadingVerses}
-                  onInsertVerse={insertVerse}
-                  smoothStones={sermon.smooth_stones}
-                  sermonTitle={sermon.title}
+          ) : (
+            /* Regular Write Mode */
+            <div className={`grid gap-4 h-full ${showPanel ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
+              {/* Left: Writing area - full half */}
+              <div className="h-full flex flex-col min-h-0">
+                <SermonRichTextArea
+                  content={sermon.full_sermon}
+                  onChange={handleContentChange}
+                  placeholder="Begin writing your sermon here. Type (find verse about...) in parentheses to auto-insert scripture. Start with your opening hook, weave through your smooth stones, build bridges between ideas, lead to your climax, and close with a powerful call to action..."
+                  minHeight="100%"
+                  showTools={true}
                   themePassage={themePassage}
-                  sermonContent={sermon.full_sermon}
-                  sermonId={sermonId}
                 />
               </div>
-            )}
-          </div>
+
+              {/* Right: Assistant Panel with Sparks/Verses/Jeeves + Your 5 Stones - full half */}
+              {showPanel && (
+                <div className="h-full overflow-hidden min-h-0">
+                  <SermonSidePanel
+                    suggestedVerses={suggestedVerses}
+                    loadingVerses={loadingVerses}
+                    onInsertVerse={insertVerse}
+                    smoothStones={sermon.smooth_stones}
+                    sermonTitle={sermon.title}
+                    themePassage={themePassage}
+                    sermonContent={sermon.full_sermon}
+                    sermonId={sermonId}
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </TabsContent>
 
         {/* Polish Tab Content */}
