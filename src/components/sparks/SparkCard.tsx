@@ -72,7 +72,7 @@ export function SparkCard({
         
         {/* Glass card */}
         <div className={cn(
-          'relative w-[calc(100vw-2rem)] max-w-80 rounded-xl overflow-hidden',
+          'relative w-[calc(100vw-2rem)] max-w-sm rounded-xl overflow-hidden',
           'backdrop-blur-xl bg-background/70',
           'border-2 shadow-xl',
           config.borderColor,
@@ -161,10 +161,10 @@ export function SparkCard({
             {/* Body */}
             <ScrollArea className={cn(
               "transition-all duration-200",
-              isExpanded ? "h-[250px]" : "max-h-[180px]"
+              isExpanded ? "h-[300px]" : "max-h-[220px]"
             )}>
-              <div className="px-4 pb-3 space-y-2">
-                <p className="text-xs text-muted-foreground italic line-clamp-2">
+              <div className="px-4 pb-4 space-y-3">
+                <p className="text-sm text-muted-foreground italic leading-relaxed">
                   {spark.recognition}
                 </p>
                 <div
@@ -176,7 +176,7 @@ export function SparkCard({
                 >
                   <p className={cn(
                     "text-sm leading-relaxed",
-                    !isExpanded && "line-clamp-4"
+                    !isExpanded && "line-clamp-5"
                   )}>
                     {spark.insight}
                   </p>
@@ -200,26 +200,26 @@ export function SparkCard({
             </ScrollArea>
             
             {/* Footer */}
-            <div className="px-4 pb-4 pt-0 gap-2 flex flex-wrap">
+            <div className="px-4 pb-4 pt-2 gap-3 flex flex-wrap border-t border-white/10 mt-2">
               <Button
-                size="sm"
+                size="default"
                 variant="default"
-                className="flex-1 min-w-[100px] touch-manipulation shadow-lg"
+                className="flex-1 min-w-[120px] touch-manipulation shadow-lg"
                 onClick={onExplore}
               >
-                <Search size={14} className="mr-1" />
+                <Search size={16} className="mr-2" />
                 Explore
               </Button>
               <Button
-                size="sm"
+                size="default"
                 variant="outline"
                 className="touch-manipulation backdrop-blur-sm bg-background/50 border-white/20"
                 onClick={onSave}
               >
-                <Bookmark size={14} />
+                <Bookmark size={16} />
               </Button>
               <Button
-                size="sm"
+                size="default"
                 variant="ghost"
                 onClick={onDismiss}
                 className="text-muted-foreground touch-manipulation"

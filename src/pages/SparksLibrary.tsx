@@ -273,12 +273,12 @@ const SparksLibrary = () => {
                         <CardHeader className="pb-2">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex items-center gap-3">
-                              <div className={`p-2 rounded-full ${config.iconColor} bg-background/50`}>
-                                <Icon className="h-5 w-5" />
+                              <div className={`p-2.5 rounded-full ${config.iconColor} bg-background/50`}>
+                                <Icon className="h-6 w-6" />
                               </div>
                               <div>
-                                <CardTitle className="text-base">{spark.title}</CardTitle>
-                                <CardDescription className="text-xs">
+                                <CardTitle className="text-lg">{spark.title}</CardTitle>
+                                <CardDescription className="text-sm">
                                   {format(new Date(spark.created_at), 'MMM d, yyyy • h:mm a')}
                                 </CardDescription>
                               </div>
@@ -293,52 +293,52 @@ const SparksLibrary = () => {
                             </div>
                           </div>
                         </CardHeader>
-                        <CardContent className="space-y-3">
-                          <p className="text-xs text-muted-foreground italic">
+                        <CardContent className="space-y-4">
+                          <p className="text-sm text-muted-foreground italic leading-relaxed">
                             {spark.recognition}
                           </p>
-                          <p className="text-sm leading-relaxed line-clamp-3">
+                          <p className="text-base leading-relaxed line-clamp-4">
                             {spark.insight}
                           </p>
                           
-                          <div className="flex gap-2 pt-2 flex-wrap">
+                          <div className="flex gap-3 pt-3 flex-wrap border-t border-white/10 mt-2">
                             <Button
-                              size="sm"
+                              size="default"
                               variant="default"
                               onClick={() => setExploringSpark(spark)}
                             >
-                              <Search className="h-3 w-3 mr-1" />
+                              <Search className="h-4 w-4 mr-2" />
                               Explore
                             </Button>
-                            
+
                             {activeTab === "dismissed" ? (
                               <>
                                 <Button
-                                  size="sm"
+                                  size="default"
                                   variant="outline"
                                   onClick={() => handleRestore(spark.id)}
                                 >
-                                  <RefreshCw className="h-3 w-3 mr-1" />
+                                  <RefreshCw className="h-4 w-4 mr-2" />
                                   Restore
                                 </Button>
                                 <Button
-                                  size="sm"
+                                  size="default"
                                   variant="ghost"
                                   className="text-destructive hover:text-destructive"
                                   onClick={() => handleDelete(spark.id)}
                                 >
-                                  <Trash2 className="h-3 w-3 mr-1" />
+                                  <Trash2 className="h-4 w-4 mr-2" />
                                   Delete
                                 </Button>
                               </>
                             ) : (
                               !spark.saved_at && (
                                 <Button
-                                  size="sm"
+                                  size="default"
                                   variant="outline"
                                   onClick={() => handleSave(spark.id)}
                                 >
-                                  <BookmarkCheck className="h-3 w-3 mr-1" />
+                                  <BookmarkCheck className="h-4 w-4 mr-2" />
                                   Save
                                 </Button>
                               )

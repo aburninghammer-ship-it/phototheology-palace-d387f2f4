@@ -238,12 +238,14 @@ const PTMultiplayerLobby = lazy(() => import("./pages/PTMultiplayerLobby"));
 const PTMultiplayerGame = lazy(() => import("./pages/PTMultiplayerGame"));
 const AnalyzeThoughts = lazy(() => import("./pages/AnalyzeThoughts"));
 const SparksLibrary = lazy(() => import("./pages/SparksLibrary"));
+const Libraries = lazy(() => import("./pages/Libraries"));
 const PalaceFreestyle = lazy(() => import("./pages/PalaceFreestyle"));
 const GraphicsGallery = lazy(() => import("./pages/GraphicsGallery"));
 const Devotionals = lazy(() => import("./pages/Devotionals"));
 const DevotionalView = lazy(() => import("./pages/DevotionalView"));
 const DevotionalProfileDetail = lazy(() => import("./pages/DevotionalProfileDetail"));
 const PublicDevotionalView = lazy(() => import("./pages/PublicDevotionalView"));
+const SinglesDevotional = lazy(() => import("./pages/SinglesDevotional"));
 const WhyPhototheology = lazy(() => import("./pages/WhyPhototheology"));
 const QuickStartSales = lazy(() => import("./pages/QuickStartSales"));
 const QuickStartSuccess = lazy(() => import("./pages/QuickStartSuccess"));
@@ -418,6 +420,7 @@ function App() {
             <Route path="/pt-multiplayer/:gameId" element={<ProtectedRoute><PTMultiplayerGame /></ProtectedRoute>} />
             <Route path="/analyze-thoughts" element={<ProtectedRoute><AnalyzeThoughts /></ProtectedRoute>} />
             <Route path="/sparks" element={<ProtectedRoute><SparksLibrary /></ProtectedRoute>} />
+            <Route path="/libraries" element={<ProtectedRoute><Libraries /></ProtectedRoute>} />
             <Route path="/palace/freestyle" element={<ProtectedRoute><PalaceFreestyle /></ProtectedRoute>} />
             <Route path="/palace/graphics" element={<ProtectedRoute><GraphicsGallery /></ProtectedRoute>} />
             
@@ -557,6 +560,8 @@ function App() {
            <Route path="/devotionals/:planId" element={<ProtectedRoute><DevotionalView /></ProtectedRoute>} />
            <Route path="/devotionals/profile/:profileId" element={<ProtectedRoute><DevotionalProfileDetail /></ProtectedRoute>} />
            <Route path="/shared-devotional/:shareToken" element={<PublicDevotionalView />} />
+           <Route path="/singles-devotional" element={<ProtectedRoute><SinglesDevotional /></ProtectedRoute>} />
+           <Route path="/singles-devotional/series/:seriesId" element={<ProtectedRoute><SinglesDevotional /></ProtectedRoute>} />
            {/* Redirect singular /devotional to plural /devotionals for notification links */}
            <Route path="/devotional/:planId" element={<DevotionalRedirect />} />
            <Route path="/bible-study-series/discover" element={<ProtectedRoute><PublicSeriesBrowser /></ProtectedRoute>} />
