@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Film, Mic, BookOpen, TrendingUp, ArrowRight, CheckCircle2, Loader2, Archive, Gem, Info, Swords, PenLine, FileText, Presentation } from "lucide-react";
+import { Film, Mic, BookOpen, TrendingUp, ArrowRight, CheckCircle2, Loader2, Archive, Gem, Info, Swords, PenLine, FileText, Presentation, Lightbulb } from "lucide-react";
 import { sermonTitleSchema, sermonThemeSchema, sermonStoneSchema, sermonBridgeSchema } from "@/lib/validationSchemas";
 import { sanitizeText, sanitizeHtml } from "@/lib/sanitize";
 import { SermonRichTextArea } from "@/components/sermon/SermonRichTextArea";
@@ -16,6 +17,7 @@ import { SermonPDFExport } from "@/components/sermon/SermonPDFExport";
 import { SermonPPTExport } from "@/components/sermon/SermonPPTExport";
 import { ScriptureArmory, ArmoryVerse } from "@/components/sermon/ScriptureArmory";
 import { SermonWritingStep } from "@/components/sermon/SermonWritingStep";
+import { SermonStartersBrowser } from "@/components/sermon/SermonStartersBrowser";
 import { StyledMarkdown } from "@/components/ui/styled-markdown";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -79,6 +81,7 @@ export default function SermonBuilder() {
   const hasRestoredState = useRef(false);
   
   const [currentStep, setCurrentStep] = useState(1);
+  const [activeTab, setActiveTab] = useState<"builder" | "starters">("builder");
   const [loading, setLoading] = useState(false);
   const [asking, setAsking] = useState(false);
   
@@ -434,37 +437,65 @@ export default function SermonBuilder() {
         </div>
       </div>
 
-      {/* Progress Steps */}
-      <div className="max-w-7xl mx-auto px-6 py-8 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex gap-4 mb-8 overflow-x-auto pb-2"
-        >
-          {STEPS.map((step, index) => (
-            <motion.div
-              key={step.num}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
+      {/* Tab Selector */}
+      <div className="max-w-7xl mx-auto px-6 pt-6 relative z-10">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "builder" | "starters")}>
+          <TabsList className="bg-white/10 border border-white/20">
+            <TabsTrigger 
+              value="builder" 
+              className="data-[state=active]:bg-white data-[state=active]:text-purple-900 text-white"
             >
-              <Button
-                variant={currentStep === step.num ? "default" : "outline"}
-                className={`min-w-[150px] ${
-                  currentStep === step.num
-                    ? "bg-white text-purple-900 shadow-lg shadow-white/20"
-                    : currentStep > step.num
-                    ? "bg-white/20 text-white border-white/40 backdrop-blur-sm"
-                    : "bg-white/5 text-white/60 border-white/20 backdrop-blur-sm"
-                }`}
-                onClick={() => goToStep(step.num)}
-              >
-                {step.num}. {step.title}
-              </Button>
+              <Film className="w-4 h-4 mr-2" />
+              Builder
+            </TabsTrigger>
+            <TabsTrigger 
+              value="starters" 
+              className="data-[state=active]:bg-white data-[state=active]:text-purple-900 text-white"
+            >
+              <Lightbulb className="w-4 h-4 mr-2" />
+              Idea Starters
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="starters" className="mt-6">
+            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+              <CardContent className="p-6">
+                <SermonStartersBrowser />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="builder" className="mt-0">
+            {/* Progress Steps */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="flex gap-4 mb-8 mt-6 overflow-x-auto pb-2"
+            >
+              {STEPS.map((step, index) => (
+                <motion.div
+                  key={step.num}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Button
+                    variant={currentStep === step.num ? "default" : "outline"}
+                    className={`min-w-[150px] ${
+                      currentStep === step.num
+                        ? "bg-white text-purple-900 shadow-lg shadow-white/20"
+                        : currentStep > step.num
+                        ? "bg-white/20 text-white border-white/40 backdrop-blur-sm"
+                        : "bg-white/5 text-white/60 border-white/20 backdrop-blur-sm"
+                    }`}
+                    onClick={() => goToStep(step.num)}
+                  >
+                    {step.num}. {step.title}
+                  </Button>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
 
         <div className={`grid gap-6 ${currentStep === 5 ? 'lg:grid-cols-1' : 'lg:grid-cols-2'}`}>
           {/* Main Content */}
@@ -896,6 +927,8 @@ export default function SermonBuilder() {
             </motion.div>
           )}
         </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Sparks Container */}
