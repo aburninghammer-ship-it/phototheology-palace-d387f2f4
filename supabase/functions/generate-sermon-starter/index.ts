@@ -1,0 +1,395 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+// Category-specific rules for the Sermon Forge engine
+const CATEGORY_RULES: Record<string, {
+  name: string;
+  rules: string[];
+  mandatoryRooms: string[];
+  palaceAnchors: string[];
+}> = {
+  "end-time": {
+    name: "End-Time Discernment",
+    rules: [
+      "Must include Time Room OR Three Heavens Room",
+      "Include present deception warning",
+      "Christ as refuge (never fear-bait)",
+      "No date-setting or speculation"
+    ],
+    mandatoryRooms: ["Three Heavens Room", "Time Room", "Beasts Room"],
+    palaceAnchors: ["Floor 6 – Three Heavens Room", "Floor 6 – Time Room", "Sanctuary – Most Holy Place"]
+  },
+  "current-events": {
+    name: "Current Events (Non-Reactionary)",
+    rules: [
+      "NO headline chasing or naming specific events",
+      "Event interpreted through prophetic PATTERN",
+      "Focus on moral shift, war, religious pressure, economic tightening, or technological imitation",
+      "Must keep sermon timeless"
+    ],
+    mandatoryRooms: ["Pattern Room", "Cycle Room", "False Center Room"],
+    palaceAnchors: ["Floor 4 – Pattern Room", "Floor 6 – Cycle Room"]
+  },
+  "righteousness-by-faith": {
+    name: "Righteousness by Faith",
+    rules: [
+      "Must expose false righteousness systems",
+      "Expose self-generated obedience traps",
+      "Christ as both substitute AND source",
+      "Balance imputed and imparted righteousness"
+    ],
+    mandatoryRooms: ["Sanctuary – Altar", "Sanctuary – Laver", "Veil Room"],
+    palaceAnchors: ["Sanctuary – Altar & Laver", "Flesh / Veil typology"]
+  },
+  "prophecy": {
+    name: "Prophecy (Daniel & Revelation)",
+    rules: [
+      "Must include timeline anchoring",
+      "Apply Repeat & Enlarge logic",
+      "Christological fulfillment required",
+      "No speculation beyond Scripture"
+    ],
+    mandatoryRooms: ["Time Room", "Math Room", "Beasts Room", "Christ Resolution Room"],
+    palaceAnchors: ["Floor 5 – Time Room", "Floor 5 – Math Room", "Floor 5 – Beasts Room"]
+  },
+  "sanctuary": {
+    name: "Sanctuary Theology",
+    rules: [
+      "Must move: Outer Court → Holy Place → Most Holy Place",
+      "Connect articles of furniture to Christ's ministry",
+      "Day of Atonement as present reality"
+    ],
+    mandatoryRooms: ["Articles Room", "Veil Room", "Day of Atonement Room"],
+    palaceAnchors: ["Sanctuary – All Articles", "Sanctuary – Veil", "Sanctuary – Most Holy Place"]
+  },
+  "everlasting-gospel": {
+    name: "Everlasting Gospel",
+    rules: [
+      "Must include: Cross, Judgment, Creation, Worship",
+      "Rev 14 gospel, not Romans-only gospel",
+      "Three Angels' Message framework"
+    ],
+    mandatoryRooms: ["Creation Room", "Cross Room", "Judgment Room", "Sabbath Room"],
+    palaceAnchors: ["Floor 5 – Three Angels Room", "Sanctuary – Most Holy Place"]
+  },
+  "series-builder": {
+    name: "Series Builder",
+    rules: [
+      "Must generate 3-7 sermon paths",
+      "Each sermon uses different Palace room",
+      "Advances same thesis throughout",
+      "Climaxes Christologically"
+    ],
+    mandatoryRooms: ["Cycle Room", "Pattern Room", "Dimension Room"],
+    palaceAnchors: ["Floor 4 – Pattern Room", "Floor 6 – Cycle Room", "Floor 4 – Dimension Room"]
+  }
+};
+
+// Current event types that can be filtered through prophetic patterns
+const CURRENT_EVENT_TYPES = [
+  { id: "moral-shift", label: "Moral Shift", pattern: "Judges cycle of moral decline" },
+  { id: "war", label: "War/Conflict", pattern: "Daniel's metal kingdoms in conflict" },
+  { id: "religious-pressure", label: "Religious Pressure", pattern: "Revelation's church-state union" },
+  { id: "economic", label: "Economic Tightening", pattern: "Revelation 13's buying and selling" },
+  { id: "technology", label: "Technological Imitation", pattern: "Image of the Beast dynamics" }
+];
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const {
+      topic,
+      topicId,
+      level,
+      anchorScriptures,
+      category,
+      currentEventType,
+      generateSeries,
+      seriesLength
+    } = await req.json();
+
+    if (!topic || !level) {
+      return new Response(
+        JSON.stringify({ error: "Topic and level are required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
+
+    // Get category-specific rules
+    const categoryConfig = category ? CATEGORY_RULES[category] : null;
+    const eventConfig = currentEventType ? CURRENT_EVENT_TYPES.find(e => e.id === currentEventType) : null;
+
+    const systemPrompt = `You are Jeeves, the PhotoTheology Sermon Forge architect.
+You build PT-driven SERMON GENERATION that:
+• Starts with biblical authority
+• Anchors every idea in Palace rooms + principles
+• Responds to current events without chasing headlines
+• Produces repeatable, expandable sermon series
+
+You do NOT write full sermons.
+You do NOT invent theology, rooms, floors, symbols, or prophetic claims.
+You generate structured sermon starters that help pastors think, observe, and connect.
+
+⚠️ CRITICAL THEOLOGICAL GUARDRAILS (NON-NEGOTIABLE):
+1. AZAZEL = SATAN, NOT CHRIST: In Leviticus 16, Azazel (scapegoat) represents SATAN. NEVER identify it as Jesus.
+2. LITTLE HORN = ROME/PAPACY, NOT ANTIOCHUS: Daniel 7 & 8 little horn = Rome/Papal power. NEVER say Antiochus Epiphanes.
+3. TWO-PHASE SANCTUARY: Christ entered HOLY PLACE at ascension (31 AD); MOST HOLY PLACE in 1844. NEVER say Most Holy at ascension.
+4. DAY OF ATONEMENT = 1844: Christ's death = PASSOVER. Day of Atonement = 1844 judgment. NEVER equate death with Atonement.
+5. FEAST TYPOLOGY: Spring feasts = First Advent (Passover=death, Firstfruits=resurrection). Fall feasts = Second Advent ministry.
+6. HEBREWS CLARITY: Hebrews contrasts earthly vs heavenly sanctuary, NOT Holy vs Most Holy Place.
+
+THE 8 FLOORS OF THE PHOTOTHEOLOGY PALACE:
+- Floor 1 (Furnishing): Story Room, Imagination Room, 24FPS Room, Bible Rendered, Translation Room, Gems Room
+- Floor 2 (Investigation): Observation Room, Def-Com Room, Symbols/Types Room, Questions Room, Q&A Chains Room
+- Floor 3 (Freestyle): Nature Freestyle, Personal Freestyle, Bible Freestyle, History Freestyle, Listening Room
+- Floor 4 (Next Level): Concentration Room, Dimensions Room, Connect-6, Theme Room, Time Zone, Patterns Room, Parallels Room, Fruit Room
+- Floor 5 (Vision): Blue Room (Sanctuary), Prophecy Room, Three Angels Room, Feasts Room, Room 66
+- Floor 6 (Three Heavens & Cycles): Three Heavens Room, Eight Cycles Room, Mathematics Room, Juice Room
+- Floor 7 (Spiritual): Fire Room, Meditation Room, Speed Room
+- Floor 8 (Master): The palace becomes invisible—internalized and instinctive
+
+${categoryConfig ? `
+CATEGORY: ${categoryConfig.name}
+CATEGORY RULES (MUST FOLLOW):
+${categoryConfig.rules.map(r => `• ${r}`).join('\n')}
+
+MANDATORY ROOMS TO USE:
+${categoryConfig.mandatoryRooms.join(', ')}
+
+PALACE ANCHORS:
+${categoryConfig.palaceAnchors.join(', ')}
+` : ''}
+
+${eventConfig ? `
+CURRENT EVENT FILTER:
+This sermon addresses: ${eventConfig.label}
+Interpret through prophetic pattern: "${eventConfig.pattern}"
+NEVER name specific headlines, countries, or people. Keep it TIMELESS.
+` : ''}
+
+INTERNAL TEMPLATE (every starter must include):
+• Palace Floor(s)
+• Rooms Activated
+• Governing Principle
+• Christological Axis
+• Time Orientation (where applicable)
+• False Center Exposed (what lie does this expose?)
+• Gospel Resolution
+
+LEVEL GUIDANCE:
+- Beginner: More guiding questions, step-by-step prompts, explicit room names
+- Intermediate: Fewer hints, more structure, expects some PT familiarity
+- Master: Dense prompts, minimal hand-holding, expects PT fluency
+
+ALL Scripture quotes MUST be KJV (King James Version).
+
+Respond ONLY with valid JSON in this exact format:
+{
+  "starterTitle": "string (compelling, non-clickbait title)",
+  "starterParagraph": "string (2-3 paragraph sermon starter that captures the essence)",
+  "bigIdea": "string (one-sentence thesis that captures the sermon's core)",
+  "palaceAnchors": ["Floor X – Room Name", "Sanctuary – Article"],
+  "keyTexts": {
+    "oldTestament": ["reference1", "reference2"],
+    "gospels": ["reference1"],
+    "epistles": ["reference1"],
+    "revelation": ["reference1"]
+  },
+  "illustrationHooks": ["hook1", "hook2"],
+  "floors": {
+    "floor1": {
+      "roomUsed": "Observation Room",
+      "keyWords": ["word1", "word2", "word3", "word4", "word5"],
+      "observationQuestions": ["question1", "question2", "question3", "question4"],
+      "historicalNotes": "string or null"
+    },
+    "floor2": {
+      "roomUsed": "Symbol Room",
+      "symbols": [
+        {"symbol": "name", "definition": "one-line biblical definition", "crossRefs": ["ref1", "ref2"]}
+      ]
+    },
+    "floor3": {
+      "roomUsed": "Sanctuary Room",
+      "article": "sanctuary article name or null",
+      "connection": "how it connects patternally",
+      "explanation": "brief explanation or null if no connection"
+    },
+    "floor4": {
+      "roomUsed": "Story Room",
+      "stories": [
+        {"reference": "story reference", "parallels": "what parallels", "contrasts": "what contrasts", "caution": "what not to over-connect"}
+      ]
+    },
+    "floor5": {
+      "roomsUsed": ["Time Room", "Cycles Room"],
+      "propheticConnections": [
+        {"type": "Confirmed Fulfillment | Typological Echo | Thematic Pattern", "description": "description"}
+      ]
+    },
+    "floor6": {
+      "roomUsed": "Christ-Finding Room",
+      "guidedQuestions": ["question1", "question2"],
+      "christPresence": "fulfillment | anticipation | contrast | future resolution",
+      "ntReferences": ["NT reference"]
+    },
+    "floor7": {
+      "roomUsed": "Application Room",
+      "applicationAngles": [
+        {"area": "Personal", "question": "question framed as question not command"},
+        {"area": "Community", "question": "question"},
+        {"area": "Mission", "question": "question"}
+      ]
+    },
+    "floor8": {
+      "roomUsed": "Worship Room",
+      "responseMovements": ["repentance", "trust", "hope", "surrender", "mission"],
+      "songThemes": ["theme1", "theme2"],
+      "prayerFocus": "prayer focus description",
+      "callToAction": "specific call to action"
+    }
+  },
+  "internalTemplate": {
+    "palaceFloor": "Floor number and name",
+    "roomsActivated": ["room1", "room2"],
+    "governingPrinciple": "The principle that governs this sermon",
+    "christologicalAxis": "How Christ is central",
+    "timeOrientation": "Where this fits in salvation history",
+    "falseCenterExposed": "What lie or false center this sermon exposes",
+    "gospelResolution": "How the gospel resolves the tension"
+  },
+  "seriesExpansion": ${generateSeries ? `[
+    {"sermonNumber": 1, "title": "title", "focus": "brief focus", "primaryRoom": "room name"},
+    {"sermonNumber": 2, "title": "title", "focus": "brief focus", "primaryRoom": "room name"},
+    {"sermonNumber": 3, "title": "title", "focus": "brief focus", "primaryRoom": "room name"}
+    ${seriesLength && seriesLength > 3 ? `, {"sermonNumber": 4, "title": "title", "focus": "brief focus", "primaryRoom": "room name"}` : ''}
+    ${seriesLength && seriesLength > 4 ? `, {"sermonNumber": 5, "title": "title", "focus": "brief focus", "primaryRoom": "room name"}` : ''}
+    ${seriesLength && seriesLength >= 7 ? `, {"sermonNumber": 6, "title": "title", "focus": "brief focus", "primaryRoom": "room name"}, {"sermonNumber": 7, "title": "title", "focus": "brief focus", "primaryRoom": "room name"}` : ''}
+  ]` : 'null'},
+  "roomRefs": ["OR", "ST", "SR", "StR", "TR", "CR", "AR", "WR"]
+}`;
+
+    const userPrompt = `Create a ${level} level PhotoTheology Sermon Starter for the topic: "${topic}"
+
+${categoryConfig ? `Category: ${categoryConfig.name}` : ''}
+${eventConfig ? `Current Event Type: ${eventConfig.label} (interpret through pattern: "${eventConfig.pattern}")` : ''}
+
+${anchorScriptures && anchorScriptures.length > 0
+  ? `Anchor Scriptures to consider: ${anchorScriptures.join(", ")}`
+  : "Use appropriate scriptures that relate to this topic."}
+
+${generateSeries ? `Generate a ${seriesLength || 3}-part sermon series expansion with each sermon using a different Palace room but advancing the same thesis, climaxing Christologically.` : ''}
+
+Remember:
+- ${level === "Beginner" ? "Include more guiding questions and explicit instructions" : ""}
+- ${level === "Intermediate" ? "Balance guidance with room for exploration" : ""}
+- ${level === "Master" ? "Use dense prompts that expect PT fluency" : ""}
+- Do NOT write a sermon - provide a scaffold for thinking
+- Include a compelling Big Idea sentence
+- Include illustration hooks for each point
+- Pose questions instead of conclusions where Scripture doesn't settle matters
+- If no symbols are explicit, say so
+- If no sanctuary connection is clear, say so
+- Expose the FALSE CENTER this sermon addresses`;
+
+    console.log(`[generate-sermon-starter] Generating ${level} starter for topic: ${topic}, category: ${category || 'none'}`);
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 6000,
+        response_format: { type: "json_object" },
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[generate-sermon-starter] AI API error: ${errorText}`);
+      throw new Error(`AI API error: ${response.status}`);
+    }
+
+    const aiResponse = await response.json();
+    const content = aiResponse.choices?.[0]?.message?.content;
+
+    if (!content) {
+      throw new Error("No content in AI response");
+    }
+
+    let starterData;
+    try {
+      starterData = JSON.parse(content);
+    } catch (parseError) {
+      console.error("[generate-sermon-starter] Failed to parse AI response:", content);
+      throw new Error("Failed to parse AI response as JSON");
+    }
+
+    console.log(`[generate-sermon-starter] Successfully generated starter: ${starterData.starterTitle}`);
+
+    // Save to database if topicId provided
+    if (topicId) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+      const { error: insertError } = await supabase
+        .from("sermon_starters")
+        .insert({
+          topic_id: topicId,
+          starter_title: starterData.starterTitle,
+          level,
+          floors: starterData,
+          room_refs: starterData.roomRefs || [],
+          quality_status: "published",
+        });
+
+      if (insertError) {
+        console.error("[generate-sermon-starter] Database insert error:", insertError);
+      } else {
+        console.log("[generate-sermon-starter] Saved starter to database");
+      }
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        starter: starterData,
+        categoryUsed: categoryConfig?.name || null,
+        eventTypeUsed: eventConfig?.label || null,
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+
+  } catch (error) {
+    console.error("[generate-sermon-starter] Error:", error);
+    return new Response(
+      JSON.stringify({
+        error: error instanceof Error ? error.message : "Unknown error",
+        success: false
+      }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});

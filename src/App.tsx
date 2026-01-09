@@ -95,6 +95,8 @@ const BibleImageLibrary = lazy(() => import("./pages/BibleImageLibrary"));
 const SermonBuilder = lazy(() => import("./pages/SermonBuilder"));
 const SermonArchive = lazy(() => import("./pages/SermonArchive"));
 const SermonPowerPoint = lazy(() => import("./pages/SermonPowerPoint"));
+const SermonTopicsHub = lazy(() => import("./pages/SermonTopicsHub"));
+const SermonTopicDetail = lazy(() => import("./pages/SermonTopicDetail"));
 const SeriesPresentationMode = lazy(() => import("./pages/SeriesPresentationMode"));
 const PublicSeriesBrowser = lazy(() => import("./pages/PublicSeriesBrowser"));
 const Flashcards = lazy(() => import("./pages/Flashcards"));
@@ -513,6 +515,8 @@ function App() {
             <Route path="/bible-image-library" element={<ProtectedRoute><BibleImageLibrary /></ProtectedRoute>} />
           <Route path="/sermon-builder" element={<ProtectedRoute><SermonBuilder /></ProtectedRoute>} />
           <Route path="/sermon-archive" element={<ProtectedRoute><SermonArchive /></ProtectedRoute>} />
+          <Route path="/sermon-topics" element={<ProtectedRoute><SermonTopicsHub /></ProtectedRoute>} />
+          <Route path="/sermon-topics/:slug" element={<ProtectedRoute><SermonTopicDetail /></ProtectedRoute>} />
           <Route path="/sermon-powerpoint" element={<ProtectedRoute><SermonPowerPoint /></ProtectedRoute>} />
           <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
           <Route path="/bible-rendered-room" element={<ProtectedRoute><BibleRenderedRoom /></ProtectedRoute>} />
