@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,9 @@ import {
   GraduationCap,
   Trophy,
   Crown,
-  Wand2
+  Wand2,
+  Send,
+  FileOutput
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -130,12 +133,15 @@ const LEVEL_CONFIG = {
 
 export default function SermonTopicDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [topic, setTopic] = useState<SermonTopic | null>(null);
   const [starters, setStarters] = useState<SermonStarter[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [expandedStarter, setExpandedStarter] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -215,6 +221,77 @@ export default function SermonTopicDetail() {
     } finally {
       setGenerating(false);
       setSelectedLevel(null);
+    }
+  };
+
+  // Export starter to Sermon Builder
+  const handleExportToSermonBuilder = async (starter: SermonStarter) => {
+    if (!user || !topic) {
+      toast.error("Please log in to export to Sermon Builder");
+      return;
+    }
+
+    setExporting(true);
+
+    try {
+      // Extract key texts from floors
+      const floors = starter.floors as any;
+      const keyTexts = floors?.keyTexts || {};
+      const allTexts = [
+        ...(keyTexts.oldTestament || []),
+        ...(keyTexts.gospels || []),
+        ...(keyTexts.epistles || []),
+        ...(keyTexts.revelation || []),
+      ].slice(0, 3);
+
+      // Build smooth stones from observation questions and symbols
+      const smoothStones: string[] = [];
+      if (floors?.floor1?.observationQuestions) {
+        smoothStones.push(...floors.floor1.observationQuestions.slice(0, 2));
+      }
+      if (floors?.floor6?.guidedQuestions) {
+        smoothStones.push(...floors.floor6.guidedQuestions.slice(0, 2));
+      }
+
+      // Build bridges from application angles
+      const bridges: string[] = [];
+      if (floors?.floor7?.applicationAngles) {
+        bridges.push(...floors.floor7.applicationAngles.map((a: any) => a.question).slice(0, 3));
+      }
+
+      // Create sermon draft
+      const sermonData = {
+        user_id: user.id,
+        title: starter.starter_title || `Sermon on ${topic.title}`,
+        theme_passage: allTexts[0] || topic.anchor_scriptures[0] || "",
+        sermon_style: "Topical (Theme-Focused)",
+        smooth_stones: smoothStones,
+        bridges: bridges,
+        movie_structure: {
+          hook: floors?.starterParagraph || floors?.bigIdea || "",
+          tension: floors?.internalTemplate?.falseCenterExposed || "",
+          resolution: floors?.internalTemplate?.gospelResolution || "",
+          response: floors?.floor8?.callToAction || "",
+        },
+        full_sermon: "",
+        status: "in_progress",
+      };
+
+      const { data, error } = await supabase
+        .from("sermons")
+        .insert(sermonData)
+        .select("id")
+        .single();
+
+      if (error) throw error;
+
+      toast.success("Exported to Sermon Builder!");
+      navigate(`/sermon-builder?id=${data.id}`);
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Failed to export. Please try again.");
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -655,6 +732,23 @@ export default function SermonTopicDetail() {
                           </Badge>
                           <CardTitle className="text-2xl">{starter.starter_title}</CardTitle>
                         </div>
+                        <Button
+                          onClick={() => handleExportToSermonBuilder(starter)}
+                          disabled={exporting}
+                          className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
+                        >
+                          {exporting ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Exporting...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="mr-2 h-4 w-4" />
+                              Send to Sermon Builder
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </CardHeader>
                     <CardContent>

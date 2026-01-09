@@ -51,6 +51,7 @@ const Index = lazy(() => import("./pages/Index"));
 // Lazy load pricing, demo, and donation
 const Pricing = lazy(() => import("./pages/Pricing"));
 const InteractiveDemo = lazy(() => import("./pages/InteractiveDemo"));
+const Comparison = lazy(() => import("./pages/Comparison"));
 const DonationPage = lazy(() => import("./pages/DonationPage"));
 
 // Lazy load all other pages
@@ -97,6 +98,7 @@ const SermonArchive = lazy(() => import("./pages/SermonArchive"));
 const SermonPowerPoint = lazy(() => import("./pages/SermonPowerPoint"));
 const SermonTopicsHub = lazy(() => import("./pages/SermonTopicsHub"));
 const SermonTopicDetail = lazy(() => import("./pages/SermonTopicDetail"));
+const WeeklyChallenge = lazy(() => import("./pages/WeeklyChallenge"));
 const SeriesPresentationMode = lazy(() => import("./pages/SeriesPresentationMode"));
 const PublicSeriesBrowser = lazy(() => import("./pages/PublicSeriesBrowser"));
 const Flashcards = lazy(() => import("./pages/Flashcards"));
@@ -365,6 +367,7 @@ function App() {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/patreon-callback" element={<PatreonCallback />} />
             <Route path="/interactive-demo" element={<InteractiveDemo />} />
+            <Route path="/comparison" element={<Comparison />} />
             <Route path="/onboarding" element={
               <ProtectedRoute>
                 <Onboarding />
@@ -517,6 +520,7 @@ function App() {
           <Route path="/sermon-archive" element={<ProtectedRoute><SermonArchive /></ProtectedRoute>} />
           <Route path="/sermon-topics" element={<ProtectedRoute><SermonTopicsHub /></ProtectedRoute>} />
           <Route path="/sermon-topics/:slug" element={<ProtectedRoute><SermonTopicDetail /></ProtectedRoute>} />
+          <Route path="/weekly-challenge" element={<WeeklyChallenge />} />
           <Route path="/sermon-powerpoint" element={<ProtectedRoute><SermonPowerPoint /></ProtectedRoute>} />
           <Route path="/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
           <Route path="/bible-rendered-room" element={<ProtectedRoute><BibleRenderedRoom /></ProtectedRoute>} />

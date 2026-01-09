@@ -39,6 +39,8 @@ import { XPSystem, BadgeSystem, WeeklyLeaderboard } from "@/components/gamificat
 import { IdentityLoopWidget } from "@/components/IdentityLoopWidget";
 import { StudyToolsQuickAccess } from "@/components/StudyToolsQuickAccess";
 import { FeatureHighlights } from "@/components/FeatureHighlights";
+import { SermonForgeWidget } from "@/components/dashboard/SermonForgeWidget";
+import { WeeklyChallengeWidget, WinnerBanner } from "@/components/weekly-challenge";
 
 interface DashboardStats {
   dailyStreak: number;
@@ -257,6 +259,11 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
+        {/* Weekly Winner Banner (if there's a recent winner) */}
+        <div className="mb-6">
+          <WinnerBanner />
+        </div>
+
         {/* Main Stats Grid - Mobile Optimized with 2x2 layout */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
           <Card variant="glass">
@@ -388,6 +395,12 @@ export default function Dashboard() {
 
             {/* Quick AI Prompt - Surface Jeeves */}
             <QuickAIPrompt />
+
+            {/* Weekly Study Challenge */}
+            <WeeklyChallengeWidget />
+
+            {/* Sermon Forge - Quick sermon starter generation */}
+            <SermonForgeWidget />
 
             {/* Community Highlight - Surface trending posts */}
             <CommunityHighlight />

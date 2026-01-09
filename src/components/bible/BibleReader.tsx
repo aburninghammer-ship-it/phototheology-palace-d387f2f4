@@ -4,7 +4,7 @@ import { fetchChapter, Translation } from "@/services/bibleApi";
 import { Chapter } from "@/types/bible";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot, Bookmark, Sparkles, Upload, Volume2, Headphones, Copy, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Loader2, Link2, MessageSquare, Bot, Bookmark, Sparkles, Upload, Volume2, Headphones, Copy, Check, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { QuickAudioButton } from "@/components/audio";
 import { VerseView } from "./VerseView";
@@ -25,6 +25,7 @@ import { ImportPassageDialog } from "@/components/series-builder/ImportPassageDi
 import { useBibleState } from "@/hooks/useBibleState";
 import { VerseImageAttachment } from "./VerseImageAttachment";
 import { ApologeticsPanel } from "./ApologeticsPanel";
+import { SermonIdeasPanel } from "./SermonIdeasPanel";
 
 import { ThematicTagging } from "./ThematicTagging";
 import { ThemeCrossReference } from "./ThemeCrossReference";
@@ -56,6 +57,7 @@ export const BibleReader = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [activeDimensions, setActiveDimensions] = useState<string[]>(["1D", "2D", "3D", "4D", "5D"]);
   const [studyMode, setStudyMode] = useState<"beginner" | "advanced" | "apologetics">("advanced");
+  const [sermonIdeasMode, setSermonIdeasMode] = useState(false);
   
   const toggleDimension = (dimension: string) => {
     setActiveDimensions(prev =>
@@ -441,6 +443,24 @@ export const BibleReader = () => {
             Import to Lesson
           </Button>
         )}
+        {selectedVerse && (
+          <Button
+            variant={sermonIdeasMode ? "default" : "outline"}
+            size="sm"
+            onClick={() => {
+              setSermonIdeasMode(!sermonIdeasMode);
+              setStrongsMode(false);
+              setPrincipleMode(false);
+              setChainReferenceMode(false);
+              setCommentaryMode(false);
+              setJeevesMode(false);
+            }}
+            className={sermonIdeasMode ? "bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg" : ""}
+          >
+            <Flame className="h-4 w-4 mr-2" />
+            Sermon Ideas
+          </Button>
+        )}
       </div>
 
       <ImportPassageDialog
@@ -530,6 +550,14 @@ export const BibleReader = () => {
                 onHighlight={setHighlightedVerses}
               />
             </div>
+          ) : sermonIdeasMode && selectedVerse ? (
+            <SermonIdeasPanel
+              book={book}
+              chapter={chapter}
+              verse={selectedVerse}
+              verseText={chapterData.verses.find(v => v.verse === selectedVerse)?.text || ""}
+              onClose={() => setSermonIdeasMode(false)}
+            />
           ) : (commentaryMode || jeevesMode) && selectedVerse ? (
             <>
               {commentaryMode && (
