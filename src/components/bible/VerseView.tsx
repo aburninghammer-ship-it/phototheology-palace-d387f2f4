@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Verse } from "@/types/bible";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2, BookOpen, RefreshCw, HelpCircle } from "lucide-react";
+import { Sparkles, Loader2, BookOpen, RefreshCw, HelpCircle, Mic } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -109,6 +110,7 @@ export const VerseView = ({
   onDeleteNote,
   onAskJeeves,
 }: VerseViewProps) => {
+  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedPrinciple, setSelectedPrinciple] = useState<string>("");
   const [explanation, setExplanation] = useState<string>("");
@@ -119,6 +121,12 @@ export const VerseView = ({
   const [wordLoading, setWordLoading] = useState(false);
   const [regenerateTrigger, setRegenerateTrigger] = useState(0);
   const { toast } = useToast();
+
+  const handleSermonStarter = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const verseRef = `${book} ${chapter}:${verse.verse}`;
+    navigate(`/sermon-starters?verse=${encodeURIComponent(verseRef)}`);
+  };
 
   // Generate dynamic principles for this verse (regenerates when regenerateTrigger changes)
   const displayPrinciples = useMemo(
@@ -289,6 +297,15 @@ export const VerseView = ({
                   <HelpCircle className="h-3 w-3 text-purple-500" />
                 </Button>
               )}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={handleSermonStarter}
+                title="Generate sermon starter from this verse"
+              >
+                <Mic className="h-3 w-3 text-amber-500" />
+              </Button>
             </div>
           </div>
           
