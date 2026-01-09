@@ -263,8 +263,12 @@ serve(async (req) => {
       word,
       // Floor level for study questions
       floorLevel,
-      messages: chatMessages
+      messages,
+      chatMessages
     } = requestBody;
+    
+    // Handle both message formats
+    const allChatMessages = chatMessages || messages || [];
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -4097,7 +4101,7 @@ Find and return the exact Scripture they're looking for. If unclear, ask for cla
       const sermonThemePassage = themePassage || '';
       const sermonContentText = sermon_content || '';
       const sermonStones = smooth_stones || stones || [];
-      const messagesArray = chatMessages || [];
+      const messagesArray = allChatMessages || [];
 
       systemPrompt = `You are Jeeves, a helpful sermon writing assistant. Help the preacher with WHATEVER they ask.
 
