@@ -9,8 +9,8 @@ const corsHeaders = {
 // Map product IDs to their PDF filenames in storage
 // Products can have single file (string) or multiple files (string[])
 const PRODUCT_FILES: Record<string, string | string[]> = {
-  "quick-start-guide": "quick-start-guide.pdf",
-  "genesis-6-days": "genesis-6-days.pdf",
+  "quick-start-guide": "THE-PHOTOTHEOLOGY-QUICK-START-GUIDE.pdf",
+  "genesis-6-days": "GENESIS-IN-6-DAYS.pdf",
   "study-suite": [
     "study-suite-2.pdf",
     "study-suite-4.pdf", 
