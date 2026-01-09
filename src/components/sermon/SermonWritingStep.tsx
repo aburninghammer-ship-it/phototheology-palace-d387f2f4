@@ -249,6 +249,101 @@ Return ONLY the JSON, no other text.`
     }
   }, [processScriptureRequest]);
 
+  // Check for partial verse quotes and complete them
+  const checkForPartialVerses = useCallback(async (content: string) => {
+    const plainContent = content.replace(/<[^>]*>/g, '');
+
+    // Match quoted text that might be a partial verse (10-150 chars, in quotes)
+    // Look for patterns like "For God so loved" or 'the Lord is my shepherd'
+    const quoteRegex = /["']([^"']{10,150})["']/g;
+    let match;
+
+    while ((match = quoteRegex.exec(plainContent)) !== null) {
+      const fullMatch = match[0];
+      const quotedText = match[1].trim();
+
+      // Skip if already processed
+      if (processedRequestsRef.current.has(fullMatch)) continue;
+
+      // Skip if it already has a reference nearby (within 50 chars after)
+      const afterText = plainContent.slice(match.index + fullMatch.length, match.index + fullMatch.length + 50);
+      if (/\b(\d+:\d+|\w+\s+\d+:\d+|Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|Samuel|Kings|Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Proverbs|Ecclesiastes|Song|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|Corinthians|Galatians|Ephesians|Philippians|Colossians|Thessalonians|Timothy|Titus|Philemon|Hebrews|James|Peter|Jude|Revelation)\b/i.test(afterText)) {
+        continue;
+      }
+
+      // Check if the text looks like it might be from Scripture
+      // Biblical language patterns
+      const biblicalPatterns = [
+        /\b(Lord|God|Jesus|Christ|Spirit|Father|Son|heaven|earth|faith|love|hope|grace|mercy|salvation|sin|righteous|holy|blessed|glory|eternal|kingdom|covenant|commandment|prophet|apostle|disciple|lamb|shepherd|light|darkness|truth|life|death|resurrection|cross|blood|sacrifice|temple|altar|priest|angel|devil|satan|soul|heart|peace|joy|forgive|redeem|sanctify|justify|believe|pray|worship|praise|amen|hallelujah|selah)\b/i,
+        /\b(thou|thee|thy|thine|hath|doth|shalt|unto|hast|saith|verily|behold|thus)\b/i, // KJV language
+        /\b(the Lord|my God|our Father|in Christ|by faith|through grace)\b/i,
+      ];
+
+      const looksLikeBible = biblicalPatterns.some(pattern => pattern.test(quotedText));
+
+      if (looksLikeBible) {
+        // Mark as being processed to avoid duplicates
+        processedRequestsRef.current.add(fullMatch);
+        setProcessingRequest(true);
+
+        try {
+          const { data, error } = await supabase.functions.invoke("jeeves", {
+            body: {
+              mode: "sermon-assistant",
+              sermon_title: sermon.title,
+              themePassage: themePassage,
+              chatMessages: [{
+                role: "user",
+                content: `I have a partial Bible verse quote: "${quotedText}"
+
+Please identify which verse this is from and provide the COMPLETE verse text.
+
+IMPORTANT: Respond in this exact JSON format only:
+{
+  "reference": "Book Chapter:Verse(s)",
+  "scripture": "The complete text of the verse(s)",
+  "isMatch": true
+}
+
+If this doesn't appear to be from the Bible, respond with:
+{
+  "isMatch": false
+}
+
+Return ONLY the JSON, no other text.`
+              }]
+            },
+          });
+
+          if (error) throw error;
+
+          let responseText = data?.content || data?.response || (typeof data === 'string' ? data : '');
+          let cleanResponse = responseText.trim();
+          if (cleanResponse.startsWith('```json')) cleanResponse = cleanResponse.slice(7);
+          if (cleanResponse.startsWith('```')) cleanResponse = cleanResponse.slice(3);
+          if (cleanResponse.endsWith('```')) cleanResponse = cleanResponse.slice(0, -3);
+
+          const parsed = JSON.parse(cleanResponse.trim());
+
+          if (parsed?.isMatch && parsed?.scripture && parsed?.reference) {
+            // Replace the partial quote with the full verse in a blockquote
+            const scriptureHtml = `<blockquote><strong>${parsed.reference}</strong>: "${parsed.scripture}"</blockquote>`;
+            const newContent = content.replace(fullMatch, scriptureHtml);
+            setSermon({ ...sermon, full_sermon: newContent });
+            toast.success(`Completed verse: ${parsed.reference}`);
+          }
+        } catch (error) {
+          console.error("Error completing partial verse:", error);
+          // Don't show error toast, just silently fail
+        } finally {
+          setProcessingRequest(false);
+        }
+
+        break; // Process one at a time
+      }
+    }
+  }, [sermon, setSermon, themePassage]);
+
   // Debounced function to get verse suggestions based on sermon content
   const fetchVerseSuggestions = useCallback(async (content: string) => {
     if (!content || content.length < 100) {
@@ -310,9 +405,10 @@ Return ONLY the JSON, no other text.`
     }
     debounceRef.current = setTimeout(() => {
       fetchVerseSuggestions(content);
-      // Check for parentheses-based scripture requests
+      // Check for parentheses-based scripture requests and partial verses
       if (!processingRequest) {
         checkForScriptureRequests(content);
+        checkForPartialVerses(content);
       }
     }, 2000); // 2 second debounce
   };
