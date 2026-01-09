@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useEventTracking } from "@/hooks/useEventTracking";
 import {
   Download,
   CheckCircle,
@@ -26,6 +27,12 @@ interface DownloadFile {
 export default function StudySuiteSuccess() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadFiles, setDownloadFiles] = useState<DownloadFile[] | null>(null);
+  const { trackPurchaseCompleted } = useEventTracking();
+
+  // Track purchase on page load
+  useEffect(() => {
+    trackPurchaseCompleted("study-suite", 97);
+  }, [trackPurchaseCompleted]);
 
   const handleDownload = async () => {
     setIsDownloading(true);
