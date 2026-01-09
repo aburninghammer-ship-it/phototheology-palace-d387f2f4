@@ -113,7 +113,9 @@ serve(async (req) => {
       category,
       currentEventType,
       generateSeries,
-      seriesLength
+      seriesLength,
+      ptRooms,
+      roomLabels
     } = await req.json();
 
     if (!topic || !level) {
@@ -128,9 +130,12 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Get category-specific rules
+    // Get category-specific rules (legacy support)
     const categoryConfig = category ? CATEGORY_RULES[category] : null;
     const eventConfig = currentEventType ? CURRENT_EVENT_TYPES.find(e => e.id === currentEventType) : null;
+    
+    // PT Rooms mode (new feature for verse-based sermon ideas)
+    const hasPtRooms = ptRooms && Array.isArray(ptRooms) && ptRooms.length > 0;
 
     const systemPrompt = `You are Jeeves, the PhotoTheology Sermon Forge architect.
 You build PT-driven SERMON GENERATION that:
@@ -161,10 +166,18 @@ THE 8 FLOORS OF THE PHOTOTHEOLOGY PALACE:
 - Floor 7 (Spiritual): Fire Room, Meditation Room, Speed Room
 - Floor 8 (Master): The palace becomes invisible—internalized and instinctive
 
+${hasPtRooms ? `
+SELECTED PT ROOMS (MUST USE THESE SPECIFICALLY):
+${ptRooms.join(', ')} ${roomLabels ? `(${roomLabels.join(', ')})` : ''}
+
+Focus your sermon idea through the lens of these specific PT Palace rooms.
+Apply the principles and methods of each selected room to the scripture passage.
+` : ''}
+
 ${categoryConfig ? `
 CATEGORY: ${categoryConfig.name}
 CATEGORY RULES (MUST FOLLOW):
-${categoryConfig.rules.map(r => `• ${r}`).join('\n')}
+${categoryConfig.rules.map((r: string) => `• ${r}`).join('\n')}
 
 MANDATORY ROOMS TO USE:
 ${categoryConfig.mandatoryRooms.join(', ')}
@@ -172,6 +185,7 @@ ${categoryConfig.mandatoryRooms.join(', ')}
 PALACE ANCHORS:
 ${categoryConfig.palaceAnchors.join(', ')}
 ` : ''}
+
 
 ${eventConfig ? `
 CURRENT EVENT FILTER:

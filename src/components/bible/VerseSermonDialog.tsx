@@ -16,26 +16,23 @@ import {
   Loader2,
   ChevronDown,
   Mic,
-  Target,
-  Heart,
-  BookOpen,
-  Building2,
-  RefreshCw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-// New compact format from PT Sermon Idea Starters
-interface SermonIdea {
-  title: string;
-  hook: string;
+interface FullStarter {
+  starterTitle: string;
+  starterParagraph?: string;
   bigIdea: string;
-  seedMoves: string[];
-  anchorTexts: string[];
-  christResolution: string;
-  application: string;
-  memoryImage?: string | null;
+  palaceAnchors?: string[];
+  roomRefs?: string[];
+  internalTemplate?: {
+    governingPrinciple?: string;
+    christologicalAxis?: string;
+    falseCenterExposed?: string;
+    gospelResolution?: string;
+  };
 }
 
 interface VerseSermonDialogProps {
@@ -45,21 +42,44 @@ interface VerseSermonDialogProps {
   verseText: string;
 }
 
-// PT Palace rooms for sermon generation
+// PT Palace Rooms from Floors 3-7
 const PT_ROOMS = [
-  { name: "Observation Room", icon: "👁️", description: "Examine text details - who, what, when, where, why" },
-  { name: "Concentration Room", icon: "✝️", description: "Find Christ in every passage (Luke 24:27)" },
-  { name: "Fire Room", icon: "🔥", description: "Personal application and spiritual response" },
-  { name: "Symbols Room", icon: "🔣", description: "Decode Bible symbols using Scripture's definitions" },
-  { name: "Types Room", icon: "📐", description: "Connect OT types to NT antitypes" },
-  { name: "Sanctuary Room", icon: "⛪", description: "Use the sanctuary blueprint to understand salvation" },
-  { name: "Patterns Room", icon: "🔄", description: "Identify recurring biblical patterns" },
-  { name: "Parallels Room", icon: "⚖️", description: "Find parallel stories, themes, and structures" },
-  { name: "Prophecy Room", icon: "📜", description: "Interpret prophecy through proper hermeneutics" },
-  { name: "Three Angels Room", icon: "👼", description: "The everlasting gospel of Revelation 14" },
-  { name: "Story Room", icon: "📖", description: "Visualize Bible narratives as living scenes" },
-  { name: "24FPS Room", icon: "🎬", description: "Create mental images for memory retention" },
+  // Floor 3 - Freestyle
+  { id: "NF", label: "Nature Freestyle", floor: 3, description: "See lessons in creation" },
+  { id: "PF", label: "Personal Freestyle", floor: 3, description: "Life as object lesson" },
+  { id: "BF", label: "Bible Freestyle", floor: 3, description: "Verse genetics connections" },
+  { id: "HF", label: "History Freestyle", floor: 3, description: "Culture & events as lessons" },
+  { id: "LR", label: "Listening Room", floor: 3, description: "Responsive connections" },
+  // Floor 4 - Next Level
+  { id: "CR", label: "Concentration", floor: 4, description: "Christ in every text" },
+  { id: "DR", label: "Dimensions", floor: 4, description: "5 layers of meaning" },
+  { id: "C6", label: "Connect 6", floor: 4, description: "Genre classification" },
+  { id: "TRm", label: "Theme Room", floor: 4, description: "Walls of salvation history" },
+  { id: "TZ", label: "Time Zone", floor: 4, description: "Past, present, future" },
+  { id: "PRm", label: "Patterns", floor: 4, description: "Recurring motifs" },
+  { id: "P‖", label: "Parallels", floor: 4, description: "Mirrored actions" },
+  { id: "FRt", label: "Fruit Room", floor: 4, description: "Character test" },
+  // Floor 5 - Vision
+  { id: "BL", label: "Blue Room", floor: 5, description: "Sanctuary blueprint" },
+  { id: "PR", label: "Prophecy", floor: 5, description: "Prophetic timelines" },
+  { id: "3A", label: "Three Angels", floor: 5, description: "Final gospel message" },
+  // Floor 6 - Cycles & Heavens
+  { id: "@Cy", label: "Cycles", floor: 6, description: "8 redemptive cycles" },
+  { id: "3H", label: "Three Heavens", floor: 6, description: "Cosmic stage" },
+  { id: "JR", label: "Juice Room", floor: 6, description: "Full extraction" },
+  // Floor 7 - Spiritual/Emotional
+  { id: "FRm", label: "Fire Room", floor: 7, description: "Emotional weight" },
+  { id: "MR", label: "Meditation", floor: 7, description: "Slow marination" },
+  { id: "SRm", label: "Speed Room", floor: 7, description: "Rapid application" },
 ];
+
+const FLOOR_COLORS: Record<number, string> = {
+  3: "bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300",
+  4: "bg-blue-500/10 border-blue-500/30 text-blue-700 dark:text-blue-300",
+  5: "bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300",
+  6: "bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-300",
+  7: "bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300",
+};
 
 export function VerseSermonDialog({
   open,
@@ -67,70 +87,94 @@ export function VerseSermonDialog({
   verseRef,
   verseText,
 }: VerseSermonDialogProps) {
-  const [selectedRooms, setSelectedRooms] = useState<string[]>([
-    "Observation Room",
-    "Concentration Room",
-    "Fire Room",
-  ]);
+  const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
   const [generating, setGenerating] = useState(false);
-  const [idea, setIdea] = useState<SermonIdea | null>(null);
-  const [roomsUsed, setRoomsUsed] = useState<string[]>([]);
+  const [starter, setStarter] = useState<FullStarter | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const [showRoomSelector, setShowRoomSelector] = useState(false);
   const { toast } = useToast();
 
   // Reset state when dialog opens
   useEffect(() => {
     if (open) {
-      setIdea(null);
+      setSelectedRooms([]);
+      setStarter(null);
       setExpandedSection(null);
-      setShowRoomSelector(false);
     }
   }, [open]);
 
-  const toggleRoom = (roomName: string) => {
-    setSelectedRooms((prev) => {
-      if (prev.includes(roomName)) {
-        if (prev.length <= 1) return prev;
-        return prev.filter((r) => r !== roomName);
+  const toggleRoom = (roomId: string) => {
+    setSelectedRooms(prev => {
+      if (prev.includes(roomId)) {
+        return prev.filter(id => id !== roomId);
       }
       if (prev.length >= 3) {
-        return [...prev.slice(1), roomName];
+        toast({
+          title: "Maximum 3 rooms",
+          description: "Select up to 3 PT rooms to focus your sermon idea.",
+        });
+        return prev;
       }
-      return [...prev, roomName];
+      return [...prev, roomId];
     });
   };
 
-  const generateIdea = async () => {
+  const generateStarter = async () => {
+    if (selectedRooms.length === 0) {
+      toast({
+        title: "Select rooms",
+        description: "Please select at least one PT room.",
+      });
+      return;
+    }
+
     setGenerating(true);
-    setIdea(null);
+    setStarter(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke("generate-sermon-idea", {
+      const roomLabels = selectedRooms.map(id => PT_ROOMS.find(r => r.id === id)?.label).filter(Boolean);
+      
+      const { data, error } = await supabase.functions.invoke("generate-sermon-starter", {
         body: {
-          passage: `${verseRef}: "${verseText.substring(0, 200)}"`,
-          selectedRooms: selectedRooms,
+          topic: verseRef,
+          level: "Intermediate",
+          anchorScriptures: [verseRef],
+          ptRooms: selectedRooms,
+          roomLabels: roomLabels,
         },
       });
 
       if (error) throw error;
 
-      if (data?.success && data?.idea) {
-        setIdea(data.idea);
-        setRoomsUsed(data.roomsUsed || selectedRooms);
+      if (data?.success && data?.starter) {
+        setStarter(data.starter);
       } else if (data?.error) {
         throw new Error(data.error);
       }
     } catch (error) {
-      console.error("Error generating idea:", error);
+      console.error("Error generating starter:", error);
       toast({
         title: "Generation Failed",
-        description: "Could not generate sermon idea. Please try again.",
+        description: "Could not generate sermon starter. Please try again.",
         variant: "destructive",
       });
     } finally {
       setGenerating(false);
     }
+  };
+
+  // Group rooms by floor
+  const roomsByFloor = PT_ROOMS.reduce((acc, room) => {
+    if (!acc[room.floor]) acc[room.floor] = [];
+    acc[room.floor].push(room);
+    return acc;
+  }, {} as Record<number, typeof PT_ROOMS>);
+
+  const floorNames: Record<number, string> = {
+    3: "Freestyle Floor",
+    4: "Next Level Floor",
+    5: "Vision Floor",
+    6: "Cycles & Heavens",
+    7: "Spiritual/Emotional",
   };
 
   return (
@@ -146,85 +190,69 @@ export function VerseSermonDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Room Selector */}
-          <div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowRoomSelector(!showRoomSelector)}
-              className="w-full justify-between text-sm mb-2"
-            >
-              <span className="flex items-center gap-2">
-                <Building2 className="h-4 w-4" />
-                PT Rooms: {selectedRooms.slice(0, 2).join(", ")}
-                {selectedRooms.length > 2 && ` +${selectedRooms.length - 2}`}
-              </span>
-              <ChevronDown className={`h-4 w-4 transition-transform ${showRoomSelector ? "rotate-180" : ""}`} />
-            </Button>
-
-            <AnimatePresence>
-              {showRoomSelector && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="p-3 rounded-lg bg-muted/50 border mb-3"
-                >
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Select 1-3 Palace rooms to guide the sermon idea:
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {PT_ROOMS.map((room) => (
-                      <label
-                        key={room.name}
-                        className={`flex items-center gap-2 p-2 rounded text-xs cursor-pointer transition-colors ${
-                          selectedRooms.includes(room.name)
-                            ? "bg-primary/10 border border-primary/30"
-                            : "hover:bg-muted border border-transparent"
-                        }`}
-                        title={room.description}
-                      >
-                        <Checkbox
-                          checked={selectedRooms.includes(room.name)}
-                          onCheckedChange={() => toggleRoom(room.name)}
-                        />
-                        <span>{room.icon}</span>
-                        <span className="truncate">{room.name.replace(" Room", "")}</span>
-                      </label>
-                    ))}
+        <ScrollArea className="max-h-[65vh] pr-2">
+          <div className="space-y-4">
+            {/* Room Selection by Floor */}
+            <div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Select 1-3 PT Palace rooms to shape your sermon idea:
+              </p>
+              
+              {Object.entries(roomsByFloor).map(([floor, rooms]) => (
+                <div key={floor} className="mb-4">
+                  <h4 className="text-xs font-medium text-muted-foreground mb-2">
+                    Floor {floor}: {floorNames[Number(floor)]}
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {rooms.map((room) => {
+                      const isSelected = selectedRooms.includes(room.id);
+                      return (
+                        <label
+                          key={room.id}
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border cursor-pointer transition-all text-sm ${
+                            isSelected
+                              ? FLOOR_COLORS[room.floor]
+                              : "bg-muted/30 border-border hover:bg-muted/50"
+                          }`}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => toggleRoom(room.id)}
+                            className="h-3.5 w-3.5"
+                          />
+                          <span className="font-medium">{room.id}</span>
+                          <span className="text-muted-foreground hidden sm:inline">
+                            {room.label}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+              ))}
 
-            {/* Generate Button */}
-            <Button
-              onClick={generateIdea}
-              disabled={generating}
-              className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
-            >
-              {generating ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generating...
-                </>
-              ) : idea ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Generate New Idea
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Generate Sermon Idea
-                </>
+              {selectedRooms.length > 0 && (
+                <Button
+                  onClick={generateStarter}
+                  disabled={generating}
+                  className="w-full mt-2"
+                >
+                  {generating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Generate Sermon Idea ({selectedRooms.join(", ")})
+                    </>
+                  )}
+                </Button>
               )}
-            </Button>
-          </div>
+            </div>
 
-          {/* Results */}
-          <ScrollArea className="max-h-[50vh]">
+            {/* Results */}
             <AnimatePresence mode="wait">
               {generating && (
                 <motion.div
@@ -236,11 +264,8 @@ export function VerseSermonDialog({
                 >
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm">Jeeves is crafting a sermon idea...</span>
+                    <span className="text-sm">Jeeves is generating sermon ideas...</span>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Using: {selectedRooms.join(", ")}
-                  </p>
                   <Skeleton className="h-6 w-3/4" />
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
@@ -248,114 +273,124 @@ export function VerseSermonDialog({
                 </motion.div>
               )}
 
-              {!generating && idea && (
+              {!generating && starter && (
                 <motion.div
                   key="result"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="space-y-4 p-1"
+                  className="space-y-4 p-1 border-t pt-4"
                 >
                   {/* Title */}
                   <div className="flex items-start gap-2">
                     <Sparkles className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                    <h3 className="font-semibold text-lg">{idea.title}</h3>
-                  </div>
-
-                  {/* Hook */}
-                  <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                    <p className="text-sm font-medium text-orange-700 dark:text-orange-300">
-                      🎣 Hook: {idea.hook}
-                    </p>
+                    <h3 className="font-semibold text-lg">{starter.starterTitle}</h3>
                   </div>
 
                   {/* Big Idea */}
                   <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
                     <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
-                      💡 Big Idea: {idea.bigIdea}
+                      💡 {starter.bigIdea}
                     </p>
                   </div>
 
-                  {/* Seed Moves */}
-                  {idea.seedMoves && idea.seedMoves.length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium mb-2 flex items-center gap-1">
-                        <Target className="h-3 w-3" />
-                        Seed Moves:
-                      </p>
-                      <ul className="space-y-1">
-                        {idea.seedMoves.map((move, i) => (
-                          <li key={i} className="text-sm text-muted-foreground pl-4 relative">
-                            <span className="absolute left-0">•</span>
-                            {move}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  {/* Starter Paragraph */}
+                  {starter.starterParagraph && (
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {starter.starterParagraph}
+                    </p>
                   )}
 
-                  {/* Anchor Texts */}
-                  {idea.anchorTexts && idea.anchorTexts.length > 0 && (
+                  {/* Palace Anchors */}
+                  {starter.palaceAnchors && starter.palaceAnchors.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {idea.anchorTexts.map((text, i) => (
-                        <Badge key={i} variant="outline" className="text-xs">
-                          <BookOpen className="h-2 w-2 mr-1" />
-                          {text}
+                      {starter.palaceAnchors.map((anchor, i) => (
+                        <Badge key={i} variant="secondary" className="text-xs">
+                          {anchor}
                         </Badge>
                       ))}
                     </div>
                   )}
 
-                  {/* Christ Resolution */}
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <p className="text-xs font-medium mb-1 flex items-center gap-1">
-                      <Heart className="h-3 w-3 text-red-500" />
-                      Christ Resolution:
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {idea.christResolution}
-                    </p>
-                  </div>
-
-                  {/* Application */}
-                  <div>
-                    <p className="text-xs font-medium mb-1">Application:</p>
-                    <p className="text-sm text-muted-foreground italic">
-                      {idea.application}
-                    </p>
-                  </div>
-
-                  {/* Memory Image (if 24FPS was used) */}
-                  {idea.memoryImage && (
-                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                      <p className="text-xs font-medium mb-1">🎬 Memory Image:</p>
-                      <p className="text-sm text-muted-foreground">
-                        {idea.memoryImage}
-                      </p>
+                  {/* Room Refs */}
+                  {starter.roomRefs && starter.roomRefs.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {starter.roomRefs.map((ref) => (
+                        <Badge
+                          key={ref}
+                          variant="outline"
+                          className="text-xs bg-primary/10"
+                        >
+                          {ref}
+                        </Badge>
+                      ))}
                     </div>
                   )}
 
-                  {/* Rooms Used */}
-                  <div className="flex flex-wrap gap-1 pt-2 border-t">
-                    <span className="text-xs text-muted-foreground mr-1">Rooms used:</span>
-                    {roomsUsed.map((room, i) => (
-                      <Badge key={i} variant="secondary" className="text-xs">
-                        <Building2 className="h-2 w-2 mr-1" />
-                        {room}
-                      </Badge>
-                    ))}
-                  </div>
+                  {/* Internal Template Section */}
+                  {starter.internalTemplate && (
+                    <div
+                      className="pt-3 border-t cursor-pointer"
+                      onClick={() =>
+                        setExpandedSection(expandedSection === "template" ? null : "template")
+                      }
+                    >
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-medium">Theological Framework</h4>
+                        <ChevronDown
+                          className={`h-4 w-4 text-muted-foreground transition-transform ${
+                            expandedSection === "template" ? "rotate-180" : ""
+                          }`}
+                        />
+                      </div>
+                      <AnimatePresence>
+                        {expandedSection === "template" && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-3 space-y-2 text-sm"
+                          >
+                            {starter.internalTemplate.governingPrinciple && (
+                              <div>
+                                <span className="text-muted-foreground">Governing Principle: </span>
+                                <span>{starter.internalTemplate.governingPrinciple}</span>
+                              </div>
+                            )}
+                            {starter.internalTemplate.christologicalAxis && (
+                              <div>
+                                <span className="text-muted-foreground">Christ Connection: </span>
+                                <span>{starter.internalTemplate.christologicalAxis}</span>
+                              </div>
+                            )}
+                            {starter.internalTemplate.falseCenterExposed && (
+                              <div>
+                                <span className="text-muted-foreground">False Center Exposed: </span>
+                                <span>{starter.internalTemplate.falseCenterExposed}</span>
+                              </div>
+                            )}
+                            {starter.internalTemplate.gospelResolution && (
+                              <div>
+                                <span className="text-muted-foreground">Gospel Resolution: </span>
+                                <span>{starter.internalTemplate.gospelResolution}</span>
+                              </div>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
                 </motion.div>
               )}
 
-              {!generating && !idea && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Mic className="h-12 w-12 mx-auto mb-3 opacity-20" />
-                  <p className="text-sm">Click "Generate Sermon Idea" to create a PT-powered sermon starter</p>
+              {!generating && !starter && selectedRooms.length === 0 && (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Mic className="h-10 w-10 mx-auto mb-3 opacity-20" />
+                  <p className="text-sm">Select PT rooms above to generate sermon ideas</p>
                 </div>
               )}
             </AnimatePresence>
-          </ScrollArea>
-        </div>
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
