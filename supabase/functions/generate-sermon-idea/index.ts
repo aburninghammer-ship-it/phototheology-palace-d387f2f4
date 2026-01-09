@@ -121,6 +121,15 @@ HARD CONSTRAINTS (NON-NEGOTIABLE)
 - DAY OF ATONEMENT = 1844 judgment (NOT Christ's death)
 - All Scripture must be KJV
 
+7) SCHOLAR CITATION RULE (NON-NEGOTIABLE):
+   - When referencing ANY scholar, commentator, or theologian, include a footnote:
+     • Full name + life dates (birth-death)
+     • Primary work being referenced
+     • Denominational tradition
+   - Example: "Adam Clarke (1760-1832, Methodist, *Clarke's Commentary*)"
+   - Example: "Ellen G. White (1827-1915, SDA, *Desire of Ages*, p. 123)"
+   - NEVER mention a scholar without proper citation
+
 ALLOWED_ROOMS:
 ${ALLOWED_ROOMS.join(", ")}
 
