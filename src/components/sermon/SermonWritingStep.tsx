@@ -18,7 +18,7 @@ interface SuggestedVerse {
   reference: string;
   text: string;
   reason: string;
-  type?: 'descriptive' | 'connection' | 'amplifying';
+  type?: 'proof' | 'descriptive' | 'connection' | 'amplifying';
 }
 
 interface SermonWritingStepProps {
