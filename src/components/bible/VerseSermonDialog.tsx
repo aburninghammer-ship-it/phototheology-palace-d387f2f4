@@ -10,33 +10,32 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-  BookOpen,
-  Calendar,
-  Church,
-  Telescope,
-  Heart,
   Sparkles,
   Loader2,
   ChevronDown,
   Mic,
+  Target,
+  Heart,
+  BookOpen,
+  Building2,
+  RefreshCw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-interface FullStarter {
-  starterTitle: string;
-  starterParagraph?: string;
+// New compact format from PT Sermon Idea Starters
+interface SermonIdea {
+  title: string;
+  hook: string;
   bigIdea: string;
-  palaceAnchors?: string[];
-  roomRefs?: string[];
-  internalTemplate?: {
-    governingPrinciple?: string;
-    christologicalAxis?: string;
-    falseCenterExposed?: string;
-    gospelResolution?: string;
-  };
+  seedMoves: string[];
+  anchorTexts: string[];
+  christResolution: string;
+  application: string;
+  memoryImage?: string | null;
 }
 
 interface VerseSermonDialogProps {
@@ -46,12 +45,20 @@ interface VerseSermonDialogProps {
   verseText: string;
 }
 
-const CATEGORIES = [
-  { id: "everlasting-gospel", label: "Themes", icon: BookOpen },
-  { id: "occasions", label: "Occasions", icon: Calendar },
-  { id: "sanctuary", label: "Doctrine", icon: Church },
-  { id: "prophecy", label: "Prophecy", icon: Telescope },
-  { id: "righteousness-by-faith", label: "Christian Living", icon: Heart },
+// PT Palace rooms for sermon generation
+const PT_ROOMS = [
+  { name: "Observation Room", icon: "👁️", description: "Examine text details - who, what, when, where, why" },
+  { name: "Concentration Room", icon: "✝️", description: "Find Christ in every passage (Luke 24:27)" },
+  { name: "Fire Room", icon: "🔥", description: "Personal application and spiritual response" },
+  { name: "Symbols Room", icon: "🔣", description: "Decode Bible symbols using Scripture's definitions" },
+  { name: "Types Room", icon: "📐", description: "Connect OT types to NT antitypes" },
+  { name: "Sanctuary Room", icon: "⛪", description: "Use the sanctuary blueprint to understand salvation" },
+  { name: "Patterns Room", icon: "🔄", description: "Identify recurring biblical patterns" },
+  { name: "Parallels Room", icon: "⚖️", description: "Find parallel stories, themes, and structures" },
+  { name: "Prophecy Room", icon: "📜", description: "Interpret prophecy through proper hermeneutics" },
+  { name: "Three Angels Room", icon: "👼", description: "The everlasting gospel of Revelation 14" },
+  { name: "Story Room", icon: "📖", description: "Visualize Bible narratives as living scenes" },
+  { name: "24FPS Room", icon: "🎬", description: "Create mental images for memory retention" },
 ];
 
 export function VerseSermonDialog({
@@ -60,48 +67,65 @@ export function VerseSermonDialog({
   verseRef,
   verseText,
 }: VerseSermonDialogProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedRooms, setSelectedRooms] = useState<string[]>([
+    "Observation Room",
+    "Concentration Room",
+    "Fire Room",
+  ]);
   const [generating, setGenerating] = useState(false);
-  const [starter, setStarter] = useState<FullStarter | null>(null);
+  const [idea, setIdea] = useState<SermonIdea | null>(null);
+  const [roomsUsed, setRoomsUsed] = useState<string[]>([]);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [showRoomSelector, setShowRoomSelector] = useState(false);
   const { toast } = useToast();
 
   // Reset state when dialog opens
   useEffect(() => {
     if (open) {
-      setSelectedCategory(null);
-      setStarter(null);
+      setIdea(null);
       setExpandedSection(null);
+      setShowRoomSelector(false);
     }
   }, [open]);
 
-  const generateStarter = async (category: string) => {
-    setSelectedCategory(category);
+  const toggleRoom = (roomName: string) => {
+    setSelectedRooms((prev) => {
+      if (prev.includes(roomName)) {
+        if (prev.length <= 1) return prev;
+        return prev.filter((r) => r !== roomName);
+      }
+      if (prev.length >= 3) {
+        return [...prev.slice(1), roomName];
+      }
+      return [...prev, roomName];
+    });
+  };
+
+  const generateIdea = async () => {
     setGenerating(true);
-    setStarter(null);
+    setIdea(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke("generate-sermon-starter", {
+      const { data, error } = await supabase.functions.invoke("generate-sermon-idea", {
         body: {
-          topic: verseRef,
-          level: "Intermediate",
-          anchorScriptures: [verseRef],
-          category: category === "occasions" ? null : category,
+          passage: `${verseRef}: "${verseText.substring(0, 200)}"`,
+          selectedRooms: selectedRooms,
         },
       });
 
       if (error) throw error;
 
-      if (data?.success && data?.starter) {
-        setStarter(data.starter);
+      if (data?.success && data?.idea) {
+        setIdea(data.idea);
+        setRoomsUsed(data.roomsUsed || selectedRooms);
       } else if (data?.error) {
         throw new Error(data.error);
       }
     } catch (error) {
-      console.error("Error generating starter:", error);
+      console.error("Error generating idea:", error);
       toast({
         title: "Generation Failed",
-        description: "Could not generate sermon starter. Please try again.",
+        description: "Could not generate sermon idea. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -123,30 +147,80 @@ export function VerseSermonDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Category Selection */}
+          {/* Room Selector */}
           <div>
-            <p className="text-sm text-muted-foreground mb-2">
-              Select a category to generate PT-based sermon ideas:
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((cat) => {
-                const Icon = cat.icon;
-                const isActive = selectedCategory === cat.id;
-                return (
-                  <Button
-                    key={cat.id}
-                    variant={isActive ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => generateStarter(cat.id)}
-                    disabled={generating}
-                    className={isActive ? "" : ""}
-                  >
-                    <Icon className="h-3 w-3 mr-1" />
-                    {cat.label}
-                  </Button>
-                );
-              })}
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowRoomSelector(!showRoomSelector)}
+              className="w-full justify-between text-sm mb-2"
+            >
+              <span className="flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                PT Rooms: {selectedRooms.slice(0, 2).join(", ")}
+                {selectedRooms.length > 2 && ` +${selectedRooms.length - 2}`}
+              </span>
+              <ChevronDown className={`h-4 w-4 transition-transform ${showRoomSelector ? "rotate-180" : ""}`} />
+            </Button>
+
+            <AnimatePresence>
+              {showRoomSelector && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="p-3 rounded-lg bg-muted/50 border mb-3"
+                >
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Select 1-3 Palace rooms to guide the sermon idea:
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {PT_ROOMS.map((room) => (
+                      <label
+                        key={room.name}
+                        className={`flex items-center gap-2 p-2 rounded text-xs cursor-pointer transition-colors ${
+                          selectedRooms.includes(room.name)
+                            ? "bg-primary/10 border border-primary/30"
+                            : "hover:bg-muted border border-transparent"
+                        }`}
+                        title={room.description}
+                      >
+                        <Checkbox
+                          checked={selectedRooms.includes(room.name)}
+                          onCheckedChange={() => toggleRoom(room.name)}
+                        />
+                        <span>{room.icon}</span>
+                        <span className="truncate">{room.name.replace(" Room", "")}</span>
+                      </label>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Generate Button */}
+            <Button
+              onClick={generateIdea}
+              disabled={generating}
+              className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
+            >
+              {generating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : idea ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Generate New Idea
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Generate Sermon Idea
+                </>
+              )}
+            </Button>
           </div>
 
           {/* Results */}
@@ -162,8 +236,11 @@ export function VerseSermonDialog({
                 >
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm">Jeeves is generating sermon ideas...</span>
+                    <span className="text-sm">Jeeves is crafting a sermon idea...</span>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    Using: {selectedRooms.join(", ")}
+                  </p>
                   <Skeleton className="h-6 w-3/4" />
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
@@ -171,7 +248,7 @@ export function VerseSermonDialog({
                 </motion.div>
               )}
 
-              {!generating && starter && (
+              {!generating && idea && (
                 <motion.div
                   key="result"
                   initial={{ opacity: 0, y: 10 }}
@@ -181,109 +258,99 @@ export function VerseSermonDialog({
                   {/* Title */}
                   <div className="flex items-start gap-2">
                     <Sparkles className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                    <h3 className="font-semibold text-lg">{starter.starterTitle}</h3>
+                    <h3 className="font-semibold text-lg">{idea.title}</h3>
+                  </div>
+
+                  {/* Hook */}
+                  <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                    <p className="text-sm font-medium text-orange-700 dark:text-orange-300">
+                      🎣 Hook: {idea.hook}
+                    </p>
                   </div>
 
                   {/* Big Idea */}
                   <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
                     <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
-                      💡 {starter.bigIdea}
+                      💡 Big Idea: {idea.bigIdea}
                     </p>
                   </div>
 
-                  {/* Starter Paragraph */}
-                  {starter.starterParagraph && (
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {starter.starterParagraph}
+                  {/* Seed Moves */}
+                  {idea.seedMoves && idea.seedMoves.length > 0 && (
+                    <div>
+                      <p className="text-xs font-medium mb-2 flex items-center gap-1">
+                        <Target className="h-3 w-3" />
+                        Seed Moves:
+                      </p>
+                      <ul className="space-y-1">
+                        {idea.seedMoves.map((move, i) => (
+                          <li key={i} className="text-sm text-muted-foreground pl-4 relative">
+                            <span className="absolute left-0">•</span>
+                            {move}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Anchor Texts */}
+                  {idea.anchorTexts && idea.anchorTexts.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {idea.anchorTexts.map((text, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">
+                          <BookOpen className="h-2 w-2 mr-1" />
+                          {text}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Christ Resolution */}
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <p className="text-xs font-medium mb-1 flex items-center gap-1">
+                      <Heart className="h-3 w-3 text-red-500" />
+                      Christ Resolution:
                     </p>
-                  )}
+                    <p className="text-sm text-muted-foreground">
+                      {idea.christResolution}
+                    </p>
+                  </div>
 
-                  {/* Palace Anchors */}
-                  {starter.palaceAnchors && starter.palaceAnchors.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {starter.palaceAnchors.map((anchor, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">
-                          {anchor}
-                        </Badge>
-                      ))}
+                  {/* Application */}
+                  <div>
+                    <p className="text-xs font-medium mb-1">Application:</p>
+                    <p className="text-sm text-muted-foreground italic">
+                      {idea.application}
+                    </p>
+                  </div>
+
+                  {/* Memory Image (if 24FPS was used) */}
+                  {idea.memoryImage && (
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                      <p className="text-xs font-medium mb-1">🎬 Memory Image:</p>
+                      <p className="text-sm text-muted-foreground">
+                        {idea.memoryImage}
+                      </p>
                     </div>
                   )}
 
-                  {/* Room Refs */}
-                  {starter.roomRefs && starter.roomRefs.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {starter.roomRefs.map((ref) => (
-                        <Badge
-                          key={ref}
-                          variant="outline"
-                          className="text-xs bg-primary/10"
-                        >
-                          {ref}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Internal Template Section */}
-                  {starter.internalTemplate && (
-                    <div
-                      className="pt-3 border-t cursor-pointer"
-                      onClick={() =>
-                        setExpandedSection(expandedSection === "template" ? null : "template")
-                      }
-                    >
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-medium">Theological Framework</h4>
-                        <ChevronDown
-                          className={`h-4 w-4 text-muted-foreground transition-transform ${
-                            expandedSection === "template" ? "rotate-180" : ""
-                          }`}
-                        />
-                      </div>
-                      <AnimatePresence>
-                        {expandedSection === "template" && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="mt-3 space-y-2 text-sm"
-                          >
-                            {starter.internalTemplate.governingPrinciple && (
-                              <div>
-                                <span className="text-muted-foreground">Governing Principle: </span>
-                                <span>{starter.internalTemplate.governingPrinciple}</span>
-                              </div>
-                            )}
-                            {starter.internalTemplate.christologicalAxis && (
-                              <div>
-                                <span className="text-muted-foreground">Christ Connection: </span>
-                                <span>{starter.internalTemplate.christologicalAxis}</span>
-                              </div>
-                            )}
-                            {starter.internalTemplate.falseCenterExposed && (
-                              <div>
-                                <span className="text-muted-foreground">False Center Exposed: </span>
-                                <span>{starter.internalTemplate.falseCenterExposed}</span>
-                              </div>
-                            )}
-                            {starter.internalTemplate.gospelResolution && (
-                              <div>
-                                <span className="text-muted-foreground">Gospel Resolution: </span>
-                                <span>{starter.internalTemplate.gospelResolution}</span>
-                              </div>
-                            )}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )}
+                  {/* Rooms Used */}
+                  <div className="flex flex-wrap gap-1 pt-2 border-t">
+                    <span className="text-xs text-muted-foreground mr-1">Rooms used:</span>
+                    {roomsUsed.map((room, i) => (
+                      <Badge key={i} variant="secondary" className="text-xs">
+                        <Building2 className="h-2 w-2 mr-1" />
+                        {room}
+                      </Badge>
+                    ))}
+                  </div>
                 </motion.div>
               )}
 
-              {!generating && !starter && selectedCategory === null && (
+              {!generating && !idea && (
                 <div className="text-center py-8 text-muted-foreground">
                   <Mic className="h-12 w-12 mx-auto mb-3 opacity-20" />
-                  <p className="text-sm">Select a category above to generate sermon ideas</p>
+                  <p className="text-sm">Click "Generate Sermon Idea" to create a PT-powered sermon starter</p>
                 </div>
               )}
             </AnimatePresence>
