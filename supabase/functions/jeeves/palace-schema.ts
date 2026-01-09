@@ -2377,6 +2377,7 @@ export const PALACE_SCHEMA = `
 **Purpose:** See cleansing and sanctification
 **Core Question:** How does washing reveal our need for spiritual cleansing?
 **METHOD:** Water washing → Word/Spirit cleansing → Daily sanctification → Perfect purity
+**⚠️ CRITICAL SANCTUARY ACCURACY:** The laver was in the COURTYARD between the altar and the Holy Place. Priests washed at the laver BEFORE entering the Holy Place (first apartment) - NOT before the Most Holy Place. The sequence is: Gate → Altar → Laver → Holy Place. Washing at the laver was required for DAILY ministry in the Holy Place, not just annual Day of Atonement service.
 
 **LS - Lampstand (Menorah)**
 **Purpose:** Understand the light of God's presence and the Spirit
@@ -2397,6 +2398,10 @@ export const PALACE_SCHEMA = `
 **Purpose:** Understand separation and access to God
 **Core Question:** How does the torn veil reveal access through Christ?
 **METHOD:** Barrier → Christ's body torn → We enter boldly → Face-to-face communion
+**⚠️ CRITICAL SANCTUARY ACCURACY:** There were TWO veils in the sanctuary:
+1. FIRST VEIL (Door/Screen): Entrance from courtyard INTO the Holy Place (first apartment) - Exodus 26:36-37
+2. SECOND VEIL: Separation between Holy Place and Most Holy Place - Exodus 26:31-33, Hebrews 9:3
+The veil torn at Christ's death (Matthew 27:51) was the SECOND veil separating the Holy from the Most Holy Place. Do NOT confuse these. The laver washing preceded entry through the FIRST veil into the Holy Place, not the second veil.
 
 **ARK - Ark of the Covenant**
 **Purpose:** See God's throne, law, and mercy united
@@ -2572,6 +2577,17 @@ export const PALACE_SCHEMA = `
 ### ❌ WRONG: Multiple Principles Per Floor
 **Correct:** When analyzing, select maximum ONE principle from each floor
 **Wrong:** Identifying both Story Room (SR) and Imagination Room (IR) for the same text
+
+### ❌ WRONG: Confusing Sanctuary Structure/Sequence
+**Correct Sanctuary Sequence:** Gate → Altar of Burnt Offering → Laver → (First Veil/Door) → HOLY PLACE [Lampstand, Table, Incense Altar] → (Second Veil) → MOST HOLY PLACE [Ark, Mercy Seat]
+**Wrong:** Saying laver washing was for entering the Most Holy Place (it was for entering the Holy Place)
+**Wrong:** Saying "the veil" without specifying which veil (there were TWO)
+**Wrong:** Placing the laver between the Holy Place and Most Holy Place (it was in the courtyard)
+
+### ❌ WRONG: Misunderstanding Laver Function
+**Correct:** Priests washed at the laver BEFORE entering the Holy Place for DAILY ministry
+**Wrong:** "The laver... points to the separation of the Holy and Most Holy Places" (laver is not about the second veil)
+**Wrong:** Connecting laver washing only to Day of Atonement (it was required for ALL priestly ministry in the Holy Place)
 
 ---
 
