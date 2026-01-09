@@ -48,6 +48,7 @@ export function GuestContributionForm({
       // Get share_id if shareCode provided
       let shareId = null;
       if (shareCode) {
+        // @ts-ignore - Table exists but types not synced
         const { data: shareData } = await supabase
           .from("weekly_challenge_shares")
           .select("id")
@@ -56,11 +57,12 @@ export function GuestContributionForm({
         shareId = shareData?.id;
       }
 
+      // @ts-ignore - Table exists but types not synced
       const { error } = await supabase.from("weekly_challenge_guest_contributions").insert({
         challenge_id: challengeId,
         share_id: shareId,
-        guest_name: name.trim(),
-        guest_email: email.trim() || null,
+        name: name.trim(),
+        email: email.trim() || null,
         contribution: contribution.trim(),
       });
 

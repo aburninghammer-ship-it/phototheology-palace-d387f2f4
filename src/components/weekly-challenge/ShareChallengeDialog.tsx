@@ -20,7 +20,6 @@ import {
   Facebook,
   MessageCircle,
   Mail,
-  Link2,
   Loader2,
   Gift,
 } from "lucide-react";
@@ -47,23 +46,23 @@ export function ShareChallengeDialog({
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const generateShareLink = async (platform: string) => {
+  const generateShareLink = async () => {
     if (!user) {
       // For non-logged-in users, use direct link
-      const url = `${window.location.origin}/weekly-challenge`;
-      return url;
+      return `${window.location.origin}/weekly-challenge`;
     }
 
     setLoading(true);
     try {
+      // @ts-ignore - RPC exists but types not synced
       const { data, error } = await supabase.rpc("create_challenge_share", {
         p_challenge_id: challenge.id,
-        p_platform: platform,
       });
 
       if (error) throw error;
 
-      const url = `${window.location.origin}/weekly-challenge?ref=${data.share_code}`;
+      const shareCode = typeof data === 'object' && data !== null ? (data as any).share_code : data;
+      const url = `${window.location.origin}/weekly-challenge?ref=${shareCode}`;
       setShareUrl(url);
       return url;
     } catch (err) {
@@ -76,7 +75,7 @@ export function ShareChallengeDialog({
   };
 
   const copyToClipboard = async () => {
-    const url = shareUrl || (await generateShareLink("link"));
+    const url = shareUrl || (await generateShareLink());
     await navigator.clipboard.writeText(url);
     setCopied(true);
     toast.success("Link copied to clipboard!");
@@ -84,7 +83,7 @@ export function ShareChallengeDialog({
   };
 
   const shareToTwitter = async () => {
-    const url = shareUrl || (await generateShareLink("twitter"));
+    const url = shareUrl || (await generateShareLink());
     const text = `Join me in this week's Bible study challenge: "${challenge.title}" - ${challenge.anchor_passage}`;
     window.open(
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
@@ -93,7 +92,7 @@ export function ShareChallengeDialog({
   };
 
   const shareToFacebook = async () => {
-    const url = shareUrl || (await generateShareLink("facebook"));
+    const url = shareUrl || (await generateShareLink());
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
       "_blank"
@@ -101,13 +100,13 @@ export function ShareChallengeDialog({
   };
 
   const shareToWhatsApp = async () => {
-    const url = shareUrl || (await generateShareLink("whatsapp"));
+    const url = shareUrl || (await generateShareLink());
     const text = `Join me in this week's Bible study challenge: "${challenge.title}" - ${challenge.anchor_passage}. Study together at: ${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const shareByEmail = async () => {
-    const url = shareUrl || (await generateShareLink("email"));
+    const url = shareUrl || (await generateShareLink());
     const subject = `Bible Study Challenge: ${challenge.title}`;
     const body = `I'm participating in a weekly Bible study challenge and thought you might enjoy it!\n\nThis week's challenge: "${challenge.title}"\nPassage: ${challenge.anchor_passage}\nTheme: ${challenge.theme}\n\nYou can share your thoughts even without an account. Join here:\n${url}`;
     window.open(
