@@ -58,17 +58,17 @@ export function SermonRichTextArea({
 
   const cursorContextDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Extract text around cursor position - using node-aware traversal
+  // Extract text around cursor position - focus on what user is currently typing
   const extractCursorContext = useCallback((editor: any) => {
     if (!editor || !onCursorContext) return;
 
     const { from } = editor.state.selection;
     const doc = editor.state.doc;
     
-    // Build text before and after cursor by walking the document
-    let beforeText = '';
-    let afterText = '';
-    let currentPos = 0;
+    // Get the full text content and cursor position
+    let fullText = '';
+    let cursorOffset = 0;
+    let foundCursor = false;
     
     doc.descendants((node: any, pos: number) => {
       if (node.isText) {
@@ -76,39 +76,52 @@ export function SermonRichTextArea({
         const nodeStart = pos;
         const nodeEnd = pos + nodeText.length;
         
-        if (nodeEnd <= from) {
-          // Entire node is before cursor
-          beforeText += nodeText;
-        } else if (nodeStart >= from) {
-          // Entire node is after cursor
-          afterText += nodeText;
-        } else {
-          // Cursor is inside this node
-          const splitPoint = from - nodeStart;
-          beforeText += nodeText.slice(0, splitPoint);
-          afterText += nodeText.slice(splitPoint);
+        if (!foundCursor && nodeEnd >= from) {
+          // Cursor is in or after this node
+          const offsetInNode = Math.max(0, from - nodeStart);
+          cursorOffset = fullText.length + offsetInNode;
+          foundCursor = true;
         }
-      } else if (node.isBlock && beforeText.length > 0) {
+        fullText += nodeText;
+      } else if (node.isBlock && fullText.length > 0 && !fullText.endsWith('\n\n')) {
         // Add paragraph breaks between blocks
-        beforeText += '\n\n';
+        fullText += '\n\n';
+        if (!foundCursor && pos >= from) {
+          cursorOffset = fullText.length;
+          foundCursor = true;
+        }
       }
       return true;
     });
     
-    // Trim to reasonable lengths
-    beforeText = beforeText.slice(-400);
-    afterText = afterText.slice(0, 150);
+    // If cursor wasn't found in text nodes, put it at end
+    if (!foundCursor) {
+      cursorOffset = fullText.length;
+    }
     
-    // Find the current paragraph/sentence (what user is currently typing)
-    // Split on double newlines and get the last "paragraph" before cursor
-    const paragraphs = beforeText.split(/\n\n/);
-    const currentParagraphBefore = paragraphs[paragraphs.length - 1] || '';
-    const currentParagraphAfter = afterText.split(/\n\n/)[0] || '';
+    // Get text before and after cursor
+    const beforeText = fullText.slice(0, cursorOffset);
+    const afterText = fullText.slice(cursorOffset);
+    
+    // Find the current paragraph/sentence the user is typing in
+    // Look for the paragraph containing the cursor
+    const paragraphsBefore = beforeText.split(/\n\n/);
+    const paragraphsAfter = afterText.split(/\n\n/);
+    
+    const currentParagraphBefore = paragraphsBefore[paragraphsBefore.length - 1] || '';
+    const currentParagraphAfter = paragraphsAfter[0] || '';
     const paragraph = (currentParagraphBefore + currentParagraphAfter).trim();
 
+    // For suggestions, prioritize the most recent content near cursor
+    // Take last 300 chars before cursor for context
+    const recentBefore = beforeText.slice(-300).trim();
+
+    console.log("[CursorContext] Paragraph around cursor:", paragraph.slice(-100));
+    console.log("[CursorContext] Before cursor:", recentBefore.slice(-80));
+
     onCursorContext({
-      before: beforeText.trim(),
-      after: afterText.trim(),
+      before: recentBefore,
+      after: afterText.slice(0, 100).trim(),
       paragraph
     });
   }, [onCursorContext]);
