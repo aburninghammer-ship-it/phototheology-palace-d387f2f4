@@ -10,6 +10,7 @@ const corsHeaders = {
 // Products can have single file (string) or multiple files (string[])
 const PRODUCT_FILES: Record<string, string | string[]> = {
   "quick-start-guide": "quick-start-guide.pdf",
+  "genesis-6-days": "genesis-6-days.pdf",
   "study-suite": [
     "study-suite-2.pdf",
     "study-suite-4.pdf", 
