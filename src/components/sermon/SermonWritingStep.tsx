@@ -356,28 +356,36 @@ Return ONLY the JSON, no other text.`
       return;
     }
 
-    // Use cursor context if available, otherwise fall back to last 500 chars
-    const context = contextOverride || cursorContextRef.current;
+    // PRIORITY: Use context override (from cursor position) if provided
+    const context = contextOverride;
     let focusedContent: string;
     
-    if (context?.paragraph && context.paragraph.length > 20) {
-      // Use the paragraph around cursor for more relevant suggestions
+    if (context?.paragraph && context.paragraph.length > 15) {
+      // Use the paragraph around cursor - this is the BEST context
       focusedContent = context.paragraph;
-    } else if (context?.before) {
-      // Use text before cursor
-      focusedContent = context.before.slice(-400);
+      console.log("[VerseSuggestions] Using cursor paragraph:", focusedContent.slice(-100));
+    } else if (context?.before && context.before.length > 15) {
+      // Use text immediately before cursor
+      focusedContent = context.before;
+      console.log("[VerseSuggestions] Using cursor before text:", focusedContent.slice(-100));
     } else {
-      // Fallback to last 500 characters
+      // Fallback to last 400 characters of content (strip HTML)
       const plainText = content.replace(/<[^>]*>/g, '').trim();
-      focusedContent = plainText.slice(-500);
+      focusedContent = plainText.slice(-400);
+      console.log("[VerseSuggestions] Fallback to end of content:", focusedContent.slice(-100));
     }
 
     // Only fetch if content has meaningfully changed
-    if (focusedContent === lastContentRef.current) return;
+    if (focusedContent === lastContentRef.current) {
+      console.log("[VerseSuggestions] Content unchanged, skipping");
+      return;
+    }
     lastContentRef.current = focusedContent;
 
     setLoadingVerses(true);
     try {
+      console.log("[VerseSuggestions] Sending to Jeeves:", focusedContent.slice(-150));
+      
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "sermon-verse-suggestions",
