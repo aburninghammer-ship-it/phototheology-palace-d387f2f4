@@ -21,22 +21,24 @@ interface Submission {
   id: string;
   user_id: string;
   main_insight: string;
-  scripture_connections: string[];
-  pt_principles_applied: string[];
-  practical_application: string | null;
-  supporting_evidence: string | null;
-  ai_score: number | null;
-  depth_score: number | null;
-  biblical_score: number | null;
-  pt_score: number | null;
-  clarity_score: number | null;
-  ai_feedback: string | null;
-  highlight_quotes: string[];
-  submitted_at: string;
+  scripture_connections?: string[];
+  principles_applied?: string[];
+  pt_principles_applied?: string[];
+  practical_application?: string | null;
+  supporting_evidence?: string | null;
+  ai_score?: number | null;
+  depth_score?: number | null;
+  biblical_score?: number | null;
+  pt_score?: number | null;
+  clarity_score?: number | null;
+  ai_feedback?: string | null;
+  highlight_quotes?: string[];
+  submitted_at?: string;
+  rank?: number;
   profiles?: {
     display_name: string;
     avatar_url: string;
-  };
+  } | any;
 }
 
 interface SubmissionCardProps {

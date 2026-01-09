@@ -95,7 +95,7 @@ export function WinnerBanner() {
         setWinner({
           ...winnerData,
           weekly_study_challenges: challengeData,
-        } as Winner);
+        } as unknown as Winner);
         setIsUserWinner(user?.id === winnerData.user_id);
       }
     } catch (err) {
