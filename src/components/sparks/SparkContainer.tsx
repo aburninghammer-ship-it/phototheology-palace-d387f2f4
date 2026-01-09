@@ -65,7 +65,7 @@ export function SparkContainer({
   return (
     <div className={cn("relative", className)}>
       {/* Spark Icons */}
-      <div className="flex gap-1.5 flex-wrap">
+      <div className="flex gap-4 flex-wrap items-center">
         <AnimatePresence>
           {(maxDisplay && maxDisplay > 0 ? sparks.slice(0, maxDisplay) : sparks).map((spark, index) => (
             <motion.div
