@@ -16,8 +16,8 @@ const sparkConfig = {
     color: 'text-orange-400',
     bgColor: 'bg-orange-500/20',
     hoverBg: 'hover:bg-orange-500/30',
-    glowColor: 'shadow-[0_0_20px_5px_rgba(249,115,22,0.4)]',
-    pulseGlow: 'shadow-[0_0_30px_10px_rgba(249,115,22,0.5)]',
+    glowColor: 'shadow-[0_0_12px_3px_rgba(249,115,22,0.35)]',
+    pulseGlow: 'shadow-[0_0_16px_4px_rgba(249,115,22,0.45)]',
     label: 'Connection Spark'
   },
   pattern: {
@@ -25,8 +25,8 @@ const sparkConfig = {
     color: 'text-purple-400',
     bgColor: 'bg-purple-500/20',
     hoverBg: 'hover:bg-purple-500/30',
-    glowColor: 'shadow-[0_0_20px_5px_rgba(168,85,247,0.4)]',
-    pulseGlow: 'shadow-[0_0_30px_10px_rgba(168,85,247,0.5)]',
+    glowColor: 'shadow-[0_0_12px_3px_rgba(168,85,247,0.35)]',
+    pulseGlow: 'shadow-[0_0_16px_4px_rgba(168,85,247,0.45)]',
     label: 'Pattern Spark'
   },
   application: {
@@ -34,8 +34,8 @@ const sparkConfig = {
     color: 'text-yellow-400',
     bgColor: 'bg-yellow-500/20',
     hoverBg: 'hover:bg-yellow-500/30',
-    glowColor: 'shadow-[0_0_20px_5px_rgba(234,179,8,0.4)]',
-    pulseGlow: 'shadow-[0_0_30px_10px_rgba(234,179,8,0.5)]',
+    glowColor: 'shadow-[0_0_12px_3px_rgba(234,179,8,0.35)]',
+    pulseGlow: 'shadow-[0_0_16px_4px_rgba(234,179,8,0.45)]',
     label: 'Application Spark'
   }
 };
@@ -84,90 +84,58 @@ export function SparkIcon({
       )}
       title={config.label}
     >
-      {/* Intense outer glow ring that pulses */}
+      {/* Subtle outer glow ring that pulses */}
       {pulse && (
         <motion.span
           className={cn(
-            "absolute -inset-1 rounded-full",
+            "absolute -inset-0.5 rounded-full",
             config.bgColor,
-            "blur-md"
+            "blur-sm"
           )}
           animate={{
-            opacity: [0.4, 0.8, 0.4],
-            scale: [1, 1.5, 1],
+            opacity: [0.3, 0.6, 0.3],
+            scale: [1, 1.15, 1],
           }}
           transition={{
-            duration: 1.5,
+            duration: 2,
             repeat: Infinity,
             ease: "easeInOut",
           }}
         />
       )}
       
-      {/* Sparkle particles */}
+      {/* Subtle sparkle particle */}
       {pulse && (
-        <>
-          <motion.span
-            className="absolute w-1.5 h-1.5 rounded-full bg-white"
-            animate={{
-              x: [0, 12, -10, 0],
-              y: [0, -12, 6, 0],
-              opacity: [0, 1, 0.5, 0],
-              scale: [0, 1.2, 0.5, 0],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatDelay: 0.5,
-            }}
-          />
-          <motion.span
-            className="absolute w-1 h-1 rounded-full bg-white/80"
-            animate={{
-              x: [0, -10, 12, 0],
-              y: [0, 10, -8, 0],
-              opacity: [0, 0.9, 0.3, 0],
-              scale: [0, 1.5, 0.3, 0],
-            }}
-            transition={{
-              duration: 1.8,
-              repeat: Infinity,
-              repeatDelay: 0.8,
-              delay: 0.3,
-            }}
-          />
-          <motion.span
-            className="absolute w-1 h-1 rounded-full bg-white/90"
-            animate={{
-              x: [0, 8, -5, 0],
-              y: [0, -8, 12, 0],
-              opacity: [0, 1, 0.4, 0],
-              scale: [0, 1, 0.2, 0],
-            }}
-            transition={{
-              duration: 2.2,
-              repeat: Infinity,
-              repeatDelay: 0.6,
-              delay: 0.6,
-            }}
-          />
-        </>
+        <motion.span
+          className="absolute w-1 h-1 rounded-full bg-white/70"
+          animate={{
+            x: [0, 6, -4, 0],
+            y: [0, -6, 4, 0],
+            opacity: [0, 0.8, 0.3, 0],
+            scale: [0, 1, 0.5, 0],
+          }}
+          transition={{
+            duration: 2.5,
+            repeat: Infinity,
+            repeatDelay: 1,
+          }}
+        />
       )}
       
       {/* Inner glow ring */}
       <motion.span
         className={cn(
-          "absolute inset-0 rounded-full border-2",
-          type === 'connection' ? 'border-orange-400/60' : 
-          type === 'pattern' ? 'border-purple-400/60' : 
-          'border-yellow-400/60'
+          "absolute inset-0 rounded-full border",
+          type === 'connection' ? 'border-orange-400/50' : 
+          type === 'pattern' ? 'border-purple-400/50' : 
+          'border-yellow-400/50'
         )}
         animate={pulse ? {
-          opacity: [0.4, 1, 0.4],
-          scale: [1, 1.2, 1],
-        } : { opacity: 0.4 }}
+          opacity: [0.3, 0.7, 0.3],
+          scale: [1, 1.08, 1],
+        } : { opacity: 0.3 }}
         transition={{
-          duration: 1.5,
+          duration: 2,
           repeat: Infinity,
           ease: "easeInOut",
         }}
