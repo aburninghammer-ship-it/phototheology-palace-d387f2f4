@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { Verse } from "@/types/bible";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import { formatJeevesResponse } from "@/lib/formatJeevesResponse";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { VerseHighlightMenu } from "./VerseHighlightMenu";
 import { VerseNoteEditor } from "./VerseNoteEditor";
+import { VerseSermonDialog } from "./VerseSermonDialog";
 import { VerseNote } from "@/hooks/useVerseNotes";
 import { cn } from "@/lib/utils";
 
@@ -110,7 +110,6 @@ export const VerseView = ({
   onDeleteNote,
   onAskJeeves,
 }: VerseViewProps) => {
-  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedPrinciple, setSelectedPrinciple] = useState<string>("");
   const [explanation, setExplanation] = useState<string>("");
@@ -120,12 +119,12 @@ export const VerseView = ({
   const [wordAnalysis, setWordAnalysis] = useState<string>("");
   const [wordLoading, setWordLoading] = useState(false);
   const [regenerateTrigger, setRegenerateTrigger] = useState(0);
+  const [sermonDialogOpen, setSermonDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const handleSermonStarter = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const verseRef = `${book} ${chapter}:${verse.verse}`;
-    navigate(`/sermon-builder?tab=starters&verse=${encodeURIComponent(verseRef)}`);
+    setSermonDialogOpen(true);
   };
 
   // Generate dynamic principles for this verse (regenerates when regenerateTrigger changes)
@@ -397,6 +396,13 @@ export const VerseView = ({
           </ScrollArea>
         </DialogContent>
       </Dialog>
+
+      <VerseSermonDialog
+        open={sermonDialogOpen}
+        onOpenChange={setSermonDialogOpen}
+        verseRef={`${book} ${chapter}:${verse.verse}`}
+        verseText={verse.text}
+      />
     </>
   );
 };
