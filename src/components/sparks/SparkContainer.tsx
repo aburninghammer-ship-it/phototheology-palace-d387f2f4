@@ -64,8 +64,8 @@ export function SparkContainer({
 
   return (
     <div className={cn("relative", className)}>
-      {/* Spark Icons */}
-      <div className="flex gap-4 flex-wrap items-center">
+      {/* Spark Icons - extra padding to prevent glow clipping at edges */}
+      <div className="flex gap-5 flex-wrap items-center p-2 -m-2">
         <AnimatePresence>
           {(maxDisplay && maxDisplay > 0 ? sparks.slice(0, maxDisplay) : sparks).map((spark, index) => (
             <motion.div
@@ -80,6 +80,7 @@ export function SparkContainer({
                 pulse={!spark.opened_at}
                 onClick={() => handleIconClick(spark.id)}
                 size="md"
+                colorVariant={spark.id.charCodeAt(0) + index}
               />
             </motion.div>
           ))}
