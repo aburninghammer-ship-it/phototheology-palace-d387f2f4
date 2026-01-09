@@ -582,6 +582,7 @@ function App() {
             <Route path="/church-signup/cancelled" element={<ChurchSignupCancelled />} />
             <Route path="/manage-subscription" element={<ManageSubscription />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/delete-account" element={<DeleteAccount />} />
             <Route path="/branch-study" element={
