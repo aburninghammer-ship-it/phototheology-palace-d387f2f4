@@ -20,6 +20,7 @@ interface SermonRichTextAreaProps {
   minHeight?: string;
   showTools?: boolean;
   themePassage?: string;
+  onCursorContext?: (context: { before: string; after: string; paragraph: string }) => void;
 }
 
 // Regex pattern to match Bible verse references like "John 3:16", "1 Corinthians 13:4-7", "Genesis 1:1"
@@ -47,12 +48,39 @@ export function SermonRichTextArea({
   placeholder = "Start writing...",
   minHeight = "120px",
   showTools = true,
-  themePassage
+  themePassage,
+  onCursorContext
 }: SermonRichTextAreaProps) {
   const lastProcessedRef = useRef<Set<string>>(new Set());
   const verseContentMapRef = useRef<Map<string, string>>(new Map()); // Track ref -> verse text
   const processingRef = useRef(false);
   const { connections, isAnalyzing, analyzeText } = usePalaceConnections();
+
+  const cursorContextDebounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Extract text around cursor position
+  const extractCursorContext = useCallback((editor: any) => {
+    if (!editor || !onCursorContext) return;
+
+    const { from } = editor.state.selection;
+    const doc = editor.state.doc;
+    const text = doc.textContent || '';
+    
+    // Get 300 chars before and 100 chars after cursor
+    const beforeText = text.slice(Math.max(0, from - 300), from);
+    const afterText = text.slice(from, from + 100);
+    
+    // Find the current paragraph/sentence
+    const beforeParagraph = beforeText.split(/\n\n/).pop() || beforeText;
+    const afterParagraph = afterText.split(/\n\n/)[0] || afterText;
+    const paragraph = beforeParagraph + afterParagraph;
+
+    onCursorContext({
+      before: beforeText,
+      after: afterText,
+      paragraph: paragraph.trim()
+    });
+  }, [onCursorContext]);
 
   const editor = useEditor({
     extensions: [
@@ -70,6 +98,15 @@ export function SermonRichTextArea({
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+    },
+    onSelectionUpdate: ({ editor }) => {
+      // Debounce cursor context updates
+      if (cursorContextDebounceRef.current) {
+        clearTimeout(cursorContextDebounceRef.current);
+      }
+      cursorContextDebounceRef.current = setTimeout(() => {
+        extractCursorContext(editor);
+      }, 500);
     },
     editorProps: {
       attributes: {
