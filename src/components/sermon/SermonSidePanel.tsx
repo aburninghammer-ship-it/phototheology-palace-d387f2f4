@@ -208,18 +208,18 @@ export function SermonSidePanel({
           </Tabs>
         </CardHeader>
         
-        <CardContent className="p-2 flex-1 min-h-0 overflow-hidden">
+        <CardContent className="p-2 flex-1 min-h-0 overflow-visible relative">
           {activeTab === "sparks" && (
-            <ScrollArea className="h-full">
+            <div className="h-full overflow-y-auto overflow-x-visible">
               {activeSparks.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
                   <SparkContainer
                     sparks={activeSparks}
                     onOpen={openSpark}
                     onSave={saveSpark}
                     onDismiss={dismissSpark}
                     onExplore={exploreSpark}
-                    position="inline"
+                    position="floating"
                     className="flex-wrap"
                   />
                   <p className="text-xs text-muted-foreground mt-2">
@@ -234,7 +234,7 @@ export function SermonSidePanel({
                   </p>
                 </div>
               )}
-            </ScrollArea>
+            </div>
           )}
 
           {activeTab === "verses" && (
