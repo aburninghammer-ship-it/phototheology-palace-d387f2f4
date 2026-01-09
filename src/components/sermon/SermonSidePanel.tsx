@@ -52,6 +52,7 @@ interface SermonSidePanelProps {
   themePassage: string;
   sermonContent: string;
   sermonId?: string;
+  cursorContext?: string; // The paragraph or text around cursor
 }
 
 export function SermonSidePanel({
@@ -62,7 +63,8 @@ export function SermonSidePanel({
   sermonTitle,
   themePassage,
   sermonContent,
-  sermonId
+  sermonId,
+  cursorContext
 }: SermonSidePanelProps) {
   const [activeTab, setActiveTab] = useState("verses");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -239,6 +241,16 @@ export function SermonSidePanel({
 
           {activeTab === "verses" && (
             <ScrollArea className="h-full">
+              {/* Context indicator - show what text the verses are based on */}
+              {cursorContext && cursorContext.length > 10 && (
+                <div className="mb-2 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50">
+                  <p className="text-[10px] text-blue-600 dark:text-blue-400 font-medium mb-1">📍 Verses for:</p>
+                  <p className="text-[10px] text-muted-foreground italic line-clamp-2">
+                    "{cursorContext.slice(0, 100)}{cursorContext.length > 100 ? '...' : ''}"
+                  </p>
+                </div>
+              )}
+              
               {suggestedVerses.length > 0 ? (
                 <div className="space-y-2">
                   {suggestedVerses.map((verse, idx) => (
@@ -291,7 +303,7 @@ export function SermonSidePanel({
                   <p className="text-sm">
                     {loadingVerses 
                       ? "Finding relevant verses..." 
-                      : "Verses will appear as you write."}
+                      : "Click in your sermon to get verse suggestions for that section."}
                   </p>
                   {loadingVerses && <Loader2 className="w-4 h-4 animate-spin mt-2" />}
                 </div>

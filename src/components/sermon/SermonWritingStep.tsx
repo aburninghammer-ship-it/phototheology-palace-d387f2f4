@@ -46,6 +46,10 @@ export function SermonWritingStep({ sermon, setSermon, themePassage, sermonId }:
   const autoSaveRef = useRef<NodeJS.Timeout | null>(null);
   const lastContentRef = useRef<string>("");
   const lastSavedContentRef = useRef<string>(sermon.full_sermon);
+  
+  // Cursor context for verse suggestions
+  const [cursorContext, setCursorContext] = useState<{ before: string; after: string; paragraph: string } | null>(null);
+  const cursorContextRef = useRef<{ before: string; after: string; paragraph: string } | null>(null);
 
   // Parentheses-based scripture lookup state
   const [processingRequest, setProcessingRequest] = useState(false);
@@ -345,24 +349,39 @@ Return ONLY the JSON, no other text.`
     }
   }, [sermon, setSermon, themePassage]);
 
-  // Debounced function to get verse suggestions based on sermon content
-  const fetchVerseSuggestions = useCallback(async (content: string) => {
-    if (!content || content.length < 100) {
+  // Debounced function to get verse suggestions based on cursor context
+  const fetchVerseSuggestions = useCallback(async (content: string, contextOverride?: { before: string; paragraph: string }) => {
+    if (!content || content.length < 50) {
       setSuggestedVerses([]);
       return;
     }
 
+    // Use cursor context if available, otherwise fall back to last 500 chars
+    const context = contextOverride || cursorContextRef.current;
+    let focusedContent: string;
+    
+    if (context?.paragraph && context.paragraph.length > 20) {
+      // Use the paragraph around cursor for more relevant suggestions
+      focusedContent = context.paragraph;
+    } else if (context?.before) {
+      // Use text before cursor
+      focusedContent = context.before.slice(-400);
+    } else {
+      // Fallback to last 500 characters
+      const plainText = content.replace(/<[^>]*>/g, '').trim();
+      focusedContent = plainText.slice(-500);
+    }
+
     // Only fetch if content has meaningfully changed
-    const plainText = content.replace(/<[^>]*>/g, '').trim();
-    if (plainText === lastContentRef.current) return;
-    lastContentRef.current = plainText;
+    if (focusedContent === lastContentRef.current) return;
+    lastContentRef.current = focusedContent;
 
     setLoadingVerses(true);
     try {
       const { data, error } = await supabase.functions.invoke("jeeves", {
         body: {
           mode: "sermon-verse-suggestions",
-          sermon_content: plainText.slice(-500), // Last 500 characters
+          sermon_content: focusedContent,
           themePassage: themePassage,
           stones: sermon.smooth_stones.join("\n"),
         },
@@ -395,6 +414,20 @@ Return ONLY the JSON, no other text.`
       setLoadingVerses(false);
     }
   }, [themePassage, sermon.smooth_stones]);
+
+  // Handle cursor context changes from editor
+  const handleCursorContext = useCallback((context: { before: string; after: string; paragraph: string }) => {
+    setCursorContext(context);
+    cursorContextRef.current = context;
+    
+    // Trigger verse suggestions based on new cursor position
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      fetchVerseSuggestions(sermon.full_sermon, { before: context.before, paragraph: context.paragraph });
+    }, 1500);
+  }, [sermon.full_sermon, fetchVerseSuggestions]);
 
   // Handle content change with debounce
   const handleContentChange = (content: string) => {
@@ -577,6 +610,7 @@ Return ONLY the JSON, no other text.`
                   minHeight="100%"
                   showTools={true}
                   themePassage={themePassage}
+                  onCursorContext={handleCursorContext}
                 />
               </div>
 
@@ -592,6 +626,7 @@ Return ONLY the JSON, no other text.`
                     themePassage={themePassage}
                     sermonContent={sermon.full_sermon}
                     sermonId={sermonId}
+                    cursorContext={cursorContext?.paragraph}
                   />
                 </div>
               )}
