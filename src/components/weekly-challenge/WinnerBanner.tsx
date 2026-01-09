@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Crown, Sparkles, PartyPopper, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,15 +12,16 @@ import confetti from "canvas-confetti";
 interface Winner {
   id: string;
   rank: number;
-  jeeves_commentary: string;
-  standout_insight: string | null;
+  jeeves_commentary?: string;
+  standout_insight?: string | null;
   xp_awarded: number;
-  badge_awarded: string | null;
+  badge_awarded?: string | null;
   user_id: string;
+  challenge_id: string;
   profiles?: {
     display_name: string;
     avatar_url: string;
-  };
+  } | null;
   weekly_study_challenges?: {
     title: string;
     week_number: number;
@@ -57,7 +57,8 @@ export function WinnerBanner() {
   const loadLatestWinner = async () => {
     try {
       // Get most recent judged challenge
-      const { data: challenge } = await supabase
+      // @ts-ignore - Table exists but types not synced
+      const { data: challengeData } = await supabase
         .from("weekly_study_challenges")
         .select("id, title, week_number")
         .eq("status", "judged")
@@ -65,13 +66,13 @@ export function WinnerBanner() {
         .limit(1)
         .single();
 
-      if (!challenge) {
+      if (!challengeData) {
         setLoading(false);
         return;
       }
 
       // Check if banner was dismissed for this week
-      const dismissKey = `winner_banner_dismissed_${challenge.id}`;
+      const dismissKey = `winner_banner_dismissed_${challengeData.id}`;
       if (localStorage.getItem(dismissKey)) {
         setDismissed(true);
         setLoading(false);
@@ -79,21 +80,22 @@ export function WinnerBanner() {
       }
 
       // Get 1st place winner
+      // @ts-ignore - Table exists but types not synced
       const { data: winnerData } = await supabase
         .from("weekly_study_winners")
         .select(`
           *,
           profiles:user_id (display_name, avatar_url)
         `)
-        .eq("challenge_id", challenge.id)
+        .eq("challenge_id", challengeData.id)
         .eq("rank", 1)
         .single();
 
       if (winnerData) {
         setWinner({
           ...winnerData,
-          weekly_study_challenges: challenge,
-        });
+          weekly_study_challenges: challengeData,
+        } as Winner);
         setIsUserWinner(user?.id === winnerData.user_id);
       }
     } catch (err) {
@@ -104,10 +106,8 @@ export function WinnerBanner() {
   };
 
   const handleDismiss = () => {
-    if (winner?.weekly_study_challenges) {
-      // Get challenge_id from the winner's context
-      const challengeId = winner.id.split("-")[0]; // This won't work, need to store challenge_id
-      localStorage.setItem(`winner_banner_dismissed_week`, "true");
+    if (winner?.challenge_id) {
+      localStorage.setItem(`winner_banner_dismissed_${winner.challenge_id}`, "true");
     }
     setDismissed(true);
   };

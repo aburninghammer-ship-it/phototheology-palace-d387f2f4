@@ -12462,6 +12462,247 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_challenge_guest_contributions: {
+        Row: {
+          challenge_id: string | null
+          contribution: string
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          share_id: string | null
+        }
+        Insert: {
+          challenge_id?: string | null
+          contribution: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          share_id?: string | null
+        }
+        Update: {
+          challenge_id?: string | null
+          contribution?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          share_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_challenge_guest_contributions_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_study_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_challenge_guest_contributions_share_id_fkey"
+            columns: ["share_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_challenge_shares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_challenge_shares: {
+        Row: {
+          challenge_id: string | null
+          clicks: number | null
+          conversions: number | null
+          created_at: string
+          id: string
+          share_code: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id?: string | null
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string
+          id?: string
+          share_code: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string | null
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string
+          id?: string
+          share_code?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_challenge_shares_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_study_challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_study_challenges: {
+        Row: {
+          anchor_passage: string
+          created_at: string
+          difficulty: string | null
+          ends_at: string | null
+          id: string
+          judged_at: string | null
+          starts_at: string | null
+          status: string | null
+          theme: string | null
+          title: string
+          updated_at: string
+          week_number: number | null
+          year: number | null
+        }
+        Insert: {
+          anchor_passage: string
+          created_at?: string
+          difficulty?: string | null
+          ends_at?: string | null
+          id?: string
+          judged_at?: string | null
+          starts_at?: string | null
+          status?: string | null
+          theme?: string | null
+          title: string
+          updated_at?: string
+          week_number?: number | null
+          year?: number | null
+        }
+        Update: {
+          anchor_passage?: string
+          created_at?: string
+          difficulty?: string | null
+          ends_at?: string | null
+          id?: string
+          judged_at?: string | null
+          starts_at?: string | null
+          status?: string | null
+          theme?: string | null
+          title?: string
+          updated_at?: string
+          week_number?: number | null
+          year?: number | null
+        }
+        Relationships: []
+      }
+      weekly_study_submissions: {
+        Row: {
+          ai_feedback: string | null
+          ai_score: number | null
+          challenge_id: string | null
+          created_at: string
+          id: string
+          main_insight: string
+          practical_application: string | null
+          principles_applied: string[] | null
+          rank: number | null
+          scripture_connections: string[] | null
+          supporting_evidence: string | null
+          updated_at: string
+          user_id: string
+          word_count: number | null
+        }
+        Insert: {
+          ai_feedback?: string | null
+          ai_score?: number | null
+          challenge_id?: string | null
+          created_at?: string
+          id?: string
+          main_insight: string
+          practical_application?: string | null
+          principles_applied?: string[] | null
+          rank?: number | null
+          scripture_connections?: string[] | null
+          supporting_evidence?: string | null
+          updated_at?: string
+          user_id: string
+          word_count?: number | null
+        }
+        Update: {
+          ai_feedback?: string | null
+          ai_score?: number | null
+          challenge_id?: string | null
+          created_at?: string
+          id?: string
+          main_insight?: string
+          practical_application?: string | null
+          principles_applied?: string[] | null
+          rank?: number | null
+          scripture_connections?: string[] | null
+          supporting_evidence?: string | null
+          updated_at?: string
+          user_id?: string
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_study_submissions_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_study_challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_study_winners: {
+        Row: {
+          badge_awarded: string | null
+          challenge_id: string | null
+          created_at: string
+          id: string
+          rank: number
+          standout_insight: string | null
+          submission_id: string | null
+          user_id: string
+          xp_awarded: number | null
+        }
+        Insert: {
+          badge_awarded?: string | null
+          challenge_id?: string | null
+          created_at?: string
+          id?: string
+          rank: number
+          standout_insight?: string | null
+          submission_id?: string | null
+          user_id: string
+          xp_awarded?: number | null
+        }
+        Update: {
+          badge_awarded?: string | null
+          challenge_id?: string | null
+          created_at?: string
+          id?: string
+          rank?: number
+          standout_insight?: string | null
+          submission_id?: string | null
+          user_id?: string
+          xp_awarded?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_study_winners_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_study_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_study_winners_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_study_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       weight_loss_blueprint_progress: {
         Row: {
           article_id: number
@@ -13306,9 +13547,17 @@ export type Database = {
         }
         Returns: Json
       }
+      award_xp: {
+        Args: { p_amount: number; p_reason: string; p_user_id: string }
+        Returns: undefined
+      }
       can_access_youth_member: { Args: { _group_id: string }; Returns: boolean }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_typing_indicators: { Args: never; Returns: undefined }
+      create_challenge_share: {
+        Args: { p_challenge_id: string }
+        Returns: Json
+      }
       decrypt_token: { Args: { encrypted_token: string }; Returns: string }
       delete_cancelled_user_data: { Args: never; Returns: undefined }
       encrypt_token: { Args: { plain_token: string }; Returns: string }
@@ -13528,6 +13777,7 @@ export type Database = {
           topic_type: string[]
         }[]
       }
+      track_share_click: { Args: { p_share_code: string }; Returns: undefined }
       update_mastery_streak: { Args: { p_user_id: string }; Returns: Json }
     }
     Enums: {
