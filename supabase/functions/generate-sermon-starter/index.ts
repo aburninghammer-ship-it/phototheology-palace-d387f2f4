@@ -298,6 +298,13 @@ Respond ONLY with valid JSON in this exact format:
 
     const userPrompt = `Create a ${level} level PhotoTheology Sermon Starter for the topic: "${topic}"
 
+${hasPtRooms ? `
+**CRITICAL - SELECTED PT ROOMS (MUST USE THESE PRIMARILY):**
+${roomLabels ? roomLabels.map((label: string, i: number) => `- ${ptRooms[i]}: ${label}`).join('\n') : ptRooms.join(', ')}
+
+Your sermon idea MUST be built around these specific PT Palace rooms. Apply the methods, questions, and perspectives unique to each selected room. The palaceAnchors in your response should feature these rooms prominently.
+` : ''}
+
 ${categoryConfig ? `Category: ${categoryConfig.name}` : ''}
 ${eventConfig ? `Current Event Type: ${eventConfig.label} (interpret through pattern: "${eventConfig.pattern}")` : ''}
 
@@ -317,7 +324,8 @@ Remember:
 - Pose questions instead of conclusions where Scripture doesn't settle matters
 - If no symbols are explicit, say so
 - If no sanctuary connection is clear, say so
-- Expose the FALSE CENTER this sermon addresses`;
+- Expose the FALSE CENTER this sermon addresses
+${hasPtRooms ? `- ENSURE the palaceAnchors array includes the selected rooms: ${ptRooms.join(', ')}` : ''}`;
 
     console.log(`[generate-sermon-starter] Generating ${level} starter for topic: ${topic}, category: ${category || 'none'}`);
 
