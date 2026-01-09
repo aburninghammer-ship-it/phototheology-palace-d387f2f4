@@ -184,7 +184,7 @@ export function SermonSidePanel({
   return (
     <div className="h-full flex flex-col gap-3 min-h-0">
       {/* Top Section: Tabbed Panel - Takes most of the space */}
-      <Card className="flex-1 min-h-0 border-purple-200 dark:border-purple-800/50 flex flex-col">
+      <Card className="flex-1 min-h-0 border-purple-200 dark:border-purple-800/50 flex flex-col overflow-visible">
         <CardHeader className="py-2 px-3 bg-purple-50 dark:bg-purple-900/20 border-b shrink-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full grid grid-cols-4 h-8">
@@ -210,16 +210,16 @@ export function SermonSidePanel({
         
         <CardContent className="p-2 flex-1 min-h-0 overflow-visible relative">
           {activeTab === "sparks" && (
-            <div className="h-full overflow-y-auto overflow-x-visible">
+            <div className="h-full overflow-visible">
               {activeSparks.length > 0 ? (
-                <div className="space-y-2 relative">
+                <div className="space-y-2 relative z-[60]">
                   <SparkContainer
                     sparks={activeSparks}
                     onOpen={openSpark}
                     onSave={saveSpark}
                     onDismiss={dismissSpark}
                     onExplore={exploreSpark}
-                    position="floating"
+                    position="inline"
                     className="flex-wrap"
                   />
                   <p className="text-xs text-muted-foreground mt-2">
