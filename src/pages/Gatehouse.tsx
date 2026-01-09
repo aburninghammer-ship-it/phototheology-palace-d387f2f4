@@ -27,7 +27,7 @@ const Gatehouse = () => {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Navigation />
-        <main className="flex-1 flex items-center justify-center">
+        <main className="flex-1 flex items-center justify-center pt-20">
           <div className="text-center">
             <div className="w-12 h-12 mx-auto mb-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
             <p className="text-muted-foreground">Loading...</p>
@@ -64,7 +64,7 @@ const Gatehouse = () => {
       <div className="min-h-screen bg-background">
         <Navigation />
         
-        <main className="container mx-auto px-4 py-12 max-w-3xl">
+        <main className="container mx-auto px-4 py-12 pt-24 md:pt-28 max-w-3xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -190,7 +190,7 @@ const Gatehouse = () => {
       <div className="min-h-screen bg-background">
         <Navigation />
         
-        <main className="container mx-auto px-4 py-12 max-w-2xl">
+        <main className="container mx-auto px-4 py-12 pt-24 md:pt-28 max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -265,7 +265,7 @@ const Gatehouse = () => {
       <div className="min-h-screen bg-background flex flex-col">
         <Navigation />
         
-        <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <main className="flex-1 flex flex-col items-center px-4 py-12 pt-24 md:pt-28">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -421,7 +421,7 @@ const Gatehouse = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-12 max-w-4xl">
+      <main className="container mx-auto px-4 py-12 pt-24 md:pt-28 max-w-4xl">
         {/* The Choice - Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -16,7 +16,7 @@ import { PunchyHero } from "@/components/PunchyHero";
 import { QuickTestimonialBanner } from "@/components/landing/QuickTestimonialBanner";
 import { LandingPageSkeleton, TestimonialsSkeleton } from "@/components/landing/LandingPageSkeleton";
 import { useSyncEarlyTracking } from "@/hooks/useSyncEarlyTracking";
-import { GiveGemButton } from "@/components/GiveGemButton";
+
 
 // Lazy load heavy below-the-fold components
 const StreamlinedTestimonials = lazy(() => 
