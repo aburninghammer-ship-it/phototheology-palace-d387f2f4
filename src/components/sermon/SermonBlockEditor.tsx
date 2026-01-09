@@ -186,50 +186,70 @@ function SortableBlock({
       style={style}
       className={cn(
         'group relative',
-        isDragging && 'z-50 opacity-90'
+        isDragging && 'z-50'
       )}
     >
-      <Card
+      <div
         className={cn(
-          'p-3 transition-all backdrop-blur-md border',
-          isDragging && 'shadow-2xl ring-2 ring-primary scale-[1.02]',
+          'relative p-4 rounded-xl transition-all duration-300 backdrop-blur-xl border overflow-hidden',
+          isDragging && 'shadow-2xl scale-[1.02]',
           block.type === 'verse'
-            ? 'bg-amber-500/10 border-amber-400/30 shadow-amber-500/10 hover:bg-amber-500/15 hover:border-amber-400/50'
-            : 'bg-white/10 dark:bg-white/5 border-white/20 hover:bg-white/20 dark:hover:bg-white/10 hover:border-white/30'
+            ? 'bg-gradient-to-br from-amber-500/25 via-amber-400/15 to-yellow-500/20 border-amber-400/40 shadow-[0_4px_20px_rgba(251,191,36,0.2)] hover:shadow-[0_8px_30px_rgba(251,191,36,0.3)] hover:border-amber-400/60'
+            : 'bg-gradient-to-br from-white/15 via-purple-500/10 to-white/10 border-white/30 shadow-[0_4px_20px_rgba(168,85,247,0.15)] hover:shadow-[0_8px_30px_rgba(168,85,247,0.25)] hover:border-purple-400/50'
         )}
       >
-        <div className="flex gap-2">
+        {/* Glass reflection effect */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
+        
+        {/* Dragging glow ring */}
+        {isDragging && (
+          <div className={cn(
+            'absolute inset-0 rounded-xl ring-2',
+            block.type === 'verse' ? 'ring-amber-400/60' : 'ring-purple-400/60'
+          )} />
+        )}
+
+        <div className="relative flex gap-3">
           {/* Drag handle */}
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing touch-none p-1 -ml-1 text-muted-foreground hover:text-foreground transition-colors"
+            className={cn(
+              'cursor-grab active:cursor-grabbing touch-none p-1.5 -ml-1 rounded-lg transition-all',
+              block.type === 'verse' 
+                ? 'text-amber-400/70 hover:text-amber-300 hover:bg-amber-500/20' 
+                : 'text-purple-400/70 hover:text-purple-300 hover:bg-purple-500/20'
+            )}
           >
             <GripVertical className="h-5 w-5" />
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-2">
               {block.type === 'verse' ? (
                 <>
-                  <Quote className="h-4 w-4 text-amber-400 shrink-0" />
-                  <Badge variant="outline" className="text-xs bg-amber-500/20 border-amber-400/40 text-amber-300">
+                  <div className="p-1 rounded-md bg-amber-500/20 backdrop-blur-sm">
+                    <Quote className="h-4 w-4 text-amber-300" />
+                  </div>
+                  <Badge className="text-xs bg-amber-500/30 border-amber-400/50 text-amber-200 backdrop-blur-sm shadow-sm">
                     {block.reference || 'Scripture'}
                   </Badge>
                 </>
               ) : (
                 <>
-                  <Type className="h-4 w-4 text-purple-400 shrink-0" />
-                  <Badge variant="outline" className="text-xs bg-purple-500/20 border-purple-400/40 text-purple-300">
+                  <div className="p-1 rounded-md bg-purple-500/20 backdrop-blur-sm">
+                    <Type className="h-4 w-4 text-purple-300" />
+                  </div>
+                  <Badge className="text-xs bg-purple-500/30 border-purple-400/50 text-purple-200 backdrop-blur-sm shadow-sm">
                     Paragraph
                   </Badge>
                 </>
               )}
             </div>
             <p className={cn(
-              'text-sm leading-relaxed',
-              block.type === 'verse' && 'italic'
+              'text-sm leading-relaxed text-foreground/90',
+              block.type === 'verse' && 'italic text-amber-100/90'
             )}>
               {block.content.length > 200
                 ? block.content.slice(0, 200) + '...'
@@ -241,13 +261,13 @@ function SortableBlock({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
+            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-all text-destructive/70 hover:text-destructive hover:bg-destructive/20 backdrop-blur-sm rounded-lg"
             onClick={() => onDelete(block.id)}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
@@ -294,28 +314,34 @@ export function SermonBlockEditor({ content, onChange, onClose }: SermonBlockEdi
   const paragraphCount = blocks.filter(b => b.type === 'paragraph').length;
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-purple-950/20 via-background to-amber-950/20">
+    <div className="h-full flex flex-col bg-gradient-to-br from-purple-950/30 via-background to-amber-950/30 relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-white/10 bg-white/5 backdrop-blur-sm shrink-0">
+      <div className="relative flex items-center justify-between p-4 border-b border-white/10 bg-gradient-to-r from-purple-500/10 via-white/5 to-amber-500/10 backdrop-blur-xl shrink-0">
         <div className="flex items-center gap-4">
-          <h3 className="font-semibold text-sm">Block Editor</h3>
-          <div className="flex gap-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Quote className="h-3 w-3" />
-              {verseCount} verses
+          <h3 className="font-semibold text-sm bg-gradient-to-r from-purple-300 to-amber-300 bg-clip-text text-transparent">
+            Block Editor
+          </h3>
+          <div className="flex gap-3 text-xs">
+            <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/20 backdrop-blur-sm border border-amber-400/30">
+              <Quote className="h-3 w-3 text-amber-300" />
+              <span className="text-amber-200">{verseCount} verses</span>
             </span>
-            <span className="flex items-center gap-1">
-              <Type className="h-3 w-3" />
-              {paragraphCount} paragraphs
+            <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-purple-500/20 backdrop-blur-sm border border-purple-400/30">
+              <Type className="h-3 w-3 text-purple-300" />
+              <span className="text-purple-200">{paragraphCount} paragraphs</span>
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={onClose}>
+          <Button variant="outline" size="sm" onClick={onClose} className="backdrop-blur-sm border-white/20 hover:bg-white/10">
             <X className="h-4 w-4 mr-1" />
             Cancel
           </Button>
-          <Button size="sm" onClick={handleSave}>
+          <Button size="sm" onClick={handleSave} className="bg-gradient-to-r from-purple-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 border-0 shadow-lg shadow-purple-500/20">
             <Check className="h-4 w-4 mr-1" />
             Apply Changes
           </Button>
@@ -323,18 +349,23 @@ export function SermonBlockEditor({ content, onChange, onClose }: SermonBlockEdi
       </div>
 
       {/* Instructions */}
-      <div className="px-3 py-2 bg-blue-500/10 backdrop-blur-sm border-b border-blue-400/20 text-xs text-blue-400">
-        Drag blocks to reorder your sermon. Verses (amber) and paragraphs (glass) can be freely rearranged.
+      <div className="relative px-4 py-2.5 bg-gradient-to-r from-blue-500/15 to-cyan-500/10 backdrop-blur-xl border-b border-blue-400/20">
+        <div className="flex items-center gap-2 text-xs text-blue-300">
+          <GripVertical className="h-4 w-4" />
+          <span>Drag blocks to reorder your sermon. <span className="text-amber-300">Verses</span> and <span className="text-purple-300">paragraphs</span> can be freely rearranged.</span>
+        </div>
       </div>
 
       {/* Block list */}
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="relative flex-1 overflow-y-auto p-4">
         {blocks.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10">
-              <Type className="h-12 w-12 mb-4 mx-auto text-purple-400/50" />
-              <p className="text-sm text-foreground/70">No content blocks found.</p>
-              <p className="text-xs mt-1 text-muted-foreground">Write some content first, then use block mode to rearrange.</p>
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 shadow-xl">
+              <div className="p-4 rounded-xl bg-purple-500/20 mb-4 mx-auto w-fit">
+                <Type className="h-10 w-10 text-purple-300" />
+              </div>
+              <p className="text-sm text-foreground/80">No content blocks found.</p>
+              <p className="text-xs mt-2 text-muted-foreground max-w-xs">Write some content first, then use block mode to rearrange your sermon structure.</p>
             </div>
           </div>
         ) : (
@@ -344,7 +375,7 @@ export function SermonBlockEditor({ content, onChange, onClose }: SermonBlockEdi
             onDragEnd={handleDragEnd}
           >
             <SortableContext items={blockIds} strategy={verticalListSortingStrategy}>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {blocks.map((block) => (
                   <SortableBlock
                     key={block.id}
