@@ -9651,6 +9651,50 @@ export type Database = {
           },
         ]
       }
+      sermon_starters: {
+        Row: {
+          created_at: string | null
+          floors: Json | null
+          id: string
+          level: string
+          quality_status: string | null
+          room_refs: string[] | null
+          starter_title: string
+          topic_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          floors?: Json | null
+          id?: string
+          level: string
+          quality_status?: string | null
+          room_refs?: string[] | null
+          starter_title: string
+          topic_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          floors?: Json | null
+          id?: string
+          level?: string
+          quality_status?: string | null
+          room_refs?: string[] | null
+          starter_title?: string
+          topic_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sermon_starters_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "sermon_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sermon_study_cards: {
         Row: {
           card_type: string
@@ -9737,6 +9781,45 @@ export type Database = {
           title?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      sermon_topics: {
+        Row: {
+          anchor_scriptures: string[] | null
+          category: string | null
+          created_at: string | null
+          id: string
+          is_featured: boolean | null
+          slug: string
+          summary: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          anchor_scriptures?: string[] | null
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          slug: string
+          summary?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          anchor_scriptures?: string[] | null
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          slug?: string
+          summary?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
