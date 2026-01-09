@@ -1168,7 +1168,7 @@ IMPORTANT: Do NOT explicitly label theology as "SDA" or "Adventist" in your resp
 - 20-39: Needs Work - significant gaps or concerns to address
 - 0-19: Foundational Guidance Needed - requires careful redirection
 
-=== PALACE ROOMS REFERENCE (use exact codes) ===
+=== PALACE ROOMS REFERENCE (use ONLY these exact codes - NOTHING ELSE) ===
 Floor 1: Story Room (SR), Imagination Room (IR), 24FPS (24), Bible Rendered (BR), Translation Room (TR), Gems Room (GR)
 Floor 2: Observation Room (OR), Def-Com (DC), Symbols/Types (@T), Questions Room (QR), Q&A Room (QA)
 Floor 3: Nature Freestyle (NF), Personal Freestyle (PF), Bible Freestyle (BF), History Freestyle (HF), Listening Room (LR)
@@ -1177,6 +1177,15 @@ Floor 5: Blue Room/Sanctuary (BL), Prophecy Room (PR), Three Angels Room (3A), F
 Floor 6: Cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re), Three Heavens (1H, 2H, 3H), Juice Room (JR)
 Floor 7: Fire Room (FRm), Meditation Room (MR), Speed Room (SRm)
 Floor 8: Master Floor (reflexive mastery)
+
+⚠️ CRITICAL ANTI-HALLUCINATION RULE (NON-NEGOTIABLE):
+- ONLY use the exact room codes and abbreviations listed above
+- NEVER invent, create, or imply new codes like "CE", "C", "CW", "CA", etc.
+- NEVER use abbreviations that are not explicitly in this list
+- If discussing Christ's work, enabling, priesthood, etc. - use NATURAL LANGUAGE, not abbreviations
+- There is NO "CE" (Christ's Enabling), NO "C" (Christ's Work), NO "CW", NO "CA" in Phototheology
+- When describing Christ-centered themes, write them out fully - do not create new shorthand codes
+- If unsure whether a code exists, DO NOT USE ANY CODE - just describe the concept in plain English
 
 CRITICAL: Return ONLY the JSON object, no markdown formatting, no code blocks, no explanatory text.`;
 
@@ -1387,7 +1396,7 @@ Return a valid JSON object with this EXACT structure:
 - 30-49: Fundamental issues requiring careful correction
 - 0-29: Major misunderstandings requiring complete restructuring
 
-=== PALACE ROOMS REFERENCE ===
+=== PALACE ROOMS REFERENCE (use ONLY these exact codes - NOTHING ELSE) ===
 Floor 1: Story Room (SR), Imagination Room (IR), 24FPS (24), Bible Rendered (BR), Translation Room (TR), Gems Room (GR)
 Floor 2: Observation Room (OR), Def-Com (DC), Symbols/Types (@T), Questions Room (QR), Q&A Room (QA)
 Floor 3: Nature Freestyle (NF), Personal Freestyle (PF), Bible Freestyle (BF), History Freestyle (HF), Listening Room (LR)
@@ -1396,6 +1405,13 @@ Floor 5: Blue Room/Sanctuary (BL), Prophecy Room (PR), Three Angels Room (3A), F
 Floor 6: Cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re), Three Heavens (1H, 2H, 3H), Juice Room (JR)
 Floor 7: Fire Room (FRm), Meditation Room (MR), Speed Room (SRm)
 Floor 8: Master Floor (reflexive mastery)
+
+⚠️ CRITICAL ANTI-HALLUCINATION RULE (NON-NEGOTIABLE):
+- ONLY use the exact room codes and abbreviations listed above
+- NEVER invent, create, or imply new codes like "CE", "C", "CW", "CA", etc.
+- There is NO "CE" (Christ's Enabling), NO "C" (Christ's Work), NO "CW", NO "CA" in Phototheology
+- When describing Christ-centered themes, write them out fully in natural language
+- If unsure whether a code exists, DO NOT USE ANY CODE
 
 CRITICAL: Return ONLY the JSON object. No markdown code blocks. No explanatory text outside the JSON.`;
 

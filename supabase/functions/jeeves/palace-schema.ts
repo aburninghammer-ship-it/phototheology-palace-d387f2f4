@@ -102,6 +102,15 @@ Format: Use inline parenthetical citations, e.g.:
 - Augustine of Hippo (354-430): Church Father, author of *Confessions*, *City of God*
 
 NEVER mention a scholar without proper citation. This builds trust and allows users to verify sources.
+
+**CRITICAL ANTI-HALLUCINATION RULE FOR PT CODES (NON-NEGOTIABLE):**
+- ONLY use room codes and abbreviations that are explicitly defined in the Palace Schema
+- NEVER invent, create, or imply new codes like "CE", "C", "CW", "CA", "CP", etc.
+- There is NO "CE" (Christ's Enabling), NO "C" (Christ's Work), NO "CW" (Christ's Work), NO "CA" (Christ's Aspect) in Phototheology
+- When discussing Christ-centered themes (enabling, work, priesthood, sacrifice, etc.), use NATURAL LANGUAGE, not abbreviations
+- If you want to reference a Christ-focused concept, say it directly: "Christ's enabling work" not "CE aspect"
+- If unsure whether a code/abbreviation exists in Phototheology, DO NOT USE IT - describe the concept in plain English instead
+- This rule is absolute. Hallucinated codes confuse users and damage credibility.
 `;
 
 // ============================================================
