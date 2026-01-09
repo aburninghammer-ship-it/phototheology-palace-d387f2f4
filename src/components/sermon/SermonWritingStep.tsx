@@ -420,13 +420,13 @@ Return ONLY the JSON, no other text.`
     setCursorContext(context);
     cursorContextRef.current = context;
     
-    // Trigger verse suggestions based on new cursor position
+    // Trigger verse suggestions based on new cursor position - faster response
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
     debounceRef.current = setTimeout(() => {
       fetchVerseSuggestions(sermon.full_sermon, { before: context.before, paragraph: context.paragraph });
-    }, 1500);
+    }, 800); // Faster response when cursor moves
   }, [sermon.full_sermon, fetchVerseSuggestions]);
 
   // Handle content change with debounce

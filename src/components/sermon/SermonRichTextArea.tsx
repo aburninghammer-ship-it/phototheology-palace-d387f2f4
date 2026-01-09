@@ -58,27 +58,58 @@ export function SermonRichTextArea({
 
   const cursorContextDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Extract text around cursor position
+  // Extract text around cursor position - using node-aware traversal
   const extractCursorContext = useCallback((editor: any) => {
     if (!editor || !onCursorContext) return;
 
     const { from } = editor.state.selection;
     const doc = editor.state.doc;
-    const text = doc.textContent || '';
     
-    // Get 300 chars before and 100 chars after cursor
-    const beforeText = text.slice(Math.max(0, from - 300), from);
-    const afterText = text.slice(from, from + 100);
+    // Build text before and after cursor by walking the document
+    let beforeText = '';
+    let afterText = '';
+    let currentPos = 0;
     
-    // Find the current paragraph/sentence
-    const beforeParagraph = beforeText.split(/\n\n/).pop() || beforeText;
-    const afterParagraph = afterText.split(/\n\n/)[0] || afterText;
-    const paragraph = beforeParagraph + afterParagraph;
+    doc.descendants((node: any, pos: number) => {
+      if (node.isText) {
+        const nodeText = node.text || '';
+        const nodeStart = pos;
+        const nodeEnd = pos + nodeText.length;
+        
+        if (nodeEnd <= from) {
+          // Entire node is before cursor
+          beforeText += nodeText;
+        } else if (nodeStart >= from) {
+          // Entire node is after cursor
+          afterText += nodeText;
+        } else {
+          // Cursor is inside this node
+          const splitPoint = from - nodeStart;
+          beforeText += nodeText.slice(0, splitPoint);
+          afterText += nodeText.slice(splitPoint);
+        }
+      } else if (node.isBlock && beforeText.length > 0) {
+        // Add paragraph breaks between blocks
+        beforeText += '\n\n';
+      }
+      return true;
+    });
+    
+    // Trim to reasonable lengths
+    beforeText = beforeText.slice(-400);
+    afterText = afterText.slice(0, 150);
+    
+    // Find the current paragraph/sentence (what user is currently typing)
+    // Split on double newlines and get the last "paragraph" before cursor
+    const paragraphs = beforeText.split(/\n\n/);
+    const currentParagraphBefore = paragraphs[paragraphs.length - 1] || '';
+    const currentParagraphAfter = afterText.split(/\n\n/)[0] || '';
+    const paragraph = (currentParagraphBefore + currentParagraphAfter).trim();
 
     onCursorContext({
-      before: beforeText,
-      after: afterText,
-      paragraph: paragraph.trim()
+      before: beforeText.trim(),
+      after: afterText.trim(),
+      paragraph
     });
   }, [onCursorContext]);
 
@@ -98,15 +129,22 @@ export function SermonRichTextArea({
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
-    },
-    onSelectionUpdate: ({ editor }) => {
-      // Debounce cursor context updates
+      // Also update cursor context on content change (when typing)
       if (cursorContextDebounceRef.current) {
         clearTimeout(cursorContextDebounceRef.current);
       }
       cursorContextDebounceRef.current = setTimeout(() => {
         extractCursorContext(editor);
-      }, 500);
+      }, 400);
+    },
+    onSelectionUpdate: ({ editor }) => {
+      // Debounce cursor context updates - shorter delay for responsive feel
+      if (cursorContextDebounceRef.current) {
+        clearTimeout(cursorContextDebounceRef.current);
+      }
+      cursorContextDebounceRef.current = setTimeout(() => {
+        extractCursorContext(editor);
+      }, 300);
     },
     editorProps: {
       attributes: {
