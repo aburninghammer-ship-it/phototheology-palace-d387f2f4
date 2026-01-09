@@ -307,43 +307,105 @@ Remember:
 
     console.log(`[generate-sermon-starter] Generating ${level} starter for topic: ${topic}, category: ${category || 'none'}`);
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.7,
-        max_tokens: 6000,
-        response_format: { type: "json_object" },
-      }),
-    });
+    const makeAIRequest = async (useCompactPrompt = false) => {
+      const compactUserPrompt = useCompactPrompt 
+        ? `Create a CONCISE ${level} level PhotoTheology Sermon Starter for: "${topic}". Keep ALL floor descriptions under 50 words each. Be brief but insightful.`
+        : userPrompt;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`[generate-sermon-starter] AI API error: ${errorText}`);
-      throw new Error(`AI API error: ${response.status}`);
-    }
+      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: systemPrompt + (useCompactPrompt ? "\n\nCRITICAL: Keep ALL responses CONCISE. Each floor description must be under 50 words. Do not write long paragraphs." : "") },
+            { role: "user", content: compactUserPrompt },
+          ],
+          temperature: 0.7,
+          max_completion_tokens: 8000,
+        }),
+      });
 
-    const aiResponse = await response.json();
-    const content = aiResponse.choices?.[0]?.message?.content;
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[generate-sermon-starter] AI API error: ${errorText}`);
+        throw new Error(`AI API error: ${response.status}`);
+      }
 
-    if (!content) {
-      throw new Error("No content in AI response");
-    }
+      return response.json();
+    };
 
     let starterData;
-    try {
-      starterData = JSON.parse(content);
-    } catch (parseError) {
-      console.error("[generate-sermon-starter] Failed to parse AI response:", content);
-      throw new Error("Failed to parse AI response as JSON");
+    let attempts = 0;
+    const maxAttempts = 2;
+
+    while (attempts < maxAttempts) {
+      attempts++;
+      const useCompact = attempts > 1;
+      
+      console.log(`[generate-sermon-starter] Attempt ${attempts}/${maxAttempts}, compact mode: ${useCompact}`);
+      
+      const aiResponse = await makeAIRequest(useCompact);
+      const content = aiResponse.choices?.[0]?.message?.content;
+
+      if (!content) {
+        throw new Error("No content in AI response");
+      }
+
+      // Clean the content - remove markdown code blocks if present
+      let cleanedContent = content.trim();
+      if (cleanedContent.startsWith("```json")) {
+        cleanedContent = cleanedContent.slice(7);
+      } else if (cleanedContent.startsWith("```")) {
+        cleanedContent = cleanedContent.slice(3);
+      }
+      if (cleanedContent.endsWith("```")) {
+        cleanedContent = cleanedContent.slice(0, -3);
+      }
+      cleanedContent = cleanedContent.trim();
+
+      try {
+        starterData = JSON.parse(cleanedContent);
+        console.log(`[generate-sermon-starter] Successfully parsed on attempt ${attempts}`);
+        break;
+      } catch (parseError) {
+        console.error(`[generate-sermon-starter] Parse attempt ${attempts} failed. Content length: ${content.length}`);
+        console.error(`[generate-sermon-starter] Content preview: ${content.substring(0, 500)}...`);
+        
+        if (attempts >= maxAttempts) {
+          // Try to salvage partial JSON by finding the last complete object
+          const lastBraceIndex = cleanedContent.lastIndexOf('}');
+          if (lastBraceIndex > 0) {
+            try {
+              // Count braces to find a valid cutoff
+              let braceCount = 0;
+              let validEndIndex = -1;
+              for (let i = 0; i < cleanedContent.length; i++) {
+                if (cleanedContent[i] === '{') braceCount++;
+                if (cleanedContent[i] === '}') {
+                  braceCount--;
+                  if (braceCount === 0) {
+                    validEndIndex = i + 1;
+                    break;
+                  }
+                }
+              }
+              if (validEndIndex > 0) {
+                starterData = JSON.parse(cleanedContent.substring(0, validEndIndex));
+                console.log("[generate-sermon-starter] Salvaged partial JSON successfully");
+                break;
+              }
+            } catch {
+              // Salvage failed
+            }
+          }
+          console.error("[generate-sermon-starter] All parse attempts failed");
+          throw new Error("Failed to parse AI response as JSON after multiple attempts");
+        }
+      }
     }
 
     console.log(`[generate-sermon-starter] Successfully generated starter: ${starterData.starterTitle}`);
