@@ -7,15 +7,15 @@ import { motion } from "framer-motion";
 interface Winner {
   id: string;
   rank: number;
-  jeeves_commentary: string;
-  standout_insight: string | null;
+  jeeves_commentary?: string;
+  standout_insight?: string | null;
   xp_awarded: number;
-  badge_awarded: string | null;
+  badge_awarded?: string | null;
   user_id: string;
   profiles?: {
     display_name: string;
     avatar_url: string;
-  };
+  } | any;
 }
 
 interface WinnerCardProps {

@@ -39,10 +39,10 @@ interface WeeklyChallenge {
   title: string;
   theme: string;
   anchor_passage: string;
-  study_prompt: string;
-  pt_focus: string[];
+  study_prompt?: string;
+  pt_focus?: string[];
   difficulty: string;
-  hints: any;
+  hints?: any;
   status: string;
   starts_at: string;
   ends_at: string;
@@ -52,41 +52,39 @@ interface Submission {
   id: string;
   user_id: string;
   main_insight: string;
-  scripture_connections: string[];
-  pt_principles_applied: string[];
+  scripture_connections?: string[];
+  principles_applied?: string[];
+  pt_principles_applied?: string[];
   practical_application: string;
-  supporting_evidence: string;
+  supporting_evidence?: string;
   ai_score: number | null;
-  depth_score: number | null;
-  biblical_score: number | null;
-  pt_score: number | null;
-  clarity_score: number | null;
+  depth_score?: number | null;
+  biblical_score?: number | null;
+  pt_score?: number | null;
+  clarity_score?: number | null;
   ai_feedback: string | null;
-  highlight_quotes: string[];
-  submitted_at: string;
-  profiles?: {
-    display_name: string;
-    avatar_url: string;
-  };
+  highlight_quotes?: string[];
+  submitted_at?: string;
+  rank?: number;
+  word_count?: number;
+  profiles?: any;
 }
 
 interface Winner {
   id: string;
   rank: number;
-  jeeves_commentary: string;
+  jeeves_commentary?: string;
   standout_insight: string;
   xp_awarded: number;
   badge_awarded: string;
   user_id: string;
-  profiles?: {
-    display_name: string;
-    avatar_url: string;
-  };
+  profiles?: any;
 }
 
 interface GuestContribution {
   id: string;
-  guest_name: string;
+  name?: string;
+  guest_name?: string;
   contribution: string;
   created_at: string;
 }

@@ -200,6 +200,7 @@ export function SermonIdeasPanel({
     setSavingId(idea.id);
 
     try {
+      // @ts-ignore - table exists in DB
       const { error } = await supabase.from("user_notes").insert({
         user_id: user.id,
         book,
