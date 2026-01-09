@@ -460,12 +460,19 @@ export const Navigation = () => {
                     <BookOpen className="h-3.5 w-3.5 text-sky-500" />
                     <span className="bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent font-semibold">My Studies</span>
                   </Link>
-                  <Link 
-                    to="/notes" 
+                  <Link
+                    to="/notes"
                     className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 hover:from-yellow-500/20 hover:to-amber-500/20 ${isActiveTab('/notes') ? 'shadow-[0_0_12px_2px_rgba(234,179,8,0.5)] border-yellow-400/60' : ''}`}
                   >
                     <BookOpen className="h-3.5 w-3.5 text-yellow-500" />
                     <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent font-semibold">Notes</span>
+                  </Link>
+                  <Link
+                    to="/libraries"
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 hover:from-indigo-500/20 hover:to-purple-500/20 ${isActiveTab('/libraries') ? 'shadow-[0_0_12px_2px_rgba(99,102,241,0.5)] border-indigo-400/60' : ''}`}
+                  >
+                    <Library className="h-3.5 w-3.5 text-indigo-500" />
+                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-semibold">Libraries</span>
                   </Link>
                   <Link 
                     to="/games" 

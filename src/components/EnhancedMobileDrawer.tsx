@@ -55,6 +55,7 @@ const categoryConfig = {
       { to: "/video-training", label: "Video Training", icon: "🎥" },
       { to: "/my-studies", label: "My Studies", icon: "📝" },
       { to: "/notes", label: "Notes", icon: "📒" },
+      { to: "/libraries", label: "My Libraries", icon: "📚" },
       { to: "/sessions", label: "Study Sessions", icon: "📋" },
       { to: "/palace/floor/1/room/gr", label: "Produce a Gem", icon: "💎" },
       { to: "/memory", label: "Memory Palace", icon: "🧠" },
