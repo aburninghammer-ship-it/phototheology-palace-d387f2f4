@@ -42,172 +42,93 @@ function parseContentToBlocks(html: string): ContentBlock[] {
 
   if (!html || html.trim() === '') return blocks;
 
-  // Normalize the HTML
-  let normalizedHtml = html
-    .replace(/\n/g, '')
-    .replace(/<br\s*\/?>/gi, '\n');
+  // Strip HTML tags first
+  const strippedText = html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<\/div>/gi, '\n\n')
+    .replace(/<[^>]*>/g, '')
+    .trim();
 
-  // First, check if this is mostly plain text (not wrapped in HTML tags)
-  const strippedText = normalizedHtml.replace(/<[^>]*>/g, '').trim();
-  const hasHtmlStructure = /<(p|blockquote|div|h[1-6])[^>]*>/i.test(normalizedHtml);
+  if (!strippedText) return blocks;
 
-  // If there's no real HTML structure, treat it as plain text and split into paragraphs
-  if (!hasHtmlStructure && strippedText.length > 0) {
-    // Split by double newlines, or by sentences that end with periods followed by capital letters
-    const paragraphs = strippedText
-      .split(/\n\n+|\r\n\r\n+/)
-      .flatMap(p => {
-        // If a paragraph is very long (>500 chars), try to split further by sentence groups
-        if (p.length > 500) {
-          const sentences = p.match(/[^.!?]+[.!?]+/g) || [p];
-          const chunks: string[] = [];
-          let currentChunk = '';
-          for (const sentence of sentences) {
-            if ((currentChunk + sentence).length > 400 && currentChunk.length > 0) {
-              chunks.push(currentChunk.trim());
-              currentChunk = sentence;
-            } else {
-              currentChunk += sentence;
-            }
-          }
-          if (currentChunk.trim()) chunks.push(currentChunk.trim());
-          return chunks;
-        }
-        return [p];
-      })
-      .filter(p => p.trim().length > 0);
+  // Bible book names for matching
+  const bibleBooks = '(?:Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|1\\s*Samuel|2\\s*Samuel|1\\s*Kings|2\\s*Kings|1\\s*Chronicles|2\\s*Chronicles|Ezra|Nehemiah|Esther|Job|Psalms?|Proverbs|Ecclesiastes|Song\\s*of\\s*Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|1\\s*Corinthians|2\\s*Corinthians|Galatians|Ephesians|Philippians|Colossians|1\\s*Thessalonians|2\\s*Thessalonians|1\\s*Timothy|2\\s*Timothy|Titus|Philemon|Hebrews|James|1\\s*Peter|2\\s*Peter|1\\s*John|2\\s*John|3\\s*John|Jude|Revelation)';
 
-    for (const p of paragraphs) {
-      // Check if this looks like a Bible verse (has chapter:verse pattern or "saith the Lord" etc.)
-      const looksLikeVerse = /\b\d+:\d+\b/.test(p) || 
-        /\b(saith|thus saith|the Lord|Lord God|Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|Samuel|Kings|Chronicles|Ezra|Nehemiah|Esther|Job|Psalm|Proverbs|Ecclesiastes|Song|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|John|Acts|Romans|Corinthians|Galatians|Ephesians|Philippians|Colossians|Thessalonians|Timothy|Titus|Philemon|Hebrews|James|Peter|Jude|Revelation)\s+\d+/i.test(p);
+  // Pattern to match Bible verse references like "Matthew 6:33:" or "John 3:5-6:"
+  const verseRefPattern = new RegExp(`(${bibleBooks})\\s+(\\d+):(\\d+)(?:-(\\d+))?\\s*:`, 'gi');
 
-      // Try to extract reference if it looks like a verse
-      const refMatch = p.match(/^([A-Z0-9][a-zA-Z0-9\s]+\d+:\d+(?:-\d+)?)\s*[:\-–—]?\s*["']?(.+)["']?$/);
-      
-      if (refMatch && looksLikeVerse) {
-        blocks.push({
-          id: `block-${blockId++}`,
-          type: 'verse',
-          reference: refMatch[1].trim(),
-          content: refMatch[2].trim().replace(/^["']|["']$/g, ''),
-        });
-      } else if (looksLikeVerse) {
-        blocks.push({
-          id: `block-${blockId++}`,
-          type: 'verse',
-          content: p.trim(),
-        });
-      } else {
+  // Split content by lines first
+  const lines = strippedText.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
+  
+  let currentParagraph = '';
+
+  for (const line of lines) {
+    // Check if this line starts with a Bible reference like "Matthew 6:33:"
+    const verseMatch = line.match(new RegExp(`^(${bibleBooks}\\s+\\d+:\\d+(?:-\\d+)?)\\s*:\\s*(.+)$`, 'i'));
+    
+    if (verseMatch) {
+      // Save any accumulated paragraph first
+      if (currentParagraph.trim()) {
         blocks.push({
           id: `block-${blockId++}`,
           type: 'paragraph',
-          content: p.trim(),
+          content: currentParagraph.trim(),
         });
+        currentParagraph = '';
       }
-    }
-
-    return blocks;
-  }
-
-  // Match blockquotes (verses) and paragraphs from HTML
-  const blockquoteRegex = /<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi;
-
-  // Split content by blockquotes first, preserving order
-  const parts: { type: 'verse' | 'paragraph' | 'text'; content: string; index: number }[] = [];
-
-  // Find all blockquotes with their positions
-  let match;
-  let lastIndex = 0;
-
-  while ((match = blockquoteRegex.exec(normalizedHtml)) !== null) {
-    // Add any text before this blockquote
-    if (match.index > lastIndex) {
-      const textBetween = normalizedHtml.slice(lastIndex, match.index);
-      if (textBetween.trim()) {
-        parts.push({ type: 'text', content: textBetween, index: lastIndex });
-      }
-    }
-
-    // Add the blockquote
-    parts.push({ type: 'verse', content: match[1], index: match.index });
-    lastIndex = match.index + match[0].length;
-  }
-
-  // Add any remaining text
-  if (lastIndex < normalizedHtml.length) {
-    const remaining = normalizedHtml.slice(lastIndex);
-    if (remaining.trim()) {
-      parts.push({ type: 'text', content: remaining, index: lastIndex });
-    }
-  }
-
-  // Sort by index
-  parts.sort((a, b) => a.index - b.index);
-
-  // Process parts into blocks
-  for (const part of parts) {
-    if (part.type === 'verse') {
-      // Extract reference from verse
-      const verseMatch = part.content.match(/<strong>([^<]+)<\/strong>:\s*["']?([^"'<]+)["']?/);
-      if (verseMatch) {
-        blocks.push({
-          id: `block-${blockId++}`,
-          type: 'verse',
-          reference: verseMatch[1],
-          content: verseMatch[2].trim(),
-        });
-      } else {
-        // Plain blockquote without our format
-        const plainText = part.content.replace(/<[^>]*>/g, '').trim();
-        if (plainText) {
-          blocks.push({
-            id: `block-${blockId++}`,
-            type: 'verse',
-            content: plainText,
-          });
-        }
-      }
-    } else {
-      // Extract paragraphs from text content
-      let pMatch;
-      const pRegex = /<p[^>]*>([\s\S]*?)<\/p>/gi;
-      let foundParagraphs = false;
-
-      while ((pMatch = pRegex.exec(part.content)) !== null) {
-        const plainText = pMatch[1].replace(/<[^>]*>/g, '').trim();
-        if (plainText && plainText.length > 0) {
+      
+      // Extract the verse reference and content
+      const reference = verseMatch[1].trim();
+      let verseContent = verseMatch[2].trim();
+      
+      // Remove surrounding quotes from verse content
+      verseContent = verseContent.replace(/^["'"']+|["'"']+$/g, '');
+      
+      blocks.push({
+        id: `block-${blockId++}`,
+        type: 'verse',
+        reference,
+        content: verseContent,
+      });
+    } else if (line.length > 0) {
+      // This is a regular text line
+      // Check if it's a very short line (likely a heading or standalone thought)
+      if (line.length < 100 && !line.endsWith('.') && !line.endsWith('!') && !line.endsWith('?')) {
+        // Treat short standalone lines as separate paragraphs
+        if (currentParagraph.trim()) {
           blocks.push({
             id: `block-${blockId++}`,
             type: 'paragraph',
-            content: plainText,
+            content: currentParagraph.trim(),
           });
-          foundParagraphs = true;
+          currentParagraph = '';
         }
-      }
-
-      // If no paragraphs found, treat as plain text and split by double newlines
-      if (!foundParagraphs) {
-        const plainText = part.content.replace(/<[^>]*>/g, '').trim();
-        if (plainText) {
-          // Split by double line breaks or by sentences for long content
-          const paragraphs = plainText.split(/\n\n+|\r\n\r\n+/).filter(p => p.trim());
-          for (const p of paragraphs) {
-            if (p.trim()) {
-              blocks.push({
-                id: `block-${blockId++}`,
-                type: 'paragraph',
-                content: p.trim(),
-              });
-            }
-          }
-        }
+        blocks.push({
+          id: `block-${blockId++}`,
+          type: 'paragraph',
+          content: line,
+        });
+      } else if (currentParagraph && !currentParagraph.endsWith(' ')) {
+        currentParagraph += ' ' + line;
+      } else {
+        currentParagraph += line;
       }
     }
+  }
+
+  // Don't forget any remaining paragraph
+  if (currentParagraph.trim()) {
+    blocks.push({
+      id: `block-${blockId++}`,
+      type: 'paragraph',
+      content: currentParagraph.trim(),
+    });
   }
 
   return blocks;
 }
+
 
 // Convert blocks back to HTML
 function blocksToHtml(blocks: ContentBlock[]): string {
