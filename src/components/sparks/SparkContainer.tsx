@@ -93,18 +93,25 @@ export function SparkContainer({
         )}
       </div>
 
-      {/* Open Spark Card - Mobile optimized positioning */}
+      {/* Open Spark Card - Fixed positioning to prevent clipping */}
       {openSpark && (
-        <div className="fixed inset-x-0 bottom-0 z-50 p-4 md:absolute md:inset-auto md:right-0 md:top-full md:mt-2 md:p-0">
-          <div className="md:hidden fixed inset-0 bg-background/60 backdrop-blur-sm -z-10" onClick={handleClose} />
-          <SparkCard
-            spark={openSpark}
-            onClose={handleClose}
-            onExplore={() => handleExplore(openSpark.id)}
-            onSave={() => handleSave(openSpark.id)}
-            onDismiss={() => handleDismiss(openSpark.id)}
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[9998]" 
+            onClick={handleClose} 
           />
-        </div>
+          {/* Card - centered on mobile, positioned near sparks on desktop */}
+          <div className="fixed inset-x-4 bottom-4 z-[9999] md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2">
+            <SparkCard
+              spark={openSpark}
+              onClose={handleClose}
+              onExplore={() => handleExplore(openSpark.id)}
+              onSave={() => handleSave(openSpark.id)}
+              onDismiss={() => handleDismiss(openSpark.id)}
+            />
+          </div>
+        </>
       )}
 
       {/* Explore Flow */}
