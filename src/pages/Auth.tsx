@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Building2, Sparkles, Mail, Lock, User, Loader2, Crown } from "lucide-react";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 import { z } from "zod";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { AuthSocialProof } from "@/components/auth/AuthSocialProof";
@@ -275,6 +276,14 @@ export default function Auth() {
           console.error("Failed to send signup notification:", notifError);
         }
 
+        // Celebrate with confetti!
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#9b87f5', '#7E69AB', '#6E59A5', '#D6BCFA', '#E5DEFF']
+        });
+
         toast.success("Account created! Welcome to Phototheology!");
         if (safeRedirect) {
           navigate(safeRedirect, { replace: true });
@@ -282,6 +291,13 @@ export default function Auth() {
           navigate("/onboarding");
         }
       } else if (data.user && !data.session) {
+        // Celebrate with confetti!
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#9b87f5', '#7E69AB', '#6E59A5', '#D6BCFA', '#E5DEFF']
+        });
         toast.success("Account created! Please check your email to verify your account.");
       } else {
         setError("Account creation failed. This email may already be registered. Please try logging in instead.");
