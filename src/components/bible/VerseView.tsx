@@ -125,7 +125,7 @@ export const VerseView = ({
   const handleSermonStarter = (e: React.MouseEvent) => {
     e.stopPropagation();
     const verseRef = `${book} ${chapter}:${verse.verse}`;
-    navigate(`/sermon-starters?verse=${encodeURIComponent(verseRef)}`);
+    navigate(`/sermon-builder?tab=starters&verse=${encodeURIComponent(verseRef)}`);
   };
 
   // Generate dynamic principles for this verse (regenerates when regenerateTrigger changes)
