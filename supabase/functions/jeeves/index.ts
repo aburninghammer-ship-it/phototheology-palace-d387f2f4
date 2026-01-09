@@ -1168,7 +1168,7 @@ IMPORTANT: Do NOT explicitly label theology as "SDA" or "Adventist" in your resp
 - 20-39: Needs Work - significant gaps or concerns to address
 - 0-19: Foundational Guidance Needed - requires careful redirection
 
-=== PALACE ROOMS REFERENCE (use ONLY these exact codes - NOTHING ELSE) ===
+=== PALACE ROOMS REFERENCE (use ONLY these exact codes WITH their exact meanings) ===
 Floor 1: Story Room (SR), Imagination Room (IR), 24FPS (24), Bible Rendered (BR), Translation Room (TR), Gems Room (GR)
 Floor 2: Observation Room (OR), Def-Com (DC), Symbols/Types (@T), Questions Room (QR), Q&A Room (QA)
 Floor 3: Nature Freestyle (NF), Personal Freestyle (PF), Bible Freestyle (BF), History Freestyle (HF), Listening Room (LR)
@@ -1178,14 +1178,24 @@ Floor 6: Cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re), Three Heavens (1H, 2H
 Floor 7: Fire Room (FRm), Meditation Room (MR), Speed Room (SRm)
 Floor 8: Master Floor (reflexive mastery)
 
-⚠️ CRITICAL ANTI-HALLUCINATION RULE (NON-NEGOTIABLE):
-- ONLY use the exact room codes and abbreviations listed above
-- NEVER invent, create, or imply new codes like "CE", "C", "CW", "CA", etc.
-- NEVER use abbreviations that are not explicitly in this list
-- If discussing Christ's work, enabling, priesthood, etc. - use NATURAL LANGUAGE, not abbreviations
-- There is NO "CE" (Christ's Enabling), NO "C" (Christ's Work), NO "CW", NO "CA" in Phototheology
-- When describing Christ-centered themes, write them out fully - do not create new shorthand codes
-- If unsure whether a code exists, DO NOT USE ANY CODE - just describe the concept in plain English
+⚠️ CRITICAL ANTI-HALLUCINATION RULES (NON-NEGOTIABLE):
+
+RULE 1 - NO INVENTED CODES:
+- NEVER invent new codes like "CE", "C", "CW", "CA", "CP", "BL" (Body of Light), etc.
+- There is NO "CE" (Christ's Enabling), NO "C" (Christ's Work), NO "Body of Light" in Phototheology
+
+RULE 2 - NO INVENTED MEANINGS FOR EXISTING CODES:
+- BL = Blue Room/Sanctuary ONLY (NOT "Body of Light")
+- CR = Concentration Room ONLY (NOT "Christ Room" or "Christ Revelation")
+- PR = Prophecy Room ONLY (NOT "Priesthood Room" or "Prayer Room")
+- FRm = Fire Room ONLY (NOT "Fruit Room" - that's FRt)
+- Use ONLY the exact name shown in parentheses above
+
+RULE 3 - WHEN IN DOUBT, USE PLAIN ENGLISH:
+- If discussing Christ's work, enabling, priesthood, light, etc. - use NATURAL LANGUAGE
+- Say "believers become conduits of divine light" NOT "the BL (Body of Light) principle"
+- Say "Christ-centered focus" NOT "the CR (Christ Room) aspect"
+- If unsure about a code's meaning, DO NOT USE THE CODE AT ALL
 
 CRITICAL: Return ONLY the JSON object, no markdown formatting, no code blocks, no explanatory text.`;
 
@@ -1396,7 +1406,7 @@ Return a valid JSON object with this EXACT structure:
 - 30-49: Fundamental issues requiring careful correction
 - 0-29: Major misunderstandings requiring complete restructuring
 
-=== PALACE ROOMS REFERENCE (use ONLY these exact codes - NOTHING ELSE) ===
+=== PALACE ROOMS REFERENCE (use ONLY these exact codes WITH their exact meanings) ===
 Floor 1: Story Room (SR), Imagination Room (IR), 24FPS (24), Bible Rendered (BR), Translation Room (TR), Gems Room (GR)
 Floor 2: Observation Room (OR), Def-Com (DC), Symbols/Types (@T), Questions Room (QR), Q&A Room (QA)
 Floor 3: Nature Freestyle (NF), Personal Freestyle (PF), Bible Freestyle (BF), History Freestyle (HF), Listening Room (LR)
@@ -1406,12 +1416,20 @@ Floor 6: Cycles (@Ad, @No, @Ab, @Mo, @Cy, @CyC, @Sp, @Re), Three Heavens (1H, 2H
 Floor 7: Fire Room (FRm), Meditation Room (MR), Speed Room (SRm)
 Floor 8: Master Floor (reflexive mastery)
 
-⚠️ CRITICAL ANTI-HALLUCINATION RULE (NON-NEGOTIABLE):
-- ONLY use the exact room codes and abbreviations listed above
-- NEVER invent, create, or imply new codes like "CE", "C", "CW", "CA", etc.
-- There is NO "CE" (Christ's Enabling), NO "C" (Christ's Work), NO "CW", NO "CA" in Phototheology
-- When describing Christ-centered themes, write them out fully in natural language
-- If unsure whether a code exists, DO NOT USE ANY CODE
+⚠️ CRITICAL ANTI-HALLUCINATION RULES (NON-NEGOTIABLE):
+
+RULE 1 - NO INVENTED CODES:
+- NEVER invent new codes like "CE", "C", "CW", "CA", "CP", etc.
+
+RULE 2 - NO INVENTED MEANINGS FOR EXISTING CODES:
+- BL = Blue Room/Sanctuary ONLY (NOT "Body of Light")
+- CR = Concentration Room ONLY (NOT "Christ Room")
+- PR = Prophecy Room ONLY (NOT "Priesthood Room")
+- Use ONLY the exact name shown in parentheses above
+
+RULE 3 - WHEN IN DOUBT, USE PLAIN ENGLISH:
+- If discussing light, priesthood, etc. - use NATURAL LANGUAGE, not codes
+- If unsure about a code's meaning, DO NOT USE THE CODE AT ALL
 
 CRITICAL: Return ONLY the JSON object. No markdown code blocks. No explanatory text outside the JSON.`;
 
