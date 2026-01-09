@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Bookmark, Search, Flame, Sparkles, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { Spark } from '@/hooks/useSparks';
 
@@ -158,40 +159,45 @@ export function SparkCard({
             </div>
             
             {/* Body */}
-            <div className="px-4 pb-3 space-y-2">
-              <p className="text-xs text-muted-foreground italic line-clamp-2">
-                {spark.recognition}
-              </p>
-              <div
-                className={cn(
-                  "cursor-pointer transition-all",
-                  needsExpansion && "hover:bg-foreground/5 rounded-md -mx-1 px-1"
-                )}
-                onClick={() => needsExpansion && setIsExpanded(!isExpanded)}
-              >
-                <p className={cn(
-                  "text-sm leading-relaxed",
-                  !isExpanded && "line-clamp-4"
-                )}>
-                  {spark.insight}
+            <ScrollArea className={cn(
+              "transition-all duration-200",
+              isExpanded ? "h-[250px]" : "max-h-[180px]"
+            )}>
+              <div className="px-4 pb-3 space-y-2">
+                <p className="text-xs text-muted-foreground italic line-clamp-2">
+                  {spark.recognition}
                 </p>
-                {needsExpansion && (
-                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-1 touch-manipulation">
-                    {isExpanded ? (
-                      <>
-                        <ChevronUp size={12} />
-                        Show less
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown size={12} />
-                        Read more
-                      </>
-                    )}
-                  </button>
-                )}
+                <div
+                  className={cn(
+                    "cursor-pointer transition-all",
+                    needsExpansion && "hover:bg-foreground/5 rounded-md -mx-1 px-1"
+                  )}
+                  onClick={() => needsExpansion && setIsExpanded(!isExpanded)}
+                >
+                  <p className={cn(
+                    "text-sm leading-relaxed",
+                    !isExpanded && "line-clamp-4"
+                  )}>
+                    {spark.insight}
+                  </p>
+                  {needsExpansion && (
+                    <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-1 touch-manipulation">
+                      {isExpanded ? (
+                        <>
+                          <ChevronUp size={12} />
+                          Show less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown size={12} />
+                          Read more
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            </ScrollArea>
             
             {/* Footer */}
             <div className="px-4 pb-4 pt-0 gap-2 flex flex-wrap">
