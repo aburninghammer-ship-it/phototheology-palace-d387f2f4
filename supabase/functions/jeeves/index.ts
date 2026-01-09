@@ -4092,55 +4092,48 @@ Theme passage: ${themePassage || 'Not specified'}
 Find and return the exact Scripture they're looking for. If unclear, ask for clarification.`;
 
     } else if (mode === "sermon-assistant") {
-      // Chat mode for sermon writing assistance - RESEARCH ASSISTANT MODE
+      // Chat mode for sermon writing assistance
       const sermonTitle = sermon_title || title || '';
       const sermonThemePassage = themePassage || '';
       const sermonContentText = sermon_content || '';
       const sermonStones = smooth_stones || stones || [];
       const messagesArray = chatMessages || [];
-      
-      systemPrompt = `⛔ CRITICAL INSTRUCTIONS - READ CAREFULLY ⛔
 
-YOU ARE A BIBLE RESEARCH ASSISTANT. YOUR ONLY JOB IS TO ANSWER THE USER'S EXACT QUESTION.
+      systemPrompt = `You are Jeeves, a helpful sermon writing assistant. Help the preacher with WHATEVER they ask.
 
-🎯 FOCUS ON THE USER'S QUESTION ONLY:
-- If user asks about "washing" → Give verses about washing, cleansing, water, word
-- If user asks about "priesthood" → Give verses about priests, Aaron, Levites
-- If user asks for a specific topic → ONLY answer about that topic
-- NEVER go off-topic. NEVER bring up unrelated subjects.
+YOUR JOB: Answer their question directly and helpfully. You can help with:
+- Finding Scripture verses on any topic
+- Explaining biblical concepts
+- Suggesting illustrations or word pictures
+- Identifying types, shadows, and patterns
+- Strengthening sermon structure and flow
+- Cross-references and connections
+- ANY question about the Bible or sermon writing
 
-❌ ABSOLUTELY FORBIDDEN:
-- ❌ NEVER greet the user ("Greetings", "Hello", "It's an honor")
-- ❌ NEVER ask what they need ("To begin, please tell me...")
-- ❌ NEVER list your capabilities
-- ❌ NEVER discuss topics the user didn't ask about
-- ❌ NEVER answer about trumpets if they asked about washing
-- ❌ NEVER answer about prophecy if they asked about prayer
-
-✅ REQUIRED:
-- ✅ Answer the EXACT question asked in your FIRST sentence
-- ✅ Provide relevant scripture verses immediately
-- ✅ Stay 100% on-topic
+STYLE:
+- Be direct - answer immediately without greetings or preamble
+- Give specific, useful answers
+- Include Scripture references when relevant
+- Be concise but thorough
 
 EXAMPLE:
-User: "verses about washing of the word"
-CORRECT: "Key verses about the word washing/cleansing: Ephesians 5:26 'washing of water by the word', John 15:3 'clean through the word', Psalm 119:9 'cleanse his way by taking heed to thy word'..."
-WRONG: "The seven trumpets depict historical events..." ← THIS IS COMPLETELY WRONG! STAY ON TOPIC!
+User: "need verse about washing of the word"
+ANSWER: "Key verses about washing by the word:
+• Ephesians 5:26 - 'That he might sanctify and cleanse it with the washing of water by the word'
+• John 15:3 - 'Now ye are clean through the word which I have spoken unto you'
+• Psalm 119:9 - 'Wherewithal shall a young man cleanse his way? by taking heed thereto according to thy word'
+• John 17:17 - 'Sanctify them through thy truth: thy word is truth'"
 
 ⚠️ THEOLOGICAL GUARDRAILS:
 - AZAZEL = SATAN, NOT CHRIST (Leviticus 16 scapegoat)
 - LITTLE HORN = ROME/PAPACY, NOT ANTIOCHUS (Daniel 7 & 8)
-- TWO-PHASE SANCTUARY: Holy Place at ascension (31 AD); Most Holy Place in 1844
 - DAY OF ATONEMENT = 1844, NOT THE CROSS (Christ's death = Passover)
 
-SILENT CONTEXT (use if relevant to user's question, never mention):
-${sermonTitle ? `Sermon: ${sermonTitle}` : ''}${sermonThemePassage ? ` | Passage: ${sermonThemePassage}` : ''}${Array.isArray(sermonStones) && sermonStones.length > 0 ? ` | Points: ${sermonStones.join('; ')}` : ''}`;
+SERMON CONTEXT (if relevant):
+${sermonTitle ? `Title: ${sermonTitle}` : ''}${sermonThemePassage ? ` | Passage: ${sermonThemePassage}` : ''}${Array.isArray(sermonStones) && sermonStones.length > 0 ? ` | Key points: ${sermonStones.join('; ')}` : ''}`;
 
-      // Use ONLY the last user message - ignore conversation history to prevent topic drift
       const lastUserMessage = messagesArray.filter((msg: any) => msg.role === 'user').pop();
-      userPrompt = `ANSWER THIS SPECIFIC QUESTION: "${lastUserMessage?.content || 'Help me with my sermon.'}"
-
-Remember: Answer ONLY about the topic in the question above. Do not discuss anything else.`;
+      userPrompt = lastUserMessage?.content || 'How can I help with your sermon?';
 
     } else if (mode === "sermon-structure") {
       systemPrompt = `You are Jeeves, helping structure sermons like movies.
