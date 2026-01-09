@@ -191,11 +191,11 @@ function SortableBlock({
     >
       <Card
         className={cn(
-          'p-3 transition-all',
-          isDragging && 'shadow-xl ring-2 ring-primary',
+          'p-3 transition-all backdrop-blur-md border',
+          isDragging && 'shadow-2xl ring-2 ring-primary scale-[1.02]',
           block.type === 'verse'
-            ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800'
-            : 'bg-background'
+            ? 'bg-amber-500/10 border-amber-400/30 shadow-amber-500/10 hover:bg-amber-500/15 hover:border-amber-400/50'
+            : 'bg-white/10 dark:bg-white/5 border-white/20 hover:bg-white/20 dark:hover:bg-white/10 hover:border-white/30'
         )}
       >
         <div className="flex gap-2">
@@ -213,15 +213,15 @@ function SortableBlock({
             <div className="flex items-center gap-2 mb-1">
               {block.type === 'verse' ? (
                 <>
-                  <Quote className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                  <Badge variant="outline" className="text-xs bg-amber-100 dark:bg-amber-900/50 border-amber-300 dark:border-amber-700">
+                  <Quote className="h-4 w-4 text-amber-400 shrink-0" />
+                  <Badge variant="outline" className="text-xs bg-amber-500/20 border-amber-400/40 text-amber-300">
                     {block.reference || 'Scripture'}
                   </Badge>
                 </>
               ) : (
                 <>
-                  <Type className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <Badge variant="outline" className="text-xs">
+                  <Type className="h-4 w-4 text-purple-400 shrink-0" />
+                  <Badge variant="outline" className="text-xs bg-purple-500/20 border-purple-400/40 text-purple-300">
                     Paragraph
                   </Badge>
                 </>
@@ -294,9 +294,9 @@ export function SermonBlockEditor({ content, onChange, onClose }: SermonBlockEdi
   const paragraphCount = blocks.filter(b => b.type === 'paragraph').length;
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-gradient-to-br from-purple-950/20 via-background to-amber-950/20">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b bg-muted/30 shrink-0">
+      <div className="flex items-center justify-between p-3 border-b border-white/10 bg-white/5 backdrop-blur-sm shrink-0">
         <div className="flex items-center gap-4">
           <h3 className="font-semibold text-sm">Block Editor</h3>
           <div className="flex gap-2 text-xs text-muted-foreground">
@@ -323,17 +323,19 @@ export function SermonBlockEditor({ content, onChange, onClose }: SermonBlockEdi
       </div>
 
       {/* Instructions */}
-      <div className="px-3 py-2 bg-blue-50 dark:bg-blue-950/30 border-b text-xs text-blue-700 dark:text-blue-300">
-        Drag blocks to reorder your sermon. Verses (amber) and paragraphs (white) can be freely rearranged.
+      <div className="px-3 py-2 bg-blue-500/10 backdrop-blur-sm border-b border-blue-400/20 text-xs text-blue-400">
+        Drag blocks to reorder your sermon. Verses (amber) and paragraphs (glass) can be freely rearranged.
       </div>
 
       {/* Block list */}
       <div className="flex-1 overflow-y-auto p-3">
         {blocks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-            <Type className="h-12 w-12 mb-4 opacity-30" />
-            <p className="text-sm">No content blocks found.</p>
-            <p className="text-xs mt-1">Write some content first, then use block mode to rearrange.</p>
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10">
+              <Type className="h-12 w-12 mb-4 mx-auto text-purple-400/50" />
+              <p className="text-sm text-foreground/70">No content blocks found.</p>
+              <p className="text-xs mt-1 text-muted-foreground">Write some content first, then use block mode to rearrange.</p>
+            </div>
           </div>
         ) : (
           <DndContext
