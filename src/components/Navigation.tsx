@@ -752,6 +752,12 @@ export const Navigation = () => {
                           Certificates
                         </Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/sparks">
+                          <Sparkles className="h-4 w-4 mr-2" />
+                          Sparks Library
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <Link to="/pricing">

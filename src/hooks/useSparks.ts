@@ -224,7 +224,7 @@ export function useSparks({
     ));
   };
 
-  // Save spark
+  // Save spark - removes from active view (goes to library)
   const saveSpark = async (sparkId: string) => {
     await supabase
       .from('sparks')
@@ -232,11 +232,10 @@ export function useSparks({
       .eq('id', sparkId);
     
     await trackSparkEvent(sparkId, 'saved');
-    toast.success('Spark saved to your collection');
+    toast.success('Spark saved to your library');
     
-    setSparks(prev => prev.map(s => 
-      s.id === sparkId ? { ...s, saved_at: new Date().toISOString() } : s
-    ));
+    // Remove from active sparks view (it's now in the library)
+    setSparks(prev => prev.filter(s => s.id !== sparkId));
   };
 
   // Dismiss spark
