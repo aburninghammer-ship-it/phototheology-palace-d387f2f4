@@ -138,10 +138,6 @@ const Index = () => {
       {/* Quick testimonial banner - immediate social proof */}
       <QuickTestimonialBanner />
 
-      {/* Give Me A Gem - Prominent CTA */}
-      <div className="flex justify-center py-8 bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 border-y border-amber-500/20">
-        <GiveGemButton />
-      </div>
 
       {/* 1. Hero - The 10-second hook - NOT lazy loaded */}
       <PunchyHero />
