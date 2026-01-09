@@ -6866,12 +6866,61 @@ Style: Professional prophetic chart, clear typography, organized layout, spiritu
     if (mode === "analyze-thoughts" || mode === "analyze-thoughts-scholar") {
       // Clean the content - remove any markdown code blocks (defined outside try for catch access)
       let cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      
+
       try {
         // Try to extract JSON from the response
         const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const analysis = JSON.parse(jsonMatch[0]);
+
+          // ======== PT CODE VALIDATION ========
+          // Check narrativeAnalysis for hallucinated PT codes/meanings
+          const textToValidate = analysis.narrativeAnalysis || "";
+          const hallucinationPatterns = [
+            { regex: /\bBL\b[^a-zA-Z]*\([^)]*Body.*?Light/gi, error: 'BL (Body of Light) - BL means "Blue Room/Sanctuary"' },
+            { regex: /\bCE\b[^a-zA-Z]*\([^)]*Christ.*?Enabl/gi, error: 'CE (Christ\'s Enabling) - there is no CE code in PT' },
+            { regex: /\bC\b[^a-zA-Z]*\([^)]*Christ.*?Work/gi, error: 'C (Christ\'s Work) - there is no C code in PT' },
+            { regex: /\bCR\b[^a-zA-Z]*\([^)]*Christ.*?Room/gi, error: 'CR (Christ Room) - CR means "Concentration Room"' },
+            { regex: /\bPR\b[^a-zA-Z]*\([^)]*Priest/gi, error: 'PR (Priesthood Room) - PR means "Prophecy Room"' },
+            { regex: /\bCW\b[^a-zA-Z]*\(/gi, error: 'CW - there is no CW code in PT' },
+            { regex: /\bCA\b[^a-zA-Z]*\([^)]*Christ/gi, error: 'CA - there is no CA code in PT' },
+          ];
+
+          const violations: string[] = [];
+          for (const { regex, error } of hallucinationPatterns) {
+            if (regex.test(textToValidate)) {
+              violations.push(error);
+              console.log(`❌ PT HALLUCINATION DETECTED: ${error}`);
+            }
+          }
+
+          if (violations.length > 0) {
+            // Add apology to the analysis
+            const apology = `\n\n---\n\n**Correction Notice:** I apologize for incorrectly referencing PT terminology. ${violations.join('; ')}. I should only use official PT codes with their correct meanings, or describe concepts in plain English. The analysis above contains this error, but the substance of the feedback remains valid.`;
+
+            if (analysis.narrativeAnalysis) {
+              analysis.narrativeAnalysis += apology;
+            }
+
+            // Log the violation for tracking
+            console.log(`[PT Validator] Violations logged for mode ${mode}:`, violations);
+
+            // Try to log to database if available
+            const supabaseUrl = Deno.env.get("SUPABASE_URL");
+            const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+            if (supabaseUrl && supabaseServiceKey) {
+              const logClient = createClient(supabaseUrl, supabaseServiceKey);
+              logClient.from("guardrail_violations").insert({
+                mode,
+                input_text: message?.substring(0, 1000) || "",
+                output_text: textToValidate.substring(0, 2000),
+                violations: violations.map(v => ({ context: v })),
+                violation_count: violations.length,
+              }).then(() => console.log("[PT Validator] Violation logged to DB"));
+            }
+          }
+          // ======== END VALIDATION ========
+
           return new Response(
             JSON.stringify({ analysis }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
