@@ -670,14 +670,14 @@ const AnalyzeThoughts = () => {
       )}
 
       {/* Spark Settings */}
-      <div className="fixed bottom-24 md:bottom-4 right-4 z-40">
+      <div className="fixed bottom-28 md:bottom-4 right-4 z-40">
         <SparkSettings
           preferences={sparkPreferences}
           onUpdate={updateSparkPreferences}
         />
       </div>
 
-      <div className="container mx-auto px-4 py-8 pt-24 md:pt-28 pb-28 md:pb-8 max-w-4xl relative z-10">
+      <div className="container mx-auto px-4 py-8 pt-24 md:pt-28 pb-32 md:pb-8 max-w-4xl relative z-10">
         {/* Header */}
         <motion.div 
           className="text-center mb-10"
