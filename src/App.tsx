@@ -262,6 +262,7 @@ const DonationSuccess = lazy(() => import("./pages/DonationSuccess"));
 const LiveDemo = lazy(() => import("./pages/LiveDemo"));
 
 // Gatehouse flow pages (Gatehouse is now imported at top as critical page)
+const Welcome = lazy(() => import("./pages/Welcome"));
 const Antechamber = lazy(() => import("./pages/Antechamber"));
 const FirstRoom = lazy(() => import("./pages/FirstRoom"));
 
@@ -396,6 +397,7 @@ function App() {
             <Route path="/app-tour" element={<AppTour />} />
             
 {/* Gatehouse Flow - Public (/ is the main gatehouse, /gatehouse kept for legacy links) */}
+            <Route path="/welcome" element={<Welcome />} />
             <Route path="/gatehouse" element={<Gatehouse />} />
             <Route path="/antechamber" element={<ProtectedRoute><Antechamber /></ProtectedRoute>} />
             <Route path="/palace/first-room" element={<ProtectedRoute><FirstRoom /></ProtectedRoute>} />
