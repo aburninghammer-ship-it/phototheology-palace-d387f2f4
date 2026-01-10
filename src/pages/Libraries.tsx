@@ -16,9 +16,46 @@ import { toast } from "sonner";
 import {
   Library, Sparkles, Gem, Bookmark, Highlighter, StickyNote,
   Image, FolderOpen, Search, ChevronRight, Flame, ArrowLeft,
-  Clock, Trash2, Eye, Star, Filter, ExternalLink, LayoutGrid, List
+  Clock, Trash2, Eye, Star, Filter, ExternalLink, LayoutGrid, List,
+  Book, Film, Layers, MessageCircleQuestion, TreeDeciduous, History,
+  Compass, Target, GitCompare, Crown, CalendarDays, Scroll, Mountain,
+  Scale, Zap, Calculator
 } from "lucide-react";
 import { format } from "date-fns";
+
+// Reference Libraries data - PT Room Libraries from Floors 1-7
+const REFERENCE_LIBRARIES = [
+  // Floor 1 - Furnishing
+  { id: "sr", name: "Story Library", tag: "SR", floor: 1, icon: Book, color: "bg-amber-500", description: "Bible stories as memorable beats", path: "/palace/floor/1/room/sr", hasLibrary: true },
+  { id: "24fps", name: "24FPS Library", tag: "24", floor: 1, icon: Film, color: "bg-purple-500", description: "Visual frames for every chapter", path: "/palace/floor/1/room/24fps", hasLibrary: true },
+  { id: "gr", name: "Gems Library", tag: "GR", floor: 1, icon: Gem, color: "bg-emerald-500", description: "Rare truths from combined texts", path: "/palace/floor/1/room/gr", hasLibrary: true },
+  
+  // Floor 2 - Investigation
+  { id: "st", name: "Symbols Library", tag: "ST", floor: 2, icon: Compass, color: "bg-orange-500", description: "Biblical symbols and their meanings", path: "/palace/floor/2/room/st", hasLibrary: true },
+  { id: "qa", name: "Q&A Library", tag: "QA", floor: 2, icon: MessageCircleQuestion, color: "bg-blue-500", description: "Question and answer chains", path: "/palace/floor/2/room/qa", hasLibrary: true },
+  
+  // Floor 3 - Freestyle
+  { id: "nf", name: "Nature Freestyle Library", tag: "NF", floor: 3, icon: TreeDeciduous, color: "bg-green-500", description: "Nature-to-Scripture connections", path: "/palace/floor/3/room/nf", hasLibrary: true },
+  { id: "hf", name: "Historical Freestyle Library", tag: "HF", floor: 3, icon: History, color: "bg-slate-500", description: "History lessons through Scripture", path: "/palace/floor/3/room/hf", hasLibrary: true },
+  
+  // Floor 4 - Next Level
+  { id: "trm", name: "Themes Library", tag: "TRm", floor: 4, icon: Layers, color: "bg-indigo-500", description: "6 walls, floor, and ceiling themes", path: "/palace/floor/4/room/trm", hasLibrary: true },
+  { id: "prm", name: "Patterns Library", tag: "PRm", floor: 4, icon: Target, color: "bg-cyan-500", description: "Recurring biblical patterns", path: "/palace/floor/4/room/prm", hasLibrary: true },
+  { id: "p||", name: "Parallels Library", tag: "P‖", floor: 4, icon: GitCompare, color: "bg-violet-500", description: "Mirrored actions across Scripture", path: "/palace/floor/4/room/p%7C%7C", hasLibrary: true },
+  { id: "cec", name: "Christ Every Chapter", tag: "CEC", floor: 4, icon: Crown, color: "bg-yellow-500", description: "Christ types and shadows", path: "/palace/floor/4/room/cec", hasLibrary: true },
+  
+  // Floor 5 - Vision
+  { id: "fe", name: "Feasts Library", tag: "FE", floor: 5, icon: CalendarDays, color: "bg-rose-500", description: "Feasts of Israel and their meaning", path: "/palace/floor/5/room/fe", hasLibrary: true },
+  { id: "bl", name: "Sanctuary Library", tag: "BL", floor: 5, icon: Mountain, color: "bg-sky-500", description: "Sanctuary furniture and services", path: "/palace/floor/5/room/bl", hasLibrary: true },
+  { id: "pr", name: "Prophecy Library", tag: "PR", floor: 5, icon: Scroll, color: "bg-fuchsia-500", description: "Prophetic timelines and symbols", path: "/palace/floor/5/room/pr", hasLibrary: true },
+  
+  // Floor 6 - Three Heavens
+  { id: "123h", name: "Three Heavens Library", tag: "123H", floor: 6, icon: Scale, color: "bg-purple-600", description: "Day of the Lord horizons", path: "/palace/floor/6/room/123h", hasLibrary: true },
+  { id: "cycles", name: "Eight Cycles Library", tag: "Cycles", floor: 6, icon: Zap, color: "bg-amber-600", description: "Redemptive cycles @Ad to @Re", path: "/palace/floor/6/room/cycles", hasLibrary: true },
+  
+  // Special
+  { id: "math", name: "Mathematics Library", tag: "Math", floor: 0, icon: Calculator, color: "bg-teal-500", description: "Biblical numerology and patterns", path: "/palace/floor/1/room/math", hasLibrary: true },
+];
 import { cn } from "@/lib/utils";
 
 interface LibraryStats {
@@ -99,7 +136,7 @@ export default function Libraries() {
   const { preferences } = useUserPreferences();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState("sparks");
+  const [activeTab, setActiveTab] = useState("reference");
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [stats, setStats] = useState<LibraryStats>({ sparks: 0, gems: 0, bookmarks: 0, highlights: 0, notes: 0, images: 0 });
@@ -208,6 +245,7 @@ export default function Libraries() {
   );
 
   const libraryTabs = [
+    { id: 'reference', label: 'PT Libraries', icon: Library, count: REFERENCE_LIBRARIES.length, color: 'text-indigo-500' },
     { id: 'sparks', label: 'Sparks', icon: Flame, count: stats.sparks, color: 'text-orange-500' },
     { id: 'gems', label: 'Gems', icon: Gem, count: stats.gems, color: 'text-emerald-500' },
     { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark, count: stats.bookmarks, color: 'text-blue-500' },
@@ -301,14 +339,132 @@ export default function Libraries() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full max-w-2xl grid-cols-5 mb-6">
+          <TabsList className="grid w-full max-w-3xl grid-cols-6 mb-6">
             {libraryTabs.map(tab => (
-              <TabsTrigger key={tab.id} value={tab.id} className="gap-2">
+              <TabsTrigger key={tab.id} value={tab.id} className="gap-1 text-xs sm:text-sm px-2">
                 <tab.icon className={cn("h-4 w-4", tab.color)} />
                 <span className="hidden sm:inline">{tab.label}</span>
               </TabsTrigger>
             ))}
           </TabsList>
+
+          {/* Reference Libraries Tab - PT Room Libraries */}
+          <TabsContent value="reference">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">Phototheology Reference Libraries</h2>
+              <p className="text-muted-foreground text-sm">
+                Access curated knowledge from each Palace Room. These libraries contain the core data for symbols, types, feasts, cycles, and more.
+              </p>
+            </div>
+            
+            {/* Group by Floor */}
+            {[1, 2, 3, 4, 5, 6].map(floorNum => {
+              const floorLibraries = REFERENCE_LIBRARIES.filter(lib => lib.floor === floorNum);
+              if (floorLibraries.length === 0) return null;
+              
+              const floorNames: Record<number, string> = {
+                1: "Floor 1 — Furnishing",
+                2: "Floor 2 — Investigation",
+                3: "Floor 3 — Freestyle",
+                4: "Floor 4 — Next Level",
+                5: "Floor 5 — Vision",
+                6: "Floor 6 — Three Heavens",
+              };
+              
+              return (
+                <div key={floorNum} className="mb-6">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">
+                    {floorNames[floorNum]}
+                  </h3>
+                  <div className={cn(
+                    viewMode === 'grid'
+                      ? "grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+                      : "space-y-3"
+                  )}>
+                    {floorLibraries.map(lib => {
+                      const Icon = lib.icon;
+                      return (
+                        <Card
+                          key={lib.id}
+                          className="cursor-pointer hover:shadow-lg transition-all group hover:border-primary/50"
+                          onClick={() => navigate(lib.path)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-start gap-3">
+                              <div className={cn("p-2 rounded-lg", lib.color)}>
+                                <Icon className="h-5 w-5 text-white" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h4 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                                    {lib.name}
+                                  </h4>
+                                  <Badge variant="secondary" className="text-xs shrink-0">
+                                    {lib.tag}
+                                  </Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground line-clamp-2">
+                                  {lib.description}
+                                </p>
+                              </div>
+                              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+            
+            {/* Special Libraries (floor 0) */}
+            {REFERENCE_LIBRARIES.filter(lib => lib.floor === 0).length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">
+                  Special Libraries
+                </h3>
+                <div className={cn(
+                  viewMode === 'grid'
+                    ? "grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    : "space-y-3"
+                )}>
+                  {REFERENCE_LIBRARIES.filter(lib => lib.floor === 0).map(lib => {
+                    const Icon = lib.icon;
+                    return (
+                      <Card
+                        key={lib.id}
+                        className="cursor-pointer hover:shadow-lg transition-all group hover:border-primary/50"
+                        onClick={() => navigate(lib.path)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-3">
+                            <div className={cn("p-2 rounded-lg", lib.color)}>
+                              <Icon className="h-5 w-5 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                                  {lib.name}
+                                </h4>
+                                <Badge variant="secondary" className="text-xs shrink-0">
+                                  {lib.tag}
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground line-clamp-2">
+                                {lib.description}
+                              </p>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </TabsContent>
 
           {/* Sparks Tab */}
           <TabsContent value="sparks">
