@@ -432,6 +432,17 @@ const AnalyzeThoughts = () => {
         return;
       }
 
+      // Log the raw score for debugging
+      console.log('[AnalyzeThoughts] Raw overallScore from API:', analysisResult.overallScore, typeof analysisResult.overallScore);
+      console.log('[AnalyzeThoughts] Full analysis result:', JSON.stringify(analysisResult, null, 2).substring(0, 1000));
+
+      // Ensure overallScore is a valid number (AI might return string or null)
+      const rawScore = analysisResult.overallScore;
+      const parsedScore = typeof rawScore === 'string' ? parseFloat(rawScore) : (typeof rawScore === 'number' ? rawScore : 0);
+      analysisResult.overallScore = !isNaN(parsedScore) ? parsedScore : 0;
+      
+      console.log('[AnalyzeThoughts] Parsed overallScore:', analysisResult.overallScore);
+
       setResult(analysisResult);
       
       // Auto-save to history and get the saved ID
