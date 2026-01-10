@@ -144,8 +144,22 @@ const BibleEncyclopedia = () => {
             </CardHeader>
           </Card>
 
-          {/* Random Entry Button */}
-          <div className="flex justify-end">
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-2">
+            {searchResults && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSearchResults("");
+                  setMapImageUrl(null);
+                }}
+                className="gap-2 border-primary/30 hover:bg-primary/10"
+              >
+                <Search className="h-4 w-4" />
+                New Search
+              </Button>
+            )}
             <Button
               variant="outline"
               onClick={handleRandomEntry}

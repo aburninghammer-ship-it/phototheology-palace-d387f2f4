@@ -917,6 +917,24 @@ const AnalyzeThoughts = () => {
             >
               {/* Action Buttons */}
               <motion.div className="flex flex-wrap gap-3 justify-center items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+                {/* New Analysis Button */}
+                <Button 
+                  onClick={() => {
+                    setInput("");
+                    setResult(null);
+                    setSelectedHistoryId(undefined);
+                    setCurrentAnalysisId(undefined);
+                    setFollowUpConversation([]);
+                    setLoadedStudyTitle(null);
+                    setCheckedItems([]);
+                    localStorage.removeItem('analyze-thoughts-draft');
+                  }}
+                  variant="outline" 
+                  className="bg-primary/10 border-primary/30 text-primary hover:bg-primary/20"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  New Analysis
+                </Button>
                 <div className="flex flex-col items-center gap-1">
                   <Button 
                     onClick={handleSaveToGems} 
