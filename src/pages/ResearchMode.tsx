@@ -242,7 +242,24 @@ const ResearchMode = () => {
                         <Search className="h-6 w-6 text-primary" />
                         <h3 className="text-3xl font-bold">{query}</h3>
                       </div>
-                      <QuickAudioButton text={research} variant="outline" size="sm" />
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setQuery("");
+                            setResearch("");
+                            setResearchNotes([]);
+                            setDeepDiveMode(false);
+                            setDeepDiveTopic("");
+                            setDeepDivePrompt("");
+                          }}
+                        >
+                          <Search className="h-4 w-4 mr-2" />
+                          New Research
+                        </Button>
+                        <QuickAudioButton text={research} variant="outline" size="sm" />
+                      </div>
                     </div>
                     <ScrollArea className="h-[700px] pr-4">
                       <div className="prose prose-lg dark:prose-invert max-w-none space-y-6">
