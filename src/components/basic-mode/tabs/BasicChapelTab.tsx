@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sunrise, Moon, BookOpenCheck, CalendarDays, Church, Heart,
-  GraduationCap, Users, Baby, Gem, Shield, Globe, HeartHandshake,
+  GraduationCap, Users, Baby, Gem, Shield, Globe,
   Sparkles, ArrowRight, Swords, Flame, Wheat,
 } from "lucide-react";
 
@@ -24,7 +24,7 @@ const CHAPEL_ITEMS = [
   { icon: GraduationCap, label: "Blueprint: Marriage", path: "/blueprint-marriage", description: "Biblical principles for marriage", color: "text-pink-400" },
   { icon: Baby, label: "Blueprint: Parenting", path: "/blueprint-parenting", description: "Raising children God's way", color: "text-orange-400" },
   { icon: Users, label: "Singles Devotional", path: "/singles-devotional", description: "Devotionals for singles", color: "text-cyan-400" },
-  { icon: HeartHandshake, label: "Blueprint: Friendship", path: "/blueprint-friendship", description: "Godly friendship principles", color: "text-lime-400" },
+  
 ];
 
 function DailyVersePreview() {
