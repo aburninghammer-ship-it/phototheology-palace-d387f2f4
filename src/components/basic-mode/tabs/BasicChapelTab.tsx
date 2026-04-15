@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sunrise, Moon, BookOpenCheck, CalendarDays, Church, Heart,
-  GraduationCap, Users, Baby, Gem, Shield, Globe, HeartHandshake,
+  GraduationCap, Users, Baby, Gem, Shield, Globe,
   Sparkles, ArrowRight, Swords, Flame, Wheat,
 } from "lucide-react";
 
