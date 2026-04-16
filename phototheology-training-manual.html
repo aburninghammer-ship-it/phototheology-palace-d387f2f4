@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Phototheology Palace — Complete Training Manual</title>
+<style>
+/* ═══════════════════════════════════════════════════════════ */
+/* PRINT-OPTIMIZED CSS                                        */
+/* ═══════════════════════════════════════════════════════════ */
+@page { size: letter; margin: 0.75in 0.75in 1in 0.75in; }
+@media print {
+  body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .no-print { display: none !important; }
+  .page-break { page-break-before: always; }
+  .avoid-break { page-break-inside: avoid; }
+  h2, h3 { page-break-after: avoid; }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Georgia', 'Times New Roman', serif; font-size: 11pt; line-height: 1.6; color: #1a1a2e; max-width: 8.5in; margin: 0 auto; }
+h1 { font-size: 28pt; font-weight: bold; letter-spacing: 1px; }
+h2 { font-size: 20pt; font-weight: bold; margin-top: 0.3in; margin-bottom: 0.15in; }
+h3 { font-size: 15pt; font-weight: bold; margin-top: 0.2in; margin-bottom: 0.1in; }
+h4 { font-size: 12pt; font-weight: bold; margin-top: 0.15in; margin-bottom: 0.08in; }
+p { margin-bottom: 0.1in; text-align: justify; }
+ul, ol { margin-left: 0.3in; margin-bottom: 0.1in; }
+li { margin-bottom: 0.04in; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 0.15in; font-size: 10pt; }
+th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+th { font-weight: bold; }
+img { max-width: 100%; height: auto; }
+
+/* ═══ Cover Page ═══ */
+.cover { height: 10in; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #533483 100%); color: white; padding: 1in; }
+.cover h1 { font-size: 36pt; margin-bottom: 0.2in; color: #f0c040; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+.cover .subtitle { font-size: 18pt; color: #e0e0ff; margin-bottom: 0.4in; }
+.cover .tagline { font-size: 13pt; color: #c0c0e0; font-style: italic; margin-top: 0.3in; }
+.cover img { max-width: 4in; margin: 0.3in 0; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.cover .version { font-size: 10pt; color: #a0a0c0; margin-top: 0.5in; }
+
+/* ═══ TOC ═══ */
+.toc { padding: 0.3in 0; }
+.toc h2 { color: #1a1a2e; border-bottom: 3px solid #0f3460; padding-bottom: 6px; }
+.toc-section { font-weight: bold; font-size: 12pt; color: #0f3460; margin-top: 0.12in; }
+.toc-item { margin-left: 0.3in; font-size: 10.5pt; color: #333; line-height: 1.8; }
+.toc-sub { margin-left: 0.6in; font-size: 10pt; color: #555; line-height: 1.6; }
+
+/* ═══ Floor Color Themes ═══ */
+.floor-header { padding: 0.3in; border-radius: 8px; margin-bottom: 0.2in; color: white; }
+.floor-1 { background: linear-gradient(135deg, #1565c0, #1e88e5); }
+.floor-2 { background: linear-gradient(135deg, #2e7d32, #43a047); }
+.floor-3 { background: linear-gradient(135deg, #6a1b9a, #8e24aa); }
+.floor-4 { background: linear-gradient(135deg, #bf8c00, #f9a825); color: #1a1a2e !important; }
+.floor-5 { background: linear-gradient(135deg, #b71c1c, #e53935); }
+.floor-6 { background: linear-gradient(135deg, #283593, #3949ab); }
+.floor-7 { background: linear-gradient(135deg, #1a1a2e, #37474f); border: 2px solid #f0c040; }
+.floor-header h2 { margin: 0; font-size: 22pt; }
+.floor-header .floor-sub { font-size: 13pt; opacity: 0.9; margin-top: 4px; }
+
+/* ═══ Room Cards ═══ */
+.room-card { border: 1px solid #ddd; border-radius: 8px; padding: 0.15in; margin-bottom: 0.2in; page-break-inside: avoid; }
+.room-card-header { display: flex; align-items: flex-start; gap: 0.15in; margin-bottom: 0.1in; }
+.room-card-img { width: 1.8in; min-width: 1.8in; border-radius: 6px; }
+.room-card-title { font-size: 15pt; font-weight: bold; }
+.room-card-tag { display: inline-block; font-size: 9pt; padding: 2px 8px; border-radius: 4px; color: white; margin-left: 8px; }
+.tag-f1 { background: #1565c0; } .tag-f2 { background: #2e7d32; } .tag-f3 { background: #6a1b9a; }
+.tag-f4 { background: #bf8c00; } .tag-f5 { background: #b71c1c; } .tag-f6 { background: #283593; }
+.tag-f7 { background: #1a1a2e; }
+.room-section { margin-top: 0.08in; }
+.room-section-label { font-weight: bold; font-size: 10pt; color: #555; margin-bottom: 2px; }
+
+/* ═══ Callout Boxes ═══ */
+.callout { border-left: 4px solid; padding: 0.1in 0.15in; margin: 0.1in 0; border-radius: 0 6px 6px 0; font-size: 10.5pt; }
+.callout-blue { border-color: #1565c0; background: #e3f2fd; }
+.callout-green { border-color: #2e7d32; background: #e8f5e9; }
+.callout-purple { border-color: #6a1b9a; background: #f3e5f5; }
+.callout-gold { border-color: #bf8c00; background: #fff8e1; }
+.callout-red { border-color: #b71c1c; background: #ffebee; }
+
+/* ═══ Bible Rendered Grid ═══ */
+.br-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 0.1in 0; }
+.br-cell { text-align: center; font-size: 8pt; border: 1px solid #ddd; border-radius: 4px; padding: 4px; page-break-inside: avoid; }
+.br-cell img { width: 100%; border-radius: 3px; margin-bottom: 2px; }
+.br-cell .br-num { font-weight: bold; color: #0f3460; }
+
+/* ═══ Genesis 24FPS Grid ═══ */
+.fps-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 0.1in 0; }
+.fps-cell { text-align: center; font-size: 8pt; }
+.fps-cell img { width: 100%; border-radius: 3px; border: 1px solid #ddd; }
+
+/* ═══ Curriculum Table ═══ */
+.curr-table th { background: #1a1a2e; color: white; }
+.curr-table tr:nth-child(even) { background: #f5f5f5; }
+
+/* ═══ Tier Table ═══ */
+.tier-table th { background: #0f3460; color: white; }
+.tier-table .tier-free { background: #e8f5e9; }
+.tier-table .tier-essential { background: #e3f2fd; }
+.tier-table .tier-premium { background: #fff8e1; }
+.tier-table .tier-student { background: #f3e5f5; }
+.tier-table .tier-patron { background: #ffebee; }
+.check { color: #2e7d32; font-weight: bold; }
+.cross { color: #b71c1c; }
+
+/* ═══ Section Divider ═══ */
+.part-header { height: 3in; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #1a1a2e; color: white; border-radius: 8px; margin: 0.2in 0; }
+.part-header h1 { font-size: 30pt; color: #f0c040; }
+.part-header p { font-size: 14pt; color: #c0c0e0; margin-top: 0.1in; }
+
+/* ═══ Appendix ═══ */
+.glossary-term { font-weight: bold; color: #0f3460; }
+.room-table td:first-child { font-weight: bold; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- COVER PAGE                                                         -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <h1>THE PHOTOTHEOLOGY PALACE</h1>
+  <div class="subtitle">Complete Training Manual</div>
+  <img src="src/assets/branding/phototheology-puzzle-banner.jpg" alt="Phototheology Palace Banner">
+  <div class="tagline">"These are they which testify of me." — John 5:39</div>
+  <div class="tagline">8 Floors &bull; 38+ Rooms &bull; One Mission: See Christ in Every Chapter</div>
+  <div class="version">Version 1.0 &bull; March 2026</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="page-break toc">
+  <h2>Table of Contents</h2>
+
+  <div class="toc-section">Part 1: Welcome &amp; Overview</div>
+  <div class="toc-item">What Is Phototheology?</div>
+  <div class="toc-item">The Palace Metaphor — 8 Floors, 38+ Rooms</div>
+  <div class="toc-item">How the System Works: Study &rarr; Practice &rarr; Master</div>
+  <div class="toc-item">Getting Started Guide for New Users</div>
+  <div class="toc-item">Subscription Tiers</div>
+
+  <div class="toc-section">Part 2: Floor-by-Floor Room Guide</div>
+  <div class="toc-item">Floor 1: Furnishing — Memory &amp; Visualization (6 Rooms)</div>
+  <div class="toc-sub">Story Room &bull; Imagination Room &bull; 24FPS Room &bull; Bible Rendered &bull; Translation Room &bull; Gems Room</div>
+  <div class="toc-item">Floor 2: Investigation — Detective Work (5 Rooms)</div>
+  <div class="toc-sub">Observation Room &bull; Def-Com Room &bull; Symbols/Types Room &bull; Questions Room &bull; Q&amp;A Chains Room</div>
+  <div class="toc-item">Floor 3: Freestyle — Connections (5 Rooms)</div>
+  <div class="toc-sub">Nature Freestyle &bull; Personal Freestyle &bull; Bible Freestyle &bull; History/Social Freestyle &bull; Listening Room</div>
+  <div class="toc-item">Floor 4: Next Level — Christ-Centered Depth (10 Rooms)</div>
+  <div class="toc-sub">Concentration &bull; Dimensions &bull; Connect-6 &bull; Theme &bull; Time Zone &bull; Patterns &bull; Parallels &bull; Fruit &bull; Christ in Every Chapter &bull; Room 66</div>
+  <div class="toc-item">Floor 5: Vision — Prophecy &amp; Sanctuary (4 Rooms)</div>
+  <div class="toc-sub">Blue Room &bull; Prophecy Room &bull; Three Angels &bull; Feasts Room</div>
+  <div class="toc-item">Floor 6: Three Heavens — Cycles &amp; Cosmic Context (7 Rooms)</div>
+  <div class="toc-sub">First Heaven &bull; Second Heaven &bull; Third Heaven &bull; Three Heavens &bull; Eight Cycles &bull; Juice Room &bull; Mathematics Room</div>
+  <div class="toc-item">Floor 7: Transformation — Spiritual &amp; Emotional (3 Rooms)</div>
+  <div class="toc-sub">Fire Room &bull; Meditation Room &bull; Speed Room</div>
+
+  <div class="toc-section">Part 3: Bible Study Systems</div>
+  <div class="toc-item">Bible Rendered — 51 Frames Covering All 1,189 Chapters</div>
+  <div class="toc-item">24FPS System — Genesis Visual Gallery</div>
+  <div class="toc-item">Sanctuary Blueprint</div>
+  <div class="toc-item">Seven Feasts Calendar</div>
+
+  <div class="toc-section">Part 4: Teaching &amp; Curriculum Guide</div>
+  <div class="toc-item">12-Week Disciple Training Program</div>
+  <div class="toc-item">14-Month Path Curriculum Overview</div>
+  <div class="toc-item">How to Facilitate Group Studies</div>
+  <div class="toc-item">Sample Lesson Plans</div>
+
+  <div class="toc-section">Part 5: Quick Reference &amp; Appendices</div>
+  <div class="toc-item">All Rooms at a Glance</div>
+  <div class="toc-item">Glossary of Phototheology Terms</div>
+  <div class="toc-item">Tier Comparison Chart</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- PART 1: WELCOME & OVERVIEW                                         -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="page-break part-header">
+  <h1>Part 1</h1>
+  <p>Welcome &amp; Overview</p>
+</div>
+
+<div class="page-break">
+  <h2 style="color:#0f3460;">What Is Phototheology?</h2>
+  <p><strong>Phototheology</strong> (from Greek <em>phos</em> = light + <em>theos</em> = God + <em>logos</em> = word/study) is a comprehensive Bible study system that transforms Scripture into a vivid, memorable, and Christ-centered experience. It combines the ancient art of memory palaces with systematic theology to create an immersive framework for studying, memorizing, and teaching the entire Bible.</p>
+
+  <p>At its core, Phototheology answers one question: <strong>"How do I see Christ in every chapter of the Bible?"</strong></p>
+
+  <p>The system is built on three convictions:</p>
+  <ol>
+    <li><strong>The Bible is one unified testimony to Jesus Christ</strong> (John 5:39). Every chapter, from Genesis to Revelation, testifies of Him.</li>
+    <li><strong>Visual memory is more powerful than verbal memory.</strong> Images, scenes, and spatial relationships encode information 6x more effectively than abstract text alone.</li>
+    <li><strong>Study must bear fruit.</strong> Knowledge without transformation is dead. Every method in the Palace is designed to produce spiritual growth, not just intellectual achievement.</li>
+  </ol>
+
+  <div class="callout callout-blue">
+    <strong>The Phototheology Promise:</strong> A believer who masters this system will be able to recall any Bible story on demand, trace any theme from Genesis to Revelation, see Christ in every chapter, and teach Scripture with vivid clarity — all from memory.
+  </div>
+</div>
+
+<div class="page-break">
+  <h2 style="color:#0f3460;">The Palace Metaphor</h2>
+  <p>The Phototheology Palace is organized like a multi-story building. Each <strong>floor</strong> represents a level of Bible study skill, and each floor contains several <strong>rooms</strong>, each with a unique methodology.</p>
+
+  <p>You enter on Floor 1 and work your way up. Early floors build foundational memory; middle floors develop analytical depth; upper floors achieve prophetic vision and spiritual transformation.</p>
+
+  <h3>Palace Architecture at a Glance</h3>
+  <table>
+    <tr style="background:#1a1a2e; color:white;"><th>Floor</th><th>Name</th><th>Focus</th><th>Rooms</th></tr>
+    <tr style="background:#e3f2fd;"><td><strong>1</strong></td><td>Furnishing</td><td>Memory &amp; Visualization</td><td>6 rooms</td></tr>
+    <tr style="background:#e8f5e9;"><td><strong>2</strong></td><td>Investigation</td><td>Detective Work</td><td>5 rooms</td></tr>
+    <tr style="background:#f3e5f5;"><td><strong>3</strong></td><td>Freestyle</td><td>Creative Connections</td><td>5 rooms</td></tr>
+    <tr style="background:#fff8e1;"><td><strong>4</strong></td><td>Next Level</td><td>Christ-Centered Depth</td><td>10 rooms</td></tr>
+    <tr style="background:#ffebee;"><td><strong>5</strong></td><td>Vision</td><td>Prophecy &amp; Sanctuary</td><td>4 rooms</td></tr>
+    <tr style="background:#e8eaf6;"><td><strong>6</strong></td><td>Three Heavens</td><td>Cycles &amp; Cosmic Context</td><td>7 rooms</td></tr>
+    <tr style="background:#eceff1;"><td><strong>7</strong></td><td>Transformation</td><td>Spiritual &amp; Emotional</td><td>3 rooms</td></tr>
+  </table>
+
+  <p><strong>Total: 7 floors, 40 rooms</strong> — each with a unique method, deliverable, and set of examples.</p>
+
+  <h3>How the System Works: Study &rarr; Practice &rarr; Master</h3>
+  <p>Every room in the Palace follows a three-phase learning cycle:</p>
+  <ol>
+    <li><strong>Study</strong> — Read the room's methodology and understand its purpose. Each room has a core question, step-by-step method, and examples.</li>
+    <li><strong>Practice</strong> — Apply the method to a real Bible passage. Produce the room's deliverable (beat list, sensory paragraph, image index, gem card, etc.).</li>
+    <li><strong>Master</strong> — Repeat until the method becomes second nature. A mastered room means you can apply it instantly to any passage.</li>
+  </ol>
+
+  <div class="callout callout-green">
+    <strong>Tip:</strong> You don't need to master all rooms before moving to the next floor. Start with Floor 1, get comfortable with 2-3 rooms, then explore Floor 2. The Palace is designed for progressive depth, not linear completion.
+  </div>
+</div>
+
+<div class="page-break">
+  <h2 style="color:#0f3460;">Getting Started Guide</h2>
+  <h3>Your First Week in the Palace</h3>
+
+  <p><strong>Day 1-2: Enter the Story Room (Floor 1)</strong></p>
+  <p>Choose a familiar Bible story (Joseph, David &amp; Goliath, or the Prodigal Son). Break it into 3-7 memorable beats. Write them with arrows showing sequence. This is your first deliverable.</p>
+
+  <p><strong>Day 3-4: Visit the Imagination Room (Floor 1)</strong></p>
+  <p>Take your story and step inside it. What do you see, hear, feel, smell, and taste? Write a sensory paragraph. You're building emotional memory.</p>
+
+  <p><strong>Day 5-6: Try the 24FPS Room (Floor 1)</strong></p>
+  <p>Read Genesis 1-5. For each chapter, create one quirky visual image that captures the chapter. Gen 1 = Birthday Cake Earth. Gen 3 = Snake + Apple + Clock. Build your first chapter-image index.</p>
+
+  <p><strong>Day 7: Explore the Gems Room (Floor 1)</strong></p>
+  <p>Take 2-3 verses from different books and place them side by side. What insight emerges from their combination? Record your first gem.</p>
+
+  <h3>Key App Features</h3>
+  <ul>
+    <li><strong>Palace Tab</strong> — Browse all floors and rooms, access methodologies and practice exercises</li>
+    <li><strong>Bible Tab</strong> — Full Bible reader with integrated study tools</li>
+    <li><strong>Jeeves AI</strong> — AI-powered study assistant that helps you apply Palace methods to any passage</li>
+    <li><strong>Growth Journal</strong> — Track your study progress and capture deliverables</li>
+    <li><strong>Daily Verse</strong> — A new verse each day with Palace room prompts</li>
+    <li><strong>Daily Challenge</strong> — Timed exercises to sharpen your skills</li>
+    <li><strong>Community</strong> — Share gems, insights, and study notes with other students</li>
+    <li><strong>Video Training</strong> — Visual demonstrations of each room's methodology</li>
+    <li><strong>Encyclopedia</strong> — Deep reference articles on Bible topics</li>
+  </ul>
+</div>
+
+<div class="page-break">
+  <h2 style="color:#0f3460;">Subscription Tiers</h2>
+  <p>Phototheology Palace offers multiple access levels to serve individuals, students, churches, and patrons.</p>
+
+  <table class="tier-table">
+    <tr><th>Feature</th><th class="tier-free">Free</th><th class="tier-essential">Essential</th><th class="tier-premium">Premium</th><th class="tier-student">Student</th><th class="tier-patron">Patron</th></tr>
+    <tr><td>Floor 1 Access (6 rooms)</td><td class="tier-free"><span class="check">&#10003;</span></td><td class="tier-essential"><span class="check">&#10003;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Floors 2-7 Access (34 rooms)</td><td class="tier-free"><span class="cross">&#10007;</span></td><td class="tier-essential"><span class="check">&#10003;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Jeeves AI Assistant</td><td class="tier-free">10/day</td><td class="tier-essential"><span class="check">Unlimited</span></td><td class="tier-premium"><span class="check">Unlimited</span></td><td class="tier-student"><span class="check">Unlimited</span></td><td class="tier-patron"><span class="check">Unlimited</span></td></tr>
+    <tr><td>Daily Devotionals</td><td class="tier-free"><span class="check">&#10003;</span></td><td class="tier-essential"><span class="check">&#10003;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Daily Challenge</td><td class="tier-free">3/week</td><td class="tier-essential"><span class="check">Unlimited</span></td><td class="tier-premium"><span class="check">Unlimited</span></td><td class="tier-student"><span class="check">Unlimited</span></td><td class="tier-patron"><span class="check">Unlimited</span></td></tr>
+    <tr><td>Community (view)</td><td class="tier-free"><span class="check">&#10003;</span></td><td class="tier-essential"><span class="check">&#10003;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Community (post)</td><td class="tier-free"><span class="cross">&#10007;</span></td><td class="tier-essential"><span class="check">&#10003;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Bible Reader</td><td class="tier-free"><span class="cross">&#10007;</span></td><td class="tier-essential"><span class="check">&#10003;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Sermon Builder</td><td class="tier-free"><span class="cross">&#10007;</span></td><td class="tier-essential"><span class="cross">&#10007;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Research Mode</td><td class="tier-free"><span class="cross">&#10007;</span></td><td class="tier-essential"><span class="cross">&#10007;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Premium Games</td><td class="tier-free"><span class="cross">&#10007;</span></td><td class="tier-essential"><span class="cross">&#10007;</span></td><td class="tier-premium"><span class="check">&#10003;</span></td><td class="tier-student"><span class="check">&#10003;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+    <tr><td>Church Group Access</td><td class="tier-free"><span class="cross">&#10007;</span></td><td class="tier-essential"><span class="cross">&#10007;</span></td><td class="tier-premium"><span class="cross">&#10007;</span></td><td class="tier-student"><span class="cross">&#10007;</span></td><td class="tier-patron"><span class="check">&#10003;</span></td></tr>
+  </table>
+
+  <div class="callout callout-gold">
+    <strong>Church Access:</strong> Churches can purchase group licenses that grant all members Premium-level access. Contact us for church pricing. Teachable students and Patreon patrons ($15+/month) also receive full Premium access.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- PART 2: FLOOR-BY-FLOOR ROOM GUIDE                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="page-break part-header">
+  <h1>Part 2</h1>
+  <p>Floor-by-Floor Room Guide</p>
+</div>
+
+<!-- ═══ FLOOR 1: FURNISHING ═══ -->
+<div class="page-break">
+  <div class="floor-header floor-1">
+    <h2>Floor 1: Furnishing</h2>
+    <div class="floor-sub">Memory &amp; Visualization &mdash; 6 Rooms</div>
+  </div>
+  <p>Load the canon's storyline into long-term memory as vivid scenes. Build your foundational library of stories, images, and gems. This is where every Phototheology student begins.</p>
+
+  <!-- Story Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor1/story-room.jpeg" alt="Story Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Story Room <span class="room-card-tag tag-f1">SR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What exactly happened — and in what order?</em></p>
+        <p>The Story Room is the most basic but also the most foundational room in the palace. The Bible is primarily narrative. Before it is a book of doctrines or prophecies, it is a book of stories: creation, fall, flood, exodus, kingdom, exile, incarnation, crucifixion, resurrection, and restoration.</p>
+        <p>In this room, the believer's goal is not to interpret but to collect and memorize the stories in their sequence. This means turning each story into a vivid mental movie — Joseph's story as a sequence from coat to pit to caravan to prison to palace.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Method</div>
+      <ol>
+        <li>Read the narrative passage completely</li>
+        <li>Identify 3-7 distinct "beats" (major plot movements)</li>
+        <li>Name each beat with a punchy NOUN or VERB (not full sentences)</li>
+        <li>Arrange beats chronologically using arrows (&rarr;)</li>
+        <li>Test: Can you teach this story to a child using only these beats?</li>
+        <li>Write a one-line plot summary</li>
+      </ol>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Examples</div>
+      <ul>
+        <li><strong>Genesis 37 (Joseph):</strong> Dream &rarr; Coat &rarr; Pit &rarr; Caravan &rarr; Egypt &rarr; Potiphar</li>
+        <li><strong>Exodus 14 (Red Sea):</strong> Trapped &rarr; Fear &rarr; "Stand Still" &rarr; Staff Raised &rarr; Waters Part &rarr; Crossing &rarr; Egypt Drowns</li>
+        <li><strong>1 Samuel 17 (David &amp; Goliath):</strong> Giant Mocks &rarr; Boy Arrives &rarr; 5 Stones &rarr; Sling &rarr; Head Severed</li>
+      </ul>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Beat list (3-7 beats with arrows) + one-line plot summary capturing the arc from start to finish.</p>
+    </div>
+  </div>
+
+  <!-- Imagination Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor1/imagination-room.jpeg" alt="Imagination Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Imagination Room <span class="room-card-tag tag-f1">IR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What do you see, hear, feel, smell, and taste in this passage?</em></p>
+        <p>The Imagination Room deepens memory by moving from simple recall to immersion. Here, you don't just remember what happened — you step inside the story as if you were there. This is not fantasy; it is a sanctified exercise in empathy.</p>
+        <p>At the Red Sea, don't just imagine Moses lifting his staff — place yourself among the Israelites, feeling the sand beneath your feet, hearing the roar of water, seeing fish swim in the walls of water.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Method</div>
+      <p>Step into the scene. Engage all five senses: What do you SEE? HEAR? TOUCH? SMELL? TASTE? Let the passage become a lived experience. Capture in one sentence how this encounter resonates with your own story.</p>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Short sensory paragraph + one sentence of personal resonance.</p>
+    </div>
+  </div>
+
+  <!-- 24FPS Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor1/24fps-room.jpeg" alt="24FPS Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">24FPS Room <span class="room-card-tag tag-f1">24</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What image will make this chapter unforgettably findable?</em></p>
+        <p>The "24FPS" name comes from film: a movie is made of 24 frames per second. Likewise, the Bible can be broken into "frames" — one symbolic image per chapter. Genesis becomes 50 frames; Exodus, 40; Psalms, 150.</p>
+        <p>Each frame is a strange, memorable image tied to the chapter. Genesis 1 = birthday cake earth. Genesis 3 = snake biting an apple-clock. The stranger, the better.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Method</div>
+      <ol>
+        <li>Read the chapter</li>
+        <li>Identify the MOST MEMORABLE element</li>
+        <li>Convert to a SINGLE VISUAL IMAGE — preferably quirky</li>
+        <li>Test: Does it instantly trigger the chapter content?</li>
+        <li>Record: Chapter Number &rarr; Image Description</li>
+      </ol>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Chapter &rarr; Image table (e.g., "Gen 1 = Birthday Cake Earth, Gen 3 = Snake+Apple+Clock").</p>
+    </div>
+  </div>
+</div>
+
+<div class="page-break">
+  <!-- Bible Rendered Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor1/movie-room.jpeg" alt="Bible Rendered Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Bible Rendered <span class="room-card-tag tag-f1">BR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What single symbol captures this 24-chapter block's essence?</em></p>
+        <p>The Bible Rendered Room zooms out even further than 24FPS. Instead of one image per chapter, you create one master image per 24-chapter block. This allows you to map the entire Bible with just 51 images.</p>
+        <p>By memorizing all 51 sets, you can literally "scan" the entire Bible in under one minute — like watching a 40-second trailer of Scripture.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Method</div>
+      <ol>
+        <li>Divide the Bible into 24-chapter blocks (~51 blocks)</li>
+        <li>Read/review each block for its CENTRAL MOVEMENT</li>
+        <li>Choose a SIMPLE SYMBOLIC GLYPH (/, &times;, &uarr;, &rarr;, word, or emoji)</li>
+        <li>Write a 1-2 sentence explanation</li>
+        <li>Memorize the sequence</li>
+      </ol>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>A 51-symbol legend — one symbol per 24-chapter block with explanation.</p>
+    </div>
+  </div>
+
+  <!-- Translation Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor1/translation-room.jpeg" alt="Translation Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Translation Room <span class="room-card-tag tag-f1">TR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Translate this text into a visual storyline.</em></p>
+        <p>The Translation Room is where words become pictures. Abstract texts are converted into concrete images. Psalm 119:105 — "Thy word is a lamp" becomes a glowing scroll lighting a dark path.</p>
+        <p>The process expands across three levels: Verse &rarr; Icon, Passage &rarr; 3-Panel Comic, Book &rarr; Mural.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Three Levels</div>
+      <ul>
+        <li><strong>Level 1 (Verse &rarr; Icon):</strong> Single verse becomes one memorable image</li>
+        <li><strong>Level 2 (Passage &rarr; Comic):</strong> Passage becomes 3-panel sequential story</li>
+        <li><strong>Level 3 (Book &rarr; Mural):</strong> Entire book becomes panoramic visual</li>
+      </ul>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Sketches or detailed written descriptions of visual translations, labeled with verse references.</p>
+    </div>
+  </div>
+
+  <!-- Gems Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor1/gems-room.jpeg" alt="Gems Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Gems Room <span class="room-card-tag tag-f1">GR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What beautiful truth emerges when I combine these seemingly unrelated texts?</em></p>
+        <p>The Gems Room is the treasure chest of Phototheology. Here you store powerful insights from combining 2-4 unrelated texts until they illuminate each other with stunning clarity.</p>
+        <p>Example: Discovering that Jesus died at the exact moment Passover lambs were being slain (Ex 12 + John 19:14). Each gem is a building block for sermons, Bible studies, and teaching.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>A "Gem Card" showing: the verses combined, the insight discovered, and how you'd use it in teaching.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLOOR 2: INVESTIGATION ═══ -->
+<div class="page-break">
+  <div class="floor-header floor-2">
+    <h2>Floor 2: Investigation</h2>
+    <div class="floor-sub">Detective Work &mdash; 5 Rooms</div>
+  </div>
+  <p>On the Investigation Floor, you become a detective. You log evidence, study definitions, profile symbols, interrogate texts with questions, and cross-examine Scripture with Scripture. No rushing to conclusions — gather the evidence first.</p>
+
+  <!-- Observation Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor2/observation-room.jpeg" alt="Observation Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Observation Room <span class="room-card-tag tag-f2">OR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What do I notice — without interpreting?</em></p>
+        <p>The Observation Room is the detective's notebook. This room is not yet interpretation; it is about noticing. A detective doesn't start with theories — he starts with fingerprints, footprints, witness statements. Likewise, you log details without rushing to meaning.</p>
+        <p>Take Luke 15:20: "When he was yet a great way off" — the father had been watching. "His father saw him" — not a servant, but the father himself. "Had compassion" — mercy precedes the son's speech. "Ran" — culturally undignified for a patriarch.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Method</div>
+      <p>Log 30-50 observations per passage without interpretation. Note repeated words, unusual details, sequence changes, who speaks, who acts, what's missing, and what surprises you.</p>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Observation log of 30-50 details, organized by category (characters, setting, dialogue, action, themes).</p>
+    </div>
+  </div>
+
+  <!-- Def-Com Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor2/def-com-room.jpeg" alt="Def-Com Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Def-Com Room <span class="room-card-tag tag-f2">DC</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What do the original words and historical context reveal?</em></p>
+        <p>The Def-Com Room is the forensic lab. Here words and contexts are tested under the microscope through Definitions and Commentary. In John 21, Jesus asks Peter "Lovest thou me?" twice with <em>agapao</em>, but Peter responds with <em>phileo</em>. Without definitions, you miss the nuance.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Word study cards (Greek/Hebrew definitions) + commentary synthesis notes with source citations.</p>
+    </div>
+  </div>
+
+  <!-- Symbols/Types Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor2/symbols-types-room.jpeg" alt="Symbols/Types Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Symbols/Types Room <span class="room-card-tag tag-f2">ST</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What symbols and types point to Christ here?</em></p>
+        <p>Symbols are God's universal language: Lamb = Christ, Rock = Christ, Light = truth/Christ, Water = Spirit/Word. Types are shadows: Passover lamb = Calvary, Manna = Bread of Life, Ark = salvation in Christ. Once you learn these profiles, you'll recognize God's symbolic fingerprints across Scripture.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Symbol profile cards mapping symbol &rarr; meaning &rarr; key texts &rarr; Christ connection.</p>
+    </div>
+  </div>
+
+  <!-- Questions Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor2/questions-room.jpeg" alt="Questions Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Questions Room <span class="room-card-tag tag-f2">QR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What questions does this text raise at every level?</em></p>
+        <p>Detectives solve cases by asking relentless questions. Phototheology requires three sets: <strong>Intratextual</strong> (inside the text), <strong>Intertextual</strong> (across Scripture), and <strong>Phototheological</strong> (within the PT framework — which rooms does this activate?).</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Question matrix: 5+ intratextual, 5+ intertextual, and 3+ phototheological questions per passage.</p>
+    </div>
+  </div>
+
+  <!-- Q&A Chains Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor2/qa-room.jpeg" alt="Q&A Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Q&amp;A Chains Room <span class="room-card-tag tag-f2">QA</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Where does Scripture answer Scripture?</em></p>
+        <p>Scripture is its own best witness; verses answer verses. This room protects against private interpretation. Why did the father in Luke 15 run? Cross-reference Psalm 103:13: "Like as a father pitieth his children." The answer is already in the witness box.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Q&amp;A chain document: Question &rarr; Answer Text &rarr; Cross-Reference &rarr; Conclusion.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLOOR 3: FREESTYLE ═══ -->
+<div class="page-break">
+  <div class="floor-header floor-3">
+    <h2>Floor 3: Freestyle</h2>
+    <div class="floor-sub">Creative Connections &mdash; 5 Rooms</div>
+  </div>
+  <p>The Freestyle Floor trains you like a freestyle rapper: see something in the world and instantly connect it to Scripture. Nature, personal experiences, other Bible texts, history, and conversations all become springboards for biblical insight.</p>
+
+  <!-- Nature Freestyle -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor3/nature-freestyle.jpeg" alt="Nature Freestyle" class="room-card-img">
+      <div>
+        <div class="room-card-title">Nature Freestyle <span class="room-card-tag tag-f3">NF</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What does creation teach about the Creator?</em></p>
+        <p>Nature is God's second book (Romans 1:20). Every element of creation can become a sermon illustration. A tree planted by water points to Psalm 1. A storm cloud breaking open echoes Matthew 24. An ant carrying food recalls Proverbs 6:6-8.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Nature &rarr; Scripture connection cards. Object observed + verse(s) connected + lesson drawn.</p>
+    </div>
+  </div>
+
+  <!-- Personal Freestyle -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor3/life-experience-freestyle.jpeg" alt="Personal Freestyle" class="room-card-img">
+      <div>
+        <div class="room-card-title">Personal Freestyle <span class="room-card-tag tag-f3">PF</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>How does my life experience illustrate Scripture?</em></p>
+        <p>Your own life experiences become object lessons. Every joy, mistake, and delay becomes material for reflection. Being stuck in traffic becomes Israel at the Red Sea, learning patience. Misplacing your keys echoes Luke 15's lost coin.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Life event + Scripture parallel + spiritual lesson. Building authentic testimony material.</p>
+    </div>
+  </div>
+
+  <!-- Bible Freestyle -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor3/bible-freestyle.jpeg" alt="Bible Freestyle" class="room-card-img">
+      <div>
+        <div class="room-card-title">Bible Freestyle <span class="room-card-tag tag-f3">BF</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What are this verse's closest "relatives"?</em></p>
+        <p>Every verse in the Bible is related to every other verse — some are siblings, others cousins, others distant relatives. John 3:16 and Romans 5:8 are brothers. Genesis 22 and John 19 are cousins linked by typology. This room trains you to see connections spontaneously.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Verse genetics map: Target verse &rarr; siblings (same theme) &rarr; cousins (typological links) &rarr; distant relatives (thematic echoes).</p>
+    </div>
+  </div>
+
+  <!-- History/Social Freestyle -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor3/history-social-freestyle.jpeg" alt="History Freestyle" class="room-card-img">
+      <div>
+        <div class="room-card-title">History/Social Freestyle <span class="room-card-tag tag-f3">HF</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What historical or cultural events mirror biblical patterns?</em></p>
+        <p>Secular history, current events, and culture all become teaching points. The printing press as God's providence for spreading truth globally. Social media uniting the world into one network recalling the spirit of Babel.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Historical event &rarr; biblical parallel &rarr; spiritual lesson card.</p>
+    </div>
+  </div>
+
+  <!-- Listening Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor3/listening-room.jpeg" alt="Listening Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Listening Room <span class="room-card-tag tag-f3">LR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What do I hear that connects to Scripture?</em></p>
+        <p>Freestyle is not only about speaking — it's also about hearing. You learn to listen carefully to sermons, testimonies, conversations, and even casual remarks, then instantly turn them into connections. Like an MC listening to another rapper's bar and instantly replying.</p>
+      </div>
+    </div>
+    <div class="room-section">
+      <div class="room-section-label">Deliverable</div>
+      <p>Listening log: What was said &rarr; Scripture triggered &rarr; connection made.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLOOR 4: NEXT LEVEL ═══ -->
+<div class="page-break">
+  <div class="floor-header floor-4">
+    <h2>Floor 4: Next Level</h2>
+    <div class="floor-sub">Christ-Centered Depth &mdash; 10 Rooms</div>
+  </div>
+  <p>Floor 4 is the heart of the Palace. Every room on this floor is designed to deepen your study by connecting everything to Christ, tracing themes across Scripture, and testing interpretations for spiritual fruit.</p>
+
+  <!-- Concentration Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/concentration-room.jpeg" alt="Concentration Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Concentration Room <span class="room-card-tag tag-f4">CR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Where is Christ in this text?</em></p>
+        <p>Every text or story must reveal Christ. Exodus? Christ is the Deliverer and Passover Lamb. Psalms? Christ is the Singer and the Song. Daniel? Christ is the Son of Man, the Judge, and the Rock. This room is the heart of Phototheology — the room every other room orbits around.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Christ-connection statement: Title/role of Christ in the passage + how He acts + supporting texts.</p>
+    </div>
+  </div>
+
+  <!-- Dimensions Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/dimensions-room.jpeg" alt="Dimensions Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Dimensions Room <span class="room-card-tag tag-f4">DR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>How does this passage read through five different lenses?</em></p>
+        <p>Every passage refracts through five dimensions: <strong>Literal</strong> (what literally happened), <strong>Christ</strong> (how it points to Jesus), <strong>Me</strong> (personal application), <strong>Church</strong> (corporate application), and <strong>Heaven</strong> (eschatological fulfillment). Like looking at a diamond under five different lights.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>5D worksheet: 1-2 sentences per dimension, each offering a distinct insight.</p>
+    </div>
+  </div>
+
+  <!-- Connect-6 -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/connect6-prophecy.jpeg" alt="Connect-6" class="room-card-img">
+      <div>
+        <div class="room-card-title">Connect-6 <span class="room-card-tag tag-f4">C6</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>How do all six genres illuminate this truth?</em></p>
+        <p>Take one text and connect it with all six biblical genres: <strong>Prophecy</strong>, <strong>Poetry</strong>, <strong>History</strong>, <strong>Gospels</strong>, <strong>Epistles</strong>, and <strong>Parables</strong>. The Bible speaks with many voices but tells one story. When you hear all six genres resonating on a single topic, your understanding becomes symphonic.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>6-genre connection map: Topic + one representative text from each genre + synthesis statement.</p>
+    </div>
+  </div>
+
+  <!-- Theme Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/theme-sanctuary.jpeg" alt="Theme Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Theme Room <span class="room-card-tag tag-f4">TRM</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Which great wall does this passage hang on?</em></p>
+        <p>Study any text against salvation history's great structures: the <strong>Sanctuary Wall</strong>, the <strong>Life of Christ Wall</strong>, the <strong>Great Controversy Wall</strong>, the <strong>Time Prophecy Wall</strong>, the <strong>Gospel Floor</strong>, and the <strong>Heaven Ceiling</strong>. Every text touches at least one of these themes.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Theme placement: Passage + which wall/floor/ceiling + how it contributes to that theme.</p>
+    </div>
+  </div>
+</div>
+
+<div class="page-break">
+  <!-- Time Zone -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/timezone-earth-present.jpeg" alt="Time Zone" class="room-card-img">
+      <div>
+        <div class="room-card-title">Time Zone <span class="room-card-tag tag-f4">TZ</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Where does this text sit on the time-space grid?</em></p>
+        <p>Locate passages across three tenses (past, present, future) and two levels (heaven, earth) for a total of six time zones. Like tracking flights on a radar screen — each verse is either landed, in-flight, or scheduled to arrive.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>6-zone placement: Heaven Past / Heaven Present / Heaven Future / Earth Past / Earth Present / Earth Future.</p>
+    </div>
+  </div>
+
+  <!-- Patterns Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/patterns-room.jpeg" alt="Patterns Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Patterns Room <span class="room-card-tag tag-f4">PRM</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What recurring divine blueprint does this passage participate in?</em></p>
+        <p>God's repeating structural blueprints appear across Scripture. The Waters pattern: Eden &rarr; Nile &rarr; Red Sea &rarr; Jordan &rarr; Cherith &rarr; Galilee &rarr; Kidron &rarr; River of Life. God doesn't just act in history — He acts in the same way, in the same order, over and over.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Pattern map: Pattern name + sequential stages + where the current passage fits.</p>
+    </div>
+  </div>
+
+  <!-- Parallels Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/parallel-room.jpeg" alt="Parallels Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Parallels Room <span class="room-card-tag tag-f4">P||</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What event in another era mirrors what happens here?</em></p>
+        <p>Unlike types (which deal with symbols), parallels show how events or actions reflect each other across time. Tower of Babel (languages divided) parallels Pentecost (languages united). Jesus fasting 40 days parallels Israel wandering 40 years.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Parallel pair: Event A + Event B + shared structure + distinct differences + Christ-centered insight.</p>
+    </div>
+  </div>
+
+  <!-- Fruit Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/fruit-love.jpeg" alt="Fruit Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Fruit Room <span class="room-card-tag tag-f4">FRT</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Does this interpretation produce the fruit of the Spirit?</em></p>
+        <p>Every interpretation must be tested: if it produces arrogance, despair, or hostility, it is false. If it grows love, joy, peace, patience, kindness, goodness, faith, meekness, and temperance (Galatians 5:22-23), it is safe. The Fruit Room is the final quality check.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Fruit test: Interpretation statement + which fruit(s) it cultivates + evidence from the passage.</p>
+    </div>
+  </div>
+
+  <!-- Christ in Every Chapter -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/concentration-room.jpeg" alt="Christ in Every Chapter" class="room-card-img">
+      <div>
+        <div class="room-card-title">Christ in Every Chapter <span class="room-card-tag tag-f4">CEC</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Where is Christ in this specific chapter?</em></p>
+        <p>Every chapter of Scripture must name and trace the line to Christ. You do not move on until the chapter's Christ-thread is explicit, anchored, and confessed. Whether reading Levitical laws, genealogies, or prophetic poetry, the question remains: Where is Christ here?</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Chapter &rarr; Christ title/role &rarr; how He acts &rarr; anchor verse. One entry per chapter studied.</p>
+    </div>
+  </div>
+
+  <!-- Room 66 -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor4/patterns-room.jpeg" alt="Room 66" class="room-card-img">
+      <div>
+        <div class="room-card-title">Room 66 <span class="room-card-tag tag-f4">R66</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Can this theme walk Genesis to Revelation in clear steps?</em></p>
+        <p>One theme must be traced through all sixty-six books with a crisp claim per book. This room means integrity at scale: theology that cannot walk Genesis to Revelation in clear steps is not ready for the pulpit.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>66-book theme trace: Theme name + one statement per book showing how it appears.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLOOR 5: VISION ═══ -->
+<div class="page-break">
+  <div class="floor-header floor-5">
+    <h2>Floor 5: Vision</h2>
+    <div class="floor-sub">Prophecy &amp; Sanctuary &mdash; 4 Rooms</div>
+  </div>
+  <p>The Vision Floor gives you the telescope lens of Scripture. Here you map texts to the sanctuary blueprint, align prophecies, study the Three Angels' Messages, and trace God's prophetic calendar through the seven feasts of Israel.</p>
+
+  <!-- Blue Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor5/blue-room.jpeg" alt="Blue Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Blue Room (Sanctuary) <span class="room-card-tag tag-f5">BL</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Which sanctuary article or service does this passage illuminate?</em></p>
+        <p>The sanctuary is God's visual theology — the gospel made visible. The Altar of Burnt Offering = the cross. The Laver = baptism. The Lampstand = the Spirit. The Table of Showbread = the Word. The Altar of Incense = intercession. The Ark = law, mercy seat, and God's throne.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Sanctuary Articles</div>
+      <table style="font-size:9.5pt;">
+        <tr style="background:#b71c1c; color:white;"><th>Article</th><th>Location</th><th>Christ Connection</th></tr>
+        <tr><td>Altar of Burnt Offering</td><td>Outer Court</td><td>The Cross — Christ our sacrifice</td></tr>
+        <tr><td>Laver</td><td>Outer Court</td><td>Baptism — cleansing by the Word</td></tr>
+        <tr><td>Lampstand</td><td>Holy Place</td><td>Light of the World — the Spirit</td></tr>
+        <tr><td>Table of Showbread</td><td>Holy Place</td><td>Bread of Life — the Word of God</td></tr>
+        <tr><td>Altar of Incense</td><td>Holy Place</td><td>Christ's intercession — our prayers</td></tr>
+        <tr><td>Ark of the Covenant</td><td>Most Holy Place</td><td>Law + mercy seat + God's throne</td></tr>
+      </table>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Sanctuary mapping: Passage &rarr; which article/service &rarr; Christ connection &rarr; personal application.</p>
+    </div>
+  </div>
+
+  <!-- Prophecy Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor5/prophecy-room.jpeg" alt="Prophecy Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Prophecy Room <span class="room-card-tag tag-f5">PR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Where does this passage sit on the prophetic timeline?</em></p>
+        <p>Daniel 2 reveals the statue of empires. Daniel 7 reveals the beasts of kingdoms. Daniel 8-9 reveals the sanctuary and 2300 days. Revelation 13 presents the beast, image, and mark. Each prophetic chapter builds on and enlarges the one before — the historicist method.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Prophetic timeline placement: Passage &rarr; which prophecy &rarr; historical fulfillment &rarr; present application.</p>
+    </div>
+  </div>
+
+  <!-- Three Angels -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor5/three-angels-room.jpeg" alt="Three Angels" class="room-card-img">
+      <div>
+        <div class="room-card-title">Three Angels <span class="room-card-tag tag-f5">3A</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>How does this connect to the final gospel messages?</em></p>
+        <p><strong>First Angel:</strong> Everlasting Gospel, worship the Creator, the judgment hour has come. <strong>Second Angel:</strong> Babylon is fallen, false systems exposed. <strong>Third Angel:</strong> Warning against the beast, image, and mark — endurance of the saints. All doctrines converge here.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Three Angels connection: Passage &rarr; which angel's message &rarr; doctrinal tie &rarr; mission application.</p>
+    </div>
+  </div>
+
+  <!-- Feasts Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor5/feast-passover.jpeg" alt="Feasts Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Feasts Room <span class="room-card-tag tag-f5">FE</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Which feast does this text correlate with?</em></p>
+        <p>The biblical feasts are God's prophetic calendar:</p>
+        <table style="font-size:9.5pt;">
+          <tr style="background:#b71c1c; color:white;"><th>Feast</th><th>Season</th><th>Fulfillment</th></tr>
+          <tr><td>Passover</td><td>Spring (Nisan 14)</td><td>Christ's crucifixion</td></tr>
+          <tr><td>Unleavened Bread</td><td>Spring (Nisan 15-21)</td><td>Sanctification — putting away sin</td></tr>
+          <tr><td>Firstfruits</td><td>Spring (Nisan 16)</td><td>Christ's resurrection</td></tr>
+          <tr><td>Pentecost</td><td>Early Summer (Sivan 6)</td><td>Outpouring of the Holy Spirit</td></tr>
+          <tr><td>Trumpets</td><td>Fall (Tishri 1)</td><td>Warning and awakening</td></tr>
+          <tr><td>Day of Atonement</td><td>Fall (Tishri 10)</td><td>Judgment and cleansing</td></tr>
+          <tr><td>Tabernacles</td><td>Fall (Tishri 15-21)</td><td>Final gathering — new earth</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Feast mapping: Passage &rarr; which feast &rarr; typological connection &rarr; Christ fulfillment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLOOR 6: THREE HEAVENS ═══ -->
+<div class="page-break">
+  <div class="floor-header floor-6">
+    <h2>Floor 6: Three Heavens</h2>
+    <div class="floor-sub">Cycles &amp; Cosmic Context &mdash; 7 Rooms</div>
+  </div>
+  <p>Floor 6 provides the cosmic framework for interpreting Scripture. Here you learn to locate any text within the correct prophetic horizon, covenant cycle, time prophecy, and heavenly context.</p>
+
+  <!-- First Heaven -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor6/heaven-1h.jpeg" alt="First Heaven" class="room-card-img">
+      <div>
+        <div class="room-card-title">First Heaven (DoL1/NE1) <span class="room-card-tag tag-f6">1H</span></div>
+        <p style="margin-top:4px;">The first Day of the Lord cycle. Culminates in Jerusalem's destruction by Babylon (586 BC), followed by post-exilic restoration under Cyrus. "New heavens and new earth" as prophetic restoration language — a renewed civic-worship order, a reconstituted people.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second Heaven -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor6/heaven-2h.jpeg" alt="Second Heaven" class="room-card-img">
+      <div>
+        <div class="room-card-title">Second Heaven (DoL2/NE2) <span class="room-card-tag tag-f6">2H</span></div>
+        <p style="margin-top:4px;">Centers on Jerusalem's destruction in 70 AD. The "new heavens and new earth" is the New-Covenant heavenly sanctuary order — the church as living temple, Christ ministering in the heavenly sanctuary (Hebrews 8-10).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Third Heaven -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor6/heaven-3h.jpeg" alt="Third Heaven" class="room-card-img">
+      <div>
+        <div class="room-card-title">Third Heaven (DoL3/NE3) <span class="room-card-tag tag-f6">3H</span></div>
+        <p style="margin-top:4px;">The final, universal judgment culminating in the literal New Heavens and New Earth (2 Peter 3; Revelation 21-22). Full defeat of Satan, descent of New Jerusalem, God dwelling with His people forever.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three Heavens -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor6/heaven-1h.jpeg" alt="Three Heavens" class="room-card-img">
+      <div>
+        <div class="room-card-title">Three Heavens (Combined) <span class="room-card-tag tag-f6">123H</span></div>
+        <p style="margin-top:4px;">Trains prophetic horizon discernment — recognizing that prophecy operates on multiple horizons. Many errors come from forcing a passage to live in only one time period. One prophecy can speak more than once — but not all fulfillments are equal. Three crescendos of the same symphony.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eight Cycles -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor6/cycle-1-adamic.jpeg" alt="Eight Cycles" class="room-card-img">
+      <div>
+        <div class="room-card-title">Eight Cycles <span class="room-card-tag tag-f6">CYC</span></div>
+        <p style="margin-top:4px;">Locate any biblical text within the correct covenant cycle: <strong>Adamic (@Ad)</strong>, <strong>Noahic (@No)</strong>, <strong>Abrahamic (@Ab)</strong>, <strong>Mosaic (@Mo)</strong>, <strong>Cyrusic (@Cy)</strong>, <strong>Cyrus-Christ (@CyC)</strong>, <strong>Spirit (@Sp)</strong>, <strong>Remnant (@Re)</strong>. Every cycle follows: Fall &rarr; Covenant &rarr; Sanctuary &rarr; Enemy &rarr; Restoration.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Juice Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor6/juice-room.jpeg" alt="Juice Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Juice Room <span class="room-card-tag tag-f6">JR</span></div>
+        <p style="margin-top:4px;">The exercise lab where you "squeeze" Scripture with all Phototheology principles at once. Juicing a text means expanding it as much as possible; juicing a book means summarizing it into a single thought. Mantra: "Much from little. Little from much."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mathematics Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor6/math-divine.jpeg" alt="Mathematics Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Mathematics Room <span class="room-card-tag tag-f6">MATH</span></div>
+        <p style="margin-top:4px;">Six time prophecies as divine timestamps: <strong>@120</strong> (probation before judgment), <strong>@400</strong> (affliction before deliverance), <strong>@70y</strong> (captivity and restoration), <strong>@490</strong> (Messiah and covenant), <strong>@1260</strong> (suppressed truth), <strong>@2300</strong> (cosmic judgment and cleansing).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLOOR 7: TRANSFORMATION ═══ -->
+<div class="page-break">
+  <div class="floor-header floor-7">
+    <h2>Floor 7: Transformation</h2>
+    <div class="floor-sub">Spiritual &amp; Emotional &mdash; 3 Rooms</div>
+  </div>
+  <p>The top floor ensures that all study leads to transformation. The Fire Room ignites devotion, the Meditation Room deepens it, and the Speed Room sharpens it for instant deployment.</p>
+
+  <!-- Fire Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor7/fire-room.jpeg" alt="Fire Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Fire Room <span class="room-card-tag tag-f7">FRM</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>Does this text burn away apathy and ignite devotion?</em></p>
+        <p>The Fire Room plunges you into the emotional weight of Scripture. At Gethsemane, you don't just analyze Christ's sweat drops of blood — you feel the crushing loneliness. At Calvary, you tremble at the cry, "My God, my God, why hast thou forsaken me?" The text burns away apathy.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Conviction statement: What moved you + what it demands of you + prayer response.</p>
+    </div>
+  </div>
+
+  <!-- Meditation Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor7/meditation-room.jpeg" alt="Meditation Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Meditation Room <span class="room-card-tag tag-f7">MR</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>What phrase rewards slow, repeated meditation?</em></p>
+        <p>Meditation is not about emptying the mind but marinating in truth. Take Psalm 23 — read it slowly. Pause after "The LORD is my shepherd." Picture it. Pray it. Rest in it. Like slow cooking: a meal simmered for hours carries richer flavor than something microwaved.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Meditation journal: Phrase chosen + insights gained through repetition + prayer that emerged.</p>
+    </div>
+  </div>
+
+  <!-- Speed Room -->
+  <div class="room-card avoid-break">
+    <div class="room-card-header">
+      <img src="src/assets/cards/floor7/speed-room.jpeg" alt="Speed Room" class="room-card-img">
+      <div>
+        <div class="room-card-title">Speed Room <span class="room-card-tag tag-f7">SRM</span></div>
+        <p style="margin-top:4px;"><strong>Core Question:</strong> <em>How fast can you apply Phototheology to any passage?</em></p>
+        <p>The opposite of Meditation. Here you practice rapid application — flipping through chapters, making connections quickly, applying themes in seconds. Sprint training for athletes. When asked a question in ministry, you recall connections instantly.</p>
+      </div>
+    </div>
+    <div class="room-section"><div class="room-section-label">Deliverable</div>
+      <p>Speed drill results: Passage + connections made in 60 seconds + rooms activated.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- PART 3: BIBLE STUDY SYSTEMS                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="page-break part-header">
+  <h1>Part 3</h1>
+  <p>Bible Study Systems</p>
+</div>
+
+<!-- Bible Rendered 51 Frames -->
+<div class="page-break">
+  <h2 style="color:#0f3460;">Bible Rendered — 51 Frames Covering All 1,189 Chapters</h2>
+  <p>The Bible Rendered system compresses the entire Bible into 51 symbolic frames. Each frame represents a ~24-chapter block. Below are all 51 sets with their images, symbols, and descriptions.</p>
+
+  <h3>Sets 1-10: Pentateuch &amp; Conquest</h3>
+  <div class="br-grid">
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-01.jpg" alt="Set 1"><div class="br-num">1. &divide; Division</div><div>Genesis 1-24</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-02.jpg" alt="Set 2"><div class="br-num">2. &times; Multiplication</div><div>Genesis 25-50</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-03.jpg" alt="Set 3"><div class="br-num">3. Deliverance</div><div>Exodus 1-24</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-04.jpg" alt="Set 4"><div class="br-num">4. Sanctuary</div><div>Ex 25-Lev 8</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-05.jpg" alt="Set 5"><div class="br-num">5. Holiness</div><div>Lev 9-Num 5</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-06.jpg" alt="Set 6"><div class="br-num">6. Journey</div><div>Numbers 6-29</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-07.jpg" alt="Set 7"><div class="br-num">7. Threshold</div><div>Num 30-Dt 17</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-08.jpg" alt="Set 8"><div class="br-num">8. Transition</div><div>Dt 18-Josh 7</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-09.jpg" alt="Set 9"><div class="br-num">9. Conquest</div><div>Josh 8-Judg 7</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-10.jpg" alt="Set 10"><div class="br-num">10. Chaos Cycles</div><div>Judg 8-1Sa 6</div></div>
+  </div>
+
+  <h3>Sets 11-20: Monarchy &amp; Wisdom</h3>
+  <div class="br-grid">
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-11.jpg" alt="Set 11"><div class="br-num">11. Monarchy Rise</div><div>1 Sam 7-30</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-12.jpg" alt="Set 12"><div class="br-num">12. Succession War</div><div>1Sa 31-2Sa 23</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-13.jpg" alt="Set 13"><div class="br-num">13. Apex &amp; Cracks</div><div>2Sa 24-2Ki 1</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-14.jpg" alt="Set 14"><div class="br-num">14. Division/Exile</div><div>2 Kings 2-25</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-15.jpg" alt="Set 15"><div class="br-num">15. Davidic Blueprint</div><div>1 Chr 1-24</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-16.jpg" alt="Set 16"><div class="br-num">16. Solomon's Height</div><div>1Ch 25-2Ch 19</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-17.jpg" alt="Set 17"><div class="br-num">17. Captivity/Return</div><div>2Ch 20-Ezra 7</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-18.jpg" alt="Set 18"><div class="br-num">18. Rebuilding</div><div>Ezra 8-Esth 8</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-19.jpg" alt="Set 19"><div class="br-num">19. Theodicy</div><div>Esth 9-Job 22</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-20.jpg" alt="Set 20"><div class="br-num">20. Trust/Silence</div><div>Job 23-Ps 4</div></div>
+  </div>
+</div>
+
+<div class="page-break">
+  <h3>Sets 21-30: Psalms &amp; Prophets</h3>
+  <div class="br-grid">
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-21.jpg" alt="Set 21"><div class="br-num">21. Warfare Prayers</div><div>Psalms 5-28</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-22.jpg" alt="Set 22"><div class="br-num">22. Kingship Praise</div><div>Psalms 29-52</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-23.jpg" alt="Set 23"><div class="br-num">23. Shield-Judge</div><div>Psalms 53-76</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-24.jpg" alt="Set 24"><div class="br-num">24. Victory</div><div>Psalms 77-100</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-25.jpg" alt="Set 25"><div class="br-num">25. Pilgrim</div><div>Psalms 101-124</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-26.jpg" alt="Set 26"><div class="br-num">26. Unshakeable Zion</div><div>Psalms 125-148</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-27.jpg" alt="Set 27"><div class="br-num">27. Wisdom</div><div>Ps 149-Prov 22</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-28.jpg" alt="Set 28"><div class="br-num">28. Folly Exposed</div><div>Prov 23-SoS 3</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-29.jpg" alt="Set 29"><div class="br-num">29. Faltering Bride</div><div>SoS 4-Isa 19</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-30.jpg" alt="Set 30"><div class="br-num">30. Judgment</div><div>Isaiah 20-43</div></div>
+  </div>
+
+  <h3>Sets 31-40: Prophets &amp; Gospels</h3>
+  <div class="br-grid">
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-31.jpg" alt="Set 31"><div class="br-num">31. Gospel/Comfort</div><div>Isa 44-Jer 1</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-32.jpg" alt="Set 32"><div class="br-num">32. Broken Cisterns</div><div>Jeremiah 2-25</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-33.jpg" alt="Set 33"><div class="br-num">33. Final Warnings</div><div>Jeremiah 26-49</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-34.jpg" alt="Set 34"><div class="br-num">34. Abominations</div><div>Jer 50-Ezk 21</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-35.jpg" alt="Set 35"><div class="br-num">35. Restoration</div><div>Ezekiel 22-45</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-36.jpg" alt="Set 36"><div class="br-num">36. Prophecy Unsealed</div><div>Ezk 46-Hos 9</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-37.jpg" alt="Set 37"><div class="br-num">37. Day of LORD</div><div>Hos 10-Mic 2</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-38.jpg" alt="Set 38"><div class="br-num">38. Mercy w/ Teeth</div><div>Mic 3-Zech 8</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-39.jpg" alt="Set 39"><div class="br-num">39. Kingdom Dawn</div><div>Zech 9-Matt 14</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-40.jpg" alt="Set 40"><div class="br-num">40. Kingdom Conflict</div><div>Matt 15-Mark 10</div></div>
+  </div>
+
+  <h3>Sets 41-51: Gospels, Epistles &amp; Revelation</h3>
+  <div class="br-grid">
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-41.jpg" alt="Set 41"><div class="br-num">41. King Enters</div><div>Mk 11-Lk 18</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-42.jpg" alt="Set 42"><div class="br-num">42. The Cross</div><div>Lk 19-Jn 18</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-43.jpg" alt="Set 43"><div class="br-num">43. Spirit Expansion</div><div>Jn 19-Acts 21</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-44.jpg" alt="Set 44"><div class="br-num">44. Gospel Logic</div><div>Acts 22-1Co 1</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-45.jpg" alt="Set 45"><div class="br-num">45. Church Order</div><div>1Co 2-2Co 9</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-46.jpg" alt="Set 46"><div class="br-num">46. Christ Only</div><div>2Co 10-Col 4</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-47.jpg" alt="Set 47"><div class="br-num">47. Advent Hope</div><div>1Th-Heb 2</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-48.jpg" alt="Set 48"><div class="br-num">48. Sanctuary Reality</div><div>Heb 3-2Pet 3</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-49.jpg" alt="Set 49"><div class="br-num">49. Final Letters</div><div>1Jn-Rev 5</div></div>
+    <div class="br-cell"><img src="src/assets/bible-rendered/set-50.jpg" alt="Set 50"><div class="br-num">50. Warfare of Truth</div><div>Rev 6-16</div></div>
+  </div>
+  <div class="callout callout-blue" style="margin-top:0.1in;">
+    <strong>Set 51: Heaven</strong> — Revelation 17-22. Babylon falls, marriage supper, white horse, millennium, final fire, New Jerusalem descends. The story ends where it began: God dwelling with His people.
+  </div>
+</div>
+
+<!-- 24FPS Genesis Gallery -->
+<div class="page-break">
+  <h2 style="color:#0f3460;">24FPS System — Genesis Visual Gallery</h2>
+  <p>Below are the 50 visual frames for Genesis, one memorable image per chapter. This is what a completed 24FPS index looks like — your mental film strip for instant chapter recall.</p>
+
+  <h3>Genesis Chapters 1-25</h3>
+  <div class="fps-grid">
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-01.jpg" alt="Gen 1"><div><strong>Ch 1</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-02.jpg" alt="Gen 2"><div><strong>Ch 2</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-03.jpg" alt="Gen 3"><div><strong>Ch 3</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-04.jpg" alt="Gen 4"><div><strong>Ch 4</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-05.jpg" alt="Gen 5"><div><strong>Ch 5</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-06.jpg" alt="Gen 6"><div><strong>Ch 6</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-07.jpg" alt="Gen 7"><div><strong>Ch 7</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-08.jpg" alt="Gen 8"><div><strong>Ch 8</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-09.jpg" alt="Gen 9"><div><strong>Ch 9</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-10.jpg" alt="Gen 10"><div><strong>Ch 10</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-11.jpg" alt="Gen 11"><div><strong>Ch 11</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-12.jpg" alt="Gen 12"><div><strong>Ch 12</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-13.jpg" alt="Gen 13"><div><strong>Ch 13</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-14.jpg" alt="Gen 14"><div><strong>Ch 14</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-15.jpg" alt="Gen 15"><div><strong>Ch 15</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-16.jpg" alt="Gen 16"><div><strong>Ch 16</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-17.jpg" alt="Gen 17"><div><strong>Ch 17</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-18.jpg" alt="Gen 18"><div><strong>Ch 18</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-19.jpg" alt="Gen 19"><div><strong>Ch 19</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-20.jpg" alt="Gen 20"><div><strong>Ch 20</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-21.jpg" alt="Gen 21"><div><strong>Ch 21</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-22.jpg" alt="Gen 22"><div><strong>Ch 22</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-23.jpg" alt="Gen 23"><div><strong>Ch 23</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-24.jpg" alt="Gen 24"><div><strong>Ch 24</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-25.jpg" alt="Gen 25"><div><strong>Ch 25</strong></div></div>
+  </div>
+
+  <h3>Genesis Chapters 26-50</h3>
+  <div class="fps-grid">
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-26.jpg" alt="Gen 26"><div><strong>Ch 26</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-27.jpg" alt="Gen 27"><div><strong>Ch 27</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-28.jpg" alt="Gen 28"><div><strong>Ch 28</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-29.jpg" alt="Gen 29"><div><strong>Ch 29</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-30.jpg" alt="Gen 30"><div><strong>Ch 30</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-31.jpg" alt="Gen 31"><div><strong>Ch 31</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-32.jpg" alt="Gen 32"><div><strong>Ch 32</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-33.jpg" alt="Gen 33"><div><strong>Ch 33</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-34.jpg" alt="Gen 34"><div><strong>Ch 34</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-35.jpg" alt="Gen 35"><div><strong>Ch 35</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-36.jpg" alt="Gen 36"><div><strong>Ch 36</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-37.jpg" alt="Gen 37"><div><strong>Ch 37</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-38.jpg" alt="Gen 38"><div><strong>Ch 38</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-39.jpg" alt="Gen 39"><div><strong>Ch 39</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-40.jpg" alt="Gen 40"><div><strong>Ch 40</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-41.jpg" alt="Gen 41"><div><strong>Ch 41</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-42.jpg" alt="Gen 42"><div><strong>Ch 42</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-43.jpg" alt="Gen 43"><div><strong>Ch 43</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-44.jpg" alt="Gen 44"><div><strong>Ch 44</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-45.jpg" alt="Gen 45"><div><strong>Ch 45</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-46.jpg" alt="Gen 46"><div><strong>Ch 46</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-47.jpg" alt="Gen 47"><div><strong>Ch 47</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-48.jpg" alt="Gen 48"><div><strong>Ch 48</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-49.jpg" alt="Gen 49"><div><strong>Ch 49</strong></div></div>
+    <div class="fps-cell"><img src="src/assets/24fps/genesis/genesis-50.jpg" alt="Gen 50"><div><strong>Ch 50</strong></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- PART 4: TEACHING & CURRICULUM GUIDE                                -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="page-break part-header">
+  <h1>Part 4</h1>
+  <p>Teaching &amp; Curriculum Guide</p>
+</div>
+
+<!-- 12-Week Disciple Training -->
+<div class="page-break">
+  <h2 style="color:#0f3460;">12-Week Disciple Training Program</h2>
+  <p>The Living Manna 12-Week Disciple Training Program is an intensive course designed to transform members into leaders. Each week connects to a sanctuary article, integrates Palace rooms, and includes practical exercises.</p>
+
+  <table class="curr-table">
+    <tr><th>Week</th><th>Title</th><th>Theme</th><th>Sanctuary Focus</th><th>Key Truth</th><th>PT Rooms</th></tr>
+    <tr><td>1</td><td>The Call to Discipleship</td><td>Understanding the Cost</td><td>Altar of Burnt Offering</td><td>Discipleship requires total surrender</td><td>CR, FRm, OR</td></tr>
+    <tr><td>2</td><td>Identity in Christ</td><td>Who You Are Now</td><td>Laver — Cleansing</td><td>Your identity is defined only by Christ</td><td>DR, CR, ST</td></tr>
+    <tr><td>3</td><td>The Word as Foundation</td><td>Scripture Mastery</td><td>Table of Showbread</td><td>Leaders are built on consistent, deep engagement</td><td>TR, OR, MR, SR</td></tr>
+    <tr><td>4</td><td>Prayer as Power Source</td><td>Developing Prayer Life</td><td>Altar of Incense</td><td>Prayer is the power source for ministry</td><td>BL, FRm, MR</td></tr>
+    <tr><td>5</td><td>Understanding the Sanctuary</td><td>God's Salvation Blueprint</td><td>Full Sanctuary</td><td>The sanctuary is the gospel made visible</td><td>BL, ST, CR, P||</td></tr>
+    <tr><td>6</td><td>The Three Angels' Messages</td><td>End-Time Commission</td><td>Heavenly Sanctuary</td><td>We proclaim the final gospel message</td><td>3A, PR, CR</td></tr>
+    <tr><td>7</td><td>Spiritual Warfare</td><td>Fighting the Right Battle</td><td>Most Holy Place</td><td>Our battle is against spiritual forces</td><td>PR, ST, FRm</td></tr>
+    <tr><td>8</td><td>Personal Evangelism</td><td>Sharing Your Faith</td><td>Light Going Outward</td><td>Every disciple is called to share</td><td>NF, PF, LR, 3A</td></tr>
+    <tr><td>9</td><td>Discipling Others</td><td>Multiplication Mindset</td><td>Priesthood of Believers</td><td>A disciple who doesn't make disciples isn't fulfilling the call</td><td>P||, PRm, LR</td></tr>
+    <tr><td>10</td><td>Leading Small Groups</td><td>Facilitating Transformation</td><td>Tabernacle Community</td><td>Small groups are the engine of discipleship</td><td>LR, NF, HF</td></tr>
+    <tr><td>11</td><td>Handling Opposition</td><td>Standing Under Pressure</td><td>Day of Atonement Prep</td><td>Opposition is promised; preparation determines outcome</td><td>FRm, PR, 3A</td></tr>
+    <tr><td>12</td><td>Commissioning &amp; Sending</td><td>Going Into the Harvest</td><td>Glory Filling Temple</td><td>Training without deployment is incomplete</td><td>3A, NF, PF, SR</td></tr>
+  </table>
+</div>
+
+<!-- Detailed Week Breakdowns -->
+<div class="page-break">
+  <h3>Week-by-Week Detail</h3>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 1: The Call to Discipleship</h4>
+    <p><strong>Scripture:</strong> Luke 14:25-33, Matthew 16:24-26, Mark 1:16-20</p>
+    <p><strong>Goal:</strong> Count the cost and commit fully.</p>
+    <p><strong>Discussion Questions:</strong></p>
+    <ul>
+      <li>What did Jesus mean by "hating" family to follow Him?</li>
+      <li>Why does Jesus want us to count the cost before committing?</li>
+      <li>What did the first disciples leave behind? What must you leave?</li>
+      <li>How is discipleship different from mere church attendance?</li>
+    </ul>
+    <p><strong>Life Application:</strong> Write a "cost counted" covenant listing what you're surrendering.</p>
+    <p><strong>Practices:</strong> Daily surrender prayer &bull; Fasting one meal this week &bull; Memorize Luke 14:33</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 2: Identity in Christ</h4>
+    <p><strong>Scripture:</strong> 2 Corinthians 5:17, Galatians 2:20, Ephesians 1:3-14</p>
+    <p><strong>Goal:</strong> Understand and live from new identity.</p>
+    <p><strong>Life Application:</strong> Write an "I am in Christ" declaration and read it daily.</p>
+    <p><strong>Practices:</strong> Identity declarations each morning &bull; Reject one old label &bull; Share testimony</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 3: The Word as Foundation</h4>
+    <p><strong>Scripture:</strong> Psalm 119:9-16, 2 Timothy 3:16-17, Joshua 1:8</p>
+    <p><strong>Goal:</strong> Establish unshakeable Word habits.</p>
+    <p><strong>Life Application:</strong> Establish a non-negotiable daily Bible time and track it.</p>
+    <p><strong>Practices:</strong> Read 3 chapters daily &bull; Memorize one verse &bull; Journal observations</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 4: Prayer as Power Source</h4>
+    <p><strong>Scripture:</strong> Luke 11:1-13, James 5:16-18, Daniel 9:1-19</p>
+    <p><strong>Goal:</strong> Move from prayer talking to prayer power.</p>
+    <p><strong>Life Application:</strong> Establish a prayer rhythm — morning, midday, evening.</p>
+    <p><strong>Practices:</strong> 30 minutes daily prayer &bull; Prayer journal &bull; Intercessory prayer for 5 people</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 5: Understanding the Sanctuary</h4>
+    <p><strong>Scripture:</strong> Hebrews 8:1-5, Hebrews 9:1-12, Exodus 25:8-9</p>
+    <p><strong>Goal:</strong> See Christ in every sanctuary element.</p>
+    <p><strong>Life Application:</strong> Create a sanctuary diagram labeling Christ in each element.</p>
+    <p><strong>Facilitator Note:</strong> This is the Phototheology foundation — make sure it's deeply understood.</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 6: The Three Angels' Messages</h4>
+    <p><strong>Scripture:</strong> Revelation 14:6-12, Revelation 18:1-4, Matthew 24:14</p>
+    <p><strong>Goal:</strong> Understand and live the final message.</p>
+    <p><strong>Life Application:</strong> Prepare a 3-minute explanation of each angel's message.</p>
+    <p><strong>Facilitator Note:</strong> Balance urgency with grace — truth must be shared in love.</p>
+  </div>
+</div>
+
+<div class="page-break">
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 7: Spiritual Warfare</h4>
+    <p><strong>Scripture:</strong> Ephesians 6:10-20, 2 Corinthians 10:3-5, Daniel 10:12-14</p>
+    <p><strong>Goal:</strong> Understand and engage spiritual warfare.</p>
+    <p><strong>Life Application:</strong> Put on the full armor daily with specific prayer for each piece.</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 8: Personal Evangelism</h4>
+    <p><strong>Scripture:</strong> 1 Peter 3:15, Acts 8:26-40, John 4:7-26</p>
+    <p><strong>Goal:</strong> Develop confident, natural witness.</p>
+    <p><strong>Life Application:</strong> Prepare and practice your 3-minute testimony.</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 9: Discipling Others</h4>
+    <p><strong>Scripture:</strong> 2 Timothy 2:1-2, Matthew 28:18-20, John 17:18</p>
+    <p><strong>Goal:</strong> Begin investing in someone else.</p>
+    <p><strong>Life Application:</strong> Identify and begin meeting with one person to disciple.</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 10: Leading Small Groups</h4>
+    <p><strong>Scripture:</strong> Acts 2:42-47, Hebrews 10:24-25, Ecclesiastes 4:9-12</p>
+    <p><strong>Goal:</strong> Develop group leadership skills.</p>
+    <p><strong>Life Application:</strong> Lead a portion of next week's session.</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 11: Handling Opposition</h4>
+    <p><strong>Scripture:</strong> John 15:18-21, 2 Timothy 3:12, Matthew 5:10-12</p>
+    <p><strong>Goal:</strong> Prepare for resistance and persecution.</p>
+    <p><strong>Life Application:</strong> Prepare mentally and spiritually for opposition you may face.</p>
+  </div>
+
+  <div class="room-card avoid-break" style="border-left:4px solid #1a1a2e;">
+    <h4>Week 12: Commissioning &amp; Sending</h4>
+    <p><strong>Scripture:</strong> Matthew 9:37-38, Acts 1:8, Isaiah 6:8</p>
+    <p><strong>Goal:</strong> Launch into active ministry.</p>
+    <p><strong>Life Application:</strong> Write and commit to your personal mission plan for the next 6 months.</p>
+    <p><strong>Facilitator Note:</strong> This is commissioning — pray over each person and send them with authority.</p>
+  </div>
+</div>
+
+<!-- 14-Month Path Curriculum -->
+<div class="page-break">
+  <h2 style="color:#0f3460;">14-Month Path Curriculum Overview</h2>
+  <p>The Path system offers four distinct learning tracks, each with a unique methodology DNA. Students choose the path that matches their learning style and progress month by month through increasingly advanced Palace rooms.</p>
+
+  <table class="curr-table">
+    <tr><th>Path</th><th>DNA</th><th>Best For</th><th>Primary Rooms</th></tr>
+    <tr style="background:#e3f2fd;"><td><strong>Visual</strong></td><td>Memory palace, image-first, scene construction</td><td>Visual learners who think in pictures</td><td>SR, IR, 24FPS, BR, TR</td></tr>
+    <tr style="background:#e8f5e9;"><td><strong>Analytical</strong></td><td>Detective work, evidence gathering, structural analysis</td><td>Logical thinkers who love details</td><td>OR, DC, ST, QR, QA</td></tr>
+    <tr style="background:#f3e5f5;"><td><strong>Devotional</strong></td><td>Heart transformation, contemplative practice, emotional engagement</td><td>Those who seek spiritual depth</td><td>FRm, MR, NF, PF, CR</td></tr>
+    <tr style="background:#fff8e1;"><td><strong>Warrior</strong></td><td>Combat training, speed precision, teaching deployment</td><td>Leaders, teachers, evangelists</td><td>SRM, 3A, PR, C6, R66</td></tr>
+  </table>
+
+  <h3>Month-by-Month Progression</h3>
+  <table class="curr-table" style="font-size:9.5pt;">
+    <tr><th>Month</th><th>Visual Path</th><th>Analytical Path</th><th>Devotional Path</th><th>Warrior Path</th></tr>
+    <tr><td>1</td><td>Story Room Foundations</td><td>Observation Foundations</td><td>Fire Room Foundations</td><td>Speed Room Foundations</td></tr>
+    <tr><td>2</td><td>Imagination Mastery</td><td>Def-Com Deep Dive</td><td>Meditation Mastery</td><td>Three Angels Combat</td></tr>
+    <tr><td>3</td><td>24FPS Film Strip</td><td>Symbols/Types Profiling</td><td>Nature Freestyle</td><td>Prophecy Deployment</td></tr>
+    <tr><td>4</td><td>Bible Rendered Mapping</td><td>Questions Investigation</td><td>Personal Freestyle</td><td>Connect-6 Speed</td></tr>
+    <tr><td>5</td><td>Translation Art</td><td>Q&amp;A Chains</td><td>Bible Freestyle</td><td>Room 66 Mastery</td></tr>
+    <tr><td>6</td><td>Gems Mining</td><td>Cross-Genre Analysis</td><td>Listening Room</td><td>Teaching Deployment</td></tr>
+    <tr><td>7-8</td><td colspan="4" style="text-align:center;">Advanced Integration — Combining rooms across floors, real-world application</td></tr>
+    <tr><td>9-12</td><td colspan="4" style="text-align:center;">Mastery Phase — Speed drills, teaching practice, portfolio building</td></tr>
+    <tr><td>13-14</td><td colspan="4" style="text-align:center;">Capstone — Complete palace walkthrough, final assessment, commissioning</td></tr>
+  </table>
+
+  <div class="callout callout-purple">
+    <strong>Gate Assessments:</strong> At the end of each month, students complete a gate assessment demonstrating mastery of that month's rooms before advancing. This ensures solid foundations before progressing.
+  </div>
+</div>
+
+<!-- Facilitating Group Studies -->
+<div class="page-break">
+  <h2 style="color:#0f3460;">How to Facilitate Group Studies</h2>
+
+  <h3>Session Structure (90 minutes)</h3>
+  <table class="curr-table">
+    <tr><th>Time</th><th>Activity</th><th>Description</th></tr>
+    <tr><td>0-10 min</td><td>Opening Prayer &amp; Recap</td><td>Review last week's key insights. Ask: "What did God show you this week?"</td></tr>
+    <tr><td>10-25 min</td><td>Scripture Reading</td><td>Read the passage together. Apply the designated Palace room method.</td></tr>
+    <tr><td>25-45 min</td><td>Palace Room Practice</td><td>Guided practice of the room's methodology. Individuals work, then share.</td></tr>
+    <tr><td>45-65 min</td><td>Group Discussion</td><td>Discussion questions from the curriculum. Facilitator guides, doesn't lecture.</td></tr>
+    <tr><td>65-80 min</td><td>Application &amp; Sharing</td><td>Personal application. How will this change your week?</td></tr>
+    <tr><td>80-90 min</td><td>Prayer &amp; Assignment</td><td>Closing prayer. Assign weekly practice and next week's reading.</td></tr>
+  </table>
+
+  <h3>Facilitator Best Practices</h3>
+  <ul>
+    <li><strong>Ask, don't tell.</strong> Use questions to guide discovery. The best facilitators talk less than 30% of the time.</li>
+    <li><strong>Model the method.</strong> Don't just explain the Story Room — demonstrate it live with a passage.</li>
+    <li><strong>Celebrate gems.</strong> When someone shares a powerful insight, highlight it. This encourages participation.</li>
+    <li><strong>Balance grace and rigor.</strong> Hold people to the method (did they actually produce the deliverable?) while being encouraging.</li>
+    <li><strong>Rotate leadership.</strong> By Week 4, have participants lead portions of the session.</li>
+    <li><strong>Keep it Christ-centered.</strong> Every session should pass through the Concentration Room at some point.</li>
+  </ul>
+
+  <h3>Sample Lesson Plan: Story Room Session (Genesis 22)</h3>
+  <div class="callout callout-green">
+    <p><strong>Opening:</strong> "Today we enter the Story Room. Our goal: break Genesis 22 into memorable beats."</p>
+    <p><strong>Read:</strong> Genesis 22:1-19 aloud together.</p>
+    <p><strong>Practice:</strong> Each person identifies 5-7 beats independently (5 min). Share with a partner (5 min).</p>
+    <p><strong>Group:</strong> Build a consensus beat list on the board: Test &rarr; Journey &rarr; "Where is the lamb?" &rarr; Binding &rarr; Knife Raised &rarr; "Abraham!" &rarr; Ram Provided</p>
+    <p><strong>Discussion:</strong> What makes each beat unforgettable? How does the sequence build tension?</p>
+    <p><strong>Christ Connection:</strong> Where do you see Christ in this story? (Concentration Room crossover)</p>
+    <p><strong>Close:</strong> Assignment — apply the Story Room to Exodus 14 before next week.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- PART 5: QUICK REFERENCE & APPENDICES                               -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="page-break part-header">
+  <h1>Part 5</h1>
+  <p>Quick Reference &amp; Appendices</p>
+</div>
+
+<!-- All Rooms at a Glance -->
+<div class="page-break">
+  <h2 style="color:#0f3460;">All Rooms at a Glance</h2>
+  <table class="room-table" style="font-size:9pt;">
+    <tr style="background:#1a1a2e; color:white;"><th>Floor</th><th>Code</th><th>Room Name</th><th>Method (One Line)</th><th>Deliverable</th></tr>
+    <tr style="background:#e3f2fd;"><td>1</td><td>SR</td><td>Story Room</td><td>Break narrative into 3-7 memorable beats</td><td>Beat list + plot summary</td></tr>
+    <tr style="background:#e3f2fd;"><td>1</td><td>IR</td><td>Imagination Room</td><td>Step inside the scene with all 5 senses</td><td>Sensory paragraph</td></tr>
+    <tr style="background:#e3f2fd;"><td>1</td><td>24</td><td>24FPS Room</td><td>One quirky image per chapter</td><td>Chapter-image index</td></tr>
+    <tr style="background:#e3f2fd;"><td>1</td><td>BR</td><td>Bible Rendered</td><td>One symbol per 24-chapter block</td><td>51-frame legend</td></tr>
+    <tr style="background:#e3f2fd;"><td>1</td><td>TR</td><td>Translation Room</td><td>Convert words into pictures</td><td>Visual translations</td></tr>
+    <tr style="background:#e3f2fd;"><td>1</td><td>GR</td><td>Gems Room</td><td>Combine 2-4 texts for rare truth</td><td>Gem card</td></tr>
+    <tr style="background:#e8f5e9;"><td>2</td><td>OR</td><td>Observation Room</td><td>Log 30-50 details without interpreting</td><td>Observation log</td></tr>
+    <tr style="background:#e8f5e9;"><td>2</td><td>DC</td><td>Def-Com Room</td><td>Analyze Greek/Hebrew + commentary</td><td>Word study + commentary notes</td></tr>
+    <tr style="background:#e8f5e9;"><td>2</td><td>ST</td><td>Symbols/Types</td><td>Profile symbols pointing to Christ</td><td>Symbol profile cards</td></tr>
+    <tr style="background:#e8f5e9;"><td>2</td><td>QR</td><td>Questions Room</td><td>Ask intratextual, intertextual, PT questions</td><td>Question matrix</td></tr>
+    <tr style="background:#e8f5e9;"><td>2</td><td>QA</td><td>Q&amp;A Chains</td><td>Cross-reference Scripture answering Scripture</td><td>Q&amp;A chain document</td></tr>
+    <tr style="background:#f3e5f5;"><td>3</td><td>NF</td><td>Nature Freestyle</td><td>Connect creation to Scripture</td><td>Nature-Scripture cards</td></tr>
+    <tr style="background:#f3e5f5;"><td>3</td><td>PF</td><td>Personal Freestyle</td><td>Apply life experiences to Scripture</td><td>Life-Scripture parallel</td></tr>
+    <tr style="background:#f3e5f5;"><td>3</td><td>BF</td><td>Bible Freestyle</td><td>Trace verse genetics</td><td>Verse genetics map</td></tr>
+    <tr style="background:#f3e5f5;"><td>3</td><td>HF</td><td>History/Social Freestyle</td><td>Find historical parallels</td><td>History-Scripture card</td></tr>
+    <tr style="background:#f3e5f5;"><td>3</td><td>LR</td><td>Listening Room</td><td>Listen for connections</td><td>Listening log</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>CR</td><td>Concentration</td><td>Locate Christ in every text</td><td>Christ-connection statement</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>DR</td><td>Dimensions</td><td>Apply 5D: Literal, Christ, Me, Church, Heaven</td><td>5D worksheet</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>C6</td><td>Connect-6</td><td>Link to all 6 genres</td><td>6-genre connection map</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>TRM</td><td>Theme Room</td><td>Place on great walls/floor/ceiling</td><td>Theme placement</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>TZ</td><td>Time Zone</td><td>Assign past/present/future + heaven/earth</td><td>6-zone placement</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>PRM</td><td>Patterns</td><td>Identify recurring divine blueprints</td><td>Pattern map</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>P||</td><td>Parallels</td><td>Find mirrored actions across time</td><td>Parallel pair analysis</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>FRT</td><td>Fruit Room</td><td>Test: Does it produce Gal 5:22-23 fruit?</td><td>Fruit test</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>CEC</td><td>Christ in Every Chapter</td><td>Name Christ's title/role per chapter</td><td>Chapter-Christ index</td></tr>
+    <tr style="background:#fff8e1;"><td>4</td><td>R66</td><td>Room 66</td><td>Trace one theme through all 66 books</td><td>66-book theme trace</td></tr>
+    <tr style="background:#ffebee;"><td>5</td><td>BL</td><td>Blue Room</td><td>Map to sanctuary furniture/services</td><td>Sanctuary mapping</td></tr>
+    <tr style="background:#ffebee;"><td>5</td><td>PR</td><td>Prophecy Room</td><td>Connect to prophetic timeline</td><td>Timeline placement</td></tr>
+    <tr style="background:#ffebee;"><td>5</td><td>3A</td><td>Three Angels</td><td>Apply to final gospel messages</td><td>Three Angels connection</td></tr>
+    <tr style="background:#ffebee;"><td>5</td><td>FE</td><td>Feasts Room</td><td>Connect to Israel's feast calendar</td><td>Feast mapping</td></tr>
+    <tr style="background:#e8eaf6;"><td>6</td><td>1H</td><td>First Heaven</td><td>Babylon exile &rarr; Cyrus restoration</td><td>Horizon placement</td></tr>
+    <tr style="background:#e8eaf6;"><td>6</td><td>2H</td><td>Second Heaven</td><td>70 AD &rarr; New Covenant order</td><td>Horizon placement</td></tr>
+    <tr style="background:#e8eaf6;"><td>6</td><td>3H</td><td>Third Heaven</td><td>Final judgment &rarr; New Creation</td><td>Horizon placement</td></tr>
+    <tr style="background:#e8eaf6;"><td>6</td><td>123H</td><td>Three Heavens</td><td>Multi-horizon discernment</td><td>Triple-horizon analysis</td></tr>
+    <tr style="background:#e8eaf6;"><td>6</td><td>CYC</td><td>Eight Cycles</td><td>Locate in covenant cycle</td><td>Cycle placement</td></tr>
+    <tr style="background:#e8eaf6;"><td>6</td><td>JR</td><td>Juice Room</td><td>Squeeze with all PT principles</td><td>Full juice extraction</td></tr>
+    <tr style="background:#e8eaf6;"><td>6</td><td>MATH</td><td>Mathematics</td><td>Connect to time prophecy structures</td><td>Prophecy mapping</td></tr>
+    <tr style="background:#eceff1;"><td>7</td><td>FRM</td><td>Fire Room</td><td>Feel the emotional weight</td><td>Conviction statement</td></tr>
+    <tr style="background:#eceff1;"><td>7</td><td>MR</td><td>Meditation Room</td><td>Slow marination in truth</td><td>Meditation journal</td></tr>
+    <tr style="background:#eceff1;"><td>7</td><td>SRM</td><td>Speed Room</td><td>Rapid-fire connections in 60 seconds</td><td>Speed drill results</td></tr>
+  </table>
+</div>
+
+<!-- Glossary -->
+<div class="page-break">
+  <h2 style="color:#0f3460;">Glossary of Phototheology Terms</h2>
+  <table style="font-size:10pt;">
+    <tr><td class="glossary-term">24FPS</td><td>One visual image per Bible chapter, creating a "film strip" for instant recall.</td></tr>
+    <tr><td class="glossary-term">Beat</td><td>A major plot movement in a narrative, named with a punchy noun or verb.</td></tr>
+    <tr><td class="glossary-term">Bible Rendered</td><td>The 51-frame system that compresses all 1,189 chapters into symbolic blocks of ~24 chapters each.</td></tr>
+    <tr><td class="glossary-term">Concentration Room</td><td>The central discipline of finding Christ in every text. The heart of Phototheology.</td></tr>
+    <tr><td class="glossary-term">Cycle</td><td>One of eight covenant cycles in salvation history (Adamic through Remnant).</td></tr>
+    <tr><td class="glossary-term">Deliverable</td><td>The tangible output produced when you complete a room's methodology with a passage.</td></tr>
+    <tr><td class="glossary-term">Dimensions (5D)</td><td>Five interpretive lenses: Literal, Christ, Me, Church, Heaven.</td></tr>
+    <tr><td class="glossary-term">Floor</td><td>A level of the Palace representing a category of Bible study skill.</td></tr>
+    <tr><td class="glossary-term">Freestyle</td><td>The ability to spontaneously connect anything (nature, life, history) to Scripture.</td></tr>
+    <tr><td class="glossary-term">Gem</td><td>A striking insight that emerges when combining 2-4 seemingly unrelated texts.</td></tr>
+    <tr><td class="glossary-term">Glyph</td><td>A simple symbolic character used in the Bible Rendered system to represent a 24-chapter block.</td></tr>
+    <tr><td class="glossary-term">Great Controversy Wall</td><td>The cosmic battle between Christ and Satan, traced through Scripture.</td></tr>
+    <tr><td class="glossary-term">Historicist Method</td><td>Interpreting prophecy as fulfilled progressively from the prophet's time to the end.</td></tr>
+    <tr><td class="glossary-term">Jeeves</td><td>The AI-powered study assistant in the Phototheology Palace app.</td></tr>
+    <tr><td class="glossary-term">Juice</td><td>To extract maximum meaning from a text using all PT principles, or to compress a book into its essence.</td></tr>
+    <tr><td class="glossary-term">Palace</td><td>The Phototheology Palace — the multi-floor, multi-room framework for Bible study.</td></tr>
+    <tr><td class="glossary-term">Pattern</td><td>A recurring divine blueprint that repeats across multiple scriptures and timelines.</td></tr>
+    <tr><td class="glossary-term">Room</td><td>A specific methodology within the Palace, with its own question, method, and deliverable.</td></tr>
+    <tr><td class="glossary-term">Sanctuary Wall</td><td>The sanctuary system as a map of salvation history, connecting texts to tabernacle services.</td></tr>
+    <tr><td class="glossary-term">Three Heavens</td><td>Three prophetic horizons of fulfillment: Babylonian, 70 AD, and Final/Eschatological.</td></tr>
+    <tr><td class="glossary-term">Time Zone</td><td>A 6-cell grid: past/present/future &times; heaven/earth, for placing any text.</td></tr>
+    <tr><td class="glossary-term">Type</td><td>An Old Testament shadow or foreshadow pointing forward to its fulfillment in Christ.</td></tr>
+  </table>
+</div>
+
+<!-- Final Back Page -->
+<div class="page-break" style="text-align:center; padding-top:3in;">
+  <img src="src/assets/branding/hero-cards-display.png" alt="Phototheology Cards" style="max-width:5in; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+  <h2 style="color:#0f3460; margin-top:0.4in;">Begin Your Journey Today</h2>
+  <p style="font-size:13pt; color:#555; text-align:center;">"These are they which testify of me." &mdash; John 5:39</p>
+  <p style="font-size:11pt; color:#777; text-align:center; margin-top:0.3in;">The Phototheology Palace &bull; Version 1.0 &bull; March 2026</p>
+  <p style="font-size:10pt; color:#999; text-align:center;">7 Floors &bull; 40 Rooms &bull; 51 Bible Rendered Frames &bull; 1,189 Chapters &bull; 1 Savior</p>
+</div>
+
+</body>
+</html>

@@ -147,7 +147,10 @@
       "Bash(sed:*)",
       "WebFetch(domain:encyclopedia.adventist.org)",
       "Bash(/tmp/compile_rooms.py:*)",
-      "mcp__claude_ai_Notion__notion-search"
+      "mcp__claude_ai_Notion__notion-search",
+      "Bash(unzip:*)",
+      "WebFetch(domain:www.phototheologybible.com)",
+      "Bash(gh api:*)"
     ],
     "deny": [],
     "ask": []
