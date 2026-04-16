@@ -160,7 +160,7 @@ const OS_SPACES: OsSpace[] = [
     simpleLabel: "AI Tools",
     subtitle: "AI Tools, GPTs & Settings",
     icon: Wrench,
-    color: "215 14% 53%",
+    color: "189 94% 43%",
     items: [
       { label: "Phototheology GPT", path: "/phototheologygpt", icon: Sparkles, description: "Master AI assistant", tooltip: "The flagship AI assistant trained on the full Phototheology system. Ask any biblical question and receive answers using all 8 floors, cycles, and heavens." },
       { label: "BranchStudy", path: "/branch-study", icon: Network, description: "Branching paths", tooltip: "Explore branching study paths where each answer leads to deeper questions." },
