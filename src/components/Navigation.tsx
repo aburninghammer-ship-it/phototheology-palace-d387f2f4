@@ -463,7 +463,7 @@ className="fixed left-0 right-0 z-40 bg-card border-b border-border shadow-sm pt
                     to="/study-buddy"
                     className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap flex items-center gap-1 bg-gradient-to-r from-slate-500/10 to-zinc-500/10 border border-slate-500/20 hover:from-slate-500/20 hover:to-zinc-500/20 ${isActiveTab('/study-buddy') ? 'shadow-[0_0_12px_2px_rgba(100,116,139,0.5)] border-slate-400/60' : ''}`}
                   >
-                    <Brain className="h-3.5 w-3.5 text-slate-400" />
+                    <Brain className="h-3.5 w-3.5 text-slate-500" />
                     <span className="bg-gradient-to-r from-slate-500 to-zinc-500 bg-clip-text text-transparent font-semibold">{t('navTabs.study-buddy', 'Study Buddy')}</span>
                   </Link>
                   <Link
