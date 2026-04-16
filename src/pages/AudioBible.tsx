@@ -2228,20 +2228,20 @@ export default function AudioBible() {
                           <Button
                             variant={!commentaryOnly ? "default" : "outline"}
                             size="sm"
-                            className="h-auto py-2 flex-col"
+                            className="h-auto min-h-[3.5rem] py-2 px-2 flex-col gap-1 whitespace-normal text-center"
                             onClick={() => setCommentaryOnly(false)}
                           >
-                            <span className="font-medium">Scripture + Commentary</span>
-                            <span className="text-xs opacity-80">Read verse, then explain</span>
+                            <span className="font-medium text-xs leading-tight break-words">Scripture + Commentary</span>
+                            <span className="text-[10px] opacity-80 leading-tight break-words">Read verse, then explain</span>
                           </Button>
                           <Button
                             variant={commentaryOnly ? "default" : "outline"}
                             size="sm"
-                            className="h-auto py-2 flex-col"
+                            className="h-auto min-h-[3.5rem] py-2 px-2 flex-col gap-1 whitespace-normal text-center"
                             onClick={() => setCommentaryOnly(true)}
                           >
-                            <span className="font-medium">Commentary Only</span>
-                            <span className="text-xs opacity-80">Skip verse audio</span>
+                            <span className="font-medium text-xs leading-tight break-words">Commentary Only</span>
+                            <span className="text-[10px] opacity-80 leading-tight break-words">Skip verse audio</span>
                           </Button>
                         </div>
                       </div>
@@ -2253,29 +2253,29 @@ export default function AudioBible() {
                           <Button
                             variant={commentaryMode === "verse" ? "default" : "outline"}
                             size="sm"
-                            className="h-auto py-2 flex-col"
+                            className="h-auto min-h-[3.5rem] py-2 px-1.5 flex-col gap-1 whitespace-normal text-center"
                             onClick={() => setCommentaryMode("verse")}
                           >
-                            <span className="font-medium">{t('audioBible.verseByVerse')}</span>
-                            <span className="text-xs opacity-80">{t('audioBible.afterEachVerse')}</span>
+                            <span className="font-medium text-xs leading-tight break-words">{t('audioBible.verseByVerse')}</span>
+                            <span className="text-[10px] opacity-80 leading-tight break-words">{t('audioBible.afterEachVerse')}</span>
                           </Button>
                           <Button
                             variant={commentaryMode === "chapter" ? "default" : "outline"}
                             size="sm"
-                            className="h-auto py-2 flex-col"
+                            className="h-auto min-h-[3.5rem] py-2 px-1.5 flex-col gap-1 whitespace-normal text-center"
                             onClick={() => setCommentaryMode("chapter")}
                           >
-                            <span className="font-medium">{t('audioBible.chapterSummary')}</span>
-                            <span className="text-xs opacity-80">{t('audioBible.afterWholeChapter')}</span>
+                            <span className="font-medium text-xs leading-tight break-words">{t('audioBible.chapterSummary')}</span>
+                            <span className="text-[10px] opacity-80 leading-tight break-words">{t('audioBible.afterWholeChapter')}</span>
                           </Button>
                           <Button
                             variant={commentaryMode === "passage" ? "default" : "outline"}
                             size="sm"
-                            className="h-auto py-2 flex-col"
+                            className="h-auto min-h-[3.5rem] py-2 px-1.5 flex-col gap-1 whitespace-normal text-center"
                             onClick={() => setCommentaryMode("passage")}
                           >
-                            <span className="font-medium">Passage</span>
-                            <span className="text-xs opacity-80">One for range</span>
+                            <span className="font-medium text-xs leading-tight break-words">Passage</span>
+                            <span className="text-[10px] opacity-80 leading-tight break-words">One for range</span>
                           </Button>
                         </div>
                       </div>
