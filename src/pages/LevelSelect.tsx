@@ -183,6 +183,8 @@ export default function LevelSelect() {
                         : "hsl(220 10% 16%)",
                       boxShadow: isActive
                         ? `0 0 40px ${level.glowColor}`
+                        : level.mode === "immersion"
+                        ? "0 0 24px hsl(270 60% 55% / 0.18)"
                         : "none",
                     }}
                   >
